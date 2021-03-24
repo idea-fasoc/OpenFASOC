@@ -34,7 +34,7 @@ Please contact mehdi@umich.edu if you have any questions.
 
 # Things to improve
 
-To improve our tools, flow, and QoR. The following items are currently being addressed:
+To improve our tools, flow, and QoR. The following limitations are currently being addressed:
    - In OpenROAD tools:
        - Add the power pins extraction in OpenROAD tool
        - LEF modification for NDR needs to be within the tool (no additional script)
