@@ -8,5 +8,6 @@ sky130hd_temp:
 clean:
 	rm -f error_within_x.csv golden_error_opt.csv search_result.csv
 	rm -rf work
+	cd flow && make clean_all
 
 
