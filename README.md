@@ -1,4 +1,4 @@
-# FASoC: Fully Open-Sourced Autonomous SoC Synthesis using Customizable Cell-Based Synthesizable Analog Circuits
+# OpenFASoC: Fully Open-Source Autonomous SoC Synthesis using Customizable Cell-Based Synthesizable Analog Circuits
 
 The FASoC Program is focused on developing a complete system-on-chip (SoC) synthesis tool from user specification to GDSII with fully open-sourced tools.
 
