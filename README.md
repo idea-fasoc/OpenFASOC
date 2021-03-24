@@ -11,10 +11,14 @@ Please build the following tools:
   Magic <https://github.com/RTimothyEdwards/magic>
 
   Netgen <https://github.com/RTimothyEdwards/netgen>
+  
+  Yosys <https://github.com/The-OpenROAD-Project/yosys>
 
   OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD> (with `export_opendb_power_pins` enabled )
 
-   - Before building the OpenROAD tools, please enable the `export_opendb_power_pins` function from OpenROAD: uncomment the `export_opendb_power_pins` in proc opendb_update_grid {} in `OpenROAD/src/pdngen/src/PdnGen.tcl` and then rebuild the OpenROAD tool
+   - Before building the OpenROAD tools, please enable the `export_opendb_power_pins` function from OpenROAD: uncomment the `export_opendb_power_pins` in proc opendb_update_grid {} in `OpenROAD/src/pdngen/src/PdnGen.tcl` and then rebuild the OpenROAD tool.
+
+Python3 is needed to run the generator.
 
 # Design Generation
 
