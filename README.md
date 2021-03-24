@@ -20,7 +20,7 @@ Please build the following tools:
 
 Our fully open source flow only supports the temperature sensor generation so far. We are working on adding additional generators in the near future.
 
-The generators are located inside `OpenFASOC/generators/`, the target for temperature sensor generation is `sky130hd_temp` inside `OpenFASOC/generators/temp-sense-gen`, the following parameters are supported:
+The generators are located inside `OpenFASOC/generators/`, the target for temperature sensor generation is `sky130hd_temp` and located inside `OpenFASOC/generators/temp-sense-gen`, the following parameters are supported:
 
 - --specfile: input specifications where the min/max temperature for the temp sensor are specified
 - --output: output folder where the gds/def results will be exported
@@ -34,6 +34,7 @@ Please contact mehdi@umich.edu if you have any questions.
 
 # Things to improve
 
+To improve our tools, flow, and QoR. The following items are currently being addressed:
    - In OpenROAD tools:
        - Add the power pins extraction in OpenROAD tool
        - LEF modification for NDR needs to be within the tool (no additional script)
