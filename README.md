@@ -7,7 +7,9 @@ See more on our [website](https://fasoc.engin.umich.edu/).
 # Prerequisites
 
 Magic <https://github.com/RTimothyEdwards/magic>
+
 Netegn <https://github.com/RTimothyEdwards/netgen>
+
 OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD> (with `export_opendb_power_pins` enabled )
 
    - Before building the OpenROAD tools, please enable the `export_opendb_power_pins` function from OpenROAD: uncomment the `export_opendb_power_pins` in proc opendb_update_grid {} in `OpenROAD-flow-scripts/tools/OpenROAD/src/pdngen/src/PdnGen.tcl` and then rebuild the OpenROAD tool
