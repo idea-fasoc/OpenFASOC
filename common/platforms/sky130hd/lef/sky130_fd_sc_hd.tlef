@@ -786,4 +786,32 @@ VIARULE M4M5_PR_C GENERATE
 END M4M5_PR_C
 ###  end of single via cells   ###
 
+NONDEFAULTRULE NDR_2W_2S
+  HARDSPACING ;
+  LAYER li1
+    WIDTH 0.17 ;
+    SPACING 0.12 ;
+  END li1
+  LAYER met1
+    WIDTH 0.14 ;
+    SPACING 0.06 ;
+  END met1
+  LAYER met2
+    WIDTH 0.28 ;
+    SPACING 0.92 ;
+  END met2
+  LAYER met3
+    WIDTH 0.6 ;
+    SPACING 1.36 ;
+  END met3
+  LAYER met4
+    WIDTH 0.6 ;
+    SPACING 1.84 ;
+  END met4
+  LAYER met5
+    WIDTH 3.2 ;
+    SPACING 6.8 ;
+  END met5
+END NDR_2W_2S
+
 END LIBRARY

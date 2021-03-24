@@ -96,7 +96,7 @@ except ValueError as e:
    sys.exit(1)
 
 
-mFile1 = genDir + '/modelfile.csv'
+mFile1 = genDir + '/models/modelfile.csv'
 mFilePublic1 = genDir + args.platform + '.model_tempsense'
 
 if not os.path.isfile(mFile1):

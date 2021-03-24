@@ -20,6 +20,7 @@ from readparamgen import check_search_done, designName, args, jsonSpec
 
 genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)),"../")
 srcDir = genDir + "src/"
+flowDir = genDir + "flow/"
 designDir = genDir + "designs/src/tempsense/"
 
 #------------------------------------------------------------------------------
@@ -88,11 +89,11 @@ with open(genDir + 'blocks/sky130hd/tempsenseInst_domain_insts.txt', 'w') as wf:
     for lv_cell in lv_list:
         wf.write('temp_analog_0.' + lv_cell + '\n')
 
-shutil.copyfile(srcDir + 'TEMP_ANALOG_lv.nl.v', designDir + 'TEMP_ANALOG_lv.nl' + '.v')
-shutil.copyfile(srcDir + 'TEMP_ANALOG_hv.nl.v', designDir + 'TEMP_ANALOG_hv.nl' + '.v')
-shutil.copyfile(srcDir + 'TEMP_AUTO_def.v', designDir + 'TEMP_AUTO_def' + '.v')
-shutil.copyfile(srcDir + 'tempsenseInst.v', designDir + designName  + '.v')
-shutil.copyfile(srcDir + 'counter.v', designDir + 'counter' + '.v')
+shutil.copyfile(srcDir + 'TEMP_ANALOG_lv.nl.v', flowDir + 'design/src/tempsense/TEMP_ANALOG_lv.nl.v')
+shutil.copyfile(srcDir + 'TEMP_ANALOG_hv.nl.v', flowDir + 'design/src/tempsense/TEMP_ANALOG_hv.nl.v')
+shutil.copyfile(srcDir + 'TEMP_AUTO_def.v', flowDir + 'design/src/tempsense/TEMP_AUTO_def.v')
+shutil.copyfile(srcDir + 'tempsenseInst.v', flowDir + 'design/src/tempsense/tempsenseInst.v')
+shutil.copyfile(srcDir + 'counter.v', flowDir + 'design/src/tempsense/counter' + '.v')
 
 print('#----------------------------------------------------------------------')
 print('# Verilog Generated')
@@ -107,7 +108,7 @@ print('#----------------------------------------------------------------------')
 print('# Run Synthesis and APR')
 print('#----------------------------------------------------------------------')
 
-p = sp.Popen(['make','finish'], cwd=genDir)
+p = sp.Popen(['make','finish'], cwd=flowDir)
 p.wait()
 
 
@@ -117,7 +118,7 @@ print('#----------------------------------------------------------------------')
 
 time.sleep(2)
 
-p = sp.Popen(['make','magic_drc'], cwd=genDir)
+p = sp.Popen(['make','magic_drc'], cwd=flowDir)
 p.wait()
 
 print('#----------------------------------------------------------------------')
@@ -126,7 +127,7 @@ print('#----------------------------------------------------------------------')
 
 time.sleep(2)
 
-p = sp.Popen(['make','netgen_lvs'], cwd=genDir)
+p = sp.Popen(['make','netgen_lvs'], cwd=flowDir)
 p.wait()
 
 
@@ -134,9 +135,12 @@ print('#----------------------------------------------------------------------')
 print('# LVS finished')
 print('#----------------------------------------------------------------------')
 
+if os.path.isdir(args.outputDir):
+    shutil.rmtree(genDir + args.outputDir)
+shutil.copytree(flowDir + 'results/' + args.platform + '/tempsense', genDir + args.outputDir)
+shutil.copyfile(flowDir + 'reports/' + args.platform + '/tempsense/6_final_drc.rpt', genDir + args.outputDir + '/6_final_drc.rpt')
+shutil.copyfile(flowDir + 'reports/' + args.platform + '/tempsense/6_final_lvs.rpt', genDir + args.outputDir + '/6_final_lvs.rpt')
 
-shutil.rmtree(genDir + args.output)
-shutil.copytree(genDir + 'results/' + args.platform + '/tempsense', genDir + args.output)
 
 time.sleep(2)
 

@@ -2,7 +2,7 @@
 # Uncomment or add the design to run
 # ==============================================================================
 
-DESIGN_CONFIG = ./designs/sky130hd/tempsense/config.mk
+DESIGN_CONFIG = ./design/sky130hd/tempsense/config.mk
 default: finish
 
 # ==============================================================================
@@ -20,9 +20,9 @@ include $(DESIGN_CONFIG)
 PUBLIC=sky130hd sky130hs
 
 ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
-  export PLATFORM_DIR = ../../common/platforms/$(PLATFORM)
+  export PLATFORM_DIR = ../../../common/platforms/$(PLATFORM)
 else ifneq ($(wildcard ../../$(PLATFORM)),)
-  export PLATFORM_DIR = ../../$(PLATFORM)
+  export PLATFORM_DIR = ../../../$(PLATFORM)
 else
   $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found)
 endif
@@ -465,7 +465,7 @@ else
 endif
 
 
-export MAGIC_SETUPS = ../../common/drc-lvs-check
+export MAGIC_SETUPS = ../../../common/drc-lvs-check
 
 magic_drc: $(RESULTS_DIR)/6_final.gds
 	magic -rcfile $(MAGIC_SETUPS)/sky130A.magicrc -noconsole -dnull $(MAGIC_SETUPS)/magic_commands.tcl < /dev/null
@@ -504,7 +504,6 @@ clean:
 clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish
 	rm -rf $(OBJECTS_DIR)
 	rm -f tempsenseInst*
-	rm -f golden_error_opt.csv error_within_x.csv search_result.csv
 
 nuke: clean_test clean_issues
 	rm -rf ./results ./logs ./reports ./objects
