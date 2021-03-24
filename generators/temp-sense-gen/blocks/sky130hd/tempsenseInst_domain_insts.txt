@@ -1,0 +1,14 @@
+temp_analog_0.a_nand_0
+temp_analog_0.a_inv_0
+temp_analog_0.a_inv_1
+temp_analog_0.a_inv_2
+temp_analog_0.a_inv_3
+temp_analog_0.a_inv_4
+temp_analog_0.a_inv_5
+temp_analog_0.a_inv_m1
+temp_analog_0.a_inv_m2
+temp_analog_0.a_inv_m3
+temp_analog_0.a_buf_3
+temp_analog_0.a_buf_0
+temp_analog_0.a_buf_1
+temp_analog_0.a_buf_2
