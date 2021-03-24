@@ -29,7 +29,7 @@ Our fully open source flow only supports the temperature sensor generation so fa
 The generators are located inside `OpenFASOC/generators/`, the target for temperature sensor generation is `sky130hd_temp` and located inside `OpenFASOC/generators/temp-sense-gen`, the following parameters are supported:
 
 - --specfile: input specifications where the min/max temperature for the temp sensor are specified
-- --output: output folder where the gds/def results will be exported
+- --outputDir: output folder where the gds/def results will be exported
 - --platform: only sky130hd platform is supported for now
 - --clean: clean flow folder and start a fresh design flow
 - --mode: support 'verilog' and 'macro' modes for now
