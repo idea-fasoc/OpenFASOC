@@ -1,6 +1,6 @@
 export DESIGN_NICKNAME = tempsense
-export DESIGN_NAME = tempsenseInst
-#export DESIGN_NAME = tempsenseInst
+export DESIGN_NAME = tempsenseInst_error
+#export DESIGN_NAME = tempsenseInst_error
 export PLATFORM    = sky130hd
 #export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 

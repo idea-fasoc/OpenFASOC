@@ -89,10 +89,22 @@ with open(genDir + 'blocks/sky130hd/tempsenseInst_domain_insts.txt', 'w') as wf:
     for lv_cell in lv_list:
         wf.write('temp_analog_0.' + lv_cell + '\n')
 
+with open(srcDir + 'tempsenseInst.v', 'r') as rf:
+    filedata = rf.read()
+    filedata = re.sub('module\s*(\w+)\s*\n', 'module ' + designName + '\n', filedata)
+with open(srcDir + 'tempsenseInst.v', 'w') as wf:
+    wf.write(filedata)
+
+with open(flowDir + 'design/sky130hd/tempsense/config.mk', 'r') as rf:
+    filedata = rf.read()
+    filedata = re.sub('export DESIGN_NAME\s*=\s*(\w+)', 'export DESIGN_NAME = ' + designName, filedata)
+with open(flowDir + 'design/sky130hd/tempsense/config.mk', 'w') as wf:
+    wf.write(filedata)
+
 shutil.copyfile(srcDir + 'TEMP_ANALOG_lv.nl.v', flowDir + 'design/src/tempsense/TEMP_ANALOG_lv.nl.v')
 shutil.copyfile(srcDir + 'TEMP_ANALOG_hv.nl.v', flowDir + 'design/src/tempsense/TEMP_ANALOG_hv.nl.v')
 shutil.copyfile(srcDir + 'TEMP_AUTO_def.v', flowDir + 'design/src/tempsense/TEMP_AUTO_def.v')
-shutil.copyfile(srcDir + 'tempsenseInst.v', flowDir + 'design/src/tempsense/tempsenseInst.v')
+shutil.copyfile(srcDir + 'tempsenseInst.v', flowDir + 'design/src/tempsense/' + designName + '.v')
 shutil.copyfile(srcDir + 'counter.v', flowDir + 'design/src/tempsense/counter' + '.v')
 
 print('#----------------------------------------------------------------------')
@@ -137,7 +149,13 @@ print('#----------------------------------------------------------------------')
 
 if os.path.isdir(args.outputDir):
     shutil.rmtree(genDir + args.outputDir)
-shutil.copytree(flowDir + 'results/' + args.platform + '/tempsense', genDir + args.outputDir)
+os.mkdir(genDir + args.outputDir)
+shutil.copyfile(flowDir + 'results/' + args.platform + '/tempsense/6_final.gds', genDir + args.outputDir + '/' + designName + '.gds')
+shutil.copyfile(flowDir + 'results/' + args.platform + '/tempsense/6_final.def', genDir + args.outputDir + '/' + designName + '.def')
+shutil.copyfile(flowDir + 'results/' + args.platform + '/tempsense/6_final.v', genDir + args.outputDir + '/' + designName + '.v')
+shutil.copyfile(flowDir + 'results/' + args.platform + '/tempsense/6_1_fill.sdc', genDir + args.outputDir + '/' + designName + '.sdc')
+shutil.copyfile(flowDir + designName + '.spice', genDir + args.outputDir + '/' + designName + '.spice')
+shutil.copyfile(flowDir + designName + '_pex.spice', genDir + args.outputDir + '/' + designName + '_pex.spice')
 shutil.copyfile(flowDir + 'reports/' + args.platform + '/tempsense/6_final_drc.rpt', genDir + args.outputDir + '/6_final_drc.rpt')
 shutil.copyfile(flowDir + 'reports/' + args.platform + '/tempsense/6_final_lvs.rpt', genDir + args.outputDir + '/6_final_lvs.rpt')
 

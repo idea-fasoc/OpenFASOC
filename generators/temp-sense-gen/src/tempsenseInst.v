@@ -1,4 +1,4 @@
-module tempsenseInst
+module tempsenseInst_error
 (
 	input CLK_REF,
 	input RESET_COUNTERn,

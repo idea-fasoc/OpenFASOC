@@ -55,9 +55,7 @@ if {[info exists ::env(FOOTPRINT)]} {
 } else {
   
   source scripts/read_domain_instances.tcl
-  if {$::env(DESIGN_NAME) == "tempsenseInst"} {
-    create_voltage_domain TEMP_ANALOG -area {34 34 65 65}
-  }
+  create_voltage_domain TEMP_ANALOG -area {34 34 65 65}
 
   initialize_floorplan -die_area $::env(DIE_AREA) \
                        -core_area $::env(CORE_AREA) \
