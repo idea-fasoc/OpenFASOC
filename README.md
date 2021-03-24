@@ -8,7 +8,7 @@ See more on our [website](https://fasoc.engin.umich.edu/).
 
 Magic <https://github.com/RTimothyEdwards/magic>
 
-Netegn <https://github.com/RTimothyEdwards/netgen>
+Netgen <https://github.com/RTimothyEdwards/netgen>
 
 OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD> (with `export_opendb_power_pins` enabled )
 
@@ -26,6 +26,6 @@ The generators are located inside `open_fasoc/generators/temp-sense-gen/`, the t
 - --nhead: specify a fixed number of headers (optional)
 - --ninv: specify a fixed number of inverters (optional)
 
-Please contact mehdi@umich.edu if you have enay questions.
+Please contact mehdi@umich.edu if you have any questions.
 
 
