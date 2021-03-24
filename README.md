@@ -18,7 +18,8 @@ Please build the following tools:
 
 # Design Generation
 
-Our fully open source flow only supports the temerature sensor generation so far. We are working on adding additional generators in the near future.
+Our fully open source flow only supports the temperature sensor generation so far. We are working on adding additional generators in the near future.
+
 The generators are located inside `OpenFASOC/generators/`, the target for temperature sensor generation is `sky130hd_temp` inside `OpenFASOC/generators/temp-sense-gen`, the following parameters are supported:
 
 - --specfile: input specifications where the min/max temperature for the temp sensor are specified
