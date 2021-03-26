@@ -18,9 +18,9 @@ Please build the following tools:
 
   OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD> (commid id: 8ed8414, with power pins generation enabled)
 
-   - Before building the OpenROAD tools, please enable the `export_opendb_power_pins` function from OpenROAD: uncomment the `export_opendb_power_pins` in `proc opendb_update_grid {}` in OpenROAD/src/pdngen/src/PdnGen.tcl and then rebuild the OpenROAD tool.
+   - Before building the OpenROAD tools, please enable the `export_opendb_power_pins` function from OpenROAD: uncomment the `export_opendb_power_pins` in `proc opendb_update_grid {}` in OpenROAD/src/pdngen/src/PdnGen.tcl and then rebuild the OpenROAD tool. The flow will terminate with errors if this function is not enabled in OpenROAD.
 
-   - Python3 is needed to run the generator. 
+   - Python 3.7 is used in this generator. 
 
    - All the required tools need to be loaded into the environment before running this generator.
 
