@@ -56,7 +56,7 @@ cd OpenFASOC/generators/temp-sense-gen
 make sky130hd_temp
 ```
 
-4. The output results will be stored in the **outputDir** folder specified in Makefile
+4. The outputs will be stored in the **outputDir** folder specified in Makefile
 
 Please contact mehdi@umich.edu if you have any questions.
 
