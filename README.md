@@ -16,11 +16,13 @@ Please build the following tools:
   
   Yosys <https://github.com/The-OpenROAD-Project/yosys>
 
-  OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD> (with `export_opendb_power_pins` enabled )
+  OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD> (commid id: 8ed8414, with power pins generation enabled)
 
    - Before building the OpenROAD tools, please enable the `export_opendb_power_pins` function from OpenROAD: uncomment the `export_opendb_power_pins` in proc opendb_update_grid {} in `OpenROAD/src/pdngen/src/PdnGen.tcl` and then rebuild the OpenROAD tool.
 
-*Python3 is needed to run the generator.
+   - Python3 is needed to run the generator. 
+
+   - All the required tools need to be loaded into the environment before running this generator.
 
 # Design Generation
 
@@ -35,6 +37,26 @@ The generators are located inside `OpenFASOC/generators/`, the target for temper
 - --mode: support 'verilog' and 'macro' modes for now
 - --nhead: specify a fixed number of headers (optional)
 - --ninv: specify a fixed number of inverters (optional)
+
+1. Clone the OpenFASOC repository
+
+```
+git clone git@github.com:idea-fasoc/OpenFASOC.git
+```
+
+2. Go to the temperature sensor generation folder
+
+```
+cd OpenFASOC/generators/temp-sense-gen
+```
+
+3. Modify the test.json or the **sky130hd_temp** target in Makefile, then run the flow
+
+```
+make sky130hd_temp
+```
+
+4. The output results will be stored in the **outputDir** folder specified in Makefile
 
 Please contact mehdi@umich.edu if you have any questions.
 
