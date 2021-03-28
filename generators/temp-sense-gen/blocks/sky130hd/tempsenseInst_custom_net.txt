@@ -2,3 +2,7 @@ r_VIN
 temp_analog_1.a_header_0 VIN
 temp_analog_1.a_header_1 VIN
 temp_analog_1.a_header_2 VIN
+temp_analog_1.a_header_3 VIN
+temp_analog_1.a_header_4 VIN
+temp_analog_1.a_header_5 VIN
+temp_analog_1.a_header_6 VIN

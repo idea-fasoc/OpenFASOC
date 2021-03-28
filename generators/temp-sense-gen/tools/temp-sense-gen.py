@@ -22,6 +22,7 @@ genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)),"../")
 srcDir = genDir + "src/"
 flowDir = genDir + "flow/"
 designDir = genDir + "designs/src/tempsense/"
+simDir = genDir + "simulations/"
 
 #------------------------------------------------------------------------------
 # Clean the workspace
@@ -113,7 +114,6 @@ print('#----------------------------------------------------------------------')
 print()
 if args.mode == 'verilog':
   print("Exiting tool....")
-  #sys.exit(1)
   exit()
 
 print('#----------------------------------------------------------------------')
@@ -162,5 +162,71 @@ shutil.copyfile(flowDir + 'reports/' + args.platform + '/tempsense/6_final_lvs.r
 
 time.sleep(2)
 
-sys.exit(0)
+print('#----------------------------------------------------------------------')
+print('# Macro Generated')
+print('#----------------------------------------------------------------------')
+print()
+if args.mode == 'macro':
+  print("Exiting tool....")
+  #sys.exit(1)
+  exit()
 
+print("Loading platform_config file...")
+print()
+try:
+  with open(genDir + '../../common/platform_config.json') as file:
+    jsonConfig = json.load(file)
+except ValueError as e:
+  print("Error occurred opening or loading json file.")
+  print >> sys.stderr, 'Exception: %s' % str(e)
+  sys.exit(1)
+
+platform_config = jsonConfig["platforms"][args.platform]
+nominal_voltage = platform_config["nominal_voltage"]
+model_file = platform_config["model_file"] 
+model_corner = platform_config["model_corner"]
+
+stage_var = int(ninv) - 1
+header_var = int(nhead)
+
+runDir = simDir + "inv{:d}_header{:d}/".format(stage_var, header_var)
+if os.path.isdir(runDir):
+  shutil.rmtree(runDir)
+os.mkdir(runDir)
+
+shutil.copyfile(flowDir + designName + '.spice', runDir + designName + '.spice')
+shutil.copyfile(flowDir + designName + '_pex.spice', runDir + designName + '_pex.spice')
+shutil.copyfile(genDir + "tools/result.py", runDir + "result.py")
+shutil.copyfile(genDir + "tools/result_error.py", runDir + "result_error.py")
+
+
+temp_start = -20
+temp_stop = 100
+temp_step = 20
+
+temp_points = int((temp_stop - temp_start) / temp_step)+1
+
+temp_list=[]
+for i in range(0, temp_points+1):
+   temp_list.append(temp_start + i*temp_step)
+
+
+with open(genDir + "tools/tempsenseInst_sim.sp", "r") as rf:
+  filedata = rf.read()
+  filedata = re.sub("@model_file", model_file, filedata)
+  filedata = re.sub("@model_corner", model_corner, filedata)
+  filedata = re.sub("@voltage", str(nominal_voltage), filedata)
+  filedata = re.sub("@netlist", os.path.abspath(runDir + designName + '.spice'), filedata)
+
+for temp in temp_list:
+  w_file = open(simDir + "inv%d_header%d/%s_%d.sp" % (stage_var, header_var, designName, temp), "w")
+  wfdata = re.sub("@temp", str(temp), filedata)
+  w_file.write(wfdata)
+  w_file.close()
+
+with open(runDir + "run_sim", "w") as wf:
+  for temp in temp_list:
+    wf.write("ngspice -b %s_%d.sp &\n" % (designName, temp))
+
+print("Exiting tool....")
+exit()

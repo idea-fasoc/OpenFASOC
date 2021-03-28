@@ -82,7 +82,6 @@ except KeyError as e:
    print('Error: Bad Input Specfile. \'module_name\' variable is missing.')
    sys.exit(1)
 
-
 try:
    Tempmin = jsonSpec['specifications']['temperature']['min']
    Tempmax = jsonSpec['specifications']['temperature']['max']
