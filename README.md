@@ -24,6 +24,14 @@ Please build the following tools:
 
    - All the required tools need to be loaded into the environment before running this generator.
 
+   - To run the simulation using ngspice (still debugging), please edit your local model file in `common/platform_config.json`:
+
+      - "simTool": currently, only ngspice is supported
+      - "nominal_voltage": nominal voltage for the specified technology
+      - "model_file": path to the top model lib file 
+      - "model_corner": the corner used in the simulation
+ 
+
 # Design Generation
 
 Our fully open source flow only supports the temperature sensor generation so far. We are working on adding additional generators in the near future.
