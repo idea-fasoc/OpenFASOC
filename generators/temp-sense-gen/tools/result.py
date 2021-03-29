@@ -16,5 +16,5 @@ result = mt0_lines[data_start_line-1].split()
 
 ##### print to output file
 #print("%s	%s        %s"%(result[3], result[1], result[2]))
-print("%s	%s        %s"%(result[4], result[1], result[2]), file=open("code_result", "a"))
+print("%s	%s"%(result[2], result[1]), file=open("code_result", "a"))
 

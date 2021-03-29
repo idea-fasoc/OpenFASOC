@@ -1,6 +1,7 @@
 import re
 import argparse
 import sys
+import os
 
 parser = argparse.ArgumentParser(
     description="formulate input cdl netlist")
@@ -50,7 +51,7 @@ with open(args.outputCdl, "w") as wf:
     ckt_end = ckt_re.group(5)
     ckt_cells = ckt_cells.replace("\n+", "").split("\n")
 
-    wf.write(".INCLUDE '" + args.stdCdl + "'\n")
+    wf.write(".INCLUDE '" + os.path.abspath(args.stdCdl) + "'\n")
     # wf.write(ckt_head)
 
     for ckt_cell in ckt_cells:

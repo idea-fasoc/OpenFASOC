@@ -3,7 +3,7 @@ import math
 import numpy
 import os
 
-genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)),"../")
+genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)),"./")
 
 ##### read mt0_list, remove \n
 r_mt0_list = open(genDir + "./mt0_list", "r")
@@ -105,11 +105,11 @@ result_lines= r_result_list.readlines()
 result_list = list()
 result_tmep = list()
 i=0
-print(os.getcwd())
-print('Temp  Frequency Power Error ')
+print(os.getcwd(), file=open("all_result", "a"))
+print('Temp Frequency Error', file=open("all_result", "a"))
 for line in result_lines:
 	result_list = result_lines[i].split()
-	print('%s %s %s %s'%(result_list[0], result_list[1], result_list[2], data4[i]), file=open("all_result", "a"))
+	print('%s %s %s'%(result_list[0], result_list[1], data4[i]), file=open("all_result", "a"))
 	i=i+1
 
 

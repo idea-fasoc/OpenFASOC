@@ -189,29 +189,36 @@ model_corner = platform_config["model_corner"]
 stage_var = int(ninv) - 1
 header_var = int(nhead)
 
-runDir = simDir + "inv{:d}_header{:d}/".format(stage_var, header_var)
+if not os.path.isdir(simDir + "run/"):
+  os.mkdir(simDir + "run/")
+
+runDir = simDir + "run/inv{:d}_header{:d}/".format(stage_var, header_var)
 if os.path.isdir(runDir):
   shutil.rmtree(runDir)
 os.mkdir(runDir)
 
-shutil.copyfile(flowDir + designName + '.spice', runDir + designName + '.spice')
+with open(flowDir + designName + '.spice', "r") as rf:
+  filedata = rf.read()
+  filedata = re.sub("(\.INCLUDE.*\n)", "\g<1>.SUBCKT tempsenseInst CLK_REF DONE DOUT[0] DOUT[10] DOUT[11]\n+ DOUT[12] DOUT[13] DOUT[14] DOUT[15] DOUT[16] DOUT[17] DOUT[18]\n+ DOUT[19] DOUT[1] DOUT[20] DOUT[21] DOUT[22] DOUT[23] DOUT[2]\n+ DOUT[3] DOUT[4] DOUT[5] DOUT[6] DOUT[7] DOUT[8] DOUT[9] RESET_COUNTERn\n+ SEL_CONV_TIME[0] SEL_CONV_TIME[1] SEL_CONV_TIME[2] SEL_CONV_TIME[3]\n+ VDD VIN VSS en lc_out out outb\n", filedata)
+  filedata = re.sub("\.end", ".ends", filedata)
+with open(runDir + designName + '.spice', "w") as wf:
+  wf.write(filedata)
+
 shutil.copyfile(flowDir + designName + '_pex.spice', runDir + designName + '_pex.spice')
 shutil.copyfile(genDir + "tools/result.py", runDir + "result.py")
 shutil.copyfile(genDir + "tools/result_error.py", runDir + "result_error.py")
-
 
 temp_start = -20
 temp_stop = 100
 temp_step = 20
 
-temp_points = int((temp_stop - temp_start) / temp_step)+1
+temp_points = int((temp_stop - temp_start) / temp_step)
 
 temp_list=[]
 for i in range(0, temp_points+1):
    temp_list.append(temp_start + i*temp_step)
 
-
-with open(genDir + "tools/tempsenseInst_sim.sp", "r") as rf:
+with open(simDir + "templates/tempsenseInst_%s.sp" % (jsonConfig["simTool"]), "r") as rf:
   filedata = rf.read()
   filedata = re.sub("@model_file", model_file, filedata)
   filedata = re.sub("@model_corner", model_corner, filedata)
@@ -219,14 +226,52 @@ with open(genDir + "tools/tempsenseInst_sim.sp", "r") as rf:
   filedata = re.sub("@netlist", os.path.abspath(runDir + designName + '.spice'), filedata)
 
 for temp in temp_list:
-  w_file = open(simDir + "inv%d_header%d/%s_%d.sp" % (stage_var, header_var, designName, temp), "w")
+  w_file = open(simDir + "run/inv%d_header%d/%s_sim_%d.sp" % (stage_var, header_var, designName, temp), "w")
   wfdata = re.sub("@temp", str(temp), filedata)
   w_file.write(wfdata)
   w_file.close()
 
 with open(runDir + "run_sim", "w") as wf:
   for temp in temp_list:
-    wf.write("ngspice -b %s_%d.sp &\n" % (designName, temp))
+    if jsonConfig["simTool"] == "ngspice":
+      wf.write("ngspice -b %s_%d.sp &\n" % (designName, temp))
+    elif jsonConfig["simTool"] == "finesim":
+      wf.write("finesim -spice %s_sim_%d.sp -o %s_sim_%d &\n" % (designName, temp, designName, temp))
 
+with open(runDir + "mt0_list", "w") as wf:
+  for temp in temp_list:
+    wf.write("%s_sim_%d.mt0\n" % (designName, temp))
+
+with open(runDir + "cal_result", "w") as wf:
+  for temp in temp_list:
+    wf.write("python result.py %s_sim_%d.mt0\n" % (designName, temp))
+  wf.write("python result_error.py\n")
+
+processes = []
+if jsonConfig["simTool"] == "ngspice":
+  pass
+elif jsonConfig["simTool"] == "finesim":
+  for temp in temp_list:
+    p = sp.Popen(["finesim", "-spice", "%s_sim_%d.sp" % (designName, temp), "-o", "%s_sim_%d" % (designName, temp)], cwd=runDir)
+    processes.append(p)
+
+for p in processes:
+  p.wait()
+
+for temp in temp_list:
+  if not os.path.isfile(runDir + "%s_sim_%d.mt0" % (designName, temp)):
+    print("simulation output: %s_sim_%d.mt0 is not generated" % (designName, temp))
+    sys.exit(1)
+  p = sp.Popen(["python", "result.py", "%s_sim_%d.mt0" % (designName, temp)], cwd=runDir)
+  p.wait()
+
+p = sp.Popen(["python", "result_error.py"], cwd=runDir)
+p.wait()
+
+shutil.copyfile(runDir + "all_result", genDir + args.outputDir + "/sim_result")
+
+print('#----------------------------------------------------------------------')
+print('# Simulation output Generated')
+print('#----------------------------------------------------------------------')
 print("Exiting tool....")
 exit()
