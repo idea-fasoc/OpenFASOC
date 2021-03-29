@@ -39,7 +39,6 @@ global_placement -routability_driven -density $::env(PLACE_DENSITY) \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 }
 
-# WBD
 set db [ord::get_db]
 set tech [$db getTech]
 set libs [$db getLibs]

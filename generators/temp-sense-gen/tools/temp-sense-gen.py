@@ -234,7 +234,7 @@ for temp in temp_list:
 with open(runDir + "run_sim", "w") as wf:
   for temp in temp_list:
     if jsonConfig["simTool"] == "ngspice":
-      wf.write("ngspice -b %s_%d.sp &\n" % (designName, temp))
+      wf.write("ngspice -b -o %s_sim_%d.log %s_%d.sp &\n" % (designName, temp, designName, temp))
     elif jsonConfig["simTool"] == "finesim":
       wf.write("finesim -spice %s_sim_%d.sp -o %s_sim_%d &\n" % (designName, temp, designName, temp))
 
@@ -249,7 +249,9 @@ with open(runDir + "cal_result", "w") as wf:
 
 processes = []
 if jsonConfig["simTool"] == "ngspice":
-  pass
+  for temp in temp_list:
+    p = sp.Popen(["ngspice", "-b", "-o", "%s_sim_%d.log" % (designName, temp), "%s_sim_%d.sp" % (designName, temp)], cwd=runDir)
+    processes.append(p)
 elif jsonConfig["simTool"] == "finesim":
   for temp in temp_list:
     p = sp.Popen(["finesim", "-spice", "%s_sim_%d.sp" % (designName, temp), "-o", "%s_sim_%d" % (designName, temp)], cwd=runDir)
