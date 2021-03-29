@@ -201,7 +201,16 @@ with open(flowDir + designName + '.spice', "r") as rf:
   filedata = rf.read()
   filedata = re.sub("(\.INCLUDE.*\n)", "\g<1>.SUBCKT tempsenseInst CLK_REF DONE DOUT[0] DOUT[10] DOUT[11]\n+ DOUT[12] DOUT[13] DOUT[14] DOUT[15] DOUT[16] DOUT[17] DOUT[18]\n+ DOUT[19] DOUT[1] DOUT[20] DOUT[21] DOUT[22] DOUT[23] DOUT[2]\n+ DOUT[3] DOUT[4] DOUT[5] DOUT[6] DOUT[7] DOUT[8] DOUT[9] RESET_COUNTERn\n+ SEL_CONV_TIME[0] SEL_CONV_TIME[1] SEL_CONV_TIME[2] SEL_CONV_TIME[3]\n+ VDD VIN VSS en lc_out out outb\n", filedata)
   filedata = re.sub("\.end", ".ends", filedata)
+  spice_netlist_re = re.search("\.INCLUDE '(.*)'", filedata)
+  spice_netlist = spice_netlist_re.group(1)
 with open(runDir + designName + '.spice', "w") as wf:
+  wf.write(filedata)
+
+with open(spice_netlist, "r") as rf:
+  filedata = rf.read()
+  filedata = re.sub("(R[0-9]+)", "*\g<1>", filedata)
+  filedata = re.sub("\*(V[0-9]+)", "\g<1>", filedata)
+with open(spice_netlist, "w") as wf:
   wf.write(filedata)
 
 shutil.copyfile(flowDir + designName + '_pex.spice', runDir + designName + '_pex.spice')
@@ -271,6 +280,13 @@ p = sp.Popen(["python", "result_error.py"], cwd=runDir)
 p.wait()
 
 shutil.copyfile(runDir + "all_result", genDir + args.outputDir + "/sim_result")
+
+with open(spice_netlist, "r") as rf:
+  filedata = rf.read()
+  filedata = re.sub("(V[0-9]+)", "*\g<1>", filedata)
+  filedata = re.sub("\*(R[0-9]+)", "\g<1>", filedata)
+with open(spice_netlist, "w") as wf:
+  wf.write(filedata)
 
 print('#----------------------------------------------------------------------')
 print('# Simulation output Generated')
