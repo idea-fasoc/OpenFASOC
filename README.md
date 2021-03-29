@@ -24,12 +24,12 @@ Please build the following tools:
 
    - All the required tools need to be loaded into the environment before running this generator.
 
-   - To run the simulation using ngspice (still debugging), please edit your local model file in `common/platform_config.json`:
+   - To run the simulation (still debugging), please edit your local model file in `common/platform_config.json`:
 
-      - "simTool": currently, only ngspice is supported
-      - "nominal_voltage": nominal voltage for the specified technology
-      - "model_file": path to the top model lib file 
-      - "model_corner": the corner used in the simulation
+      - simTool: only ngspice is supported at this point
+      - nominal_voltage: the nominal voltage for the specified technology
+      - model_file: the path to the top model lib file 
+      - model_corner: the corner used in the simulation
  
 
 # Design Generation
