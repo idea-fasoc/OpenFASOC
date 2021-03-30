@@ -1,5 +1,6 @@
 {
   "simTool": "ngspice",
+  "simMode": "partial",
   "platforms": {
     "sky130hd": {
       "nominal_voltage": 1.8,

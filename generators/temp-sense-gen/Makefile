@@ -14,7 +14,7 @@ sky130hd_temp_full:
 clean:
 	rm -f error_within_x.csv golden_error_opt.csv search_result.csv
 	rm -rf work
-	rm -rf tools/*.pyc
+	rm -rf tools/*.pyc tools/__pycache__/
 	cd flow && make clean_all
 	cd simulations && rm -rf run
 

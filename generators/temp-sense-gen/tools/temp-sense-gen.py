@@ -23,6 +23,7 @@ srcDir = genDir + "src/"
 flowDir = genDir + "flow/"
 designDir = genDir + "designs/src/tempsense/"
 simDir = genDir + "simulations/"
+platformDir = genDir + "../../common/platforms/" + args.platform + "/"
 
 #------------------------------------------------------------------------------
 # Clean the workspace
@@ -34,6 +35,8 @@ if (args.clean):
   p = sp.Popen(['make','clean_all'], cwd=genDir)
   p.wait()
 
+p = sp.Popen(["git", "checkout", platformDir + "cdl"])
+p.wait()
 
 temp, power, error, ninv, nhead, hist = check_search_done()
 
@@ -203,6 +206,8 @@ with open(flowDir + designName + '.spice', "r") as rf:
   filedata = re.sub("\.end", ".ends", filedata)
   spice_netlist_re = re.search("\.INCLUDE '(.*)'", filedata)
   spice_netlist = spice_netlist_re.group(1)
+  if jsonConfig["simMode"] == "partial":
+    filedata = re.sub("\n(X(?!temp_analog).*)", "\n*\g<1>", filedata)
 with open(runDir + designName + '.spice', "w") as wf:
   wf.write(filedata)
 
@@ -240,46 +245,71 @@ for temp in temp_list:
   w_file.write(wfdata)
   w_file.close()
 
-with open(runDir + "run_sim", "w") as wf:
-  for temp in temp_list:
-    if jsonConfig["simTool"] == "ngspice":
-      wf.write("ngspice -b -o %s_sim_%d.log %s_%d.sp &\n" % (designName, temp, designName, temp))
-    elif jsonConfig["simTool"] == "finesim":
+
+if jsonConfig["simTool"] == "finesim":
+  with open(runDir + "run_sim", "w") as wf:
+    for temp in temp_list:
       wf.write("finesim -spice %s_sim_%d.sp -o %s_sim_%d &\n" % (designName, temp, designName, temp))
 
-with open(runDir + "mt0_list", "w") as wf:
-  for temp in temp_list:
-    wf.write("%s_sim_%d.mt0\n" % (designName, temp))
+  with open(runDir + "cal_result", "w") as wf:
+    for temp in temp_list:
+      wf.write("python result.py --tool finesim --inputFile %s_sim_%d.mt0\n" % (designName, temp))
+    wf.write("python result_error.py\n")
 
-with open(runDir + "cal_result", "w") as wf:
-  for temp in temp_list:
-    wf.write("python result.py %s_sim_%d.mt0\n" % (designName, temp))
-  wf.write("python result_error.py\n")
 
-processes = []
-if jsonConfig["simTool"] == "ngspice":
-  for temp in temp_list:
-    p = sp.Popen(["ngspice", "-b", "-o", "%s_sim_%d.log" % (designName, temp), "%s_sim_%d.sp" % (designName, temp)], cwd=runDir)
-    processes.append(p)
-elif jsonConfig["simTool"] == "finesim":
+  processes = []
   for temp in temp_list:
     p = sp.Popen(["finesim", "-spice", "%s_sim_%d.sp" % (designName, temp), "-o", "%s_sim_%d" % (designName, temp)], cwd=runDir)
     processes.append(p)
 
-for p in processes:
+  for p in processes:
+    p.wait()
+
+  for temp in temp_list:
+    if not os.path.isfile(runDir + "%s_sim_%d.mt0" % (designName, temp)):
+      print("simulation output: %s_sim_%d.mt0 is not generated" % (designName, temp))
+      sys.exit(1)
+    p = sp.Popen(["python", "result.py", "--tool", "finesim", "--inputFile", "%s_sim_%d.mt0" % (designName, temp)], cwd=runDir)
+    p.wait()
+
+  p = sp.Popen(["python", "result_error.py"], cwd=runDir)
   p.wait()
+  
+  shutil.copyfile(runDir + "all_result", genDir + args.outputDir + "/sim_result")
 
-for temp in temp_list:
-  if not os.path.isfile(runDir + "%s_sim_%d.mt0" % (designName, temp)):
-    print("simulation output: %s_sim_%d.mt0 is not generated" % (designName, temp))
-    sys.exit(1)
-  p = sp.Popen(["python", "result.py", "%s_sim_%d.mt0" % (designName, temp)], cwd=runDir)
+elif jsonConfig["simTool"] == "ngspice":
+  with open(runDir + "run_sim", "w") as wf:
+    for temp in temp_list:
+      wf.write("ngspice -b -o %s_sim_%d.log %s_sim_%d.sp\n" % (designName, temp, designName, temp))
+
+  with open(runDir + "cal_result", "w") as wf:
+    for temp in temp_list:
+      wf.write("python result.py --tool ngspice --inputFile %s_sim_%d.log\n" % (designName, temp))
+    wf.write("python result_error.py\n")
+
+  processes = []
+  for temp in temp_list:
+    p = sp.Popen(["ngspice", "-b", "-o", "%s_sim_%d.log" % (designName, temp), "%s_sim_%d.sp" % (designName, temp)], cwd=runDir)
+    processes.append(p)
+
+  for p in processes:
+    p.wait()
+
+  for temp in temp_list:
+    if not os.path.isfile(runDir + "%s_sim_%d.log" % (designName, temp)):
+      print("simulation output: %s_sim_%d.log is not generated" % (designName, temp))
+      sys.exit(1)
+    p = sp.Popen(["python", "result.py", "--tool", "ngspice", "--inputFile", "%s_sim_%d.log" % (designName, temp)], cwd=runDir)
+    p.wait()
+  
+  p = sp.Popen(["python", "result_error.py"], cwd=runDir)
   p.wait()
+  
+if os.path.isfile(runDir + "all_result"):
+  shutil.copyfile(runDir + "all_result", genDir + args.outputDir + "/sim_result")
+else:
+  print(runDir + "all_result file is not generated successfully")
 
-p = sp.Popen(["python", "result_error.py"], cwd=runDir)
-p.wait()
-
-shutil.copyfile(runDir + "all_result", genDir + args.outputDir + "/sim_result")
 
 with open(spice_netlist, "r") as rf:
   filedata = rf.read()

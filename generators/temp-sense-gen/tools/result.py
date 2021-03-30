@@ -1,20 +1,40 @@
-
+import re
 import sys
+import argparse
 
-##### get result file name from cmd
-file_name = sys.argv[1]
+parser = argparse.ArgumentParser(
+    description = "parse simulators' output file")
+parser.add_argument("--tool", "-t", required=True,
+                    help="simulator type")
+parser.add_argument("--inputFile", "-i", required=True,
+                    help="simulator's output for processing")
+args = parser.parse_args()
 
-##### open mt0 file
-r_mt0 = open(file_name)
-mt0_lines=r_mt0.readlines()
+file_name = args.inputFile
+tool_name = args.tool
 
-##### mt0 parse & data organizing
-##### actual data starts from line 4
-data_start_line = 4
-result = list()
-result = mt0_lines[data_start_line-1].split()
+if tool_name == "finesim":
+  r_mt0 = open(file_name)
+  mt0_lines=r_mt0.readlines()
+  
+  data_start_line = 4
+  result = list()
+  result = mt0_lines[data_start_line-1].split()
+  
+  print("%s	%s"%(result[2], result[0]), file=open("sim_output", "a"))
+elif tool_name == "ngspice":
+  log_file = open(file_name)
+  log_file_text = log_file.read()
 
-##### print to output file
-#print("%s	%s        %s"%(result[3], result[1], result[2]))
-print("%s	%s"%(result[2], result[1]), file=open("code_result", "a"))
+  temp_patten = "TEMP = ([0-9\.]+)"
+  temp_value_re = re.search(temp_patten, log_file_text)
+  if temp_value_re:
+    temp_value = temp_value_re.group(1)
+
+  period_pattern = "period\s+=\s+([0-9\.e-]+)"
+  period_pattern_re = re.search(period_pattern, log_file_text)
+  if period_pattern_re:
+    period_value = period_pattern_re.group(1)
+
+  print("%s	%s"%(temp_value, period_value), file=open("sim_output", "a"))
 
