@@ -65,31 +65,31 @@ Please contact mehdi@umich.edu if you have any questions.
 
 To run the simulation, please edit your local model file in `common/platform_config.json`:
 
-     - simTool:  simulation tool, only ngspice is supported for now -- We plan to support Xyce in the future
+- simTool:  simulation tool, only ngspice is supported for now -- We plan to support Xyce in the future
 
-     - simMode: `partial` (recommended to reduce runtime) or `full`, partial simulation only includes headers and cells in low voltage domain to calculate the frequency errors, full simulation includes the internal counter (full simulation is slow using ngspice and is still being tested)
+- simMode: `partial` (recommended to reduce runtime) or `full`, partial simulation only includes headers and cells in low voltage domain to calculate the frequency errors, full simulation includes the internal counter (full simulation is slow using ngspice and is still being tested)
 
-     - nominal_voltage: the nominal voltage of the specified technology, it is used to set a supply voltage in the simulation testbench
+- nominal_voltage: the nominal voltage of the specified technology, it is used to set a supply voltage in the simulation testbench
 
-     - model_file: the path to the top model lib file
+- model_file: the path to the top model lib file
 
-     - model_corner: the corner used in the simulation
+- model_corner: the corner used in the simulation
 
-     - an example of the `common/platform_config.json` looks like:
+- an example of the `common/platform_config.json` looks like:
 
-       ```
-       {
-         "simTool": "ngspice",
-         "simMode": "partial",
-         "platforms": {
-           "sky130hd": {
-             "nominal_voltage": 1.8,
-             "model_file": "~/open_pdks/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice",
-             "model_corner": "tt"
-           }
-         }
-       }
-       ```
+```
+{
+  "simTool": "ngspice",
+  "simMode": "partial",
+  "platforms": {
+    "sky130hd": {
+      "nominal_voltage": 1.8,
+      "model_file": "~/open_pdks/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice",
+      "model_corner": "tt"
+    }
+  }
+}
+```
 
 # Things to improve
 
