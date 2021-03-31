@@ -24,34 +24,6 @@ Please build the following tools:
 
    - All the required tools need to be loaded into the environment before running this generator.
 
-   - To run the simulation (still debugging), please edit your local model file in `common/platform_config.json`:
-
-     - simTool:  simulation tool, only ngspice is supported for now
-
-     - simMode: partial/full, partial simulation only includes headers and cells in low voltage domain to calculate the frequency errors, full simulation includes the internal counter (full simulation is slow and is still under testing)
-
-     - nominal_voltage: the nominal voltage of the specified technology, used to set the **vdd** node in simulation
-
-     - model_file: the path to the top model lib file
-
-     - model_corner: the corner used in the simulation
-
-     - an example of the `common/platform_config.json` looks like:
-
-       ```
-       {
-         "simTool": "ngspice",
-         "simMode": "partial",
-         "platforms": {
-           "sky130hd": {
-             "nominal_voltage": 1.8,
-             "model_file": "~/open_pdks/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice",
-             "model_corner": "tt"
-           }
-         }
-       }
-       ```
-
 # Design Generation
 
 Our fully open source flow only supports the temperature sensor generation so far. We are working on adding additional generators in the near future.
@@ -88,6 +60,37 @@ make sky130hd_temp
 
 Please contact mehdi@umich.edu if you have any questions.
 
+
+# Spice Simulation Flow
+
+To run the simulation, please edit your local model file in `common/platform_config.json`:
+
+     - simTool:  simulation tool, only ngspice is supported for now -- We plan to support Xyce in the future
+
+     - simMode: `partial` (recommended to reduce runtime) or `full`, partial simulation only includes headers and cells in low voltage domain to calculate the frequency errors, full simulation includes the internal counter (full simulation is slow using ngspice and is still being tested)
+
+     - nominal_voltage: the nominal voltage of the specified technology, it is used to set a supply voltage in the simulation testbench
+
+     - model_file: the path to the top model lib file
+
+     - model_corner: the corner used in the simulation
+
+     - an example of the `common/platform_config.json` looks like:
+
+       ```
+       {
+         "simTool": "ngspice",
+         "simMode": "partial",
+         "platforms": {
+           "sky130hd": {
+             "nominal_voltage": 1.8,
+             "model_file": "~/open_pdks/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice",
+             "model_corner": "tt"
+           }
+         }
+       }
+       ```
+
 # Things to improve
 
 To improve our tools, flow, and QoR. The following limitations are currently being addressed:
@@ -97,5 +100,5 @@ To improve our tools, flow, and QoR. The following limitations are currently bei
        - write_cdl bug fix in source code    
        - fence aware placement step needs to be added
        - ioplacment step is now skipped at placement and is set to random palcement by default at floorplaning so it doesn't put power pins of additional voltage domains at the edge
-   - add the spice simulation flow and modeling
+   - add ~~the spice simulation flow~~ and modeling
    - add sky130_fd_sc_hs support
