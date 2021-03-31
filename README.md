@@ -11,26 +11,46 @@ Please build the following tools:
   Magic <https://github.com/RTimothyEdwards/magic>
 
   Netgen <https://github.com/RTimothyEdwards/netgen>
-  
+
   Klayout <https://github.com/KLayout/klayout>
-  
+
   Yosys <https://github.com/The-OpenROAD-Project/yosys>
 
   OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD> (commid id: 8ed8414, with power pins generation enabled)
 
    - Before building the OpenROAD tools, please enable the `export_opendb_power_pins` function from OpenROAD: uncomment the `export_opendb_power_pins` in `proc opendb_update_grid {}` in OpenROAD/src/pdngen/src/PdnGen.tcl and then rebuild the OpenROAD tool. The flow will terminate with errors if this function is not enabled in OpenROAD.
 
-   - Python 3.7 is used in this generator. 
+   - Python 3.7 is used in this generator.
 
    - All the required tools need to be loaded into the environment before running this generator.
 
    - To run the simulation (still debugging), please edit your local model file in `common/platform_config.json`:
 
-      - simTool: only ngspice is supported at this point
-      - nominal_voltage: the nominal voltage for the specified technology
-      - model_file: the path to the top model lib file 
-      - model_corner: the corner used in the simulation
- 
+     - simTool:  simulation tool, only ngspice is supported for now
+
+     - simMode: partial/full, partial simulation only includes headers and cells in low voltage domain to calculate the frequency errors, full simulation includes the internal counter (full simulation is slow and is still under testing)
+
+     - nominal_voltage: the nominal voltage of the specified technology, used to set the **vdd** node in simulation
+
+     - model_file: the path to the top model lib file
+
+     - model_corner: the corner used in the simulation
+
+     - an example of the `common/platform_config.json` looks like:
+
+       ```
+       {
+         "simTool": "ngspice",
+         "simMode": "partial",
+         "platforms": {
+           "sky130hd": {
+             "nominal_voltage": 1.8,
+             "model_file": "~/open_pdks/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice",
+             "model_corner": "tt"
+           }
+         }
+       }
+       ```
 
 # Design Generation
 
@@ -42,7 +62,7 @@ The generators are located inside `OpenFASOC/generators/`, the target for temper
 - --outputDir: output folder where the gds/def results will be exported
 - --platform: only sky130hd platform is supported for now
 - --clean: clean flow folder and start a fresh design flow
-- --mode: support 'verilog' and 'macro' modes for now
+- --mode: support verilog/macro/full modes, macro mode runs through APR/DRC/LVS steps to generate macros, full mode completes macro generation + simulations
 - --nhead: specify a fixed number of headers (optional)
 - --ninv: specify a fixed number of inverters (optional)
 
@@ -58,10 +78,10 @@ git clone git@github.com:idea-fasoc/OpenFASOC.git
 cd OpenFASOC/generators/temp-sense-gen
 ```
 
-3. Modify the test.json or the **sky130hd_temp** target in Makefile, then run the flow
+3. Modify the test.json or the targets in Makefile based on the requirements, then run the flow. The **sky130hd_temp** target generates a tempsensor macro, the **sky130hd_temp_full** target runs the full mode and finishes macro generation + simulations.
 
 ```
-make sky130hd_temp
+make sky130hd_temp 
 ```
 
 4. The outputs will be stored in the **outputDir** folder specified in Makefile
