@@ -16,7 +16,7 @@ catch {random seed}
 
 # Allow override of PDK path from environment variable PDKPATH
 if {[catch {set PDKPATH $env(PDKPATH)}]} {
-    set PDKPATH "/n/calumet/v/wbduan/google/open_pdks/sky130/sky130A"
+    set PDKPATH "/afs/eecs.umich.edu/vlsida/projects/restricted/google/wenbo/open_pdks_0331/pdks/sky130A"
 }
 
 # loading technology
