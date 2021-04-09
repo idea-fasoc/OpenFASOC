@@ -1,0 +1,9 @@
+.SUBCKT LDO_COMPARATOR CLK VREF VREG OUT VPWR VGND VNB VPB
+Xnand1 VREF CLK cc_out_n cc_out VGND VNB VPB VPWR sky130_fd_sc_hvl__nand3_1
+Xnand2 VREG CLK cc_out cc_out_n VGND VNB VPB VPWR sky130_fd_sc_hvl__nand3_1
+Xinv1 cc_out inv_out VGND VNB VPB VPWR sky130_fd_sc_hvl__inv_1 
+Xinv2 cc_out_n inv_out_n VGND VNB VPB VPWR sky130_fd_sc_hvl__inv_1
+Xsr1 inv_out sr_out_n OUT VGND VNB VPB VPWR sky130_fd_sc_hvl__nor2_1
+Xsr2 inv_out_n OUT sr_out_n VGND VNB VPB VPWR sky130_fd_sc_hvl__nor2_1
+.ENDS
+
