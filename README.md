@@ -12,7 +12,9 @@ Please build the following tools:
 
   Netgen <https://github.com/RTimothyEdwards/netgen>
 
-  Klayout <https://github.com/KLayout/klayout>
+  Klayout <https://github.com/KLayout/klayout>  
+        Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
+  
 
   Yosys <https://github.com/The-OpenROAD-Project/yosys>
 
