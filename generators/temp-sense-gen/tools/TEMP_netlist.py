@@ -1,8 +1,25 @@
 ##for HSPICE netlist
 import re
 import function
-from readparamgen import check_search_done, designName, args, jsonSpec
 #import os
+
+def gen_modeling_netlist(srcNetlist, dstNetlist, ninv, nhead):
+	r_netlist=open(srcNetlist,"r")
+	lines=list(r_netlist.readlines())
+	w_netlist=open(dstNetlist,"w")
+
+	netmap1=function.netmap() #modify here
+	netmap1.get_net('x1',None,1,1,1)
+	netmap1.get_net('n0',None,ninv+1,ninv+1,1)
+	netmap1.get_net('n1',None,1,1,1)
+	netmap1.get_net('x2',None,1,ninv,1)
+	netmap1.get_net('n2',None,1,ninv,1)
+	netmap1.get_net('n3',None,2,ninv+1,1)
+	netmap1.get_net('x3',None,1,1,1)
+	netmap1.get_net('n4',None,ninv+1,ninv+1,1)
+	netmap1.get_net('x4',None,1,nhead,1)
+	for line in lines:
+		netmap1.printline(line,w_netlist)
 
 def gen_temp_netlist(ninv,nhead,aux1,aux2,aux3,aux4,aux5, srcDir):
 	r_netlist=open(srcDir + "/TEMP_ANALOG_lv.v","r")
@@ -54,5 +71,7 @@ def gen_temp_netlist(ninv,nhead,aux1,aux2,aux3,aux4,aux5, srcDir):
 		line = line.replace("nbout", port)
 		netmap1.printline(line,w_netlist)
 
-	return;
+	return
+
+
 

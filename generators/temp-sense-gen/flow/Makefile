@@ -465,14 +465,15 @@ else
 endif
 
 
-export MAGIC_SETUPS = ../../../common/drc-lvs-check
+export COMMON_VERIF_DIR = ../../../common/drc-lvs-check
 
 magic_drc: $(RESULTS_DIR)/6_final.gds
-	magic -rcfile $(MAGIC_SETUPS)/sky130A.magicrc -noconsole -dnull $(MAGIC_SETUPS)/magic_commands.tcl < /dev/null
+	$(COMMON_VERIF_DIR)/run_drc.sh
+	# magic -rcfile $(COMMON_VERIF_DIR)/sky130A/sky130A.magicrc -noconsole -dnull $(COMMON_VERIF_DIR)/magic_commands.tcl < /dev/null
 
 netgen_lvs: $(RESULTS_DIR)/6_final.gds
 	python util/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(PLATFORM_DIR)/cdl/sky130_fd_sc_hd.spice -l $(OBJECTS_DIR)/merged_spacing.lef -o $(DESIGN_NAME).spice
-	$(MAGIC_SETUPS)/run_lvspex.sh $(RESULTS_DIR)/6_final.gds $(DESIGN_NAME) $(REPORTS_DIR)/6_final_lvs.rpt
+	$(COMMON_VERIF_DIR)/run_lvspex.sh $(RESULTS_DIR)/6_final.gds $(DESIGN_NAME) $(REPORTS_DIR)/6_final_lvs.rpt
 
 clean_finish:
 	rm -rf $(RESULTS_DIR)/6_*.gds $(RESULTS_DIR)/6_*.def $(RESULTS_DIR)/6_*.v

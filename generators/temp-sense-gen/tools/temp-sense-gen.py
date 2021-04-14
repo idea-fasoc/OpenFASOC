@@ -16,13 +16,14 @@ import readparamgen
 import os
 import time
 from readparamgen import check_search_done, designName, args, jsonSpec
-
+from simulation import generate_runs
 
 genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)),"../")
 srcDir = genDir + "src/"
 flowDir = genDir + "flow/"
 designDir = genDir + "designs/src/tempsense/"
 simDir = genDir + "simulations/"
+commonDir = genDir + "../../common/"
 platformDir = genDir + "../../common/platforms/" + args.platform + "/"
 
 #------------------------------------------------------------------------------
@@ -35,8 +36,32 @@ if (args.clean):
   p = sp.Popen(['make','clean_all'], cwd=genDir)
   p.wait()
 
-p = sp.Popen(["git", "checkout", platformDir + "cdl"])
+p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hd.spice"])
 p.wait()
+
+print("Loading platform_config file...")
+print()
+try:
+  with open(genDir + '../../common/platform_config.json') as file:
+    jsonConfig = json.load(file)
+except ValueError as e:
+  print("Error occurred opening or loading json file.")
+  print >> sys.stderr, 'Exception: %s' % str(e)
+  sys.exit(1)
+
+if not os.path.isdir(jsonConfig["open_pdks"] + "/libs.ref"):
+  print("Cannot find libs.ref folder from open_pdks in " + jsonConfig["open_pdks"])
+  sys.exit(1)
+elif not os.path.isdir(jsonConfig["open_pdks"] + "/libs.tech"):
+  print("Cannot find libs.tech folder from open_pdks in " + jsonConfig["open_pdks"])
+  sys.exit(1)
+else:
+  sky130A_path = commonDir + "drc-lvs-check/sky130A/"
+  if not os.path.isdir(sky130A_path):
+    os.mkdir(sky130A_path)
+  shutil.copy2(jsonConfig["open_pdks"] + "/libs.tech/magic/sky130A.magicrc", sky130A_path)
+  shutil.copy2(jsonConfig["open_pdks"] + "/libs.tech/netgen/sky130A_setup.tcl", sky130A_path)
+  
 
 temp, power, error, ninv, nhead, hist = check_search_done()
 
@@ -174,149 +199,37 @@ if args.mode == 'macro':
   #sys.exit(1)
   exit()
 
-print("Loading platform_config file...")
-print()
-try:
-  with open(genDir + '../../common/platform_config.json') as file:
-    jsonConfig = json.load(file)
-except ValueError as e:
-  print("Error occurred opening or loading json file.")
-  print >> sys.stderr, 'Exception: %s' % str(e)
-  sys.exit(1)
-
-platform_config = jsonConfig["platforms"][args.platform]
-nominal_voltage = platform_config["nominal_voltage"]
-model_file = platform_config["model_file"] 
-model_corner = platform_config["model_corner"]
-
-stage_var = int(ninv) - 1
-header_var = int(nhead)
-
-if not os.path.isdir(simDir + "run/"):
-  os.mkdir(simDir + "run/")
-
-runDir = simDir + "run/inv{:d}_header{:d}/".format(stage_var, header_var)
-if os.path.isdir(runDir):
-  shutil.rmtree(runDir)
-os.mkdir(runDir)
-
-with open(flowDir + designName + '.spice', "r") as rf:
-  filedata = rf.read()
-  filedata = re.sub("(\.INCLUDE.*\n)", "\g<1>.SUBCKT tempsenseInst CLK_REF DONE DOUT[0] DOUT[10] DOUT[11]\n+ DOUT[12] DOUT[13] DOUT[14] DOUT[15] DOUT[16] DOUT[17] DOUT[18]\n+ DOUT[19] DOUT[1] DOUT[20] DOUT[21] DOUT[22] DOUT[23] DOUT[2]\n+ DOUT[3] DOUT[4] DOUT[5] DOUT[6] DOUT[7] DOUT[8] DOUT[9] RESET_COUNTERn\n+ SEL_CONV_TIME[0] SEL_CONV_TIME[1] SEL_CONV_TIME[2] SEL_CONV_TIME[3]\n+ VDD VIN VSS en lc_out out outb\n", filedata)
-  filedata = re.sub("\.end", ".ends", filedata)
-  spice_netlist_re = re.search("\.INCLUDE '(.*)'", filedata)
-  spice_netlist = spice_netlist_re.group(1)
-  if jsonConfig["simMode"] == "partial":
-    filedata = re.sub("\n(X(?!temp_analog).*)", "\n*\g<1>", filedata)
-with open(runDir + designName + '.spice', "w") as wf:
-  wf.write(filedata)
-
-with open(spice_netlist, "r") as rf:
-  filedata = rf.read()
-  filedata = re.sub("(R[0-9]+)", "*\g<1>", filedata)
-  filedata = re.sub("\*(V[0-9]+)", "\g<1>", filedata)
-with open(spice_netlist, "w") as wf:
-  wf.write(filedata)
-
-shutil.copyfile(flowDir + designName + '_pex.spice', runDir + designName + '_pex.spice')
-shutil.copyfile(genDir + "tools/result.py", runDir + "result.py")
-shutil.copyfile(genDir + "tools/result_error.py", runDir + "result_error.py")
+stage_var = [int(ninv) - 1]
+header_var = [int(nhead)]
 
 temp_start = -20
 temp_stop = 100
 temp_step = 20
-
 temp_points = int((temp_stop - temp_start) / temp_step)
 
 temp_list=[]
 for i in range(0, temp_points+1):
    temp_list.append(temp_start + i*temp_step)
 
-with open(simDir + "templates/tempsenseInst_%s.sp" % (jsonConfig["simTool"]), "r") as rf:
-  filedata = rf.read()
-  filedata = re.sub("@model_file", model_file, filedata)
-  filedata = re.sub("@model_corner", model_corner, filedata)
-  filedata = re.sub("@voltage", str(nominal_voltage), filedata)
-  filedata = re.sub("@netlist", os.path.abspath(runDir + designName + '.spice'), filedata)
+generate_runs(genDir, designName, header_var, stage_var, temp_list, jsonConfig, args.platform) 
 
-for temp in temp_list:
-  w_file = open(simDir + "run/inv%d_header%d/%s_sim_%d.sp" % (stage_var, header_var, designName, temp), "w")
-  wfdata = re.sub("@temp", str(temp), filedata)
-  w_file.write(wfdata)
-  w_file.close()
+# shutil.copyfile(flowDir + designName + '_pex.spice', runDir + designName + '_pex.spice')
+# shutil.copyfile(genDir + "tools/result.py", runDir + "result.py")
+# shutil.copyfile(genDir + "tools/result_error.py", runDir + "result_error.py")
 
-
-if jsonConfig["simTool"] == "finesim":
-  with open(runDir + "run_sim", "w") as wf:
-    for temp in temp_list:
-      wf.write("finesim -spice %s_sim_%d.sp -o %s_sim_%d &\n" % (designName, temp, designName, temp))
-
-  with open(runDir + "cal_result", "w") as wf:
-    for temp in temp_list:
-      wf.write("python result.py --tool finesim --inputFile %s_sim_%d.mt0\n" % (designName, temp))
-    wf.write("python result_error.py\n")
-
-
-  processes = []
-  for temp in temp_list:
-    p = sp.Popen(["finesim", "-spice", "%s_sim_%d.sp" % (designName, temp), "-o", "%s_sim_%d" % (designName, temp)], cwd=runDir)
-    processes.append(p)
-
-  for p in processes:
-    p.wait()
-
-  for temp in temp_list:
-    if not os.path.isfile(runDir + "%s_sim_%d.mt0" % (designName, temp)):
-      print("simulation output: %s_sim_%d.mt0 is not generated" % (designName, temp))
-      sys.exit(1)
-    p = sp.Popen(["python", "result.py", "--tool", "finesim", "--inputFile", "%s_sim_%d.mt0" % (designName, temp)], cwd=runDir)
-    p.wait()
-
-  p = sp.Popen(["python", "result_error.py"], cwd=runDir)
-  p.wait()
-  
-  shutil.copyfile(runDir + "all_result", genDir + args.outputDir + "/sim_result")
-
-elif jsonConfig["simTool"] == "ngspice":
-  with open(runDir + "run_sim", "w") as wf:
-    for temp in temp_list:
-      wf.write("ngspice -b -o %s_sim_%d.log %s_sim_%d.sp\n" % (designName, temp, designName, temp))
-
-  with open(runDir + "cal_result", "w") as wf:
-    for temp in temp_list:
-      wf.write("python result.py --tool ngspice --inputFile %s_sim_%d.log\n" % (designName, temp))
-    wf.write("python result_error.py\n")
-
-  processes = []
-  for temp in temp_list:
-    p = sp.Popen(["ngspice", "-b", "-o", "%s_sim_%d.log" % (designName, temp), "%s_sim_%d.sp" % (designName, temp)], cwd=runDir)
-    processes.append(p)
-
-  for p in processes:
-    p.wait()
-
-  for temp in temp_list:
-    if not os.path.isfile(runDir + "%s_sim_%d.log" % (designName, temp)):
-      print("simulation output: %s_sim_%d.log is not generated" % (designName, temp))
-      sys.exit(1)
-    p = sp.Popen(["python", "result.py", "--tool", "ngspice", "--inputFile", "%s_sim_%d.log" % (designName, temp)], cwd=runDir)
-    p.wait()
-  
-  p = sp.Popen(["python", "result_error.py"], cwd=runDir)
-  p.wait()
-  
+runDir = simDir + "run/inv{:d}_header{:d}/".format(stage_var[0], header_var[0])
 if os.path.isfile(runDir + "all_result"):
   shutil.copyfile(runDir + "all_result", genDir + args.outputDir + "/sim_result")
 else:
   print(runDir + "all_result file is not generated successfully")
 
 
-with open(spice_netlist, "r") as rf:
-  filedata = rf.read()
-  filedata = re.sub("(V[0-9]+)", "*\g<1>", filedata)
-  filedata = re.sub("\*(R[0-9]+)", "\g<1>", filedata)
-with open(spice_netlist, "w") as wf:
-  wf.write(filedata)
+# with open(spice_netlist, "r") as rf:
+#   filedata = rf.read()
+#   filedata = re.sub("(V[0-9]+)", "*\g<1>", filedata)
+#   filedata = re.sub("\*(R[0-9]+)", "\g<1>", filedata)
+# with open(spice_netlist, "w") as wf:
+#   wf.write(filedata)
 
 print('#----------------------------------------------------------------------')
 print('# Simulation output Generated')

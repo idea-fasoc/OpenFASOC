@@ -20,6 +20,8 @@ import re
 import shutil
 import argparse
 
+from simulation import generate_runs
+
 
 
 #------------------------------------------------------------------------------
@@ -104,31 +106,42 @@ if not os.path.isfile(mFile1):
             'Using the model file provided in the repo.')
       mFile1 = mFilePublic1
    else:
-      print('Please provide/generate a model file')
-      #sys.exit(1)
+      print('generating a local model file')
       
-      # genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)),"../../../private/generators/temp-sense-gen/")
-      modelDir = genDir + 'models/'
-      shutil.rmtree(modelDir + 'run')
-      p = sp.Popen(['python','input_gen.py', 'tsweep_pex'], cwd=modelDir)
-      p.wait()
-      sys.exit(0)  
+      try:
+        with open(genDir + '../../common/platform_config.json') as file:
+          jsonConfig = json.load(file)
+      except ValueError as e:
+        print("Error occurred opening or loading json file.")
+        print >> sys.stderr, 'Exception: %s' % str(e)
+        sys.exit(1)
 
-      tcs = glob.glob(genDir+'models/run/*/')
-      for tc in tcs:
-         print("running model file generation in " + tc)
-         for spfile in glob.glob(tc + "tsweep_pex_*.sp"):
-            print("temp case: " + spfile)
-            spname = spfile.split('/')[-1]   
-            p = sp.Popen(['finesim', '-spice', '-np', '8', spname , '>', spname+'.log'], cwd=tc)
-            p.wait() 
-            spout = spname.replace("sp", "mt0")
-            p = sp.Popen(['python', 'result.py', spout, '>', 'code_result'], cwd=tc)
-         p = sp.Popen(['python', 'result_error.py'], cwd=tc)
-         p.wait()
-      p = sp.Popen(['python', 'genModelFile.py'], cwd=modelDir)
-      p.wait() 
-      mFile1 = genDir + '/models/ModelFile'
+      headerList = range(3, 11, 2)
+      invList = range(4, 12, 2)
+      tempList = range(-20, 120, 20)
+      all_result_start_line = 3
+
+      generate_runs(genDir, jsonSpec['module_name'], headerList, invList, tempList, jsonConfig, args.platform, modeling=True)
+      
+      modelfile = open(genDir + "models/modelfile.csv", "w")
+      fieldnames = ["Temp", "Frequency", "Power", "Error", "inv", "header"]
+      writer = csv.DictWriter(modelfile, fieldnames=fieldnames)
+      writer.writeheader()
+
+      all_runs = glob.glob(genDir + "simulations/run/*")
+      for run in all_runs:
+        run_re = re.search("inv([0-9]+)_header([0-9]+)", run)
+        inv = run_re.group(1)
+        header = run_re.group(2)
+        
+        with open(run + "/all_result", "r") as rf:
+          filedata = rf.readlines()
+          for valid_line in filedata[all_result_start_line-1:]:
+            valid_data = valid_line.split()
+            writer.writerow({"Temp": valid_data[0], "Frequency": valid_data[1], "Power": valid_data[2], \
+                             "Error": valid_data[3], "inv": inv, "header": header})
+
+      modelfile.close()
 
 #store content in objects
 #Temp = obj['temperature']

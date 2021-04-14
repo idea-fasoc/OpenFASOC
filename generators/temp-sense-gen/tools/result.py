@@ -13,30 +13,26 @@ args = parser.parse_args()
 file_name = args.inputFile
 tool_name = args.tool
 
-if tool_name == "finesim":
-  r_mt0 = open(file_name)
-  mt0_lines=r_mt0.readlines()
-  
-  data_start_line = 4
-  result = list()
-  result = mt0_lines[data_start_line-1].split()
-  
-  print("%s	%s"%(result[2], result[0]), file=open("sim_output", "a"))
-elif tool_name == "ngspice":
-  log_file = open(file_name)
-  log_file_text = log_file.read()
+with open(file_name, "r") as rf:
+  log_file_text = rf.read()
 
-  temp_patten = "TEMP = ([0-9\-\.]+)"
+  temp_patten = "TEMP\s*=\s*([0-9\-\.]+)"
   temp_value_re = re.search(temp_patten, log_file_text)
   temp_value = 'failed'
   if temp_value_re:
     temp_value = temp_value_re.group(1)
-
-  period_pattern = "period\s+=\s+([0-9\.e-]+)"
+  
+  period_pattern = "period\s*=\s*([0-9\.e-]+)"
   period_pattern_re = re.search(period_pattern, log_file_text)
   period_value = 'failed'
   if period_pattern_re:
     period_value = period_pattern_re.group(1)
+  
+  power_pattern = "power\s*=\s*([0-9\.e-]+)"
+  power_pattern_re = re.search(power_pattern, log_file_text)
+  power_value = 'failed'
+  if power_pattern_re:
+    power_value = power_pattern_re.group(1)
 
-  print("%s	%s"%(temp_value, period_value), file=open("sim_output", "a"))
+  print("%s	%s %s"%(temp_value, period_value, power_value), file=open("sim_output", "a"))
 

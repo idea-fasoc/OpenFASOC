@@ -1,5 +1,5 @@
 # generate lvs netlist using magic
-magic -rcfile $MAGIC_SETUPS/sky130A.magicrc -noconsole -dnull << EOF
+magic -rcfile $COMMON_VERIF_DIR/sky130A/sky130A.magicrc -noconsole -dnull << EOF
 gds read $1
 load $2
 flatten -nolabels $2_flat
@@ -14,4 +14,4 @@ exit
 EOF
 
 # run lvs check using netgen
-netgen lvs $2_lvsmag.spice $2.spice $MAGIC_SETUPS/netgen_sky130A_setup.tcl $3 -full
+netgen lvs $2_lvsmag.spice $2.spice $COMMON_VERIF_DIR/sky130A/sky130A_setup.tcl $3 -full

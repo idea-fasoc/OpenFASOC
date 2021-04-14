@@ -1,10 +1,10 @@
 {
   "simTool": "ngspice",
   "simMode": "partial",
+  "open_pdks": "~/google/wenbo/open_pdks/pdks/sky130A",
   "platforms": {
     "sky130hd": {
       "nominal_voltage": 1.8,
-      "model_file": "~/google/open_pdks/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice",
       "model_corner": "tt"      
     }
   }

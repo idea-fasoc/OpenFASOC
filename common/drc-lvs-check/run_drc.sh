@@ -1,8 +1,3 @@
-# echo "gds read $1
-# load $2
-# flatten drc_cell
-# load drc_cell" > magic_commands.tcl
-
 # run magic
-magic -rcfile util/sky130A.magicrc magic_commands.tcl 
+magic -rcfile $COMMON_VERIF_DIR/sky130A/sky130A.magicrc -noconsole -dnull $COMMON_VERIF_DIR/magic_commands.tcl < /dev/null
 # -noconsole -dnull < /dev/null

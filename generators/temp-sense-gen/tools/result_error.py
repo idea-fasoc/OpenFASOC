@@ -1,16 +1,28 @@
 import math
 import os
+import sys
+import argparse
+
+parser = argparse.ArgumentParser(
+    description = "calculate error values")
+parser.add_argument("--mode", "-m", required=True,
+                    help="simulation mode, full: skip power, partial: extract power")
+args = parser.parse_args()
+
 
 simDir = os.path.dirname(os.path.relpath(__file__))
 sim_output_file = open(simDir + "sim_output", "r")
 
 data0 = []
 temp = []
+power_list =[]
 sim_output_lines = sim_output_file.readlines()
 for line in sim_output_lines:
   data = line.split()
   temp.append(data[0])
   data0.append(data[1])
+  if args.mode == "partial":
+    power_list.append(data[2])
 
 frequency_list = []
 data1 = list()
@@ -53,8 +65,17 @@ for i, val in enumerate(data3):
 
 
 print(os.getcwd(), file=open("all_result", "a"))
-print('Temp Frequency Error', file=open("all_result", "a"))
+if args.mode == "partial":
+  print('Temp Frequency Power Error', file=open("all_result", "a"))
+elif args.mode == "full":
+  print('Temp Frequency Error', file=open("all_result", "a"))
+else:
+  print('simulation mode - ' + args.mode + ' is not supported')
+  sys.exit(1)
 for idx, line in enumerate(sim_output_lines):
-	result_list = line.split()
-	print('%s %s %s'%(result_list[0], frequency_list[idx], data4[idx]), file=open("all_result", "a"))
+  result_list = line.split()
+  if args.mode == "partial":
+    print('%s %s %s %s'%(result_list[0], frequency_list[idx], power_list[idx], data4[idx]), file=open("all_result", "a"))
+  elif args.mode == "full":
+    print('%s %s %s'%(result_list[0], frequency_list[idx], data4[idx]), file=open("all_result", "a"))
 
