@@ -22,8 +22,14 @@ Please build the following tools:
 
    - Before building the OpenROAD tools, please enable the `export_opendb_power_pins` function from OpenROAD: uncomment the `export_opendb_power_pins` in `proc opendb_update_grid {}` in OpenROAD/src/pdngen/src/PdnGen.tcl and then rebuild the OpenROAD tool. The flow will terminate with errors if this function is not enabled in OpenROAD.
 
+  open_pdks <https://github.com/RTimothyEdwards/open_pdks> 
+  
+   - open_pdks is required to run drc/lvs check and the simulations
+   - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
+  
+  Other notice:
+   
    - Python 3.7 is used in this generator.
-
    - All the required tools need to be loaded into the environment before running this generator.
 
 # Design Generation
