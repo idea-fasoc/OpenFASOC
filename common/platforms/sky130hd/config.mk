@@ -52,8 +52,8 @@ export CTS_MAX_CAP    = .1532e-12
 export CTS_TECH_DIR   = ../../../common/platforms/$(PLATFORM)/tritonCTShd
 
 # FastRoute options
-export MIN_ROUTING_LAYER = 2
-export MAX_ROUTING_LAYER = 6
+export MIN_ROUTING_LAYER = met1
+export MAX_ROUTING_LAYER = met5
 
 # IO Pin fix margin
 export IO_PIN_MARGIN = 70
@@ -127,8 +127,8 @@ export PLACE_DENSITY ?= 0.60
 export HOLD_BUF_CELL = sky130_fd_sc_hd__buf_1
 
 # IO Placer pin layers
-export IO_PLACER_H = 4
-export IO_PLACER_V = 3
+export IO_PLACER_H = met3
+export IO_PLACER_V = met2
 
 # keep with gf
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 4
