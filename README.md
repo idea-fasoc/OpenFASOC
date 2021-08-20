@@ -18,9 +18,7 @@ Please build the following tools:
 
   Yosys <https://github.com/The-OpenROAD-Project/yosys>
 
-  OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD> (commid id: 8ed8414, with power pins generation enabled)
-
-   - Before building the OpenROAD tools, please enable the `export_opendb_power_pins` function from OpenROAD: uncomment the `export_opendb_power_pins` in `proc opendb_update_grid {}` in OpenROAD/src/pdngen/src/PdnGen.tcl and then rebuild the OpenROAD tool. The flow will terminate with errors if this function is not enabled in OpenROAD.
+  OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD> (commid id: 7ff7171)
 
   open_pdks <https://github.com/RTimothyEdwards/open_pdks> 
   
