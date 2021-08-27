@@ -1,7 +1,7 @@
-###################################################
-# Create Routing Blockages around Macros for GF12 #
-# Created by Minsoo Kim (mik226@eng.ucsd.edu)     #
-###################################################
+#############################################################
+# Create Routing Blockages around Macros for advanced nodes #
+# Created by Minsoo Kim (mik226@eng.ucsd.edu)               #
+#############################################################
 set db [::ord::get_db]
 set block [[$db getChip] getBlock]
 set tech [$db getTech]
