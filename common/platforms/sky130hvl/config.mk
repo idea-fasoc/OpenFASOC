@@ -32,7 +32,7 @@ export MACRO_PLACE_HALO ?= 1 1
 export MACRO_PLACE_CHANNEL ?= 80 80
 
 export TECH_LEF = ../../../common/platforms/$(PLATFORM)/lef/sky130_fd_sc_hvl.tlef
-export SC_LEF = ../../../common/platforms/$(PLATFORM)/lef/sky130_fd_sc_hvl.lef
+export SC_LEF = ../../../common/platforms/$(PLATFORM)/lef/sky130_fd_sc_hvl_merged.lef
 
 export LIB_FILES = ../../../common/platforms/$(PLATFORM)/lib/sky130_fd_sc_hvl__tt_025C_3v30.lib \
                      $(ADDITIONAL_LIBS)
@@ -71,41 +71,7 @@ export KLAYOUT_TECH_FILE = ../../../common/platforms/$(PLATFORM)/$(PLATFORM).lyt
 # on all layers.
 # *lpflow* cells are for multi-power domains
 export DONT_USE_CELLS += \
-    sky130_fd_sc_hd__probe_p_8 sky130_fd_sc_hd__probec_p_8 \
-    sky130_fd_sc_hd__lpflow_bleeder_1 \
-    sky130_fd_sc_hd__lpflow_clkbufkapwr_1 \
-    sky130_fd_sc_hd__lpflow_clkbufkapwr_16 \
-    sky130_fd_sc_hd__lpflow_clkbufkapwr_2 \
-    sky130_fd_sc_hd__lpflow_clkbufkapwr_4 \
-    sky130_fd_sc_hd__lpflow_clkbufkapwr_8 \
-    sky130_fd_sc_hd__lpflow_clkinvkapwr_1 \
-    sky130_fd_sc_hd__lpflow_clkinvkapwr_16 \
-    sky130_fd_sc_hd__lpflow_clkinvkapwr_2 \
-    sky130_fd_sc_hd__lpflow_clkinvkapwr_4 \
-    sky130_fd_sc_hd__lpflow_clkinvkapwr_8 \
-    sky130_fd_sc_hd__lpflow_decapkapwr_12 \
-    sky130_fd_sc_hd__lpflow_decapkapwr_3 \
-    sky130_fd_sc_hd__lpflow_decapkapwr_4 \
-    sky130_fd_sc_hd__lpflow_decapkapwr_6 \
-    sky130_fd_sc_hd__lpflow_decapkapwr_8 \
-    sky130_fd_sc_hd__lpflow_inputiso0n_1 \
-    sky130_fd_sc_hd__lpflow_inputiso0p_1 \
-    sky130_fd_sc_hd__lpflow_inputiso1n_1 \
-    sky130_fd_sc_hd__lpflow_inputiso1p_1 \
-    sky130_fd_sc_hd__lpflow_inputisolatch_1 \
-    sky130_fd_sc_hd__lpflow_isobufsrc_1 \
-    sky130_fd_sc_hd__lpflow_isobufsrc_16 \
-    sky130_fd_sc_hd__lpflow_isobufsrc_2 \
-    sky130_fd_sc_hd__lpflow_isobufsrc_4 \
-    sky130_fd_sc_hd__lpflow_isobufsrc_8 \
-    sky130_fd_sc_hd__lpflow_isobufsrckapwr_16 \
-    sky130_fd_sc_hd__lpflow_lsbuf_lh_hl_isowell_tap_1 \
-    sky130_fd_sc_hd__lpflow_lsbuf_lh_hl_isowell_tap_2 \
-    sky130_fd_sc_hd__lpflow_lsbuf_lh_hl_isowell_tap_4 \
-    sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_4 \
-    sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_1 \
-    sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_2 \
-    sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_4
+    sky130_fd_sc_hvl__probe_p_8 sky130_fd_sc_hvl__probec_p_8 \
 
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hvl__buf_1

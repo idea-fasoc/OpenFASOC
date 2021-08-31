@@ -11,10 +11,10 @@ export VERILOG_FILES 		= $(sort $(wildcard ./design/src/$(DESIGN_NICKNAME)/*.v))
 
 export SDC_FILE    		= ./design/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export DIE_AREA   	 	= 0 0 155.48 146.88
-export CORE_AREA   		= 18.4 16.32 137.08 130.56 
+export DIE_AREA   	 	= 0 0 320 320
+export CORE_AREA   		= 10 10 310 310 
 
-export VD1_AREA                 = 33.58 32.64 64.86 62.56
+#export VD1_AREA                 = 33.58 32.64 64.86 62.56
 
 export PDN_CFG 			= ../blocks/$(PLATFORM)/pdn.cfg
 
@@ -31,7 +31,7 @@ export ADDITIONAL_GDS_FILES  	= ../blocks/$(PLATFORM)/gds/capacitor_test_nf.gds 
 			   	  ../blocks/$(PLATFORM)/gds/PT_UNIT_CELL.gds \
 				  ../blocks/$(PLATFORM)/gds/vref_gen_nmos_with_trim.gds
 
-export ADDITIONAL_LIBS		= ../blocks/$(PLATFORM)/lib/capacitor_test_nf.lib \
+#export ADDITIONAL_LIBS		= ../blocks/$(PLATFORM)/lib/capacitor_test_nf.lib \
                                   ../blocks/$(PLATFORM)/lib/LDO_COMPARATOR_LATCH.lib \
                                   ../blocks/$(PLATFORM)/lib/PMOS.lib \
                                   ../blocks/$(PLATFORM)/lib/PT_UNIT_CELL.lib \

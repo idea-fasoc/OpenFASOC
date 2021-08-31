@@ -6,18 +6,24 @@
 parameter dont_touch = "on";
 endmodule
 
+(* keep *)
+(* keep_hierarchy *)
 (* blackbox *) module PT_UNIT_CELL(
   input CTRL
 );
 parameter dont_touch = "on";
 endmodule
 
+(* keep *)
+(* keep_hierarchy *)
 (* blackbox *) module PMOS(
   input cmp_out
 );
 parameter dont_touch = "on";
 endmodule
 
+(* keep *)
+(* keep_hierarchy *)
 (* blackbox *) module capacitor_test_nf(
   input pin0
 );

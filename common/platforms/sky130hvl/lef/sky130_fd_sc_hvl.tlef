@@ -46,15 +46,28 @@ SITE unithvdbl
   SIZE 0.48 BY 8.14 ;
 END unithvdbl
 
-#LAYER nwell
-#  TYPE MASTERSLICE ;
-#  PROPERTY LEF58_TYPE "TYPE NWELL ;" ;
-#END nwell
-#
-#LAYER pwell
-#  TYPE MASTERSLICE ;
-#  PROPERTY LEF58_TYPE "TYPE NWELL ;" ;
-#END pwell
+LAYER nwell
+  TYPE MASTERSLICE ;
+  PROPERTY LEF58_TYPE "TYPE NWELL ;" ;
+END nwell
+
+LAYER pwell
+  TYPE MASTERSLICE ;
+  PROPERTY LEF58_TYPE "TYPE NWELL ;" ;
+END pwell
+
+LAYER poly
+  TYPE MASTERSLICE ;
+END poly
+
+LAYER licon1
+  TYPE CUT ;
+
+  WIDTH 0.17 ;                # Licon 1
+  SPACING 0.17 ;              # Licon 2
+  ENCLOSURE BELOW 0 0 ;       # Licon 4
+  ENCLOSURE ABOVE 0.08 0.08 ; # Poly / Met1 4 / Met1 5
+END licon1
 
 LAYER li1
   TYPE ROUTING ;
