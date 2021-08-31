@@ -19,7 +19,7 @@ import yaml
 import argparse
 from gh import gh
 
-dependencies_path = os.path.join(gh.root, "dependencies")
+dependencies_path = os.path.join(gh.root, ".github/scripts/dependencies")
 metadata_path = os.path.join(dependencies_path, "tool_metadata.yml")
 
 sys.path.append(dependencies_path)
