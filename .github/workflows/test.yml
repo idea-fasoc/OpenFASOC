@@ -13,6 +13,17 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.7'
+          architecture: 'x64'
+      
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install numpy
+
       - name: Install Magic
         run:  |
           cd /home/runner/work
@@ -31,18 +42,18 @@ jobs:
           make
           sudo make install
  
-      - name: Install Klayout
-        run:  |
-          cd /home/runner/work
-          git clone https://github.com/KLayout/klayout.git
-          cd klayout
-          sudo apt-add-repository ppa:rock-core/qt4
-          sudo apt-add-repository ppa:ubuntu-toolchain-r/test
-          sudo apt update
-          sudo apt install qt4-default
-          sudo apt-get install gcc-4.7
-          sudo apt-get install build-essential
-          ./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg
+      # - name: Install Klayout
+      #  run:  |
+      #     cd /home/runner/work
+      #     git clone https://github.com/KLayout/klayout.git
+      #     cd klayout
+      #     sudo apt-add-repository ppa:rock-core/qt4
+      #     sudo apt-add-repository ppa:ubuntu-toolchain-r/test
+      #     sudo apt update
+      #     sudo apt install qt4-default
+      #     sudo apt-get install gcc-4.7
+      #     sudo apt-get install build-essential
+      #     ./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg
  
       - name: Install PDK
         run:  |
@@ -56,6 +67,7 @@ jobs:
       # docker run -v $(pwd):/mnt -w /mnt efabless/openlane sh -c 'make sky130hd_temp'
       - name: Locate gen-design folder
         run:  |
-          cd /home/runner/work/OpenFASOC/OpenFASOC/generators/temp-sense-gen    
+          cd /home/runner/work/OpenFASOC/OpenFASOC/generators/temp-sense-gen
+          make sky130hd_temp
 
 
