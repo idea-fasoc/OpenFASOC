@@ -74,8 +74,8 @@ jobs:
           cd /home/runner/work
           git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD.git
           cd OpenROAD
-          ./etc/DependencyInstaller.sh -dev
-          ./etc/Build.sh
+          sudo ./etc/DependencyInstaller.sh -dev
+          sudo ./etc/Build.sh
           
       # docker run -v $(pwd):/mnt -w /mnt efabless/openlane sh -c 'make sky130hd_temp'
       - name: Locate gen-design folder
