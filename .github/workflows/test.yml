@@ -13,9 +13,45 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      - name: Install PDK
+        run:  |
+          cd /home/runner/work
+          git clone https://github.com/RTimothyEdwards/open_pdks.git
+          cd open_pdks
+          ./configure --enable-sky130-pdk
+          make
+          make install
+
+      - name: Install Magic
+        run:  |
+          cd /home/runner/work
+          git clone https://github.com/RTimothyEdwards/magic.git
+          cd magic
+          ./configure
+          make
+          make install
+      
+      - name: Install Netgen
+        run:  |
+          cd /home/runner/work
+          git clone https://github.com/RTimothyEdwards/netgen.git
+          cd netgen
+          ./configure
+          make
+          make install
+ 
+      - name: Install Klayout
+        run:  |
+          cd /home/runner/work
+          git clone https://github.com/KLayout/klayout.git
+          cd klayout
+          sudo apt-get install qt4-qmake
+          sudo apt-get install gcc-4.6 build-essential
+          ./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg
+      
+      # docker run -v $(pwd):/mnt -w /mnt efabless/openlane sh -c 'make sky130hd_temp'
       - name: Locate gen-design folder
         run:  |
-          cd /home/runner/work/OpenFASOC/OpenFASOC/generators/temp-sense-gen
-          docker run -v $(pwd):/mnt -w /mnt efabless/openlane sh -c 'make sky130hd_temp'
+          cd /home/runner/work/OpenFASOC/OpenFASOC/generators/temp-sense-gen    
 
 
