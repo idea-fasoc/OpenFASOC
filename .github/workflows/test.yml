@@ -20,7 +20,7 @@ jobs:
           cd magic
           ./configure
           make
-          make install
+          sudo make install
       
       - name: Install Netgen
         run:  |
@@ -29,7 +29,7 @@ jobs:
           cd netgen
           ./configure
           make
-          make install
+          sudo make install
  
       - name: Install Klayout
         run:  |
@@ -47,7 +47,7 @@ jobs:
           cd open_pdks
           ./configure --enable-sky130-pdk
           make
-          make install
+          sudo make install
  
       # docker run -v $(pwd):/mnt -w /mnt efabless/openlane sh -c 'make sky130hd_temp'
       - name: Locate gen-design folder
