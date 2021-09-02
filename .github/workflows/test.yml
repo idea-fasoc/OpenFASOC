@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          pip install numpy matpoltlib pandas 
+          pip install numpy matplotlib pandas 
 
       - name: Install Magic
         run:  |
