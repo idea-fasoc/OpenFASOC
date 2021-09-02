@@ -48,7 +48,7 @@ jobs:
           sudo make install
  
       # - name: Install Klayout
-      #  run:  |
+      #   run:  |
       #     cd /home/runner/work
       #     git clone https://github.com/KLayout/klayout.git
       #     cd klayout
@@ -60,15 +60,23 @@ jobs:
       #     sudo apt-get install build-essential
       #     ./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg
  
-      - name: Install PDK
+      # - name: Install PDK
+      #   run:  |
+      #     cd /home/runner/work
+      #     git clone https://github.com/RTimothyEdwards/open_pdks.git
+      #     cd open_pdks
+      #     ./configure --enable-sky130-pdk
+      #     make
+      #     sudo make install
+
+      - name: Install OpenROAD
         run:  |
           cd /home/runner/work
-          git clone https://github.com/RTimothyEdwards/open_pdks.git
-          cd open_pdks
-          ./configure --enable-sky130-pdk
-          make
-          sudo make install
- 
+          git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD.git
+          cd OpenROAD
+          ./etc/DependencyInstaller.sh -dev
+          ./etc/Build.sh
+          
       # docker run -v $(pwd):/mnt -w /mnt efabless/openlane sh -c 'make sky130hd_temp'
       - name: Locate gen-design folder
         run:  |
