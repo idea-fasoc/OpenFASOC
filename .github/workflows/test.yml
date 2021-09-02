@@ -36,7 +36,7 @@ jobs:
           cd /home/runner/work
           git clone https://github.com/KLayout/klayout.git
           cd klayout
-          sudo apt-get install qt4-qmake
+          sudo apt-get install qt4-default
           sudo apt-get install gcc-4.6 build-essential
           ./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg
  
