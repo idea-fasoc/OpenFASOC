@@ -13,15 +13,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Install PDK
-        run:  |
-          cd /home/runner/work
-          git clone https://github.com/RTimothyEdwards/open_pdks.git
-          cd open_pdks
-          ./configure --enable-sky130-pdk
-          make
-          make install
-
       - name: Install Magic
         run:  |
           cd /home/runner/work
@@ -48,7 +39,16 @@ jobs:
           sudo apt-get install qt4-qmake
           sudo apt-get install gcc-4.6 build-essential
           ./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg
-      
+ 
+      - name: Install PDK
+        run:  |
+          cd /home/runner/work
+          git clone https://github.com/RTimothyEdwards/open_pdks.git
+          cd open_pdks
+          ./configure --enable-sky130-pdk
+          make
+          make install
+ 
       # docker run -v $(pwd):/mnt -w /mnt efabless/openlane sh -c 'make sky130hd_temp'
       - name: Locate gen-design folder
         run:  |
