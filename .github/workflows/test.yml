@@ -1,0 +1,21 @@
+name: TEST
+
+on:
+
+    push:
+    
+    pull_request:
+
+jobs:
+  test_run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Locate gen-design folder
+        run:  |
+          cd OpenFASOC/generators/temp-sense-gen
+          docker run -v $(pwd):/mnt -w /mnt efabless/openlane sh -c 'make sky130hd_temp'
+
+
