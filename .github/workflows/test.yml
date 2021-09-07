@@ -47,6 +47,9 @@ jobs:
           make
           sudo make install
  
+      - name: PDK installation
+        run: cd ${GITHUB_WORKSPACE}/ && make pdk
+ 
       # - name: Install Klayout
       #   run:  |
       #     cd /home/runner/work
