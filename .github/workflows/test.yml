@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          pip install numpy matplotlib pandas 
+          pip install numpy matplotlib pandas XlsxWriter pyyaml pyinstaller jinja2<3.0.0
 
       - name: Install Magic
         run:  |
