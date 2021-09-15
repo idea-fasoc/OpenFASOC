@@ -47,6 +47,14 @@ jobs:
           make
           sudo make install
  
+      - name: Install OpenROAD
+        run:  |
+          cd /home/runner/work
+          git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD.git
+          cd OpenROAD
+          sudo ./etc/DependencyInstaller.sh -dev
+          sudo ./etc/Build.sh
+ 
       - name: PDK installation
         run: cd ${GITHUB_WORKSPACE}/ && make pdk
  
@@ -71,14 +79,6 @@ jobs:
       #     ./configure --enable-sky130-pdk
       #     make
       #     sudo make install
-
-      - name: Install OpenROAD
-        run:  |
-          cd /home/runner/work
-          git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD.git
-          cd OpenROAD
-          sudo ./etc/DependencyInstaller.sh -dev
-          sudo ./etc/Build.sh
           
       # docker run -v $(pwd):/mnt -w /mnt efabless/openlane sh -c 'make sky130hd_temp'
       - name: Locate gen-design folder
