@@ -46,17 +46,24 @@ jobs:
           ./configure
           make
           sudo make install
- 
-      - name: Install OpenROAD
-        run:  |
+      
+      - name: Install OpenLane
+        run: |
           cd /home/runner/work
-          git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD.git
-          cd OpenROAD
-          sudo ./etc/DependencyInstaller.sh -dev
-          sudo ./etc/Build.sh
+          git clone https://github.com/The-OpenROAD-Project/OpenLane.git
+          cd OpenLane/
+          make openlane
  
-      - name: PDK installation
-        run: cd ${GITHUB_WORKSPACE}/ && make pdk
+      # - name: Install OpenROAD
+      #   run:  |
+      #     cd /home/runner/work
+      #     git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD.git
+      #     cd OpenROAD
+      #     sudo ./etc/DependencyInstaller.sh -dev
+      #     sudo ./etc/Build.sh
+ 
+      # - name: PDK installation
+      #   run: cd ${GITHUB_WORKSPACE}/ && make pdk
  
       # - name: Install Klayout
       #   run:  |
@@ -81,6 +88,7 @@ jobs:
       #     sudo make install
           
       # docker run -v $(pwd):/mnt -w /mnt efabless/openlane sh -c 'make sky130hd_temp'
+      
       - name: Locate gen-design folder
         run:  |
           cd /home/runner/work/OpenFASOC/OpenFASOC/generators/temp-sense-gen
