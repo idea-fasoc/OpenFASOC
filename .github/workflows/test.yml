@@ -61,6 +61,8 @@ jobs:
           ls /home/runner/work
           echo "/home/runner/work/open_pdks: "
           ls /home/runner/work/open_pdks
+          echo "/home/runner/work/sky130A: "
+          ls /home/runner/work/sky130A
           echo "/home/runner/work/open_pdks/sky130: "
           ls /home/runner/work/open_pdks/sky130
  
