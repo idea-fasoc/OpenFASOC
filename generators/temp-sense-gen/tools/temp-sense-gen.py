@@ -178,10 +178,13 @@ print('#----------------------------------------------------------------------')
 if os.path.isdir(args.outputDir):
     shutil.rmtree(genDir + args.outputDir)
 os.mkdir(genDir + args.outputDir)
+
 print("genDir + args.outputDir: {}".format(genDir + args.outputDir))
 print("flowDir: {}".format(flowDir))
 print("args.platform: {}".format(args.platform))
 print("designName: {}".format(designName))
+subprocess.run(["ls", "-l", flowDir, "results/", args.platform, "/tempsense"])
+
 shutil.copyfile(flowDir + 'results/' + args.platform + '/tempsense/6_final.gds', genDir + args.outputDir + '/' + designName + '.gds')
 shutil.copyfile(flowDir + 'results/' + args.platform + '/tempsense/6_final.def', genDir + args.outputDir + '/' + designName + '.def')
 shutil.copyfile(flowDir + 'results/' + args.platform + '/tempsense/6_final.v', genDir + args.outputDir + '/' + designName + '.v')
