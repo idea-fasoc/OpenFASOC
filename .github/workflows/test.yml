@@ -58,14 +58,11 @@ jobs:
       - name: Check Paths
         run: |
           echo "/home/runner/work: "
-          cd /home/runner/work
-          ls
+          ls /home/runner/work
           echo "/home/runner/work/open_pdks: "
-          cd /home/runner/work/open_pdks
-          ls
-          echo "/home/runner/work/open_pdks/sky130/sky130A: "
-          cd /home/runner/work/open_pdks/sky130/sky130A
-          ls
+          ls /home/runner/work/open_pdks
+          echo "/home/runner/work/open_pdks/sky130: "
+          ls /home/runner/work/open_pdks/sky130
  
       # - name: Install OpenROAD
       #   run:  |
