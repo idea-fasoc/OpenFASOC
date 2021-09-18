@@ -53,7 +53,7 @@ jobs:
           export PDK_ROOT=/home/runner/work/
           git clone https://github.com/The-OpenROAD-Project/OpenLane.git
           cd OpenLane/
-          make openlane
+          make
           
       # echo "/home/runner/work/OpenLane: "
       # ls
