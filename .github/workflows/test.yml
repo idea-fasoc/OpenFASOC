@@ -50,13 +50,15 @@ jobs:
       - name: Install OpenLane
         run: |
           cd /home/runner/work
+          export PDK_ROOT=/home/runner/work/
           git clone https://github.com/The-OpenROAD-Project/OpenLane.git
           cd OpenLane/
           make openlane
-          echo "/home/runner/work/OpenLane: "
-          ls
-          echo "/home/runner/work: "
-          ls ../
+          
+      # echo "/home/runner/work/OpenLane: "
+      # ls
+      # echo "/home/runner/work: "
+      # ls ../
  
       # - name: Install OpenROAD
       #   run:  |
