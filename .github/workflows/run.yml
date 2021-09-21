@@ -1,0 +1,38 @@
+name: Tempsense_run
+
+on:
+
+    push:
+      branches:
+        - topic/GCP 
+    pull_request:
+
+jobs:
+  test_run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        
+      - name: Pull antmicro/OL
+        run:  |
+          cd /home/runner/work
+          git clone https://github.com/antmicro/openlane.git
+          cp $GITHUB_WORKSPACE/Docker/Dockerfile openlane/docker_build/Dockerfile
+          cd openlane/docker_build
+          make merge
+
+      - name: Pull OL to make pdk
+        run:  |
+          cd /home/runner/work
+          git clone https://github.com/The-OpenROAD-Project/OpenLane.git
+          make pdk
+
+      - name: Locate gen-design folder
+        run:  |
+          docker run --rm \
+          -v /home/runner/work/OpenFASOC/:/shared/OpenFASOC/ \
+          -v /home/runner/work/OpenLane/:/shared/OpenLane/ \
+          -w /shared/OpenFASOC/generators/temp-sense-gen \
+          efabless/openlane:current \
+          make sky130hd_temp
