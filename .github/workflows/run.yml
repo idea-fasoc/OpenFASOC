@@ -3,7 +3,8 @@ name: Tempsense_run
 on:
   push:
     branches:
-      - topic/GCP 
+      - topic/GCP
+      - main
   pull_request:
   workflow_dispatch:
 
@@ -13,8 +14,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-        with:
-          ref: topic/GCP
+
+# with:
+#   ref: topic/GCP
     
       - name: Pull OpenLane
         run: |
