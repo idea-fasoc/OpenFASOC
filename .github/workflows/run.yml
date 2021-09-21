@@ -3,7 +3,6 @@ name: Tempsense_run
 on:
   push:
     branches:
-      - topic/GCP
       - main
   pull_request:
   workflow_dispatch:
@@ -14,9 +13,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-
-# with:
-#   ref: topic/GCP
+        # with:
+        #   ref: topic/GCP
     
       - name: Pull OpenLane
         run: |
@@ -54,5 +52,5 @@ jobs:
             bash -c "\
               yum install -y time &&\
               cd ./generators/temp-sense-gen &&\
-              make sky130hd_temp\
+              make sky130hd_temp_full\
             "
