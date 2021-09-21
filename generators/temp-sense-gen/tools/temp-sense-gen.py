@@ -49,13 +49,14 @@ except ValueError as e:
   print >> sys.stderr, 'Exception: %s' % str(e)
   sys.exit(1)
 
+print("PDK_ROOT value: {}".format(os.getenv("PDK_ROOT")))
 
+# TODO: GHA/GCP/Whatever check
 pdk = None
 if os.getenv("PDK_ROOT") is not None:
   pdk = os.path.join(os.environ["PDK_ROOT"], "sky130A")
 else:
   open_pdks_key = "open_pdks"
-  # TODO: GHA/GCP/Whatever check
   pdk = jsonConfig[open_pdks_key]
 
 if not os.path.isdir(os.path.join(pdk, "libs.ref")):
