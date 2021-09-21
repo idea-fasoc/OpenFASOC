@@ -34,9 +34,4 @@ jobs:
       - name: Locate gen-design folder
         run:  |
           cd $GITHUB_WORKSPACE
-          docker run --rm \
-          -v /home/runner/work/OpenFASOC/:/shared/OpenFASOC/ \
-          -v /home/runner/work/OpenLane/:/shared/OpenLane/ \
-          -w /shared/OpenFASOC/generators/temp-sense-gen \
-          efabless/openlane:current \
-          make sky130hd_temp
+          docker run --rm -v /home/runner/work/OpenFASOC/:/shared/OpenFASOC/ -v /home/runner/work/OpenLane/:/shared/OpenLane/ -w /shared/OpenFASOC/generators/temp-sense-gen efabless/openlane:current make sky130hd_temp
