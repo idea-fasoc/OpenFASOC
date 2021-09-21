@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test_run:
+  sky130hd_temp:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -52,5 +52,5 @@ jobs:
             bash -c "\
               yum install -y time &&\
               cd ./generators/temp-sense-gen &&\
-              make sky130hd_temp_full\
+              make sky130hd_temp\
             "
