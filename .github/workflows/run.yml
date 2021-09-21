@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+        with:
+          ref: topic/GCP
         
       - name: Pull antmicro/OL
         run:  |
