@@ -1,11 +1,11 @@
 name: Tempsense_run
 
 on:
-
-    push:
-      branches:
-        - topic/GCP 
-    pull_request:
+  push:
+    branches:
+      - topic/GCP 
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   test_run:
@@ -15,28 +15,42 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: topic/GCP
-        
-      - name: Pull antmicro/OL
-        run:  |
-          cd /home/runner/work
-          git clone https://github.com/antmicro/openlane.git
-          cp $GITHUB_WORKSPACE/Docker/Dockerfile openlane/docker_build/Dockerfile
-          cd openlane/docker_build
-          make merge
-
-      - name: Pull OL to make pdk
-        run:  |
-          cd /home/runner/work
+    
+      - name: Pull OpenLane
+        run: |
+          cd /tmp
           git clone https://github.com/The-OpenROAD-Project/OpenLane.git
           cd OpenLane
-          make pdk
+          git checkout --force 2021.09.19_20.25.16
 
-      - name: Locate gen-design folder
-        uses: addnab/docker-run-action@v3
-        with:
-          image: efabless/openlane:current
-          options: -v /home/runner/work/OpenFASOC/:/home/runner/work/OpenFASOC/ -v /home/runner/work/OpenLane/:/home/runner/work/OpenLane/
-          run:  |
-            echo "Running Docker-run action"
-            cd /home/runner/work/OpenFASOC/generators/temp-sense-gen
-            make sky130hd_temp
+      - name: Make OpenLane Image
+        run: |
+          cd /tmp/OpenLane/docker_build
+          make merge
+
+      - name: Make PDK
+        env:
+          PDK_ROOT: /tmp/pdk
+          IMAGE_NAME: efabless/openlane:current
+        run: |
+          cd /tmp/OpenLane
+          make pdk
+          
+      - name: Make Sky130HD Temp
+        env:
+          PDK_ROOT: /tmp/pdk
+          IMAGE_NAME: efabless/openlane:current
+        run: |
+          docker run --rm\
+            -e GITHUB_ACTIONS=1\
+            -v /tmp/OpenLane:/openLANE_flow\
+            -v $PDK_ROOT:$PDK_ROOT\
+            -e PDK_ROOT=$PDK_ROOT\
+            -v $PWD:$PWD\
+            -w $PWD\
+            $IMAGE_NAME\
+            bash -c "\
+              yum install -y time &&\
+              cd ./generators/temp-sense-gen &&\
+              make sky130hd_temp\
+            "

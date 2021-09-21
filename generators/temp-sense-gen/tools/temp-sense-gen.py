@@ -49,18 +49,27 @@ except ValueError as e:
   print >> sys.stderr, 'Exception: %s' % str(e)
   sys.exit(1)
 
-if not os.path.isdir(jsonConfig["open_pdks"] + "/libs.ref"):
-  print("Cannot find libs.ref folder from open_pdks in " + jsonConfig["open_pdks"])
+
+pdk = None
+if os.getenv("PDK_ROOT") is not None:
+  pdk = os.path.join(os.environ["PDK_ROOT"], "sky130A")
+else:
+  open_pdks_key = "open_pdks"
+  # TODO: GHA/GCP/Whatever check
+  pdk = jsonConfig[open_pdks_key]
+
+if not os.path.isdir(os.path.join(pdk, "libs.ref")):
+  print("Cannot find libs.ref folder from open_pdks in " + pdk)
   sys.exit(1)
-elif not os.path.isdir(jsonConfig["open_pdks"] + "/libs.tech"):
-  print("Cannot find libs.tech folder from open_pdks in " + jsonConfig["open_pdks"])
+elif not os.path.isdir(os.path.join(pdk, "libs.tech")):
+  print("Cannot find libs.tech folder from open_pdks in " + pdk)
   sys.exit(1)
 else:
   sky130A_path = commonDir + "drc-lvs-check/sky130A/"
   if not os.path.isdir(sky130A_path):
     os.mkdir(sky130A_path)
-  shutil.copy2(jsonConfig["open_pdks"] + "/libs.tech/magic/sky130A.magicrc", sky130A_path)
-  shutil.copy2(jsonConfig["open_pdks"] + "/libs.tech/netgen/sky130A_setup.tcl", sky130A_path)
+  shutil.copy2(os.path.join(pdk, "libs.tech/magic/sky130A.magicrc"), sky130A_path)
+  shutil.copy2(os.path.join(pdk, "libs.tech/netgen/sky130A_setup.tcl"), sky130A_path)
   
 
 temp, power, error, ninv, nhead, hist = check_search_done()
