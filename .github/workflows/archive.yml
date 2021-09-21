@@ -54,17 +54,6 @@ jobs:
           git clone https://github.com/The-OpenROAD-Project/OpenLane.git
           cd OpenLane/
           make
-
-      - name: Check Paths
-        run: |
-          echo "/home/runner/work: "
-          ls /home/runner/work
-          echo "/home/runner/work/open_pdks: "
-          ls /home/runner/work/open_pdks
-          echo "/home/runner/work/sky130A: "
-          ls /home/runner/work/sky130A
-          echo "/home/runner/work/open_pdks/sky130: "
-          ls /home/runner/work/open_pdks/sky130
  
       # - name: Install OpenROAD
       #   run:  |
