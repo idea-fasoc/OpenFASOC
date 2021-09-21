@@ -28,10 +28,12 @@ jobs:
         run:  |
           cd /home/runner/work
           git clone https://github.com/The-OpenROAD-Project/OpenLane.git
+          cd OpenLane
           make pdk
 
       - name: Locate gen-design folder
         run:  |
+          cd $GITHUB_WORKSPACE
           docker run --rm \
           -v /home/runner/work/OpenFASOC/:/shared/OpenFASOC/ \
           -v /home/runner/work/OpenLane/:/shared/OpenLane/ \
