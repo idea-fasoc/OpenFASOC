@@ -32,7 +32,7 @@ jobs:
           make pdk
 
       - name: Locate gen-design folder
-      - uses: addnab/docker-run-action@v3
+        uses: addnab/docker-run-action@v3
         with:
           image: efabless/openlane:current
           options: -v /home/runner/work/OpenFASOC/:/home/runner/work/OpenFASOC/ -v /home/runner/work/OpenLane/:/home/runner/work/OpenLane/ -w /home/runner/work/OpenFASOC/generators/temp-sense-gen
