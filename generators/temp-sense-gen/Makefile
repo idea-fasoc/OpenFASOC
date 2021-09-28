@@ -7,6 +7,7 @@ sky130hd_temp_verilog:
 
 sky130hd_temp:
 	python3 tools/temp-sense-gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode macro
+	python3 tools/parse_rpt.py
 
 sky130hd_temp_full:
 	python3 tools/temp-sense-gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode full
