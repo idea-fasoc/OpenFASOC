@@ -9,7 +9,7 @@ on:
 
 jobs:
   sky130hd_temp:
-    runs-on: [ubuntu-latest, self-hosted]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
