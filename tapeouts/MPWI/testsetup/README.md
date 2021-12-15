@@ -15,10 +15,10 @@ Please install the latest version of [Anaconda](https://www.anaconda.com/product
 ### 2.1 **Daughter Board for the Chip**
 The daughter board could be as simple as one that directly connects all the chip I/Os to headers and power supplies to SMA or banana connectors. No level conversion should be needed as the chip uses 3.3V I/O voltage. It is suggested to use 64-pin ceramic PGA packages for packaging the dice and a Zero-Insertion-Force (ZIF) socket for holding the chip. The daughter board designed for validating this setup is shown below as a reference:
 
-<img src="/img/PCBtop.png" width="600">
+<img src="./img/PCBtop.png" width="600">
 Fig. 1. Top view of the daughter board
 <br /><br />
-<img src="/img/PCBbot.png" width="600">
+<img src="./img/PCBbot.png" width="600">
 Fig. 2. Bottom view of the daughter board
 
 ### 2.2 **FT232H USB-to-GPIO Bridge**
@@ -31,7 +31,7 @@ After the driver is installed, open an Anaconda prompt on the host computer, ins
 
 After the installations, connect the three bridges to the daughter board via jumper wires according to `PinMap.txt` in this repository. The pin numbers of bridge boards are already printed on-board, like what is shown in Fig. 3, while the chip I/O names are printed on the bottom of the daughter board shown in Fig. 2. The three bridges are named `Input-bridge`, `Output-bridge1` and `Output-bridge0`, where the input bridge is used for all the input pins of the chip and the output bridges are used for chip output pins. After connecting the chip I/Os, also remember to connect the ground pins of each bridge to the daughter board ground for a common ground.
 
-<img src="/img/FT232H.jpg" width="600">
+<img src="./img/FT232H.jpg" width="600">
 Fig. 3. FT232H USB-to-GPIO Bridge Board
 <br /><br />
 
