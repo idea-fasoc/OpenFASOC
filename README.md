@@ -98,7 +98,7 @@ To run the simulation, please edit your local model file in `common/platform_con
 ```
 # Tapeouts and testing setup
 
-Please refer to our testing setup in our tapeouts and testing setup [section](https://github.com/idea-fasoc/OpenFASOC/blob/82b25ed2d01a4d6628f95595722c94702181b65f/tapeouts/MPWI/testsetup/README.md#section).
+Please refer to our testing setup in our tapeouts and testing setup [section](./tapeouts/MPWI/testsetup/README.md#section).
 
 
 # Things to improve
