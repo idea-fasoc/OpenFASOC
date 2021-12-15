@@ -25,6 +25,7 @@ Fig. 2. Bottom view of the daughter board
 Three [FT232H USB-to-GPIO bridge boards](https://www.adafruit.com/product/2264#description) from AdaFruit are needed in this setup for controlling the chip. Please purchase them online from Adafruit. After getting the boards, follow this [page](https://learn.adafruit.com/circuitpython-on-any-computer-with-ft232h/windows) to install driver for the boards using Zadig on the host computer. Note: you only need to follow the`Plug in FT232H & Fix Driver with Zadig` part on this page, as we do not use the boards in the same way as they suggest.
 
 After the driver is installed, open an Anaconda prompt on the host computer, install pyftdi and pyusb libraries:
+
 ```  pip install pyftdi```
 <br />
 ```  pip install pyusb```
