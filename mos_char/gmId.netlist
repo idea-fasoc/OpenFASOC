@@ -1,0 +1,92 @@
+.options nonlin continuation=gmin
+.options timeint method=trap
+.options device temp=25
+**.options output initial_interval=1e-8
+.options parser model_binning=true
+
+* Scale the values of the device parameters
+*.options parser scale=1E-6
+
+* -- Model Includes and Std Cell Includes --
+
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.lib "../../../PDK/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130.lib.spice" tt
+**.lib "/home/chandru/PDK/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130.lib.spice" tt
+**.include "../../../PDK/skywater-pdk/libraries/sky130_fd_pr/latest/models/r+c/res_typical__cap_typical__lin.spice"
+**.include "../../../PDK/skywater-pdk/libraries/sky130_fd_pr/latest/models/r+c/res_typical__cap_typical.spice"
+**.lib ../../../PDK/skywater-pdk/libraries/sky130_fd_pr/latest/models/sky130.lib.spice tt
+
+
+.param kw = 1
+.param pvdd = 1.8
+
+* --- Voltage Sources ---
+vdd   supply  0 dc 'pvdd'
+vsig  vi  0 dc 'pvdd'
+
+* --- Mos Subcircuit ---
+*    d     G  S B
+*XM1 supply vi 0 0 sky130_fd_pr__nfet_01v8_lvt L=0.15 W=0.42
+*XM2 supply vi 0 0 sky130_fd_pr__nfet_01v8 L=0.15 W=0.42
+*XM3 0 vi supply 0 sky130_fd_pr__pfet_01v8_lvt L=0.15 W=0.42
+*XM4 0 vi supply 0 sky130_fd_pr__pfet_01v8 L=0.15 W=0.42
+*XM5 0 vi supply 0 sky130_fd_pr__pfet_01v8_hvt L=0.15 W=0.42
+*XM6 supply vi 0 0 sky130_fd_pr__nfet_03v3_nvt L=0.15 W=0.42
+*XM7 supply vi 0 0 sky130_fd_pr__nfet_05v0_nvt L=0.15 W=0.42
+
+
+
+* --- Analysis ---
+*.tran 10n 5u
+.op
+.DC vsig 0 1.8 0.1
+*.DC kw 1 20 1
+*.DC Idd 0 100e-3 0.05e-3
+
+
+* --- Result Print---
+.print dc FORMAT=GNUPLOT V(vi)
+.print dc FORMAT=GNUPLOT N(XM1:MSKY130_FD_PR__NFET_01V8_lvt:Vth)
+.print dc FORMAT=GNUPLOT N(XM1:MSKY130_FD_PR__NFET_01V8_lvt:gds)
+.print dc FORMAT=GNUPLOT N(XM1:MSKY130_FD_PR__NFET_01V8_lvt:gm)
+.print dc FORMAT=GNUPLOT N(XM1:MSKY130_FD_PR__NFET_01V8_lvt:Vdsat)
+.print dc FORMAT=GNUPLOT N(XM2:MSKY130_FD_PR__NFET_01V8:Vth)
+.print dc FORMAT=GNUPLOT N(XM2:MSKY130_FD_PR__NFET_01V8:gds)
+.print dc FORMAT=GNUPLOT N(XM2:MSKY130_FD_PR__NFET_01V8:gm)
+.print dc FORMAT=GNUPLOT N(XM2:MSKY130_FD_PR__NFET_01V8:Vdsat)
+.print dc FORMAT=GNUPLOT ID(XM2:MSKY130_FD_PR__NFET_01V8)
+**.print dc FORMAT=GNUPLOT I(XM2)
+**.print dc FORMAT=GNUPLOT N(XM3:msky130_fd_pr__pfet_01v8_lvt:Vth)
+**.print dc FORMAT=GNUPLOT N(XM3:msky130_fd_pr__pfet_01v8_lvt:gds)
+**.print dc FORMAT=GNUPLOT N(XM3:msky130_fd_pr__pfet_01v8_lvt:gm)
+**.print dc FORMAT=GNUPLOT N(XM3:msky130_fd_pr__pfet_01v8_lvt:Vdsat)
+.print dc FORMAT=GNUPLOT N(XM4:MSKY130_FD_PR__PFET_01V8:Vth)
+.print dc FORMAT=GNUPLOT N(XM4:MSKY130_FD_PR__PFET_01V8:gds)
+.print dc FORMAT=GNUPLOT N(XM4:MSKY130_FD_PR__PFET_01V8:gm)
+.print dc FORMAT=GNUPLOT N(XM4:MSKY130_FD_PR__PFET_01V8:Vdsat)
+.print dc FORMAT=GNUPLOT N(XM5:MSKY130_FD_PR__PFET_01V8_HVT:Vth)
+.print dc FORMAT=GNUPLOT N(XM5:MSKY130_FD_PR__PFET_01V8_HVT:gds)
+.print dc FORMAT=GNUPLOT N(XM5:MSKY130_FD_PR__PFET_01V8_HVT:gm)
+.print dc FORMAT=GNUPLOT N(XM5:MSKY130_FD_PR__PFET_01V8_HVT:Vdsat)
+*.print dc FORMAT=GNUPLOT N(XM6:MSKY130_FD_PR__PFET_01V8:Vth)
+*.print dc FORMAT=GNUPLOT N(XM6:MSKY130_FD_PR__PFET_01V8:gds)
+*.print dc FORMAT=GNUPLOT N(XM6:MSKY130_FD_PR__PFET_01V8:gm)
+*.print dc FORMAT=GNUPLOT N(XM6:MSKY130_FD_PR__PFET_01V8:Vdsat)
+*.print dc FORMAT=GNUPLOT N(XM7:MSKY130_FD_PR__PFET_01V8:Vth)
+*.print dc FORMAT=GNUPLOT N(XM7:MSKY130_FD_PR__PFET_01V8:gds)
+*.print dc FORMAT=GNUPLOT N(XM7:MSKY130_FD_PR__PFET_01V8:gm)
+*.print dc FORMAT=GNUPLOT N(XM7:MSKY130_FD_PR__PFET_01V8:Vdsat)
+
+.print dc FORMAT=GNUPLOT I(*) V(*)
+
+*.print dc FORMAT=GNUPLOT N(XM1:VDSSAT)
+*.print dc FORMAT=GNUPLOT N(XM1:VGS)
+*.print dc FORMAT=GNUPLOT N(XM1:VDS)
+*.print dc FORMAT=GNUPLOT N(XM1:GDS)
+*.print dc FORMAT=GNUPLOT {kw}
+*.print dc FORMAT=GNUPLOT N(XM1:CGG)
+**.print tran {v(vi)+1} {v(vo)+1}
+**comp {v(vi)+1} reltol=1e-2
+**comp {v(vo)+1} reltol=1e-2  abstol=1e-5 zerotol=1e-8
+.end
