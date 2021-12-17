@@ -18,6 +18,7 @@ if {![info exists standalone] || $standalone} {
 } else {
   puts "Starting detailed placement"
 }
+set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hd__decap_4
 
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
