@@ -20,7 +20,7 @@ if {![info exists standalone] || $standalone} {
 }
 
 # cdl read_masters $::env(CDL_FILE)
-write_cdl -include_fillers $::env(RESULTS_DIR)/6_final.cdl
+write_cdl  -masters $::env(CDL_FILE) $::env(RESULTS_DIR)/6_final.cdl
 
 if {![info exists standalone] || $standalone} {
   exit
