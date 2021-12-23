@@ -25,10 +25,10 @@ if {![info exists standalone] || $standalone} {
   puts "Starting global routing"
 }
 
-source scripts/create_custom_connections.tcl
-if {[info exist ::env(CUSTOM_CONNECTION)]} {
-  create_custom_connections $::env(CUSTOM_CONNECTION)
-}
+# source scripts/create_custom_connections.tcl
+# if {[info exist ::env(CUSTOM_CONNECTION)]} {
+#   create_custom_connections $::env(CUSTOM_CONNECTION)
+# }
 
 
 if {[info exist ::env(FASTROUTE_TCL)]} {

@@ -12,7 +12,7 @@ if {[info exists ::env(SEAL_GDS)]} {
 
 exec klayout -zz -rd design_name=$::env(DESIGN_NAME) \
 	         -rd in_def=$::env(RESULTS_DIR)/6_final.def \
-	         -rd in_gds="$::env(GDS_FILES) $::env(WRAPPED_GDS)" \
+	         -rd in_gds="$::env(GDS_FILES)" \
 	         -rd config_file=$fill_config \
 	         -rd seal_gds=$seal_gds \
 	         -rd out_gds=$::env(RESULTS_DIR)/6_1_merged.gds \
