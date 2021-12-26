@@ -1,10 +1,11 @@
 import re
 import math
+import argparse  # argument parsing
 
-def place_inv(fp_dim, array_dim, cell_dim, srcDir, target_instance):
-    r_def = open(srcDir + "./2_floorplan.def", "r")
+def place_inv(fp_dim, array_dim, cell_dim):
+    r_def = open(args.inputDef, "r")
     lines=list(r_def.readlines())
-    w_def = open(srcDir + "./2_floorplan_ro.def", "w")
+    w_def = open(args.outputDef, "w")
     
     # create a dictionary to store the data
     inv_array_dict = dict()
@@ -58,29 +59,34 @@ def place_inv(fp_dim, array_dim, cell_dim, srcDir, target_instance):
 
     # assign positions to each inv in array inside inv_array_dict, remove the old component placements in "lines" on the go 
     # TODO: Take care of odd ninvs?
-    for i in range (0, math.ceil(len(inv_array_dict) / 2)):
+    for i in range (0, int(math.ceil(len(inv_array_dict) / 1))):
 
         inv_sm = i
         inv_lg = max_inst_num - i
 
-        x_index_sm = x - (i // y ) * 2
-        x_index_lg = x - ((i // y ) * 2 + 1)
+        y_index_sm = (i // x ) * 2
+        y_index_lg = ((i // x ) * 2 + 1)
 
         # for cells on columns that have (x_index_sm / 2) % 2 == 1, their y_indices should be flipped
         # arrange_direction: 1 => reversed, 0 => same as index
-        arrange_direction = (x_index_sm / 2) % 2
+        arrange_direction = (y_index_sm / 2) % 2
         
         if arrange_direction:
-            y_index = y - (i % y)
-            ori_sm = 'E'
-            ori_lg = 'W'
+            x_index = x - (i % x)
+            ori_sm = 'FN'
+            ori_lg = 'FS'
         else:
-            y_index = i % y + 1
-            ori_sm = 'W'
-            ori_lg = 'E'
+            x_index = i % x + 1
+            ori_sm = 'FS'
+            ori_lg = 'FN'
 
-        coord_sm = (math.floor(math.floor(p / a) / (x + 1) ) * (x_index_sm) * a, math.floor(math.floor(q / b) / (y + 1)) * (y_index + 1) * b)
-        coord_lg = (math.floor(math.floor(p / a) / (x + 1) ) * (x_index_lg) * a, math.floor(math.floor(q / b) / (y + 1)) * (y_index + 1) * b)
+        coord_sm = (math.floor(math.floor(p / a) / (x + 1) ) * (x_index + 1) * a, math.floor(math.floor(q / b) / (y + 1)) * (y_index_sm + 1) * b)
+        coord_lg = (math.floor(math.floor(p / a) / (x + 1) ) * (x_index + 1) * a, math.floor(math.floor(q / b) / (y + 1)) * (y_index_lg + 1) * b)
+	
+	# move the smaller one left by 3 units to avoid overlap
+        #new_sm_coord_x = coord_sm[0] - 3 * a
+        #coord_sm = (new_sm_coord_x, coord_sm[1])
+	
 
         #print("Inv", inv_sm, "(", x_index_sm, ",", y_index, ")", coord_sm)
         #print("Inv", inv_lg, "(", x_index_lg, ",", y_index, ")", coord_lg)
@@ -90,12 +96,12 @@ def place_inv(fp_dim, array_dim, cell_dim, srcDir, target_instance):
         inv_array_dict[inv_lg].extend([ori_lg, coord_lg])
 
     # assign positions to each of the other components inside other_comp_dict, remove the old component placements in "lines" on the go 
-    coord_nand = (math.floor(math.floor(p / a) / (x + 1) ) * (x - 1) * a, math.floor(math.floor(q / b) / (y + 1)) * (0 + 1) * b)
-    coord_invout = (math.floor(math.floor(p / a) / (x + 1) ) * (x + 1) * a, math.floor(math.floor(q / b) / (y + 1)) * (0 + 1) * b)
+    coord_nand = (math.floor(math.floor(p / a) / (x + 1) ) * (1) * a, math.floor(math.floor(q / b) / (y + 1)) * (1 + 1) * b)
+    coord_invout = (math.floor(math.floor(p / a) / (x + 1) ) * (1) * a, math.floor(math.floor(q / b) / (y + 1)) * (1 - 1) * b)
 
     # HARD CODED inv_out and nand placement
-    other_comp_dict['a_inv_out'].extend(['E', coord_invout])
-    other_comp_dict['a_nand_0'].extend(['E', coord_nand])
+    other_comp_dict['a_inv_out'].extend(['N', coord_invout])
+    other_comp_dict['a_nand_0'].extend(['FN', coord_nand])
     
     # remove the placed components from lines
     for key, value in inv_array_dict.items():
@@ -120,6 +126,9 @@ def place_inv(fp_dim, array_dim, cell_dim, srcDir, target_instance):
         # if inside component, immediatly write the results previously stored in the dictionaries
         if (is_component):
             for key, value in inv_array_dict.items():
+		# apply offset 
+                value[2] = tuple(map(sum, zip(value[2], core_die_offset)))
+
                 insertion = ["+", "FIXED", '(', str(round(value[2][0] * 1000)), str(round(value[2][1] * 1000)), ')', value[1], ';']
                 new_line = value[0].replace(";", ' '.join(insertion))
                 print(new_line)
@@ -127,6 +136,7 @@ def place_inv(fp_dim, array_dim, cell_dim, srcDir, target_instance):
 
                 
             for key, value in other_comp_dict.items():
+                value[2] = tuple(map(sum, zip(value[2], core_die_offset)))
                 insertion = ["+", "FIXED", '(', str(round(value[2][0] * 1000)), str(round(value[2][1] * 1000)), ')', value[1], ';'] 
                 new_line = value[0].replace(";", ' '.join(insertion))
                 print(new_line)
@@ -135,7 +145,31 @@ def place_inv(fp_dim, array_dim, cell_dim, srcDir, target_instance):
             # make is_component False so that the components are only written once
             is_component = False
 
-if __name__ == "__main__":
+parser = argparse.ArgumentParser(
+	description='Place Ring Oscillator')
+parser.add_argument('--inputDef', '-i', required=True,
+                help='Input Def')
+parser.add_argument('--outputDef', '-o', required=True,
+                help='Output Def')
+parser.add_argument('--coreDim', '-c', required=True,
+                help='Core Dim')
+parser.add_argument('--arrayDim', '-a', required=True,
+                help='Array Dim')
+parser.add_argument('--coreDieOffset', '-s', required=True,
+                help='CoreDie Offset')
+parser.add_argument('--cellDim', '-d', required=True,
+                help='Cell Dim')
+parser.add_argument('--targetInst', '-t', required=True,
+                help='Target Inst')
+args = parser.parse_args()  
+    
 
-    # Notice here the cell is horizontal, swap the ab in cell_dim (The unit dim)
-    place_inv((40, 40), (12, 12), (2.72, 0.46), "", "cryo_ro_1")
+# Notice here the cell is horizontal, swap the ab in cell_dim (The unit dim)
+core_dim = (tuple(list(map(float, args.coreDim.split(',')))))
+array_dim = (tuple(list(map(int, args.arrayDim.split(',')))))
+cell_dim = (tuple(list(map(float, args.cellDim.split(',')))))
+core_die_offset = (tuple(list(map(float, args.coreDieOffset.split(',')))))
+target_instance = args.targetInst
+
+
+place_inv(core_dim, array_dim, cell_dim)

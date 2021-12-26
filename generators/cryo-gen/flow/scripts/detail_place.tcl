@@ -20,6 +20,10 @@ if {![info exists standalone] || $standalone} {
 }
 set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hd__decap_4
 
+set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hd__inv_1
+
+set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__tapvpwrvgnd_1
+
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
