@@ -19,9 +19,9 @@ if {![info exists standalone] || $standalone} {
   puts "Starting IO placement"
 }
 
-#place_pin -pin_name EBL -layer met3 -location {0.92 2.72} -pin_size {0.14 0.485} -force_to_die_boundary
+#place_pin -pin_name EBL -layer met3 -location {0.92 2.72} -pin_size {0.5 0.14} -force_to_die_boundary
 
-#place_pin -pin_name Out -layer met2 -location {70 2.72} -pin_size {0.14 0.485} -force_to_die_boundary
+#place_pin -pin_name Out -layer met2 -location {70 2.72} -pin_size {0.14 0.5} -force_to_die_boundary
 
   place_pins -hor_layer $::env(IO_PLACER_H) \
              -ver_layer $::env(IO_PLACER_V) \

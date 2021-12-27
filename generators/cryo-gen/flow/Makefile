@@ -60,7 +60,7 @@ export NUM_CORES = $(shell grep -c ^processor /proc/cpuinfo)
 OPENROAD_CMD = openroad -no_init -exit
 
 # OPENROAD_CMD = docker run --rm -v /shared/OpenLane:/openLANE_flow \
-                               -v /shared/OpenFASOC/generators/temp-sense-gen/:/shared/OpenFASOC/generators/temp-sense-gen/ \
+                               -v /shared/OpenFASOC/generators/cryo-gen/:/shared/OpenFASOC/generators/cryo-gen/ \
 			       -e PDK_ROOT=/shared/OpenLane --user 1001:1002 efabless/openlane:2021.09.02_03.15.28 \
 			       openroad -no_init -exit 
 
@@ -186,10 +186,10 @@ $(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synt
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/floorplan.tcl -metrics $(LOG_DIR)/2_1_floorplan.json) 2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
 
 
-# STEP 2: IO Placement (random)
+# STEP 2: IO Placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_2_floorplan_io.def: $(RESULTS_DIR)/2_1_floorplan.def
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement_random.tcl -metrics $(LOG_DIR)/2_2_floorplan_io.json) 2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/2_2_floorplan_io.json) 2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
 
 # STEP 3: Timing Driven Mixed Sized Placement
 #-------------------------------------------------------------------------------
