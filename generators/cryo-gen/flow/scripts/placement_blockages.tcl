@@ -32,6 +32,7 @@ proc block_channels {channel_width_in_microns} {
   set core_rect [odb::newSetFromRect $xl $yl $xh $yh]
   set shapeSet [odb::andSet $shapeSet $core_rect]
 
+
   #
   # Output the blockages
   #

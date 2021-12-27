@@ -58,6 +58,35 @@ global_placement -routability_driven -density $::env(PLACE_DENSITY) \
 #   }
 # }
 
+# Force all divider cells into the center of the right half
+set db [::ord::get_db]
+set block [[$db getChip] getBlock]
+set tech [$db getTech]
+
+set core [$block getCoreArea]
+set core_xl [$core xMin]
+set core_yl [$core yMin]
+set core_xh [$core xMax]
+set core_yh [$core yMax]
+  
+set div_cen_x [expr double(($core_xl + $core_xh) * 3 / 4 / 1000)]
+set div_cen_y [expr double(($core_yl + $core_yh) / 2 / 1000)]
+
+set div_cen [concat $div_cen_x $div_cen_y]
+
+set allInsts [$block getInsts]
+
+foreach inst $allInsts {
+  set master [$inst getMaster]
+  set name [$inst getName]
+  if {[string match "_*_" $name]} {
+    # puts $name
+	place_cell -inst $name \
+	-origin $div_cen \
+	-orient R0
+  }
+}
+
 estimate_parasitics -placement
 report_wns
 report_tns

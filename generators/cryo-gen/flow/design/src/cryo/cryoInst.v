@@ -7,7 +7,7 @@ module cryoInst
 	wire ro_out;
  
 	cryo_ro cryo_ro_1(
-		.EN(en),
+		.EN(EBL),
 		.OUT(ro_out)
 	);
 
