@@ -24,10 +24,13 @@ set_placement_padding -global \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
 set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__decap_4
-
 set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__inv_1
-
+set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__nand2_1
 set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hd__tapvpwrvgnd_1
+
+set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hvl__inv_1
+set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hvl__decap_4
+set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hvl__nand2_1
 
 #set db [ord::get_db]
 #set tech [$db getTech]

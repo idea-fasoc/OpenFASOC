@@ -88,8 +88,8 @@ def place_inv(fp_dim, array_dim, cell_dim):
         #coord_sm = (new_sm_coord_x, coord_sm[1])
 	
 
-        #print("Inv", inv_sm, "(", x_index_sm, ",", y_index, ")", coord_sm)
-        #print("Inv", inv_lg, "(", x_index_lg, ",", y_index, ")", coord_lg)
+        print("Inv", inv_sm, "(", x_index, ",", y_index_sm, ")", coord_sm)
+        print("Inv", inv_lg, "(", x_index, ",", y_index_lg, ")", coord_lg)
 
         # store inside dictionary
         inv_array_dict[inv_sm].extend([ori_sm,coord_sm])
@@ -131,7 +131,7 @@ def place_inv(fp_dim, array_dim, cell_dim):
 
                 insertion = ["+", "FIXED", '(', str(round(value[2][0] * 1000)), str(round(value[2][1] * 1000)), ')', value[1], ';']
                 new_line = value[0].replace(";", ' '.join(insertion))
-                print(new_line)
+                #print(new_line)
                 w_def.writelines(new_line)
 
                 
@@ -139,7 +139,7 @@ def place_inv(fp_dim, array_dim, cell_dim):
                 value[2] = tuple(map(sum, zip(value[2], core_die_offset)))
                 insertion = ["+", "FIXED", '(', str(round(value[2][0] * 1000)), str(round(value[2][1] * 1000)), ')', value[1], ';'] 
                 new_line = value[0].replace(";", ' '.join(insertion))
-                print(new_line)
+                #print(new_line)
                 w_def.writelines(new_line)
 
             # make is_component False so that the components are only written once

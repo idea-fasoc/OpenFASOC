@@ -20,13 +20,8 @@ if {![info exists standalone] || $standalone} {
 }
 
 if {[info exist ::env(TAPCELL_TCL)]} {
-# replace source by the content from common
-#  source $::env(TAPCELL_TCL)
-tapcell \
-  -endcap_cpp "2" \
-  -distance 14 \
-  -tapcell_master "sky130_fd_sc_hd__tapvpwrvgnd_1" \
-  -endcap_master "sky130_fd_sc_hd__decap_4"
+# replace source by the content from common - restored
+  source $::env(TAPCELL_TCL)
 }
 
 if {![info exists standalone] || $standalone} {
