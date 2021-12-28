@@ -20,9 +20,9 @@ export MAX_FANOUT = 5
 export BLACKBOX_V_FILE = ../../../common/platforms/$(PLATFORM)/sky130_fd_sc_hvl.blackbox.v
 
 # Yosys mapping files
-export LATCH_MAP_FILE = ../../../common/platforms/$(PLATFORM)/cells_latch_hvl.v
-export CLKGATE_MAP_FILE = ../../../common/platforms/$(PLATFORM)/cells_clkgate_hvl.v
-export BLACKBOX_MAP_TCL = ../../../common/platforms/$(PLATFORM)/blackbox_map.tcl
+#export LATCH_MAP_FILE = ../../../common/platforms/$(PLATFORM)/cells_latch_hvl.v
+#export CLKGATE_MAP_FILE = ../../../common/platforms/$(PLATFORM)/cells_clkgate_hvl.v
+#export BLACKBOX_MAP_TCL = ../../../common/platforms/$(PLATFORM)/blackbox_map.tcl
 
 # Placement site for core cells
 # This can be found in the technology lef
@@ -106,3 +106,4 @@ export FILL_CELLS = sky130_fd_sc_hvl__fill_1 sky130_fd_sc_hvl__fill_2 sky130_fd_
 # resizer repair_long_wires -max_length
 export MAX_WIRE_LENGTH = 21000
 
+export CDL_FILE = ../../../common/platforms/sky130hvl/cdl/sky130_fd_sc_hvl.spice

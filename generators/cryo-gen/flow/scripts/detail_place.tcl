@@ -18,108 +18,78 @@ if {![info exists standalone] || $standalone} {
 } else {
   puts "Starting detailed placement"
 }
-set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hd__decap_4
-
-set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hd__inv_1
-
-set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__tapvpwrvgnd_1
 
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
-set db [ord::get_db]
-set tech [$db getTech]
-set libs [$db getLibs]
+set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__decap_4
+set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__inv_1
+set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__nand2_1
+set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hd__tapvpwrvgnd_1
+
+set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hs__decap_4
+set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__inv_1
+set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__nand2_1
+set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__tap_1
+
+set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hvl__inv_1
+set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hvl__decap_4
+set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hvl__nand2_1
+
+#set db [ord::get_db]
+#set tech [$db getTech]
+#set libs [$db getLibs]
+#set block [$db getChip]
+
+  #
+  # Core area
+  #
+#  set core [$block getCoreArea]
+#  set xl [$core xMin]
+#  set yl [$core yMin]
+#  set xh [$core xMax]
+#  set yh [$core yMax]
+#  set core_rect [odb::newSetFromRect $xl $yl $xh $yh]
+
+  # Create a block for the Cryo RO
+#  set ro_dim_x 40
+#  set ro_dim_y 40
+#  set ro_xl [expr $xl]
+#  set ro_yl [expr $yl] 
+#  set ro_xh [expr $xl + $ro_dim_x]
+#  set ro_yh [expr $yl + $ro_dim_y]
+#  set ro_rect [odb::newSetFromRect $ro_xl $ro_yl $ro_xh $ro_yh]
+
+  #
+  # Output the blockages
+  #
+#  set rects [odb::getRectangles $ro_rect]
+#  foreach rect $rects {
+#      set b [odb::dbBlockage_create $block \
+#                 [$rect xMin] [$rect yMin] [$rect xMax] [$rect yMax]]
+#  }
+
+#puts "RO Placement Blockage Set"
+
+# find the bounds of the max_displacement
+set db [::ord::get_db]
 set block [[$db getChip] getBlock]
+set tech [$db getTech]
 
-set has_domain 0
-foreach region [$block getRegions] {
-  set domain $region
-  set domain_name [$region getName]
-  set has_domain 1
-}
-
-set domain_rows []
-if {$has_domain == 1} {
-  foreach row [$block getRows] {
-    set result [regexp $domain_name [$row getName] match]
-    if {$result == 1} {
-      lappend domain_rows [list [$row getName] \
-                                [$row getSite] \
-                                [$row getBBox] \
-                                [$row getOrient] \
-                          ]
-      odb::dbRow_destroy $row
-    }
-  }
-}
-
-set row [lindex [$block getRows] 0]
-set row_site [$row getSite]
-set site_width [$row_site getWidth]
-set row_height [$row_site getHeight]
-
-detailed_placement
-
-foreach row $domain_rows {
-  odb::dbRow_create $block [lindex $row 0] \
-                           [lindex $row 1] \
-                           [[lindex $row 2] xMin] \
-                           [[lindex $row 2] yMin] \
-                           [lindex $row 3] \
-                           "HORIZONTAL" \
-                           [expr ([[lindex $row 2] xMax] - [[lindex $row 2] xMin]) / [[lindex $row 1] getWidth]] \
-                           [[lindex $row 1] getWidth]
-}
-
-
-if {$has_domain == 1} {
-  set placed_insts []
-  set region_insts [$region getRegionInsts]
-  foreach inst [$block getInsts] {
-    if {[lsearch -exact $region_insts $inst] >= 0} {
-    } else {
-      if {[$inst getPlacementStatus] == "FIRM"} {
-      } else {
-        lappend placed_insts $inst
-        $inst setPlacementStatus "FIRM"
-      }
-    }
-  }
-
-  set core_rows []
-  foreach row [$block getRows] {
-    set result [regexp $domain_name [$row getName] match]
-    if {$result == 1} {
-    } else {
-      lappend core_rows [list [$row getName] \
-                              [$row getSite] \
-                              [$row getBBox] \
-                              [$row getOrient] \
-                        ]
-      odb::dbRow_destroy $row
-    }
-  }
-
-  detailed_placement
+set core [$block getCoreArea]
+set core_xl [$core xMin]
+set core_yl [$core yMin]
+set core_xh [$core xMax]
+set core_yh [$core yMax]
   
-  foreach row $core_rows {
-    odb::dbRow_create $block [lindex $row 0] \
-                             [lindex $row 1] \
-                             [[lindex $row 2] xMin] \
-                             [[lindex $row 2] yMin] \
-                             [lindex $row 3] \
-                             "HORIZONTAL" \
-                             [expr ([[lindex $row 2] xMax] - [[lindex $row 2] xMin]) / [[lindex $row 1] getWidth]] \
-                             [[lindex $row 1] getWidth]
+set max_disp_x [expr int(($core_xh - (($core_xl + $core_xh) * 3 / 4)) / 1000)]
+set max_disp_y [expr int(($core_yh - ($core_yl + $core_yh) / 2) / 1000)]
 
-  }
+set max_disp [concat $max_disp_x $max_disp_y]
 
-  foreach inst $placed_insts {
-    $inst setPlacementStatus "PLACED"
-  }
-}
+
+detailed_placement -max_displacement $max_disp
 
 optimize_mirroring
 check_placement -verbose

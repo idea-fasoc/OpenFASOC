@@ -14,7 +14,7 @@ default: finish
 
 # Include design and platform configuration
 
-DESIGN_CONFIG = ./design/sky130hd/cryo/config.mk
+DESIGN_CONFIG = ./design/sky130hs/cryo/config.mk
 
 include $(DESIGN_CONFIG)
 
@@ -30,6 +30,8 @@ endif
 
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
 include $(PLATFORM_DIR)/config.mk
+
+$(info [INFO][FLOW] Using tlef $(TECH_LEF))
 
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
@@ -237,7 +239,7 @@ place: $(RESULTS_DIR)/3_place.def \
 # STEP 0: Place RO to fixed coordinates
 
 $(RESULTS_DIR)/2_floorplan_ro.def: $(RESULTS_DIR)/2_floorplan.def
-	python3 util/place_ro.py --inputDef $(RESULTS_DIR)/2_floorplan.def --outputDef $(RESULTS_DIR)/2_floorplan_ro.def --coreDim 40,40 --arrayDim 12,12 --cellDim 0.46,2.72 --targetInst cryo_ro_1 --coreDieOffset 3.68,2.72
+	python3 util/place_ro.py --inputDef $(RESULTS_DIR)/2_floorplan.def --outputDef $(RESULTS_DIR)/2_floorplan_ro.def --coreDim 48,40 --arrayDim 15,10 --cellDim 0.48,3.33 --targetInst cryo_ro_1 --coreDieOffset 2.4,3.33
 
 # STEP 1: Global placement + IO placement (not random)
 #-------------------------------------------------------------------------------

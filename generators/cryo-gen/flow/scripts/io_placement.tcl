@@ -16,14 +16,16 @@ if {![info exists standalone] || $standalone} {
   # Read design files
   read_def $::env(RESULTS_DIR)/2_1_floorplan.def
 } else {
-  puts "Starting random IO placement"
+  puts "Starting IO placement"
 }
 
-if {![info exists ::env(FOOTPRINT)]} {
-  place_pins -hor_layer $::env(IO_PLACER_H) \
+place_pin -pin_name EBL -layer met3 -location {0 5} -pin_size {0.5 0.3} -force_to_die_boundary
+
+place_pin -pin_name OUT -layer met3 -location {160 5} -pin_size {0.5 0.3} -force_to_die_boundary
+
+#  place_pins -hor_layer $::env(IO_PLACER_H) \
              -ver_layer $::env(IO_PLACER_V) \
              -random
-}
 
 if {![info exists standalone] || $standalone} {
   # write output

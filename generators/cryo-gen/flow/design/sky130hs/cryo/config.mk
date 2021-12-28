@@ -1,15 +1,15 @@
 export DESIGN_NICKNAME = cryo
 export DESIGN_NAME = cryoInst
 
-export PLATFORM    = sky130hd
+export PLATFORM    = sky130hs
 #export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 
 export VERILOG_FILES 		= $(sort $(wildcard ./design/src/$(DESIGN_NICKNAME)/*.v)) 
 
 export SDC_FILE    		= ./design/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export DIE_AREA   	 	= 0 0 80 40 
-export CORE_AREA   		= 2.32 2.32 77.68 37.68
+export DIE_AREA   	 	= 0 0 96 40 
+export CORE_AREA   		= 2.32 2.32 93.68 37.68
 
 # export PDN_CFG 			= ../blocks/$(PLATFORM)/pdn.cfg
 
