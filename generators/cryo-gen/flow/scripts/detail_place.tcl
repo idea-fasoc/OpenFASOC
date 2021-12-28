@@ -28,6 +28,11 @@ set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__inv_1
 set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__nand2_1
 set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hd__tapvpwrvgnd_1
 
+set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hs__decap_4
+set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__inv_1
+set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__nand2_1
+set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__tap_1
+
 set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hvl__inv_1
 set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hvl__decap_4
 set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hvl__nand2_1

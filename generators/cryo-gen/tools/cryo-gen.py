@@ -42,7 +42,6 @@ if args.platform == 'sky130hd':
 elif args.platform == 'sky130hs':
   p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hs.spice"])
   p.wait()
-
 elif args.platform == 'sky130hvl':
   p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hvl.spice"])
   p.wait()

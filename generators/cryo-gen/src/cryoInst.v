@@ -1,7 +1,7 @@
 module cryoInst
 (
 	input EBL,
-	output Out
+	output OUT
 	);
 	
 	wire ro_out;
@@ -13,7 +13,7 @@ module cryoInst
 
 	divider divider_1(
 	       	.CLK_in(ro_out),
-		.CLK_out(Out)		
+		.CLK_out(OUT)		
 	);
 
 endmodule
