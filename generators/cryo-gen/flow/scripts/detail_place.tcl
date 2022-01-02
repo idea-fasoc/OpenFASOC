@@ -41,6 +41,10 @@ set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_hs__inv_1
 set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_12T_hs__decap_1
 set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_hs__nand2_1
 
+set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_hs__inv_1
+set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_18T_hs__decap_1
+set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_hs__nand2_1
+
 
 #set db [ord::get_db]
 #set tech [$db getTech]
