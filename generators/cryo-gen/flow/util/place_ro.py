@@ -80,8 +80,8 @@ def place_inv(fp_dim, array_dim, cell_dim):
             ori_sm = 'N'
             ori_lg = 'S'
 
-        coord_sm = (math.floor(math.floor(p / a) / (x + 1) ) * (x_index + 1) * a, math.floor(math.floor(q / b) / (y + 1)) * (y_index_sm) * b)
-        coord_lg = (math.floor(math.floor(p / a) / (x + 1) ) * (x_index + 1) * a, math.floor(math.floor(q / b) / (y + 1)) * (y_index_lg) * b)
+        coord_sm = (math.floor(math.floor(p / a) / (x + 1) ) * (x_index + 1) * a, math.floor(math.floor(q / b) / (y)) * (y_index_sm) * b)
+        coord_lg = (math.floor(math.floor(p / a) / (x + 1) ) * (x_index + 1) * a, math.floor(math.floor(q / b) / (y)) * (y_index_lg) * b)
 	
 	# move the smaller one left by 3 units to avoid overlap
         #new_sm_coord_x = coord_sm[0] - 3 * a
@@ -96,8 +96,8 @@ def place_inv(fp_dim, array_dim, cell_dim):
         inv_array_dict[inv_lg].extend([ori_lg, coord_lg])
 
     # assign positions to each of the other components inside other_comp_dict, remove the old component placements in "lines" on the go 
-    coord_nand = (math.floor(math.floor(p / a) / (x + 1) ) * (1) * a, math.floor(math.floor(q / b) / (y + 1)) * (1 ) * b)
-    coord_invout = (math.floor(math.floor(p / a) / (x + 1) ) * (1) * a, math.floor(math.floor(q / b) / (y + 1)) * (0) * b)
+    coord_nand = (math.floor(math.floor(p / a) / (x + 1) ) * (1) * a, math.floor(math.floor(q / b) / (y)) * (1 ) * b)
+    coord_invout = (math.floor(math.floor(p / a) / (x + 1) ) * (1) * a, math.floor(math.floor(q / b) / (y)) * (0) * b)
 
     # HARD CODED inv_out and nand placement
     other_comp_dict['a_inv_out'].extend(['N', coord_invout])
