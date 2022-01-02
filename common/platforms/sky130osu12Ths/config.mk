@@ -9,8 +9,8 @@ export FILL_CONFIG = ../../../common/platforms/$(PLATFORM)/fill.json
 
 # Set the TIEHI/TIELO cells
 # These are used in yosys synthesis to avoid logical 1/0's in the netlist
-export TIEHI_CELL_AND_PORT = $(cell_prefix)__tiehi HI
-export TIELO_CELL_AND_PORT = $(cell_prefix)__tielo LO
+export TIEHI_CELL_AND_PORT = $(cell_prefix)__tiehi Y
+export TIELO_CELL_AND_PORT = $(cell_prefix)__tielo Y
 
 # Used in synthesis
 export MIN_BUF_CELL_AND_PORTS = $(cell_prefix)__buf_4 A Y
@@ -23,8 +23,8 @@ export MAX_FANOUT = 5
 export BLACKBOX_V_FILE = ../../../common/platforms/$(PLATFORM)/$(cell_prefix).blackbox.v
 
 # Yosys mapping files
-#export LATCH_MAP_FILE = ../../../common/platforms/$(PLATFORM)/cells_latch_hd.v
-#export CLKGATE_MAP_FILE = ../../../common/platforms/$(PLATFORM)/cells_clkgate_hd.v
+export LATCH_MAP_FILE = ../../../common/platforms/$(PLATFORM)/cells_latch_hd.v
+export CLKGATE_MAP_FILE = ../../../common/platforms/$(PLATFORM)/cells_clkgate_hd.v
 #export BLACKBOX_MAP_TCL = ../../../common/platforms/$(PLATFORM)/blackbox_map.tcl
 
 # Placement site for core cells
