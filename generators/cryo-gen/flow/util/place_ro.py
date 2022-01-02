@@ -73,8 +73,8 @@ def place_inv(fp_dim, array_dim, cell_dim):
         
         if arrange_direction:
             x_index = x - (i % x)
-            ori_sm = 'S'
-            ori_lg = 'N'
+            ori_sm = 'FN'
+            ori_lg = 'FS'
         else:
             x_index = i % x + 1
             ori_sm = 'N'

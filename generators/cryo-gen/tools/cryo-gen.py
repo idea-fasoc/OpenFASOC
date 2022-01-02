@@ -45,6 +45,9 @@ elif args.platform == 'sky130hs':
 elif args.platform == 'sky130hvl':
   p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hvl.spice"])
   p.wait()
+elif args.platform == 'sky130osu12Ths':
+  p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_osu_sc_12T_hs.spice"])
+  p.wait()
 
 print("Loading platform_config file...")
 print()
@@ -107,6 +110,9 @@ elif args.platform == 'sky130hvl':
   aux1 = 'sky130_fd_sc_hvl__nand2_1'
   aux2 = 'sky130_fd_sc_hvl__inv_1'
 
+elif args.platform == 'sky130osu12Ths':
+  aux1 = 'sky130_osu_sc_12T_hs__nand2_1'
+  aux2 = 'sky130_osu_sc_12T_hs__inv_1'
 ninv=ninv+1
 
 cryo_netlist.gen_cryo_netlist(ninv,aux1,aux2, srcDir)

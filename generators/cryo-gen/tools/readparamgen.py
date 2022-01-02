@@ -57,8 +57,8 @@ if not os.path.isfile(args.specfile):
    sys.exit(1)
 
 
-if args.platform != 'sky130hd' and args.platform != 'sky130hs' and args.platform != 'sky130hvl':
-  print("Error: only sky130hd, sky130hs, and sky130hvl platforms are supported as of now")
+if args.platform != 'sky130hd' and args.platform != 'sky130hs' and args.platform != 'sky130hvl' and args.platform != 'sky130osu12Ths':
+  print("Error: only sky130hd, sky130hs, sky130hvl, and sky130osu12Ths platforms are supported as of now")
   sys.exit(1)
 
 # Load json spec file
