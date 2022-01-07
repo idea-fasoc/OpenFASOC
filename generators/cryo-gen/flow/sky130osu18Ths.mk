@@ -237,7 +237,7 @@ place: $(RESULTS_DIR)/3_place.def \
 # STEP 0: Place RO to fixed coordinates
 
 $(RESULTS_DIR)/2_floorplan_ro.def: $(RESULTS_DIR)/2_floorplan.def
-	python3 util/place_ro.py --inputDef $(RESULTS_DIR)/2_floorplan.def --outputDef $(RESULTS_DIR)/2_floorplan_ro.def --coreDim 50,40 --arrayDim 24,6 --cellDim 0.99,6.66 --targetInst cryo_ro_1 --coreDieOffset 3.63,0
+	python3 util/place_ro.py --inputDef $(RESULTS_DIR)/2_floorplan.def --outputDef $(RESULTS_DIR)/2_floorplan_ro.def --coreDim 75,35 --arrayDim 36,4 --cellDim 0.99,6.66 --targetInst cryo_ro_1 --coreDieOffset 3.63,6.66
 
 # STEP 1: Global placement + IO placement (not random)
 #-------------------------------------------------------------------------------
@@ -434,25 +434,24 @@ $(RESULTS_DIR)/6_final.def: $(REPORTS_DIR)/6_final_report.rpt
 $(WRAPPED_GDS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 	($(TIME_CMD) klayout -zz -rd design_name=$(basename $(notdir $@)) \
 	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:gds=def)) \
-	        -rd in_gds="$(ADDITIONAL_GDS)" \
+	        -rd in_files="$(ADDITIONAL_GDS)" \
 	        -rd config_file=$(FILL_CONFIG) \
-	        -rd seal_gds="" \
-	        -rd out_gds=$@ \
+	        -rd seal_file="" \
+	        -rd out_file=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout_wrap.lyt \
-	        -rm $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
+	        -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
 
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED_GDS) $(RESULTS_DIR)/6_final.def
 	($(TIME_CMD) stdbuf -o L klayout -zz -rd design_name=$(DESIGN_NAME) \
-		-rd lef_file=" ../../../$(TECH_LEF)  ../../../$(SC_LEF)" \
 	        -rd in_def=$(RESULTS_DIR)/6_final.def \
-	        -rd in_gds="$(GDS_FILES) $(WRAPPED_GDS)" \
+	        -rd in_files="$(GDS_FILES) $(WRAPPED_GDS)" \
 	        -rd config_file=$(FILL_CONFIG) \
-	        -rd seal_gds="$(SEAL_GDS)" \
-	        -rd out_gds=$@ \
+	        -rd seal_file="$(SEAL_GDS)" \
+	        -rd out_file=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rm $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+	        -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
 
 $(RESULTS_DIR)/6_final.v: $(REPORTS_DIR)/6_final_report.rpt
 

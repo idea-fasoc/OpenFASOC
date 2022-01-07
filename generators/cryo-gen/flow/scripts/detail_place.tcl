@@ -97,8 +97,11 @@ set max_disp_y [expr int(($core_yh - ($core_yl + $core_yh) / 2) / 1000)]
 
 set max_disp [concat $max_disp_x $max_disp_y]
 
+puts $max_disp
 
-detailed_placement -max_displacement $max_disp
+#detailed_placement -max_displacement $max_disp
+
+detailed_placement
 
 optimize_mirroring
 check_placement -verbose
