@@ -237,7 +237,7 @@ place: $(RESULTS_DIR)/3_place.def \
 # STEP 0: Place RO to fixed coordinates
 
 $(RESULTS_DIR)/2_floorplan_ro.def: $(RESULTS_DIR)/2_floorplan.def
-	python3 util/place_ro.py --inputDef $(RESULTS_DIR)/2_floorplan.def --outputDef $(RESULTS_DIR)/2_floorplan_ro.def --coreDim 50,40 --arrayDim 24,6 --cellDim 0.99,6.66 --targetInst cryo_ro_1 --coreDieOffset 3.63,0
+	python3 util/place_ro.py --inputDef $(RESULTS_DIR)/2_floorplan.def --outputDef $(RESULTS_DIR)/2_floorplan_ro.def --coreDim 75,35 --arrayDim 36,4 --cellDim 0.99,6.66 --targetInst cryo_ro_1 --coreDieOffset 3.63,6.66
 
 # STEP 1: Global placement + IO placement (not random)
 #-------------------------------------------------------------------------------
