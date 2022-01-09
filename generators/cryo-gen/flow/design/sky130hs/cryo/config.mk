@@ -8,8 +8,8 @@ export VERILOG_FILES 		= $(sort $(wildcard ./design/src/$(DESIGN_NICKNAME)/*.v))
 
 export SDC_FILE    		= ./design/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export DIE_AREA   	 	= 0 0 96 40 
-export CORE_AREA   		= 2.32 2.32 93.68 37.68
+export DIE_AREA   	 	= 0 0 96 34 
+export CORE_AREA   		= 2.32 2.32 93.68 31.68
 
 export PDN_CFG 			= ../blocks/$(PLATFORM)/pdn.cfg
 
