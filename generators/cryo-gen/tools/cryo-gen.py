@@ -51,6 +51,9 @@ elif args.platform == 'sky130osu12Ths':
 elif args.platform == 'sky130osu12Tms':
   p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_osu_sc_12T_ms.spice"])
   p.wait()
+elif args.platform == 'sky130osu12Tls':
+  p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_osu_sc_12T_ls.spice"])
+  p.wait()
 elif args.platform == 'sky130osu18Ths':
   p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_osu_sc_18T_hs.spice"])
   p.wait()
@@ -123,6 +126,10 @@ elif args.platform == 'sky130osu12Ths':
 elif args.platform == 'sky130osu12Tms':
   aux1 = 'sky130_osu_sc_12T_ms__nand2_1'
   aux2 = 'sky130_osu_sc_12T_ms__inv_1'
+  
+elif args.platform == 'sky130osu12Tls':
+  aux1 = 'sky130_osu_sc_12T_ls__nand2_1'
+  aux2 = 'sky130_osu_sc_12T_ls__inv_1'
 
 elif args.platform == 'sky130osu18Ths':
   aux1 = 'sky130_osu_sc_18T_hs__nand2_1'

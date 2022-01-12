@@ -45,6 +45,10 @@ set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_ms__inv_1
 set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_12T_ms__decap_1
 set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_ms__nand2_1
 
+set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_ls__inv_1
+set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_12T_ls__decap_1
+set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_ls__nand2_1
+
 set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_hs__inv_1
 set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_18T_hs__decap_1
 set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_hs__nand2_1

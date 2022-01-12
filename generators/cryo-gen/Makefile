@@ -62,6 +62,18 @@ sky130osu12Tms_cryo:
 sky130osu12Tms_cyro_full:
 	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu12Tms --mode full --ninv 144
 
+# sky130osu12Tls
+
+sky130osu12Tls_cryo_verilog:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu12Tls --mode verilog --ninv 144
+
+sky130osu12Tls_cryo:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu12Tls --mode macro --ninv 144
+	python3 tools/parse_rpt.py
+
+sky130osu12Tls_cyro_full:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu12Tls --mode full --ninv 144
+
 # sky130osu18Ths
 
 sky130osu18Ths_cryo_verilog:
