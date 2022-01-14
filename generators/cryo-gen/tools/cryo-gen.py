@@ -36,8 +36,27 @@ if (args.clean):
   p = sp.Popen(['make','clean_all'], cwd=genDir)
   p.wait()
 
-p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hd.spice"])
-p.wait()
+if args.platform == 'sky130hd':
+  p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hd.spice"])
+  p.wait()
+elif args.platform == 'sky130hs':
+  p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hs.spice"])
+  p.wait()
+elif args.platform == 'sky130hvl':
+  p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hvl.spice"])
+  p.wait()
+elif args.platform == 'sky130osu12Ths':
+  p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_osu_sc_12T_hs.spice"])
+  p.wait()
+elif args.platform == 'sky130osu12Tms':
+  p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_osu_sc_12T_ms.spice"])
+  p.wait()
+elif args.platform == 'sky130osu12Tls':
+  p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_osu_sc_12T_ls.spice"])
+  p.wait()
+elif args.platform == 'sky130osu18Ths':
+  p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_osu_sc_18T_hs.spice"])
+  p.wait()
 
 print("Loading platform_config file...")
 print()
@@ -96,24 +115,29 @@ elif args.platform == 'sky130hs':
   aux1 = 'sky130_fd_sc_hs__nand2_1'
   aux2 = 'sky130_fd_sc_hs__inv_1'
 
+elif args.platform == 'sky130hvl':
+  aux1 = 'sky130_fd_sc_hvl__nand2_1'
+  aux2 = 'sky130_fd_sc_hvl__inv_1'
+
+elif args.platform == 'sky130osu12Ths':
+  aux1 = 'sky130_osu_sc_12T_hs__nand2_1'
+  aux2 = 'sky130_osu_sc_12T_hs__inv_1'
+  
+elif args.platform == 'sky130osu12Tms':
+  aux1 = 'sky130_osu_sc_12T_ms__nand2_1'
+  aux2 = 'sky130_osu_sc_12T_ms__inv_1'
+  
+elif args.platform == 'sky130osu12Tls':
+  aux1 = 'sky130_osu_sc_12T_ls__nand2_1'
+  aux2 = 'sky130_osu_sc_12T_ls__inv_1'
+
+elif args.platform == 'sky130osu18Ths':
+  aux1 = 'sky130_osu_sc_18T_hs__nand2_1'
+  aux2 = 'sky130_osu_sc_18T_hs__inv_1'  
+  
 ninv=ninv+1
 
 cryo_netlist.gen_cryo_netlist(ninv,aux1,aux2, srcDir)
-
-#with open(srcDir + 'TEMP_ANALOG_hv.nl.v', 'r') as rf:
-#    filedata = rf.read()
-#header_list = re.findall('HEADER\s+(\w+)\(', filedata)
-#with open(genDir + 'blocks/sky130hd/cryoInst_custom_net.txt', 'w') as wf:
-#    wf.write('r_VIN\n')
-#    for header_cell in header_list:
-#        wf.write('temp_analog_1.' + header_cell + ' VIN\n')
-
-#with open(srcDir + 'cryo_ro.nl.v', 'r') as rf:
-#    filedata = rf.read()
-#lv_list = re.findall('\nsky130_fd_sc\w*\s+(\w+)\s+\(', filedata)
-#with open(genDir + 'blocks/sky130hd/cryoInst_domain_insts.txt', 'w') as wf:
-#    for lv_cell in lv_list:
-#        wf.write('temp_analog_0.' + lv_cell + '\n')
 
 with open(srcDir + 'cryoInst.v', 'r') as rf:
     filedata = rf.read()
@@ -122,10 +146,10 @@ with open(srcDir + 'cryoInst.v', 'w') as wf:
     wf.write(filedata)
 
 # note that this python overwrites config.mk
-with open(flowDir + 'design/sky130hd/cryo/config.mk', 'r') as rf:
+with open(flowDir + 'design/' + args.platform +'/cryo/config.mk', 'r') as rf:
     filedata = rf.read()
     filedata = re.sub('export DESIGN_NAME\s*=\s*(\w+)', 'export DESIGN_NAME = ' + designName, filedata)
-with open(flowDir + 'design/sky130hd/cryo/config.mk', 'w') as wf:
+with open(flowDir + 'design/' + args.platform + '/cryo/config.mk', 'w') as wf:
     wf.write(filedata)
 
 shutil.copyfile(srcDir + 'cryo_ro.nl.v', flowDir + 'design/src/cryo/cryo_ro.nl.v')
@@ -144,7 +168,7 @@ print('#----------------------------------------------------------------------')
 print('# Run Synthesis and APR')
 print('#----------------------------------------------------------------------')
 
-p = sp.Popen(['make','finish'], cwd=flowDir)
+p = sp.Popen(['make',args.platform], cwd=flowDir)
 p.wait()
 
 
@@ -181,14 +205,14 @@ os.mkdir(genDir + args.outputDir)
 #  print("designName: {}".format(designName))
 #  subprocess.run(["ls", "-l", flowDir, "results/", args.platform, "/cryo"])
 
-shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_final.gds', genDir + args.outputDir + '/' + designName + '.gds')
-shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_final.def', genDir + args.outputDir + '/' + designName + '.def')
-shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_final.v', genDir + args.outputDir + '/' + designName + '.v')
-shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_1_fill.sdc', genDir + args.outputDir + '/' + designName + '.sdc')
-shutil.copyfile(flowDir + designName + '.spice', genDir + args.outputDir + '/' + designName + '.spice')
-shutil.copyfile(flowDir + designName + '_pex.spice', genDir + args.outputDir + '/' + designName + '_pex.spice')
-shutil.copyfile(flowDir + 'reports/' + args.platform + '/cryo/6_final_drc.rpt', genDir + args.outputDir + '/6_final_drc.rpt')
-shutil.copyfile(flowDir + 'reports/' + args.platform + '/cryo/6_final_lvs.rpt', genDir + args.outputDir + '/6_final_lvs.rpt')
+shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_final.gds', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.gds')
+shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_final.def', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.def')
+shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_final.v', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.v')
+shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_1_fill.sdc', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.sdc')
+shutil.copyfile(flowDir + designName + '.spice', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.spice')
+shutil.copyfile(flowDir + designName + '_pex.spice', genDir + args.outputDir + '/' + args.platform + '/' + designName + '_pex.spice')
+shutil.copyfile(flowDir + 'reports/' + args.platform + '/cryo/6_final_drc.rpt', genDir + args.outputDir + '/' + args.platform + '/6_final_drc.rpt')
+shutil.copyfile(flowDir + 'reports/' + args.platform + '/cryo/6_final_lvs.rpt', genDir + args.outputDir + '/' + args.platform + '/6_final_lvs.rpt')
 
 
 time.sleep(2)

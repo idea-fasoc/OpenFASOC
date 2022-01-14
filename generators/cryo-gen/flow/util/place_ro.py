@@ -73,31 +73,31 @@ def place_inv(fp_dim, array_dim, cell_dim):
         
         if arrange_direction:
             x_index = x - (i % x)
-            ori_sm = 'S'
-            ori_lg = 'N'
+            ori_sm = 'FN'
+            ori_lg = 'FS'
         else:
             x_index = i % x + 1
             ori_sm = 'N'
             ori_lg = 'S'
 
-        coord_sm = (math.floor(math.floor(p / a) / (x + 1) ) * (x_index + 1) * a, math.floor(math.floor(q / b) / (y + 1)) * (y_index_sm) * b)
-        coord_lg = (math.floor(math.floor(p / a) / (x + 1) ) * (x_index + 1) * a, math.floor(math.floor(q / b) / (y + 1)) * (y_index_lg) * b)
+        coord_sm = (math.floor(math.floor(p / a) / (x + 1) ) * (x_index + 1) * a, math.floor(math.floor(q / b) / (y)) * (y_index_sm) * b)
+        coord_lg = (math.floor(math.floor(p / a) / (x + 1) ) * (x_index + 1) * a, math.floor(math.floor(q / b) / (y)) * (y_index_lg) * b)
 	
 	# move the smaller one left by 3 units to avoid overlap
         #new_sm_coord_x = coord_sm[0] - 3 * a
         #coord_sm = (new_sm_coord_x, coord_sm[1])
 	
 
-        #print("Inv", inv_sm, "(", x_index_sm, ",", y_index, ")", coord_sm)
-        #print("Inv", inv_lg, "(", x_index_lg, ",", y_index, ")", coord_lg)
+        print("Inv", inv_sm, "(", x_index, ",", y_index_sm, ")", coord_sm)
+        print("Inv", inv_lg, "(", x_index, ",", y_index_lg, ")", coord_lg)
 
         # store inside dictionary
         inv_array_dict[inv_sm].extend([ori_sm,coord_sm])
         inv_array_dict[inv_lg].extend([ori_lg, coord_lg])
 
     # assign positions to each of the other components inside other_comp_dict, remove the old component placements in "lines" on the go 
-    coord_nand = (math.floor(math.floor(p / a) / (x + 1) ) * (1) * a, math.floor(math.floor(q / b) / (y + 1)) * (1 ) * b)
-    coord_invout = (math.floor(math.floor(p / a) / (x + 1) ) * (1) * a, math.floor(math.floor(q / b) / (y + 1)) * (0) * b)
+    coord_nand = (math.floor(math.floor(p / a) / (x + 1) ) * (1) * a, math.floor(math.floor(q / b) / (y)) * (1 ) * b)
+    coord_invout = (math.floor(math.floor(p / a) / (x + 1) ) * (1) * a, math.floor(math.floor(q / b) / (y)) * (0) * b)
 
     # HARD CODED inv_out and nand placement
     other_comp_dict['a_inv_out'].extend(['N', coord_invout])
@@ -131,7 +131,7 @@ def place_inv(fp_dim, array_dim, cell_dim):
 
                 insertion = ["+", "FIXED", '(', str(round(value[2][0] * 1000)), str(round(value[2][1] * 1000)), ')', value[1], ';']
                 new_line = value[0].replace(";", ' '.join(insertion))
-                print(new_line)
+                #print(new_line)
                 w_def.writelines(new_line)
 
                 
@@ -139,7 +139,7 @@ def place_inv(fp_dim, array_dim, cell_dim):
                 value[2] = tuple(map(sum, zip(value[2], core_die_offset)))
                 insertion = ["+", "FIXED", '(', str(round(value[2][0] * 1000)), str(round(value[2][1] * 1000)), ')', value[1], ';'] 
                 new_line = value[0].replace(";", ' '.join(insertion))
-                print(new_line)
+                #print(new_line)
                 w_def.writelines(new_line)
 
             # make is_component False so that the components are only written once

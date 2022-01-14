@@ -22,11 +22,11 @@ jobs:
           cd /tmp
           git clone https://github.com/The-OpenROAD-Project/OpenLane.git
           cd OpenLane
-          git checkout --force 2021.09.19_20.25.16
+          git checkout --force 2021.12.22_01.51.18
 
       - name: Make OpenLane Image
         run: |
-          cd /tmp/OpenLane/docker_build
+          cd /tmp/OpenLane/docker
           make merge
 
       - name: Make PDK
