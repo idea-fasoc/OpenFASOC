@@ -146,7 +146,6 @@ wire n142;
 wire n143; 
 wire n144; 
 wire n145; 
-
 sky130_osu_sc_15T_hs__nand2_1 a_nand_0 ( .A(EN), .B(n145), .Y(n1));
 sky130_osu_sc_15T_hs__inv_1 a_inv_0 ( .A(n1), .Y(n2));
 sky130_osu_sc_15T_hs__inv_1 a_inv_1 ( .A(n2), .Y(n3));
