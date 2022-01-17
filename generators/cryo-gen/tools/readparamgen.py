@@ -56,9 +56,10 @@ if not os.path.isfile(args.specfile):
    print('File Path: ' + args.specfile)
    sys.exit(1)
 
+supportedPlatforms = {'sky130hd', 'sky130hs', 'sky130hvl', 'sky130osu12Ths', 'sky130osu12Tms', 'sky130osu12Tls', 'sky130osu18Ths', 'sky130osu18Tms', 'sky130osu18Tls'}
 
-if args.platform != 'sky130hd' and args.platform != 'sky130hs' and args.platform != 'sky130hvl' and args.platform != 'sky130osu12Ths' and args.platform != 'sky130osu12Tms' and args.platform != 'sky130osu12Tls' and args.platform != 'sky130osu18Ths':
-  print("Error: only sky130hd, sky130hs, sky130hvl, sky130osu12Ths/ms/ls, and sky130osu18Ths platforms are supported as of now")
+if args.platform not in supportedPlatforms:
+  print("Error: only", supportedPlatforms, "platforms are supported as of now")
   sys.exit(1)
 
 # Load json spec file
