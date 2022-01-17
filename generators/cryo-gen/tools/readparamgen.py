@@ -57,13 +57,9 @@ if not os.path.isfile(args.specfile):
    sys.exit(1)
 
 
-<<<<<<< HEAD
-if args.platform != 'sky130hd' and args.platform != 'sky130hs' and args.platform != 'sky130hvl' and args.platform != 'sky130osu15Ths' and args.platform != 'sky130osu12Ths' and args.platform != 'sky130osu18Ths':
-  print("Error: only sky130hd, sky130hs, sky130hvl, sky130osu12Ths, sky130osu15Ths and sky130osu18Ths platforms are supported as of now")
-=======
-if args.platform != 'sky130hd' and args.platform != 'sky130hs' and args.platform != 'sky130hvl' and args.platform != 'sky130osu12Ths' and args.platform != 'sky130osu12Tms' and args.platform != 'sky130osu12Tls' and args.platform != 'sky130osu18Ths':
-  print("Error: only sky130hd, sky130hs, sky130hvl, sky130osu12Ths/ms/ls, and sky130osu18Ths platforms are supported as of now")
->>>>>>> 4a35d4dfe48d50ad3f34ead54fe89012f2e126bb
+if args.platform != 'sky130hd' and args.platform != 'sky130hs' and args.platform != 'sky130hvl' and args.platform != 'sky130osu12Ths' and args.platform != 'sky130osu12Tms' and args.platform != 'sky130osu12Tls'and args.platform != 'sky130osu15Ths' and args.platform != 'sky130osu18Ths':
+  print("Error: only sky130hd, sky130hs, sky130hvl, sky130osu12Ths/ms/ls, sky130osu15Ths and sky130osu18Ths platforms are supported as of now")
+
   sys.exit(1)
 
 # Load json spec file
