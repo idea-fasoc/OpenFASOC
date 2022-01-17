@@ -54,11 +54,17 @@ elif args.platform == 'sky130osu12Tms':
 elif args.platform == 'sky130osu12Tls':
   p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_osu_sc_12T_ls.spice"])
   p.wait()
+elif args.platform == 'sky130osu15Ths':
+  p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_osu_sc_15T_hs.spice"])
+  p.wait()
 elif args.platform == 'sky130osu18Ths':
   p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_osu_sc_18T_hs.spice"])
   p.wait()
-elif args.platform == 'sky130osu15Ths':
-  p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_osu_sc_15T_hs.spice"])
+elif args.platform == 'sky130osu18Tms':
+  p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_osu_sc_18T_ms.spice"])
+  p.wait()
+elif args.platform == 'sky130osu18Tls':
+  p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_osu_sc_18T_ls.spice"])
   p.wait()
 
 print("Loading platform_config file...")
@@ -134,13 +140,21 @@ elif args.platform == 'sky130osu12Tls':
   aux1 = 'sky130_osu_sc_12T_ls__nand2_1'
   aux2 = 'sky130_osu_sc_12T_ls__inv_1'
 
+elif args.platform == 'sky130osu15Ths':
+  aux1 = 'sky130_osu_sc_15T_hs__nand2_1'
+  aux2 = 'sky130_osu_sc_15T_hs__inv_1'
+  
 elif args.platform == 'sky130osu18Ths':
   aux1 = 'sky130_osu_sc_18T_hs__nand2_1'
   aux2 = 'sky130_osu_sc_18T_hs__inv_1'  
 
-elif args.platform == 'sky130osu15Ths':
-  aux1 = 'sky130_osu_sc_15T_hs__nand2_1'
-  aux2 = 'sky130_osu_sc_15T_hs__inv_1'
+elif args.platform == 'sky130osu18Tms':
+  aux1 = 'sky130_osu_sc_18T_ms__nand2_1'
+  aux2 = 'sky130_osu_sc_18T_ms__inv_1'  
+
+elif args.platform == 'sky130osu18Tls':
+  aux1 = 'sky130_osu_sc_18T_ls__nand2_1'
+  aux2 = 'sky130_osu_sc_18T_ls__inv_1'  
   
 ninv=ninv+1
 

@@ -100,6 +100,30 @@ sky130osu18Ths_cryo:
 sky130osu18Ths_cyro_full:
 	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu18Ths --mode full --ninv 144
 	
+# sky130osu18Tms
+
+sky130osu18Tms_cryo_verilog:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu18Tms --mode verilog --ninv 144
+
+sky130osu18Tms_cryo:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu18Tms --mode macro --ninv 144
+	python3 tools/parse_rpt.py
+
+sky130osu18Tms_cyro_full:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu18Tms --mode full --ninv 144
+
+# sky130osu18Tls
+
+sky130osu18Tls_cryo_verilog:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu18Tls --mode verilog --ninv 144
+
+sky130osu18Tls_cryo:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu18Tls --mode macro --ninv 144
+	python3 tools/parse_rpt.py
+
+sky130osu18Tls_cyro_full:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu18Tls --mode full --ninv 144
+	
 clean:
 	rm -f error_within_x.csv golden_error_opt.csv search_result.csv
 	rm -rf work
