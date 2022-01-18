@@ -434,25 +434,24 @@ $(RESULTS_DIR)/6_final.def: $(REPORTS_DIR)/6_final_report.rpt
 $(WRAPPED_GDS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 	($(TIME_CMD) klayout -zz -rd design_name=$(basename $(notdir $@)) \
 	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:gds=def)) \
-	        -rd in_gds="$(ADDITIONAL_GDS)" \
+	        -rd in_files="$(ADDITIONAL_GDS)" \
 	        -rd config_file=$(FILL_CONFIG) \
-	        -rd seal_gds="" \
-	        -rd out_gds=$@ \
+	        -rd seal_file="" \
+	        -rd out_file=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout_wrap.lyt \
-	        -rm $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
+	        -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
 
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED_GDS) $(RESULTS_DIR)/6_final.def
 	($(TIME_CMD) stdbuf -o L klayout -zz -rd design_name=$(DESIGN_NAME) \
-		-rd lef_file=" ../../../$(TECH_LEF)  ../../../$(SC_LEF)" \
-	        -rd in_def=$(RESULTS_DIR)/6_final.def \
-	        -rd in_gds="$(GDS_FILES) $(WRAPPED_GDS)" \
-	        -rd config_file=$(FILL_CONFIG) \
-	        -rd seal_gds="$(SEAL_GDS)" \
-	        -rd out_gds=$@ \
-	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rm $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+		-rd in_def=$(RESULTS_DIR)/6_final.def \
+                -rd in_files="$(GDS_FILES) $(WRAPPED_GDS)" \
+                -rd config_file=$(FILL_CONFIG) \
+                -rd seal_file="$(SEAL_GDS)" \
+                -rd out_file=$@ \
+                -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
+                -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
 
 $(RESULTS_DIR)/6_final.v: $(REPORTS_DIR)/6_final_report.rpt
 
