@@ -3,7 +3,7 @@
 
 layout = RBA::Layout.new
 
-files = Dir["/home/tuohang/OpenFASOC/common/platforms/sky130osu12Ths/gds/*.gds"]
+files = Dir["/home/elonjia/OpenFASOC/common/platforms/sky130osu15Ths/gds/*.gds"]
 
 load_layout_options = RBA::LoadLayoutOptions.new
     
@@ -18,4 +18,4 @@ files.each do |file_name|
 end
 
 
-layout.write("/home/tuohang/OpenFASOC/common/platforms/sky130osu12Ths/gds/sky130_osu_sc_12T_hs.gds")
+layout.write("/home/elonjia/OpenFASOC/common/platforms/sky130osu15Ths/gds/sky130_osu_sc_15T_hs.gds")
