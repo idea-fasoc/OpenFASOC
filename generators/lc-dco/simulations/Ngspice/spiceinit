@@ -1,0 +1,3 @@
+set num_threads=16
+set ngbehavior=hsa
+set ng_nomodcheck
