@@ -21,7 +21,7 @@
 .param pvdd = 1.8
 .param bias = 1.0
 *.param Icurr = 1200u
-.param Icurr = 760u
+.param Icurr = 800u
 .param psw0 = 1.8
 *.param psw1 = 1.8 
 *.param psw2 = 1.8 
@@ -63,7 +63,7 @@ xlccore tail_c outn outp open VDD 0 LC_Cell_3
 *Ibias outn outp ind_sub VDD GND
 *xmim_1m2C outn outp sw7 sw6 sw5 sw4 sw3 sw2 sw1 sw0 VDD 0 mim_1m2C
 
-** LC Circuit **
+** Initial Condition**
 .NODESET v(outp)=0 v(outn)=1.8 v(xmim_1m2C.net1)=0 v(xmim_1m2C.net1)=0
 .ic v(outn)='pvdd'
 .ic v(outp)= 0
@@ -91,14 +91,14 @@ save all
 set filetype=ascii
 set appendwrite TRUE
 set wr_singlescale TRUE
-echo "time outp outn outndc outpdc" > LC_run.out
-wrdata LC_run.out v(outp) v(outn) v(outpndc) v(outnndc)
+echo "time outp outn " > LC_run.out
+wrdata LC_run.out v(outp) v(outn)
 .endc
 
-.measure tran tperiodR_P TRIG v(outpndc) val=0.9 TD=90n FALL=5 TARG v(outpndc) val=0.9 TD=90n FALL=6
-.measure tran tperiodF_P TRIG v(outpndc) val=0.9 TD=90n RISE=5 TARG v(outpndc) val=0.9 TD=90n RISE=6
-.measure tran tperiodR_N TRIG v(outnndc) val=0.9 TD=90n FALL=5 TARG v(outnndc) val=0.9 TD=90n FALL=6
-.measure tran tperiodF_N TRIG v(outnndc) val=0.9 TD=90n RISE=5 TARG v(outnndc) val=0.9 TD=90n RISE=6
+.measure tran tperiodR_P TRIG v(outp) val=0.9 TD=90n FALL=5 TARG v(out) val=0.9 TD=90n FALL=6
+.measure tran tperiodF_P TRIG v(outp) val=0.9 TD=90n RISE=5 TARG v(out) val=0.9 TD=90n RISE=6
+.measure tran tperiodR_N TRIG v(outn) val=0.9 TD=90n FALL=5 TARG v(out) val=0.9 TD=90n FALL=6
+.measure tran tperiodF_N TRIG v(outn) val=0.9 TD=90n RISE=5 TARG v(out) val=0.9 TD=90n RISE=6
 
 
 .measure tran outpmax MAX v(outp) TD=90n
