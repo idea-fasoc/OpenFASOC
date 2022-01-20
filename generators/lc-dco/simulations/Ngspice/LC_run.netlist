@@ -53,7 +53,7 @@ vsw0 sw0 0 'psw0'
 **Coutp outp outpndc 300f
 **Coutn outn outnndc 300f
 Clp outp 0 10f
-Clp outn 0 10f
+Cln outn 0 10f
 
 
 
