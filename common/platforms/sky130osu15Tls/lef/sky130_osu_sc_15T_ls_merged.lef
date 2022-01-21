@@ -1,0 +1,3815 @@
+VERSION 5.8 ;
+BUSBITCHARS "[]" ;
+DIVIDERCHAR "/" ;
+
+MACRO sky130_osu_sc_15T_ls__addf_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__addf_1 0 0 ;
+  SIZE 7.04 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 5.01 1.475 5.3 1.705 ;
+        RECT 0.34 1.505 5.3 1.675 ;
+        RECT 2.35 1.475 2.64 1.705 ;
+        RECT 0.34 1.475 0.63 1.705 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 4.12 2.215 4.41 2.445 ;
+        RECT 0.34 2.25 4.41 2.415 ;
+        RECT 4.06 2.245 4.41 2.415 ;
+        RECT 0.34 2.245 3.67 2.415 ;
+        RECT 2.83 2.215 3.12 2.445 ;
+        RECT 2.16 2.215 2.45 2.445 ;
+        RECT 0.34 2.215 0.63 2.445 ;
+    END
+  END B
+  PIN CI
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 4.6 1.845 4.89 2.075 ;
+        RECT 0.4 1.875 4.89 2.045 ;
+        RECT 3.27 1.845 3.56 2.075 ;
+        RECT 1.18 1.845 1.47 2.075 ;
+    END
+  END CI
+  PIN CO
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 6.605 2.585 6.895 2.815 ;
+        RECT 6.495 2.615 6.895 2.785 ;
+    END
+  END CO
+  PIN CON
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 5.995 1.105 6.285 1.335 ;
+        RECT 1.405 1.135 6.285 1.305 ;
+        RECT 3.825 1.105 4.115 1.335 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+    END
+  END CON
+  PIN S
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 5.655 2.96 5.945 3.19 ;
+        RECT 5.545 2.99 5.945 3.16 ;
+    END
+  END S
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 7.04 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 7.04 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__addf_1
+
+MACRO sky130_osu_sc_15T_ls__addf_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__addf_l 0 0 ;
+  SIZE 7.04 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 5.01 1.475 5.3 1.705 ;
+        RECT 0.34 1.505 5.3 1.675 ;
+        RECT 2.35 1.475 2.64 1.705 ;
+        RECT 0.34 1.475 0.63 1.705 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 4.12 2.215 4.41 2.445 ;
+        RECT 0.34 2.25 4.41 2.415 ;
+        RECT 4.06 2.245 4.41 2.415 ;
+        RECT 0.34 2.245 3.67 2.415 ;
+        RECT 2.83 2.215 3.12 2.445 ;
+        RECT 2.16 2.215 2.45 2.445 ;
+        RECT 0.34 2.215 0.63 2.445 ;
+    END
+  END B
+  PIN CI
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 4.6 1.845 4.89 2.075 ;
+        RECT 0.4 1.875 4.89 2.045 ;
+        RECT 3.27 1.845 3.56 2.075 ;
+        RECT 1.18 1.845 1.47 2.075 ;
+    END
+  END CI
+  PIN CO
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 6.605 2.585 6.895 2.815 ;
+        RECT 6.495 2.615 6.895 2.785 ;
+    END
+  END CO
+  PIN CON
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 5.995 1.105 6.285 1.335 ;
+        RECT 1.405 1.135 6.285 1.305 ;
+        RECT 3.825 1.105 4.115 1.335 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+    END
+  END CON
+  PIN S
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 5.655 2.99 5.945 3.22 ;
+        RECT 5.545 3.02 5.945 3.19 ;
+    END
+  END S
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 7.04 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 7.04 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__addf_l
+
+MACRO sky130_osu_sc_15T_ls__addh_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__addh_1 0 0 ;
+  SIZE 4.18 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.54 2.215 3.83 2.445 ;
+        RECT 1.24 2.24 3.83 2.415 ;
+        RECT 1.24 2.215 1.53 2.445 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.06 1.845 3.35 2.075 ;
+        RECT 0.76 1.875 3.35 2.05 ;
+        RECT 0.76 1.845 1.05 2.075 ;
+    END
+  END B
+  PIN CO
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 2.03 2.615 2.43 2.785 ;
+        RECT 2.03 2.585 2.32 2.815 ;
+    END
+  END CO
+  PIN CON
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.275 1.475 3.565 1.705 ;
+        RECT 3.165 1.505 3.565 1.675 ;
+    END
+  END CON
+  PIN S
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.115 2.955 0.405 3.185 ;
+        RECT 0.115 1.1 0.405 1.33 ;
+        RECT 0.175 1.1 0.345 3.185 ;
+    END
+  END S
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 4.18 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 4.18 5.55 ;
+    END
+  END vdd
+  OBS
+    LAYER met1 ;
+      RECT 2.475 1.475 2.765 1.705 ;
+      RECT 0.49 1.475 0.78 1.705 ;
+      RECT 0.49 1.505 2.765 1.675 ;
+  END
+END sky130_osu_sc_15T_ls__addh_1
+
+MACRO sky130_osu_sc_15T_ls__addh_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__addh_l 0 0 ;
+  SIZE 4.18 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.54 2.215 3.83 2.445 ;
+        RECT 1.24 2.24 3.83 2.415 ;
+        RECT 1.24 2.215 1.53 2.445 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.06 1.845 3.35 2.075 ;
+        RECT 0.76 1.875 3.35 2.05 ;
+        RECT 0.76 1.845 1.05 2.075 ;
+    END
+  END B
+  PIN CO
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 2.03 2.615 2.43 2.785 ;
+        RECT 2.03 2.585 2.32 2.815 ;
+    END
+  END CO
+  PIN CON
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.275 1.475 3.565 1.705 ;
+        RECT 3.165 1.505 3.565 1.675 ;
+    END
+  END CON
+  PIN S
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.115 2.955 0.405 3.185 ;
+        RECT 0.115 1.1 0.405 1.33 ;
+        RECT 0.175 1.1 0.345 3.185 ;
+    END
+  END S
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 4.18 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 4.18 5.55 ;
+    END
+  END vdd
+  OBS
+    LAYER met1 ;
+      RECT 2.475 1.475 2.765 1.705 ;
+      RECT 0.49 1.475 0.78 1.705 ;
+      RECT 0.49 1.505 2.765 1.675 ;
+  END
+END sky130_osu_sc_15T_ls__addh_l
+
+MACRO sky130_osu_sc_15T_ls__and2_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__and2_1 0 0 ;
+  SIZE 1.87 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.125 2.985 0.525 3.155 ;
+        RECT 0.125 2.955 0.415 3.185 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.805 2.585 1.095 2.815 ;
+        RECT 0.7 2.615 1.095 2.785 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.405 2.215 1.695 2.445 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.87 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.87 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__and2_1
+
+MACRO sky130_osu_sc_15T_ls__and2_2
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__and2_2 0 0 ;
+  SIZE 2.31 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.125 2.985 0.525 3.155 ;
+        RECT 0.125 2.955 0.415 3.185 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.805 2.585 1.095 2.815 ;
+        RECT 0.7 2.615 1.095 2.785 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.405 2.215 1.695 2.445 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 2.31 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 2.31 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__and2_2
+
+MACRO sky130_osu_sc_15T_ls__and2_4
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__and2_4 0 0 ;
+  SIZE 3.19 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.125 2.985 0.525 3.155 ;
+        RECT 0.125 2.955 0.415 3.185 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.805 2.585 1.095 2.815 ;
+        RECT 0.7 2.615 1.095 2.785 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 2.265 2.215 2.555 2.445 ;
+        RECT 2.265 1.105 2.555 1.335 ;
+        RECT 2.325 1.105 2.495 2.445 ;
+        RECT 1.405 2.245 2.555 2.415 ;
+        RECT 1.405 1.135 2.555 1.305 ;
+        RECT 1.405 2.215 1.695 2.445 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 3.19 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 3.19 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__and2_4
+
+MACRO sky130_osu_sc_15T_ls__and2_6
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__and2_6 0 0 ;
+  SIZE 4.07 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.09 2.985 0.49 3.155 ;
+        RECT 0.09 2.955 0.38 3.185 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.77 2.585 1.06 2.815 ;
+        RECT 0.66 2.615 1.06 2.785 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.125 2.215 3.415 2.445 ;
+        RECT 3.125 1.105 3.415 1.335 ;
+        RECT 3.185 1.105 3.355 2.445 ;
+        RECT 1.405 2.245 3.415 2.415 ;
+        RECT 1.405 1.135 3.415 1.305 ;
+        RECT 2.265 2.215 2.555 2.445 ;
+        RECT 2.265 1.105 2.555 1.335 ;
+        RECT 2.325 1.105 2.495 2.445 ;
+        RECT 1.405 2.215 1.695 2.445 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 4.07 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 4.07 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__and2_6
+
+MACRO sky130_osu_sc_15T_ls__and2_8
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__and2_8 0 0 ;
+  SIZE 4.95 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.125 2.985 0.525 3.155 ;
+        RECT 0.125 2.955 0.415 3.185 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.805 2.585 1.095 2.815 ;
+        RECT 0.7 2.615 1.095 2.785 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.985 2.215 4.275 2.445 ;
+        RECT 3.985 1.105 4.275 1.335 ;
+        RECT 4.045 1.105 4.215 2.445 ;
+        RECT 1.405 2.245 4.275 2.415 ;
+        RECT 3.56 1.135 4.275 1.305 ;
+        RECT 3.125 2.215 3.415 2.445 ;
+        RECT 3.125 1.105 3.415 1.335 ;
+        RECT 3.185 1.105 3.355 2.445 ;
+        RECT 1.405 1.135 3.415 1.305 ;
+        RECT 2.265 2.215 2.555 2.445 ;
+        RECT 2.265 1.105 2.555 1.335 ;
+        RECT 2.325 1.105 2.495 2.445 ;
+        RECT 1.405 2.215 1.695 2.445 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 4.95 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 4.95 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__and2_8
+
+MACRO sky130_osu_sc_15T_ls__and2_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__and2_l 0 0 ;
+  SIZE 1.87 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.125 2.985 0.525 3.155 ;
+        RECT 0.125 2.955 0.415 3.185 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.805 2.585 1.095 2.815 ;
+        RECT 0.7 2.615 1.095 2.785 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.405 2.215 1.695 2.445 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.87 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.87 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__and2_l
+
+MACRO sky130_osu_sc_15T_ls__ant
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__ant 0 0 ;
+  SIZE 0.99 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.215 0.54 2.445 ;
+    END
+  END A
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 0.99 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 0.99 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__ant
+
+MACRO sky130_osu_sc_15T_ls__antfill
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__antfill 0 0 ;
+  SIZE 0.99 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.215 0.54 2.445 ;
+    END
+  END A
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 0.99 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 0.99 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__antfill
+
+MACRO sky130_osu_sc_15T_ls__aoi21_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__aoi21_l 0 0 ;
+  SIZE 1.87 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A0
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.24 2.985 0.64 3.155 ;
+        RECT 0.24 2.955 0.53 3.185 ;
+    END
+  END A0
+  PIN A1
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.58 2.615 0.98 2.785 ;
+        RECT 0.58 2.585 0.87 2.815 ;
+    END
+  END A1
+  PIN B0
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.02 2.215 1.31 2.445 ;
+        RECT 0.91 2.245 1.31 2.415 ;
+    END
+  END B0
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.405 1.845 1.695 2.075 ;
+        RECT 1.465 1.135 1.635 2.075 ;
+        RECT 0.905 1.135 1.635 1.305 ;
+        RECT 0.905 1.105 1.195 1.335 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.87 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.87 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__aoi21_l
+
+MACRO sky130_osu_sc_15T_ls__aoi22_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__aoi22_l 0 0 ;
+  SIZE 2.31 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A0
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.24 2.985 0.64 3.155 ;
+        RECT 0.24 2.955 0.53 3.185 ;
+    END
+  END A0
+  PIN A1
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.58 2.615 0.98 2.785 ;
+        RECT 0.58 2.585 0.87 2.815 ;
+    END
+  END A1
+  PIN B0
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.02 2.215 1.31 2.445 ;
+        RECT 0.91 2.245 1.31 2.415 ;
+    END
+  END B0
+  PIN B1
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.79 1.85 2.08 2.08 ;
+        RECT 1.68 1.88 2.08 2.05 ;
+    END
+  END B1
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.45 1.475 1.74 1.705 ;
+        RECT 1.52 1.135 1.69 1.705 ;
+        RECT 0.94 1.135 1.69 1.305 ;
+        RECT 0.94 1.105 1.23 1.335 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 2.31 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 2.31 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__aoi22_l
+
+MACRO sky130_osu_sc_15T_ls__buf_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__buf_1 0 0 ;
+  SIZE 1.43 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.49 2.955 0.78 3.185 ;
+        RECT 0.32 2.985 0.78 3.155 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.975 2.585 1.265 2.815 ;
+        RECT 0.975 1.105 1.265 1.335 ;
+        RECT 1.035 1.105 1.205 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.43 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.43 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__buf_1
+
+MACRO sky130_osu_sc_15T_ls__buf_2
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__buf_2 0 0 ;
+  SIZE 1.87 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.49 2.955 0.78 3.185 ;
+        RECT 0.32 2.985 0.78 3.155 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.975 2.585 1.265 2.815 ;
+        RECT 0.975 1.105 1.265 1.335 ;
+        RECT 1.035 1.105 1.205 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.87 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.87 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__buf_2
+
+MACRO sky130_osu_sc_15T_ls__buf_4
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__buf_4 0 0 ;
+  SIZE 2.75 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.49 2.955 0.78 3.185 ;
+        RECT 0.32 2.985 0.78 3.155 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.835 2.585 2.125 2.815 ;
+        RECT 1.835 1.105 2.125 1.335 ;
+        RECT 1.895 1.105 2.065 2.815 ;
+        RECT 0.975 2.615 2.125 2.785 ;
+        RECT 0.975 1.135 2.125 1.305 ;
+        RECT 0.975 2.585 1.265 2.815 ;
+        RECT 0.975 1.105 1.265 1.335 ;
+        RECT 1.035 1.105 1.205 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 2.75 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 2.75 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__buf_4
+
+MACRO sky130_osu_sc_15T_ls__buf_6
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__buf_6 0 0 ;
+  SIZE 3.63 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.49 2.955 0.78 3.185 ;
+        RECT 0.32 2.985 0.78 3.155 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 2.695 2.585 2.985 2.815 ;
+        RECT 2.695 1.105 2.985 1.335 ;
+        RECT 2.755 1.105 2.925 2.815 ;
+        RECT 0.975 2.615 2.985 2.785 ;
+        RECT 0.975 1.135 2.985 1.305 ;
+        RECT 1.835 2.585 2.125 2.815 ;
+        RECT 1.835 1.105 2.125 1.335 ;
+        RECT 1.895 1.105 2.065 2.815 ;
+        RECT 0.975 2.585 1.265 2.815 ;
+        RECT 0.975 1.105 1.265 1.335 ;
+        RECT 1.035 1.105 1.205 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 3.63 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 3.63 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__buf_6
+
+MACRO sky130_osu_sc_15T_ls__buf_8
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__buf_8 0 0 ;
+  SIZE 4.51 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.49 2.955 0.78 3.185 ;
+        RECT 0.32 2.985 0.78 3.155 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.555 2.585 3.845 2.815 ;
+        RECT 3.555 1.105 3.845 1.335 ;
+        RECT 3.615 1.105 3.785 2.815 ;
+        RECT 0.975 2.615 3.845 2.785 ;
+        RECT 0.975 1.135 3.845 1.305 ;
+        RECT 2.695 2.585 2.985 2.815 ;
+        RECT 2.695 1.105 2.985 1.335 ;
+        RECT 2.755 1.105 2.925 2.815 ;
+        RECT 1.835 2.585 2.125 2.815 ;
+        RECT 1.835 1.105 2.125 1.335 ;
+        RECT 1.895 1.105 2.065 2.815 ;
+        RECT 0.975 2.585 1.265 2.815 ;
+        RECT 0.975 1.105 1.265 1.335 ;
+        RECT 1.035 1.105 1.205 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 4.51 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 4.51 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__buf_8
+
+MACRO sky130_osu_sc_15T_ls__buf_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__buf_l 0 0 ;
+  SIZE 1.43 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.49 2.955 0.78 3.185 ;
+        RECT 0.32 2.985 0.78 3.155 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.975 2.585 1.265 2.815 ;
+        RECT 0.975 1.105 1.265 1.335 ;
+        RECT 1.035 1.105 1.205 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.43 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.43 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__buf_l
+
+MACRO sky130_osu_sc_15T_ls__decap_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__decap_1 0 0 ;
+  SIZE 0.99 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 0.99 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 0.99 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__decap_1
+
+MACRO sky130_osu_sc_15T_ls__decap_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__decap_l 0 0 ;
+  SIZE 0.99 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 0.99 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 0.99 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__decap_l
+
+MACRO sky130_osu_sc_15T_ls__dff_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__dff_1 0 0 ;
+  SIZE 7.26 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN CK
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 4.43 2.215 4.72 2.445 ;
+        RECT 1.205 2.245 4.72 2.415 ;
+        RECT 3.435 2.215 3.725 2.445 ;
+        RECT 1.205 2.215 1.495 2.445 ;
+    END
+  END CK
+  PIN D
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.845 1.875 1.245 2.045 ;
+        RECT 0.845 1.845 1.135 2.075 ;
+    END
+  END D
+  PIN Q
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 6.83 2.955 7.12 3.185 ;
+        RECT 6.715 2.985 7.12 3.155 ;
+    END
+  END Q
+  PIN QN
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 5.97 2.585 6.26 2.815 ;
+        RECT 5.86 2.615 6.26 2.785 ;
+    END
+  END QN
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 7.26 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 7.26 5.55 ;
+    END
+  END vdd
+  OBS
+    LAYER met1 ;
+      RECT 6.07 1.815 6.36 2.045 ;
+      RECT 3.915 1.815 4.205 2.045 ;
+      RECT 3.915 1.845 6.36 2.015 ;
+      RECT 5.03 1.475 5.32 1.705 ;
+      RECT 2.615 1.475 2.905 1.705 ;
+      RECT 2.615 1.505 5.32 1.675 ;
+      RECT 2.185 1.475 2.475 1.705 ;
+      RECT 0.14 1.475 0.43 1.705 ;
+      RECT 0.14 1.505 2.475 1.675 ;
+  END
+END sky130_osu_sc_15T_ls__dff_1
+
+MACRO sky130_osu_sc_15T_ls__dff_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__dff_l 0 0 ;
+  SIZE 7.26 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN CK
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 4.43 2.215 4.72 2.445 ;
+        RECT 1.205 2.245 4.72 2.415 ;
+        RECT 3.435 2.215 3.725 2.445 ;
+        RECT 1.205 2.215 1.495 2.445 ;
+    END
+  END CK
+  PIN D
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.845 1.875 1.245 2.045 ;
+        RECT 0.845 1.845 1.135 2.075 ;
+    END
+  END D
+  PIN Q
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 6.825 2.955 7.115 3.185 ;
+        RECT 6.715 2.985 7.115 3.155 ;
+    END
+  END Q
+  PIN QN
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 5.97 2.585 6.26 2.815 ;
+        RECT 5.86 2.615 6.26 2.785 ;
+    END
+  END QN
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 7.26 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 7.26 5.55 ;
+    END
+  END vdd
+  OBS
+    LAYER met1 ;
+      RECT 6.07 1.815 6.36 2.045 ;
+      RECT 3.915 1.815 4.205 2.045 ;
+      RECT 3.915 1.845 6.36 2.015 ;
+      RECT 5.03 1.475 5.32 1.705 ;
+      RECT 2.615 1.475 2.905 1.705 ;
+      RECT 2.615 1.505 5.32 1.675 ;
+      RECT 2.185 1.475 2.475 1.705 ;
+      RECT 0.14 1.475 0.43 1.705 ;
+      RECT 0.14 1.505 2.475 1.675 ;
+  END
+END sky130_osu_sc_15T_ls__dff_l
+
+MACRO sky130_osu_sc_15T_ls__dffr_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__dffr_1 0 0 ;
+  SIZE 9.57 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN CK
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 6.305 2.215 6.595 2.445 ;
+        RECT 3.08 2.245 6.595 2.415 ;
+        RECT 5.31 2.215 5.6 2.445 ;
+        RECT 3.08 2.215 3.37 2.445 ;
+    END
+  END CK
+  PIN D
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 2.72 1.875 3.12 2.045 ;
+        RECT 2.72 1.845 3.01 2.075 ;
+    END
+  END D
+  PIN Q
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 9.13 2.955 9.42 3.185 ;
+        RECT 9.02 2.985 9.42 3.155 ;
+    END
+  END Q
+  PIN QN
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 8.275 2.585 8.565 2.815 ;
+        RECT 8.16 2.615 8.565 2.785 ;
+    END
+  END QN
+  PIN RN
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.985 0.635 3.155 ;
+        RECT 0.175 2.955 0.465 3.185 ;
+    END
+  END RN
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 9.57 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 9.57 5.55 ;
+    END
+  END vdd
+  OBS
+    LAYER met1 ;
+      RECT 8.375 1.815 8.665 2.045 ;
+      RECT 5.79 1.815 6.08 2.045 ;
+      RECT 5.79 1.845 8.665 2.015 ;
+      RECT 7.665 1.105 7.955 1.335 ;
+      RECT 1.085 1.105 1.375 1.335 ;
+      RECT 1.085 1.135 7.955 1.305 ;
+      RECT 6.985 1.475 7.275 1.705 ;
+      RECT 4.49 1.475 4.78 1.705 ;
+      RECT 4.49 1.505 7.275 1.675 ;
+      RECT 4.06 1.475 4.35 1.705 ;
+      RECT 1.495 1.475 1.785 1.705 ;
+      RECT 1.495 1.505 4.35 1.675 ;
+  END
+END sky130_osu_sc_15T_ls__dffr_1
+
+MACRO sky130_osu_sc_15T_ls__dffr_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__dffr_l 0 0 ;
+  SIZE 9.57 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN CK
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 6.305 2.215 6.595 2.445 ;
+        RECT 3.08 2.245 6.595 2.415 ;
+        RECT 5.31 2.215 5.6 2.445 ;
+        RECT 3.08 2.215 3.37 2.445 ;
+    END
+  END CK
+  PIN D
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 2.72 1.875 3.12 2.045 ;
+        RECT 2.72 1.845 3.01 2.075 ;
+    END
+  END D
+  PIN Q
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 9.13 2.955 9.42 3.185 ;
+        RECT 9.02 2.985 9.42 3.155 ;
+    END
+  END Q
+  PIN QN
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 8.275 2.585 8.565 2.815 ;
+        RECT 8.16 2.615 8.565 2.785 ;
+    END
+  END QN
+  PIN RN
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.985 0.635 3.155 ;
+        RECT 0.175 2.955 0.465 3.185 ;
+    END
+  END RN
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 9.57 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 9.57 5.55 ;
+    END
+  END vdd
+  OBS
+    LAYER met1 ;
+      RECT 8.375 1.815 8.665 2.045 ;
+      RECT 5.79 1.815 6.08 2.045 ;
+      RECT 5.79 1.845 8.665 2.015 ;
+      RECT 7.665 1.105 7.955 1.335 ;
+      RECT 1.085 1.105 1.375 1.335 ;
+      RECT 1.085 1.135 7.955 1.305 ;
+      RECT 6.985 1.475 7.275 1.705 ;
+      RECT 4.49 1.475 4.78 1.705 ;
+      RECT 4.49 1.505 7.275 1.675 ;
+      RECT 4.06 1.475 4.35 1.705 ;
+      RECT 1.495 1.475 1.785 1.705 ;
+      RECT 1.495 1.505 4.35 1.675 ;
+  END
+END sky130_osu_sc_15T_ls__dffr_l
+
+MACRO sky130_osu_sc_15T_ls__dffs_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__dffs_1 0 0 ;
+  SIZE 8.69 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN CK
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 5.355 2.215 5.645 2.445 ;
+        RECT 2.13 2.245 5.645 2.415 ;
+        RECT 4.36 2.215 4.65 2.445 ;
+        RECT 2.13 2.215 2.42 2.445 ;
+    END
+  END CK
+  PIN D
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.77 1.875 2.17 2.045 ;
+        RECT 1.77 1.845 2.06 2.075 ;
+    END
+  END D
+  PIN Q
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 8.18 2.955 8.47 3.185 ;
+        RECT 8.07 2.985 8.47 3.155 ;
+    END
+  END Q
+  PIN QN
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 7.325 2.585 7.615 2.815 ;
+        RECT 7.21 2.615 7.615 2.785 ;
+    END
+  END QN
+  PIN SN
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 6.715 1.105 7.005 1.335 ;
+        RECT 0.175 1.135 7.005 1.305 ;
+        RECT 0.175 1.105 0.465 1.335 ;
+    END
+  END SN
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 8.69 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 8.69 5.55 ;
+    END
+  END vdd
+  OBS
+    LAYER met1 ;
+      RECT 7.425 1.815 7.715 2.045 ;
+      RECT 4.84 1.815 5.13 2.045 ;
+      RECT 4.84 1.845 7.715 2.015 ;
+      RECT 5.955 1.475 6.245 1.705 ;
+      RECT 3.54 1.475 3.83 1.705 ;
+      RECT 3.54 1.505 6.245 1.675 ;
+      RECT 3.11 1.475 3.4 1.705 ;
+      RECT 0.545 1.475 0.835 1.705 ;
+      RECT 0.545 1.505 3.4 1.675 ;
+  END
+END sky130_osu_sc_15T_ls__dffs_1
+
+MACRO sky130_osu_sc_15T_ls__dffs_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__dffs_l 0 0 ;
+  SIZE 8.69 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN CK
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 5.355 2.215 5.645 2.445 ;
+        RECT 2.13 2.245 5.645 2.415 ;
+        RECT 4.36 2.215 4.65 2.445 ;
+        RECT 2.13 2.215 2.42 2.445 ;
+    END
+  END CK
+  PIN D
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.77 1.875 2.17 2.045 ;
+        RECT 1.77 1.845 2.06 2.075 ;
+    END
+  END D
+  PIN Q
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 8.18 2.955 8.47 3.185 ;
+        RECT 8.07 2.985 8.47 3.155 ;
+    END
+  END Q
+  PIN QN
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 7.325 2.585 7.615 2.815 ;
+        RECT 7.21 2.615 7.615 2.785 ;
+    END
+  END QN
+  PIN SN
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 6.715 1.105 7.005 1.335 ;
+        RECT 0.175 1.135 7.005 1.305 ;
+        RECT 0.175 1.105 0.465 1.335 ;
+    END
+  END SN
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 8.69 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 8.69 5.55 ;
+    END
+  END vdd
+  OBS
+    LAYER met1 ;
+      RECT 7.425 1.815 7.715 2.045 ;
+      RECT 4.84 1.815 5.13 2.045 ;
+      RECT 4.84 1.845 7.715 2.015 ;
+      RECT 5.955 1.475 6.245 1.705 ;
+      RECT 3.54 1.475 3.83 1.705 ;
+      RECT 3.54 1.505 6.245 1.675 ;
+      RECT 3.11 1.475 3.4 1.705 ;
+      RECT 0.545 1.475 0.835 1.705 ;
+      RECT 0.545 1.505 3.4 1.675 ;
+  END
+END sky130_osu_sc_15T_ls__dffs_l
+
+MACRO sky130_osu_sc_15T_ls__dffsr_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__dffsr_1 0 0 ;
+  SIZE 10.45 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN CK
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 6.735 2.215 7.025 2.445 ;
+        RECT 3.51 2.245 7.025 2.415 ;
+        RECT 5.74 2.215 6.03 2.445 ;
+        RECT 3.51 2.215 3.8 2.445 ;
+    END
+  END CK
+  PIN D
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.15 1.875 3.55 2.045 ;
+        RECT 3.15 1.845 3.44 2.075 ;
+    END
+  END D
+  PIN Q
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 9.995 2.955 10.285 3.185 ;
+        RECT 9.885 2.985 10.285 3.155 ;
+    END
+  END Q
+  PIN QN
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 9.135 2.585 9.425 2.815 ;
+        RECT 9.02 2.615 9.425 2.785 ;
+    END
+  END QN
+  PIN RN
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.985 0.635 3.155 ;
+        RECT 0.175 2.955 0.465 3.185 ;
+    END
+  END RN
+  PIN SN
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 7.79 2.585 8.08 2.815 ;
+        RECT 1.565 2.615 8.08 2.785 ;
+        RECT 1.565 2.585 1.855 2.815 ;
+    END
+  END SN
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 10.45 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 10.45 5.55 ;
+    END
+  END vdd
+  OBS
+    LAYER met1 ;
+      RECT 9.235 1.815 9.525 2.045 ;
+      RECT 6.22 1.815 6.51 2.045 ;
+      RECT 6.22 1.845 9.525 2.015 ;
+      RECT 8.715 1.105 9.005 1.335 ;
+      RECT 1.085 1.105 1.375 1.335 ;
+      RECT 1.085 1.135 9.005 1.305 ;
+      RECT 7.45 1.475 7.74 1.705 ;
+      RECT 4.92 1.475 5.21 1.705 ;
+      RECT 4.92 1.505 7.74 1.675 ;
+      RECT 4.49 1.475 4.78 1.705 ;
+      RECT 1.565 1.475 1.855 1.705 ;
+      RECT 1.565 1.505 4.78 1.675 ;
+  END
+END sky130_osu_sc_15T_ls__dffsr_1
+
+MACRO sky130_osu_sc_15T_ls__dffsr_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__dffsr_l 0 0 ;
+  SIZE 10.45 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN CK
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 6.735 2.215 7.025 2.445 ;
+        RECT 3.51 2.245 7.025 2.415 ;
+        RECT 5.74 2.215 6.03 2.445 ;
+        RECT 3.51 2.215 3.8 2.445 ;
+    END
+  END CK
+  PIN D
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.15 1.875 3.55 2.045 ;
+        RECT 3.15 1.845 3.44 2.075 ;
+    END
+  END D
+  PIN Q
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 9.99 2.955 10.28 3.185 ;
+        RECT 9.88 2.985 10.28 3.155 ;
+    END
+  END Q
+  PIN QN
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 9.135 2.585 9.425 2.815 ;
+        RECT 9.02 2.615 9.425 2.785 ;
+    END
+  END QN
+  PIN RN
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.985 0.635 3.155 ;
+        RECT 0.175 2.955 0.465 3.185 ;
+    END
+  END RN
+  PIN SN
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 7.79 2.585 8.08 2.815 ;
+        RECT 1.565 2.615 8.08 2.785 ;
+        RECT 1.565 2.585 1.855 2.815 ;
+    END
+  END SN
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 10.45 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 10.45 5.55 ;
+    END
+  END vdd
+  OBS
+    LAYER met1 ;
+      RECT 9.235 1.815 9.525 2.045 ;
+      RECT 6.22 1.815 6.51 2.045 ;
+      RECT 6.22 1.845 9.525 2.015 ;
+      RECT 8.715 1.105 9.005 1.335 ;
+      RECT 1.085 1.105 1.375 1.335 ;
+      RECT 1.085 1.135 9.005 1.305 ;
+      RECT 7.45 1.475 7.74 1.705 ;
+      RECT 4.92 1.475 5.21 1.705 ;
+      RECT 4.92 1.505 7.74 1.675 ;
+      RECT 4.49 1.475 4.78 1.705 ;
+      RECT 1.565 1.475 1.855 1.705 ;
+      RECT 1.565 1.505 4.78 1.675 ;
+  END
+END sky130_osu_sc_15T_ls__dffsr_l
+
+MACRO sky130_osu_sc_15T_ls__dlat_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__dlat_1 0 0 ;
+  SIZE 5.06 BY 5.4 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN CK
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 2.25 2.215 2.54 2.445 ;
+        RECT 1.255 2.245 2.54 2.415 ;
+        RECT 1.255 2.215 1.545 2.445 ;
+    END
+  END CK
+  PIN D
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.295 1.875 0.695 2.045 ;
+        RECT 0.295 1.845 0.585 2.075 ;
+    END
+  END D
+  PIN Q
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 4.65 2.955 4.94 3.185 ;
+        RECT 4.535 2.985 4.94 3.155 ;
+    END
+  END Q
+  PIN QN
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.79 2.585 4.08 2.815 ;
+        RECT 3.68 2.615 4.08 2.785 ;
+    END
+  END QN
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 5.06 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.095 5.06 5.4 ;
+    END
+  END vdd
+  OBS
+    LAYER met1 ;
+      RECT 3.89 1.815 4.18 2.045 ;
+      RECT 1.735 1.815 2.025 2.045 ;
+      RECT 1.735 1.845 4.18 2.015 ;
+      RECT 2.85 1.475 3.14 1.705 ;
+      RECT 0.435 1.475 0.725 1.705 ;
+      RECT 0.435 1.505 3.14 1.675 ;
+  END
+END sky130_osu_sc_15T_ls__dlat_1
+
+MACRO sky130_osu_sc_15T_ls__dlat_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__dlat_l 0 0 ;
+  SIZE 5.06 BY 5.4 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN CK
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 2.25 2.215 2.54 2.445 ;
+        RECT 1.255 2.245 2.54 2.415 ;
+        RECT 1.255 2.215 1.545 2.445 ;
+    END
+  END CK
+  PIN D
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.295 1.875 0.695 2.045 ;
+        RECT 0.295 1.845 0.585 2.075 ;
+    END
+  END D
+  PIN Q
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 4.65 2.955 4.94 3.185 ;
+        RECT 4.535 2.985 4.94 3.155 ;
+    END
+  END Q
+  PIN QN
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.79 2.585 4.08 2.815 ;
+        RECT 3.68 2.615 4.08 2.785 ;
+    END
+  END QN
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 5.06 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.095 5.06 5.4 ;
+    END
+  END vdd
+  OBS
+    LAYER met1 ;
+      RECT 3.89 1.815 4.18 2.045 ;
+      RECT 1.735 1.815 2.025 2.045 ;
+      RECT 1.735 1.845 4.18 2.015 ;
+      RECT 2.85 1.475 3.14 1.705 ;
+      RECT 0.435 1.475 0.725 1.705 ;
+      RECT 0.435 1.505 3.14 1.675 ;
+  END
+END sky130_osu_sc_15T_ls__dlat_l
+
+MACRO sky130_osu_sc_15T_ls__fill_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__fill_1 0 0 ;
+  SIZE 0.11 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 0.11 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 0.11 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__fill_1
+
+MACRO sky130_osu_sc_15T_ls__fill_16
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__fill_16 0 0 ;
+  SIZE 1.76 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.76 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.76 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__fill_16
+
+MACRO sky130_osu_sc_15T_ls__fill_2
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__fill_2 0 0 ;
+  SIZE 0.22 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 0.22 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 0.22 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__fill_2
+
+MACRO sky130_osu_sc_15T_ls__fill_32
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__fill_32 0 0 ;
+  SIZE 3.52 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 3.52 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 3.52 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__fill_32
+
+MACRO sky130_osu_sc_15T_ls__fill_4
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__fill_4 0 0 ;
+  SIZE 0.44 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 0.44 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 0.44 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__fill_4
+
+MACRO sky130_osu_sc_15T_ls__fill_8
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__fill_8 0 0 ;
+  SIZE 0.88 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 0.88 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 0.88 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__fill_8
+
+MACRO sky130_osu_sc_15T_ls__inv_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__inv_1 0 0 ;
+  SIZE 0.99 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.985 0.635 3.155 ;
+        RECT 0.175 2.955 0.465 3.185 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.545 2.585 0.835 2.815 ;
+        RECT 0.545 1.105 0.835 1.335 ;
+        RECT 0.605 1.105 0.775 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 0.99 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 0.99 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__inv_1
+
+MACRO sky130_osu_sc_15T_ls__inv_10
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__inv_10 0 0 ;
+  SIZE 4.95 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.985 0.635 3.155 ;
+        RECT 0.175 2.955 0.465 3.185 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.985 2.585 4.275 2.815 ;
+        RECT 3.985 1.105 4.275 1.335 ;
+        RECT 4.045 1.105 4.215 2.815 ;
+        RECT 0.545 2.615 4.275 2.785 ;
+        RECT 0.545 1.135 4.275 1.305 ;
+        RECT 3.125 2.585 3.415 2.815 ;
+        RECT 3.125 1.105 3.415 1.335 ;
+        RECT 3.185 1.105 3.355 2.815 ;
+        RECT 2.265 2.585 2.555 2.815 ;
+        RECT 2.265 1.105 2.555 1.335 ;
+        RECT 2.325 1.105 2.495 2.815 ;
+        RECT 1.405 2.585 1.695 2.815 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.815 ;
+        RECT 0.545 2.585 0.835 2.815 ;
+        RECT 0.545 1.105 0.835 1.335 ;
+        RECT 0.605 1.105 0.775 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 4.95 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 4.95 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__inv_10
+
+MACRO sky130_osu_sc_15T_ls__inv_2
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__inv_2 0 0 ;
+  SIZE 1.43 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.985 0.635 3.155 ;
+        RECT 0.175 2.955 0.465 3.185 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.545 2.585 0.835 2.815 ;
+        RECT 0.545 1.105 0.835 1.335 ;
+        RECT 0.605 1.105 0.775 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.43 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.43 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__inv_2
+
+MACRO sky130_osu_sc_15T_ls__inv_3
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__inv_3 0 0 ;
+  SIZE 1.87 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.985 0.635 3.155 ;
+        RECT 0.175 2.955 0.465 3.185 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.405 2.585 1.695 2.815 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.815 ;
+        RECT 0.545 2.615 1.695 2.785 ;
+        RECT 0.545 1.135 1.695 1.305 ;
+        RECT 0.545 2.585 0.835 2.815 ;
+        RECT 0.545 1.105 0.835 1.335 ;
+        RECT 0.605 1.105 0.775 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.87 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.87 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__inv_3
+
+MACRO sky130_osu_sc_15T_ls__inv_4
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__inv_4 0 0 ;
+  SIZE 2.31 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.985 0.635 3.155 ;
+        RECT 0.175 2.955 0.465 3.185 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.405 2.585 1.695 2.815 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.815 ;
+        RECT 0.545 2.615 1.695 2.785 ;
+        RECT 0.545 1.135 1.695 1.305 ;
+        RECT 0.545 2.585 0.835 2.815 ;
+        RECT 0.545 1.105 0.835 1.335 ;
+        RECT 0.605 1.105 0.775 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 2.31 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 2.31 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__inv_4
+
+MACRO sky130_osu_sc_15T_ls__inv_6
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__inv_6 0 0 ;
+  SIZE 3.19 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.985 0.635 3.155 ;
+        RECT 0.175 2.955 0.465 3.185 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 2.265 2.585 2.555 2.815 ;
+        RECT 2.265 1.105 2.555 1.335 ;
+        RECT 2.325 1.105 2.495 2.815 ;
+        RECT 0.545 2.615 2.555 2.785 ;
+        RECT 0.545 1.135 2.555 1.305 ;
+        RECT 1.405 2.585 1.695 2.815 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.815 ;
+        RECT 0.545 2.585 0.835 2.815 ;
+        RECT 0.545 1.105 0.835 1.335 ;
+        RECT 0.605 1.105 0.775 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 3.19 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 3.19 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__inv_6
+
+MACRO sky130_osu_sc_15T_ls__inv_8
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__inv_8 0 0 ;
+  SIZE 4.07 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.985 0.635 3.155 ;
+        RECT 0.175 2.955 0.465 3.185 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.125 2.585 3.415 2.815 ;
+        RECT 3.125 1.105 3.415 1.335 ;
+        RECT 3.185 1.105 3.355 2.815 ;
+        RECT 0.545 2.615 3.415 2.785 ;
+        RECT 0.545 1.135 3.415 1.305 ;
+        RECT 2.265 2.585 2.555 2.815 ;
+        RECT 2.265 1.105 2.555 1.335 ;
+        RECT 2.325 1.105 2.495 2.815 ;
+        RECT 1.405 2.585 1.695 2.815 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.815 ;
+        RECT 0.545 2.585 0.835 2.815 ;
+        RECT 0.545 1.105 0.835 1.335 ;
+        RECT 0.605 1.105 0.775 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 4.07 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 4.07 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__inv_8
+
+MACRO sky130_osu_sc_15T_ls__inv_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__inv_l 0 0 ;
+  SIZE 0.99 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.985 0.635 3.155 ;
+        RECT 0.175 2.955 0.465 3.185 ;
+    END
+  END A
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.545 2.585 0.835 2.815 ;
+        RECT 0.545 1.105 0.835 1.335 ;
+        RECT 0.605 1.105 0.775 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 0.99 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 0.99 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__inv_l
+
+MACRO sky130_osu_sc_15T_ls__mux2_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__mux2_1 0 0 ;
+  SIZE 2.75 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A0
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.12 2.585 1.41 2.815 ;
+        RECT 0.95 2.615 1.41 2.785 ;
+    END
+  END A0
+  PIN A1
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.925 2.215 2.215 2.445 ;
+        RECT 1.755 2.245 2.215 2.415 ;
+    END
+  END A1
+  PIN S0
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.125 2.985 0.585 3.155 ;
+        RECT 0.125 2.955 0.415 3.185 ;
+    END
+  END S0
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.495 1.845 1.785 2.075 ;
+        RECT 1.495 1.105 1.785 1.335 ;
+        RECT 1.555 1.105 1.725 2.075 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 2.75 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 2.75 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__mux2_1
+
+MACRO sky130_osu_sc_15T_ls__nand2_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__nand2_1 0 0 ;
+  SIZE 1.43 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.985 0.575 3.155 ;
+        RECT 0.175 2.955 0.465 3.185 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.915 2.585 1.205 2.815 ;
+        RECT 0.805 2.615 1.205 2.785 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.545 2.215 0.835 2.445 ;
+        RECT 0.605 1.135 0.775 2.445 ;
+        RECT 0.115 1.135 0.775 1.305 ;
+        RECT 0.115 1.105 0.405 1.335 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.43 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.43 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__nand2_1
+
+MACRO sky130_osu_sc_15T_ls__nand2_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__nand2_l 0 0 ;
+  SIZE 1.43 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.175 2.985 0.575 3.155 ;
+        RECT 0.175 2.955 0.465 3.185 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.915 2.585 1.205 2.815 ;
+        RECT 0.805 2.615 1.205 2.785 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.545 2.215 0.835 2.445 ;
+        RECT 0.605 1.135 0.775 2.445 ;
+        RECT 0.115 1.135 0.775 1.305 ;
+        RECT 0.115 1.105 0.405 1.335 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.43 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.43 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__nand2_l
+
+MACRO sky130_osu_sc_15T_ls__nor2_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__nor2_1 0 0 ;
+  SIZE 1.43 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.845 2.955 1.135 3.185 ;
+        RECT 0.74 2.985 1.135 3.155 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.505 2.585 0.795 2.815 ;
+        RECT 0.395 2.615 0.795 2.785 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.545 1.105 0.835 1.335 ;
+        RECT 0.115 2.245 0.775 2.415 ;
+        RECT 0.605 1.105 0.775 2.415 ;
+        RECT 0.115 2.215 0.405 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.43 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.43 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__nor2_1
+
+MACRO sky130_osu_sc_15T_ls__nor2_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__nor2_l 0 0 ;
+  SIZE 1.43 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.845 2.955 1.135 3.185 ;
+        RECT 0.74 2.985 1.135 3.155 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.505 2.585 0.795 2.815 ;
+        RECT 0.395 2.615 0.795 2.785 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.545 1.105 0.835 1.335 ;
+        RECT 0.115 2.245 0.775 2.415 ;
+        RECT 0.605 1.105 0.775 2.415 ;
+        RECT 0.115 2.215 0.405 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.43 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.43 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__nor2_l
+
+MACRO sky130_osu_sc_15T_ls__oai21_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__oai21_l 0 0 ;
+  SIZE 1.87 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A0
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.27 2.985 0.67 3.155 ;
+        RECT 0.27 2.955 0.56 3.185 ;
+    END
+  END A0
+  PIN A1
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.75 2.615 1.15 2.785 ;
+        RECT 0.75 2.585 1.04 2.815 ;
+    END
+  END A1
+  PIN B0
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.055 2.215 1.345 2.445 ;
+        RECT 0.945 2.245 1.345 2.415 ;
+    END
+  END B0
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.395 1.845 1.685 2.075 ;
+        RECT 1.465 1.105 1.635 2.075 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.87 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.87 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__oai21_l
+
+MACRO sky130_osu_sc_15T_ls__oai22_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__oai22_l 0 0 ;
+  SIZE 2.31 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A0
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.27 2.985 0.67 3.155 ;
+        RECT 0.27 2.955 0.56 3.185 ;
+    END
+  END A0
+  PIN A1
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.75 2.615 1.15 2.785 ;
+        RECT 0.75 2.585 1.04 2.815 ;
+    END
+  END A1
+  PIN B0
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.055 2.215 1.345 2.445 ;
+        RECT 0.945 2.245 1.345 2.415 ;
+    END
+  END B0
+  PIN B1
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.86 1.85 2.15 2.08 ;
+        RECT 1.75 1.88 2.15 2.05 ;
+    END
+  END B1
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.52 1.475 1.81 1.705 ;
+        RECT 1.52 1.105 1.81 1.335 ;
+        RECT 1.58 1.105 1.75 1.705 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 2.31 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 2.31 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__oai22_l
+
+MACRO sky130_osu_sc_15T_ls__or2_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__or2_1 0 0 ;
+  SIZE 1.87 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.805 2.955 1.095 3.185 ;
+        RECT 0.7 2.985 1.095 3.155 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.125 2.615 0.525 2.785 ;
+        RECT 0.125 2.585 0.415 2.815 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.405 2.215 1.695 2.445 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.87 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.87 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__or2_1
+
+MACRO sky130_osu_sc_15T_ls__or2_2
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__or2_2 0 0 ;
+  SIZE 2.31 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.805 2.955 1.095 3.185 ;
+        RECT 0.7 2.985 1.095 3.155 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.125 2.615 0.525 2.785 ;
+        RECT 0.125 2.585 0.415 2.815 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.405 2.215 1.695 2.445 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 2.31 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 2.31 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__or2_2
+
+MACRO sky130_osu_sc_15T_ls__or2_4
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__or2_4 0 0 ;
+  SIZE 3.19 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.805 2.955 1.095 3.185 ;
+        RECT 0.7 2.985 1.095 3.155 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.125 2.615 0.525 2.785 ;
+        RECT 0.125 2.585 0.415 2.815 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 2.265 2.215 2.555 2.445 ;
+        RECT 2.265 1.105 2.555 1.335 ;
+        RECT 2.325 1.105 2.495 2.445 ;
+        RECT 1.405 2.245 2.555 2.415 ;
+        RECT 1.405 1.135 2.555 1.305 ;
+        RECT 1.405 2.215 1.695 2.445 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 3.19 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 3.19 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__or2_4
+
+MACRO sky130_osu_sc_15T_ls__or2_8
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__or2_8 0 0 ;
+  SIZE 4.95 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.805 2.955 1.095 3.185 ;
+        RECT 0.7 2.985 1.095 3.155 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.125 2.615 0.525 2.785 ;
+        RECT 0.125 2.585 0.415 2.815 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 3.985 2.215 4.275 2.445 ;
+        RECT 3.985 1.105 4.275 1.335 ;
+        RECT 4.045 1.105 4.215 2.445 ;
+        RECT 1.405 2.245 4.275 2.415 ;
+        RECT 3.56 1.135 4.275 1.305 ;
+        RECT 3.125 2.215 3.415 2.445 ;
+        RECT 3.125 1.105 3.415 1.335 ;
+        RECT 3.185 1.105 3.355 2.445 ;
+        RECT 1.405 1.135 3.415 1.305 ;
+        RECT 2.265 2.215 2.555 2.445 ;
+        RECT 2.265 1.105 2.555 1.335 ;
+        RECT 2.325 1.105 2.495 2.445 ;
+        RECT 1.405 2.215 1.695 2.445 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 4.95 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 4.95 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__or2_8
+
+MACRO sky130_osu_sc_15T_ls__or2_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__or2_l 0 0 ;
+  SIZE 1.87 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.805 2.955 1.095 3.185 ;
+        RECT 0.7 2.985 1.095 3.155 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.125 2.615 0.525 2.785 ;
+        RECT 0.125 2.585 0.415 2.815 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.405 2.215 1.695 2.445 ;
+        RECT 1.405 1.105 1.695 1.335 ;
+        RECT 1.465 1.105 1.635 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.87 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.87 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__or2_l
+
+MACRO sky130_osu_sc_15T_ls__tbufi_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__tbufi_1 0 0 ;
+  SIZE 1.87 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.995 2.955 1.285 3.185 ;
+        RECT 0.885 2.985 1.285 3.155 ;
+    END
+  END A
+  PIN OE
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.545 2.615 0.945 2.785 ;
+        RECT 0.545 2.585 0.835 2.815 ;
+        RECT 0.545 1.475 0.835 1.705 ;
+        RECT 0.605 1.475 0.775 2.815 ;
+    END
+  END OE
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.335 2.215 1.625 2.445 ;
+        RECT 1.335 1.105 1.625 1.335 ;
+        RECT 1.395 1.105 1.565 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.87 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.87 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__tbufi_1
+
+MACRO sky130_osu_sc_15T_ls__tbufi_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__tbufi_l 0 0 ;
+  SIZE 1.87 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.995 2.955 1.285 3.185 ;
+        RECT 0.885 2.985 1.285 3.155 ;
+    END
+  END A
+  PIN OE
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.545 2.615 0.945 2.785 ;
+        RECT 0.545 2.585 0.835 2.815 ;
+        RECT 0.545 1.475 0.835 1.705 ;
+        RECT 0.605 1.475 0.775 2.815 ;
+    END
+  END OE
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.335 2.215 1.625 2.445 ;
+        RECT 1.335 1.105 1.625 1.335 ;
+        RECT 1.395 1.105 1.565 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.87 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.87 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__tbufi_l
+
+MACRO sky130_osu_sc_15T_ls__tiehi
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__tiehi 0 0 ;
+  SIZE 0.99 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.47 2.585 0.835 2.815 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 0.99 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 0.99 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__tiehi
+
+MACRO sky130_osu_sc_15T_ls__tielo
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__tielo 0 0 ;
+  SIZE 0.99 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.47 1.475 0.835 1.705 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 0.99 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 0.99 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__tielo
+
+MACRO sky130_osu_sc_15T_ls__tnbufi_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__tnbufi_1 0 0 ;
+  SIZE 1.87 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.995 2.955 1.285 3.185 ;
+        RECT 0.885 2.985 1.285 3.155 ;
+    END
+  END A
+  PIN OE
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.545 2.615 0.945 2.785 ;
+        RECT 0.545 2.585 0.835 2.815 ;
+    END
+  END OE
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.335 2.215 1.625 2.445 ;
+        RECT 1.335 1.105 1.625 1.335 ;
+        RECT 1.395 1.105 1.565 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.87 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.87 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__tnbufi_1
+
+MACRO sky130_osu_sc_15T_ls__tnbufi_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__tnbufi_l 0 0 ;
+  SIZE 1.87 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.995 2.955 1.285 3.185 ;
+        RECT 0.885 2.985 1.285 3.155 ;
+    END
+  END A
+  PIN OE
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 0.545 2.615 0.945 2.785 ;
+        RECT 0.545 2.585 0.835 2.815 ;
+    END
+  END OE
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.335 2.215 1.625 2.445 ;
+        RECT 1.335 1.105 1.625 1.335 ;
+        RECT 1.395 1.105 1.565 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 1.87 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 1.87 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__tnbufi_l
+
+MACRO sky130_osu_sc_15T_ls__xnor2_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__xnor2_l 0 0 ;
+  SIZE 3.19 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 2 1.105 2.29 1.335 ;
+        RECT 0.7 1.135 2.29 1.305 ;
+        RECT 0.7 1.105 0.99 1.335 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 2.385 1.475 2.675 1.705 ;
+        RECT 2.275 1.505 2.675 1.675 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.28 2.955 1.57 3.185 ;
+        RECT 1.28 1.475 1.57 1.705 ;
+        RECT 1.34 1.475 1.51 3.185 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 3.19 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 3.19 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__xnor2_l
+
+MACRO sky130_osu_sc_15T_ls__xor2_l
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN sky130_osu_sc_15T_ls__xor2_l 0 0 ;
+  SIZE 3.19 BY 5.55 ;
+  SYMMETRY X Y ;
+  SITE 15T ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 2 2.955 2.29 3.185 ;
+        RECT 0.94 2.985 2.29 3.155 ;
+        RECT 0.94 2.955 1.23 3.185 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 2.385 2.585 2.675 2.815 ;
+        RECT 2.275 2.615 2.675 2.785 ;
+    END
+  END B
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER met1 ;
+        RECT 1.42 1.105 1.71 1.335 ;
+        RECT 1.28 2.215 1.57 2.445 ;
+        RECT 1.34 1.135 1.51 2.445 ;
+    END
+  END Y
+  PIN gnd
+    DIRECTION INOUT ;
+    USE GROUND ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 0 3.19 0.305 ;
+    END
+  END gnd
+  PIN vdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER met1 ;
+        RECT 0 5.245 3.19 5.55 ;
+    END
+  END vdd
+END sky130_osu_sc_15T_ls__xor2_l
+
+END LIBRARY
