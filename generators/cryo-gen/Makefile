@@ -51,18 +51,6 @@ sky130osu12Ths_cyro_full:
 	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu12Ths --mode full --ninv 144
 
 
-# sky130osu15Ths
-sky130osu15Ths_cryo_verilog:
-	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu15Ths --mode verilog --ninv 144
-
-sky130osu15Ths_cryo:
-	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu15Ths --mode macro --ninv 144
-	python3 tools/parse_rpt.py
-
-sky130osu15Ths_cyro_full:
-	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu15Ths --mode full --ninv 144
-
-
 # sky130osu12Tms
 
 sky130osu12Tms_cryo_verilog:
@@ -75,6 +63,7 @@ sky130osu12Tms_cryo:
 sky130osu12Tms_cyro_full:
 	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu12Tms --mode full --ninv 144
 
+
 # sky130osu12Tls
 
 sky130osu12Tls_cryo_verilog:
@@ -86,6 +75,45 @@ sky130osu12Tls_cryo:
 
 sky130osu12Tls_cyro_full:
 	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu12Tls --mode full --ninv 144
+
+
+# sky130osu15Ths
+
+sky130osu15Ths_cryo_verilog:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu15Ths --mode verilog --ninv 144
+
+sky130osu15Ths_cryo:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu15Ths --mode macro --ninv 144
+	python3 tools/parse_rpt.py
+
+sky130osu15Ths_cyro_full:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu15Ths --mode full --ninv 144
+
+
+# sky130osu15Tms
+
+sky130osu15Tms_cryo_verilog:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu15Tms --mode verilog --ninv 144
+
+sky130osu15Tms_cryo:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu15Tms --mode macro --ninv 144
+	python3 tools/parse_rpt.py
+
+sky130osu15Tms_cyro_full:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu15Tms --mode full --ninv 144
+
+
+# sky130osu15Tls
+
+sky130osu15Tls_cryo_verilog:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu15Tls --mode verilog --ninv 144
+
+sky130osu15Tls_cryo:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu15Tls --mode macro --ninv 144
+	python3 tools/parse_rpt.py
+
+sky130osu15Tls_cyro_full:
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130osu15Tls --mode full --ninv 144
 
 
 # sky130osu18Ths

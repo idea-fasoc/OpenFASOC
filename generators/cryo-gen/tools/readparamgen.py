@@ -56,7 +56,7 @@ if not os.path.isfile(args.specfile):
    print('File Path: ' + args.specfile)
    sys.exit(1)
 
-supportedPlatforms = {'sky130hd', 'sky130hs', 'sky130hvl', 'sky130osu12Ths', 'sky130osu12Tms', 'sky130osu12Tls', 'sky130osu15Ths', 'sky130osu18Ths', 'sky130osu18Tms', 'sky130osu18Tls'}
+supportedPlatforms = {'sky130hd', 'sky130hs', 'sky130hvl', 'sky130osu12Ths', 'sky130osu12Tms', 'sky130osu12Tls', 'sky130osu15Ths', 'sky130osu15Tms', 'sky130osu15Tls', 'sky130osu18Ths', 'sky130osu18Tms', 'sky130osu18Tls'}
 
 if args.platform not in supportedPlatforms:
   print("Error: only", supportedPlatforms, "platforms are supported as of now")
