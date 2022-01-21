@@ -1,0 +1,5 @@
+Simulations Using Ngspice with skywater 130 nm tech
+1. Update thee link to ngspice in run_ngspice.sh (source run_ngspice.sh  serial LC_run.netlist)
+2. Update the path to models if they dont already work
+3. We can update this to a python script which we use vary parameters, more in line with OpenFASOC methodology
+4. Make sure to copy spiceinit to ~/.spieinit in your docker, this sets simulator options

@@ -1,0 +1,39 @@
+** sch_path: /home/chandru/Tools/OpenFASOC/generators/lc-dco/xschem_rundir/LC_Cell.sch
+**.subckt LC_Cell Ibias outn outp
+*.ipin Ibias
+*.opin outn
+*.opin outp
+XM1 outp outn net2 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=24 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM2 outn outp net1 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=24 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM3 net2 Ibias GND GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=48 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XL1 outp outn VDD sky130_fd_pr__ind_05_220
+XC1 outp outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XM4 net1 Ibias GND GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=48 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM5 Ibias Ibias GND GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=48 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+I0 VDD Ibias 200u
+**** begin user architecture code
+
+blabla
+
+** manual skywater pdks install (with patches applied)
+* .lib /home/chandru/PDK/skywater-pdk/sky130A/libs.tech/ngspice/models/sky130.lib.spice tt
+
+** opencircuitdesign pdks install
+.lib /home/chandru/PDK/skywater-pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+
+
+**** end user architecture code
+**.ends
+.GLOBAL GND
+.GLOBAL VDD
+.end
