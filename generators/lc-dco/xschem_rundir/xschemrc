@@ -69,7 +69,7 @@ set netlist_dir .
 #### IN SPICE NETLISTS (EXAMPLE: DATA[7] --> DATA<7>) 
 ###########################################################################
 #### default: empty (use xschem default, [ ])
-# set bus_replacement_char {<>}
+set bus_replacement_char {<>}
 #### for XSPICE: replace square brackets as the are used for XSPICE vector nodes.
 # set bus_replacement_char {__} 
 

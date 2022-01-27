@@ -1,0 +1,591 @@
+** sch_path: /home/chandru/Tools/OpenFASOC/generators/lc-dco/xschem_rundir/swcap_3M2C.sch
+.subckt swcap_3M2C outn outp sw<7> sw<6> sw<5> sw<4> sw<3> sw<2> sw<1> sw<0> GND
+*.PININFO outn:O outp:O sw[7:0]:I GND:B
+XC2 net2 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XM6 net1 sw<0> net2 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8 nf=2 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM1 GND sw<0> net1 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29'
++ pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W'
++ sa=0 sb=0 sd=0 mult=1 m=1
+XM2 GND sw<0> net2 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29'
++ pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W'
++ sa=0 sb=0 sd=0 mult=1 m=1
+XC1 outp net1 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC4<1> net4 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC4<0> net4 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XM3 net3 sw<1> net4 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8 nf=1 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM4 GND sw<1> net3 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29'
++ pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W'
++ sa=0 sb=0 sd=0 mult=1 m=1
+XM5 GND sw<1> net4 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29'
++ pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W'
++ sa=0 sb=0 sd=0 mult=1 m=1
+XC3<1> outp net3 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC3<0> outp net3 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC6<3> net6 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC6<2> net6 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC6<1> net6 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC6<0> net6 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XM7 net5 sw<2> net6 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8 nf=6 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM8 GND sw<2> net5 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29'
++ pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W'
++ sa=0 sb=0 sd=0 mult=1 m=1
+XM9 GND sw<2> net6 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29'
++ pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W'
++ sa=0 sb=0 sd=0 mult=1 m=1
+XC5<3> outp net5 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC5<2> outp net5 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC5<1> outp net5 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC5<0> outp net5 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC8<7> net8 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC8<6> net8 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC8<5> net8 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC8<4> net8 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC8<3> net8 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC8<2> net8 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC8<1> net8 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC8<0> net8 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XM10 net7 sw<3> net8 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8 nf=6 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM11 GND sw<3> net7 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=2 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM12 GND sw<3> net8 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=2 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XC7<7> outp net7 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC7<6> outp net7 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC7<5> outp net7 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC7<4> outp net7 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC7<3> outp net7 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC7<2> outp net7 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC7<1> outp net7 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC7<0> outp net7 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<15> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<14> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<13> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<12> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<11> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<10> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<9> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<8> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<7> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<6> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<5> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<4> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<3> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<2> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<1> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC10<0> net10 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XM13 net9 sw<4> net10 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8 nf=8 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM14 GND sw<4> net9 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=2 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM15 GND sw<4> net10 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=2 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XC9<15> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<14> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<13> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<12> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<11> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<10> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<9> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<8> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<7> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<6> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<5> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<4> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<3> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<2> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<1> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC9<0> outp net9 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<31> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<30> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<29> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<28> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<27> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<26> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<25> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<24> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<23> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<22> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<21> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<20> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<19> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<18> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<17> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<16> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<15> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<14> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<13> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<12> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<11> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<10> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<9> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<8> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<7> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<6> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<5> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<4> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<3> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<2> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<1> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC12<0> net12 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XM16 net11 sw<5> net12 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8 nf=11 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM17 GND sw<5> net11 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=2 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM18 GND sw<5> net12 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=2 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XC11<31> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<30> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<29> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<28> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<27> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<26> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<25> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<24> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<23> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<22> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<21> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<20> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<19> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<18> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<17> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<16> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<15> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<14> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<13> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<12> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<11> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<10> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<9> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<8> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<7> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<6> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<5> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<4> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<3> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<2> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<1> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC11<0> outp net11 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<63> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<62> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<61> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<60> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<59> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<58> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<57> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<56> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<55> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<54> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<53> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<52> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<51> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<50> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<49> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<48> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<47> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<46> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<45> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<44> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<43> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<42> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<41> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<40> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<39> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<38> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<37> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<36> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<35> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<34> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<33> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<32> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<31> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<30> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<29> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<28> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<27> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<26> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<25> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<24> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<23> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<22> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<21> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<20> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<19> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<18> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<17> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<16> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<15> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<14> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<13> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<12> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<11> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<10> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<9> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<8> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<7> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<6> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<5> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<4> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<3> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<2> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<1> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC14<0> net14 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XM19 net13 sw<6> net14 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8 nf=11 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=2 m=2
+XM20 GND sw<6> net13 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=2 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM21 GND sw<6> net14 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1 nf=2 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XC13<63> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<62> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<61> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<60> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<59> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<58> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<57> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<56> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<55> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<54> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<53> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<52> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<51> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<50> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<49> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<48> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<47> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<46> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<45> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<44> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<43> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<42> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<41> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<40> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<39> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<38> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<37> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<36> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<35> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<34> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<33> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<32> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<31> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<30> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<29> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<28> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<27> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<26> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<25> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<24> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<23> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<22> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<21> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<20> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<19> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<18> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<17> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<16> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<15> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<14> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<13> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<12> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<11> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<10> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<9> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<8> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<7> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<6> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<5> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<4> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<3> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<2> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<1> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC13<0> outp net13 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<127> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<126> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<125> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<124> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<123> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<122> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<121> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<120> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<119> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<118> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<117> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<116> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<115> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<114> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<113> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<112> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<111> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<110> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<109> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<108> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<107> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<106> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<105> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<104> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<103> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<102> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<101> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<100> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<99> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<98> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<97> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<96> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<95> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<94> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<93> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<92> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<91> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<90> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<89> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<88> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<87> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<86> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<85> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<84> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<83> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<82> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<81> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<80> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<79> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<78> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<77> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<76> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<75> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<74> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<73> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<72> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<71> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<70> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<69> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<68> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<67> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<66> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<65> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<64> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<63> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<62> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<61> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<60> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<59> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<58> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<57> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<56> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<55> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<54> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<53> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<52> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<51> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<50> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<49> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<48> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<47> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<46> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<45> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<44> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<43> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<42> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<41> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<40> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<39> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<38> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<37> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<36> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<35> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<34> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<33> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<32> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<31> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<30> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<29> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<28> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<27> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<26> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<25> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<24> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<23> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<22> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<21> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<20> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<19> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<18> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<17> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<16> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<15> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<14> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<13> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<12> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<11> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<10> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<9> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<8> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<7> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<6> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<5> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<4> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<3> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<2> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<1> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC16<0> net16 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XM22<1> net15 sw<7> net16 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8 nf=11 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM22<0> net15 sw<7> net16 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8 nf=11 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM23 GND sw<7> net15 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8 nf=2 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM24 GND sw<7> net16 GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8 nf=2 ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XC15<127> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<126> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<125> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<124> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<123> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<122> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<121> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<120> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<119> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<118> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<117> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<116> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<115> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<114> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<113> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<112> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<111> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<110> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<109> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<108> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<107> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<106> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<105> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<104> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<103> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<102> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<101> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<100> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<99> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<98> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<97> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<96> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<95> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<94> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<93> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<92> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<91> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<90> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<89> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<88> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<87> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<86> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<85> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<84> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<83> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<82> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<81> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<80> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<79> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<78> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<77> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<76> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<75> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<74> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<73> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<72> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<71> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<70> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<69> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<68> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<67> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<66> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<65> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<64> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<63> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<62> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<61> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<60> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<59> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<58> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<57> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<56> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<55> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<54> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<53> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<52> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<51> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<50> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<49> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<48> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<47> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<46> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<45> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<44> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<43> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<42> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<41> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<40> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<39> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<38> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<37> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<36> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<35> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<34> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<33> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<32> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<31> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<30> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<29> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<28> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<27> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<26> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<25> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<24> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<23> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<22> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<21> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<20> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<19> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<18> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<17> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<16> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<15> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<14> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<13> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<12> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<11> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<10> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<9> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<8> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<7> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<6> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<5> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<4> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<3> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<2> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<1> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+XC15<0> outp net15 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+.ends
+.GLOBAL GND
+.end

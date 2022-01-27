@@ -5,7 +5,7 @@ echo "Type is $type (Allowed type are serial or parallel"
 if [ "$type" == "serial" ]; then
 	/usr/local/bin/ngspice ${2} -b -o ${2}.log 
 elif [ "$type" == "parallel" ]; then
-	/usr/local/bin/ngspice ${2} -b -o ${2}.log
+	/home/chandru/Tools/ngspice_klu/ngspice-ngspice/release/src/ngspice ${2} -b -o ${2}_parallel.log
 else 
 	echo "Incorrect Options only serial and parallel allowed"
 fi

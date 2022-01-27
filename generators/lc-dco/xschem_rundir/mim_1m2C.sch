@@ -71,7 +71,7 @@ model=nfet_01v8_lvt
 spiceprefix=X
 }
 C {sky130_fd_pr/cap_mim_m3_1.sym} 130 -160 3 0 {name=C3[1:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
-C {sky130_fd_pr/cap_mim_m3_1.sym} 260 -160 3 0 {name=C1[1:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
+C {sky130_fd_pr/cap_mim_m3_1.sym} 260 -160 3 0 {name=C4[1:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
 C {sky130_fd_pr/nfet3_01v8_lvt.sym} 190 -220 3 1 {name=M7
 L=0.15
 W=1
@@ -108,7 +108,7 @@ spiceprefix=X
 }
 C {devices/lab_wire.sym} 360 -410 0 0 {name=l1 sig_type=std_logic lab=sw[2]}
 C {sky130_fd_pr/cap_mim_m3_1.sym} 130 -440 3 0 {name=C7[7:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
-C {sky130_fd_pr/cap_mim_m3_1.sym} 260 -440 3 0 {name=C1[7:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
+C {sky130_fd_pr/cap_mim_m3_1.sym} 260 -440 3 0 {name=C8[7:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
 C {sky130_fd_pr/nfet3_01v8_lvt.sym} 190 -500 3 1 {name=M2
 L=0.15
 W=1
@@ -126,7 +126,7 @@ spiceprefix=X
 }
 C {devices/lab_wire.sym} 360 -540 0 0 {name=l2 sig_type=std_logic lab=sw[3]}
 C {sky130_fd_pr/cap_mim_m3_1.sym} 130 -600 3 0 {name=C9[15:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
-C {sky130_fd_pr/cap_mim_m3_1.sym} 260 -600 3 0 {name=C1[15:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
+C {sky130_fd_pr/cap_mim_m3_1.sym} 260 -600 3 0 {name=C10[15:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
 C {sky130_fd_pr/nfet3_01v8_lvt.sym} 190 -660 3 1 {name=M3
 L=0.15
 W=1
@@ -143,7 +143,7 @@ model=nfet_01v8_lvt
 spiceprefix=X
 }
 C {sky130_fd_pr/cap_mim_m3_1.sym} 130 -720 3 0 {name=C11[31:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
-C {sky130_fd_pr/cap_mim_m3_1.sym} 260 -720 3 0 {name=C1[31:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
+C {sky130_fd_pr/cap_mim_m3_1.sym} 260 -720 3 0 {name=C12[31:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
 C {sky130_fd_pr/nfet3_01v8_lvt.sym} 190 -780 3 1 {name=M4
 L=0.15
 W=1
@@ -162,7 +162,7 @@ spiceprefix=X
 C {devices/lab_wire.sym} 360 -820 0 0 {name=l3 sig_type=std_logic lab=sw[5]}
 C {devices/lab_wire.sym} 350 -700 0 0 {name=l4 sig_type=std_logic lab=sw[4]}
 C {sky130_fd_pr/cap_mim_m3_1.sym} 130 -870 3 0 {name=C13[63:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
-C {sky130_fd_pr/cap_mim_m3_1.sym} 260 -870 3 0 {name=C1[63:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
+C {sky130_fd_pr/cap_mim_m3_1.sym} 260 -870 3 0 {name=C14[63:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
 C {sky130_fd_pr/nfet3_01v8_lvt.sym} 190 -930 3 1 {name=M5
 L=0.15
 W=1
@@ -180,7 +180,7 @@ spiceprefix=X
 }
 C {devices/lab_wire.sym} 360 -970 0 0 {name=l5 sig_type=std_logic lab=sw[6]}
 C {sky130_fd_pr/cap_mim_m3_1.sym} 130 -1000 3 0 {name=C15[127:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
-C {sky130_fd_pr/cap_mim_m3_1.sym} 260 -1000 3 0 {name=C1[127:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
+C {sky130_fd_pr/cap_mim_m3_1.sym} 260 -1000 3 0 {name=C16[127:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
 C {sky130_fd_pr/nfet3_01v8_lvt.sym} 190 -1060 3 1 {name=M8
 L=0.15
 W=1
