@@ -4,10 +4,10 @@
 *.ipin Ibias
 *.opin outn
 *.opin outp
-XM1 outp outn net2 GND sky130_fd_pr__nfet_01v8 L=0.15 W=2.4 nf=5 
-XM2 outn outp net1 GND sky130_fd_pr__nfet_01v8 L=0.15 W=2.4 nf=5
-**XM1a outp outn net2 GND sky130_fd_pr__nfet_01v8 L=0.15 W=4.8 nf=5 
-**XM2b outn outp net1 GND sky130_fd_pr__nfet_01v8 L=0.15 W=4.8 nf=5
+XM1 outp outn net2 GND sky130_fd_pr__nfet_01v8 L=0.15 W=3.2 nf=5 
+XM2 outn outp net1 GND sky130_fd_pr__nfet_01v8 L=0.15 W=3.2 nf=5
+XM1a outp outn net2 GND sky130_fd_pr__nfet_01v8 L=0.15 W=3.2 nf=5 
+XM2b outn outp net1 GND sky130_fd_pr__nfet_01v8 L=0.15 W=3.2 nf=5
 **XM1b outp outn net2 GND sky130_fd_pr__nfet_01v8 L=0.15 W=4.8 nf=5 
 **XM2c outn outp net1 GND sky130_fd_pr__nfet_01v8 L=0.15 W=4.8 nf=5
 **XM5b outp outn net2 GND sky130_fd_pr__nfet_01v8 L=0.15 W=4.8 nf=5

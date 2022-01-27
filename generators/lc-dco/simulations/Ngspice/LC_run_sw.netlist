@@ -21,13 +21,13 @@
 .param Icurr = 600u
 **.param Icurr = 1260u
 .param psw0 = 1.8
-.param psw1 = 1.8 
-.param psw2 = 1.8  
-.param psw3 = 1.8  
-.param psw4 = 1.8 
-.param psw5 = 1.8  
-.param psw6 = 1.8  
-.param psw7 = 1.8
+.param psw1 = 0.0 
+.param psw2 = 0.0  
+.param psw3 = 0.0  
+.param psw4 = 0.0 
+.param psw5 = 0.0  
+.param psw6 = 0.0  
+.param psw7 = 0.0
 
 
 
@@ -91,63 +91,63 @@ xswcap_3M2C outn outp sw7 sw6 sw5 sw4 sw3 sw2 sw1 sw0 0 swcap_3M2C
 
 .control
 option numdgt =7
-**run
-**save all
-**set filetype=ascii
-**set appendwrite TRUE
-**set wr_singlescale TRUE
-**echo "alterparam psw0=1.8" > LC_run_sw1.out
-**echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw1.out
-**wrdata LC_run_sw1.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
-**alterparam psw1=1.8
-**reset
-**set appendwrite TRUE
-**set wr_singlescale TRUE
-**run
-**echo "alterparam psw1=1.8" > LC_run_sw2.out
-**echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw2.out
-**wrdata LC_run_sw2.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
-**alterparam psw2=1.8
-**reset
-**set appendwrite TRUE
-**set wr_singlescale TRUE
-**run
-**echo "alterparam psw1=1.8 psw2=1.8" > LC_run_sw3.out
-**echo "time outp outn " >> LC_run_sw3.out
-**wrdata LC_run_sw3.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
-**alterparam psw3=1.8
-**reset
-**set appendwrite TRUE
-**set wr_singlescale TRUE
-**run
-**echo "alterparam psw1=1.8 psw2=1.8 psw3=1.8" > LC_run_sw4.out
-**echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw4.out
-**wrdata LC_run_sw4.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
-**alterparam psw4=1.8
-**reset
-**set appendwrite TRUE
-**set wr_singlescale TRUE
-**run
-**echo "alterparam psw1=1.8 psw2=1.8 psw3=1.8 psw4=1.8" >  LC_run_sw5.out
-**echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw5.out
-**wrdata LC_run_sw5.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
-**alterparam psw5=1.8
-**reset
-**set appendwrite TRUE
-**set wr_singlescale TRUE
-**run
-**echo "alterparam psw1=1.8 psw2=1.8 psw3=1.8 psw4=1.8" >  LC_run_sw6.out
-**echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw6.out
-**wrdata LC_run_sw6.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
-**
-**alterparam psw6=1.8
-**reset
-**set appendwrite TRUE
-**set wr_singlescale TRUE
-**run
-**echo "alterparam psw1=1.8 psw2=1.8 psw3=1.8 psw4=1.8" >  LC_run_sw7.out
-**echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw7.out
-**wrdata LC_run_sw7.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+run
+save all
+set filetype=ascii
+set appendwrite TRUE
+set wr_singlescale TRUE
+echo "alterparam psw0=1.8" > LC_run_sw1.out
+echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw1.out
+wrdata LC_run_sw1.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+alterparam psw1=1.8
+reset
+set appendwrite TRUE
+set wr_singlescale TRUE
+run
+echo "alterparam psw1=1.8" > LC_run_sw2.out
+echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw2.out
+wrdata LC_run_sw2.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+alterparam psw2=1.8
+reset
+set appendwrite TRUE
+set wr_singlescale TRUE
+run
+echo "alterparam psw1=1.8 psw2=1.8" > LC_run_sw3.out
+echo "time outp outn " >> LC_run_sw3.out
+wrdata LC_run_sw3.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+alterparam psw3=1.8
+reset
+set appendwrite TRUE
+set wr_singlescale TRUE
+run
+echo "alterparam psw1=1.8 psw2=1.8 psw3=1.8" > LC_run_sw4.out
+echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw4.out
+wrdata LC_run_sw4.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+alterparam psw4=1.8
+reset
+set appendwrite TRUE
+set wr_singlescale TRUE
+run
+echo "alterparam psw1=1.8 psw2=1.8 psw3=1.8 psw4=1.8" >  LC_run_sw5.out
+echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw5.out
+wrdata LC_run_sw5.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+alterparam psw5=1.8
+reset
+set appendwrite TRUE
+set wr_singlescale TRUE
+run
+echo "alterparam psw1=1.8 psw2=1.8 psw3=1.8 psw4=1.8" >  LC_run_sw6.out
+echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw6.out
+wrdata LC_run_sw6.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+
+alterparam psw6=1.8
+reset
+set appendwrite TRUE
+set wr_singlescale TRUE
+run
+echo "alterparam psw1=1.8 psw2=1.8 psw3=1.8 psw4=1.8" >  LC_run_sw7.out
+echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw7.out
+wrdata LC_run_sw7.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
 alterparam psw7=1.8
 reset
 set appendwrite TRUE
