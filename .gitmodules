@@ -1,0 +1,3 @@
+[submodule "caravel_user_project"]
+	path = caravel_user_project
+	url = https://github.com/efabless/caravel_user_project.git

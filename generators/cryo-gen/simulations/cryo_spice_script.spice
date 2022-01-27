@@ -1,0 +1,33 @@
+
+.lib '~/OpenLane/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice' tt
+.include './../flow/results/sky130hd/cryo/6_final.cdl'
+.include '~/OpenLane/pdks/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice'
+
+.param vvdd = 1.8
+
+xi1 EBL OUT cryoInst
+
+vEBL                      EBL                      0                  pwl               0 0 '1n+1f' 'vvdd'
+vVDD                      VDD                      0                  dc		        'vvdd'
+vVSS                      VSS                      0                  dc                0
+vVDDxi1                      xi1.VDD                      0                  dc		        'vvdd'
+vVSSxi1                      xi1.VSS                      0                  dc                0
+
+c0 OUT 0 1f
+
+.TRAN 50p 9u
+
+.PRINT TRAN V(OUT, 0)
+
+*.meas   tran period TRIG v(lc_out) td=10p val=1.0 rise=2
+*+           TARG v(lc_out) td=10p val=1.0 rise=3
+
+
+.control
+
+set num_threads=64
+
+run
+.endc
+
+.END

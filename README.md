@@ -96,6 +96,10 @@ To run the simulation, please edit your local model file in `common/platform_con
   }
 }
 ```
+# Tapeouts and testing setup
+
+Please refer to our testing setup in our tapeouts and testing setup [section](./tapeouts/mpw-1/testsetup/README.md#section).
+
 
 # Things to improve
 
