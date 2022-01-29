@@ -17,22 +17,27 @@ jobs:
         # with:
         #   ref: topic/GCP
     
-      - name: Pull OpenLane
+      - name: Clone OpenLane repo
         run: |
           cd /tmp
           git clone https://github.com/The-OpenROAD-Project/OpenLane.git
-          cd OpenLane
-          git checkout 0dcb781dc1658514deee27f039d712e3d1670484
 
-      - name: Make OpenLane Image
+      # - name: Make OpenLane Image
+      #   run: |
+      #     cd /tmp/OpenLane/docker
+      #     make merge
+
+      # Build openlane:current instead of merging
+      # `make openlane` applies the current tag to the image
+      - name: Make OpenLane
         run: |
-          cd /tmp/OpenLane/docker
-          make merge
+          cd /tmp/OpenLane
+          make openlane
 
-      - name: Make PDK
+      - name: Make OpenLane
         env:
           PDK_ROOT: /tmp/pdk
-          IMAGE_NAME: efabless/openlane:latest
+          IMAGE_NAME: efabless/openlane:current
         run: |
           cd /tmp/OpenLane
           make pdk
@@ -40,7 +45,7 @@ jobs:
       - name: Make Sky130HD Temp
         env:
           PDK_ROOT: /tmp/pdk
-          IMAGE_NAME: efabless/openlane:latest
+          IMAGE_NAME: efabless/openlane:current
         run: |
           docker run --rm\
             -e GITHUB_ACTIONS=1\
