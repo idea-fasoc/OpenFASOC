@@ -22,7 +22,7 @@ jobs:
           cd /tmp
           git clone https://github.com/The-OpenROAD-Project/OpenLane.git
           cd OpenLane
-          git checkout --force 2021.12.22_01.51.18
+          git checkout 0dcb781dc1658514deee27f039d712e3d1670484
 
       - name: Make OpenLane Image
         run: |
