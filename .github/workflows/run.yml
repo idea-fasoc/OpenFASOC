@@ -32,7 +32,7 @@ jobs:
       - name: Make PDK
         env:
           PDK_ROOT: /tmp/pdk
-          IMAGE_NAME: efabless/openlane:current
+          IMAGE_NAME: efabless/openlane:latest
         run: |
           cd /tmp/OpenLane
           make pdk
@@ -40,7 +40,7 @@ jobs:
       - name: Make Sky130HD Temp
         env:
           PDK_ROOT: /tmp/pdk
-          IMAGE_NAME: efabless/openlane:current
+          IMAGE_NAME: efabless/openlane:latest
         run: |
           docker run --rm\
             -e GITHUB_ACTIONS=1\
