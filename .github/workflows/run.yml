@@ -9,8 +9,8 @@ on:
 
 jobs:
   sky130hd_temp:
-    runs-on: ubuntu-latest
-    # runs-on: self-hosted
+    # runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -29,12 +29,12 @@ jobs:
 
       # Build openlane:current instead of merging
       # `make openlane` applies the current tag to the image
-      - name: Make OpenLane
+      - name: Make OpenLane image
         run: |
           cd /tmp/OpenLane
           make openlane
 
-      - name: Make OpenLane
+      - name: Build PDK
         env:
           PDK_ROOT: /tmp/pdk
           IMAGE_NAME: efabless/openlane:current
