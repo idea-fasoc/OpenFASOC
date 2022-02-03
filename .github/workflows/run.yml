@@ -17,10 +17,10 @@ jobs:
         # with:
         #   ref: topic/GCP
     
-      - name: Clone OpenLane repo
-        run: |
-          cd /github
-          git clone https://github.com/The-OpenROAD-Project/OpenLane.git
+      # - name: Clone OpenLane repo
+      #   run: |
+      #     cd /github
+      #     git clone https://github.com/The-OpenROAD-Project/OpenLane.git
 
       # - name: Make OpenLane Image
       #   run: |
@@ -29,22 +29,23 @@ jobs:
 
       # Build openlane:current instead of merging
       # `make openlane` applies the current tag to the image
-      - name: Make OpenLane image
-        run: |
-          cd /github/OpenLane
-          make openlane
+      
+      # - name: Make OpenLane image
+      #   run: |
+      #     cd /github/OpenLane
+      #     make openlane
 
-      - name: Build PDK
-        env:
-          PDK_ROOT: /tmp/pdk
-          IMAGE_NAME: efabless/openlane:current
-        run: |
-          cd /github/OpenLane
-          make pdk
+      # - name: Build PDK
+      #   env:
+      #     PDK_ROOT: /github/pdks
+      #     IMAGE_NAME: efabless/openlane:current
+      #   run: |
+      #     cd /github/OpenLane
+      #     make pdk
           
       - name: Make Sky130HD Temp
         env:
-          PDK_ROOT: /github/pdk
+          PDK_ROOT: /github/pdks
           IMAGE_NAME: efabless/openlane:current
         run: |
           cd $GITHUB_WORKSPACE
