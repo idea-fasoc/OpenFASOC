@@ -37,7 +37,7 @@ jobs:
 
       # - name: Build PDK
       #   env:
-      #     PDK_ROOT: /github/pdks
+      #     PDK_ROOT: /github/OpenLane/pdks
       #     IMAGE_NAME: efabless/openlane:current
       #   run: |
       #     cd /github/OpenLane
@@ -45,7 +45,7 @@ jobs:
           
       - name: Make Sky130HD Temp
         env:
-          PDK_ROOT: /github/pdks
+          PDK_ROOT: /github/OpenLane/pdks
           IMAGE_NAME: efabless/openlane:current
         run: |
           cd $GITHUB_WORKSPACE
