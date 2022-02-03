@@ -12,6 +12,10 @@ jobs:
     # runs-on: ubuntu-latest
     runs-on: self-hosted
     steps:
+      - name: Fix self-host Permissions
+        run:
+          sudo chmod -R a+rwx /actions-runner/
+        
       - name: Checkout repo
         uses: actions/checkout@v2
         # with:
