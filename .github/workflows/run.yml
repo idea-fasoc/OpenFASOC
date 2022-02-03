@@ -47,9 +47,10 @@ jobs:
           PDK_ROOT: /tmp/pdk
           IMAGE_NAME: efabless/openlane:current
         run: |
+          cd $GITHUB_WORKSPACE
           docker run --rm\
             -e GITHUB_ACTIONS=1\
-            -v /tmp/OpenLane:/openLANE_flow\
+            -v /tmp/OpenLane:/OpenLane\
             -v $PDK_ROOT:$PDK_ROOT\
             -e PDK_ROOT=$PDK_ROOT\
             -v $PWD:$PWD\
