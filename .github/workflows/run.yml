@@ -19,7 +19,7 @@ jobs:
     
       - name: Clone OpenLane repo
         run: |
-          cd /tmp
+          cd /github
           git clone https://github.com/The-OpenROAD-Project/OpenLane.git
 
       # - name: Make OpenLane Image
@@ -31,7 +31,7 @@ jobs:
       # `make openlane` applies the current tag to the image
       - name: Make OpenLane image
         run: |
-          cd /tmp/OpenLane
+          cd /github/OpenLane
           make openlane
 
       - name: Build PDK
@@ -39,12 +39,12 @@ jobs:
           PDK_ROOT: /tmp/pdk
           IMAGE_NAME: efabless/openlane:current
         run: |
-          cd /tmp/OpenLane
+          cd /github/OpenLane
           make pdk
           
       - name: Make Sky130HD Temp
         env:
-          PDK_ROOT: /tmp/pdk
+          PDK_ROOT: /github/pdk
           IMAGE_NAME: efabless/openlane:current
         run: |
           cd $GITHUB_WORKSPACE
