@@ -1,5 +1,5 @@
 ** sch_path: /home/chandru/Tools/OpenFASOC/generators/lc-dco/xschem_rundir/mim_1m2C.sch
-.subckt mim_1m2C outn outp sw<7> sw<6> sw<5> sw<4> sw<3> sw<2> sw<1> sw<0> GND
+.subckt mim_1m2C outn outp sw<7> sw<6> sw<5> sw<4> sw<3> sw<2> sw<1> sw<0>
 *.PININFO outn:O outp:O sw[7:0]:I
 XC1 outp net1 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
 XC2 net2 outn sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1

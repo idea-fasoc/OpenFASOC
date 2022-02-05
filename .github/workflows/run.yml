@@ -9,42 +9,53 @@ on:
 
 jobs:
   sky130hd_temp:
-    runs-on: ubuntu-latest
-    # runs-on: self-hosted
+    # runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
+      - name: Fix self-host Permissions
+        run:
+          sudo chmod -R a+rwx /actions-runner/
+        
       - name: Checkout repo
         uses: actions/checkout@v2
         # with:
         #   ref: topic/GCP
     
-      - name: Pull OpenLane
-        run: |
-          cd /tmp
-          git clone https://github.com/The-OpenROAD-Project/OpenLane.git
-          cd OpenLane
-          git checkout --force 2021.12.22_01.51.18
+      # - name: Clone OpenLane repo
+      #   run: |
+      #     cd /github
+      #     git clone https://github.com/The-OpenROAD-Project/OpenLane.git
 
-      - name: Make OpenLane Image
-        run: |
-          cd /tmp/OpenLane/docker
-          make merge
+      # - name: Make OpenLane Image
+      #   run: |
+      #     cd /tmp/OpenLane/docker
+      #     make merge
 
-      - name: Make PDK
-        env:
-          PDK_ROOT: /tmp/pdk
-          IMAGE_NAME: efabless/openlane:current
-        run: |
-          cd /tmp/OpenLane
-          make pdk
+      # Build openlane:current instead of merging
+      # `make openlane` applies the current tag to the image
+      
+      # - name: Make OpenLane image
+      #   run: |
+      #     cd /github/OpenLane
+      #     make openlane
+
+      # - name: Build PDK
+      #   env:
+      #     PDK_ROOT: /github/OpenLane/pdks
+      #     IMAGE_NAME: efabless/openlane:2021.12.22_01.51.18
+      #   run: |
+      #     cd /github/OpenLane
+      #     make pdk
           
       - name: Make Sky130HD Temp
         env:
-          PDK_ROOT: /tmp/pdk
-          IMAGE_NAME: efabless/openlane:current
+          PDK_ROOT: /github/OpenLane/pdks
+          IMAGE_NAME: efabless/openlane:2021.12.22_01.51.18
         run: |
+          cd $GITHUB_WORKSPACE
           docker run --rm\
             -e GITHUB_ACTIONS=1\
-            -v /tmp/OpenLane:/openLANE_flow\
+            -v /github/OpenLane:/OpenLane\
             -v $PDK_ROOT:$PDK_ROOT\
             -e PDK_ROOT=$PDK_ROOT\
             -v $PWD:$PWD\
