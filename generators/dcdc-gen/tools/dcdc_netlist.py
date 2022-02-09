@@ -8,18 +8,47 @@ import math
 def gen_dcdc_netlist(cells, args, jsonSpec, platformConfig, srcDir):
 
     # process the top level verilog
-    r_netlist=open(srcDir + "/dcdcInst.template.v","r")          # Modify here, and also the writeback file
+    r_netlist=open(srcDir + "/dcdcInst.template.v","r")
     lines=list(r_netlist.readlines())
     w_netlist=open(srcDir + "/dcdcInst.v","w")
 
-    netmap1=function.netmap()
-    netmap1.get_net('na',cells['ff_cell'],1,1,1)
-    netmap1.get_net('nb',cells['inv_cell'],1,1,1)
-    netmap1.get_net('nc',cells['clkgate_cell'],1,1,1)
+    netmap_top=function.netmap()
+    netmap_top.get_net('na',cells['ff_cell'],1,1,1)
+    netmap_top.get_net('nb',cells['inv_cell'],1,1,1)
+    netmap_top.get_net('nc',cells['clkgate_cell'],1,1,1)
 	
     for line in lines:
-        netmap1.printline(line,w_netlist)
+        netmap_top.printline(line,w_netlist)
 
+    # process the non-inverting clock verilog
+    r_netlist=open(srcDir + "/DCDC_NOV_CLKGEN.template.sv","r")
+    lines=list(r_netlist.readlines())
+    w_netlist=open(srcDir + "/DCDC_NOV_CLKGEN.sv","w")
+
+    netmap_novclkgen=function.netmap()
+    netmap_novclkgen.get_net('na',cells['nand2_cell'],1,1,1)
+    netmap_novclkgen.get_net('nb',cells['clkinv_cell'],1,1,1)
+    netmap_novclkgen.get_net('nc',cells['clkinv_cell'],1,1,1)
+    netmap_novclkgen.get_net('ne',cells['clkinv_cell'],1,1,1)
+    netmap_novclkgen.get_net('nf',cells['clkinv_cell'],1,1,1)
+    netmap_novclkgen.get_net('nd',cells['nor2_cell'],1,1,1)
+	
+    for line in lines:
+        netmap_novclkgen.printline(line,w_netlist)
+        
+    
+    netmap_buffer=function.netmap()
+    netmap_buffer.get_net('nb',cells['clkinv_cell'],1,1,1)
+    netmap_buffer.get_net('nc',cells['clkinv_cell'],1,1,1)
+    
+    r_netlist=open(srcDir + "/DCDC_BUFFER.template.sv","r")
+    lines=list(r_netlist.readlines())
+    w_netlist=open(srcDir + "/DCDC_BUFFER.sv","w")
+	
+    for line in lines:
+        netmap_buffer.printline(line,w_netlist)
+    
+    
     # Get the design spec & parameters from spec file
     try:
         Iload = float(jsonSpec['specifications']['Iload (mA)'])
@@ -74,10 +103,10 @@ def gen_dcdc_netlist(cells, args, jsonSpec, platformConfig, srcDir):
     # process 2:1 stage switch and cap configuration
     # Technology parameter ######
     if re.search('sky130',args.platform): 
-        k_sqrt_rc = 2.0E-6                                       # Update
+        k_sqrt_rc = 6.1E-6
         deltaV  = 0.10
-        unit_cap_capacitance = 1.8E-12
-        unit_r_resistance = 5.0E+2
+        unit_cap_capacitance = 2E-12
+        unit_r_resistance = 6750
     #############################
 
     # Determine the cap and switch size

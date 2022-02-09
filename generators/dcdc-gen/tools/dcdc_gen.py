@@ -121,7 +121,12 @@ print('#----------------------------------------------------------------------')
 # declare cells to use for each platform
 
 if args.platform == 'sky130hd':
-    cells = {'ff_cell':'sky130_fd_sc_hd__dfxtp_1', 'inv_cell':'sky130_fd_sc_hd__inv_1', 'clkgate_cell':'sky130_fd_sc_hd__dlclkp_1'}
+    cells = {'ff_cell':'sky130_fd_sc_hd__dfxtp_1', 
+    'inv_cell':'sky130_fd_sc_hd__inv_1', 
+    'clkgate_cell':'sky130_fd_sc_hd__dlclkp_1',
+    'clkinv_cell':'sky130_fd_sc_hd__clkinv_1',
+    'nor2_cell':'sky130_fd_sc_hd__nor2_1',
+    'nand2_cell':'sky130_fd_sc_hd__nand2_1'}
 
 # generate updated verilog netlist based on the cells and jsonSpec
 
@@ -165,6 +170,8 @@ shutil.copyfile(srcDir + 'dcdcInst.v', flowDir + 'design/src/dcdc/' + designName
 shutil.copyfile(srcDir + 'DCDC_SIX_STAGES_CONV.v', flowDir + 'design/src/dcdc/DCDC_SIX_STAGES_CONV.v')
 shutil.copyfile(srcDir + 'DCDC_CONV2TO1.v', flowDir + 'design/src/dcdc/DCDC_CONV2TO1.v')
 shutil.copyfile(srcDir + 'DCDC_HUNIT_CONV2TO1.v', flowDir + 'design/src/dcdc/DCDC_HUNIT_CONV2TO1.v')
+shutil.copyfile(srcDir + 'DCDC_NOV_CLKGEN.sv', flowDir + 'design/src/dcdc/DCDC_NOV_CLKGEN.sv')
+shutil.copyfile(srcDir + 'DCDC_BUFFER.sv', flowDir + 'design/src/dcdc/DCDC_BUFFER.sv')
 
 print('#----------------------------------------------------------------------')
 print('# Verilog Generated')

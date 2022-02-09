@@ -9,8 +9,8 @@ module DCDC_SIX_STAGES_CONV(
 	);
 	
     parameter DCDC_NUM_STAGE = 6;
-    parameter DCDC_CAP_SIZE = 69;
-    parameter DCDC_SW_SIZE = 43;
+    parameter DCDC_CAP_SIZE = 62;
+    parameter DCDC_SW_SIZE = 194;
 	parameter DCDC_PWR_MUX_SIZE = 24;
 	
     assign VOUT = w_vint[DCDC_NUM_STAGE-1];

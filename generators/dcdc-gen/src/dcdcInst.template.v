@@ -11,6 +11,7 @@ module dcdcInst (
 	input dummy_in,
 	input [5:0] sel_vh, sel_vl,
 	output reg dummy_out
+	input [1:0] s; //add the select input --changed by jianwei jia 02/08/2022
 );
 
     wire w_clk0, w_clk0b, w_clk1, w_clk1b;
@@ -34,11 +35,10 @@ module dcdcInst (
 		.w_clk1(w_clk1), 
 		.w_clk1b(w_clk1b)
 	);
-	// AUX CELL DCDC_NOV_CLKGEN
+	// AUX CELL DCDC_NOV_CLKGEN--changed by jianwei jia 02/08/2022
     DCDC_NOV_CLKGEN u_DCDC_NOV_CLKGEN (
-        .VDD(VDD),
-        .VSS(VSS), 
-        .clk(FF_out),//given module has clk as input here, which is wrong?
+        .clk_in(FF_out),
+		.s (s),//notice, two bit to select the dead time
         .clk0(w_clk0),
         .clk0b(w_clk0b),
         .clk1(w_clk1),
