@@ -1,21 +1,8 @@
-////////////////////////////////////////////////////////////////
-//Design unit: non_overlap gen clock
-//
-//File name: DCDC_NOV_CLKGEN.sv
-//
-//Description:using parameter and sel to adjust the delay time
-//
-//Limitaions: None
-//
-//Replacement fit: nd, nb, or
-//
-//System: IEEE 1800-2017
-//
-//Author: Jianwei Jia
-//
-//Revison: Version 1.0 02/05/2022 
-/////////////////////////////////////////////////////////////////
-
+// Design: DCDC_NOV_CLKGEN
+// Description: Using parameter and sel to adjust the delay time in nov_clk generation
+// Author：Jianwei Jia
+// Updated by:
+// Last update: 02/05/22
 
 //define non_overlap clock generator
 module DCDC_NOV_CLKGEN #(parameter N_delay) (
@@ -72,8 +59,8 @@ endmodule
 
 //4 Delay inverter chain
 module inverterchain_4 (input in, output out1, out2, out3, out4);
-DCDC_BUFFER b1(out1, in);
-DCDC_BUFFER b2(out2_0, in), b3(out2, out2_0);
-DCDC_BUFFER b4(out3_0, in), b5(out3_1, out3_0), b6(out3, out3_1);
-DCDC_BUFFER b7(out4_0, in), b8(out4_1, out4_0), b9(out4_2, out4_1), b10(out4, out4_2);
+	DCDC_BUFFER b1(out1, in);
+	DCDC_BUFFER b2(out2_0, in), b3(out2, out2_0);
+	DCDC_BUFFER b4(out3_0, in), b5(out3_1, out3_0), b6(out3, out3_1);
+	DCDC_BUFFER b7(out4_0, in), b8(out4_1, out4_0), b9(out4_2, out4_1), b10(out4, out4_2);
 endmodule

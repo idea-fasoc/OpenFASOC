@@ -1,3 +1,9 @@
+// Design: DCDC_HUNIT_CONV2to1
+// Description: 2:1 Converter PMOS/NMOS switch pair
+// Author：Jeongsup Lee
+// Updated by: Wanyue Xu
+// Last update: 02/08/22
+
 module DCDC_HUNIT_CONV2to1 (
     inout    VDD,
     inout    VSS,

@@ -1,21 +1,8 @@
-////////////////////////////////////////////////////////////////
-//Design unit: buffer
-//
-//File name: DCDC_BUFFER.sv
-//
-//Description: two inverter to construct one buffer
-//
-//Limitaions: Should be changed into different inv to control the delay time if needed
-//
-//
-//Replacement fit: nb
-//
-//System: IEEE 1800-2017
-//
-//Author: Jianwei Jia
-//
-//Revison: Version 1.0 02/05/2022 
-/////////////////////////////////////////////////////////////////
+// Design: DCDC_BUFFER
+// Description: Buffers used in non-overlapping clock generation
+// Author：Jianwei Jia
+// Updated by: 
+// Last update: 02/05/22
 
 module DCDC_BUFFER(
     output logic out, input logic in

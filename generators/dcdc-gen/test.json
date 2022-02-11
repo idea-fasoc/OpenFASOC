@@ -2,8 +2,7 @@
     "module_name": "dcdcInst",
     "generator": "dcdc-gen",
     "specifications": {
-		"Iload (mA)": 2.0,
-		"Output voltage (V)": 0.62,
-		"Clock frequency (kHz)": 40000
+		"Iload (mA)": 5.0,
+		"Clock frequency (kHz)": 300000
 	}
 }

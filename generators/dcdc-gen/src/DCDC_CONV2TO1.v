@@ -1,3 +1,9 @@
+// Design: DCDC_CONV2TO1
+// Description: 2:1 Converter slice
+// Author：Jeongsup Lee
+// Updated by: Wanyue Xu
+// Last update: 02/08/22
+
 module DCDC_CONV2TO1 (
     inout    VDD,
     inout    VSS,
