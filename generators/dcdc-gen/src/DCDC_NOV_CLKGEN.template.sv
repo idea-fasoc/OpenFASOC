@@ -23,9 +23,11 @@ module DCDC_NOV_CLKGEN #(parameter N_delay) (
     end
     endgenerate
     
+	wire out1, out2, out3, out4, clk_in9;
+	
     //adjust delay element
     inverterchain_4 inverterchain_4(.in(clk_in1[N_delay]), .out1(out1), .out2(out2), .out3(out3), .out4(out4));
-    MUX4 mux4(.y(clk_in9), .a(out1), .b(out2), .c(out3), .d(out4), .s(s)));
+    MUX4 mux4(.y(clk_in9), .a(out1), .b(out2), .c(out3), .d(out4), .s(s));
 
     //output clk0, clk0b
 @@ 	@na nand1(.Y(nandout1), .A(clk_in1[0]), .B(clk_in9)); 
@@ -59,6 +61,11 @@ endmodule
 
 //4 Delay inverter chain
 module inverterchain_4 (input in, output out1, out2, out3, out4);
+	
+	wire out2_0, out3_0, out4_0;
+	wire out3_1, out4_1;
+	wire out4_2;
+
 	DCDC_BUFFER b1(out1, in);
 	DCDC_BUFFER b2(out2_0, in), b3(out2, out2_0);
 	DCDC_BUFFER b4(out3_0, in), b5(out3_1, out3_0), b6(out3, out3_1);

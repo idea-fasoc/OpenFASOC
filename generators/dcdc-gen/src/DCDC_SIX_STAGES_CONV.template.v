@@ -19,12 +19,12 @@ module DCDC_SIX_STAGES_CONV(
     parameter DCDC_SW_SIZE = 12;
 	parameter [(DCDC_NUM_STAGE*8)-1:0] DCDC_PWR_MUX_CONF = {8'd1,8'd1,8'd1,8'd1,8'd1,8'd1};
 	
-    assign VOUT = w_vint[DCDC_NUM_STAGE-2];
+    assign VOUT = w_vint[DCDC_NUM_STAGE-1];
 	
 	wire [DCDC_NUM_STAGE-1:0] y0_top, y0_bot, y1_top, y1_bot;
 	wire [DCDC_NUM_STAGE-1:0] vhigh, vlow;
 	
-	wire [DCDC_NUM_STAGE-2:0] w_vint;
+	wire [DCDC_NUM_STAGE-1:0] w_vint;
 	
 	// generate stages with power mux, 2:1 slices, and caps
     genvar i, j;  
@@ -34,7 +34,7 @@ module DCDC_SIX_STAGES_CONV(
 			// Power mux generation (Configuration, defined by parameter, is stage dependent)
 			if(!i) begin
 			// AUX CELL DCDC_POWMUX
-			DCDC_POWMUX #(.M(DCDC_PWR_MUX_CONF[i*8+:8])) u_DCDC_POWMUX (
+			DCDC_POWMUX #(.m(DCDC_PWR_MUX_CONF[i*8+:8])) u_DCDC_POWMUX (
 				.VDD(VDD),
 				.VSS(VSS),
 				.vin(GND),
@@ -46,7 +46,7 @@ module DCDC_SIX_STAGES_CONV(
 			end
 			else begin
 			// AUX CELL DCDC_POWMUX
-			DCDC_POWMUX #(.M(DCDC_PWR_MUX_CONF[i*8+:8])) u_DCDC_POWMUX (
+			DCDC_POWMUX #(.m(DCDC_PWR_MUX_CONF[i*8+:8])) u_DCDC_POWMUX (
 				.VDD(VDD),
 				.VSS(VSS),
 				.vin(w_vint[i]),

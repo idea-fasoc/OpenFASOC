@@ -14,13 +14,12 @@ module dcdcInst (
 	input VREF_in, //new added input
 	input dummy_in,
 	input [5:0] sel_vh, sel_vl,
-	output reg dummy_out
-	input [1:0] s;
+	output reg dummy_out,
+	input [1:0] s
 );
 
     wire w_clk0, w_clk0b, w_clk1, w_clk1b;
-    wire [DCDC_NUM_STAGE-1:0] y0_top, y0_bot, y1_top, y1_bot;
-	wire comp_out, clk_gate_out, FF_out;
+	wire comp_out, clk_gate_out, FF_out, FF_out_inv;
 	
 	always @ (posedge clk) begin
 		dummy_out <= ~dummy_in;
@@ -41,7 +40,7 @@ module dcdcInst (
 	);
 	
 	// AUX CELL DCDC_NOV_CLKGEN
-    DCDC_NOV_CLKGEN u_DCDC_NOV_CLKGEN (
+    DCDC_NOV_CLKGEN #(.N_delay(7)) u_DCDC_NOV_CLKGEN (
         .clk_in(FF_out),
 		.s (s), // two bits to select the dead time
         .clk0(w_clk0),

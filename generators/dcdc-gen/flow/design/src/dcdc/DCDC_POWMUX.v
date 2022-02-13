@@ -16,6 +16,8 @@ module DCDC_POWMUX (
 	// device multiplier
 	parameter m = 1;
 	
+	wire sel_vh_inv, sel_vl_inv;
+	
 	// power mux t-gate
 	DCDC_MUX_TGATE pmux_hi [m-1:0] (.VIN(vin), .SEL_INV(sel_vh_inv), .SLE(sel_vh), .VDD(VDD), .VSS(VSS), .VOUT(vhigh));
 	DCDC_MUX_TGATE pmux_lo [m-1:0] (.VIN(vin), .SEL_INV(sel_vl_inv), .SLE(sel_vl), .VDD(VDD), .VSS(VSS), .VOUT(vlow));

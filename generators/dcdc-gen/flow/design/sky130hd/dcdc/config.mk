@@ -4,7 +4,9 @@ export DESIGN_NAME = dcdcInst
 export PLATFORM    = sky130hd
 #export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 
-export VERILOG_FILES 		= $(sort $(wildcard ./design/src/$(DESIGN_NICKNAME)/*.v)) 
+export VERILOG_FILES 		=   $(sort $(wildcard ./design/src/$(DESIGN_NICKNAME)/*.v)) \
+								$(sort $(wildcard ./design/src/$(DESIGN_NICKNAME)/*.sv)) \
+								../blocks/$(PLATFORM)/dcdcInst.blackbox.v
 
 export SDC_FILE    		= ./design/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 

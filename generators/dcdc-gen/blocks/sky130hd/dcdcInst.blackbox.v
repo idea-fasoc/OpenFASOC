@@ -44,8 +44,8 @@ endmodule
 (* keep *)
 (* keep_hierarchy *)
 (* blackbox *) module DCDC_CAP_UNIT(
-  input TOP,
-  output BOT
+  inout top,
+  inout bot
 );
 parameter dont_touch = "on";
 endmodule
@@ -54,7 +54,7 @@ endmodule
 (* keep *)
 (* keep_hierarchy *)
 (* blackbox *) module DCDC_MUX_TGATE(
-  input VIN
+  input VIN,
   input SEL_INV,
   input SLE,
   inout VDD,
