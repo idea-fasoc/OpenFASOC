@@ -1,9 +1,10 @@
-# Ruby Script for merging gds file together
+# Ruby Script for merging gds files
 # Please run the script within Klayout
 
 layout = RBA::Layout.new
 
-files = Dir["/home/elonjia/OpenFASOC/common/platforms/sky130osu15Ths/gds/*.gds"]
+# list all input gds files here
+files = Dir["./*.gds"]
 
 load_layout_options = RBA::LoadLayoutOptions.new
     
@@ -17,5 +18,5 @@ files.each do |file_name|
   end
 end
 
-
-layout.write("/home/elonjia/OpenFASOC/common/platforms/sky130osu15Ths/gds/sky130_osu_sc_15T_hs.gds")
+# specify output gds file
+layout.write("./out/out.gds")

@@ -16,7 +16,6 @@ import readparamgen
 import os
 import time
 from readparamgen import designName, args, jsonSpec
-from simulation import generate_runs
 
 genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)),"../")
 srcDir = genDir + "src/"
@@ -260,41 +259,3 @@ if args.mode == 'macro':
   print("Exiting tool....")
   #sys.exit(1)
   exit()
-
-stage_var = [int(ninv) - 1]
-header_var = [int(nhead)]
-
-temp_start = -20
-temp_stop = 100
-temp_step = 20
-temp_points = int((temp_stop - temp_start) / temp_step)
-
-temp_list=[]
-for i in range(0, temp_points+1):
-   temp_list.append(temp_start + i*temp_step)
-
-generate_runs(genDir, designName, header_var, stage_var, temp_list, jsonConfig, args.platform) 
-
-# shutil.copyfile(flowDir + designName + '_pex.spice', runDir + designName + '_pex.spice')
-# shutil.copyfile(genDir + "tools/result.py", runDir + "result.py")
-# shutil.copyfile(genDir + "tools/result_error.py", runDir + "result_error.py")
-
-runDir = simDir + "run/inv{:d}_header{:d}/".format(stage_var[0], header_var[0])
-if os.path.isfile(runDir + "all_result"):
-  shutil.copyfile(runDir + "all_result", genDir + args.outputDir + "/sim_result")
-else:
-  print(runDir + "all_result file is not generated successfully")
-
-
-# with open(spice_netlist, "r") as rf:
-#   filedata = rf.read()
-#   filedata = re.sub("(V[0-9]+)", "*\g<1>", filedata)
-#   filedata = re.sub("\*(R[0-9]+)", "\g<1>", filedata)
-# with open(spice_netlist, "w") as wf:
-#   wf.write(filedata)
-
-print('#----------------------------------------------------------------------')
-print('# Simulation output Generated')
-print('#----------------------------------------------------------------------')
-print("Exiting tool....")
-exit()

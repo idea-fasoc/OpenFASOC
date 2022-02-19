@@ -14,11 +14,25 @@ default: finish
 
 # Include design and platform configuration
 
+# Uncomment to run the flow for different platforms
+
 DESIGN_CONFIG = ./design/sky130hd/cryo/config.mk
+#DESIGN_CONFIG = ./design/sky130hs/cryo/config.mk
+#DESIGN_CONFIG = ./design/sky130hvl/cryo/config.mk
+#DESIGN_CONFIG = ./design/sky130osu12Ths/cryo/config.mk
+#DESIGN_CONFIG = ./design/sky130osu12Tms/cryo/config.mk
+#DESIGN_CONFIG = ./design/sky130osu12Tls/cryo/config.mk
+#DESIGN_CONFIG = ./design/sky130osu15Ths/cryo/config.mk
+#DESIGN_CONFIG = ./design/sky130osu15Tms/cryo/config.mk
+#DESIGN_CONFIG = ./design/sky130osu15Tls/cryo/config.mk
+#DESIGN_CONFIG = ./design/sky130osu18Ths/cryo/config.mk
+#DESIGN_CONFIG = ./design/sky130osu18Tms/cryo/config.mk
+#DESIGN_CONFIG = ./design/sky130osu18Tls/cryo/config.mk
+
 
 include $(DESIGN_CONFIG)
 
-PUBLIC=sky130hd sky130hs sky130hvl
+PUBLIC=sky130hd sky130hs sky130hvl sky130osu12Ths sky130osu12Tms sky130osu12Tls sky130osu18Ths sky130osu18Tms sky130osu18Tls sky130osu15Ths sky130osu15Tms sky130osu15Tls
 
 ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
   export PLATFORM_DIR = ../../../common/platforms/$(PLATFORM)
@@ -234,10 +248,10 @@ place: $(RESULTS_DIR)/3_place.def \
        $(RESULTS_DIR)/3_place.sdc
 # ==============================================================================
 
-# STEP 0: Place RO to fixed coordinates
+# STEP 0: Place RO to fixed coordinates. Variables are defined inside of config.mk in flow
 
 $(RESULTS_DIR)/2_floorplan_ro.def: $(RESULTS_DIR)/2_floorplan.def
-	python3 util/place_ro.py --inputDef $(RESULTS_DIR)/2_floorplan.def --outputDef $(RESULTS_DIR)/2_floorplan_ro.def --coreDim 40,40 --arrayDim 12,12 --cellDim 0.46,2.72 --targetInst cryo_ro_1 --coreDieOffset 3.68,2.72
+	python3 util/place_ro.py --inputDef $(RESULTS_DIR)/2_floorplan.def --outputDef $(RESULTS_DIR)/2_floorplan_ro.def --coreDim $(RO_CORE_DIM) --arrayDim $(RO_ARRAY_DIM) --cellDim $(RO_CELL_DIM) --targetInst cryo_ro_1 --coreDieOffset $(RO_OFFSET)
 
 # STEP 1: Global placement + IO placement (not random)
 #-------------------------------------------------------------------------------
@@ -358,6 +372,8 @@ endif
 	echo "outputDRC:$(REPORTS_DIR)/5_route_drc.rpt" >> $@
 	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
 	echo "threads:$(NUM_CORES)" >> $@
+	echo "bottomRoutingLayer:met1" >> $@
+	echo "topRoutingLayer:met5" >> $@ 
 	echo "cpxthreads:1" >> $@
 	echo "verbose:1" >> $@
 	echo "gap:0" >> $@
@@ -432,24 +448,24 @@ $(RESULTS_DIR)/6_final.def: $(REPORTS_DIR)/6_final_report.rpt
 $(WRAPPED_GDS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 	($(TIME_CMD) klayout -zz -rd design_name=$(basename $(notdir $@)) \
 	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:gds=def)) \
-	        -rd in_gds="$(ADDITIONAL_GDS)" \
+	        -rd in_files="$(ADDITIONAL_GDS)" \
 	        -rd config_file=$(FILL_CONFIG) \
-	        -rd seal_gds="" \
-	        -rd out_gds=$@ \
+	        -rd seal_file="" \
+	        -rd out_file=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout_wrap.lyt \
-	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
+	        -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
 
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED_GDS) $(RESULTS_DIR)/6_final.def
 	($(TIME_CMD) stdbuf -o L klayout -zz -rd design_name=$(DESIGN_NAME) \
-	        -rd in_def=$(RESULTS_DIR)/6_final.def \
-	        -rd in_gds="$(GDS_FILES) $(WRAPPED_GDS)" \
-	        -rd config_file=$(FILL_CONFIG) \
-	        -rd seal_gds="$(SEAL_GDS)" \
-	        -rd out_gds=$@ \
-	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+		-rd in_def=$(RESULTS_DIR)/6_final.def \
+                -rd in_files="$(GDS_FILES) $(WRAPPED_GDS)" \
+                -rd config_file=$(FILL_CONFIG) \
+                -rd seal_file="$(SEAL_GDS)" \
+                -rd out_file=$@ \
+                -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
+                -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
 
 $(RESULTS_DIR)/6_final.v: $(REPORTS_DIR)/6_final_report.rpt
 
