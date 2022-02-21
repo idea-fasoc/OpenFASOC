@@ -13,10 +13,9 @@ default: finish
 # ==============================================================================
 
 # Include design and platform configuration
-
-# Uncomment to run the flow for different platforms
-
-DESIGN_CONFIG = ./design/sky130hd/cryo/config.mk
+PLATFORM_ARG = sky130hd
+DESIGN_CONFIG = ./design/$(PLATFORM_ARG)/cryo/config.mk
+#DESIGN_CONFIG = ./design/sky130hd/cryo/config.mk
 #DESIGN_CONFIG = ./design/sky130hs/cryo/config.mk
 #DESIGN_CONFIG = ./design/sky130hvl/cryo/config.mk
 #DESIGN_CONFIG = ./design/sky130osu12Ths/cryo/config.mk
@@ -510,9 +509,8 @@ magic_drc: $(RESULTS_DIR)/6_final.gds
 	$(COMMON_VERIF_DIR)/run_drc.sh
 	# magic -rcfile $(COMMON_VERIF_DIR)/sky130A/sky130A.magicrc -noconsole -dnull $(COMMON_VERIF_DIR)/magic_commands.tcl < /dev/null
 
-netgen_lvs: $(RESULTS_DIR)/6_final.gds
-
-	cdl_spice_file = $(subst sky130, sky130_fd_sc_, $(PLATFORM)).spice
+netgen_lvs: $(RESULTS_DIR)/6_final.gds	
+	cdl_spice_file=$(subst sky130, sky130_fd_sc_, $(PLATFORM)).spice
         
 	python util/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(PLATFORM_DIR)/cdl/$(cdl_spice_file) -l $(OBJECTS_DIR)/merged_spacing.lef -o $(DESIGN_NAME).spice
 	$(COMMON_VERIF_DIR)/run_lvspex.sh $(RESULTS_DIR)/6_final.gds $(DESIGN_NAME) $(REPORTS_DIR)/6_final_lvs.rpt

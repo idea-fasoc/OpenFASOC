@@ -201,8 +201,8 @@ if args.mode == 'verilog':
 print('#----------------------------------------------------------------------')
 print('# Run Synthesis and APR')
 print('#----------------------------------------------------------------------')
-
-p = sp.Popen(['make',args.platform], cwd=flowDir)
+# make with different deisgn config 
+p = sp.Popen(['make','PLATFORM_ARG='+args.platform], cwd=flowDir)
 p.wait()
 
 
@@ -221,32 +221,33 @@ print('#----------------------------------------------------------------------')
 
 time.sleep(2)
 
-p = sp.Popen(['make','netgen_lvs'], cwd=flowDir)
-p.wait()
+# p = sp.Popen(['make','netgen_lvs'], cwd=flowDir)
+# p.wait()
 
 
-print('#----------------------------------------------------------------------')
-print('# LVS finished')
-print('#----------------------------------------------------------------------')
+# print('#----------------------------------------------------------------------')
+# print('# LVS finished')
+# print('#----------------------------------------------------------------------')
 
-if os.path.isdir(args.outputDir):
-    shutil.rmtree(genDir + args.outputDir)
-os.mkdir(genDir + args.outputDir)
+if os.path.isdir(args.outputDir + "/" + args.platform):
+    shutil.rmtree(genDir + args.outputDir + "/" + args.platform)
+sp.run(["mkdir", genDir + args.outputDir])
+sp.run(["mkdir", genDir + args.outputDir + "/" + args.platform])
 
-#  print("genDir + args.outputDir: {}".format(genDir + args.outputDir))
-#  print("flowDir: {}".format(flowDir))
-#  print("args.platform: {}".format(args.platform))
-#  print("designName: {}".format(designName))
-#  subprocess.run(["ls", "-l", flowDir, "results/", args.platform, "/cryo"])
+print("genDir + args.outputDir: {}".format(genDir + args.outputDir))
+print("flowDir: {}".format(flowDir))
+print("args.platform: {}".format(args.platform))
+print("designName: {}".format(designName))
+sp.run(["ls", "-l", flowDir + "/results/" + args.platform + "/cryo"])
 
 shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_final.gds', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.gds')
 shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_final.def', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.def')
 shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_final.v', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.v')
 shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_1_fill.sdc', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.sdc')
-shutil.copyfile(flowDir + designName + '.spice', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.spice')
-shutil.copyfile(flowDir + designName + '_pex.spice', genDir + args.outputDir + '/' + args.platform + '/' + designName + '_pex.spice')
-shutil.copyfile(flowDir + 'reports/' + args.platform + '/cryo/6_final_drc.rpt', genDir + args.outputDir + '/' + args.platform + '/6_final_drc.rpt')
-shutil.copyfile(flowDir + 'reports/' + args.platform + '/cryo/6_final_lvs.rpt', genDir + args.outputDir + '/' + args.platform + '/6_final_lvs.rpt')
+#shutil.copyfile(flowDir + designName + '.spice', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.spice')
+#shutil.copyfile(flowDir + designName + '_pex.spice', genDir + args.outputDir + '/' + args.platform + '/' + designName + '_pex.spice')
+#shutil.copyfile(flowDir + 'reports/' + args.platform + '/cryo/6_final_drc.rpt', genDir + args.outputDir + '/' + args.platform + '/6_final_drc.rpt')
+#shutil.copyfile(flowDir + 'reports/' + args.platform + '/cryo/6_final_lvs.rpt', genDir + args.outputDir + '/' + args.platform + '/6_final_lvs.rpt')
 
 
 time.sleep(2)
