@@ -5,31 +5,17 @@
 // Last update: 02/08/22
 
 module dcdcInst (
-    inout VDD,
-    inout VSS,
-    inout AVDD,
-    inout GND,
     inout VOUT,
     input clk,
 	input VREF_in, //new added input
-	input dummy_in,
 	input [5:0] sel_vh, sel_vl,
-	output reg dummy_out,
 	input [1:0] s
 );
 
     wire w_clk0, w_clk0b, w_clk1, w_clk1b;
 	wire comp_out, clk_gate_out, FF_out, FF_out_inv;
-	
-	always @ (posedge clk) begin
-		dummy_out <= ~dummy_in;
-    end
-	
+		
     DCDC_SIX_STAGES_CONV u_DCDC_SIX_STAGES_CONV(
-		.VDD(VDD),
-		.VSS(VSS),
-		.AVDD(AVDD),
-		.GND(GND),
 		.VOUT(VOUT),
 		.sel_vh(sel_vh),
 		.sel_vl(sel_vl),
@@ -77,5 +63,3 @@ module dcdcInst (
 		.Y(FF_out_inv)
 	);
 endmodule
-
-

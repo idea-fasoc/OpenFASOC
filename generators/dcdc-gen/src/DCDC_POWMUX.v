@@ -5,9 +5,7 @@
 // Last update: 02/09/22
 
 module DCDC_POWMUX (
-	inout VDD,
-	inout VSS,
-	input vin,
+	inout vin,
 	input sel_vh,
 	input sel_vl,
 	output vhigh,
@@ -19,8 +17,11 @@ module DCDC_POWMUX (
 	wire sel_vh_inv, sel_vl_inv;
 	
 	// power mux t-gate
-	DCDC_MUX_TGATE pmux_hi [m-1:0] (.VIN(vin), .SEL_INV(sel_vh_inv), .SLE(sel_vh), .VDD(VDD), .VSS(VSS), .VOUT(vhigh));
-	DCDC_MUX_TGATE pmux_lo [m-1:0] (.VIN(vin), .SEL_INV(sel_vl_inv), .SLE(sel_vl), .VDD(VDD), .VSS(VSS), .VOUT(vlow));
+	DCDC_MUX_TGATE pmux_hi_rail [m-1:0] (.VIN(1'b1), .SEL_INV(sel_vh_inv), .SEL(sel_vh), .VOUT(vhigh));
+	DCDC_MUX_TGATE pmux_hi [m-1:0] (.VIN(vin), .SEL_INV(sel_vh), .SEL(sel_vh_inv), .VOUT(vhigh));
+	
+	DCDC_MUX_TGATE pmux_lo [m-1:0] (.VIN(vin), .SEL_INV(sel_vl_inv), .SEL(sel_vl), .VOUT(vlow));
+	DCDC_MUX_TGATE pmux_lo_rail [m-1:0] (.VIN(1'b0), .SEL_INV(sel_vl), .SEL(sel_vl_inv), .VOUT(vlow));
 	
 	// inverters
 	sky130_fd_sc_hd__inv_1 inv0 [1:0] (.A({sel_vh, sel_vl}), .Y({sel_vh_inv, sel_vl_inv}));	

@@ -5,19 +5,15 @@
 // Last update: 02/09/22
 
 module DCDC_SIX_STAGES_CONV(
-    inout VDD,
-    inout VSS,
-    inout AVDD,
-    inout GND,
-    inout VOUT,
+    output VOUT,
 	input [5:0] sel_vh, sel_vl,
     input w_clk0, w_clk0b, w_clk1, w_clk1b
 	);
 	
     parameter DCDC_NUM_STAGE = 6;
-    parameter DCDC_CAP_SIZE = 20;
-    parameter DCDC_SW_SIZE = 177;
-	parameter [(DCDC_NUM_STAGE*8)-1:0] DCDC_PWR_MUX_CONF = {8'd1,8'd1,8'd1,8'd1,8'd2,8'd2};
+    parameter DCDC_CAP_SIZE = 1;
+    parameter DCDC_SW_SIZE = 3;
+	parameter [(DCDC_NUM_STAGE*8)-1:0] DCDC_PWR_MUX_CONF = {8'd1,8'd1,8'd1,8'd1,8'd1,8'd1};
 	
     assign VOUT = w_vint[DCDC_NUM_STAGE-1];
 	
@@ -35,9 +31,7 @@ module DCDC_SIX_STAGES_CONV(
 			if(!i) begin
 			// AUX CELL DCDC_POWMUX
 			DCDC_POWMUX #(.m(DCDC_PWR_MUX_CONF[i*8+:8])) u_DCDC_POWMUX (
-				.VDD(VDD),
-				.VSS(VSS),
-				.vin(GND),
+				.vin(1'b0),
 				.sel_vh(sel_vh[i]),
 				.sel_vl(sel_vl[i]),
 				.vhigh(vhigh[i]),
@@ -47,9 +41,7 @@ module DCDC_SIX_STAGES_CONV(
 			else begin
 			// AUX CELL DCDC_POWMUX
 			DCDC_POWMUX #(.m(DCDC_PWR_MUX_CONF[i*8+:8])) u_DCDC_POWMUX (
-				.VDD(VDD),
-				.VSS(VSS),
-				.vin(w_vint[i]),
+				.vin(w_vint[i-1]),
 				.sel_vh(sel_vh[i]),
 				.sel_vl(sel_vl[i]),
 				.vhigh(vhigh[i]),
@@ -60,8 +52,6 @@ module DCDC_SIX_STAGES_CONV(
 			// 2:1 Conv stages generation
 			for(j=0; (j==0)||(j<(DCDC_SW_SIZE>>(DCDC_NUM_STAGE-1-i))); j=j+1) begin: gen_conv
 				DCDC_CONV2TO1 u_DCDC_CONV2TO1 (
-					.VDD(VDD),
-					.VSS(VSS),
 					.vhigh(vhigh[i]),
 					.vlow(vlow[i]),
 					.vmid(w_vint[i]),

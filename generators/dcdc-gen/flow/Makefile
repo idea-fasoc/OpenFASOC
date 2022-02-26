@@ -38,6 +38,7 @@ export LOG_DIR     = ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)
 export OBJECTS_DIR = ./objects/$(PLATFORM)/$(DESIGN_NICKNAME)
 export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NICKNAME)
 export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)
+export AUXCELL_DIR = ./../blocks/$(PLATFORM)
 
 export SCRIPTS_DIR = ./scripts
 export UTILS_DIR   = ./util
@@ -131,6 +132,7 @@ $(WRAPPED_LEFS):
 $(WRAPPED_LIBS):
 	mkdir -p $(OBJECTS_DIR)/lib
 	sed 's/library(\(.*\))/library(\1_mod)/g' $(filter %$(notdir $(@:_mod.lib=.lib)),$(WRAP_LIBS)) | sed 's/cell(\(.*\))/cell(\1_mod)/g' > $@
+
 
 # ==============================================================================
 #  ______   ___   _ _____ _   _ _____ ____ ___ ____
