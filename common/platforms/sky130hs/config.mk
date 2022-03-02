@@ -103,3 +103,4 @@ export FILL_CELLS = sky130_fd_sc_hs__fill_1 sky130_fd_sc_hs__fill_2 sky130_fd_sc
 # resizer repair_long_wires -max_length
 export MAX_WIRE_LENGTH = 21000
 
+export CDL_FILE = ../../../common/platforms/$(PLATFORM)/cdl/sky130_fd_sc_hs.spice

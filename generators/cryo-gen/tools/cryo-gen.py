@@ -15,13 +15,14 @@ import cryo_netlist
 import readparamgen
 import os
 import time
+import simulation
 from readparamgen import designName, args, jsonSpec
 
 genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)),"../")
 srcDir = genDir + "src/"
 flowDir = genDir + "flow/"
 designDir = genDir + "designs/src/cryo/"
-simDir = genDir + "simulations/"
+simDir = genDir + "simulation/"
 commonDir = genDir + "../../common/"
 platformDir = genDir + "../../common/platforms/" + args.platform + "/"
 
@@ -169,6 +170,8 @@ elif args.platform == 'sky130osu18Tls':
   aux1 = 'sky130_osu_sc_18T_ls__nand2_1'
   aux2 = 'sky130_osu_sc_18T_ls__inv_1'  
   
+pdk_lib_name = aux1.split("__")[0]
+  
 ninv=ninv+1
 
 cryo_netlist.gen_cryo_netlist(ninv,aux1,aux2, srcDir)
@@ -212,7 +215,7 @@ print('#----------------------------------------------------------------------')
 
 time.sleep(2)
 
-p = sp.Popen(['make','magic_drc'], cwd=flowDir)
+p = sp.Popen(['make','magic_drc','PLATFORM_ARG='+args.platform], cwd=flowDir)
 p.wait()
 
 print('#----------------------------------------------------------------------')
@@ -221,13 +224,13 @@ print('#----------------------------------------------------------------------')
 
 time.sleep(2)
 
-# p = sp.Popen(['make','netgen_lvs'], cwd=flowDir)
-# p.wait()
+p = sp.Popen(['make','netgen_lvs'], cwd=flowDir)
+p.wait()
 
 
-# print('#----------------------------------------------------------------------')
-# print('# LVS finished')
-# print('#----------------------------------------------------------------------')
+print('#----------------------------------------------------------------------')
+print('# LVS finished')
+print('#----------------------------------------------------------------------')
 
 if os.path.isdir(args.outputDir + "/" + args.platform):
     shutil.rmtree(genDir + args.outputDir + "/" + args.platform)
@@ -244,10 +247,12 @@ shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_final.gds', genD
 shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_final.def', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.def')
 shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_final.v', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.v')
 shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_1_fill.sdc', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.sdc')
-#shutil.copyfile(flowDir + designName + '.spice', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.spice')
-#shutil.copyfile(flowDir + designName + '_pex.spice', genDir + args.outputDir + '/' + args.platform + '/' + designName + '_pex.spice')
-#shutil.copyfile(flowDir + 'reports/' + args.platform + '/cryo/6_final_drc.rpt', genDir + args.outputDir + '/' + args.platform + '/6_final_drc.rpt')
-#shutil.copyfile(flowDir + 'reports/' + args.platform + '/cryo/6_final_lvs.rpt', genDir + args.outputDir + '/' + args.platform + '/6_final_lvs.rpt')
+shutil.copyfile(flowDir + 'results/' + args.platform + '/cryo/6_final.cdl', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.cdl')
+shutil.copyfile(flowDir + designName + '.spice', genDir + args.outputDir + '/' + args.platform + '/' + designName + '.spice')
+shutil.copyfile(flowDir + designName + '_pex.spice', genDir + args.outputDir + '/' + args.platform + '/' + designName + '_pex.spice')
+shutil.copyfile(flowDir + designName + '_sim.spice', genDir + args.outputDir + '/' + args.platform + '/' + designName + '_sim.spice')
+shutil.copyfile(flowDir + 'reports/' + args.platform + '/cryo/6_final_drc.rpt', genDir + args.outputDir + '/' + args.platform + '/6_final_drc.rpt')
+shutil.copyfile(flowDir + 'reports/' + args.platform + '/cryo/6_final_lvs.rpt', genDir + args.outputDir + '/' + args.platform + '/6_final_lvs.rpt')
 
 
 time.sleep(2)
@@ -258,5 +263,19 @@ print('#----------------------------------------------------------------------')
 print()
 if args.mode == 'macro':
   print("Exiting tool....")
-  #sys.exit(1)
   exit()
+
+p = sp.Popen(['yum','install', '-y', 'libXaw-devel'])
+p.wait()
+p = sp.Popen(['yum','install', '-y', 'libXaw'])
+p.wait()
+
+pdks_path = "/shared/OpenLane/pdks/"
+
+simulation.run_cryo_sim(simDir, pdks_path + "sky130A/libs.tech/ngspice/sky130.lib.spice", "./../work/" + args.platform + "/" + designName + '_sim.spice', "./../" + platformDir + 'cdl/' + pdk_lib_name + ".spice")
+
+print('#----------------------------------------------------------------------')
+print('# Simulation output Generated')
+print('#----------------------------------------------------------------------')
+print("Exiting tool....")
+exit()

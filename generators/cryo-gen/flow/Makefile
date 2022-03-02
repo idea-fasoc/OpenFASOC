@@ -55,6 +55,7 @@ export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)
 export SCRIPTS_DIR = ./scripts
 export UTILS_DIR   = ./util
 export TEST_DIR    = ./test
+export SIM_DIR     = $(PWD)/../simulation
 
 # export BASE        = /shared/OpenFASOC/generators/temp-sense-gen/flow
 # export LOG_DIR     = $(BASE)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)
@@ -509,10 +510,9 @@ magic_drc: $(RESULTS_DIR)/6_final.gds
 	$(COMMON_VERIF_DIR)/run_drc.sh
 	# magic -rcfile $(COMMON_VERIF_DIR)/sky130A/sky130A.magicrc -noconsole -dnull $(COMMON_VERIF_DIR)/magic_commands.tcl < /dev/null
 
-netgen_lvs: $(RESULTS_DIR)/6_final.gds	
-	cdl_spice_file=$(subst sky130, sky130_fd_sc_, $(PLATFORM)).spice
+netgen_lvs: $(RESULTS_DIR)/6_final.gds
         
-	python util/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(PLATFORM_DIR)/cdl/$(cdl_spice_file) -l $(OBJECTS_DIR)/merged_spacing.lef -o $(DESIGN_NAME).spice
+	python util/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(CDL_FILE) -l $(OBJECTS_DIR)/merged_spacing.lef -o $(DESIGN_NAME).spice
 	$(COMMON_VERIF_DIR)/run_lvspex.sh $(RESULTS_DIR)/6_final.gds $(DESIGN_NAME) $(REPORTS_DIR)/6_final_lvs.rpt
 
 clean_finish:
@@ -551,6 +551,7 @@ nuke: clean_test clean_issues
 	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def dummy.guide run.param
 	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
 	rm -rf versions.txt
+	rm -f *.ext *.spice
 
 
 # DEF/GDS viewer shortcuts
