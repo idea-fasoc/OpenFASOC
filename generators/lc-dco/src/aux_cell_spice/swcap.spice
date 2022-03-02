@@ -1,0 +1,18 @@
+** sch_path: /home/chandru/Tools/OpenFASOC/generators/lc-dco/xschem_rundir/swcap.sch
+.subckt swcap outn outp sw GND
+*.opin outn
+*.opin outp
+*.ipin sw
+*.iopin GND
+XM1 net1 sw net2 GND sky130_fd_pr__nfet_01v8_lvt L=Lsw W=Wsw nf=nsw ad='int((nf+1)/2) * W/nf * 0.29'
++ as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XM2 GND sw net1 GND sky130_fd_pr__nfet_01v8_lvt L=Wpd W=Wpd nf=npd ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29'
++ pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W'
++ sa=0 sb=0 sd=0 mult=1 m=1
+XM3 net2 sw GND GND sky130_fd_pr__nfet_01v8_lvt L=Lpd W=Wpd nf=npd ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29'
++ pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W'
++ sa=0 sb=0 sd=0 mult=1 m=1
+XC1 outn net2 sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=Mc m=Mc
+XC2 net1 outp sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=Mc m=Mc
+.ends

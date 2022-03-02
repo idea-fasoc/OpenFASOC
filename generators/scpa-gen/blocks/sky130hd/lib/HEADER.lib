@@ -1,0 +1,79 @@
+
+library("HEADER") {
+
+  technology (cmos) ;
+  delay_model : table_lookup ;
+  library_features ( report_delay_calculation ) ;
+  date : "Thu Aug 20 08:58:19 2020" ;
+  revision : "O-2018.06-1" ;
+  voltage_unit : "1V" ;
+  time_unit : "1ns" ;
+  slew_derate_from_library : 1.0000 ;
+  slew_lower_threshold_pct_rise : 20.0000 ;
+  slew_lower_threshold_pct_fall : 20.0000 ;
+  slew_upper_threshold_pct_rise : 80.0000 ;
+  slew_upper_threshold_pct_fall : 80.0000 ;
+  input_threshold_pct_rise : 50.0000 ;
+  input_threshold_pct_fall : 50.0000 ;
+  output_threshold_pct_rise : 50.0000 ;
+  output_threshold_pct_fall : 50.0000 ;
+  k_process_cell_rise : 0.000000;
+  k_process_cell_fall : 0.000000;
+  k_volt_cell_rise : 0.000000;
+  k_volt_cell_fall : 0.000000;
+  k_temp_cell_rise : 0.000000;
+  k_temp_cell_fall : 0.000000;
+  k_process_rise_transition : 0.000000;
+  k_process_fall_transition : 0.000000;
+  k_volt_rise_transition : 0.000000;
+  k_volt_fall_transition : 0.000000;
+  k_temp_rise_transition : 0.000000;
+  k_temp_fall_transition : 0.000000;
+  default_fanout_load : 1.0;
+  default_inout_pin_cap : 1.0;
+  default_input_pin_cap : 1.0;
+  default_output_pin_cap : 0.0;
+  current_unit : 1mA;
+  pulling_resistance_unit : "1kohm";
+  comment : "PrimeTime qtm Model." ;
+ 
+  define(min_delay_flag, timing, boolean);
+  define(internal_noise_peak_time_below_high, pin, float);
+  define(internal_noise_width_above_low, pin, float);
+  define(original_pin, pin, string);
+  define(internal_noise_peak_time_above_low, pin, float);
+  define(internal_noise_width_below_high, pin, float);
+  define(internal_noise_height_above_low, pin, float);
+  define(internal_noise_height_below_high, pin, float);
+
+
+
+cell( HEADER ) {
+  dont_touch : "true" ;
+  interface_timing : true;
+  timing_model_type : "qtm";
+
+pin("VIN") {
+	direction : inout ;
+	capacitance : 1.0 ;
+} /* end of pin VIN */
+
+pin("VPWR") {
+	direction : inout ;
+	capacitance : 1.0 ;
+} /* end of pin VPWR */
+
+pin("VGND") {
+	direction : inout ;
+	capacitance : 1.0 ;
+} /* end of pin VGND */
+
+pin("VNB") {
+	direction : inout ;
+	capacitance : 1.0 ;
+} /* end of pin VNB */
+
+} /* end of cell */
+
+} /* end of library */
+
