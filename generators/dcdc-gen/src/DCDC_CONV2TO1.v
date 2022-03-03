@@ -1,6 +1,10 @@
+// Design: DCDC_CONV2TO1
+// Description: 2:1 Converter slice
+// Author：Jeongsup Lee
+// Updated by: Wanyue Xu
+// Last update: 02/08/22
+
 module DCDC_CONV2TO1 (
-    inout    VDD,
-    inout    VSS,
     inout    vhigh,
     inout    vlow,
     inout    vmid,
@@ -16,8 +20,6 @@ module DCDC_CONV2TO1 (
 );
 
     DCDC_HUNIT_CONV2to1 u_high_DCDC_HUNIT_CONV2to1 (
-        .VDD(VDD),
-        .VSS(VSS),
         .vhigh(vhigh),
         .vlow(vmid),
         .y0(y0_top),
@@ -30,8 +32,6 @@ module DCDC_CONV2TO1 (
     );
 
     DCDC_HUNIT_CONV2to1 u_low_DCDC_HUNIT_CONV2to1 (
-        .VDD(VDD),
-        .VSS(VSS),
         .vhigh(vmid),
         .vlow(vlow),
         .y0(y0_bot),

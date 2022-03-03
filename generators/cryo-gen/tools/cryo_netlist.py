@@ -22,19 +22,6 @@ def gen_cryo_netlist(ninv,aux1,aux2, srcDir):
 	for line in lines:
 		#line = line.replace("nbout", port)
 		netmap1.printline(line,w_netlist)
-	
-	
-	
-	
-#	r_netlist=open(srcDir + "/divider.v","r")	
-#	lines=list(r_netlist.readlines())
-#	w_netlist=open(srcDir + "/counter.v","w")
-
-	# TODO: change the below part
-#	netmap1.get_net('np',aux1,1,1,1)
-#	for line in lines:
-#		line = line.replace("nbout", port)
-#		netmap1.printline(line,w_netlist)
 
 	return
 

@@ -93,12 +93,12 @@ splitnets
 opt_clean -purge
 
 # Technology mapping of constant hi- and/or lo-drivers
-hilomap -singleton \
+#hilomap -singleton \
         -hicell {*}$::env(TIEHI_CELL_AND_PORT) \
         -locell {*}$::env(TIELO_CELL_AND_PORT)
 
 # Insert buffer cells for pass through wires
-insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
+#insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
 
 # Reports
 tee -o $::env(REPORTS_DIR)/synth_check.txt check
@@ -112,3 +112,5 @@ tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$stat_libs
 
 # Write synthesized design
 write_verilog -noattr -noexpr -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v
+
+#write_spice -pos VDD -neg VSS $::env(RESULTS_DIR)/1_synth.spice

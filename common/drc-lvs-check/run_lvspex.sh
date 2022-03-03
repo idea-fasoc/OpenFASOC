@@ -2,14 +2,19 @@
 magic -rcfile $COMMON_VERIF_DIR/sky130A/sky130A.magicrc -noconsole -dnull << EOF
 gds read $1
 load $2
-flatten -nolabels $2_flat
+flatten $2_flat
 load $2_flat
 extract all
 ext2spice lvs
 ext2spice -o $2_lvsmag.spice
+extract all
 ext2spice lvs
 ext2spice cthresh 0
 ext2spice -o $2_pex.spice
+load $2
+extract all
+ext2spice cthresh 0
+ext2spice -o $2_sim.spice
 exit
 EOF
 

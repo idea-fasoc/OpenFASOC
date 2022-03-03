@@ -1,32 +1,21 @@
-// Designed by Jeongsup Lee
+// Design: dcdcInst
+// Description: Top-level verilog structure
+// Author：Wanyue Xu
+// Updated by: Tuohang Zeng, Jianwei Jia
+// Last update: 02/08/22
 
 module dcdcInst (
-    inout VDD,
-    inout VSS,
-    inout AVDD,
-    inout GND,
     inout VOUT,
     input clk,
 	input VREF_in, //new added input
-	input dummy_in,
 	input [5:0] sel_vh, sel_vl,
-	output reg dummy_out
-	input [1:0] s; //add the select input --changed by jianwei jia 02/08/2022
+	input [1:0] s
 );
 
     wire w_clk0, w_clk0b, w_clk1, w_clk1b;
-    wire [DCDC_NUM_STAGE-1:0] y0_top, y0_bot, y1_top, y1_bot;
-	wire comp_out, clk_gate_out, FF_out;
-	
-	always @ (posedge clk) begin
-		dummy_out <= ~dummy_in;
-    end
-	
+	wire comp_out, clk_gate_out, FF_out, FF_out_inv;
+		
     DCDC_SIX_STAGES_CONV u_DCDC_SIX_STAGES_CONV(
-		.VDD(VDD),
-		.VSS(VSS),
-		.AVDD(AVDD),
-		.GND(GND),
 		.VOUT(VOUT),
 		.sel_vh(sel_vh),
 		.sel_vl(sel_vl),
@@ -35,10 +24,11 @@ module dcdcInst (
 		.w_clk1(w_clk1), 
 		.w_clk1b(w_clk1b)
 	);
-	// AUX CELL DCDC_NOV_CLKGEN--changed by jianwei jia 02/08/2022
-    DCDC_NOV_CLKGEN u_DCDC_NOV_CLKGEN (
+	
+	// AUX CELL DCDC_NOV_CLKGEN
+    DCDC_NOV_CLKGEN #(.N_delay(7)) u_DCDC_NOV_CLKGEN (
         .clk_in(FF_out),
-		.s (s),//notice, two bit to select the dead time
+		.s (s), // two bits to select the dead time
         .clk0(w_clk0),
         .clk0b(w_clk0b),
         .clk1(w_clk1),
@@ -73,5 +63,3 @@ module dcdcInst (
 		.Y(FF_out_inv)
 	);
 endmodule
-
-

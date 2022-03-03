@@ -18,8 +18,6 @@ import re
 import shutil
 import argparse
 
-from simulation import generate_runs
-
 
 
 #------------------------------------------------------------------------------
@@ -82,36 +80,10 @@ try:
 except KeyError as e:
    print('Error: Bad Input Specfile. \'module_name\' variable is missing.')
    sys.exit(1)
-
-
-#      generate_runs(genDir, jsonSpec['module_name'], headerList, invList, tempList, jsonConfig, args.platform, modeling=True)
-      
+     
       
 # Get the design spec & parameters from spec file
 designName = jsonSpec['module_name']
-
-
-def main():
-    #check model
-    if Model == "":
-        print("Model file is missing")
-        exit()
-    else:
-        #Check if temparature range field is not empty
-        if Tempmin == "" or Tempmax == "":
-            print("Please provide a temperature range")
-            exit()
-        else:
-            if Optimization == "power":
-                #THIS IS THE MAIN FUNCTION for power optimization
-                print("*********Performing Power Optimization*********")
-                time.sleep(5)
-                return calculate_min_error_new(df, delta_1st_pass, number_rows)
-            elif Optimization == "error":
-                print("*********Performing Error Optimization*********")
-                time.sleep(5)
-                #THIS IS THE MAIN FUNCTION for error optimization
-                return calculate_min_power_new(df, delta_1st_pass, number_rows)
 
 
 

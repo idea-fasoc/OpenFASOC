@@ -172,6 +172,7 @@ shutil.copyfile(srcDir + 'DCDC_CONV2TO1.v', flowDir + 'design/src/dcdc/DCDC_CONV
 shutil.copyfile(srcDir + 'DCDC_HUNIT_CONV2TO1.v', flowDir + 'design/src/dcdc/DCDC_HUNIT_CONV2TO1.v')
 shutil.copyfile(srcDir + 'DCDC_NOV_CLKGEN.sv', flowDir + 'design/src/dcdc/DCDC_NOV_CLKGEN.sv')
 shutil.copyfile(srcDir + 'DCDC_BUFFER.sv', flowDir + 'design/src/dcdc/DCDC_BUFFER.sv')
+shutil.copyfile(srcDir + 'DCDC_POWMUX.v', flowDir + 'design/src/dcdc/DCDC_POWMUX.v')
 
 print('#----------------------------------------------------------------------')
 print('# Verilog Generated')
