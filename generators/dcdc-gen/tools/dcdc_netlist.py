@@ -55,7 +55,7 @@ def gen_dcdc_netlist(cells, args, jsonSpec, platformConfig, srcDir):
     if re.search('sky130',args.platform): 
         k_sqrt_rc = 6.1E-6
         deltaV  = 0.10
-        unit_cap_capacitance = 2E-12
+        unit_cap_capacitance = 1E-12
         unit_r_resistance = 6750
     #############################
 
@@ -158,7 +158,7 @@ def gen_dcdc_netlist(cells, args, jsonSpec, platformConfig, srcDir):
     w_netlist=open(srcDir + "/DCDC_POWMUX.v","w")
 
     netmap_powmux=function.netmap()
-    netmap_powmux.get_net('na',cells['inv_cell'],1,1,1)
+    netmap_powmux.get_net('na',cells['inv_cell_w'],1,1,1)
 	
     for line in lines:
         netmap_powmux.printline(line,w_netlist)

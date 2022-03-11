@@ -46,14 +46,37 @@ endmodule
 parameter dont_touch = "on";
 endmodule
 
-// power mux: DCDC_MUX_TGATE
+// power mux: DCDC_MUX
 (* keep *)
 (* keep_hierarchy *)
-(* blackbox *) module DCDC_MUX_TGATE(
+(* blackbox *) module DCDC_MUX(
+  input SEL_H,
+  input SEL_INV_H,
+  input SEL_L,
+  input SEL_INV_L,
   input VIN,
-  input SEL_INV,
-  input SEL,
-  inout VOUT
+  output VOUT_H,
+  output VOUT_L
+);
+parameter dont_touch = "on";
+endmodule
+
+// power mux: DCDC_MUX
+(* keep *)
+(* keep_hierarchy *)
+(* blackbox *) module DCDC_CONV2TO1 (
+    inout    vhigh,
+    inout    vlow,
+    inout    vmid,
+    inout    y1_top,
+    inout    y0_top,
+    inout    y1_bot,
+    inout    y0_bot,
+
+    input    clk0,
+    input    clk0b,
+    input    clk1,
+    input    clk1b
 );
 parameter dont_touch = "on";
 endmodule

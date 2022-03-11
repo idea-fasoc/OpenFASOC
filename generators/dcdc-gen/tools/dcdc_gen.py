@@ -123,6 +123,7 @@ print('#----------------------------------------------------------------------')
 if args.platform == 'sky130hd':
     cells = {'ff_cell':'sky130_fd_sc_hd__dfxtp_1', 
     'inv_cell':'sky130_fd_sc_hd__inv_1', 
+    'inv_cell_w':'sky130_fd_sc_hd__inv_4',
     'clkgate_cell':'sky130_fd_sc_hd__dlclkp_1',
     'clkinv_cell':'sky130_fd_sc_hd__clkinv_1',
     'nor2_cell':'sky130_fd_sc_hd__nor2_1',
@@ -168,8 +169,8 @@ with open(flowDir + 'design/' + args.platform + '/dcdc/config.mk', 'w') as wf:
 
 shutil.copyfile(srcDir + 'dcdcInst.v', flowDir + 'design/src/dcdc/' + designName + '.v')
 shutil.copyfile(srcDir + 'DCDC_SIX_STAGES_CONV.v', flowDir + 'design/src/dcdc/DCDC_SIX_STAGES_CONV.v')
-shutil.copyfile(srcDir + 'DCDC_CONV2TO1.v', flowDir + 'design/src/dcdc/DCDC_CONV2TO1.v')
-shutil.copyfile(srcDir + 'DCDC_HUNIT_CONV2TO1.v', flowDir + 'design/src/dcdc/DCDC_HUNIT_CONV2TO1.v')
+#shutil.copyfile(srcDir + 'DCDC_CONV2TO1.v', flowDir + 'design/src/dcdc/DCDC_CONV2TO1.v')
+#shutil.copyfile(srcDir + 'DCDC_HUNIT_CONV2TO1.v', flowDir + 'design/src/dcdc/DCDC_HUNIT_CONV2TO1.v')
 shutil.copyfile(srcDir + 'DCDC_NOV_CLKGEN.sv', flowDir + 'design/src/dcdc/DCDC_NOV_CLKGEN.sv')
 shutil.copyfile(srcDir + 'DCDC_BUFFER.sv', flowDir + 'design/src/dcdc/DCDC_BUFFER.sv')
 shutil.copyfile(srcDir + 'DCDC_POWMUX.v', flowDir + 'design/src/dcdc/DCDC_POWMUX.v')
