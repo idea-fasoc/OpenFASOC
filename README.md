@@ -32,7 +32,7 @@ Please build the following tools:
 
 # Design Generation
 
-Our fully open source flow only supports the temperature sensor generation so far. We are working on adding additional generators in the near future.
+Our fully open-source flow only supports the temperature sensor generation so far. We are working on adding additional generators in the near future.
 
 The generators are located inside `OpenFASOC/generators/`, the target for temperature sensor generation is `sky130hd_temp` and located inside `OpenFASOC/generators/temp-sense-gen`, the following parameters are supported:
 
@@ -40,7 +40,7 @@ The generators are located inside `OpenFASOC/generators/`, the target for temper
 - --outputDir: output folder where the gds/def results will be exported
 - --platform: only sky130hd platform is supported for now
 - --clean: clean flow folder and start a fresh design flow
-- --mode: support verilog/macro/full modes, macro mode runs through APR/DRC/LVS steps to generate macros, full mode completes macro generation + simulations
+- --mode: support Verilog/macro/full modes, macro mode runs through APR/DRC/LVS steps to generate macros, full mode completes macro generation + simulations
 - --nhead: specify a fixed number of headers (optional)
 - --ninv: specify a fixed number of inverters (optional)
 
@@ -56,7 +56,7 @@ git clone git@github.com:idea-fasoc/OpenFASOC.git
 cd OpenFASOC/generators/temp-sense-gen
 ```
 
-3. Modify the test.json or the targets in Makefile based on the requirements, then run the flow. The **sky130hd_temp** target generates a tempsensor macro, the **sky130hd_temp_full** target runs the full mode and finishes macro generation + simulations.
+3. Modify the test.json or the targets in Makefile based on the requirements, then run the flow. The **sky130hd_temp** target generates a temp sensor macro, the **sky130hd_temp_full** target runs the full mode and finishes macro generation + simulations.
 
 ```
 make sky130hd_temp 
@@ -73,7 +73,7 @@ To run the simulation, please edit your local model file in `common/platform_con
 
 - simTool:  simulation tool, only ngspice is supported for now -- We plan to support Xyce in the future
 
-- simMode: `partial` (recommended to reduce runtime) or `full`, partial simulation only includes headers and cells in low voltage domain to calculate the frequency errors, full simulation includes the internal counter (full simulation is slow using ngspice and is still being tested)
+- simMode: `partial` (recommended to reduce runtime) or `full`, partial simulation only includes headers and cells in low voltage domain to calculate the frequency errors, the full simulation includes the internal counter (full simulation is slow using ngspice and is still being tested)
 
 - nominal_voltage: the nominal voltage of the specified technology, it is used to set a supply voltage in the simulation testbench
 
@@ -81,7 +81,7 @@ To run the simulation, please edit your local model file in `common/platform_con
 
 - model_corner: the corner used in the simulation
 
-- an example of the `common/platform_config.json` looks like:
+- an example of the `common/platform_config.json` looks like this:
 
 ```
 {
@@ -105,10 +105,10 @@ Please refer to our testing setup in our tapeouts and testing setup [section](./
 
 To improve our tools, flow, and QoR. The following limitations are currently being addressed:
    - In OpenROAD tools:
-       - Add the power pins extraction in OpenROAD tool
+       - Add the power pins extraction in the OpenROAD tool
        - LEF modification for NDR needs to be within the tool (no additional script)
        - write_cdl bug fix in source code    
        - fence aware placement step needs to be added
-       - ioplacment step is now skipped at placement and is set to random palcement by default at floorplaning so it doesn't put power pins of additional voltage domains at the edge
+       - ioplacment step is now skipped at placement and is set to random placement by default at floorplanning so it doesn't put power pins of additional voltage domains at the edge
    - add ~~the spice simulation flow~~ and modeling
    - add sky130_fd_sc_hs support
