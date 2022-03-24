@@ -128,6 +128,14 @@ if args.platform == 'sky130hd':
     'clkinv_cell':'sky130_fd_sc_hd__clkinv_1',
     'nor2_cell':'sky130_fd_sc_hd__nor2_1',
     'nand2_cell':'sky130_fd_sc_hd__nand2_1'}
+elif args.platform == 'sky130hs':
+    cells = {'ff_cell':'sky130_fd_sc_hs__dfxtp_1', 
+    'inv_cell':'sky130_fd_sc_hs__inv_1', 
+    'inv_cell_w':'sky130_fd_sc_hs__inv_4',
+    'clkgate_cell':'sky130_fd_sc_hs__dlclkp_1',
+    'clkinv_cell':'sky130_fd_sc_hs__clkinv_1',
+    'nor2_cell':'sky130_fd_sc_hs__nor2_1',
+    'nand2_cell':'sky130_fd_sc_hs__nand2_1'}
 
 # generate updated verilog netlist based on the cells and jsonSpec
 

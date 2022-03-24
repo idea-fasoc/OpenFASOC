@@ -20,6 +20,6 @@ module DCDC_POWMUX (
 	DCDC_MUX dcdc0 [m-1:0] (.SEL_H(sel_vh), .SEL_INV_H(sel_vh_inv), .SEL_L(sel_vl), .SEL_INV_L(sel_vl_inv), .VIN(vin), .VOUT_H(vhigh), .VOUT_L(vlow));
 	
 	// inverters
-	sky130_fd_sc_hd__inv_4 inv0 [1:0] (.A({sel_vh, sel_vl}), .Y({sel_vh_inv, sel_vl_inv}));	
+	sky130_fd_sc_hs__inv_4 inv0 [1:0] (.A({sel_vh, sel_vl}), .Y({sel_vh_inv, sel_vl_inv}));	
 
 endmodule 
