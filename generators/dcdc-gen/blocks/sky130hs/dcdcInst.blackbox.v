@@ -2,15 +2,16 @@
 (* keep *)
 (* keep_hierarchy *)
 (* blackbox *) module DCDC_COMP(
-  input pos_in,
-  input neg_in,
-  input clk,
-  output out
+  input VIN,
+  input VIP,
+  input CLK,
+  output VOP,
+  output VON
 );
 parameter dont_touch = "on";
 endmodule
 
-// 2:1 stage: PMOS SWITCH
+/* // 2:1 stage: PMOS SWITCH
 (* keep *)
 (* keep_hierarchy *)
 (* blackbox *) module DCDC_XSW_PMOS(
@@ -21,9 +22,9 @@ endmodule
   inout vOUT1
 );
 parameter dont_touch = "on";
-endmodule
+endmodule */
 
-// 2:1 stage: NMOS SWITCH
+/* // 2:1 stage: NMOS SWITCH
 (* keep *)
 (* keep_hierarchy *)
 (* blackbox *) module DCDC_XSW_NMOS(
@@ -34,26 +35,49 @@ endmodule
   inout vOUT1
 );
 parameter dont_touch = "on";
-endmodule
+endmodule */
 
 // 2:1 stage: unit cap
 (* keep *)
 (* keep_hierarchy *)
 (* blackbox *) module DCDC_CAP_UNIT(
-  inout top,
-  inout bot
+  inout TOP,
+  inout BOT
 );
 parameter dont_touch = "on";
 endmodule
 
-// power mux: DCDC_MUX_TGATE
+// power mux: DCDC_MUX
 (* keep *)
 (* keep_hierarchy *)
-(* blackbox *) module DCDC_MUX_TGATE(
+(* blackbox *) module DCDC_MUX(
+  input SEL_H,
+  input SEL_INV_H,
+  input SEL_L,
+  input SEL_INV_L,
   input VIN,
-  input SEL_INV,
-  input SEL,
-  inout VOUT
+  output VOUT_H,
+  output VOUT_L
+);
+parameter dont_touch = "on";
+endmodule
+
+// power mux: DCDC_MUX
+(* keep *)
+(* keep_hierarchy *)
+(* blackbox *) module DCDC_CONV2TO1 (
+    inout    VHIGH,
+    inout    VLOW,
+    inout    VMID,
+    inout    Y1_TOP,
+    inout    Y0_TOP,
+    inout    Y1_BOT,
+    inout    Y0_BOT,
+
+    input    CLK0,
+    input    CLK0B,
+    input    CLK1,
+    input    CLK1B
 );
 parameter dont_touch = "on";
 endmodule

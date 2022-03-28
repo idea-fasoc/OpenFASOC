@@ -23,31 +23,6 @@ set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
-
-#set db [ord::get_db]
-#set tech [$db getTech]
-#set libs [$db getLibs]
-#set block [$db getChip]
-
-  #
-  # Core area
-  #
-#  set core [$block getCoreArea]
-#  set xl [$core xMin]
-#  set yl [$core yMin]
-#  set xh [$core xMax]
-#  set yh [$core yMax]
-#  set core_rect [odb::newSetFromRect $xl $yl $xh $yh]
-
-  # Create a block for the Cryo RO
-#  set ro_dim_x 40
-#  set ro_dim_y 40
-#  set ro_xl [expr $xl]
-#  set ro_yl [expr $yl] 
-#  set ro_xh [expr $xl + $ro_dim_x]
-#  set ro_yh [expr $yl + $ro_dim_y]
-#  set ro_rect [odb::newSetFromRect $ro_xl $ro_yl $ro_xh $ro_yh]
-
   #
   # Output the blockages
   #
@@ -56,26 +31,6 @@ set_placement_padding -global \
 #      set b [odb::dbBlockage_create $block \
 #                 [$rect xMin] [$rect yMin] [$rect xMax] [$rect yMax]]
 #  }
-
-#puts "RO Placement Blockage Set"
-
-# find the bounds of the max_displacement
-set db [::ord::get_db]
-set block [[$db getChip] getBlock]
-set tech [$db getTech]
-
-set core [$block getCoreArea]
-set core_xl [$core xMin]
-set core_yl [$core yMin]
-set core_xh [$core xMax]
-set core_yh [$core yMax]
-  
-set max_disp_x [expr int(($core_xh - (($core_xl + $core_xh) * 3 / 4)) / 1000)]
-set max_disp_y [expr int(($core_yh - ($core_yl + $core_yh) / 2) / 1000)]
-
-set max_disp [concat $max_disp_x $max_disp_y]
-
-puts $max_disp
 
 #detailed_placement -max_displacement $max_disp
 

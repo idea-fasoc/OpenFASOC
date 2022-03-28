@@ -14,7 +14,7 @@ default: finish
 
 # Include design and platform configuration
 
-DESIGN_CONFIG = ./design/sky130hd/dcdc/config.mk
+DESIGN_CONFIG = ./design/sky130hs/dcdc/config.mk
 
 include $(DESIGN_CONFIG)
 
@@ -38,11 +38,11 @@ export LOG_DIR     = ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)
 export OBJECTS_DIR = ./objects/$(PLATFORM)/$(DESIGN_NICKNAME)
 export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NICKNAME)
 export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)
-export AUXCELL_DIR = ./../blocks/$(PLATFORM)
 
 export SCRIPTS_DIR = ./scripts
 export UTILS_DIR   = ./util
 export TEST_DIR    = ./test
+export SIM_DIR     = $(PWD)/../simulation
 
 # export BASE        = /shared/OpenFASOC/generators/temp-sense-gen/flow
 # export LOG_DIR     = $(BASE)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)
@@ -132,7 +132,6 @@ $(WRAPPED_LEFS):
 $(WRAPPED_LIBS):
 	mkdir -p $(OBJECTS_DIR)/lib
 	sed 's/library(\(.*\))/library(\1_mod)/g' $(filter %$(notdir $(@:_mod.lib=.lib)),$(WRAP_LIBS)) | sed 's/cell(\(.*\))/cell(\1_mod)/g' > $@
-
 
 # ==============================================================================
 #  ______   ___   _ _____ _   _ _____ ____ ___ ____
@@ -355,6 +354,8 @@ endif
 	echo "outputDRC:$(REPORTS_DIR)/5_route_drc.rpt" >> $@
 	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
 	echo "threads:$(NUM_CORES)" >> $@
+	echo "bottomRoutingLayer:met1" >> $@
+	echo "topRoutingLayer:met5" >> $@ 
 	echo "cpxthreads:1" >> $@
 	echo "verbose:1" >> $@
 	echo "gap:0" >> $@
@@ -429,24 +430,24 @@ $(RESULTS_DIR)/6_final.def: $(REPORTS_DIR)/6_final_report.rpt
 $(WRAPPED_GDS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 	($(TIME_CMD) klayout -zz -rd design_name=$(basename $(notdir $@)) \
 	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:gds=def)) \
-	        -rd in_gds="$(ADDITIONAL_GDS)" \
+	        -rd in_files="$(ADDITIONAL_GDS)" \
 	        -rd config_file=$(FILL_CONFIG) \
-	        -rd seal_gds="" \
-	        -rd out_gds=$@ \
+	        -rd seal_file="" \
+	        -rd out_file=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout_wrap.lyt \
-	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
+	        -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
 
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED_GDS) $(RESULTS_DIR)/6_final.def
 	($(TIME_CMD) stdbuf -o L klayout -zz -rd design_name=$(DESIGN_NAME) \
-	        -rd in_def=$(RESULTS_DIR)/6_final.def \
-	        -rd in_gds="$(GDS_FILES) $(WRAPPED_GDS)" \
-	        -rd config_file=$(FILL_CONFIG) \
-	        -rd seal_gds="$(SEAL_GDS)" \
-	        -rd out_gds=$@ \
-	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+		-rd in_def=$(RESULTS_DIR)/6_final.def \
+                -rd in_files="$(GDS_FILES) $(WRAPPED_GDS)" \
+                -rd config_file=$(FILL_CONFIG) \
+                -rd seal_file="$(SEAL_GDS)" \
+                -rd out_file=$@ \
+                -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
+                -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
 
 $(RESULTS_DIR)/6_final.v: $(REPORTS_DIR)/6_final_report.rpt
 
@@ -492,10 +493,8 @@ magic_drc: $(RESULTS_DIR)/6_final.gds
 	# magic -rcfile $(COMMON_VERIF_DIR)/sky130A/sky130A.magicrc -noconsole -dnull $(COMMON_VERIF_DIR)/magic_commands.tcl < /dev/null
 
 netgen_lvs: $(RESULTS_DIR)/6_final.gds
-
-	cdl_spice_file = $(subst sky130, sky130_fd_sc_, $(PLATFORM)).spice
         
-	python util/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(PLATFORM_DIR)/cdl/$(cdl_spice_file) -l $(OBJECTS_DIR)/merged_spacing.lef -o $(DESIGN_NAME).spice
+	python util/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(CDL_FILE) -l $(OBJECTS_DIR)/merged_spacing.lef -o $(DESIGN_NAME).spice
 	$(COMMON_VERIF_DIR)/run_lvspex.sh $(RESULTS_DIR)/6_final.gds $(DESIGN_NAME) $(REPORTS_DIR)/6_final_lvs.rpt
 
 clean_finish:
@@ -534,6 +533,7 @@ nuke: clean_test clean_issues
 	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def dummy.guide run.param
 	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
 	rm -rf versions.txt
+	rm -f *.ext *.spice
 
 
 # DEF/GDS viewer shortcuts
