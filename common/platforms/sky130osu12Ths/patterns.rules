@@ -27,7 +27,7 @@ DIST count 12 width 0.17
 END DIST
 
 Metal 1 UNDER
-WIDTH Table 0 entries: 
+WIDTH Table 0 entries:
 
 Metal 1 UNDER 2
 
@@ -210,7 +210,7 @@ DIST count 12 width 0.14
 END DIST
 
 Metal 2 UNDER
-WIDTH Table 0 entries: 
+WIDTH Table 0 entries:
 
 Metal 2 UNDER 3
 
@@ -458,7 +458,7 @@ DIST count 12 width 0.14
 END DIST
 
 Metal 3 UNDER
-WIDTH Table 0 entries: 
+WIDTH Table 0 entries:
 
 Metal 3 UNDER 4
 
@@ -723,7 +723,7 @@ DIST count 12 width 0.3
 END DIST
 
 Metal 4 UNDER
-WIDTH Table 0 entries: 
+WIDTH Table 0 entries:
 
 Metal 4 UNDER 5
 
@@ -973,7 +973,7 @@ DIST count 12 width 0.3
 END DIST
 
 Metal 5 UNDER
-WIDTH Table 0 entries: 
+WIDTH Table 0 entries:
 
 Metal 5 UNDER 6
 
@@ -1176,8 +1176,8 @@ DIST count 12 width 1.6
 END DIST
 
 Metal 6 UNDER
-WIDTH Table 0 entries: 
+WIDTH Table 0 entries:
 
 Metal 6 DIAGUNDER
-WIDTH Table 0 entries: 
+WIDTH Table 0 entries:
 END DensityModel 0

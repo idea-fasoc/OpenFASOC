@@ -49,7 +49,7 @@ export SIM_DIR     = $(PWD)/../simulation
 # export OBJECTS_DIR = $(BASE)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)
 # export REPORTS_DIR = $(BASE)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)
 # export RESULTS_DIR = $(BASE)/results/$(PLATFORM)/$(DESIGN_NICKNAME)
-# 
+#
 # export SCRIPTS_DIR = $(BASE)/scripts
 # export UTILS_DIR   = $(BASE)/util
 # export TEST_DIR    = $(BASE)/test
@@ -64,7 +64,7 @@ OPENROAD_CMD = openroad -no_init -exit
 # OPENROAD_CMD = docker run --rm -v /shared/OpenLane:/openLANE_flow \
                                -v /shared/OpenFASOC/generators/cryo-gen/:/shared/OpenFASOC/generators/cryo-gen/ \
 			       -e PDK_ROOT=/shared/OpenLane --user 1001:1002 efabless/openlane:2021.09.02_03.15.28 \
-			       openroad -no_init -exit 
+			       openroad -no_init -exit
 
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
 WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
@@ -245,12 +245,12 @@ $(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2
 # #-------------------------------------------------------------------------------
 # $(RESULTS_DIR)/3_2_place_iop.def: $(RESULTS_DIR)/3_1_place_gp.def
 # 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_2_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_2_place_iop.log
-# 
+#
 # # STEP 3: Resizing & Buffering
 # #-------------------------------------------------------------------------------
 # $(RESULTS_DIR)/3_3_place_resized.def: $(RESULTS_DIR)/3_2_place_iop.def $(RESULTS_DIR)/2_floorplan.sdc
 # 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl -metrics $(LOG_DIR)/3_3_resizer.json) 2>&1 | tee $(LOG_DIR)/3_3_resizer.log
-# 
+#
 # clean_resize:
 # 	rm -f $(RESULTS_DIR)/3_3_place_resized.def
 
@@ -355,7 +355,7 @@ endif
 	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
 	echo "threads:$(NUM_CORES)" >> $@
 	echo "bottomRoutingLayer:met1" >> $@
-	echo "topRoutingLayer:met5" >> $@ 
+	echo "topRoutingLayer:met5" >> $@
 	echo "cpxthreads:1" >> $@
 	echo "verbose:1" >> $@
 	echo "gap:0" >> $@
@@ -493,7 +493,7 @@ magic_drc: $(RESULTS_DIR)/6_final.gds
 	# magic -rcfile $(COMMON_VERIF_DIR)/sky130A/sky130A.magicrc -noconsole -dnull $(COMMON_VERIF_DIR)/magic_commands.tcl < /dev/null
 
 netgen_lvs: $(RESULTS_DIR)/6_final.gds
-        
+
 	python util/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(CDL_FILE) -l $(OBJECTS_DIR)/merged_spacing.lef -o $(DESIGN_NAME).spice
 	$(COMMON_VERIF_DIR)/run_lvspex.sh $(RESULTS_DIR)/6_final.gds $(DESIGN_NAME) $(REPORTS_DIR)/6_final_lvs.rpt
 

@@ -85,5 +85,3 @@ saveas(hdl, './Figures/InaccVStemp_hdrB_lr.emf');
     % Report FoM
 fprintf("Power, EnC, res and FoM are %fuW, %fnJ, %fK, %fpJ*K^2. \n", power, EnC, res, FoM);
 fprintf("\n");
-
-

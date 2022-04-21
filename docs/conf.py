@@ -1,5 +1,3 @@
-from recommonmark.transform import AutoStructify
-
 project = "OpenFASoC"
 version = "0.0.1"
 copyright = "2020,  msaligane"

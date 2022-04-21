@@ -83,8 +83,3 @@ floop_lock_range,freq_update, freq_incr_decr,divcnt_diff);
 
 
 endmodule : freq_loop
-
-
-
-
-

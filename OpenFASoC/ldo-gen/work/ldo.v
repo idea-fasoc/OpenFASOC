@@ -1,6 +1,6 @@
 module ldo(
    input        clk,
-   input        reset, 
+   input        reset,
 
    input  [1:0] mode_sel,         // 2'b00 (Comparator & PT Array Test Mode)
                                   // 2'b01 (Controller Test Mode)
@@ -20,17 +20,17 @@ module ldo(
    reg             ctrl_in, mode;
    reg [ARRSZ-1:0] pt_ctrl_word;
 
-   LDO_COMPARATOR cmp1 (.CLK(clk), 
-                        .VREF(VREF), 
+   LDO_COMPARATOR cmp1 (.CLK(clk),
+                        .VREF(VREF),
                         .OUT(cmp_out));
 
-   LDO_CONTROLLER #(.ARRSZ(ARRSZ)) 
-             ctrl1 (.clk(clk), 
-                    .reset(reset), 
-                    .mode(mode), 
-                    .ctrl_in(ctrl_in), 
-                    .std_pt_in_cnt(std_pt_in_cnt), 
-                    .ctrl_word(pt_ctrl_word), 
+   LDO_CONTROLLER #(.ARRSZ(ARRSZ))
+             ctrl1 (.clk(clk),
+                    .reset(reset),
+                    .mode(mode),
+                    .ctrl_in(ctrl_in),
+                    .std_pt_in_cnt(std_pt_in_cnt),
+                    .ctrl_word(pt_ctrl_word),
                     .ctrl_word_cnt(ctrl_out));
 
    PT_UNIT_CELL pt_array_unit [ARRSZ-1:0] (.CTRL(pt_ctrl_word));

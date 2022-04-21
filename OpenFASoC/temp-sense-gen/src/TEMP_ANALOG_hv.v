@@ -29,6 +29,5 @@ counter async_counter_0(
 @@ @nf a_header_@nh(.VIN(VIN));
 SLC
 @@ @no a_buffer_0 (.A(lc_0), .nbout(lc_out));
-	
-endmodule
 
+endmodule

@@ -99,7 +99,7 @@ if {$has_domain == 1} {
   }
 
   detailed_placement
-  
+
   foreach row $core_rows {
     odb::dbRow_create $block [lindex $row 0] \
                              [lindex $row 1] \

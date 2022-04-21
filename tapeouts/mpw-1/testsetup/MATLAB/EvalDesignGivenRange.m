@@ -1,18 +1,18 @@
 function [params, inacc_arr, params_sec, inacc_arr_sec, Nc_A, indlist_A, inacc_B, indlist_B] = ...
     EvalDesignGivenRange(freq_arr, tlist, tstart_ind, twin_len, pcalib, inacc_th, Nc_B, order_sec)
 % This function evaluate a single temperature design/instance's inaccuracy
-% across multiple chips under a given temperature range. 
+% across multiple chips under a given temperature range.
 % It returns fitted parameter pairs for each chip,
 % inaccuracies across chips and temperatures, and
-% metric A: the number of chips with inaccuracy below a threshold and 
+% metric A: the number of chips with inaccuracy below a threshold and
 % their indices, and
-% metric B: the minimal-possible max-inaccuracy given the number of good 
+% metric B: the minimal-possible max-inaccuracy given the number of good
 % chips we need, also return the their indices.
 
 % metric A is about the best reliability or least variation
-% while metric B is about the best inaccuracy 
+% while metric B is about the best inaccuracy
 
-% Input: 
+% Input:
 %   freq_arr - Ntemp x Nchip
 %   tlist - Ntemp x 1
 %   tstart_ind - 1x1, index of starting temperature
@@ -27,8 +27,8 @@ function [params, inacc_arr, params_sec, inacc_arr_sec, Nc_A, indlist_A, inacc_B
 %   inacc_arr - Ntemp x Nchip
 %   Nc_A - 1x1, the number of chips with inaccuracy below a threshold
 %   indlist_A - 2 x Nchip, the chip indices for metric A
-%   inacc_B - 1x1, the minimal-possible max-inaccuracy given Nc_B, 
-%   indlist_B - 2 x Nc_B, the chip indices for metric B 
+%   inacc_B - 1x1, the minimal-possible max-inaccuracy given Nc_B,
+%   indlist_B - 2 x Nc_B, the chip indices for metric B
 
 TZiK = 273.15; scale = 1;
 
@@ -47,13 +47,13 @@ for c = 1:Nchip
     k = (tlist(p2) - tlist(p1)) / (log(flist(p2)) * (tlist(p2) + TZiK) * scale - log(flist(p1)) * (tlist(p1) + TZiK) * scale);
     b = tlist(p1) - k * log(flist(p1)) * (tlist(p1) + TZiK) * scale;
     params(1, c) = k; params(2, c) = b;
-    
+
     % Calculate estimated temperatures and inaccuracies
     for t = 1:Ntemp
         T_array(t, c) = (scale * TZiK * k * log(flist(t)) + b) / (1 - scale * k * log(flist(t)));
         inacc_arr(t, c) = T_array(t, c) - tlist(t);
     end
-    
+
     % Calculate max inaccuracies in the given range
     if ( sum(isnan(inacc_arr(tstart_ind:(tstart_ind + twin_len), c))) == 0 )
         metric_arr(1, c) = max(inacc_arr(tstart_ind:(tstart_ind + twin_len), c)); % largest positive error
@@ -90,7 +90,7 @@ if (inacc_B < 20) % Only do SEC when inaccuracy is not too bad
         % Do Optimization
     param0 = zeros(1, order_sec + 1); param0(2) = 1;
     opts = optimoptions('lsqcurvefit', 'Display','off');
-    [params_sec, ~, ~, ~, ~] = lsqcurvefit(T_right, param0, T_est, T_left, [], [], opts);        
+    [params_sec, ~, ~, ~, ~] = lsqcurvefit(T_right, param0, T_est, T_left, [], [], opts);
         % Calculate Corrected Temperature estimation and errors
     T_array_sec = T_sec(params_sec, T_array);
     inacc_arr_sec = T_array_sec - tlist';

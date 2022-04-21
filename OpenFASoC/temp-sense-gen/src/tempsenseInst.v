@@ -4,13 +4,13 @@ module tempsenseInst_error
 	input RESET_COUNTERn,
 	input [3:0] SEL_CONV_TIME,
 	input en,
-	
+
         output [23:0] DOUT,
 	output DONE,
 	output out, outb,
 	output lc_out
 	);
-	
+
 	wire VIN;
 	TEMP_ANALOG_lv temp_analog_0(
 		.EN(en),
@@ -27,8 +27,7 @@ module tempsenseInst_error
 		.DOUT(DOUT),
 		.DONE(DONE),
 		.lc_out(lc_out),
-		.VIN(VIN)		
+		.VIN(VIN)
 	);
 
 endmodule
-

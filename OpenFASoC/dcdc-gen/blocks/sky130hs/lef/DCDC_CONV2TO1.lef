@@ -9,7 +9,7 @@ MACRO DCDC_CONV2TO1
   PIN CLK0
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met3 ;
         RECT 18.35 0.68 18.63 7.3 ;
       LAYER met3 ;
@@ -25,7 +25,7 @@ MACRO DCDC_CONV2TO1
   PIN CLK0B
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met3 ;
         RECT 12.33 22.94 12.61 29.56 ;
       LAYER met3 ;
@@ -41,7 +41,7 @@ MACRO DCDC_CONV2TO1
   PIN CLK1
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met3 ;
         RECT 12.33 0.68 12.61 7.3 ;
       LAYER met3 ;
@@ -57,7 +57,7 @@ MACRO DCDC_CONV2TO1
   PIN CLK1B
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met3 ;
         RECT 18.35 22.94 18.63 29.56 ;
       LAYER met3 ;
@@ -73,7 +73,7 @@ MACRO DCDC_CONV2TO1
   PIN VGND
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 14.88 0.7 16.08 0.98 ;
       LAYER met2 ;
@@ -101,7 +101,7 @@ MACRO DCDC_CONV2TO1
   PIN VHIGH
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 14.45 23.8 16.51 24.08 ;
       LAYER met2 ;
@@ -117,7 +117,7 @@ MACRO DCDC_CONV2TO1
   PIN VLOW
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 4.13 6.16 6.19 6.44 ;
       LAYER met2 ;
@@ -133,7 +133,7 @@ MACRO DCDC_CONV2TO1
   PIN VMID
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 14.45 6.16 16.51 6.44 ;
       LAYER met2 ;
@@ -165,7 +165,7 @@ MACRO DCDC_CONV2TO1
   PIN VPWR
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 14.88 29.26 16.08 29.54 ;
       LAYER met2 ;
@@ -193,7 +193,7 @@ MACRO DCDC_CONV2TO1
   PIN Y0_BOT
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 3.7 15.4 7.48 15.68 ;
       LAYER met2 ;
@@ -209,7 +209,7 @@ MACRO DCDC_CONV2TO1
   PIN Y0_TOP
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 13.16 15.4 16.94 15.68 ;
       LAYER met2 ;
@@ -225,7 +225,7 @@ MACRO DCDC_CONV2TO1
   PIN Y1_BOT
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 2.84 15.82 6.62 16.1 ;
       LAYER met2 ;
@@ -241,7 +241,7 @@ MACRO DCDC_CONV2TO1
   PIN Y1_TOP
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 14.02 15.82 17.8 16.1 ;
       LAYER met2 ;
@@ -254,7 +254,7 @@ MACRO DCDC_CONV2TO1
         RECT 14.89 14.14 15.21 14.42 ;
     END
   END Y1_TOP
-  OBS 
+  OBS
   LAYER met3 ;
         RECT 14.91 22.94 15.19 27.46 ;
   LAYER met2 ;
@@ -1399,5 +1399,5 @@ MACRO DCDC_CONV2TO1
         RECT 1.12 2.8 2.32 3.08 ;
   LAYER met3 ;
         RECT 2.01 0.68 2.29 7.3 ;
-  END 
+  END
 END DCDC_CONV2TO1

@@ -1,6 +1,6 @@
 
 {
-   "platforms": { 
+   "platforms": {
      "sky130hvl": {
       "vin": {
         "max": 3.3,

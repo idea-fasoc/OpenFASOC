@@ -9,7 +9,7 @@ MACRO DCDC_COMP
   PIN VOP
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met3 ;
         RECT 3.73 15.38 4.01 19.9 ;
       LAYER met3 ;
@@ -35,7 +35,7 @@ MACRO DCDC_COMP
   PIN VON
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met3 ;
         RECT 4.16 15.8 4.44 20.32 ;
       LAYER met3 ;
@@ -61,7 +61,7 @@ MACRO DCDC_COMP
   PIN VPWR
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met3 ;
         RECT 4.59 16.22 4.87 22 ;
       LAYER met3 ;
@@ -103,7 +103,7 @@ MACRO DCDC_COMP
   PIN VGND
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 2.41 14.14 6.19 14.42 ;
       LAYER met2 ;
@@ -133,7 +133,7 @@ MACRO DCDC_COMP
   PIN VIN
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 2.84 2.8 4.04 3.08 ;
     END
@@ -141,7 +141,7 @@ MACRO DCDC_COMP
   PIN VIP
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 3.7 2.38 4.9 2.66 ;
     END
@@ -149,7 +149,7 @@ MACRO DCDC_COMP
   PIN CLK
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 7.57 12.04 8.77 12.32 ;
       LAYER met2 ;
@@ -206,7 +206,7 @@ MACRO DCDC_COMP
         RECT 1.99 2.8 2.31 3.08 ;
     END
   END CLK
-  OBS 
+  OBS
   LAYER met2 ;
         RECT 1.98 8.68 3.18 8.96 ;
   LAYER met2 ;
@@ -569,5 +569,5 @@ MACRO DCDC_COMP
         RECT 1.12 2.8 2.32 3.08 ;
   LAYER met3 ;
         RECT 0.72 0.68 1 6.88 ;
-  END 
+  END
 END DCDC_COMP

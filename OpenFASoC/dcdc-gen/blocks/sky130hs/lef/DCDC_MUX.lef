@@ -9,7 +9,7 @@ MACRO DCDC_MUX
   PIN SEL_H
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 14.02 12.04 16.08 12.32 ;
     END
@@ -17,7 +17,7 @@ MACRO DCDC_MUX
   PIN SEL_INV_H
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 1.12 2.8 3.18 3.08 ;
       LAYER met2 ;
@@ -41,7 +41,7 @@ MACRO DCDC_MUX
   PIN SEL_INV_L
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 9.72 12.04 11.78 12.32 ;
       LAYER met2 ;
@@ -69,7 +69,7 @@ MACRO DCDC_MUX
   PIN SEL_L
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 9.72 2.8 11.78 3.08 ;
     END
@@ -77,7 +77,7 @@ MACRO DCDC_MUX
   PIN VIN
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 13.59 6.58 16.51 6.86 ;
       LAYER met2 ;
@@ -105,7 +105,7 @@ MACRO DCDC_MUX
   PIN VOUT_H
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 4.99 6.58 7.91 6.86 ;
       LAYER met2 ;
@@ -141,7 +141,7 @@ MACRO DCDC_MUX
   PIN VOUT_L
     DIRECTION INOUT ;
     USE SIGNAL ;
-    PORT 
+    PORT
       LAYER met2 ;
         RECT 9.72 7 11.78 7.28 ;
       LAYER met2 ;
@@ -170,7 +170,7 @@ MACRO DCDC_MUX
         RECT 7.74 8.26 8.17 8.54 ;
     END
   END VOUT_L
-  OBS 
+  OBS
   LAYER met1 ;
         RECT 5.465 3.695 5.715 7.225 ;
   LAYER met1 ;
@@ -443,5 +443,5 @@ MACRO DCDC_MUX
         RECT 1.12 12.04 3.18 12.32 ;
   LAYER met2 ;
         RECT 0.69 8.26 3.61 8.54 ;
-  END 
+  END
 END DCDC_MUX

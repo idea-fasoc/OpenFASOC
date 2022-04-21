@@ -8,5 +8,3 @@ OpenFASoC
     README
     markdown
     rst
-
-

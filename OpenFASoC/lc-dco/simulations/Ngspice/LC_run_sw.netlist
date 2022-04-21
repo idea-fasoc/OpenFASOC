@@ -21,12 +21,12 @@
 .param Icurr = 600u
 **.param Icurr = 1260u
 .param psw0 = 1.8
-.param psw1 = 0.0 
-.param psw2 = 0.0  
-.param psw3 = 0.0  
-.param psw4 = 0.0 
-.param psw5 = 0.0  
-.param psw6 = 0.0  
+.param psw1 = 0.0
+.param psw2 = 0.0
+.param psw3 = 0.0
+.param psw4 = 0.0
+.param psw5 = 0.0
+.param psw6 = 0.0
 .param psw7 = 0.0
 
 
@@ -163,7 +163,7 @@ wrdata LC_run_sw8.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) 
 .measure tran tperiodR_N TRIG v(outn) val=1.8 TD=90n FALL=5 TARG v(outn) val=1.8 TD=90n FALL=6
 .measure tran tperiodF_N TRIG v(outn) val=1.8 TD=90n RISE=5 TARG v(outn) val=1.8 TD=90n RISE=6
 
-.measure tran outpmax MAX v(outp) from=90n to=100n 
+.measure tran outpmax MAX v(outp) from=90n to=100n
 .measure tran outpmin MIN v(outp) from=90n to=100n
 .measure tran outp_p2p PP v(outp) from=90n to=100n
 .measure tran outnmax MAX v(outn) from=90n to=100n

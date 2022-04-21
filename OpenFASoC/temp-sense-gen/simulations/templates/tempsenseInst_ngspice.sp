@@ -19,7 +19,7 @@
 +    method=gear
 +    measdgt=10
 
-.lib '@model_file' @model_corner 
+.lib '@model_file' @model_corner
 .include '@netlist'
 
 .param temp_var = @temp

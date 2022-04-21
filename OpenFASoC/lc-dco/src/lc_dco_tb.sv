@@ -42,5 +42,5 @@ module lc_dco_tb;
                 .Ibias()
         );
 
-	
+
 endmodule : lc_dco_tb

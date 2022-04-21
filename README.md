@@ -12,21 +12,21 @@ Please build the following tools:
 
   Netgen <https://github.com/RTimothyEdwards/netgen>
 
-  Klayout <https://github.com/KLayout/klayout>  
+  Klayout <https://github.com/KLayout/klayout>
         Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
-  
+
 
   Yosys <https://github.com/The-OpenROAD-Project/yosys>
 
   OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD> (commid id: 7ff7171)
 
-  open_pdks <https://github.com/RTimothyEdwards/open_pdks> 
-  
+  open_pdks <https://github.com/RTimothyEdwards/open_pdks>
+
    - open_pdks is required to run drc/lvs check and the simulations
    - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
-  
+
   Other notice:
-   
+
    - Python 3.7 is used in this generator.
    - All the required tools need to be loaded into the environment before running this generator.
 
@@ -59,7 +59,7 @@ cd OpenFASOC/generators/temp-sense-gen
 3. Modify the test.json or the targets in Makefile based on the requirements, then run the flow. The **sky130hd_temp** target generates a tempsensor macro, the **sky130hd_temp_full** target runs the full mode and finishes macro generation + simulations.
 
 ```
-make sky130hd_temp 
+make sky130hd_temp
 ```
 
 4. The outputs will be stored in the **outputDir** folder specified in Makefile
@@ -107,7 +107,7 @@ To improve our tools, flow, and QoR. The following limitations are currently bei
    - In OpenROAD tools:
        - Add the power pins extraction in OpenROAD tool
        - LEF modification for NDR needs to be within the tool (no additional script)
-       - write_cdl bug fix in source code    
+       - write_cdl bug fix in source code
        - fence aware placement step needs to be added
        - ioplacment step is now skipped at placement and is set to random palcement by default at floorplaning so it doesn't put power pins of additional voltage domains at the edge
    - add ~~the spice simulation flow~~ and modeling

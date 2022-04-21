@@ -94,7 +94,7 @@ set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_ls__nand2_1
 #  set ro_dim_x 40
 #  set ro_dim_y 40
 #  set ro_xl [expr $xl]
-#  set ro_yl [expr $yl] 
+#  set ro_yl [expr $yl]
 #  set ro_xh [expr $xl + $ro_dim_x]
 #  set ro_yh [expr $yl + $ro_dim_y]
 #  set ro_rect [odb::newSetFromRect $ro_xl $ro_yl $ro_xh $ro_yh]
@@ -120,7 +120,7 @@ set core_xl [$core xMin]
 set core_yl [$core yMin]
 set core_xh [$core xMax]
 set core_yh [$core yMax]
-  
+
 set max_disp_x [expr int(($core_xh - (($core_xl + $core_xh) * 3 / 4)) / 1000)]
 set max_disp_y [expr int(($core_yh - ($core_yl + $core_yh) / 2) / 1000)]
 

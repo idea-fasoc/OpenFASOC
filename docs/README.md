@@ -7,4 +7,3 @@ Fully Open-Source Autonomous SoC Synthesis using Customizable Cell-Based Synthes
 ## Installation
 
 `make install`
-

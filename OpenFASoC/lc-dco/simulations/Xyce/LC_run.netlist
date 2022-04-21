@@ -70,7 +70,7 @@ xlccore tail_c outp outn open VDD GND LC_Cell_v1
 
 
 .data test
-+ Icurr 
++ Icurr
 + 1540u
 + 1560u
 + 1580u
@@ -130,10 +130,10 @@ xlccore tail_c outp outn open VDD GND LC_Cell_v1
 ** Continous measure
 **.measure tran_cont AVG tpdlh TRIG v(vi)=0.9 FALL=1 TARG v(voclk)=0.9 RISE=1
 *** Single Measure
-.measure tran ROfreqP FREQ v(outp) FROM=90n TO=100n minval=1.8 
-.measure tran ROdutyP DUTY v(outp) FROM=90n TO=100n minval=1.8 
-.measure tran ROfreqN FREQ v(outn) FROM=90n TO=100n minval=1.8 
-.measure tran ROdutyN DUTY v(outn) FROM=90n TO=100n minval=1.8 
+.measure tran ROfreqP FREQ v(outp) FROM=90n TO=100n minval=1.8
+.measure tran ROdutyP DUTY v(outp) FROM=90n TO=100n minval=1.8
+.measure tran ROfreqN FREQ v(outn) FROM=90n TO=100n minval=1.8
+.measure tran ROdutyN DUTY v(outn) FROM=90n TO=100n minval=1.8
 
 .measure tran tpdhl_clk TRIG TD=90n v(outp)=1.8 RISE=5 TARG v(outp)=1.8 RISE=6
 .print tran {1/{tpdhl_clk}}

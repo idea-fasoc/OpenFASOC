@@ -34,24 +34,24 @@
 #            "sign": "abs"
 #        }, ...
 #
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 import argparse  # argument parsing
 import json  # json parsing
-import sys
 import operator
+import sys
 from os.path import isfile
 
 # Parse and validate arguments
 # ==============================================================================
 parser = argparse.ArgumentParser(
-    description='Checks metadata from OpenROAD flow against a set of rules')
-parser.add_argument('--metadata', '-m', required=True,
-                    help='The metadata file')
-parser.add_argument('--rules', '-r', required=True, nargs='+',
-                    help='The rules file')
-parser.add_argument('--goldMetadata', '-g', required=True,
-                    help='The gold/reference metadata file')
+    description="Checks metadata from OpenROAD flow against a set of rules"
+)
+parser.add_argument("--metadata", "-m", required=True, help="The metadata file")
+parser.add_argument("--rules", "-r", required=True, nargs="+", help="The rules file")
+parser.add_argument(
+    "--goldMetadata", "-g", required=True, help="The gold/reference metadata file"
+)
 args = parser.parse_args()
 
 with open(args.metadata) as metadataFile:
@@ -64,11 +64,11 @@ rules = list()
 for filePath in args.rules:
     if isfile(filePath):
         with open(filePath) as rulesFile:
-            rules += json.load(rulesFile)['rules']
+            rules += json.load(rulesFile)["rules"]
     else:
-        print('[WARN] File {} not found'.format(filePath))
+        print("[WARN] File {} not found".format(filePath))
 if len(rules) == 0:
-    print('No rules')
+    print("No rules")
     sys.exit(1)
 
 # Convert to a float if possible
@@ -78,53 +78,71 @@ def try_number(s):
     except ValueError:
         return s
 
-ops = { "<" : operator.lt,
-        ">" : operator.gt,
-        "<=": operator.le,
-        ">=": operator.ge,
-        "==": operator.eq,
-        "!=": operator.ne,
-        "%" : "delta",
-      }
+
+ops = {
+    "<": operator.lt,
+    ">": operator.gt,
+    "<=": operator.le,
+    ">=": operator.ge,
+    "==": operator.eq,
+    "!=": operator.ne,
+    "%": "delta",
+}
 
 errors = 0
 
 for rule in rules:
-    field = rule['field']
-    rule_value = try_number(rule['value'])
-    compare = rule['compare']
+    field = rule["field"]
+    rule_value = try_number(rule["value"])
+    compare = rule["compare"]
     op = ops[compare]
     check_value = try_number(metadata[field])
 
-    deltaMessage = ''
+    deltaMessage = ""
     if op == "delta":
         reference_value = try_number(referenceMetadata[field])
         if not isinstance(check_value, float) or not isinstance(reference_value, float):
             errors += 1
-            print('Error: field {} fails rule {} {} {}. Invalid number.'.format(field, check_value, compare, rule_value))
+            print(
+                "Error: field {} fails rule {} {} {}. Invalid number.".format(
+                    field, check_value, compare, rule_value
+                )
+            )
             continue
         percentage = (check_value - reference_value) / reference_value * 100
-        deltaMessage = " check_value = {}, reference_value = {}, diff_percentage = {}%".format(
-                check_value, reference_value, percentage)
+        deltaMessage = (
+            " check_value = {}, reference_value = {}, diff_percentage = {}%".format(
+                check_value, reference_value, percentage
+            )
+        )
         check_value = percentage
-        if not rule.has_key('sign') or rule['sign'] == 'abs':
+        if not rule.has_key("sign") or rule["sign"] == "abs":
             check_value = abs(check_value)
             op = operator.le
             compare = "(absolute value) <="
         else:
-            compare = rule['sign']
+            compare = rule["sign"]
             op = ops[compare]
 
-    if (isinstance(rule_value, float) != isinstance(check_value, float)
-        or not op(check_value, rule_value)):
+    if isinstance(rule_value, float) != isinstance(check_value, float) or not op(
+        check_value, rule_value
+    ):
         errors += 1
-        print('Error: field {} fails rule {} {} {}.{}'.format(field, check_value, compare, rule_value, deltaMessage))
+        print(
+            "Error: field {} fails rule {} {} {}.{}".format(
+                field, check_value, compare, rule_value, deltaMessage
+            )
+        )
     else:
-        print('Passed: field {} passed rule {} {} {}.{}'.format(field, check_value, compare, rule_value, deltaMessage))
+        print(
+            "Passed: field {} passed rule {} {} {}.{}".format(
+                field, check_value, compare, rule_value, deltaMessage
+            )
+        )
 
 if errors == 0:
-    print('All metadata rules passed ({} rules)'.format(len(rules)))
+    print("All metadata rules passed ({} rules)".format(len(rules)))
 else:
-    print('Failed metadata checks: {} out of {}'.format(errors, len(rules)))
+    print("Failed metadata checks: {} out of {}".format(errors, len(rules)))
 
 sys.exit(1 if errors else 0)

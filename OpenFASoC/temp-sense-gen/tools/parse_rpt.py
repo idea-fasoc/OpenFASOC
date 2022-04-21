@@ -1,7 +1,3 @@
-import re
-import subprocess
-import sys
-
 drc_filename = "flow/reports/sky130hd/tempsense/6_final_drc.rpt"
 num_lines = sum(1 for line in open(drc_filename))
 

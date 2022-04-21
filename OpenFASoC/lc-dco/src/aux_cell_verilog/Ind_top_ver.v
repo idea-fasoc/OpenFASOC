@@ -11,7 +11,7 @@ ind_generic
 #(
 .model ( ind_05_220 )
 )
-L1 ( 
+L1 (
  .b( outp ),
  .b( outn ),
  .ct( VDD )

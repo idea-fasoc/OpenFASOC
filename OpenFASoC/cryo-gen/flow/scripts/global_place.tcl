@@ -77,7 +77,7 @@ set core_xl [$core xMin]
 set core_yl [$core yMin]
 set core_xh [$core xMax]
 set core_yh [$core yMax]
-  
+
 set div_cen_x [expr double(($core_xl + $core_xh) * 3 / 4 / 1000)]
 set div_cen_y [expr double(($core_yl + $core_yh) / 2 / 1000)]
 

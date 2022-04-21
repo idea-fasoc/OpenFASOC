@@ -21,13 +21,13 @@
 .param Icurr = 600u
 **.param Icurr = 1260u
 .param psw0 = 1.8
-.param psw1 = 0.0  
-.param psw2 = 0.0   
-.param psw3 = 0.0   
-.param psw4 = 0.0  
-.param psw5 = 0.0   
-.param psw6 = 0.0   
-.param psw7 = 0.0 
+.param psw1 = 0.0
+.param psw2 = 0.0
+.param psw3 = 0.0
+.param psw4 = 0.0
+.param psw5 = 0.0
+.param psw6 = 0.0
+.param psw7 = 0.0
 
 
 
@@ -247,7 +247,7 @@ echo "$&tpertiaR_P, $&tpertiaF_P, $&tpertiaR_N, $&tpertiaF_N" >> LC_run_sw_tia.m
 .measure tran tpertiaF_N TRIG v(tiaoutn) val=0.9 TD=90n RISE=5 TARG v(tiaoutn) val=0.9 TD=90n RISE=6
 
 
-.measure tran outpmax MAX v(outp) from=90n to=100n 
+.measure tran outpmax MAX v(outp) from=90n to=100n
 .measure tran outpmin MIN v(outp) from=90n to=100n
 .measure tran outp_p2p PP v(outp) from=90n to=100n
 .measure tran outnmax MAX v(outn) from=90n to=100n

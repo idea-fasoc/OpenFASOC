@@ -9,7 +9,7 @@ sky130hd_cryo_verilog:
 
 sky130hd_cryo:
 	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode macro --ninv 144
-	
+
 sky130hd_cryo_full:
 	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode full --ninv 144
 
@@ -113,5 +113,3 @@ clean:
 	rm -rf tools/*.pyc tools/__pycache__/
 	cd flow && make nuke
 	cd simulation && rm -f *.log *.sp *.out
-
-

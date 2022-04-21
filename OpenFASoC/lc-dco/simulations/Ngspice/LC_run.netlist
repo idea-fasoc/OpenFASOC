@@ -23,13 +23,13 @@
 *.param Icurr = 1200u
 .param Icurr = 800u
 .param psw0 = 1.8
-*.param psw1 = 1.8 
-*.param psw2 = 1.8 
-*.param psw3 = 1.8 
-*.param psw4 = 1.8 
-*.param psw5 = 1.8 
-*.param psw6 = 1.8 
-*.param psw7 = 1.8 
+*.param psw1 = 1.8
+*.param psw2 = 1.8
+*.param psw3 = 1.8
+*.param psw4 = 1.8
+*.param psw5 = 1.8
+*.param psw6 = 1.8
+*.param psw7 = 1.8
 
 
 

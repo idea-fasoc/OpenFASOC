@@ -15,7 +15,7 @@ indlist_B_arr = zeros(2, Nc_B, 64);
 for design = 1:64
     freq_arr = freq_data_array(:, :, design);
     [params, inacc, params_sec, inacc_sec, Nc_A, indlist_A, inacc_B, indlist_B] = ...
-        EvalDesignGivenRange(freq_arr, tlist, tstart_ind, twin_len, pcalib, inacc_th, Nc_B, order_sec);    
+        EvalDesignGivenRange(freq_arr, tlist, tstart_ind, twin_len, pcalib, inacc_th, Nc_B, order_sec);
     params_arr(:, :, design) = params;
     inacc_arr(:, :, design) = inacc;
     params_sec_arr(:, design) = params_sec;

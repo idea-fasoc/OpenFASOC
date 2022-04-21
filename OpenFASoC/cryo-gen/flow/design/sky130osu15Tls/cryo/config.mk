@@ -4,11 +4,11 @@ export DESIGN_NAME = cryoInst
 export PLATFORM    = sky130osu15Tls
 #export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 
-export VERILOG_FILES 		= $(sort $(wildcard ./design/src/$(DESIGN_NICKNAME)/*.v)) 
+export VERILOG_FILES 		= $(sort $(wildcard ./design/src/$(DESIGN_NICKNAME)/*.v))
 
 export SDC_FILE    		= ./design/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export DIE_AREA   	 	= 0 0 100 30 
+export DIE_AREA   	 	= 0 0 100 30
 export CORE_AREA   		= 4 1 96 29
 
 export PDN_CFG 			= ../blocks/$(PLATFORM)/pdn.cfg

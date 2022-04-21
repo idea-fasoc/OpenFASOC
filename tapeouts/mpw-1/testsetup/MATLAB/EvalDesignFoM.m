@@ -23,4 +23,3 @@ res = res_B_arr(1, sorted_ind(min_order), design);
 EnC = EnC_B_arr(1, sorted_ind(min_order), design);
 
 end
-

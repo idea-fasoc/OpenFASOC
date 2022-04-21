@@ -12,7 +12,7 @@ if {![info exists standalone] || $standalone} {
   foreach libFile $::env(LIB_FILES) {
     read_liberty $libFile
   }
-  
+
   # Read design files
   read_def $::env(RESULTS_DIR)/2_3_floorplan_tdms.def
   read_sdc $::env(RESULTS_DIR)/1_synth.sdc

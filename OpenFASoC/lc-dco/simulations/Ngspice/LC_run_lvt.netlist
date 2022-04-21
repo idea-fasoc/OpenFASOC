@@ -20,13 +20,13 @@
 *.param Icurr = 1200u
 .param Icurr = 740u
 *.param psw0 = 1.8
-*.param psw1 = 1.8 
-*.param psw2 = 1.8 
-*.param psw3 = 1.8 
-*.param psw4 = 1.8 
-*.param psw5 = 1.8 
-*.param psw6 = 1.8 
-*.param psw7 = 1.8 
+*.param psw1 = 1.8
+*.param psw2 = 1.8
+*.param psw3 = 1.8
+*.param psw4 = 1.8
+*.param psw5 = 1.8
+*.param psw6 = 1.8
+*.param psw7 = 1.8
 
 
 
@@ -56,7 +56,7 @@ xinv2 outnndc 0 0 VDD VDD tiaoutn sky130_fd_sc_hs__clkinv_4
 
 R1 outpndc tiaoutp 20000
 R2 outnndc tiaoutn 20000
-** CD 
+** CD
 xinv3 tiaoutp 0 0 VDD VDD tiaoutn sky130_fd_sc_hs__clkinv_2
 xinv4 tiaoutn 0 0 VDD VDD tiaoutp sky130_fd_sc_hs__clkinv_2
 
@@ -105,10 +105,10 @@ wrdata LC_run_lvt.out v(outp) v(outn) v(tiaoutp) v(tiaoutn) v(QBP) v(QBN) v(outn
 .measure tran tperiodR_N TRIG v(outnndc) val=0.9 TD=90n FALL=5 TARG v(outnndc) val=0.9 TD=90n FALL=6
 .measure tran tperiodF_N TRIG v(outnndc) val=0.9 TD=90n RISE=5 TARG v(outnndc) val=0.9 TD=90n RISE=6
 
-.measure tran tperiodR_PO TRIG v(tiaoutp) val=0.9 TD=90n FALL=5 TARG v(tiaoutp) val=0.9 TD=90n FALL=6 
-.measure tran tperiodF_PO TRIG v(tiaoutp) val=0.9 TD=90n RISE=5 TARG v(tiaoutp) val=0.9 TD=90n RISE=6 
-.measure tran tperiodR_NO TRIG v(tiaoutn) val=0.9 TD=90n FALL=5 TARG v(tiaoutn) val=0.9 TD=90n FALL=6 
-.measure tran tperiodF_NO TRIG v(tiaoutn) val=0.9 TD=90n RISE=5 TARG v(tiaoutn) val=0.9 TD=90n RISE=6 
+.measure tran tperiodR_PO TRIG v(tiaoutp) val=0.9 TD=90n FALL=5 TARG v(tiaoutp) val=0.9 TD=90n FALL=6
+.measure tran tperiodF_PO TRIG v(tiaoutp) val=0.9 TD=90n RISE=5 TARG v(tiaoutp) val=0.9 TD=90n RISE=6
+.measure tran tperiodR_NO TRIG v(tiaoutn) val=0.9 TD=90n FALL=5 TARG v(tiaoutn) val=0.9 TD=90n FALL=6
+.measure tran tperiodF_NO TRIG v(tiaoutn) val=0.9 TD=90n RISE=5 TARG v(tiaoutn) val=0.9 TD=90n RISE=6
 
 .measure tran outpmax MAX v(outp) TD=90n
 .measure tran outpmin MIN v(outp) TD=90n

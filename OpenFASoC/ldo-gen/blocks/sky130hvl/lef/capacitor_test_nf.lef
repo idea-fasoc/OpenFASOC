@@ -406,4 +406,3 @@ MACRO capacitor_test_nf
   END
 END capacitor_test_nf
 END LIBRARY
-

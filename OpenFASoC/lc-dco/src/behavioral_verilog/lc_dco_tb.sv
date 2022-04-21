@@ -47,5 +47,5 @@ module lc_dco_tb;
 		);
 
 
-	
+
 endmodule : lc_dco_tb

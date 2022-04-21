@@ -159,9 +159,9 @@ W=4.8
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -175,9 +175,9 @@ W=1
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -190,9 +190,9 @@ W=1
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -208,9 +208,9 @@ W=4.8
 nf=1
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -224,9 +224,9 @@ W=1
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -239,9 +239,9 @@ W=1
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -258,9 +258,9 @@ W=4.8
 nf=6
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -274,9 +274,9 @@ W=1
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -289,9 +289,9 @@ W=1
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -307,9 +307,9 @@ W=4.8
 nf=6
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -323,9 +323,9 @@ W=1
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -338,9 +338,9 @@ W=1
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -356,9 +356,9 @@ W=4.8
 nf=8
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -373,9 +373,9 @@ W=1
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -388,9 +388,9 @@ W=1
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -406,9 +406,9 @@ W=4.8
 nf=11
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -422,9 +422,9 @@ W=1
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -437,9 +437,9 @@ W=1
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -455,9 +455,9 @@ W=4.8
 nf=11
 mult=2
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -471,9 +471,9 @@ W=1
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -486,9 +486,9 @@ W=1
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -504,9 +504,9 @@ W=4.8
 nf=11
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -520,9 +520,9 @@ W=4.8
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -535,9 +535,9 @@ W=4.8
 nf=2
 mult=1
 body=GND
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0

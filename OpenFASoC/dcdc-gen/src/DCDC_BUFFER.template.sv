@@ -9,13 +9,13 @@ module DCDC_BUFFER(
 );
 logic out1;
 
-@@ 	@nb u_DCDC_INVERTER1( 
-		.A(in), 
+@@ 	@nb u_DCDC_INVERTER1(
+		.A(in),
 		.Y(out1)
 	);
 
-@@ 	@nc u_DCDC_INVERTER2( 
-		.A(out1), 
+@@ 	@nc u_DCDC_INVERTER2(
+		.A(out1),
 		.Y(out)
 	);
 endmodule

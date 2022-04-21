@@ -1,35 +1,35 @@
 repos:
     - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: "1ca4ceba9609a60c79160b461f7336aa615e4813"
+      rev: "5d1ab6d7f3e8f928c896232d2fb0ff95b3563ca6"
       hooks:
           - id: check-yaml
           - id: end-of-file-fixer
           - id: trailing-whitespace
 
-    - repo: https://github.com/hakancelik96/unimport
-      rev: 0.9.2
-      hooks:
-          - id: unimport
-            args: [--remove, --include-star-import]
+    # - repo: https://github.com/hakancelik96/unimport
+    #   rev: 039c9bb2940e95c16d8169053a7b301e4b20eecc
+    #   hooks:
+    #       - id: unimport
+    #         args: [--remove, --include-star-import]
     - repo: https://github.com/pycqa/isort
-      rev: "24c98ec4a3c826b44f4d7b06ebfe09a485d2fbcf"
+      rev: "c6a41965247a858a0afd848fbebfca18b8983917"
       hooks:
           - id: isort
             files: "OpenFASoC/.*"
             args: ["--profile", "black", "--filter-files"]
 
     - repo: https://github.com/psf/black
-      rev: "3b2a7d196bc1984aed194cca26a7900968ce4409"
+      rev: "8ed3e3d07ea3e6d62e3e533e69f96a0ff148cd5d"
       hooks:
           - id: black
 
-    - repo: https://gitlab.com/pycqa/flake8
-      rev: "21d3c70d676007470908d39b73f0521d39b3b997"
-      hooks:
-          - id: flake8
+    # - repo: https://gitlab.com/pycqa/flake8
+    #   rev: "21d3c70d676007470908d39b73f0521d39b3b997"
+    #   hooks:
+    #       - id: flake8
 
     - repo: https://github.com/kynan/nbstripout
-      rev: 3843f5f7c586fa6f0df81423f35d52e6af8e3039
+      rev: 8cafdcc393232045208137698dbeb42d6e0dd9e8
       hooks:
           - id: nbstripout
             files: ".ipynb"

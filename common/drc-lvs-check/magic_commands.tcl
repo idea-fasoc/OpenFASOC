@@ -24,7 +24,7 @@ proc custom_drc_save_report {{cellname ""} {outfile ""}} {
         set origname [cellname list self]
         puts stdout "\[INFO\]: Loading $cellname\n"
         flush stdout
-   
+
         load $cellname
         select top cell
     }

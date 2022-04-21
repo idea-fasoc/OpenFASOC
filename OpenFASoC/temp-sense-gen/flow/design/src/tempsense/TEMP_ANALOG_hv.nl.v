@@ -35,6 +35,5 @@ HEADER a_header_5(.VIN(VIN));
 HEADER a_header_6(.VIN(VIN));
 SLC a_lc_0(.IN(out), .INB(outb), .VOUT(lc_0));
 sky130_fd_sc_hd__buf_1 a_buffer_0 (.A(lc_0), .X(lc_out));
-	
-endmodule
 
+endmodule

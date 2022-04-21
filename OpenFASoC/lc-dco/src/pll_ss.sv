@@ -27,4 +27,3 @@ lc_dco lc_dco_inst(
     .Ibias()
 );
 endmodule : pll_ss
-

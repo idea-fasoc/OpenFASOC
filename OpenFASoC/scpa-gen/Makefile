@@ -18,5 +18,3 @@ clean:
 	rm -rf tools/*.pyc tools/__pycache__/
 	cd flow && make clean_all
 	cd simulations && rm -rf run
-
-

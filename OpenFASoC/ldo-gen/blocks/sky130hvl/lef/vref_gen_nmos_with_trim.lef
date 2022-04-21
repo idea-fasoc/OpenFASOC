@@ -6008,4 +6008,3 @@ MACRO vref_gen_nmos_with_trim
   END
 END vref_gen_nmos_with_trim
 END LIBRARY
-

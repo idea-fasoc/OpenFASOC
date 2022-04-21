@@ -55,11 +55,11 @@ if {[info exists ::env(FOOTPRINT)]} {
 # Initialize floorplan using DIE_AREA/CORE_AREA
 # ----------------------------------------------------------------------------
 } else {
-  
+
   initialize_floorplan -die_area $::env(DIE_AREA) \
                        -core_area $::env(CORE_AREA) \
                        -site $::env(PLACE_SITE)
-  
+
 
 }
 
@@ -82,7 +82,7 @@ if {[info exists ::env(MACRO_WRAPPERS)]} {
     }
   }
 }
- 
+
 # remove buffers inserted by yosys/abc
 remove_buffers
 

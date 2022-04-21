@@ -12,7 +12,7 @@ LInd outn outp l=5n
 **sky130_fd_pr__cap_mim_m3_2.model.spice"
 *.subckt  sky130_fd_pr__cap_mim_m3_1 c0 c1 w=1 l=1 mf=1
 ** Maybe nominally 2fF/um^2 ?
-**xcap<25600:0> outp outn sky130_fd_pr__cap_mim_m3_1  w=1 l=1 mf=1 
+**xcap<25600:0> outp outn sky130_fd_pr__cap_mim_m3_1  w=1 l=1 mf=1
 cap1 outp outn c=100p
 ** Tail Current
 xtail tail tail_bias VSS VSS sky130_fd_pr__nfet_01v8_lvt w=60 L=0.15
@@ -20,10 +20,10 @@ xtail tail tail_bias VSS VSS sky130_fd_pr__nfet_01v8_lvt w=60 L=0.15
 .ends
 
 
-.subckt ROcell_hsinvx1 en VGND VNB VPB VPWR voclk14 
+.subckt ROcell_hsinvx1 en VGND VNB VPB VPWR voclk14
 .ends
 
 
-.subckt ROcell_msinvx1 en VGND VNB VPB VPWR voclk14 
+.subckt ROcell_msinvx1 en VGND VNB VPB VPWR voclk14
 
 .ends

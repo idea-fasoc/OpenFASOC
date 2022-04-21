@@ -47,7 +47,7 @@ export TEST_DIR    = ./test
 # export OBJECTS_DIR = $(BASE)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)
 # export REPORTS_DIR = $(BASE)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)
 # export RESULTS_DIR = $(BASE)/results/$(PLATFORM)/$(DESIGN_NICKNAME)
-# 
+#
 # export SCRIPTS_DIR = $(BASE)/scripts
 # export UTILS_DIR   = $(BASE)/util
 # export TEST_DIR    = $(BASE)/test
@@ -62,7 +62,7 @@ OPENROAD_CMD = openroad -no_init -exit
 # OPENROAD_CMD = docker run --rm -v /shared/OpenLane:/openLANE_flow \
                                -v /shared/OpenFASOC/generators/temp-sense-gen/:/shared/OpenFASOC/generators/temp-sense-gen/ \
 			       -e PDK_ROOT=/shared/OpenLane --user 1001:1002 efabless/openlane:2021.09.02_03.15.28 \
-			       openroad -no_init -exit 
+			       openroad -no_init -exit
 
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
 WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
@@ -243,12 +243,12 @@ $(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2
 # #-------------------------------------------------------------------------------
 # $(RESULTS_DIR)/3_2_place_iop.def: $(RESULTS_DIR)/3_1_place_gp.def
 # 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_2_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_2_place_iop.log
-# 
+#
 # # STEP 3: Resizing & Buffering
 # #-------------------------------------------------------------------------------
 # $(RESULTS_DIR)/3_3_place_resized.def: $(RESULTS_DIR)/3_2_place_iop.def $(RESULTS_DIR)/2_floorplan.sdc
 # 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl -metrics $(LOG_DIR)/3_3_resizer.json) 2>&1 | tee $(LOG_DIR)/3_3_resizer.log
-# 
+#
 # clean_resize:
 # 	rm -f $(RESULTS_DIR)/3_3_place_resized.def
 

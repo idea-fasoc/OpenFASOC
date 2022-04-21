@@ -17,11 +17,16 @@
 import sys
 import subprocess
 
+
 def get_tag():
     tag = None
 
     try:
-        tag = subprocess.check_output(["git", "describe", "--tags", "--abbrev=0"]).decode("utf8").strip()
+        tag = (
+            subprocess.check_output(["git", "describe", "--tags", "--abbrev=0"])
+            .decode("utf8")
+            .strip()
+        )
     except Exception as e:
         pass
 
@@ -29,16 +34,23 @@ def get_tag():
         try:
             tag = open("./resolved_version").read()
         except:
-            print("Please input the version of OpenLane you'd like to pull: ", file=sys.stderr)
+            print(
+                "Please input the version of OpenLane you'd like to pull: ",
+                file=sys.stderr,
+            )
             try:
                 tag = input()
                 with open("./resolved_version", "w") as f:
                     f.write(tag)
             except EOFError:
-                print("Could not resolve the version of OpenLane being used. This is a critical error.", file=sys.stderr)
+                print(
+                    "Could not resolve the version of OpenLane being used. This is a critical error.",
+                    file=sys.stderr,
+                )
                 exit(-1)
 
     return tag
+
 
 if __name__ == "__main__":
     print(get_tag(), end="")

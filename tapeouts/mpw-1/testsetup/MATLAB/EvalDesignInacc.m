@@ -25,4 +25,3 @@ pos_sigma_inacc = [pos_sigma_inacc; pos_sigma_inacc_sec];
 neg_sigma_inacc = [neg_sigma_inacc; neg_sigma_inacc_sec];
 
 end
-

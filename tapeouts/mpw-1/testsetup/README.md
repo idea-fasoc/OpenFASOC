@@ -1,6 +1,6 @@
 # OpenFASOC Temperature Sensors in SkyWater 130nm: Test Setup
 
-This repository provides a fully open-source test setup solution for a temperature sensor chip taped-out in SkyWater 130nm with 64 openFASOC-generated temperature sensor instances. The setup is highly automated with Python and open-source libraries, where the chip is controlled through low-cost commercially-available USB devices, and control of testing equipments like temperature chamber and source measurement unit is also seamlessly embedded in the test flow using Python. 
+This repository provides a fully open-source test setup solution for a temperature sensor chip taped-out in SkyWater 130nm with 64 openFASOC-generated temperature sensor instances. The setup is highly automated with Python and open-source libraries, where the chip is controlled through low-cost commercially-available USB devices, and control of testing equipments like temperature chamber and source measurement unit is also seamlessly embedded in the test flow using Python.
 
 **Author:** [Qirui Zhang](https://www.linkedin.com/in/cary-qirui-zhang/) from the [University of Michigan, Ann Arbor](https://micl.engin.umich.edu/)
 
@@ -39,18 +39,18 @@ Fig. 3. FT232H USB-to-GPIO Bridge Board
 The last step for setting-up the bridges is to connect them to the host computer via USB cables (note the latest bridge version uses USB type-C) and figure out what their USB addresses are. Use `find_usb_addr.py` in this repository to achieve that. For example, when running line `25` and line `27` for checking which bridge board has the USB address of `gpio0`, use a saleae logic analyzer or simply a multimeter to probe pin D0 of each board. The one that toggles should have the USB address from the first check. Correspondances can be established similarly for the second and third checks and eventually you can figure out the USB addresses for the input bridge and output bridges. After that, replace line `17 ~ 19` in `tempsensor_ctrl.py` with the correct USB addresses you get.
 
 ### 2.3 **Temperature Chamber**
-Please make sure you use a TestEquity temperature chamber with the [F4 controller](https://www.testequity.com/Series-F4-Controller) from Watlow Electric. Any other temperature chambers are not guaranteed to work with this setup. The temperature chamber can be automated through Python using an RS232 cable and the Modbus protocol. Install the minimalmodbus library in Python on the host computer: 
+Please make sure you use a TestEquity temperature chamber with the [F4 controller](https://www.testequity.com/Series-F4-Controller) from Watlow Electric. Any other temperature chambers are not guaranteed to work with this setup. The temperature chamber can be automated through Python using an RS232 cable and the Modbus protocol. Install the minimalmodbus library in Python on the host computer:
 
 ```  pip install minimalmodbus```
 
 After installation of minimalmodbus, connect the temperature chamber's RS232 port to your host computer through a [null-modem](https://www.testequity.com/RS-232-F4-resources) RS232 cable. It is best if your host computer is a desktop made for electronic testing, which typically comes with an RS232 port. If not, you may need a USB-to-RS232 converter, which is commonly available on Amazon. `MODBUS_EXP.py` in this repository provides an example on how to control the temperature chamber through Python.
 
 ### 2.4 **Source and Measurement Unit (SMU)**
-Though theoretically you could use any SMU from Agilent/Keysight, it is highly recommended that you have Agilent/Keysight B2902A available as the control commands used in this repository are B2902A-specific. To automate SMU B2902A, first download the [Keysight Instrument Control Bundle](https://www.keysight.com/us/en/lib/software-detail/computer-software/keysight-instrument-control-bundle-download-1184883.html), install "IO Libraries Suite" and "Command Expert" on the host computer. After installing those, connect the SMU to the host computer via a USB type-A or printer cable. Open `Keysight Connection Expert` and check whether the SMU is detected. Then, install the pyvisa library in Python on the host computer: 
+Though theoretically you could use any SMU from Agilent/Keysight, it is highly recommended that you have Agilent/Keysight B2902A available as the control commands used in this repository are B2902A-specific. To automate SMU B2902A, first download the [Keysight Instrument Control Bundle](https://www.keysight.com/us/en/lib/software-detail/computer-software/keysight-instrument-control-bundle-download-1184883.html), install "IO Libraries Suite" and "Command Expert" on the host computer. After installing those, connect the SMU to the host computer via a USB type-A or printer cable. Open `Keysight Connection Expert` and check whether the SMU is detected. Then, install the pyvisa library in Python on the host computer:
 
 ```pip install pyvisa```
 
-`B2902A_EXP.py` in this repository provides an example on how to control the SMU through Python. 
+`B2902A_EXP.py` in this repository provides an example on how to control the SMU through Python.
 
 If you use any SMU other than B2902A, you may connect it to the host computer in the same way as B2902A, check for its existance in `Keysight Connection Expert` and then open `Command Expert`. There you can experiment your SMU with the commands you may need. After that, simply click `File->Export Sequence` through the menu, select `Python with calls to PyVISA` for `Language` and click `Save to File` to get the Python codes to automate your SMU of choice. You may also need to replace all the B2902A commands in the scripts with corresponding commands for your SMU.
 
