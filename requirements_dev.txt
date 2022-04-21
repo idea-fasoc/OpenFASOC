@@ -1,0 +1,17 @@
+sphinx
+docutils
+sphinx-rtd-theme
+recommonmark
+sphinx-markdown-tables
+sphinx-autodoc-typehints
+matplotlib
+pytest
+pytest-regressions
+pre-commit
+flake8
+tox
+doc8
+pydocstyle
+pur
+myst-parser
+furo

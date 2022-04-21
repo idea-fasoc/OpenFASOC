@@ -1,0 +1,71 @@
+image: python:3.7
+
+before_script:
+  - pip list
+  - python -V # Print out python version for debugging
+  - which python # Print out which python for debugging
+  - pip install -r requirements.txt --upgrade
+  - python setup.py develop
+
+stages:
+  - test
+  - release
+
+pre-commit:
+  stage: test
+  script:
+    - pip install pre-commit
+    - pre-commit install
+    - pre-commit run -a
+
+test:
+  stage: test
+  script:
+    - pytest
+
+python37:
+  image: python:3.7
+  stage: test
+  script:
+    - python -m pip install tox
+    - python -m tox -e py37
+
+python38:
+  image: python:3.8
+  stage: test
+  script:
+    - python -m pip install tox
+    - python -m tox -e py38
+
+python39:
+  image: python:3.9
+  stage: test
+  script:
+    - python -m pip install tox
+    - python -m tox -e py39
+
+doctest:
+  stage: test
+  script:
+    - python -m pip install tox
+    - python -m tox -e docs
+
+flake8:
+  stage: test
+  script:
+    - python -m pip install tox
+    - python -m tox -e flake8
+
+mypy:
+  stage: test
+  script:
+    - python -m pip install tox
+    - python -m tox -e mypy
+
+docs:
+  stage: release
+  script:
+    - cd docs
+    - make install clean html upload
+  only:
+    - release
