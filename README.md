@@ -53,7 +53,7 @@ git clone git@github.com:idea-fasoc/OpenFASOC.git
 2. Go to the temperature sensor generation folder
 
 ```
-cd OpenFASOC/generators/temp-sense-gen
+cd OpenFASOC/openfasoc/temp-sense-gen
 ```
 
 3. Modify the test.json or the targets in Makefile based on the requirements, then run the flow. The **sky130hd_temp** target generates a tempsensor macro, the **sky130hd_temp_full** target runs the full mode and finishes macro generation + simulations.
