@@ -15,7 +15,7 @@
 vdd1 out 0 1
 vin in 0 dc 1.8 ac 1
 
-XM1 out in 0 0 sky130_fd_pr__nfet_01v8 L=7.5 W=42 
+XM1 out in 0 0 sky130_fd_pr__nfet_01v8 L=7.5 W=42
 H1 out_p 0 vdd1 1
 
 *.noise v(out_p) Vin dec 10 1k 1G 1

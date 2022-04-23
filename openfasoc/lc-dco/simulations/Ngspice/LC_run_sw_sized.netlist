@@ -1,0 +1,176 @@
+* LC Run Test
+* Model Includes and Std Cell Includes
+
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+
+* Full paths dont work apparently only relative paths
+.lib ../../../../../../PDK/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+.include ../../../../../../PDK/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
+.include ../../../../../../PDK/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hs/spice/sky130_fd_sc_hs.spice
+.include ../../../../../../PDK/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_ms/spice/sky130_fd_sc_ms.spice
+.include ../../../../../../PDK/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130_fd_pr__model__inductors.model.spice
+
+
+** LC Core
+.include "LC_Cell.spice"
+.include "swcap_3M2C.spice"
+
+.param pvdd = 1.8
+.param bias = 1.0
+.param Icurr = 370u
+**.param Icurr = 1260u
+.param psw0 = 1.8
+.param psw1 = 0.0
+.param psw2 = 0.0
+.param psw3 = 0.0
+.param psw4 = 0.0
+.param psw5 = 0.0
+.param psw6 = 0.0
+.param psw7 = 0.0
+
+
+
+* --- Voltage Sources ---
+vvdd VDD 0 dc 'pvdd'
+*vvss GND 0 dc 0
+*vsig VDD 0 pwl(0 0 0.10n 0 0.20n 'pvdd')
+*vvdd VDD GND 'pvdd'
+vsw0 sw0 0 'psw0'
+vsw1 sw1 0 'psw1'
+vsw2 sw2 0 'psw2'
+vsw3 sw3 0 'psw3'
+vsw4 sw4 0 'psw4'
+vsw5 sw5 0 'psw5'
+vsw6 sw6 0 'psw6'
+vsw7 sw7 0 'psw7'
+
+***--Load
+**Coutp outp outpndc 300f
+**Coutn outn outnndc 300f
+Clp outp 0 10f
+Cln outn 0 10f
+
+
+Idctail VDD tail_c 'Icurr'
+* ---LCCell Subcircuit------
+xlccore tail_c outn outp open VDD 0 LC_Cell_3
+xmim_1m2C outn outp sw7 sw6 sw5 sw4 sw3 sw2 sw1 sw0 0 mim_1m2C
+***xswcap_3M2C outn outp sw7 sw6 sw5 sw4 sw3 sw2 sw1 sw0 0 swcap_3M2C
+
+** Initial Condition**
+.ic v(outn)='pvdd'
+.ic v(outp)= 0
+*.ic v(xmim_1m2C.net1)= 0
+*.ic v(xmim_1m2C.net2)= 0
+*.ic v(xmim_1m2C.net1)= 0
+*.ic v(xmim_1m2C.net2)= 0
+*.ic v(xmim_1m2C.net1)= 0
+*.ic v(xmim_1m2C.net2)= 0
+*.ic v(xmim_1m2C.net1)= 0
+*.ic v(xmim_1m2C.net2)= 0
+*.ic v(xmim_1m2C.net1)= 0
+*.ic v(xmim_1m2C.net2)= 0
+*.ic v(xmim_1m2C.net1)= 0
+*.ic v(xmim_1m2C.net2)= 0
+
+
+* --- Transient Analysis ---
+.probe all
+.save all
+.tran 1p 100n UIC
+
+* --- Measurement ---
+*.print tran v(outp)
+*.print tran v(outn)
+*.print tran v(VDD)
+
+.width out = 256
+** Continous measure
+**.measure tran_cont AVG tpdlh TRIG v(vi)=0.9 FALL=1 TARG v(voclk)=0.9 RISE=1
+*** Single Measure
+
+.control
+option numdgt =7
+run
+save all
+set filetype=ascii
+set appendwrite TRUE
+set wr_singlescale TRUE
+echo "alterparam psw0=1.8" > LC_run_sw1.out
+echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw1.out
+wrdata LC_run_sw1.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+alterparam psw1=1.8
+reset
+set appendwrite TRUE
+set wr_singlescale TRUE
+run
+echo "alterparam psw1=1.8" > LC_run_sw2.out
+echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw2.out
+wrdata LC_run_sw2.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+alterparam psw2=1.8
+reset
+set appendwrite TRUE
+set wr_singlescale TRUE
+run
+echo "alterparam psw1=1.8 psw2=1.8" > LC_run_sw3.out
+echo "time outp outn " >> LC_run_sw3.out
+wrdata LC_run_sw3.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+alterparam psw3=1.8
+reset
+set appendwrite TRUE
+set wr_singlescale TRUE
+run
+echo "alterparam psw1=1.8 psw2=1.8 psw3=1.8" > LC_run_sw4.out
+echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw4.out
+wrdata LC_run_sw4.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+alterparam psw4=1.8
+reset
+set appendwrite TRUE
+set wr_singlescale TRUE
+run
+echo "alterparam psw1=1.8 psw2=1.8 psw3=1.8 psw4=1.8" >  LC_run_sw5.out
+echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw5.out
+wrdata LC_run_sw5.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+
+alterparam psw5=1.8
+reset
+set appendwrite TRUE
+set wr_singlescale TRUE
+run
+echo "alterparam psw1=1.8 psw2=1.8 psw3=1.8 psw4=1.8" >  LC_run_sw6.out
+echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw6.out
+wrdata LC_run_sw6.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+
+
+alterparam psw6=1.8
+reset
+set appendwrite TRUE
+set wr_singlescale TRUE
+run
+echo "alterparam psw1=1.8 psw2=1.8 psw3=1.8 psw4=1.8" >  LC_run_sw7.out
+echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw7.out
+wrdata LC_run_sw7.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+alterparam psw7=1.8
+reset
+set appendwrite TRUE
+set wr_singlescale TRUE
+run
+echo "alterparam psw1=1.8 psw2=1.8 psw3=1.8 psw4=1.8" >  LC_run_sw8.out
+echo "time outp outn sw0 sw1 sw2 sw3 sw4 sw5 sw6 sw7" >> LC_run_sw8.out
+wrdata LC_run_sw8.out v(outp) v(outn) v(sw0) v(sw1) v(sw2) v(sw3) v(sw4) v(sw5) v(sw6) v(sw7)
+.endc
+
+.measure tran tperiodR_P TRIG v(outp) val=1.8 TD=90n FALL=5 TARG v(outp) val=1.8 TD=90n FALL=6
+.measure tran tperiodF_P TRIG v(outp) val=1.8 TD=90n RISE=5 TARG v(outp) val=1.8 TD=90n RISE=6
+.measure tran tperiodR_N TRIG v(outn) val=1.8 TD=90n FALL=5 TARG v(outn) val=1.8 TD=90n FALL=6
+.measure tran tperiodF_N TRIG v(outn) val=1.8 TD=90n RISE=5 TARG v(outn) val=1.8 TD=90n RISE=6
+
+.measure tran outpmax MAX v(outp) from=90n to=100n
+.measure tran outpmin MIN v(outp) from=90n to=100n
+.measure tran outp_p2p PP v(outp) from=90n to=100n
+.measure tran outnmax MAX v(outn) from=90n to=100n
+.measure tran outnmin MIN v(outn) from=90n to=100n
+.measure tran outp_p2p PP v(outn) from=90n to=100n
+
+.end

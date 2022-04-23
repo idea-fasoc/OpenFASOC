@@ -3,7 +3,7 @@ name: TEST
 on:
 
     push:
-    
+
     pull_request:
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: '3.7'
           architecture: 'x64'
-      
+
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
@@ -37,7 +37,7 @@ jobs:
           ./configure
           make
           sudo make install
-      
+
       - name: Install Netgen
         run:  |
           cd /home/runner/work
@@ -46,7 +46,7 @@ jobs:
           ./configure
           make
           sudo make install
-      
+
       - name: Install OpenLane
         run: |
           cd /home/runner/work
@@ -54,7 +54,7 @@ jobs:
           git clone https://github.com/The-OpenROAD-Project/OpenLane.git
           cd OpenLane/
           make
- 
+
       # - name: Install OpenROAD
       #   run:  |
       #     cd /home/runner/work
@@ -62,10 +62,10 @@ jobs:
       #     cd OpenROAD
       #     sudo ./etc/DependencyInstaller.sh -dev
       #     sudo ./etc/Build.sh
- 
+
       # - name: PDK installation
       #   run: cd ${GITHUB_WORKSPACE}/ && make pdk
- 
+
       # - name: Install Klayout
       #   run:  |
       #     cd /home/runner/work
@@ -78,7 +78,7 @@ jobs:
       #     sudo apt-get install gcc-4.7
       #     sudo apt-get install build-essential
       #     ./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg
- 
+
       # - name: Install PDK
       #   run:  |
       #     cd /home/runner/work
@@ -87,12 +87,10 @@ jobs:
       #     ./configure --enable-sky130-pdk
       #     make
       #     sudo make install
-          
+
       # docker run -v $(pwd):/mnt -w /mnt efabless/openlane sh -c 'make sky130hd_temp'
-      
+
       - name: Locate gen-design folder
         run:  |
-          cd /home/runner/work/OpenFASOC/OpenFASOC/generators/temp-sense-gen
+          cd /home/runner/work/OpenFASOC/OpenFASOC/openfasoc/temp-sense-gen
           make sky130hd_temp
-
-

@@ -15,12 +15,12 @@ jobs:
       - name: Fix self-host Permissions
         run:
           sudo chmod -R a+rwx /actions-runner/
-        
+
       - name: Checkout repo
         uses: actions/checkout@v2
         # with:
         #   ref: topic/GCP
-    
+
       # - name: Clone OpenLane repo
       #   run: |
       #     cd /github
@@ -33,7 +33,7 @@ jobs:
 
       # Build openlane:current instead of merging
       # `make openlane` applies the current tag to the image
-      
+
       # - name: Make OpenLane image
       #   run: |
       #     cd /github/OpenLane
@@ -46,7 +46,7 @@ jobs:
       #   run: |
       #     cd /github/OpenLane
       #     make pdk
-          
+
       - name: Make Sky130HD Temp
         env:
           PDK_ROOT: /github/OpenLane/pdks

@@ -4871,7 +4871,7 @@ X7 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1e+06u l=250000u
 R0 VGND LO sky130_fd_pr__res_generic_po w=480000u l=45000u
 R1 HI VPWR sky130_fd_pr__res_generic_po w=480000u l=45000u
 *V0 VGND LO DC 0
-*V1 HI VPWR DC 0 
+*V1 HI VPWR DC 0
 .ends
 
 
@@ -18433,4 +18433,3 @@ xMN8 net07 IN VGND VNB sky130_fd_pr__nfet_01v8_lvt m=10 mult=1 w=500000u l=15000
 .ends
 
 ******* EOF
-

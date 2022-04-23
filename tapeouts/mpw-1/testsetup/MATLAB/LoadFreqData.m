@@ -1,7 +1,7 @@
 % Define chip list and full temp range
 clist = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 tlist = -40:10:120;
-Ntemp = length(tlist); 
+Ntemp = length(tlist);
 Nchip = length(clist);
 
 % Re-organize Measured Data

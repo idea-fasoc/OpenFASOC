@@ -32,7 +32,7 @@ R9 net23 net39 r='1.019'
     L1 net39 ct l=760.5e-12
 .ends sky130_fd_pr__ind_03_90
 
-P1 a 0 port=1 
+P1 a 0 port=1
 XL1 a 0 0 0 sky130_fd_pr__ind_03_90
 
 .ac dec 10 100 100000Meg

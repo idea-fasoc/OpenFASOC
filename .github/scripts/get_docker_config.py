@@ -22,22 +22,30 @@ import getpass
 import subprocess
 from enum import Enum
 
+
 class Engine(Enum):
     docker = 0b0000
 
     misc_conmon = 0b1000
     podman = 0b1001
 
+
 def get_docker_config():
     engine = Engine.docker
 
-    uid = subprocess.check_output([ "id", "-u", getpass.getuser() ]).decode("utf8").strip()
-    gid = subprocess.check_output([ "id", "-g", getpass.getuser() ]).decode("utf8").strip()
+    uid = (
+        subprocess.check_output(["id", "-u", getpass.getuser()]).decode("utf8").strip()
+    )
+    gid = (
+        subprocess.check_output(["id", "-g", getpass.getuser()]).decode("utf8").strip()
+    )
 
     try:
         info = ""
         try:
-            info = subprocess.check_output([ "docker", "info", "--format", "{{json .}}"]).decode("utf8")
+            info = subprocess.check_output(
+                ["docker", "info", "--format", "{{json .}}"]
+            ).decode("utf8")
         except:
             raise Exception("Could not execute docker info.")
 
@@ -46,28 +54,29 @@ def get_docker_config():
         except:
             raise Exception("Docker info was not valid JSON.")
 
-
         if info.get("host") is not None and info["host"].get("conmon") is not None:
             engine = Engine.misc_conmon
-            if info["host"].get("remoteSocket") is not None and "podman" in info["host"]["remoteSocket"]["path"]:
+            if (
+                info["host"].get("remoteSocket") is not None
+                and "podman" in info["host"]["remoteSocket"]["path"]
+            ):
                 engine = Engine.podman
-        elif info.get("Name") is not None: 
+        elif info.get("Name") is not None:
             engine = Engine.docker
             rootless = False
-            sec_info = info.get("SecurityOptions") 
+            sec_info = info.get("SecurityOptions")
 
             for o in sec_info:
 
                 if "rootless" in o:
                     rootless = True
                     break
-            
+
             if rootless:
                 return "-u 0"
 
-
         if engine == Engine.docker:
-            raise Exception("") # Output UID/GID Info
+            raise Exception("")  # Output UID/GID Info
 
         # Else, print nothing… Podman (and possibly other conmon-based solutions) do not handle the -u options in a similar manner.
         return ""
@@ -76,6 +85,7 @@ def get_docker_config():
             print(f"{e}. Assuming a standard Docker installation.", file=sys.stderr)
 
         return f"--user {uid}:{gid}"
+
 
 if __name__ == "__main__":
     print(get_docker_config(), end="")

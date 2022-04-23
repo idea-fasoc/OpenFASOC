@@ -1,0 +1,15 @@
+
+{
+   "platforms": {
+     "sky130hvl": {
+      "vin": {
+        "max": 3.3,
+        "min": 1.8
+      },
+      "maxLoad": {
+        "max": "25e-03",
+        "min": "0.5e-03"
+      }
+    }
+  }
+}

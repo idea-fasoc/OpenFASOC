@@ -51,5 +51,3 @@ fprintf("3-sigma error w/ SEC is %f/+%f degreeC. \n", neg_sigma_inacc(2), pos_si
 [fig, hdl] = PlotInacc(fig, tlist(tstart_ind:(tstart_ind + twin_len)), inacc_sub_arr, inacc_sub_arr_sec, sigma_sec, design);
 saveas(hdl, './Figures/InaccVStemp_hdrB_lr.emf');
 fprintf("\n");
-
-

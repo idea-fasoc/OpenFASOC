@@ -19,9 +19,9 @@ vsig vi     0 dc 1.8
 *vds1  vd1    0 dc 0.5
 vds2  vd2    0 dc 0
 
-*XM1 supply vi 0 0 sky130_fd_pr__nfet_01v8 L=0.15 W=0.42 
-*XM1 vi vi 0 0 sky130_fd_pr__nfet_01v8 L=0.15 W=2.1 
-XM2 vi vi 0 0 sky130_fd_pr__nfet_01v8 L=7.5 W=42 
+*XM1 supply vi 0 0 sky130_fd_pr__nfet_01v8 L=0.15 W=0.42
+*XM1 vi vi 0 0 sky130_fd_pr__nfet_01v8 L=0.15 W=2.1
+XM2 vi vi 0 0 sky130_fd_pr__nfet_01v8 L=7.5 W=42
 
 .op
 .DC vsig 0 1.8 0.1

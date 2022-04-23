@@ -1,5 +1,5 @@
 Input-bridge Pins:
-	C7:	SEL_INST1  	
+	C7:	SEL_INST1
 	C6:	SEL_INST0
 	C5:	SEL_GRP2
 	C4:	SEL_GRP1

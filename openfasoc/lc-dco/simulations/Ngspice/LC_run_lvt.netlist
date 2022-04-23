@@ -1,0 +1,120 @@
+* LC Run Test
+* Model Includes and Std Cell Includes
+
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.lib ../../PDK/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+**.include "../../PDK//open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hd/cdl/sky130_fd_sc_hd_Xyce.cdl"
+.include ../../PDK/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
+.include ../../PDK/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hs/spice/sky130_fd_sc_hs.spice
+.include ../../PDK/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_ms/spice/sky130_fd_sc_ms.spice
+.include ../../PDK/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130_fd_pr__model__inductors.model.spice
+*.include ../../PDK/open_pdks/sky130/sky130A/libs.tech/ngspice/capacitors/sky130_fd_pr__model__cap_mim.model.spice
+
+
+** LC Core
+.include "LC_Cell.spice"
+
+.param pvdd = 1.8
+.param bias = 1.0
+*.param Icurr = 1200u
+.param Icurr = 740u
+*.param psw0 = 1.8
+*.param psw1 = 1.8
+*.param psw2 = 1.8
+*.param psw3 = 1.8
+*.param psw4 = 1.8
+*.param psw5 = 1.8
+*.param psw6 = 1.8
+*.param psw7 = 1.8
+
+
+
+* --- Voltage Sources ---
+**vvdd VDD 0 dc 'pvdd'
+*vvss GND 0 dc 0
+vsig VDD 0 pwl(0 0 0.10n 0 0.20n 'pvdd')
+*vvdd VDD GND 'pvdd'
+*vsw0 sw0 0 'psw0'
+*vsw1 sw1 0 'psw1'
+*vsw2 sw0 0 'psw2'
+*vsw3 sw1 0 'psw3'
+*vsw4 sw0 0 'psw4'
+*vsw5 sw1 0 'psw5'
+*vsw6 sw0 0 'psw6'
+*vsw7 sw1 0 'psw7'
+
+
+
+***--Load
+Coutp outp outpndc 300f
+Coutn outn outnndc 300f
+**
+**** TIA
+xinv1 outpndc 0 0 VDD VDD tiaoutp sky130_fd_sc_hs__clkinv_4
+xinv2 outnndc 0 0 VDD VDD tiaoutn sky130_fd_sc_hs__clkinv_4
+
+R1 outpndc tiaoutp 20000
+R2 outnndc tiaoutn 20000
+** CD
+xinv3 tiaoutp 0 0 VDD VDD tiaoutn sky130_fd_sc_hs__clkinv_2
+xinv4 tiaoutn 0 0 VDD VDD tiaoutp sky130_fd_sc_hs__clkinv_2
+
+xsky130_fd_sc_hs__dfxtp_1 tiaoutp Qbp 0 0 VDD VDD Qp sky130_fd_sc_hs__dfxtp_1
+xsky130_fd_sc_hs__dfxtp_2 tiaoutn Qbn 0 0 VDD VDD Qn sky130_fd_sc_hs__dfxtp_1
+
+xsky130_fd_sc_hs__clkinv_1 Qp 0 0 VDD VDD Qbp sky130_fd_sc_hs__clkinv_4
+xsky130_fd_sc_hs__clkinv_2 Qn 0 0 VDD VDD Qbn sky130_fd_sc_hs__clkinv_4
+
+Idctail VDD tail_c 'Icurr'
+* ---ROCell Subcircuit------
+xlccore tail_c outp outn open VDD 0 LC_Cell_lvt
+
+
+** LC Circuit **
+.NODESET v(outp)=1.8 v(outn)=0
+.ic v(outn)='pvdd'
+.ic v(outp)= 0
+
+* --- Transient Analysis ---
+.probe all
+.save all
+.tran 1p 100n
+* --- Measurement ---
+*.print tran v(outp)
+*.print tran v(outn)
+*.print tran v(VDD)
+
+.width out = 256
+** Continous measure
+**.measure tran_cont AVG tpdlh TRIG v(vi)=0.9 FALL=1 TARG v(voclk)=0.9 RISE=1
+*** Single Measure
+.control
+run
+save all
+set filetype=ascii
+set wr_singlescale TRUE
+set appendwrite TRUE
+
+echo "time outp outn tiaoutp tiaoutn QBP QBN outndc outpdc" > LC_run_lvt.out
+wrdata LC_run_lvt.out v(outp) v(outn) v(tiaoutp) v(tiaoutn) v(QBP) v(QBN) v(outnndc) v(outpndc)
+.endc
+
+.measure tran tperiodR_P TRIG v(outpndc) val=0.9 TD=90n FALL=5 TARG v(outpndc) val=0.9 TD=90n FALL=6
+.measure tran tperiodF_P TRIG v(outpndc) val=0.9 TD=90n RISE=5 TARG v(outpndc) val=0.9 TD=90n RISE=6
+.measure tran tperiodR_N TRIG v(outnndc) val=0.9 TD=90n FALL=5 TARG v(outnndc) val=0.9 TD=90n FALL=6
+.measure tran tperiodF_N TRIG v(outnndc) val=0.9 TD=90n RISE=5 TARG v(outnndc) val=0.9 TD=90n RISE=6
+
+.measure tran tperiodR_PO TRIG v(tiaoutp) val=0.9 TD=90n FALL=5 TARG v(tiaoutp) val=0.9 TD=90n FALL=6
+.measure tran tperiodF_PO TRIG v(tiaoutp) val=0.9 TD=90n RISE=5 TARG v(tiaoutp) val=0.9 TD=90n RISE=6
+.measure tran tperiodR_NO TRIG v(tiaoutn) val=0.9 TD=90n FALL=5 TARG v(tiaoutn) val=0.9 TD=90n FALL=6
+.measure tran tperiodF_NO TRIG v(tiaoutn) val=0.9 TD=90n RISE=5 TARG v(tiaoutn) val=0.9 TD=90n RISE=6
+
+.measure tran outpmax MAX v(outp) TD=90n
+.measure tran outpmin MIN v(outp) TD=90n
+.measure tran outp_p2p PP v(outp) TD=90n
+.measure tran outnmax MAX v(outn) TD=90n
+.measure tran outnmin MIN v(outn) TD=90n
+.measure tran outn_p2p PP v(outn) TD=90n
+
+.end

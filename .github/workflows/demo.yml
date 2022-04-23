@@ -54,7 +54,7 @@ jobs:
           title: "[BOT] Update ${{ env.TOOL }}"
           body: |
             This is an automated PR.
-            See the individual commits for details.   
+            See the individual commits for details.
           commit-message: |
             [BOT] Update ${{ env.TOOL }}
             ${{ env.TOOL }} -> ${{ env.TOOL_COMMIT_HASH }}
@@ -90,7 +90,7 @@ jobs:
           title: "[BOT] Update PDK"
           body: |
             This is an automated PR.
-            See the individual commits for details.      
+            See the individual commits for details.
           commit-message: |
             [BOT] Update PDK
             sky130 -> ${{ env.SKY130_COMMIT_HASH }}

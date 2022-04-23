@@ -957,7 +957,7 @@ Number of BSIM4 instances: 4
 
 Number of Independent Voltage Source models: 1
           name V level 1 (Independent Voltage Source)
-          type                
+          type
          level               1
 
 Number of Independent Voltage Source instances: 2
@@ -968,7 +968,7 @@ Number of Independent Voltage Source instances: 2
 TRANSIENTSOURCETYPE              6              6
           PHASE              0              0
              TF              0              0
-           DATA                              
+           DATA
              FS              0              0
              VA              0              0
         ACPHASE              0              0
@@ -1040,4 +1040,3 @@ Xyce                                         1        0.744 (100.0%)        0.76
   Late Initialization                        1        0.003 ( 0.41%)        0.003 ( 0.40%)
     Global Indices                           1        0.000 (<0.01%)        0.000 (<0.01%)
   Setup Matrix Structure                     1        0.000 ( 0.03%)        0.000 ( 0.03%)
-

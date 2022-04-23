@@ -1,0 +1,198 @@
+** sch_path: /home/chandru/Tools/OpenFASOC/generators/lc-dco/xschem_rundir/swcap_3M2C.sch
+.subckt swcap_3M2C outn outp sw<7>,sw<6>,sw<5>,sw<4>,sw<3>,sw<2>,sw<1>,sw<0> GND
+*.PININFO outn:O outp:O sw[7:0]:I GND:B
+**** spice_prefix X
+C2 ?1 net2 ?1 outn  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+M6 ?1 net1 ?1 sw<0> ?1 net2  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M1 ?1 GND ?1 sw<0> ?1 net1  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M2 ?1 GND ?1 sw<0> ?1 net2  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+C1 ?1 outp ?1 net1  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+C4<1>,C4<0> ?1 net4 ?1 outn  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+M3 ?1 net3 ?1 sw<1> ?1 net4  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8
++ nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M4 ?1 GND ?1 sw<1> ?1 net3  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M5 ?1 GND ?1 sw<1> ?1 net4  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+C3<1>,C3<0> ?1 outp ?1 net3  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+C6<3>,C6<2>,C6<1>,C6<0> ?1 net6 ?1 outn  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+M7 ?1 net5 ?1 sw<2> ?1 net6  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8
++ nf=6 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M8 ?1 GND ?1 sw<2> ?1 net5  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M9 ?1 GND ?1 sw<2> ?1 net6  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+C5<3>,C5<2>,C5<1>,C5<0> ?1 outp ?1 net5  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+C8<7>,C8<6>,C8<5>,C8<4>,C8<3>,C8<2>,C8<1>,C8<0> ?1 net8 ?1 outn  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+M10 ?1 net7 ?1 sw<3> ?1 net8  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8
++ nf=6 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M11 ?1 GND ?1 sw<3> ?1 net7  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M12 ?1 GND ?1 sw<3> ?1 net8  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+C7<7>,C7<6>,C7<5>,C7<4>,C7<3>,C7<2>,C7<1>,C7<0> ?1 outp ?1 net7  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+C10<15>,C10<14>,C10<13>,C10<12>,C10<11>,C10<10>,C10<9>,C10<8>,C10<7>,C10<6>,C10<5>,C10<4>,C10<3>,C10<2>,C10<1>,C10<0> ?1 net10 ?1 outn  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+M13 ?1 net9 ?1 sw<4> ?1 net10  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8
++ nf=8 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M14 ?1 GND ?1 sw<4> ?1 net9  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M15 ?1 GND ?1 sw<4> ?1 net10  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+C9<15>,C9<14>,C9<13>,C9<12>,C9<11>,C9<10>,C9<9>,C9<8>,C9<7>,C9<6>,C9<5>,C9<4>,C9<3>,C9<2>,C9<1>,C9<0> ?1 outp ?1 net9  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+C12<31>,C12<30>,C12<29>,C12<28>,C12<27>,C12<26>,C12<25>,C12<24>,C12<23>,C12<22>,C12<21>,C12<20>,C12<19>,C12<18>,C12<17>,C12<16>,C12<15>,C12<14>,C12<13>,C12<12>,C12<11>,C12<10>,C12<9>,C12<8>,C12<7>,C12<6>,C12<5>,C12<4>,C12<3>,C12<2>,C12<1>,C12<0> ?1 net12 ?1 outn  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+M16 ?1 net11 ?1 sw<5> ?1 net12  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8
++ nf=11 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M17 ?1 GND ?1 sw<5> ?1 net11  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M18 ?1 GND ?1 sw<5> ?1 net12  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+C11<31>,C11<30>,C11<29>,C11<28>,C11<27>,C11<26>,C11<25>,C11<24>,C11<23>,C11<22>,C11<21>,C11<20>,C11<19>,C11<18>,C11<17>,C11<16>,C11<15>,C11<14>,C11<13>,C11<12>,C11<11>,C11<10>,C11<9>,C11<8>,C11<7>,C11<6>,C11<5>,C11<4>,C11<3>,C11<2>,C11<1>,C11<0> ?1 outp ?1 net11  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+C14<63>,C14<62>,C14<61>,C14<60>,C14<59>,C14<58>,C14<57>,C14<56>,C14<55>,C14<54>,C14<53>,C14<52>,C14<51>,C14<50>,C14<49>,C14<48>,C14<47>,C14<46>,C14<45>,C14<44>,C14<43>,C14<42>,C14<41>,C14<40>,C14<39>,C14<38>,C14<37>,C14<36>,C14<35>,C14<34>,C14<33>,C14<32>,C14<31>,C14<30>,C14<29>,C14<28>,C14<27>,C14<26>,C14<25>,C14<24>,C14<23>,C14<22>,C14<21>,C14<20>,C14<19>,C14<18>,C14<17>,C14<16>,C14<15>,C14<14>,C14<13>,C14<12>,C14<11>,C14<10>,C14<9>,C14<8>,C14<7>,C14<6>,C14<5>,C14<4>,C14<3>,C14<2>,C14<1>,C14<0> ?1 net14 ?1 outn  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+M19 ?1 net13 ?1 sw<6> ?1 net14  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8
++ nf=11 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=2 m=2
+**** end_element
+**** spice_prefix X
+M20 ?1 GND ?1 sw<6> ?1 net13  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M21 ?1 GND ?1 sw<6> ?1 net14  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=1
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+C13<63>,C13<62>,C13<61>,C13<60>,C13<59>,C13<58>,C13<57>,C13<56>,C13<55>,C13<54>,C13<53>,C13<52>,C13<51>,C13<50>,C13<49>,C13<48>,C13<47>,C13<46>,C13<45>,C13<44>,C13<43>,C13<42>,C13<41>,C13<40>,C13<39>,C13<38>,C13<37>,C13<36>,C13<35>,C13<34>,C13<33>,C13<32>,C13<31>,C13<30>,C13<29>,C13<28>,C13<27>,C13<26>,C13<25>,C13<24>,C13<23>,C13<22>,C13<21>,C13<20>,C13<19>,C13<18>,C13<17>,C13<16>,C13<15>,C13<14>,C13<13>,C13<12>,C13<11>,C13<10>,C13<9>,C13<8>,C13<7>,C13<6>,C13<5>,C13<4>,C13<3>,C13<2>,C13<1>,C13<0> ?1 outp ?1 net13  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+C16<127>,C16<126>,C16<125>,C16<124>,C16<123>,C16<122>,C16<121>,C16<120>,C16<119>,C16<118>,C16<117>,C16<116>,C16<115>,C16<114>,C16<113>,C16<112>,C16<111>,C16<110>,C16<109>,C16<108>,C16<107>,C16<106>,C16<105>,C16<104>,C16<103>,C16<102>,C16<101>,C16<100>,C16<99>,C16<98>,C16<97>,C16<96>,C16<95>,C16<94>,C16<93>,C16<92>,C16<91>,C16<90>,C16<89>,C16<88>,C16<87>,C16<86>,C16<85>,C16<84>,C16<83>,C16<82>,C16<81>,C16<80>,C16<79>,C16<78>,C16<77>,C16<76>,C16<75>,C16<74>,C16<73>,C16<72>,C16<71>,C16<70>,C16<69>,C16<68>,C16<67>,C16<66>,C16<65>,C16<64>,C16<63>,C16<62>,C16<61>,C16<60>,C16<59>,C16<58>,C16<57>,C16<56>,C16<55>,C16<54>,C16<53>,C16<52>,C16<51>,C16<50>,C16<49>,C16<48>,C16<47>,C16<46>,C16<45>,C16<44>,C16<43>,C16<42>,C16<41>,C16<40>,C16<39>,C16<38>,C16<37>,C16<36>,C16<35>,C16<34>,C16<33>,C16<32>,C16<31>,C16<30>,C16<29>,C16<28>,C16<27>,C16<26>,C16<25>,C16<24>,C16<23>,C16<22>,C16<21>,C16<20>,C16<19>,C16<18>,C16<17>,C16<16>,C16<15>,C16<14>,C16<13>,C16<12>,C16<11>,C16<10>,C16<9>,C16<8>,C16<7>,C16<6>,C16<5>,C16<4>,C16<3>,C16<2>,C16<1>,C16<0> ?1 net16 ?1 outn  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+**** spice_prefix X
+M22<1>,M22<0> ?1 net15 ?1 sw<7> ?1 net16  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8
++ nf=11 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M23 ?1 GND ?1 sw<7> ?1 net15  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+M24 ?1 GND ?1 sw<7> ?1 net16  GND sky130_fd_pr__nfet_01v8_lvt L=0.15 W=4.8
++ nf=2 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2) * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)'
++ nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0
++ mult=1 m=1
+**** end_element
+**** spice_prefix X
+C15<127>,C15<126>,C15<125>,C15<124>,C15<123>,C15<122>,C15<121>,C15<120>,C15<119>,C15<118>,C15<117>,C15<116>,C15<115>,C15<114>,C15<113>,C15<112>,C15<111>,C15<110>,C15<109>,C15<108>,C15<107>,C15<106>,C15<105>,C15<104>,C15<103>,C15<102>,C15<101>,C15<100>,C15<99>,C15<98>,C15<97>,C15<96>,C15<95>,C15<94>,C15<93>,C15<92>,C15<91>,C15<90>,C15<89>,C15<88>,C15<87>,C15<86>,C15<85>,C15<84>,C15<83>,C15<82>,C15<81>,C15<80>,C15<79>,C15<78>,C15<77>,C15<76>,C15<75>,C15<74>,C15<73>,C15<72>,C15<71>,C15<70>,C15<69>,C15<68>,C15<67>,C15<66>,C15<65>,C15<64>,C15<63>,C15<62>,C15<61>,C15<60>,C15<59>,C15<58>,C15<57>,C15<56>,C15<55>,C15<54>,C15<53>,C15<52>,C15<51>,C15<50>,C15<49>,C15<48>,C15<47>,C15<46>,C15<45>,C15<44>,C15<43>,C15<42>,C15<41>,C15<40>,C15<39>,C15<38>,C15<37>,C15<36>,C15<35>,C15<34>,C15<33>,C15<32>,C15<31>,C15<30>,C15<29>,C15<28>,C15<27>,C15<26>,C15<25>,C15<24>,C15<23>,C15<22>,C15<21>,C15<20>,C15<19>,C15<18>,C15<17>,C15<16>,C15<15>,C15<14>,C15<13>,C15<12>,C15<11>,C15<10>,C15<9>,C15<8>,C15<7>,C15<6>,C15<5>,C15<4>,C15<3>,C15<2>,C15<1>,C15<0> ?1 outp ?1 net15  sky130_fd_pr__cap_mim_m3_1 W=1 L=1 MF=1 m=1
+**** end_element
+.ends
+.GLOBAL GND
+.end

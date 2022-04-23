@@ -1,0 +1,152 @@
+.options nonlin continuation=gmin
+.options timeint method=gear
+.options device temp=25
+**.options output initial_interval=1e-8 # DONOT USE THIS SEEMS TO GO CRAZY EVEN WITH INPUT SIGNAL
+.options parser model_binning=True
+.options parser scale=1e-6
+**** Oscillator specific options
+.options timeint newlte=0 method=7 delmax=1.0e-1
+.options timeint erroption=1 delmax=1.0e-12
+
+* Model Includes and Std Cell Includes
+
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+
+** Modify to point to open_pdks installation
+.lib /home/chandru/PDK/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+**.include "../../PDK//open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hd/cdl/sky130_fd_sc_hd_Xyce.cdl"
+.include /home/chandru/PDK/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
+.include /home/chandru/PDK/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hs/spice/sky130_fd_sc_hs.spice
+.include /home/chandru/PDK/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_ms/spice/sky130_fd_sc_ms.spice
+.include /home/chandru/PDK/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130_fd_pr__model__inductors.model.spice
+
+
+** LC Core Include file
+.include "LC_Cell.spice"
+
+** Parameters
+.param pvdd = 1.8
+.param bias = 1.0
+*.param Icurr = 1200u
+.param Icurr = 720u
+.param psw0 = 1.8
+.param psw1 = 1.8
+
+* --- Voltage Sources ---
+**vvdd VDD 0 dc 'pvdd'
+vvss GND 0 dc 0
+*vsig VDD 0 pwl(0 0 0.10n 0 0.20n 'pvdd')
+vvdd VDD GND 'pvdd'
+vsw0 sw0 0 'psw0'
+vsw1 sw1 0 'psw1'
+
+
+***--Load
+Coutp outp GND 50f
+Coutn outn GND 50f
+
+** TIA
+*vtail tail_v 0 dc 'bias'
+Idctail VDD tail_c 'Icurr'
+* ---LCCell Subcircuit----
+xlccore tail_c outp outn open VDD GND LC_Cell_v1
+
+
+** LC Circuit **
+.ic v(outn)='pvdd'
+.ic v(outp)='pvdd'
+*.ic v(net1)=1.6
+**.ic v(SW0) = 0
+**.ic v(SW1) = 0
+**.ic v(XLCCORE:NET3) = 0
+**.ic v(XLCCORE:NET4) = 0
+**.ic v(XLCCORE:XC1:B1) = 0
+**.ic v(XLCCORE:XC3:B1) = 0
+**.ic v(XLCCORE:XC1:A) = 0
+**.ic v(XLCCORE:XC3:A) = 0
+**.ic v(XLCCORE:XL1:NET37) = 0
+**.ic v(XLCCORE:XL1:NET31) = 0
+
+
+.data test
++ Icurr
++ 1540u
++ 1560u
++ 1580u
++ 1600u
+.enddata
+
+.data sw
++psw0 psw1
++ 0.0 0.0
++ 1.8 0.0
++ 0.0 1.8
++ 1.8 1.8
+.enddata
+
+* --- Transient Analysis ---
+.op
+*.dc vtail 0.4 1.4 0.01
+**.dc Icurr 10u 11u 0.1u
+*.step DATA=test
+*.step DATA=sw
+.tran 1p 100n NOOP
+
+* --- Measurement ---
+*.print DC v(*)
+.print tran v(outp)
+.print tran v(outn)
+.print tran v(*)
+*.print tran i(*)
+.print tran v(VDD)
+.print tran ID(XLCCORE:XM1:MSKY130_FD_PR__NFET_01V8)
+.print tran ID(XLCCORE:XM2:MSKY130_FD_PR__NFET_01V8)
+.print tran ID(XLCCORE:XM3:MSKY130_FD_PR__NFET_01V8)
+.print tran ID(XLCCORE:XM4:MSKY130_FD_PR__NFET_01V8)
+.print tran ID(XLCCORE:XM5:MSKY130_FD_PR__NFET_01V8)
+
+*.print tran ID(XLCCORE:XM1:MSKY130_FD_PR__PFET_01V8)
+*.print tran ID(XLCCORE:XM2:MSKY130_FD_PR__PFET_01V8)
+*.print tran ID(XLCCORE:XM3:MSKY130_FD_PR__PFET_01V8)
+*.print tran ID(XLCCORE:XM4:MSKY130_FD_PR__PFET_01V8)
+
+**.print DC {Icurr}
+**.print DC {vtail}
+**.print DC {tail}
+*.print DC ID(XLCCORE:XLEFT:MSKY130_FD_PR__NFET_01V8_LVT)
+*.print DC ID(XLCCORE:XRIGHT:MSKY130_FD_PR__NFET_01V8_LVT)
+*.print DC ID(XLCCORE:XTAIL:MSKY130_FD_PR__NFET_01V8_LVT)
+*.print DC N(XLCCORE:XLEFT:MSKY130_FD_PR__NFET_01V8_LVT:GM)
+*.print DC N(XLCCORE:XRIGHT:MSKY130_FD_PR__NFET_01V8_LVT:GM)
+*.print DC N(XLCCORE:XLEFT:MSKY130_FD_PR__NFET_01V8_LVT:VDSAT)
+*.print DC N(XLCCORE:XRIGHT:MSKY130_FD_PR__NFET_01V8_LVT:VDSAT)
+*.print DC N(XLCCORE:XLEFT:MSKY130_FD_PR__NFET_01V8_LVT:VTH)
+*.print DC N(XLCCORE:XRIGHT:MSKY130_FD_PR__NFET_01V8_LVT:VTH)
+
+
+
+
+** Continous measure
+**.measure tran_cont AVG tpdlh TRIG v(vi)=0.9 FALL=1 TARG v(voclk)=0.9 RISE=1
+*** Single Measure
+.measure tran ROfreqP FREQ v(outp) FROM=90n TO=100n minval=1.8
+.measure tran ROdutyP DUTY v(outp) FROM=90n TO=100n minval=1.8
+.measure tran ROfreqN FREQ v(outn) FROM=90n TO=100n minval=1.8
+.measure tran ROdutyN DUTY v(outn) FROM=90n TO=100n minval=1.8
+
+.measure tran tpdhl_clk TRIG TD=90n v(outp)=1.8 RISE=5 TARG v(outp)=1.8 RISE=6
+.print tran {1/{tpdhl_clk}}
+
+.measure tran tperiodR_P TRIG TD=90n v(outp)=0.9 FALL=5 TARG v(outp)=0.9 FALL=6
+.measure tran tperiodF_P TRIG TD=90n v(outp)=0.9 RISE=5 TARG v(outp)=0.9 RISE=6
+.measure tran tperiodR_N TRIG TD=90n v(outn)=0.9 FALL=5 TARG v(outn)=0.9 FALL=6
+.measure tran tperiodF_N TRIG TD=90n v(outn)=0.9 RISE=5 TARG v(outn)=0.9 RISE=6
+
+.measure tran outpmax MAX v(outp) TD=90n
+.measure tran outpmin MIN v(outp) TD=90n
+.measure tran outp_p2p PP v(outp) TD=90n
+.measure tran outnmax MAX v(outn) TD=90n
+.measure tran outnmin MIN v(outn) TD=90n
+
+.end

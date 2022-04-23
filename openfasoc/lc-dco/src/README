@@ -1,0 +1,5 @@
+Added 3 separate src directories
+
+aux_cell_spice/ : Spice netlists for aux gds creation
+behavioral_verilog/: Behavioral verilog WIP
+aux_cell_verilog: Aux cell verilog cells for PAR
