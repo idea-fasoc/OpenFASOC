@@ -8,7 +8,7 @@ import numpy as np
 from scipy import interpolate
 
 
-def gen_dcdc_netlist(cells, args, jsonSpec, platformConfig, srcDir):
+def gen_dcdc_netlist(cells, args, jsonSpec, platformConfig, srcDir) -> None:
 
     # power mux models
     xs = [100, 330, 1000, 3300, 10000]

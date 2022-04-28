@@ -560,7 +560,7 @@ def calculate_min_power_new(df, x, number_rows):
     return temp, min_power, min_error, Inv, Header, search_param
 
 
-def read_plot_power_opt():
+def read_plot_power_opt() -> None:
     # read new data
     power_within_data = pd.read_csv("power_within_x.csv", delimiter=",")
     x_within = power_within_data["Temp"]
@@ -597,7 +597,7 @@ def read_plot_power_opt():
     plt.show()
 
 
-def read_plot_error_opt():
+def read_plot_error_opt() -> None:
     # read new data
     error_within_data = pd.read_csv("error_within_x.csv", delimiter=",")
     x_within_e = error_within_data["Temp"]
@@ -709,7 +709,7 @@ def check_search_done():
 
 
 # plot the appropriate data source and results
-def plot():
+def plot() -> None:
     if Optimization == "power":
         read_plot_power_opt()
     elif Optimization == "error":

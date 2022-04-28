@@ -266,3 +266,8 @@ update:
 
 update2:
 	pre-commit autoupdate --bleeding-edge
+
+add-types:
+	python -m libcst.tool codemod autotyping.AutotypeCommand openfasoc/ --scalar-return
+	python -m libcst.tool codemod autotyping.AutotypeCommand openfasoc/ --none-return
+	python -m libcst.tool codemod autotyping.AutotypeCommand openfasoc/ --scalar-return

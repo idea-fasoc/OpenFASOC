@@ -3,7 +3,7 @@ import math
 import re
 
 
-def place_inv(fp_dim, array_dim, cell_dim):
+def place_inv(fp_dim, array_dim, cell_dim) -> None:
     r_def = open(args.inputDef, "r")
     lines = list(r_def.readlines())
     w_def = open(args.outputDef, "w")

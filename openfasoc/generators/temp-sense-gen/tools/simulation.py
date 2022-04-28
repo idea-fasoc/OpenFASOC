@@ -18,7 +18,7 @@ def generate_runs(
     jsonConfig,
     platform,
     modeling=False,
-):
+) -> None:
     simDir = genDir + "simulations/"
     flowDir = genDir + "flow/"
     platformConfig = jsonConfig["platforms"][platform]
@@ -109,7 +109,7 @@ def generate_runs(
         )
 
 
-def update_netlist(srcNetlist, dstNetlist, simMode):
+def update_netlist(srcNetlist, dstNetlist, simMode) -> None:
     with open(srcNetlist, "r") as rf:
         netlist = rf.read()
         netlist = re.sub(
@@ -141,7 +141,7 @@ def update_netlist(srcNetlist, dstNetlist, simMode):
         wf.write(filedata)
 
 
-def run_simulations(runDir, designName, temp_list, simTool, simMode):
+def run_simulations(runDir, designName, temp_list, simTool, simMode) -> None:
     if simTool == "finesim":
         with open(runDir + "run_sim", "w") as wf:
             for temp in temp_list:

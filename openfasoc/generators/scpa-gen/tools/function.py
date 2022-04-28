@@ -24,7 +24,7 @@ class varmap:
     # 	self.map=[None]*self.size
     # 	self.comblist=[None]*self.size
     # 	self.nvar=0
-    def __init__(self):
+    def __init__(self) -> None:
         self.n_smlcycle = 1
         self.last = 0
         self.smlcy = 1
@@ -35,7 +35,7 @@ class varmap:
         # self.comblist=[None]
         self.nvar = 0
 
-    def get_var(self, name, start, end, step):
+    def get_var(self, name, start, end, step) -> None:
         if self.nvar == 0:
             self.map = [None]
             self.comblist = [None]
@@ -49,20 +49,20 @@ class varmap:
             self.map[self.nvar].append(start + step * (i - 1))
         self.nvar += 1
 
-    def cal_nbigcy(self):
+    def cal_nbigcy(self) -> None:
         self.bias = [1] * (len(self.map))
         for j in range(1, len(self.map) + 1):
             self.n_smlcycle = self.n_smlcycle * (len(self.map[j - 1]) - 1)
         self.n_smlcycle = self.n_smlcycle * len(self.map)
 
-    def increm(self, inc):  # increment bias
+    def increm(self, inc) -> None:  # increment bias
         self.bias[inc] += 1
         if self.bias[inc] > len(self.map[inc]) - 1:
             self.bias[inc] % len(self.map[inc]) - 1
 
     def check_end(
         self, vf
-    ):  # When this is called, it's already last stage of self.map[vf]
+    ) -> int:  # When this is called, it's already last stage of self.map[vf]
         self.bias[vf] = 1
         # 		if vf==0 and self.bias[0]==len(self.map[0])-1:
         # 			return 0
@@ -74,7 +74,7 @@ class varmap:
             self.bias[vf - 1] += 1
             return 1
 
-    def combinate(self):
+    def combinate(self) -> None:
         # 		print self.map[self.vv][self.bias[self.vv]]
         self.smlcy += 1
         if self.vv == len(self.map) - 1:  # last variable
@@ -128,7 +128,7 @@ class netmap:
     # 	self.line_nvar=0      # index of last variable for this line
     # 	self.nxtl_var=0      # index of variable of next line
     # 	self.ci_at=100
-    def __init__(self):
+    def __init__(self) -> None:
         self.nn = 0
         self.pvar = 1
         self.cnta = 0
@@ -138,7 +138,7 @@ class netmap:
 
     def get_net(
         self, flag, netname, start, end, step
-    ):  # if start==None: want to repeat without incrementation(usually for tab) (end)x(step) is the num of repetition
+    ) -> None:  # if start==None: want to repeat without incrementation(usually for tab) (end)x(step) is the num of repetition
         if self.nn == 0:
             self.map = [None]
             self.flag = [None]
@@ -180,7 +180,7 @@ class netmap:
         self.nn += 1
         # print self.map
 
-    def add_val(self, flag, netname, start, end, step):
+    def add_val(self, flag, netname, start, end, step) -> None:
         varidx = self.flag.index(flag)
         if start != None:
             nval = int((end - start + step / 10) // step + 1)
@@ -190,7 +190,7 @@ class netmap:
             for i in range(1, step + 1):
                 self.map[varidx].append(end)
 
-    def printline(self, line, wrfile):
+    def printline(self, line, wrfile) -> None:
         if line[0:2] == "@@":
             # print('self.ci_at=%d'%(self.ci_at))
             self.nline = line[3 : len(line)]
@@ -281,7 +281,7 @@ class netmap:
 
 
 class resmap:
-    def __init__(self, num_tb, num_words, index):  # num_words includes index
+    def __init__(self, num_tb, num_words, index) -> None:  # num_words includes index
         self.tb = [None] * num_tb
         self.tbi = [None] * num_tb
         self.vl = [None] * num_tb
@@ -300,14 +300,14 @@ class resmap:
             self.vl[itb] = [None] * (num_words + index)
             self.vlinit[itb] = [0] * (num_words + index)
 
-    def get_var(self, ntb, var):
+    def get_var(self, ntb, var) -> None:
         self.vr[self.tbi[ntb]] = var
         # 		self.vl[ntb][self.tbi[ntb]]=list([None])
         self.tbi[ntb] += 1
         if self.tbi[ntb] == len(self.vr):  # ????????
             self.tbi[ntb] = 0
 
-    def add(self, ntb, value):
+    def add(self, ntb, value) -> None:
         if self.vlinit[ntb][self.tbi[ntb]] == 0:  # initialization
             self.vl[ntb][self.tbi[ntb]] = [value]
             self.vlinit[ntb][self.tbi[ntb]] += 1
@@ -317,7 +317,7 @@ class resmap:
 
     def plot_env(
         self, ntb, start, step, xvar, xval
-    ):  # setting plot environment: if ntb=='all': x axis is in terms of testbench
+    ) -> None:  # setting plot environment: if ntb=='all': x axis is in terms of testbench
         if ntb == "all":
             self.nenv += 1
             self.xaxis = [None] * len(self.tb)
@@ -342,13 +342,13 @@ class resmap:
                 if x == "%s" % (xval)
             ]
 
-    def rst_env(self):
+    def rst_env(self) -> None:
         self.vidx[self.nenv] = None
         self.env[self.nenv] = 0
         self.nenv = 0
         # print self.vl[0][self.vidx[self.nenv]]
 
-    def plot_y(self, yvar):
+    def plot_y(self, yvar) -> None:
         self.yidx = self.vr.index(yvar)
         print("yidx=%d" % (self.yidx))
         # print self.vl[0][self.yidx][self.env[self.nenv][0]]
@@ -359,7 +359,7 @@ class resmap:
         # plt.plot(self.xaxis,self.yaxis)
         # plt.ylabel(self.vr[self.yidx])
 
-    def sort(self, var):
+    def sort(self, var) -> None:
         varidx = self.vr.index(var)
         for k in range(len(self.vl)):  # all testbenches
             self.svar[k] = {}  # define dict

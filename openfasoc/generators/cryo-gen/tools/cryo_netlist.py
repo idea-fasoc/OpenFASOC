@@ -4,7 +4,7 @@ import function
 # import os
 
 
-def gen_cryo_netlist(ninv, aux1, aux2, srcDir):
+def gen_cryo_netlist(ninv, aux1, aux2, srcDir) -> None:
     r_netlist = open(srcDir + "/cryo_ro.v", "r")
     lines = list(r_netlist.readlines())
     w_netlist = open(srcDir + "/cryo_ro.nl.v", "w")

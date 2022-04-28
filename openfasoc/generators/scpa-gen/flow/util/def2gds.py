@@ -6,7 +6,7 @@ import pya
 
 
 # Expand layers in json
-def expand_cfg_layers(cfg):
+def expand_cfg_layers(cfg) -> None:
     layers = cfg["layers"]
     expand = [layer for layer in layers if "layers" in layers[layer]]
     for layer in expand:

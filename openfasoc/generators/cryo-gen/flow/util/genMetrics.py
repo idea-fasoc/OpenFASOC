@@ -86,7 +86,7 @@ def extractTagFromFile(
     occurrence=-1,
     defaultNotFound="N/A",
     t=str,
-):
+) -> None:
     if jsonTag in jsonFile:
         print("[WARN] Overwriting Tag", jsonTag)
 
@@ -122,7 +122,7 @@ def extractTagFromFile(
         jsonFile[jsonTag] = "ERR"
 
 
-def extractGnuTime(prefix, file, jsonFile):
+def extractGnuTime(prefix, file, jsonFile) -> None:
     extractTagFromFile(
         prefix + "__runtime__total", jsonFile, "^(\S+)elapsed \S+CPU \S+memKB", file
     )

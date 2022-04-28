@@ -4,7 +4,7 @@ import function
 # import os
 
 
-def gen_modeling_netlist(srcNetlist, dstNetlist, ninv, nhead):
+def gen_modeling_netlist(srcNetlist, dstNetlist, ninv, nhead) -> None:
     r_netlist = open(srcNetlist, "r")
     lines = list(r_netlist.readlines())
     w_netlist = open(dstNetlist, "w")
@@ -23,7 +23,7 @@ def gen_modeling_netlist(srcNetlist, dstNetlist, ninv, nhead):
         netmap1.printline(line, w_netlist)
 
 
-def gen_temp_netlist(ninv, nhead, aux1, aux2, aux3, aux4, aux5, srcDir):
+def gen_temp_netlist(ninv, nhead, aux1, aux2, aux3, aux4, aux5, srcDir) -> None:
     r_netlist = open(srcDir + "/TEMP_ANALOG_lv.v", "r")
     lines = list(r_netlist.readlines())
     w_netlist = open(srcDir + "/TEMP_ANALOG_lv.nl.v", "w")

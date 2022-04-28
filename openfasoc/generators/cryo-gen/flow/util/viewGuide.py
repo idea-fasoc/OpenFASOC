@@ -10,7 +10,7 @@ bbox_re = re.compile("(\d+) (\d+) (\d+) (\d+) (\w+)")
 categories = {}
 
 
-def add_box(line):
+def add_box(line) -> bool:
     m = re.match(bbox_re, line)
     if not m:
         assert line.strip() == ")"

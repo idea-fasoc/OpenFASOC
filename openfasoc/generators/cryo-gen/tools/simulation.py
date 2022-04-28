@@ -2,7 +2,7 @@ import re
 import subprocess as sp
 
 
-def run_cryo_sim(simDir, lib_path, dut_path, sc_path):
+def run_cryo_sim(simDir, lib_path, dut_path, sc_path) -> None:
     # process 6-stage conv verilog
     with open(simDir + "templates/cryoInst_ngspice.sp", "r") as file:
         filedata = file.read()
