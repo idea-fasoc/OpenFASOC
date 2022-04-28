@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements_dev.txt
-          pip install .
+          pip install -e .
           sudo apt install pandoc
       - name: Test documentation
         run: |
