@@ -1,0 +1,41 @@
+name: Tempsense_run
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  sky130hd_temp:
+    runs-on: ubuntu-latest
+    # runs-on: self-hosted
+    steps:
+
+      - name: Checkout main repo
+        uses: actions/checkout@v2
+
+      - name: Checkout PDK info from openfasoc_ci branches
+        run: |
+          mkdir $GITHUB_WORKSPACE/testing && cd $GITHUB_WORKSPACE/testing
+          git clone https://github.com/${{ github.repository }}.git
+          cd ${{ github.repository }} && git checkout openfasoc_ci
+          
+      - name: Run sky130hd_temp target
+        env:
+          PDK_ROOT: $GITHUB_WORKSPACE/testing/OpenFASOC/pdks
+          IMAGE_NAME: efabless/openlane:2021.12.22_01.51.18
+        run: |
+          docker run --rm\
+            -e GITHUB_ACTIONS=1\
+            -v /github/OpenLane:/OpenLane\
+            -v $PDK_ROOT:$PDK_ROOT\
+            -e PDK_ROOT=$PDK_ROOT\
+            -v $PWD:$PWD\
+            -w $PWD\
+            $IMAGE_NAME\
+            bash -c "\
+              yum install -y time &&\
+              cd $GITHUB_WORKSPACE/openfasoc/generators/temp-sense-gen &&\
+              make sky130hd_temp\
+            "
