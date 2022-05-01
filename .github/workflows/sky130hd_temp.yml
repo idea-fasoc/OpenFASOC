@@ -19,7 +19,7 @@ jobs:
         run: |
           mkdir $GITHUB_WORKSPACE/testing && cd $GITHUB_WORKSPACE/testing
           git clone https://github.com/${{ github.repository }}.git
-          cd ${{ github.repository }} && git checkout openfasoc_ci
+          cd OpenFASOC && git checkout openfasoc_ci
           
       - name: Run sky130hd_temp target
         env:
