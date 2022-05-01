@@ -44,4 +44,4 @@ jobs:
               make sky130hd_temp\
             "\
             >> $LOGFILE
-            if ! grep "\[ERROR\]" $LOGFILE ; then echo "# Run Successful #" ;else echo "# Run Failed #" ; fi
+            if ! grep "\[ERROR\]" $LOGFILE ; then echo "# Run Successful #" ; exit 0 ; else echo "# Run Failed #" ; exit 1 ; fi

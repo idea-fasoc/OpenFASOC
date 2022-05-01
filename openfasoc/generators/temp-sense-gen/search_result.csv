@@ -1,0 +1,2 @@
+Temp,Power,Error,Inv,Header,search_param
+20.0,1.65e-09,-0.031256129,6.0,7.0,"Tempmin:-20,Tempmax:100,Optimization:error,Model:tools/..//models/modelfile.csv,Delta_1st_pass:10"
