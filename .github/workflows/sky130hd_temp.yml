@@ -1,4 +1,4 @@
-name: Tempsense_run
+name: Test Temp-Sense Macro
 
 on:
   push:
@@ -15,10 +15,13 @@ jobs:
       - name: Checkout main repo
         uses: actions/checkout@v2
 
+        # For now, PDK data is taken from openfasoc_ci branch under saicharan0112/OpenFASOC repository. 
+        # In future, similar branch can be created for PDK data and other testing related files which are not required for users while cloning the idea-fasoc/OpenFASOC repository.
+
       - name: Checkout PDK info from openfasoc_ci branches
         run: |
           mkdir /home/runner/work/testing && cd /home/runner/work/testing
-          git clone https://github.com/${{ github.repository }}.git
+          git clone https://github.com/saicharan0112/OpenFASOC.git
           cd OpenFASOC && git checkout openfasoc_ci
           
       - name: Run sky130hd_temp target
@@ -26,6 +29,7 @@ jobs:
           PDK_ROOT: /home/runner/work/testing/OpenFASOC/pdks
           IMAGE_NAME: efabless/openlane:2021.12.22_01.51.18
         run: |
+          export LOGFILE=/home/runner/work/$(date +%F_%H.%M)
           docker run --rm\
             -e GITHUB_ACTIONS=1\
             -v /github/OpenLane:/OpenLane\
@@ -38,4 +42,6 @@ jobs:
               yum install -y time &&\
               cd $GITHUB_WORKSPACE/openfasoc/generators/temp-sense-gen &&\
               make sky130hd_temp\
-            "
+            "\
+            >> $LOGFILE
+            grep "\[ERROR\]" $LOGFILE && if [[ "$?" -eq "0" ]];; then echo "\n# Run Successful #" ;else echo "\n# Run Failed #" ; fi 
