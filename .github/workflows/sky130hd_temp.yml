@@ -15,7 +15,7 @@ jobs:
       - name: Checkout main repo
         uses: actions/checkout@v2
 
-        # For now, PDK data is taken from openfasoc_ci branch under saicharan0112/OpenFASOC repository. 
+        # For now, PDK data is taken from openfasoc_ci branch under saicharan0112/OpenFASOC repository.
         # In future, similar branch can be created for PDK data and other testing related files which are not required for users while cloning the idea-fasoc/OpenFASOC repository.
 
       - name: Checkout PDK info from openfasoc_ci branches
@@ -23,7 +23,7 @@ jobs:
           mkdir /home/runner/work/testing && cd /home/runner/work/testing
           git clone https://github.com/saicharan0112/OpenFASOC.git
           cd OpenFASOC && git checkout openfasoc_ci
-          
+
       - name: Run sky130hd_temp target
         env:
           PDK_ROOT: /home/runner/work/testing/OpenFASOC/pdks

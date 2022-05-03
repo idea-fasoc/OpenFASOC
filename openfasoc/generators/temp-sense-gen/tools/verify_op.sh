@@ -6,7 +6,7 @@ do
 	then
 	       echo "[ERROR] $file is not created"
 	fi
-done	       
+done
 
 module_name=$(grep "module_name" test.json | cut -d "\"" -f 4)
 
