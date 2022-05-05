@@ -67,6 +67,16 @@ make sky130hd_temp
 Please contact mehdi@umich.edu if you have any questions.
 
 
+#Generators
+
+**[temp-sense-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)** A fully automated SoC generator that uses an all-digital temperature sensor architecture, that relies on a new subthreshold oscillator (achieved using the auxiliary cell “Header Cell“) for realizing synthesizable thermal sensors.
+**[cryo-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/cryo-gen)**
+**[dcdc-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
+**[gdsfactory:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
+**[lc-dco:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
+**[ido-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
+**[scpa-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
+
 # Spice Simulation Flow
 
 To run the simulation, please edit your local model file in `common/platform_config.json`:
