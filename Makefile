@@ -229,3 +229,45 @@ test:
 .PHONY: clean_runs
 clean_runs:
 	@rm -rf ./designs/*/runs && echo "Runs cleaned successfully." || echo "Failed to delete runs."
+
+
+install:
+	pip install -r requirements.txt --upgrade
+	pip install -r requirements_dev.txt --upgrade
+	pip install -e .
+	pre-commit install
+
+test:
+	pytest
+
+cov:
+	pytest --cov= OpenFASoC
+
+mypy:
+	mypy . --ignore-missing-imports
+
+lint:
+	flake8
+
+pylint:
+	pylint OpenFASoC
+
+lintd2:
+	flake8 --select RST
+
+lintd:
+	pydocstyle OpenFASoC
+
+doc8:
+	doc8 docs/
+
+update:
+	pur
+
+update2:
+	pre-commit autoupdate --bleeding-edge
+
+add-types:
+	python -m libcst.tool codemod autotyping.AutotypeCommand openfasoc/ --scalar-return
+	python -m libcst.tool codemod autotyping.AutotypeCommand openfasoc/ --none-return
+	python -m libcst.tool codemod autotyping.AutotypeCommand openfasoc/ --scalar-returny
