@@ -74,7 +74,7 @@ Please contact mehdi@umich.edu if you have any questions.
   Block Architecture:
    - Temperature-sensitive ring oscillator and stacked zero-VT devices.
     ![plot](./markdown%20images/tempSensor-BA.png)
-     Documentation **[link](https://fasoc.engin.umich.edu/thermal-sensor/)** 
+     Documentation **[link](https://fasoc.engin.umich.edu/thermal-sensor/)**
 
 
 
@@ -85,12 +85,9 @@ Please contact mehdi@umich.edu if you have any questions.
     ![plot](./markdown%20images/LDO-BA.png)
     Documentation **[link](https://fasoc.engin.umich.edu/digital-ldo/)**
 
-**[dcdc-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)** For synthesizable on-chip power management  circuits, we use the “2:1 SC Cell” auxiliary cell for implementing a switched-capacitor (SC) based DC-DC converter. By varying the number of auxiliary cells, we can achieve wide range of conversion ratios with fine grain resolution. It operates similarly to  a successive approximation analog to digital converter (SAR ADC). Furthermore, since the total structure is simply composed of auxiliary cells, it is ideal for the proposed flow of automating the analog block design.
+**[dcdc-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)** For synthesizable on-chip power management  circuits, we use the “2:1 SC Cell” auxiliary cell for implementing a switched-capacitor (SC) based DC-DC converter. By varying the number of auxiliary cells, we can achieve wide range of conversion ratios with fine grain resolution. It operates similarly to  a successive approximation analog to digital converter (SAR ADC). Furthermore, since the total structure is simply composed of auxiliary cells, it is ideal for the proposed flow of automating the analog block design.  Documentation **[link](https://fasoc.engin.umich.edu/dc-dc-converter/)**
 
-
-   Documentation **[link](https://fasoc.engin.umich.edu/dc-dc-converter/)**
-     
-**[cryo-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/cryo-gen)** 
+**[cryo-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/cryo-gen)**
 
 **[gdsfactory:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/gdsfactory)**
 
