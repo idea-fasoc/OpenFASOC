@@ -122,3 +122,4 @@ To improve our tools, flow, and QoR. The following limitations are currently bei
        - ioplacment step is now skipped at placement and is set to random palcement by default at floorplaning so it doesn't put power pins of additional voltage domains at the edge
    - add ~~the spice simulation flow~~ and modeling
    - add sky130_fd_sc_hs support
+   - enabling new features like power gating/UPF flow, clock gating
