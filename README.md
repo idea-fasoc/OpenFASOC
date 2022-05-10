@@ -69,13 +69,19 @@ Please contact mehdi@umich.edu if you have any questions.
 
 #Generators
 
--**[temp-sense-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/temp-sense-gen)** 
--**[cryo-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/cryo-gen)**
--**[dcdc-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
--**[gdsfactory:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/gdsfactory)**
--**[lc-dco:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/lc-dco)**
--**[ldo-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/ldo-gen)**
--**[scpa-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/scpa-gen)**
+- **[temp-sense-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/temp-sense-gen)** 
+
+- **[cryo-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/cryo-gen)**
+
+- **[dcdc-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
+
+- **[gdsfactory:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/gdsfactory)**
+
+- **[lc-dco:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/lc-dco)**
+
+- **[ldo-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/ldo-gen)**
+
+- **[scpa-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/scpa-gen)**
 
 # Spice Simulation Flow
 
