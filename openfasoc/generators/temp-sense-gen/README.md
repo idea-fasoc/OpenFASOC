@@ -1,6 +1,6 @@
-Thermal-sensor generator
+# Thermal-sensor generator
 
-We use an all-digital temperature sensor architecture, that relies on a new subthreshold oscillator (achieved using the auxiliary cell “Header Cell“) for realizing synthesizable thermal sensors. We choose frequency as the temperature dependent variable. So, we use a ring oscillators that is based on inverters only and stacked native IO devices for better line sensitivity.
+We use an all-digital temperature sensor architecture, that relies on a new subthreshold oscillator (achieved using the auxiliary cell â€œHeader Cellâ€œ) for realizing synthesizable thermal sensors. We choose frequency as the temperature dependent variable. So, we use a ring oscillators that is based on inverters only and stacked native IO devices for better line sensitivity.
 
 
 For more documentation check on our [website](https://fasoc.engin.umich.edu/thermal-sensor/).
