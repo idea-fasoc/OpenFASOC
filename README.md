@@ -33,7 +33,7 @@ Please build the following tools:
 # Design Generation
 ## Generators
 
-**[temp-sense-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/temp-sense-gen)** A fully automated SoC generator that uses an all-digital temperature sensor architecture, that relies on a new subthreshold oscillator (achieved using the auxiliary cell “Header Cell“) for realizing synthesizable thermal sensors.
+**[temp-sense-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/temp-sense-gen/)** A fully automated SoC generator that uses an all-digital temperature sensor architecture, that relies on a new subthreshold oscillator (achieved using the auxiliary cell “Header Cell“) for realizing synthesizable thermal sensors.
 
   Block Architecture:
    - Temperature-sensitive ring oscillator and stacked zero-VT devices.
@@ -48,13 +48,14 @@ Please build the following tools:
 
 **[dcdc-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)** For synthesizable on-chip power management  circuits, we use the “2:1 SC Cell” auxiliary cell for implementing a switched-capacitor (SC) based DC-DC converter. By varying the number of auxiliary cells, we can achieve wide range of conversion ratios with fine grain resolution. It operates similarly to  a successive approximation analog to digital converter (SAR ADC). Furthermore, since the total structure is simply composed of auxiliary cells, it is ideal for the proposed flow of automating the analog block design.
 
-**[cryo-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/cryo-gen)**
 
-**[gdsfactory:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/gdsfactory)**
+**[cryo-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/cryo-gen)** to be added
 
-**[lc-dco:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/lc-dco)**
+**[gdsfactory:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/gdsfactory)** to be added
 
-**[scpa-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/scpa-gen)**
+**[lc-dco:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/lc-dco)** to be added
+
+**[scpa-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/scpa-gen)** to be added
 
 Our fully open source flow only supports the temperature sensor generation so far. We are working on adding additional generators in the near future.
 
