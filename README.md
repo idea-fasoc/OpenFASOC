@@ -55,6 +55,7 @@ Please build the following tools:
 **[lc-dco:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/lc-dco)**
 
 **[scpa-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/scpa-gen)**
+
 Our fully open source flow only supports the temperature sensor generation so far. We are working on adding additional generators in the near future.
 
 The generators are located inside `OpenFASOC/generators/`, the target for temperature sensor generation is `sky130hd_temp` and located inside `OpenFASOC/generators/temp-sense-gen`, the following parameters are supported:
