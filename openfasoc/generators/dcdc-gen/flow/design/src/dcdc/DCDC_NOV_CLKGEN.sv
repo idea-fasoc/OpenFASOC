@@ -22,24 +22,24 @@ module DCDC_NOV_CLKGEN #(parameter N_delay) (
     DCDC_BUFFER b(clk_in1[i+1], clk_in1[i]);
     end
     endgenerate
-    
+
 	wire out1, out2, out3, out4, clk_in9;
-	
+
     //adjust delay element
     inverterchain_4 inverterchain_4(.in(clk_in1[N_delay]), .out1(out1), .out2(out2), .out3(out3), .out4(out4));
     MUX4 mux4(.y(clk_in9), .a(out1), .b(out2), .c(out3), .d(out4), .s(s));
 
     //output clk0, clk0b
-	sky130_fd_sc_hs__nand2_1 nand1(.Y(nandout1), .A(clk_in1[0]), .B(clk_in9)); 
-	sky130_fd_sc_hs__clkinv_1 not1(.Y(nandout2), .A(nandout1)); 
-	sky130_fd_sc_hs__clkinv_1 not2(.Y(clk0b), .A(nandout2)); 
-	DCDC_BUFFER buf1(clk0, nandout2); 
+	sky130_fd_sc_hs__nand2_1 nand1(.Y(nandout1), .A(clk_in1[0]), .B(clk_in9));
+	sky130_fd_sc_hs__clkinv_1 not1(.Y(nandout2), .A(nandout1));
+	sky130_fd_sc_hs__clkinv_1 not2(.Y(clk0b), .A(nandout2));
+	DCDC_BUFFER buf1(clk0, nandout2);
 
 	//output clk1, clk1b
-	sky130_fd_sc_hs__nor2_1 nor1(.Y(norout1), .A(clk_in1[0]), .B(clk_in9)); 
-	sky130_fd_sc_hs__clkinv_1 not3(.Y(norout2), .A(norout1)); 
-	sky130_fd_sc_hs__clkinv_1 not4(.Y(clk1), .A(norout2)); 
-    DCDC_BUFFER buf2(clk1b, norout2); 
+	sky130_fd_sc_hs__nor2_1 nor1(.Y(norout1), .A(clk_in1[0]), .B(clk_in9));
+	sky130_fd_sc_hs__clkinv_1 not3(.Y(norout2), .A(norout1));
+	sky130_fd_sc_hs__clkinv_1 not4(.Y(clk1), .A(norout2));
+    DCDC_BUFFER buf2(clk1b, norout2);
 endmodule
 
 //MUX 4:1
@@ -54,14 +54,14 @@ else
     if(s[1])
         y=b;
     else
-        y=a;   
+        y=a;
 end
 endmodule
 
 
 //4 Delay inverter chain
 module inverterchain_4 (input in, output out1, out2, out3, out4);
-	
+
 	wire out2_0, out3_0, out4_0;
 	wire out3_1, out4_1;
 	wire out4_2;

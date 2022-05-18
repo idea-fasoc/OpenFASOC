@@ -46,7 +46,7 @@ x5 VDD VSS NODE1 VOUT NON_CLK_INV number={number}
 .subckt DCDE VDD VSS VIN A[3] A[2] A[1] A[0] VOUT number=1
 .param w_inv_n = 0.48 w_inv_p = {w_inv_n * 2} $1.68, 0.84, 0.42
 .param w_tg_n = 0.6 w_tg_p = {w_tg_n * 2}
-.param w_c = 1 l_c = 1 
+.param w_c = 1 l_c = 1
 x1 NODE1 VIN VDD VDD sky130_fd_pr__pfet_01v8 w=w_inv_p l=0.15 m={number}
 x2 NODE1 VIN VSS VSS sky130_fd_pr__nfet_01v8 w=w_inv_n l=0.15 m={number}
 x3 COUT1 a[0] NODE1 VSS sky130_fd_pr__nfet_01v8 w=w_tg_n l=0.15 m={number}
@@ -101,7 +101,7 @@ x9 VDD VSS NODE3 lCLK1_B NON_CLK_BUFFER number={number}
 x10 VDD VSS NODE3 lCLK1 NON_CLK_INV number={number}
 
 *buffer chain
-x11 VDD VSS lCLK1_B CLK1_B NON_CLK_BUF_AMP number={number} 
+x11 VDD VSS lCLK1_B CLK1_B NON_CLK_BUF_AMP number={number}
 x12 VDD VSS lCLK1 CLK1 NON_CLK_BUF_AMP number={number}
 
 .ends NON_CLK_GEN

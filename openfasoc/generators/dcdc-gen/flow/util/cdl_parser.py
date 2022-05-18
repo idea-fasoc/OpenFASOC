@@ -3,18 +3,17 @@ import argparse
 import sys
 import os
 
-parser = argparse.ArgumentParser(
-    description="formulate input cdl netlist")
-parser.add_argument("--inputCdl", "-i", required=True,
-                    help="input CDL netlist") 
-parser.add_argument("--stdLef", "-l", required=True,
-                    help="input standard LEF, showing pin order used in OpenROAD")
-parser.add_argument("--stdCdl", "-s", required=True,
-                    help="standard cells CDL netlist")
-parser.add_argument("--powerConn", "-p", required=False,
-                    help="power connection")
-parser.add_argument("--outputCdl", "-o", required=True,
-                    help="output CDL netlist")
+parser = argparse.ArgumentParser(description="formulate input cdl netlist")
+parser.add_argument("--inputCdl", "-i", required=True, help="input CDL netlist")
+parser.add_argument(
+    "--stdLef",
+    "-l",
+    required=True,
+    help="input standard LEF, showing pin order used in OpenROAD",
+)
+parser.add_argument("--stdCdl", "-s", required=True, help="standard cells CDL netlist")
+parser.add_argument("--powerConn", "-p", required=False, help="power connection")
+parser.add_argument("--outputCdl", "-o", required=True, help="output CDL netlist")
 
 args = parser.parse_args()
 
@@ -64,7 +63,9 @@ with open(args.outputCdl, "w") as wf:
         gnd_net = ckt_cell_list[1 + pin_order_dict[ckt_cell_list[-1]].index("VGND")]
         for pin in std_pin_order_dict[ckt_cell_list[-1]]:
             try:
-                net_name = ckt_cell_list[1 + pin_order_dict[ckt_cell_list[-1]].index(pin)]
+                net_name = ckt_cell_list[
+                    1 + pin_order_dict[ckt_cell_list[-1]].index(pin)
+                ]
                 ordered_cell.append(net_name)
             except:
                 if pin == "VNB":
@@ -72,12 +73,10 @@ with open(args.outputCdl, "w") as wf:
                 elif pin == "VPB":
                     ordered_cell.append(pwr_net)
                 else:
-                    print("cell: " + ckt_cell + " pin: "+ pin + " is missing")
+                    print("cell: " + ckt_cell + " pin: " + pin + " is missing")
                     sys.exit(0)
         ordered_cell.append(ckt_cell_list[-1])
-    
+
         wf.write(" ".join(ordered_cell))
         wf.write("\n")
     wf.write(".end")
-    
-

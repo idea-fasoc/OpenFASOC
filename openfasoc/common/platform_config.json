@@ -7,11 +7,11 @@
   "platforms": {
     "sky130hd": {
       "nominal_voltage": 1.8,
-      "model_corner": "tt"      
+      "model_corner": "tt"
     },
 	"sky130hs": {
       "nominal_voltage": 1.8,
-      "model_corner": "tt"      
+      "model_corner": "tt"
     }
   }
 }

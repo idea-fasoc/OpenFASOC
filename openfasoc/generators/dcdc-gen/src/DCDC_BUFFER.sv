@@ -9,13 +9,13 @@ module DCDC_BUFFER(
 );
 logic out1;
 
-	sky130_fd_sc_hs__clkinv_1 u_DCDC_INVERTER1( 
-		.A(in), 
+	sky130_fd_sc_hs__clkinv_1 u_DCDC_INVERTER1(
+		.A(in),
 		.Y(out1)
 	);
 
-	sky130_fd_sc_hs__clkinv_1 u_DCDC_INVERTER2( 
-		.A(out1), 
+	sky130_fd_sc_hs__clkinv_1 u_DCDC_INVERTER2(
+		.A(out1),
 		.Y(out)
 	);
 endmodule

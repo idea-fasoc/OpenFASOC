@@ -8,16 +8,13 @@ import argparse  # argument parsing
 
 # Parse and validate arguments
 # ==============================================================================
-parser = argparse.ArgumentParser(
-    description='Merges lefs together')
-parser.add_argument('--inputLef', '-i', required=True,
-                    help='Input Lef', nargs='+')
-parser.add_argument('--outputLef', '-o', required=True,
-                    help='Output Lef')
+parser = argparse.ArgumentParser(description="Merges lefs together")
+parser.add_argument("--inputLef", "-i", required=True, help="Input Lef", nargs="+")
+parser.add_argument("--outputLef", "-o", required=True, help="Output Lef")
 args = parser.parse_args()
 
 
-print(os.path.basename(__file__),": Merging LEFs")
+print(os.path.basename(__file__), ": Merging LEFs")
 
 f = open(args.inputLef[0])
 content = f.read()
@@ -28,38 +25,37 @@ f.close()
 propDefinitions = set()
 
 # Remove Last line ending the library
-content = re.sub("END LIBRARY","",content)
+content = re.sub("END LIBRARY", "", content)
 
 # Iterate through additional lefs
 for lefFile in args.inputLef[1:]:
-  f = open(lefFile)
-  snippet = f.read()
-  f.close()
+    f = open(lefFile)
+    snippet = f.read()
+    f.close()
 
-  # Match the sites
-  pattern = r"(^SITE (\S+).*?END\s+\2)"
-  m = re.findall(pattern, snippet, re.M | re.DOTALL)
+    # Match the sites
+    pattern = r"(^SITE (\S+).*?END\s+\2)"
+    m = re.findall(pattern, snippet, re.M | re.DOTALL)
 
-  print(os.path.basename(lefFile) + ": SITEs matched found: " + str(len(m)))
-  for groups in m:
-    content += "\n" + groups[0]
+    print(os.path.basename(lefFile) + ": SITEs matched found: " + str(len(m)))
+    for groups in m:
+        content += "\n" + groups[0]
 
+    # Match the macros
+    pattern = r"(^MACRO (\S+\s).*?END\s+\2)"
+    m = re.findall(pattern, snippet, re.M | re.DOTALL)
 
-  # Match the macros
-  pattern = r"(^MACRO (\S+\s).*?END\s+\2)"
-  m = re.findall(pattern, snippet, re.M | re.DOTALL)
+    print(os.path.basename(lefFile) + ": MACROs matched found: " + str(len(m)))
+    for groups in m:
+        content += "\n" + groups[0]
 
-  print(os.path.basename(lefFile) + ": MACROs matched found: " + str(len(m)))
-  for groups in m:
-    content += "\n" + groups[0]
+    # Match the property definitions
+    pattern = r"^(PROPERTYDEFINITIONS)(.*?)(END PROPERTYDEFINITIONS)"
+    m = re.search(pattern, snippet, re.M | re.DOTALL)
 
-  # Match the property definitions
-  pattern = r"^(PROPERTYDEFINITIONS)(.*?)(END PROPERTYDEFINITIONS)"
-  m = re.search(pattern, snippet, re.M | re.DOTALL)
-
-  if m:
-    print(os.path.basename(lefFile) + ": PROPERTYDEFINITIONS found")
-    propDefinitions.update(map(str.strip,m.group(2).split("\n")))
+    if m:
+        print(os.path.basename(lefFile) + ": PROPERTYDEFINITIONS found")
+        propDefinitions.update(map(str.strip, m.group(2).split("\n")))
 
 
 # Add Last line ending the library
@@ -71,8 +67,8 @@ content += "\nEND LIBRARY"
 pattern = r"^(PROPERTYDEFINITIONS)(.*?)(END PROPERTYDEFINITIONS)"
 m = re.search(pattern, content, re.M | re.DOTALL)
 if m:
-  print(os.path.basename(lefFile) + ": PROPERTYDEFINITIONS found in base lef")
-  propDefinitions.update(map(str.strip,m.group(2).split("\n")))
+    print(os.path.basename(lefFile) + ": PROPERTYDEFINITIONS found in base lef")
+    propDefinitions.update(map(str.strip, m.group(2).split("\n")))
 
 
 replace = r"\1" + "\n".join(propDefinitions) + r"\n\3"
@@ -83,4 +79,4 @@ f = open(args.outputLef, "w")
 f.write(content)
 f.close()
 
-print(os.path.basename(__file__),": Merging LEFs complete")
+print(os.path.basename(__file__), ": Merging LEFs complete")

@@ -6,7 +6,7 @@
 
 #sky130hd_dcdc_verilog:
 #	python3 tools/dcdc_gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode verilog
-	
+
 #sky130hs_dcdc_verilog:
 #	python3 tools/dcdc_gen.py --specfile test.json --outputDir ./work --platform sky130hs --mode verilog
 
@@ -23,5 +23,3 @@ clean:
 	rm -rf tools/*.pyc tools/__pycache__/
 	cd flow && make nuke
 	cd simulations && rm -rf run
-
-

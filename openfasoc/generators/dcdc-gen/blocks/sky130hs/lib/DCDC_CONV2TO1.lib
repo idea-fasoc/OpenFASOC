@@ -152,7 +152,7 @@ library ("DCDC_CONV2TO1") {
     slew_upper_threshold_pct_fall : 80.000000000;
     slew_upper_threshold_pct_rise : 80.000000000;
     switching_power_split_model : "true";
-    
+
     cell ("DCDC_CONV2TO1") {
         dont_touch : true ;
         pin ("CLK0") {
@@ -208,4 +208,4 @@ library ("DCDC_CONV2TO1") {
             voltage_name : "VPWR";
         }
     }
-} 
+}

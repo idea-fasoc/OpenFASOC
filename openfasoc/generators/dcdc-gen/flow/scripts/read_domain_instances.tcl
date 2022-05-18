@@ -5,7 +5,7 @@ proc read_domain_instances {voltage_domain_name instances_list} {
   set ch [open $instances_list]
 
   set domain_region [$block findRegion $voltage_domain_name]
-  
+
   while {![eof $ch]} {
     set line [gets $ch]
     if {[llength $line] == 0} {continue}

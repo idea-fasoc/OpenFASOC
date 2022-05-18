@@ -27,12 +27,12 @@ if [package vcompare 8.6 $tcl_version] {
 namespace eval lef {
     variable lefOut stdout
     variable def_units 2000
-    
+
     proc open {file_name} {
         variable lefOut
         set lefOut [::open $file_name w]
     }
-    
+
     proc close {} {
         variable lefOut
         if {$lefOut != "stdout"} {
@@ -40,10 +40,10 @@ namespace eval lef {
         }
         set lefOut stdout
     }
-    
+
     proc out {args} {
         variable lefOut
-        
+
         if {[llength $args] == 2} {
             puts [lindex $args 0] $lefOut [lindex $args 1]
         } else {
@@ -54,27 +54,27 @@ namespace eval lef {
     variable cells
 
     proc get_cells {} {
-        variable cells 
+        variable cells
         return $cells
     }
-    
+
     proc get_cell {cell_name} {
-        variable cells 
+        variable cells
         return [dict get $cells $cell_name]
     }
-    
+
     proc get_width {cell} {
         return [expr [lindex [dict get $cell die_area] 2] - [lindex [dict get $cell die_area] 0]]
     }
-    
+
     proc get_height {cell} {
         return [expr [lindex [dict get $cell die_area] 3] - [lindex [dict get $cell die_area] 1]]
     }
-    
+
     proc read_macros {file_name} {
         variable cells
         variable def_units
-        
+
         set ch [::open $file_name]
 
         set cells {}
@@ -287,16 +287,16 @@ namespace eval lef {
     #       - shape
     #       - ports: a list of lists of shapes that make up a physical connection
     #               - layer
-    #               - rect 
+    #               - rect
     #               - mask?
     #   - obstructions
     #       - layer: a dictionaries with layer_name as the key
-    #           - rect 
+    #           - rect
     #           - mask?
-    #             
+    #
     proc write {design} {
         set def_units [dict get $design units]
-        
+
         out "MACRO [dict get $design name]"
         out "  CLASS [dict get $design cell_class] ;"
         if {[dict exists $design origin]} {
@@ -375,7 +375,7 @@ namespace eval lef {
         out "END [dict get $design name]"
         out ""
     }
-    
+
     proc write_cells {file_name cells} {
         lef open $file_name
 
@@ -439,15 +439,15 @@ namespace eval lef {
 }
 
 namespace eval def {
-    variable def_units 
+    variable def_units
     variable defOut stdout
     variable designs {}
-    
+
     proc open {file_name} {
         variable defOut
         set defOut [::open $file_name w]
     }
-    
+
     proc close {} {
         variable defOut
         if {$defOut != "stdout"} {
@@ -455,10 +455,10 @@ namespace eval def {
         }
         set defOut stdout
     }
-    
+
     proc out {args} {
         variable defOut
-        
+
         if {[llength $args] == 2} {
             puts [lindex $args 0] $defOut [lindex $args 1]
         } else {
@@ -493,12 +493,12 @@ namespace eval def {
     #               - shapes : list of rectangles (or polygons)
     #                   - (rect|polygon)
     #   - physical_viarules: dict with the name of the viarule as the key
-    #       - rule        
-    #       - cutsize     
-    #       - layers      
-    #       - cutspacing  
-    #       - enclosure   
-    #       - rowcol      
+    #       - rule
+    #       - cutsize
+    #       - layers
+    #       - cutspacing
+    #       - enclosure
+    #       - rowcol
     #   - components: dict with the instance name of the component as the key
     #       - inst_name
     #       - cell_name
@@ -506,34 +506,34 @@ namespace eval def {
     #       - orientation
     #   - nets: dict with the name of the net as the key
     #       - use: SIGNAL | POWER | GROUND
-    #       - connections: list of instance pin pairs  
-    #       - routes: list of dictionaries              
-    #           - layer                                
-    #           - points: list of points, where a point can be an XY location or the name of a VIA 
-    #   - special_nets: dict with the name of the net as the key
-    #       - use: SIGNAL | POWER | GROUND                                    
-    #       - connections: list of instance pin pairs  
-    #       - routes: list of dictioaries              
-    #           - layer                                
-    #           - width                                
-    #           - shape                                
+    #       - connections: list of instance pin pairs
+    #       - routes: list of dictionaries
+    #           - layer
     #           - points: list of points, where a point can be an XY location or the name of a VIA
-    #                              
+    #   - special_nets: dict with the name of the net as the key
+    #       - use: SIGNAL | POWER | GROUND
+    #       - connections: list of instance pin pairs
+    #       - routes: list of dictioaries
+    #           - layer
+    #           - width
+    #           - shape
+    #           - points: list of points, where a point can be an XY location or the name of a VIA
+    #
 
     proc shift_point {point x y} {
         return [list [expr [lindex $point 0] + $x] [expr [lindex $point 1] + $y]]
     }
-    
+
     proc shift_rect {rect x y} {
         return [list [expr [lindex $rect 0] + $x] [expr [lindex $rect 1] + $y] [expr [lindex $rect 2] + $x] [expr [lindex $rect 3] + $y]]
     }
 
     proc shift_origin {design x y} {
         if {[dict exists $design die_area]} {
-            dict set design die_area [shift_rect [dict get $design die_area] $x $y] 
+            dict set design die_area [shift_rect [dict get $design die_area] $x $y]
         }
         if {[dict exists $design core_area]} {
-            dict set design core_area [shift_rect [dict get $design core_area] $x $y] 
+            dict set design core_area [shift_rect [dict get $design core_area] $x $y]
         }
         if {[dict exists $design rows]} {
         }
@@ -612,7 +612,7 @@ namespace eval def {
         return $design
     }
 
-    variable layer_info {} 
+    variable layer_info {}
     proc set_layer_info {layer_name key value} {
         variable layer_info
 
@@ -716,14 +716,14 @@ namespace eval def {
 
         if {[dict exists $design tracks]} {
         }
-        
+
         if {[dict exists $design rows]} {
             foreach idx [lsort -integer [dict keys $design rows]] {
                 out -nonewline "ROW ROW_$idx [dict keys $design rows $idx site] [dict keys $design rows $idx start] [dict keys $design rows $idx height] [dict keys $design rows $idx orientation]"
                 out " DO [dict keys $design rows $idx num_sites] BY 1 STEP [dict keys $design rows $idx site_width] 0 ;"
             }
         }
-        
+
         if {[dict exists $design pins]} {
             out ""
             out "PINS [dict size [dict get $design pins]] ;"
@@ -799,7 +799,7 @@ namespace eval def {
             }
             out "END COMPONENTS"
         }
-        
+
         if {[dict exists $design nets]} {
             out ""
             out "SPECIALNETS [dict size [dict get $design nets]] ;"
@@ -812,7 +812,7 @@ namespace eval def {
                     set type "ROUTED"
                     foreach route [dict get $net routes] {
                         set first_point [lindex [dict get $route points] 0]
- 
+
                         foreach point [lrange [dict get $route points] 1 end] {
                             set points [get_extended_line [dict get $route layer] [list $first_point $point]]
                             if {[dict exists $route shape]} {
@@ -897,14 +897,14 @@ namespace eval def {
         dict set designs $current_design components $inst_name $status [list $x $y]
         dict set designs $current_design components $inst_name orientation $orientation
     }
-    
+
     proc get_current_design {} {
         variable designs
         variable current_design
 
         return [dict get $designs $current_design]
     }
-    
+
     proc write_cells {cells} {
         dict for {cell_name cell} $cells {
             def open ${cell_name}.def
@@ -912,19 +912,19 @@ namespace eval def {
             def close
         }
     }
-    
+
     proc set_def_units {units} {
         variable def_units
-        
+
         set def_units $units
     }
-    
+
     proc get_def_units {} {
         variable def_units
-        
+
         return $def_units
     }
-    
+
     namespace export new_design add_component get_current_design
     namespace export set_def_units get_def_units shift_origin shift_rect
     namespace export open close out write write_cells

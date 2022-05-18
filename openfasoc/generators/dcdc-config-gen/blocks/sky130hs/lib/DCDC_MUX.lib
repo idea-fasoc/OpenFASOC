@@ -152,7 +152,7 @@ library ("DCDC_MUX") {
     slew_upper_threshold_pct_fall : 80.000000000;
     slew_upper_threshold_pct_rise : 80.000000000;
     switching_power_split_model : "true";
-    
+
     cell ("DCDC_MUX") {
         dont_touch : true ;
         pin ("SEL_H") {
@@ -184,4 +184,4 @@ library ("DCDC_MUX") {
 			capacitance : 0.026850 ;
         }
     }
-} 
+}

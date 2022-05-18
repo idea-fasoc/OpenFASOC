@@ -152,7 +152,7 @@ library ("DCDC_CAP_UNIT") {
     slew_upper_threshold_pct_fall : 80.000000000;
     slew_upper_threshold_pct_rise : 80.000000000;
     switching_power_split_model : "true";
-    
+
     cell ("DCDC_CAP_UNIT") {
         dont_touch : true ;
         pin ("TOP") {
@@ -164,4 +164,4 @@ library ("DCDC_CAP_UNIT") {
 			capacitance : 0.026850 ;
         }
     }
-} 
+}
