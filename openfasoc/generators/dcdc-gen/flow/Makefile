@@ -44,12 +44,14 @@ export UTILS_DIR   = ./util
 export TEST_DIR    = ./test
 export SIM_DIR     = $(PWD)/../simulation
 
+export MACRO_PLACEMENT = $(RESULTS_DIR)/six_stage.macro_placment.cfg
+
 # export BASE        = /shared/OpenFASOC/generators/temp-sense-gen/flow
 # export LOG_DIR     = $(BASE)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)
 # export OBJECTS_DIR = $(BASE)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)
 # export REPORTS_DIR = $(BASE)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)
 # export RESULTS_DIR = $(BASE)/results/$(PLATFORM)/$(DESIGN_NICKNAME)
-#
+# 
 # export SCRIPTS_DIR = $(BASE)/scripts
 # export UTILS_DIR   = $(BASE)/util
 # export TEST_DIR    = $(BASE)/test
@@ -64,13 +66,17 @@ OPENROAD_CMD = openroad -no_init -exit
 # OPENROAD_CMD = docker run --rm -v /shared/OpenLane:/openLANE_flow \
                                -v /shared/OpenFASOC/generators/cryo-gen/:/shared/OpenFASOC/generators/cryo-gen/ \
 			       -e PDK_ROOT=/shared/OpenLane --user 1001:1002 efabless/openlane:2021.09.02_03.15.28 \
-			       openroad -no_init -exit
+			       openroad -no_init -exit 
 
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
 WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
 export WRAPPED_GDS  = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.gds))
 export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
 export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
+
+$(RESULTS_DIR)/sc_aux_merged.cdl: $(CDL_FILE) $(ADDITIONAL_CDL_FILE)
+	cat $(CDL_FILE) $(ADDITIONAL_CDL_FILE) > $(RESULTS_DIR)/sc_aux_merged.cdl
+
 
 export DONT_USE_LIBS   = $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES)))
 export DONT_USE_SC_LIB = $(OBJECTS_DIR)/lib/$(notdir $(firstword $(LIB_FILES)))
@@ -187,7 +193,11 @@ $(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synt
 	echo $(PWD)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/floorplan.tcl -metrics $(LOG_DIR)/2_1_floorplan.json) 2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
 
-
+# STEP 1.1: DEF manipulation
+#-------------------------------------------------------------------------------
+$(RESULTS_DIR)/six_stage.macro_placment.cfg:	
+	python3 $(UTILS_DIR)/place_six_stage.py 
+	
 # STEP 2: IO Placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_2_floorplan_io.def: $(RESULTS_DIR)/2_1_floorplan.def
@@ -200,7 +210,7 @@ $(RESULTS_DIR)/2_3_floorplan_tdms.def: $(RESULTS_DIR)/2_2_floorplan_io.def $(RES
 
 # STEP 4: Macro Placement
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_4_floorplan_macro.def: $(RESULTS_DIR)/2_3_floorplan_tdms.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(IP_GLOBAL_CFG)
+$(RESULTS_DIR)/2_4_floorplan_macro.def: $(RESULTS_DIR)/2_3_floorplan_tdms.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(IP_GLOBAL_CFG) $(RESULTS_DIR)/six_stage.macro_placment.cfg
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/macro_place.tcl -metrics $(LOG_DIR)/2_4_mplace.json) 2>&1 | tee $(LOG_DIR)/2_4_mplace.log
 
 # STEP 5: Tapcell and Welltie insertion
@@ -245,12 +255,12 @@ $(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2
 # #-------------------------------------------------------------------------------
 # $(RESULTS_DIR)/3_2_place_iop.def: $(RESULTS_DIR)/3_1_place_gp.def
 # 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_2_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_2_place_iop.log
-#
+# 
 # # STEP 3: Resizing & Buffering
 # #-------------------------------------------------------------------------------
 # $(RESULTS_DIR)/3_3_place_resized.def: $(RESULTS_DIR)/3_2_place_iop.def $(RESULTS_DIR)/2_floorplan.sdc
 # 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl -metrics $(LOG_DIR)/3_3_resizer.json) 2>&1 | tee $(LOG_DIR)/3_3_resizer.log
-#
+# 
 # clean_resize:
 # 	rm -f $(RESULTS_DIR)/3_3_place_resized.def
 
@@ -355,7 +365,7 @@ endif
 	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
 	echo "threads:$(NUM_CORES)" >> $@
 	echo "bottomRoutingLayer:met1" >> $@
-	echo "topRoutingLayer:met5" >> $@
+	echo "topRoutingLayer:met5" >> $@ 
 	echo "cpxthreads:1" >> $@
 	echo "verbose:1" >> $@
 	echo "gap:0" >> $@
@@ -403,7 +413,7 @@ klayout_guides: $(RESULTS_DIR)/5_route.def
 # |  _|  | || |\  || | ___) |  _  || || |\  | |_| |
 # |_|   |___|_| \_|___|____/|_| |_|___|_| \_|\____|
 #
-finish: $(REPORTS_DIR)/6_final_report.rpt \
+finish:	$(REPORTS_DIR)/6_final_report.rpt \
         $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.gds \
         $(RESULTS_DIR)/6_final.cdl
@@ -467,10 +477,10 @@ else
 	echo "DRC not supported on this platform" > $@
 endif
 
-$(RESULTS_DIR)/6_final.cdl: $(RESULTS_DIR)/6_final.v
+$(RESULTS_DIR)/6_final.cdl: $(RESULTS_DIR)/6_final.v $(RESULTS_DIR)/sc_aux_merged.cdl
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cdl.tcl) 2>&1 | tee $(LOG_DIR)/6_cdl.log
 
-$(OBJECTS_DIR)/6_final_concat.cdl: $(RESULTS_DIR)/6_final.cdl $(CDL_FILE)
+$(OBJECTS_DIR)/6_final_concat.cdl: $(RESULTS_DIR)/6_final.cdl $(RESULTS_DIR)/sc_aux_merged.cdl
 	cat $^ > $@
 
 lvs: $(RESULTS_DIR)/6_lvs.lvsdb
@@ -493,8 +503,8 @@ magic_drc: $(RESULTS_DIR)/6_final.gds
 	# magic -rcfile $(COMMON_VERIF_DIR)/sky130A/sky130A.magicrc -noconsole -dnull $(COMMON_VERIF_DIR)/magic_commands.tcl < /dev/null
 
 netgen_lvs: $(RESULTS_DIR)/6_final.gds
-
-	python util/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(CDL_FILE) -l $(OBJECTS_DIR)/merged_spacing.lef -o $(DESIGN_NAME).spice
+        
+	python util/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(RESULTS_DIR)/sc_aux_merged.cdl -l $(OBJECTS_DIR)/merged_spacing.lef -o $(DESIGN_NAME).spice
 	$(COMMON_VERIF_DIR)/run_lvspex.sh $(RESULTS_DIR)/6_final.gds $(DESIGN_NAME) $(REPORTS_DIR)/6_final_lvs.rpt
 
 clean_finish:

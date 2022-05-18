@@ -11,6 +11,22 @@
 parameter dont_touch = "on";
 endmodule
 
+/*
+// dcdcInst: AUX CELL NON_CLK_GEN
+(* keep *)
+(* keep_hierarchy *)
+(* blackbox *) module NON_CLK_GEN(
+  input CLK,
+  input [3:0] A,
+  output CLK0,
+  output CLK0_B,
+  output CLK1,
+  output CLK1_B
+);
+parameter dont_touch = "on";
+endmodule
+*/
+
 /* // 2:1 stage: PMOS SWITCH
 (* keep *)
 (* keep_hierarchy *)
@@ -52,9 +68,9 @@ endmodule
 (* keep_hierarchy *)
 (* blackbox *) module DCDC_MUX(
   input SEL_H,
-  input SEL_INV_H,
+  //input SEL_INV_H,
   input SEL_L,
-  input SEL_INV_L,
+  //input SEL_INV_L,
   input VIN,
   output VOUT_H,
   output VOUT_L

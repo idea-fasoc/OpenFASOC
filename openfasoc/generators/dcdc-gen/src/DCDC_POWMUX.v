@@ -13,13 +13,20 @@ module DCDC_POWMUX (
 );
 	// device multiplier
 	parameter m = 1;
-
-	wire sel_vh_inv, sel_vl_inv;
-
+	
+	//wire sel_vh_inv, sel_vl_inv;
+	
 	// power mux
-	DCDC_MUX dcdc0 [m-1:0] (.SEL_H(sel_vh), .SEL_INV_H(sel_vh_inv), .SEL_L(sel_vl), .SEL_INV_L(sel_vl_inv), .VIN(vin), .VOUT_H(vhigh), .VOUT_L(vlow));
-
+	genvar i;
+	generate
+        for(i=0; i<m; i=i+1) begin: gen_powmux
+		
+		DCDC_MUX powmux (.SEL_H(sel_vh), .SEL_L(sel_vl), .VIN(vin), .VOUT_H(vhigh), .VOUT_L(vlow));
+		end
+	endgenerate
+	
 	// inverters
-	sky130_fd_sc_hs__inv_4 inv0 [1:0] (.A({sel_vh, sel_vl}), .Y({sel_vh_inv, sel_vl_inv}));
+//@@ 	@na inv1 [m-1:0] (.A({m{sel_vh}}), .Y({m{sel_vh_inv}}));	
+//@@ 	@nb inv0 [m-1:0] (.A({m{sel_vl}}), .Y({m{sel_vl_inv}}));	
 
-endmodule
+endmodule 

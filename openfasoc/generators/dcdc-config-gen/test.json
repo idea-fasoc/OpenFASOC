@@ -1,0 +1,5 @@
+{
+    "module_name": "dcdc_config",
+    "generator": "dcdc-config-gen"
+	}
+}
