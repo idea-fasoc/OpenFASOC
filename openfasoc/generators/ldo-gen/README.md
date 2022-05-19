@@ -6,7 +6,7 @@ The main idea behind a Digital LDO is the use of an array of small power transis
 
 ![plot](./readme_images/LDO_CONTROLLER_TEMPLATE.PNG)
 
-The basic mode of operation of the code module is, that the unit switches (which are 50 in number) will hold '0' value initially and when reset is 1 and when mode is 1 the leftmost or rightmost switch is going to be 1 depending on the value of ctrl_in(which is the controller in the SOC), its value is dependent on input from the comparator. If nither mode or reset is 1, all the switches are going to reset and the value of str_pt_in_cnt is going to be transferred to ctrl_word_cnt.
+ The basic mode of operation of the code module is, that the unit switches (which are 50 in number) will hold '0' value initially and when reset is 1 and when mode is 1 the leftmost or rightmost switch is going to be 1 depending on the value of ctrl_in(which is the controller in the SOC), its value is dependent on input from the comparator. If nither mode or reset is 1, all the switches are going to reset and the value of str_pt_in_cnt is going to be transferred to ctrl_word_cnt.
 
 
  ## Inputs
