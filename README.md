@@ -37,14 +37,14 @@ Please build the following tools:
 
   Block Architecture:
    - Temperature-sensitive ring oscillator and stacked zero-VT devices.
-    ![plot](./markdown%20images/tempSensor-BA.png)
+    ![plot](./openfasoc/generators/temp-sense-gen/readme_imgs/tempSensor-BA.png)
 
 
 **[ldo-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/ldo-gen)** The main idea behind a Digital LDO is the use of an array of small power transistors that operate as switches . The use of power transistors as switches facilitates low VDD power management and process scalability which makes Digital LDOs a good potential candidate for power management as we go to lower nodes. With the “Unit Power Switch” as the auxiliary cell, an automatic LDO design tool “LDO_GEN” is developed as part of this project.
 
   Block Architecture:
    - Synchronous Digital LDO with optional stochastic flash ADC.
-    ![plot](./markdown%20images/LDO-BA.png)
+    ![plot](./openfasoc/generators/ldo-gen/readme_images/LDO-BA.png)
 
 **[dcdc-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)** For synthesizable on-chip power management  circuits, we use the “2:1 SC Cell” auxiliary cell for implementing a switched-capacitor (SC) based DC-DC converter. By varying the number of auxiliary cells, we can achieve wide range of conversion ratios with fine grain resolution. It operates similarly to  a successive approximation analog to digital converter (SAR ADC). Furthermore, since the total structure is simply composed of auxiliary cells, it is ideal for the proposed flow of automating the analog block design.
 
