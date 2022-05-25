@@ -92,5 +92,5 @@ jobs:
 
       - name: Locate gen-design folder
         run:  |
-          cd /home/runner/work/OpenFASOC/openfasoc/generators/temp-sense-gen
+          cd /home/runner/work/OpenFASOC/OpenFASOC/openfasoc/temp-sense-gen
           make sky130hd_temp
