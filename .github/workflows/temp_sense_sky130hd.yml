@@ -1,0 +1,41 @@
+name: Sky130hd_temp-sense-generator
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  sky130hd_temp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Use PDK data from openfasoc_ci branch
+        run: |
+          mkdir -p /home/runner/testing && cd /home/runner/testing
+          git clone https://github.com/saicharan0112/OpenFASOC.git
+          git checkout openfasoc_ci
+
+      - name: Make Sky130HD Temp
+        env:
+          PDK_ROOT: /home/runner/testing/OpenFASOC/pdk_test
+          IMAGE_NAME: efabless/openlane:2021.12.22_01.51.18
+        run: |
+          cd $GITHUB_WORKSPACE
+          docker run --rm\
+            -e GITHUB_ACTIONS=1\
+            -v $PDK_ROOT:$PDK_ROOT\
+            -e PDK_ROOT=$PDK_ROOT\
+            -v $PWD:$PWD\
+            -w $PWD\
+            $IMAGE_NAME\
+            bash -c "\
+              yum install -y time &&\
+              cd ./generators/temp-sense-gen &&\
+              make sky130hd_temp\
+            "
+
