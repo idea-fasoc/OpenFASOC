@@ -36,7 +36,7 @@ jobs:
             $IMAGE_NAME\
             bash -c "\
               yum install -y time &&\
-              cd ./generators/temp-sense-gen &&\
+              cd ./openfasoc/generators/temp-sense-gen &&\
               make sky130hd_temp\
             "
 
