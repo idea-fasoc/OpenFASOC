@@ -6,7 +6,7 @@ The way that works is we have a subthreshold current that has an exponential dep
 
 ## RTL - GDS flow
 
-**userspecs**
+**User Specs**
 * Temperature sensing range: -20⁰C – 125⁰C (-4⁰F - 257⁰F )
 * Frequency range of operation: 100Hz – 10MHz
 
@@ -24,8 +24,11 @@ _Outputs_
  *  DONE: Validity signal for DOUT
 
 **Thermal Sensor Block Diagram (RTL)**
+
+<br> 
+
 ![plot](./readme_imgs/Thermal%20Sensor%20Block%20Diagram.png)
 
-**pysical Design**
+**Physical Design**
 
 ... final GDS file to be added ...
