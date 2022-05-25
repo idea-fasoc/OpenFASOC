@@ -25,7 +25,7 @@ _Outputs_
 
 **Thermal Sensor Block Diagram (RTL)**
 
-<br> 
+<br>
 
 ![plot](./readme_imgs/Thermal%20Sensor%20Block%20Diagram.png)
 
