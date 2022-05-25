@@ -18,6 +18,7 @@ jobs:
         run: |
           mkdir -p /home/runner/testing && cd /home/runner/testing
           git clone https://github.com/saicharan0112/OpenFASOC.git
+          cd OpenFASOC
           git checkout openfasoc_ci
 
       - name: Make Sky130HD Temp
