@@ -27,6 +27,7 @@ jobs:
           IMAGE_NAME: efabless/openlane:2021.12.22_01.51.18
         run: |
           cd $GITHUB_WORKSPACE
+          touch file.log
           docker run --rm\
             -e GITHUB_ACTIONS=1\
             -v $PDK_ROOT:$PDK_ROOT\
@@ -38,5 +39,6 @@ jobs:
               yum install -y time &&\
               cd ./openfasoc/generators/temp-sense-gen &&\
               make sky130hd_temp\
-            "
+            ">> file.log
+            if grep "\[ERROR\]"" file.log; then exit 1; else exit 0; fi
 
