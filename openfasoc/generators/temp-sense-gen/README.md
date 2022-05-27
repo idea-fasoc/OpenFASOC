@@ -7,7 +7,7 @@ The way that works is we have a subthreshold current that has an exponential dep
 ## Temperature Sensor Description
 
 **User Specs**
-* Temperature sensing range: -20⁰C – 125⁰C 
+* Temperature sensing range: -20⁰C – 125⁰C
 * Frequency range of operation: 100Hz – 10MHz
 
 **Block Architecture**
@@ -33,4 +33,4 @@ _Outputs_
 <br>
 
 ![plot](./readme_imgs/temp-sense-gen-final-gds.PNG)
-    
+
