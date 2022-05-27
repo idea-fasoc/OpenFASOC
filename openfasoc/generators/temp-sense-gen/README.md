@@ -1,13 +1,13 @@
-# Temp Sensor generator
+# Temp Sensor Generator
 
 An all-digital temperature sensor, that relies on a new subthreshold oscillator (achieved using the auxiliary cell “Header Cell“) for realizing synthesizable thermal sensors.
 
 The way that works is we have a subthreshold current that has an exponential dependency on the temperature, the frequency generated from the subthreshold ring oscillator is also dependent on temperature. So we can sense the temperature by comparing the difference between the clock frequency generated from a reference oscillator and the clock frequency from the proposed frequency generator.
 
-## RTL - GDS flow
+## Temperature Sensor Description
 
 **User Specs**
-* Temperature sensing range: -20⁰C – 125⁰C (-4⁰F - 257⁰F )
+* Temperature sensing range: -20⁰C – 125⁰C 
 * Frequency range of operation: 100Hz – 10MHz
 
 **Block Architecture**
@@ -29,8 +29,8 @@ _Outputs_
 
 ![plot](./readme_imgs/Thermal%20Sensor%20Block%20Diagram.png)
 
-**Physical Design**
+**Top  Layout View**
 <br>
 
 ![plot](./readme_imgs/temp-sense-gen-final-gds.PNG)
-    temp-sense-gen final layout image.
+    
