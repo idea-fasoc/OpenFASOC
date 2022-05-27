@@ -1,0 +1,8 @@
+{
+    "module_name": "dcdcInst",
+    "generator": "dcdc-gen",
+    "specifications": {
+		"Iload (mA)": 0.1,
+		"Clock frequency (kHz)": 50000
+	}
+}

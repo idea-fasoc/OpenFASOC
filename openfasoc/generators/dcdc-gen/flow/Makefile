@@ -14,7 +14,7 @@ default: finish
 
 # Include design and platform configuration
 
-DESIGN_CONFIG = ./design/sky130hs/dcdc/config.mk
+DESIGN_CONFIG = ./design/sky130hd/dcdc/config.mk
 
 include $(DESIGN_CONFIG)
 
