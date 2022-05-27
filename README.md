@@ -91,6 +91,7 @@ make sky130hd_temp
 
 Please contact mehdi@umich.edu if you have any questions.
 
+**Another way to run the generators is using the efabless docker image which is currently used to test the temp-sense generator flow during smoke test**
 
 # Spice Simulation Flow
 
