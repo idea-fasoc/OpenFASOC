@@ -3,9 +3,9 @@
 # ==============================================================================
 
 help:banner
-	@@echo "OpenFASOC is focused on developing a complete system-on-chip (SoC) synthesis tool"
+	@@echo "OpenFASOC is focused on open-source automate analog generation"
 	@@echo "from user specification to GDSII with fully open-sourced tools."
-	@@echo "This project is led by a team of researchers at the Universities of Michigan, Virginia, and Arm"
+	@@echo "This project is led by a team of researchers at the Universities of Michigan is inspired from FASOC whcih sits on proprietary tools"
 	@@echo "For more info, visit https://fasoc.engin.umich.edu/"
 	@@echo  ""
 	@@echo "IP: Temperature Sensor \nSupported Technology: Sky130A \nSupported Library: sky130hd"
