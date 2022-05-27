@@ -31,8 +31,33 @@ Please build the following tools:
    - All the required tools need to be loaded into the environment before running this generator.
 
 # Design Generation
+## Generators
 
-Our fully open source flow only supports the temperature sensor generation so far. We are working on adding additional generators in the near future.
+**[temp-sense-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/temp-sense-gen/)** A fully automated SoC generator that uses an all-digital temperature sensor architecture, that relies on a new subthreshold oscillator (achieved using the auxiliary cell “Header Cell“) for realizing synthesizable thermal sensors.
+
+  Block Architecture:
+   - Temperature-sensitive ring oscillator and stacked zero-VT devices.
+    ![plot](./openfasoc/generators/temp-sense-gen/readme_imgs/tempSensor-BA.png)
+
+
+**[ldo-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/ldo-gen)** The main idea behind a Digital LDO is the use of an array of small power transistors that operate as switches. The use of power transistors as switches facilitates low VDD power management and process scalability which makes Digital LDOs a good potential candidate for power management as we go to lower nodes. With the “Unit Power Switch” as the auxiliary cell, an automatic LDO design tool “LDO_GEN” is developed as part of this project.
+
+  Block Architecture:
+   - Synchronous Digital LDO with optional stochastic flash ADC.
+    ![plot](./openfasoc/generators/ldo-gen/readme_images/LDO-BA.png)
+
+**[dcdc-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)** For synthesizable on-chip power management circuits, we use the “2:1 SC Cell” auxiliary cell for implementing a switched-capacitor (SC) based DC-DC converter. By varying the number of auxiliary cells, we can achieve a wide range of conversion ratios with fine-grain resolution. It operates similarly to a successive approximation analog to digital converter (SAR ADC). Furthermore, since the total structure is simply composed of auxiliary cells, it is ideal for the proposed flow of automating the analog block design.
+
+
+**[cryo-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/cryo-gen)** to be added
+
+**[gdsfactory:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/gdsfactory)** to be added
+
+**[lc-dco:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/lc-dco)** to be added
+
+**[scpa-gen:](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/scpa-gen)** to be added
+
+Our fully open-source flow only supports the temperature sensor generation so far. We are working on adding additional generators in the near future.
 
 The generators are located inside `OpenFASOC/generators/`, the target for temperature sensor generation is `sky130hd_temp` and located inside `OpenFASOC/generators/temp-sense-gen`, the following parameters are supported:
 
@@ -67,34 +92,6 @@ make sky130hd_temp
 Please contact mehdi@umich.edu if you have any questions.
 
 **Another way to run the generators is using the efabless docker image which is currently used to test the temp-sense generator flow during smoke test**
-
-***:information_source: - Install docker on your machine based on the operating system before you proceed***
-
-1. Set PDK_ROOT variable to the location of your PDK data location which contains sky130A directory.
-   eg: `export PDK_ROOT=/home/user1/pdks`
-
-2. Now clone the OpenFASOC repository - `git clone https://github.com/idea-fasoc/OpenFASOC.git`
-
-3. Move to the OpenFASOC directory - `cd OpenFASOC`
-
-4. Now run this command - `docker run --rm -v /github/OpenLane:/OpenLane -v $PDK_ROOT:$PDK_ROOT -e PDK_ROOT=$PDK_ROOT -v $PWD:$PWD -w $PWD efabless/openlane:2021.12.22_01.51.18 bash -c "yum install -y time && cd ./openfasoc/generators/temp-sense-gen && make sky130hd_temp`
-
-***:warning: Files will be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.***
-## Generators
-
-**[temp-sense-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)** A fully automated SoC generator that uses an all-digital temperature sensor architecture, that relies on a new subthreshold oscillator (achieved using the auxiliary cell “Header Cell“) for realizing synthesizable thermal sensors.
-
-**[cryo-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/cryo-gen)**
-
-**[dcdc-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
-
-**[gdsfactory:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
-
-**[lc-dco:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
-
-**[ido-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
-
-**[scpa-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
 
 # Spice Simulation Flow
 

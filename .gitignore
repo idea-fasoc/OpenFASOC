@@ -1,6 +1,9 @@
 *.prn
 *.log
 *.out
+env
+pre-commit-2.19.0
+
 *.vscode
 # Byte-compiled / optimized / DLL files
 __pycache__/
