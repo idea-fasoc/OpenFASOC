@@ -69,8 +69,8 @@ Please contact mehdi@umich.edu if you have any questions.
 **Another way to run the generators is using the efabless docker image which is currently used to test the temp-sense generator flow during smoke test**
 
 ***:information_source: - Install docker on your machine based on the operating system before you proceed***
- 
-1. Set PDK_ROOT variable to the location of your PDK data location which contains sky130A directory. 
+
+1. Set PDK_ROOT variable to the location of your PDK data location which contains sky130A directory.
    eg: `export PDK_ROOT=/home/user1/pdks`
 
 2. Now clone the OpenFASOC repository - `git clone https://github.com/idea-fasoc/OpenFASOC.git`
