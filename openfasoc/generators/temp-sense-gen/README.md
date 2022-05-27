@@ -33,4 +33,3 @@ _Outputs_
 <br>
 
 ![plot](./readme_imgs/temp-sense-gen-final-gds.PNG)
-
