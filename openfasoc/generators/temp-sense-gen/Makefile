@@ -17,7 +17,7 @@ help:banner
 	@@echo "    >> This will create the verilog file for the thermal sensor IP. It doesn't create a macro, won't create lef/def/gds files and won't run simulations "
 	@@echo "3. make sky130hd_temp_full"
 	@@echo "    >> This will create the macro for the thermal sensor, creates the lef/def/gds files, performs lvs/drc checks and also runs simulations."
-	@@echo "    >> [Warning] Currently, this target is in alpha phase" 
+	@@echo "    >> [Warning] Currently, this target is in alpha phase"
 	@@echo "4. make clean"
 	@@echo "    >> This will clean all files generated during the run inside the run/, flow/ and work/ directories"
 	@@echo "5. make help"
@@ -50,4 +50,3 @@ banner:
 	@@echo "  \___/|_|    |_____|_| \_|_| /_/   \_\|____/ \___/ \____|"
 	@@echo ""
 	@@echo "==============================================================="
-
