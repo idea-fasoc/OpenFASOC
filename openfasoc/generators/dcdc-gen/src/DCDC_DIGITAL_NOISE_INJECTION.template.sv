@@ -2,68 +2,73 @@
 // Description: Use clock-controlled sequence generator for noise injection (pseudo-random number)
 // Author：Jianwei Jia
 // Updated by:
-// Last update: 03/20/22
+// Last update: 04/18/22
 
 `timescale 1ns/1ps
 
 // Digital noise injection block
-module DCDC_DNI(
-    input logic CLK, rst_n, output logic[3:0] Q
+module DCDC_DIGITAL_NOISE_INJECTION(
+    input logic CLK, rst_n, control, input logic[8:0] seed, output logic[3:0] Q
 );
-logic LFSR1_OUT, CLK_LFSR2;
-//the first LFSR
-DCDC_LFSR1 DCDC_LFSR1(.CLK(CLK), .rst_n(rst_n), .OUT(LFSR1_OUT));
-and and1(CLK_LFSR2, LFSR1_OUT, CLK);
-//the second LFSR
-DCDC_LFSR2 DCDC_LFSR2(.CLK(CLK_LFSR2), .rst_n(rst_n), .Q(Q));
+logic Q_internal;
+LFSR2 NON_CLK_NOISE_LFSR2(.CLK(CLK), .rst_n(rst_n), .control(control), .seed(seed[4:0]), .Q_internal(Q_internal));
+LFSR1 NON_CLK_NOISE_LFSR1(.CLK(CLK), .rst_n(rst_n), .seed(seed[8:5]), .Q_internal(Q_internal), .Q(Q));
 endmodule
 
-//the first LFSR
-module DCDC_LFSR1(
-    input logic CLK, rst_n, output logic OUT
+`timescale 1ns/1ps
+//the second LFSR - 6bit LFSR
+module NON_CLK_NOISE_LFSR2(
+    input logic CLK, rst_n, control, input logic[4:0] seed, output logic Q_internal
 );
-logic[3:0] Q;
+logic[5:0] Q;
+logic OUT, XOR1_OUT;
+//asynchronous reset->1 negedge D flip-flop
+always_ff @(posedge CLK or negedge rst_n) begin
+    if(!rst_n) begin
+    Q[0]<=seed[0];
+    Q[1]<=seed[1];
+    Q[2]<=seed[2];
+    Q[3]<=seed[3];
+    Q[4]<=seed[4];
+    Q[5]<=1'b1; // ensure the LFSR won't go into '000000'
+    end
+    else begin
+    Q[0]<=Q[1];
+    Q[1]<=Q[2];
+    Q[2]<=Q[3];
+    Q[3]<=Q[4];
+    Q[4]<=Q[5];
+    Q[5]<=Q_internal;
+    end
+end
+//The XOR
+xor xor1 (XOR1_OUT, Q[0], Q[5]);
+xor xor2 (Q_internal, control, XOR1_OUT);
+endmodule
+
+// the first LFSR - 5bit LFSR
+module NON_CLK_NOISE_LFSR1(
+    input logic CLK, rst_n, Q_internal, input logic[3:0] seed, output logic[3:0] Q
+);
+logic Q4;
 logic D;
 //asynchronous reset->1 negedge D flip-flop
 always_ff @(posedge CLK or negedge rst_n) begin
     if(!rst_n) begin
-    Q[0]<=1'b1;
-    Q[1]<=1'b1;
-    Q[2]<=1'b1;
-    Q[3]<=1'b1;
+    Q[0]<=seed[0];
+    Q[1]<=seed[1];
+    Q[2]<=seed[2];
+    Q[3]<=seed[3];
+    Q4<=1'b1; // ensure the LFSR won't go into '00000'
     end
     else begin
-    Q[0]<=Q[3];
-    Q[1]<=D;
-    Q[2]<=Q[1];
-    Q[3]<=Q[2];
+    Q[0]<=Q[1];
+    Q[1]<=Q[2];
+    Q[2]<=Q[3];
+    Q[3]<=Q4;
+    Q4<=D;
     end
 end
 //The XOR
-xor xor1 (D, Q[0], Q[3]);
-not not1 (OUT, Q[2]);
-endmodule
-
-// the second LFSR
-module DCDC_LFSR2(
-    input logic CLK, rst_n, output logic[3:0] Q
-);
-logic D;
-//asynchronous reset->1 negedge D flip-flop
-always_ff @(posedge CLK or negedge rst_n) begin
-    if(!rst_n) begin
-    Q[0]<=1'b1;
-    Q[1]<=1'b1;
-    Q[2]<=1'b1;
-    Q[3]<=1'b1;
-    end
-    else begin
-    Q[0]<=Q[3];
-    Q[1]<=D;
-    Q[2]<=Q[1];
-    Q[3]<=Q[2];
-    end
-end
-//The XOR
-xor xor1 (D, Q[0], Q[3]);
+xor xor1 (D, Q_internal, Q[0]);
 endmodule
