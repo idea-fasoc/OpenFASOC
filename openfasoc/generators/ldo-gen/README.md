@@ -10,14 +10,14 @@ The main idea behind a Digital LDO is the use of an array of small power transis
 
 
  ## Inputs
- *  CLK:- System clock taken from the input.
- *  RESET:- Input signal to reset to the module's initial state.
- *  mode:- Input signal for normal mode of operation.
- *  ctrl_in :-  Input signal to choose if a switch to be ON is from the leftmost or rightmost in the "ctrl_word" power switches array.
+ *  CLK: System clock taken from the input.
+ *  RESET: Input signal to reset to the module's initial state.
+ *  mode: Input signal for normal mode of operation.
+ *  ctrl_in :  Input signal to choose if a switch to be ON is from the leftmost or rightmost in the "ctrl_word" power switches array.
 
- * str_pt_in_cnt :- A 9-bit register to store the number of power switches(ctrl_word) that are on.
+ * str_pt_in_cnt : A 9-bit register to store the number of power switches(ctrl_word) that are on.
 
  ## Outputs
- *  ctrl_word_cnt :- A 9-bit register to store the number of power switches(ctrl_word) that are on.
+ *  ctrl_word_cnt : A 9-bit register to store the number of power switches(ctrl_word) that are on.
 
- *  ctrl_word:- Array of registers that corresponds to the unit power switches.
+ *  ctrl_word: Array of registers that corresponds to the unit power switches.

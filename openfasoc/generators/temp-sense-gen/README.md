@@ -30,5 +30,7 @@ _Outputs_
 ![plot](./readme_imgs/Thermal%20Sensor%20Block%20Diagram.png)
 
 **Physical Design**
+<br>
 
-... final GDS file to be added ...
+![plot](./readme_imgs/temp-sense-gen-final-gds.PNG)
+    temp-sense-gen final layout image.
