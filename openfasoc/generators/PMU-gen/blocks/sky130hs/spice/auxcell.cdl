@@ -1,0 +1,85 @@
+* dcdcInst: AUX CELL DCDC_COMP
+.subckt DCDC_COMP VPWR VGND VIN VIP VON VOP CLK
+X0 VCM CLK VGND VGND  sky130_fd_pr__nfet_01v8 w=420000u l=150000u
+X1 VMP VIN VCM VGND  sky130_fd_pr__nfet_01v8 w=420000u l=150000u
+X2 VMN VIP VCM VGND  sky130_fd_pr__nfet_01v8 w=420000u l=150000u
+X3 VOP VON VMP VGND  sky130_fd_pr__nfet_01v8 w=420000u l=150000u
+X4 VON VOP VMN VGND  sky130_fd_pr__nfet_01v8 w=420000u l=150000u
+X5 VOP VON VPWR VPWR  sky130_fd_pr__pfet_01v8 w=420000u l=150000u
+X6 VON VOP VPWR VPWR  sky130_fd_pr__pfet_01v8 w=420000u l=150000u
+X7 VOP CLK VPWR VPWR  sky130_fd_pr__pfet_01v8 w=420000u l=150000u
+X8 VON CLK VPWR VPWR  sky130_fd_pr__pfet_01v8 w=420000u l=150000u
+X9 VMP CLK VPWR VPWR  sky130_fd_pr__pfet_01v8 w=420000u l=150000u
+X10 VMN CLK VPWR VPWR sky130_fd_pr__pfet_01v8 w=420000u l=150000u
+.ends DCDC_COMP
+
+* 2:1 stage: PMOS SWITCH
+.subckt DCDC_XSW_PMOS VGND VNB VPB VPWR clk clkb vIN vOUT0 vOUT1
+x0 int_sw0 int_sw1 vIN VPB sky130_fd_pr__pfet_01v8 w=420000u l=150000u
+x1 int_sw1 int_sw0 vIN VPB sky130_fd_pr__pfet_01v8 w=420000u l=150000u
+x2 vOUT0 int_sw0 vIN VPB sky130_fd_pr__pfet_01v8 w=1260000u l=150000u
+x3 vOUT1 int_sw1 vIN VPB sky130_fd_pr__pfet_01v8 w=1260000u l=150000u
+x4 clkb int_sw0 clkb clkb sky130_fd_pr__pfet_01v8 w=2100000u l=150000u
+x5 clk int_sw1 clk clk sky130_fd_pr__pfet_01v8 w=2100000u l=1500000u
+.ends DCDC_XSW_PMOS
+
+* 2:1 stage: NMOS SWITCH
+.subckt DCDC_XSW_NMOS VGND VNB VPB VPWR clk clkb vIN vOUT0 vOUT1
+x0 int_sw0 int_sw1 vIN VNB sky130_fd_pr__nfet_01v8 w=420000u l=150000u
+x1 int_sw1 int_sw0 vIN VNB sky130_fd_pr__nfet_01v8 w=420000u l=150000u
+x2 vOUT0 int_sw0 vIN VNB sky130_fd_pr__nfet_01v8 w=840000u l=150000u m=2
+x3 vOUT1 int_sw1 vIN VNB sky130_fd_pr__nfet_01v8 w=840000u l=150000u m=2
+x4 clkb int_sw0 clkb clkb sky130_fd_pr__pfet_01v8 w=2100000u l=150000u
+x5 clk int_sw1 clk clk sky130_fd_pr__pfet_01v8 w=2100000u l=150000u
+.ends DCDC_XSW_NMOS
+
+*2:1 converter: DCDC_HUNIT_CONV2to1
+.subckt DCDC_HUNIT_CONV2to1 VGND VNB VPB VPWR clk0 clk0b clk1 clk1b y0 y1 vhigh vlow
+x0 VGND VNB VPB VPWR clk1b clk0b vhigh y0 y1 DCDC_XSW_PMOS
+x1 VGND VNB VPB VPWR clk0 clk1 vlow y0 y1 DCDC_XSW_NMOS
+.ends DCDC_HUNIT_CONV2to1
+
+*2:1 converter: DCDC_CONV2TO1
+.subckt DCDC_CONV2TO1 VGND VPWR CLK0 CLK0B CLK1 CLK1B Y0_TOP Y1_TOP Y0_BOT Y1_BOT VHIGH VMID VLOW
+x0 VGND VGND VPWR VPWR CLK0 CLK0B CLK1 CLK1B Y0_TOP Y1_TOP VHIGH VMID DCDC_HUNIT_CONV2to1
+x1 VGND VGND VPWR VPWR CLK0 CLK0B CLK1 CLK1B Y0_BOT Y1_BOT VMID VLOW DCDC_HUNIT_CONV2TO1
+.ends DCDC_CONV2TO1
+
+* 2:1 stage: unit cap
+.subckt DCDC_CAP_UNIT BOT TOP
+x0 BOT TOP sky130_fd_pr__cap_mim_m3_1 w=19 l=7
+.ends DCDC_CAP_UNIT
+
+* power mux: DCDC_MUX
+.subckt DCDC_MUX_PMOS VGND VNB VPB VPWR SEL SEL_INV VIN VOUT
+x1  VIN SEL_INV VOUT VPWR sky130_fd_pr__pfet_01v8 w=2.1 l=0.15 m=3
+x2  VOUT SEL     VIN VPWR sky130_fd_pr__pfet_01v8 w=2.1 l=0.15 m=3
+.ends DCDC_MUX_PMOS
+
+.subckt DCDC_MUX_NMOS VGND VNB VPB VPWR SEL SEL_INV VIN VOUT
+x1  VIN SEL_INV VOUT VGND sky130_fd_pr__nfet_01v8 w=2.1 l=0.15 m=3
+x2  VOUT SEL     VIN VGND sky130_fd_pr__nfet_01v8 w=2.1 l=0.15 m=3
+.ends DCDC_MUX_NMOS
+
+.subckt DCDC_MUX_TGATE VGND VNB VPB VPWR SEL SEL_INV VIN VOUT
+x1  VOUT SEL_INV VIN VPWR sky130_fd_pr__pfet_01v8 w=2.1 l=0.15 m=3
+x2  VOUT SEL     VIN VGND sky130_fd_pr__nfet_01v8 w=2.1 l=0.15 m=3
+.ends DCDC_MUX_TGATE
+
+.subckt inv_4 A VGND VNB VPB VPWR Y
+x1 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=2.1 l=0.15
+x2 Y A VPWR VPB sky130_fd_pr__pfet_01v8 w=2.1 l=0.15 m=2
+.ends inv_4
+
+.subckt DCDC_MUX VGND VPWR SEL_H SEL_L VIN VOUT_H VOUT_L
+x0 SEL_H VGND VGND VPWR VPWR SEL_INV_H inv_4
+x1 SEL_L VGND VGND VPWR VPWR SEL_INV_L inv_4
+* Top MUX rail
+x2 VGND VGND VPWR VPWR SEL_INV_H SEL_INV_H VPWR VOUT_H DCDC_MUX_PMOS
+* Top MUX mid
+x3 VGND VGND VPWR VPWR SEL_INV_H SEL_H VIN VOUT_H DCDC_MUX_TGATE
+* Bot MUX mid
+x4 VGND VGND VPWR VPWR SEL_L SEL_INV_L VIN VOUT_L DCDC_MUX_TGATE
+* Bot MUX rail
+x5 VGND VGND VPWR VPWR SEL_INV_L SEL_INV_L VGND VOUT_L DCDC_MUX_NMOS
+.ends DCDC_MUX
