@@ -93,7 +93,7 @@ Please contact mehdi@umich.edu if you have any questions.
 
 **Another way to run the generators is using the efabless docker image which is currently used to test the temp-sense generator flow during smoke test**
 
-*** :information_source:  Install docker on your machine based on the operating system before you proceed***
+***:information_source:  Install docker on your machine based on the operating system before you proceed***
 
 1. Set PDK_ROOT variable to the location of your PDK data location which contains sky130A directory.
    eg: `export PDK_ROOT=/home/user1/pdks`
@@ -104,22 +104,8 @@ Please contact mehdi@umich.edu if you have any questions.
 
 4. Now run this command - `docker run --rm -v /github/OpenLane:/OpenLane -v $PDK_ROOT:$PDK_ROOT -e PDK_ROOT=$PDK_ROOT -v $PWD:$PWD -w $PWD efabless/openlane:2021.12.22_01.51.18 bash -c "yum install -y time && cd ./openfasoc/generators/temp-sense-gen && make sky130hd_temp`
 
-*** :warning:  Files will be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.***
-## Generators
+***:warning:  Files will be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.***
 
-**[temp-sense-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)** A fully automated SoC generator that uses an all-digital temperature sensor architecture, that relies on a new subthreshold oscillator (achieved using the auxiliary cell “Header Cell“) for realizing synthesizable thermal sensors.
-
-**[cryo-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/cryo-gen)**
-
-**[dcdc-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
-
-**[gdsfactory:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
-
-**[lc-dco:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
-
-**[ido-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
-
-**[scpa-gen:-](https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen)**
 
 # Spice Simulation Flow
 
