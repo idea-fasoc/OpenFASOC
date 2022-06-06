@@ -102,7 +102,9 @@ Please contact mehdi@umich.edu if you have any questions.
 
 3. Change to the OpenFASOC directory - `cd OpenFASOC`
 
-4. Now run this command just to run temp-sense generator - `docker run --rm -v /github/OpenLane:/OpenLane -v $PDK_ROOT:$PDK_ROOT -e PDK_ROOT=$PDK_ROOT -v $PWD:$PWD -w $PWD saicharan0112/openfasoc:ci bash -c "yum install -y time && cd ./openfasoc/generators/temp-sense-gen && make sky130hd_temp`
+4. Run this command to access OpenFASOC folder from the container - `docker run -it -v $PWD:$PWD saicharan0112/openfasoc:stable`
+
+5. To test, go to `openfasoc/generators/temp-sense` and type `make sky130hd_temp` to run the temp-sense generator.
 
 ***:warning:  Files will be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.***
 
