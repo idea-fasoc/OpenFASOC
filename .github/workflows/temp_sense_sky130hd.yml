@@ -14,17 +14,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Use PDK data from openfasoc_ci branch
-        run: |
-          mkdir -p /home/runner/testing && cd /home/runner/testing
-          git clone https://github.com/saicharan0112/OpenFASOC.git
-          cd OpenFASOC
-          git checkout openfasoc_ci
-
       - name: Make Sky130HD Temp
         env:
-          PDK_ROOT: /home/runner/testing/OpenFASOC/pdk_test
-          IMAGE_NAME: efabless/openlane:2021.12.22_01.51.18
+                IMAGE_NAME: saicharan0112/openfasoc:stable
         run: |
           cd $GITHUB_WORKSPACE
           touch file.log
@@ -36,7 +28,7 @@ jobs:
             -w $PWD\
             $IMAGE_NAME\
             bash -c "\
-              yum install -y time &&\
+              export PDK_ROOT=/pdk_data/ &&\
               cd ./openfasoc/generators/temp-sense-gen &&\
               make sky130hd_temp\
             ">> file.log
