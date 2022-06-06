@@ -100,9 +100,9 @@ Please contact mehdi@umich.edu if you have any questions.
 
 2. Now clone the OpenFASOC repository - `git clone https://github.com/idea-fasoc/OpenFASOC.git`
 
-3. Move to the OpenFASOC directory - `cd OpenFASOC`
+3. Change to the OpenFASOC directory - `cd OpenFASOC`
 
-4. Now run this command - `docker run --rm -v /github/OpenLane:/OpenLane -v $PDK_ROOT:$PDK_ROOT -e PDK_ROOT=$PDK_ROOT -v $PWD:$PWD -w $PWD efabless/openlane:2021.12.22_01.51.18 bash -c "yum install -y time && cd ./openfasoc/generators/temp-sense-gen && make sky130hd_temp`
+4. Now run this command just to run temp-sense generator - `docker run --rm -v /github/OpenLane:/OpenLane -v $PDK_ROOT:$PDK_ROOT -e PDK_ROOT=$PDK_ROOT -v $PWD:$PWD -w $PWD saicharan0112/openfasoc:ci bash -c "yum install -y time && cd ./openfasoc/generators/temp-sense-gen && make sky130hd_temp`
 
 ***:warning:  Files will be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.***
 
