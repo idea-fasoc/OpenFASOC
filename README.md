@@ -102,7 +102,7 @@ Please contact mehdi@umich.edu if you have any questions.
 
 3. Change to the OpenFASOC directory - `cd OpenFASOC`
 
-4. Run this command to access OpenFASOC folder from the container - `docker run -it -v $PWD:$PWD saicharan0112/openfasoc:stable`
+4. Run this command to access OpenFASOC folder from the container - `docker run -it -v $PWD:$PWD -e $PDK_ROOT:/pdk_data/ saicharan0112/openfasoc:stable`
 
 5. To test, go to `openfasoc/generators/temp-sense` and type `make sky130hd_temp` to run the temp-sense generator.
 
