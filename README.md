@@ -93,16 +93,15 @@ Please contact mehdi@umich.edu if you have any questions.
 
 **Another way to run the generators is using the efabless docker image which is currently used to test the temp-sense generator flow during smoke test**
 
-***:information_source:  Install docker on your machine based on the operating system before you proceed***
+***:information_source:  Install docker on your machine before you proceed***
 
-1. Set PDK_ROOT variable to the location of your PDK data location which contains sky130A directory.
-   eg: `export PDK_ROOT=/home/user1/pdks`
+1. Clone the OpenFASOC repository - `git clone https://github.com/idea-fasoc/OpenFASOC.git`
 
-2. Now clone the OpenFASOC repository - `git clone https://github.com/idea-fasoc/OpenFASOC.git`
+2. Change to the OpenFASOC directory - `cd OpenFASOC`
 
-3. Move to the OpenFASOC directory - `cd OpenFASOC`
+3. Run this command to access OpenFASOC folder from the container - `docker run -it -v $PWD:$PWD -e $PDK_ROOT:/pdk_data/ saicharan0112/openfasoc:stable`
 
-4. Now run this command - `docker run --rm -v /github/OpenLane:/OpenLane -v $PDK_ROOT:$PDK_ROOT -e PDK_ROOT=$PDK_ROOT -v $PWD:$PWD -w $PWD efabless/openlane:2021.12.22_01.51.18 bash -c "yum install -y time && cd ./openfasoc/generators/temp-sense-gen && make sky130hd_temp`
+4. To test, go to `openfasoc/generators/temp-sense` and type `make sky130hd_temp` to run the temp-sense generator.
 
 ***:warning:  Files will be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.***
 
