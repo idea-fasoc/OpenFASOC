@@ -93,7 +93,7 @@ Please contact mehdi@umich.edu if you have any questions.
 
 **Another way to run the generators is using the efabless docker image which is currently used to test the temp-sense generator flow during smoke test**
 
-***:information_source:  Install docker and PDK using open_pdks on your machine before you proceed***
+***:information_source:  Install docker on your machine before you proceed***
 
 1. Clone the OpenFASOC repository - `git clone https://github.com/idea-fasoc/OpenFASOC.git`
 
