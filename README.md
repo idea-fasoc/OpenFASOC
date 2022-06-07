@@ -95,16 +95,13 @@ Please contact mehdi@umich.edu if you have any questions.
 
 ***:information_source:  Install docker and PDK using open_pdks on your machine before you proceed***
 
-1. Set PDK_ROOT variable to the location of your PDK data location which contains sky130A directory.
-   eg: `export PDK_ROOT=/home/user1/pdks`
+1. Clone the OpenFASOC repository - `git clone https://github.com/idea-fasoc/OpenFASOC.git`
 
-2. Now clone the OpenFASOC repository - `git clone https://github.com/idea-fasoc/OpenFASOC.git`
+2. Change to the OpenFASOC directory - `cd OpenFASOC`
 
-3. Change to the OpenFASOC directory - `cd OpenFASOC`
+3. Run this command to access OpenFASOC folder from the container - `docker run -it -v $PWD:$PWD -e $PDK_ROOT:/pdk_data/ saicharan0112/openfasoc:stable`
 
-4. Run this command to access OpenFASOC folder from the container - `docker run -it -v $PWD:$PWD -e $PDK_ROOT:/pdk_data/ saicharan0112/openfasoc:stable`
-
-5. To test, go to `openfasoc/generators/temp-sense` and type `make sky130hd_temp` to run the temp-sense generator.
+4. To test, go to `openfasoc/generators/temp-sense` and type `make sky130hd_temp` to run the temp-sense generator.
 
 ***:warning:  Files will be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.***
 
