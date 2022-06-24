@@ -2,7 +2,7 @@ $user_analog_project_wrapper
  100
 r_0_LU.2
 Rule File Pathname: /home/elonjia/caravel_tutorial/OpenFASOC_NIST_PMU_ReRAM/precheck_results/22_JUN_2022___17_05_58/outputs/reports/magic_drc_check.drc.report
-LU.2: N-diff distance to P-tap must be < 15.0um 
+LU.2: N-diff distance to P-tap must be < 15.0um
 p 1 4
 2000 56900
 2200 56900
