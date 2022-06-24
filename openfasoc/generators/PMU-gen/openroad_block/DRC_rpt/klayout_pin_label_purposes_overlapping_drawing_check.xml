@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<report-database>
+ <description>pin_label_purposes_overlapping_drawing.rb.drc, input=/home/elonjia/caravel_tutorial/OpenFASOC_NIST_PMU_ReRAM/gds/user_analog_project_wrapper.gds, topcell=user_analog_project_wrapper</description>
+ <original-file/>
+ <generator>drc: script='/home/elonjia/mpw_precheck/checks/drc_checks/klayout/pin_label_purposes_overlapping_drawing.rb.drc'</generator>
+ <top-cell>user_analog_project_wrapper</top-cell>
+ <tags>
+ </tags>
+ <categories>
+ </categories>
+ <cells>
+  <cell>
+   <name>user_analog_project_wrapper</name>
+   <variant/>
+   <references>
+   </references>
+  </cell>
+ </cells>
+ <items>
+ </items>
+</report-database>
