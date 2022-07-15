@@ -1,5 +1,7 @@
 # OpenFASoC: Fully Open-Source Autonomous SoC Synthesis using Customizable Cell-Based Synthesizable Analog Circuits
 
+[![Build Status](http://34.66.76.153:8080/buildStatus/icon?job=SampleJob)](http://34.66.76.153:8080/job/SampleJob/)
+
 The FASoC Program is focused on developing a complete system-on-chip (SoC) synthesis tool from user specification to GDSII with fully open-sourced tools.
 
 See more on our [website](https://fasoc.engin.umich.edu/).
