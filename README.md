@@ -1,6 +1,8 @@
 # OpenFASoC: Fully Open-Source Autonomous SoC Synthesis using Customizable Cell-Based Synthesizable Analog Circuits
 
 [![Build Status](http://34.66.76.153:8080/buildStatus/icon?job=SampleJob)](http://34.66.76.153:8080/job/SampleJob/)
+[![Documentation Status](https://readthedocs.org/projects/openfasoc/badge/?version=latest)](https://openfasoc.readthedocs.io/en/latest/?badge=latest)
+
 
 The FASoC Program is focused on developing a complete system-on-chip (SoC) synthesis tool from user specification to GDSII with fully open-sourced tools.
 
@@ -10,19 +12,19 @@ See more on our [website](https://fasoc.engin.umich.edu/).
 
 Please build the following tools:
 
-  Magic <https://github.com/RTimothyEdwards/magic>
+  1. Magic <https://github.com/RTimothyEdwards/magic> (commit id:)
 
-  Netgen <https://github.com/RTimothyEdwards/netgen>
+  2. Netgen <https://github.com/RTimothyEdwards/netgen> (commit id:)
 
-  Klayout <https://github.com/KLayout/klayout>
+  3. Klayout <https://github.com/KLayout/klayout>
         Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
-  Yosys <https://github.com/The-OpenROAD-Project/yosys>
+  4. Yosys <https://github.com/The-OpenROAD-Project/yosys> (commit id:)
 
-  OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD> (commid id: 7ff7171)
+  5. OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD> (commid id: 7ff7171)
 
-  open_pdks <https://github.com/RTimothyEdwards/open_pdks>
+  6. Open_pdks <https://github.com/RTimothyEdwards/open_pdks> (commit id:)
 
    - open_pdks is required to run drc/lvs check and the simulations
    - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
