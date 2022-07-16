@@ -1,5 +1,7 @@
 # OpenFASoC: Fully Open-Source Autonomous SoC Synthesis using Customizable Cell-Based Synthesizable Analog Circuits
 
+[![Build Status](http://34.66.76.153:8080/buildStatus/icon?job=SampleJob)](http://34.66.76.153:8080/job/SampleJob/)
+
 The FASoC Program is focused on developing a complete system-on-chip (SoC) synthesis tool from user specification to GDSII with fully open-sourced tools.
 
 See more on our [website](https://fasoc.engin.umich.edu/).
@@ -93,18 +95,15 @@ Please contact mehdi@umich.edu if you have any questions.
 
 **Another way to run the generators is using the efabless docker image which is currently used to test the temp-sense generator flow during smoke test**
 
-***:information_source:  Install docker and PDK using open_pdks on your machine before you proceed***
+***:information_source:  Install docker on your machine before you proceed***
 
-1. Set PDK_ROOT variable to the location of your PDK data location which contains sky130A directory.
-   eg: `export PDK_ROOT=/home/user1/pdks`
+1. Clone the OpenFASOC repository - `git clone https://github.com/idea-fasoc/OpenFASOC.git`
 
-2. Now clone the OpenFASOC repository - `git clone https://github.com/idea-fasoc/OpenFASOC.git`
+2. Change to the OpenFASOC directory - `cd OpenFASOC`
 
-3. Change to the OpenFASOC directory - `cd OpenFASOC`
+3. Run this command to access OpenFASOC folder from the container - `docker run -it -v $PWD:$PWD -e PDK_ROOT='/pdk_data' -w $PWD saicharan0112/openfasoc:stable`
 
-4. Run this command to access OpenFASOC folder from the container - `docker run -it -v $PWD:$PWD -e $PDK_ROOT:/pdk_data/ saicharan0112/openfasoc:stable`
-
-5. To test, go to `openfasoc/generators/temp-sense` and type `make sky130hd_temp` to run the temp-sense generator.
+4. To test, go to `openfasoc/generators/temp-sense` and type `make sky130hd_temp` to run the temp-sense generator.
 
 ***:warning:  Files will be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.***
 
