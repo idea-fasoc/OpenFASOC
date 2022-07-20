@@ -4,7 +4,6 @@ OpenFASoC
 **OpenFASoC: Fully Open-Source Autonomous SoC Synthesis using Customizable Cell-Based Synthesizable Analog Circuits**
 
 .. image:: http://34.66.76.153:8080/buildStatus/icon?job=SampleJob
-    :target: http://34.66.76.153:8080/buildStatus/icon?job=SampleJob
 
 .. image:: https://readthedocs.org/projects/openfasoc/badge/?version=latest
     :target: https://openfasoc.readthedocs.io/en/latest/?badge=latest
@@ -42,6 +41,7 @@ Please install the following tools with the recommended commit ids for a stable 
 
    - Python 3.7 is used in this generator.
    - All the required tools need to be loaded into the environment before running this generator.
+
 
 Design Generation
 ********************
@@ -115,7 +115,7 @@ Please contact mehdi@umich.edu if you have any questions.
 
 
 Run OpenFASoC via docker - 
-***************************
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Another way to run the generators is using the efabless docker image which is currently used to test the temp-sense generator flow during smoke test**
 
@@ -133,7 +133,7 @@ Install docker on your machine before you proceed
 
 
 Spice Simulation Flow
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+**************************
 
 To run the simulation, please edit your local model file in `common/platform_config.json`:
 
@@ -165,16 +165,16 @@ To run the simulation, please edit your local model file in `common/platform_con
 
 
 Tapeouts and testing setup
-------------------------------
+*********************************
 
 Please refer to our testing setup in our tapeouts and testing setup [section](./tapeouts/mpw-1/testsetup/README.md#section).
 
 
 Things to improve
-------------------
+********************
 
 To improve our tools, flow, and QoR. The following limitations are currently being addressed:
-   - In OpenROAD tools:
+   - In OpenROAD tool:
        - Add the power pins extraction in OpenROAD tool
        - LEF modification for NDR needs to be within the tool (no additional script)
        - write_cdl bug fix in source code

@@ -306,4 +306,75 @@ Below commands will build yosys binary on your local machine -
 * `make`
 * `make install`
 
-:ref: ubuntu20_
+
+Run OpenFASoC flow
+##############################
+
+Generic way
+.................
+
+* First clone the OpenFASoC github repository using the command - `git clone https://github.com/idea-fasoc/openfasoc`
+
+* Now edit the platform_config.json file as suggested in the `Spice Simulation Flow` subsection under OpenFASoC section
+
+* Set the PDK_ROOT variable to your skywater-pdk location till the sky130A level
+
+* Now go to one of the generators and run `make` to list down all the generator specific targets. 
+
+* Run `make <library>_<generator>_<mode>` to begin the flow
+
+Below is an example for the temp-sense generator
+
+
+.. code-block:: bash
+
+    $cd openfasoc/generators/temp-sense-gen
+    $make
+    ==============================================================
+     ___  _____ ______ _   _ _____  _     ____   ___   ____
+    / _ \|  _  \| ____| \ | |  ___|/ \   / ___| / _ \ / ___|
+   | | | | |_) ||  _| |  \| | |_  / _ \  \___ \| | | | |    
+   | |_| |  __/ | |___| |\  |  _|/ ___ \  ___) | |_| | |___ 
+    \___/|_|    |_____|_| \_|_| /_/   \_\|____/ \___/ \____|
+
+    ===============================================================
+    OpenFASOC is focused on open-source automate analog generation
+    from user specification to GDSII with fully open-sourced tools.
+    This project is led by a team of researchers at the Universities of Michigan is inspired from FASOC whcih sits on proprietary tools
+    For more info, visit https://fasoc.engin.umich.edu/
+
+    IP: Temperature Sensor 
+    Supported Technology: Sky130A 
+    Supported Library: sky130hd
+
+    Targets supported:
+    1. make sky130hd_temp
+        >> This will create the macro for the thermal sensor, creates the lef/def/gds files and performs lvs/drc checks. It won't run simulations.
+    2. make sky130hd_temp_verilog
+        >> This will create the verilog file for the thermal sensor IP. It doesn't create a macro, won't create lef/def/gds files and won't run simulations 
+    3. make sky130hd_temp_full
+        >> This will create the macro for the thermal sensor, creates the lef/def/gds files, performs lvs/drc checks and also runs simulations.
+        >> [Warning] Currently, this target is in alpha phase
+    4. make clean
+        >> This will clean all files generated during the run inside the run/, flow/ and work/ directories
+    5. make help
+        >> Displays this message
+    $make sky130hd_temp
+
+
+Run OpenFASoC via docker
+.........................
+
+**Another way to run the generators is using the efabless docker image which is currently used to test the temp-sense generator flow during smoke test**
+
+Install docker on your machine before you proceed
+
+1. Clone the OpenFASOC repository - `git clone https://github.com/idea-fasoc/OpenFASOC.git`
+
+2. Change to the OpenFASOC directory - `cd OpenFASOC`
+
+3. Run this command to access OpenFASOC folder from the container - `docker run -it -v $PWD:$PWD -e PDK_ROOT='/pdk_data' -w $PWD saicharan0112/openfasoc:stable`
+
+4. To test, go to `openfasoc/generators/temp-sense` and type `make sky130hd_temp` to run the temp-sense generator.
+
+**Note** Files will be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.
