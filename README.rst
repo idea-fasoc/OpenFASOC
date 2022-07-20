@@ -4,7 +4,6 @@ OpenFASoC
 **OpenFASoC: Fully Open-Source Autonomous SoC Synthesis using Customizable Cell-Based Synthesizable Analog Circuits**
 
 .. image:: http://34.66.76.153:8080/buildStatus/icon?job=SampleJob
-
 .. image:: https://readthedocs.org/projects/openfasoc/badge/?version=latest
     :target: https://openfasoc.readthedocs.io/en/latest/?badge=latest
 
