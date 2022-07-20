@@ -63,5 +63,4 @@ See also our FAQs.
    developers-guide
    README
    getting-started
-   faqs
    contact
