@@ -1,4 +1,11 @@
-# OpenFASoC: Fully Open-Source Autonomous SoC Synthesis using Customizable Cell-Based Synthesizable Analog Circuits
+OpenFASoC
+===================
+
+OpenFASoC: Fully Open-Source Autonomous SoC Synthesis using Customizable Cell-Based Synthesizable Analog Circuits
+#########################################################################################################################
+
+.. |Generic badge| image:: http://34.66.76.153:8080/buildStatus/icon?job=SampleJob
+
 
 [![Build Status](http://34.66.76.153:8080/buildStatus/icon?job=SampleJob)](http://34.66.76.153:8080/job/SampleJob/)
 [![Documentation Status](https://readthedocs.org/projects/openfasoc/badge/?version=latest)](https://openfasoc.readthedocs.io/en/latest/?badge=latest)
