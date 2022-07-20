@@ -17,11 +17,10 @@ For a technical description of the OpenROAD flow, please refer to our DAC-2019 p
 
 Code of conduct
 ----------------------
-Please read our code of conduct here.
+Please read our code of conduct `here - code-of-conduct_`.
 
 Documentation
 ----------------------
-
 
 
 How to contribute
