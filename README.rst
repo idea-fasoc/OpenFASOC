@@ -23,7 +23,7 @@ Please install the following tools with the recommended commit ids for a stable 
   2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (commit id:)
 
   3. `Klayout <https://github.com/KLayout/klayout>`_
-      
+
       - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
@@ -54,7 +54,8 @@ A fully automated SoC generator that uses an all-digital temperature sensor arch
   Block Architecture:
    - Temperature-sensitive ring oscillator and stacked zero-VT devices.
 
-   .. image:: ./openfasoc/generators/temp-sense-gen/readme_imgs/tempSensor-BA.png
+.. image:: https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/temp-sense-gen/readme_imgs/tempSensor-BA.png
+   :target: https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/temp-sense-gen/readme_imgs/tempSensor-BA.png
 
 **LDO Generator (ldo-gen)** - `link <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/ldo-gen>`_
 
@@ -63,14 +64,15 @@ The main idea behind a Digital LDO is the use of an array of small power transis
   Block Architecture:
      - Synchronous Digital LDO with optional stochastic flash ADC.
 
-     .. image:: ./openfasoc/generators/ldo-gen/readme_images/LDO-BA.png
+.. image:: https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/ldo-gen/readme_images/LDO-BA.png
+   :target: https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/ldo-gen/readme_images/LDO-BA.png
 
 **DC-DC Generator (dcdc-gen)** - `link <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/dcdc-gen>`_
 
  For synthesizable on-chip power management circuits, we use the “2:1 SC Cell” auxiliary cell for implementing a switched-capacitor (SC) based DC-DC converter. By varying the number of auxiliary cells, we can achieve a wide range of conversion ratios with fine-grain resolution. It operates similarly to a successive approximation analog to digital converter (SAR ADC). Furthermore, since the total structure is simply composed of auxiliary cells, it is ideal for the proposed flow of automating the analog block design.
 
 
-**Cryo Generator (cryo-gen)** - `link <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/cryo-gen>`_ 
+**Cryo Generator (cryo-gen)** - `link <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/cryo-gen>`_
 
 **GDS Factory (gdsfactory)** - `link <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/gdsfactory>`_
 
@@ -113,7 +115,7 @@ make sky130hd_temp
 Please contact mehdi@umich.edu if you have any questions.
 
 
-Run OpenFASoC via docker - 
+Run OpenFASoC via docker -
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Another way to run the generators is using the efabless docker image which is currently used to test the temp-sense generator flow during smoke test**

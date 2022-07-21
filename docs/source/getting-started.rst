@@ -319,7 +319,7 @@ Generic way
 
 * Set the PDK_ROOT variable to your skywater-pdk location till the sky130A level
 
-* Now go to one of the generators and run `make` to list down all the generator specific targets. 
+* Now go to one of the generators and run `make` to list down all the generator specific targets.
 
 * Run `make <library>_<generator>_<mode>` to begin the flow
 
@@ -333,8 +333,8 @@ Below is an example for the temp-sense generator
     ==============================================================
      ___  _____ ______ _   _ _____  _     ____   ___   ____
     / _ \|  _  \| ____| \ | |  ___|/ \   / ___| / _ \ / ___|
-   | | | | |_) ||  _| |  \| | |_  / _ \  \___ \| | | | |    
-   | |_| |  __/ | |___| |\  |  _|/ ___ \  ___) | |_| | |___ 
+   | | | | |_) ||  _| |  \| | |_  / _ \  \___ \| | | | |
+   | |_| |  __/ | |___| |\  |  _|/ ___ \  ___) | |_| | |___
     \___/|_|    |_____|_| \_|_| /_/   \_\|____/ \___/ \____|
 
     ===============================================================
@@ -343,15 +343,15 @@ Below is an example for the temp-sense generator
     This project is led by a team of researchers at the Universities of Michigan is inspired from FASOC whcih sits on proprietary tools
     For more info, visit https://fasoc.engin.umich.edu/
 
-    IP: Temperature Sensor 
-    Supported Technology: Sky130A 
+    IP: Temperature Sensor
+    Supported Technology: Sky130A
     Supported Library: sky130hd
 
     Targets supported:
     1. make sky130hd_temp
         >> This will create the macro for the thermal sensor, creates the lef/def/gds files and performs lvs/drc checks. It won't run simulations.
     2. make sky130hd_temp_verilog
-        >> This will create the verilog file for the thermal sensor IP. It doesn't create a macro, won't create lef/def/gds files and won't run simulations 
+        >> This will create the verilog file for the thermal sensor IP. It doesn't create a macro, won't create lef/def/gds files and won't run simulations
     3. make sky130hd_temp_full
         >> This will create the macro for the thermal sensor, creates the lef/def/gds files, performs lvs/drc checks and also runs simulations.
         >> [Warning] Currently, this target is in alpha phase
