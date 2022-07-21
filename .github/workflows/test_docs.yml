@@ -3,8 +3,6 @@ name: Test documentation
 on:
   pull_request:
   push:
-  schedule:
-    - cron: "0 2 * * *" # run at 2 AM UTC
 
 jobs:
   build-linux:
@@ -14,15 +12,13 @@ jobs:
       - name: Cancel Workflow Action
         uses: styfle/cancel-workflow-action@0.9.1
       - uses: actions/checkout@v2
-      - name: Set up Python 3.9
+      - name: Set up Python 3.7
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          python-version: 3.7
       - name: Install dependencies
         run: |
-          pip install -r requirements_dev.txt
-          pip install -e .
-          sudo apt install pandoc
+          pip install sphinx
       - name: Test documentation
         run: |
           cd docs
