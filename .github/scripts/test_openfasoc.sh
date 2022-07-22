@@ -1,7 +1,7 @@
 #!/bin/bash
 
-git clone https://github.com/saicharan0112/OpenFASOC.git
-cd OpenFASOC
+#git clone https://github.com/saicharan0112/OpenFASOC.git
+#cd OpenFASOC
 make install
 cd openfasoc/generators/temp-sense-gen
 make sky130hd_temp > file.log

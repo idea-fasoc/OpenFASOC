@@ -16,9 +16,9 @@ with open("tools.json", "w") as outfile:
 
 
 #open the README and tools.json file in read mode
-fjson = open("tools.json",'r')
+fjson = open(".github/tools.json",'r')
 tools=json.load(fjson)
-fin = open("README.md", "rt")
+fin = open("README.rst", "rt")
 data = fin.readlines()
 data_mod=""
 j=0
@@ -32,7 +32,7 @@ for i in data:
 
 
 #open the README file in write mode
-fin = open("README.md", "wt")
+fin = open("README.rst", "wt")
 fin.write(data_mod)
 fin.close()
 
