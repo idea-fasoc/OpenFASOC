@@ -2,6 +2,7 @@
 
 #git clone https://github.com/saicharan0112/OpenFASOC.git
 #cd OpenFASOC
+export PDK_ROOT=/pdks/
 make install
 cd openfasoc/generators/temp-sense-gen
 make sky130hd_temp > file.log
