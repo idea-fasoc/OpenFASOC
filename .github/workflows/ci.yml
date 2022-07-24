@@ -51,6 +51,9 @@ jobs:
   update_readme:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
       - name: Grep the commit numbers of all dependent tools and update README.rst
         env:
               IMAGE_NAME: saicharan0112/openfasoc_ci:alpha
@@ -61,9 +64,7 @@ jobs:
             -w $PWD\
             $IMAGE_NAME\
             bash -c "\
-              cd ./openfasoc/../ &&\
-              tree -L 3 &&\
-              /scripts/extract_commit_no.sh > commits.txt &&\
+              /scripts/extract_commit_no.sh > commits.txt
               /scripts/modify_readme.py"
 
       - name: Commit README.rst
