@@ -55,14 +55,13 @@ jobs:
         env:
               IMAGE_NAME: saicharan0112/openfasoc_ci:alpha
         run: |
-          echo $GITHUB_WORKSPACE
+          cd $GITHUB_WORKSPACE
           docker run --rm \
             -v $PWD:$PWD\
             -w $PWD\
             $IMAGE_NAME\
             bash -c "\
-              cd $GITHUB_WORKSPACE
-              echo $GITHUB_WORKSPACE
+              echo $PWD
               /scripts/extract_commit_no.sh > commits.txt
               /scripts/modify_readme.py"
 
