@@ -62,6 +62,7 @@ jobs:
             $IMAGE_NAME\
             bash -c "\
               echo $PWD
+              tree -L 3
               /scripts/extract_commit_no.sh > commits.txt
               /scripts/modify_readme.py"
 
