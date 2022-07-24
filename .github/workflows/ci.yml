@@ -18,7 +18,7 @@ jobs:
 
       - name: Test sky130hd Temp sensor
         env:
-                IMAGE_NAME: saicharan0112/openfasoc:stable
+                IMAGE_NAME: saicharan0112/openfasoc:dev
         run: |
           cd $GITHUB_WORKSPACE
           touch file.log
