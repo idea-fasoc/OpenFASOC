@@ -61,7 +61,7 @@ jobs:
             $IMAGE_NAME\
             bash -c "\
               cd $GITHUB_WORKSPACE
-              /scripts/extract_commit_no.sh
+              /scripts/extract_commit_no.sh > commits.txt
               /scripts/modify_readme.py"
 
       - name: Commit README.rst
