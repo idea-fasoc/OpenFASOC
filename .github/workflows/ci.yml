@@ -53,7 +53,7 @@ jobs:
     steps:
       - name: Grep the commit numbers of all dependent tools and update README.rst
         env:
-              IMAGE_NAME: saicharan0112/openfasoc_ci:docker
+              IMAGE_NAME: saicharan0112/openfasoc_ci:alpha
         run: |
           docker run --rm \
             -v $PWD:$PWD\
@@ -68,7 +68,7 @@ jobs:
         run: |
           git config --global user.name 'saicharan0112'
           git config --global user.email 'saicharan0112@users.noreply.github.com'
-          git commit -am "pdated README with latest stable commit numbers of dependent tools"
+          git commit -am "Updated README with latest stable commit numbers of dependent tools"
           git push
   
               
