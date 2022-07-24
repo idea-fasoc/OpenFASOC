@@ -62,7 +62,7 @@ jobs:
             bash -c "\
               cd $GITHUB_WORKSPACE
               /scripts/extract_commit_no.sh > commits.txt
-              /scripts/modify_readme.py $GITHUB_WORKSPACE/.github/tools.json $GITHUB_WORKSPACE/README.rst"
+              /scripts/modify_readme.py"
 
       - name: Commit README.rst
         run: |
