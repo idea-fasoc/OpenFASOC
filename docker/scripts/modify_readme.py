@@ -9,12 +9,12 @@ with open("commits.txt") as f1:
         if i != "\n":
             tools.append([i.split(":")[0],i.split(":")[1].strip()])
 
-with open(".github/tools.json", "w") as outfile:
+with open("tools.json", "w") as outfile:
     outfile.write(json.dumps(tools,indent=4, separators=(", ", " : ")))
 
 
 #open the README and tools.json file in read mode
-fjson = open(".github/tools.json",'r')
+fjson = open("tools.json",'r')
 tools=json.load(fjson)
 fin = open("README.rst", "rt")
 data = fin.readlines()
