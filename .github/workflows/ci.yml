@@ -44,7 +44,7 @@ jobs:
               IMAGE_NAME: saicharan0112/openfasoc_ci:docker_trail
         run: |
           cd $GITHUB_WORKSPACE/docker
-          docker build -t $IMAGE_NAME
+          docker build -t $IMAGE_NAME .
           echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin'
           docker push $IMAGE_NAME
 
