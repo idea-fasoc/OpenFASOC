@@ -1,7 +1,22 @@
-{
-  "magic":"xxx",
-  "netgen":"xxx",
-  "yosys":"xxx",
-  "openroad":"xxx",
-  "open_pdks":"xxx",
-}
+[
+    [
+        "magic", 
+        "f7df5e7c86fb47c5fd445c846afddc6fbabad6ae"
+    ], 
+    [
+        "netgen", 
+        "2056b37c95e11ea802f8b06c8948e874a298808a"
+    ], 
+    [
+        "yosys", 
+        "08c319fc352fb2670b7416b5fb16ddcb9a400049"
+    ], 
+    [
+        "OpenROAD", 
+        "e76737f10d4670ab6b67bcf8659112983fc6ab0a"
+    ], 
+    [
+        "open_pdks", 
+        "702caf0cc0f32f59008f3e389b627a66d733c924"
+    ]
+]
