@@ -10,68 +10,68 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  test_sky130hd_temp:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
-
-      - name: Test sky130hd Temp sensor
-        env:
-                IMAGE_NAME: saicharan0112/openfasoc:dev
-        run: |
-          cd $GITHUB_WORKSPACE
-          touch file.log
-          docker run --rm \
-            -v $PWD:$PWD\
-            -w $PWD\
-            $IMAGE_NAME\
-            bash -c "\
-              export PDK_ROOT=/pdk_data/ &&\
-              cd ./openfasoc/generators/temp-sense-gen &&\
-              make sky130hd_temp\
-            ">> file.log
-            if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi
-  
-  # build_docker_image:
+  # test_sky130hd_temp:
   #   runs-on: ubuntu-latest
   #   steps:
   #     - name: Checkout repo
   #       uses: actions/checkout@v2
 
-  #     - name: build the docker image
+  #     - name: Test sky130hd Temp sensor
   #       env:
-  #             IMAGE_NAME: saicharan0112/openfasoc_ci:docker
+  #               IMAGE_NAME: saicharan0112/openfasoc_ci:latest
   #       run: |
-  #         cd $GITHUB_WORKSPACE/docker
-  #         docker build -t $IMAGE_NAME
-  #         echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-  #         docker push $IMAGE_NAME
-
-  update_readme:
-    runs-on: ubuntu-latest
+  #         cd $GITHUB_WORKSPACE
+  #         touch file.log
+  #         docker run --rm \
+  #           -v $PWD:$PWD\
+  #           -w $PWD\
+  #           $IMAGE_NAME\
+  #           bash -c "\
+  #             export PDK_ROOT=/pdk_data/ &&\
+  #             cd ./openfasoc/generators/temp-sense-gen &&\
+  #             make sky130hd_temp\
+  #           ">> file.log
+  #           if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi
+  
+  build_docker_image:
+    runs-on: self-hosted
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Grep the commit numbers of all dependent tools and update README.rst
+      - name: build the docker image
         env:
-              IMAGE_NAME: saicharan0112/openfasoc_ci:alpha
+              IMAGE_NAME: saicharan0112/openfasoc_ci:docker_trail
         run: |
-          cd $GITHUB_WORKSPACE
-          docker run --rm \
-            -v $PWD:$PWD\
-            -w $PWD\
-            $IMAGE_NAME\
-            bash -c "\
-              /scripts/extract_commit_no.sh > commits.txt
-              /scripts/modify_readme.py"
+          cd $GITHUB_WORKSPACE/docker
+          docker build -t $IMAGE_NAME
+          echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin'
+          docker push $IMAGE_NAME
 
-      - name: Commit README.rst
-        run: |
-          git config --global user.name 'saicharan0112'
-          git config --global user.email 'saicharan0112@users.noreply.github.com'
-          git commit -am "Updated README with latest stable commit numbers of dependent tools"
-          git push
+  # update_readme:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v2
+
+  #     - name: Grep the commit numbers of all dependent tools and update README.rst
+  #       env:
+  #             IMAGE_NAME: saicharan0112/openfasoc_ci:latest
+  #       run: |
+  #         cd $GITHUB_WORKSPACE
+  #         docker run --rm \
+  #           -v $PWD:$PWD\
+  #           -w $PWD\
+  #           $IMAGE_NAME\
+  #           bash -c "\
+  #             /scripts/extract_commit_no.sh > commits.txt
+  #             /scripts/modify_readme.py"
+
+  #     - name: Commit README.rst
+  #       run: |
+  #         git config --global user.name 'saicharan0112'
+  #         git config --global user.email 'saicharan0112@users.noreply.github.com'
+  #         git commit -am "Updated README with latest stable commit numbers of dependent tools"
+  #         git push
   
               
