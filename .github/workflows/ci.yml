@@ -51,7 +51,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/docker
           docker build -t $IMAGE_NAME .
-          echo "${{ secrets.DOCKER_PSW }}"| docker login -u ${{ secrets.DOCKERHUB_USR }} --password-stdin
+          echo ${{ secrets.DOCKER_PSW }}| docker login -u ${{ secrets.DOCKERHUB_USR }}--password-stdin
           docker push $IMAGE_NAME
 
   # update_readme:
