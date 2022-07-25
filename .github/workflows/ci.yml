@@ -4,7 +4,7 @@ name: CI
 
 # Controls when the workflow will run
 on:
-  #push:
+  push:
   #pull_request:
   workflow_dispatch:
 
@@ -39,13 +39,18 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USR }}
+          password: ${{ secrets.DOCKERHUB_PSW }}
+
       - name: build the docker image
         env:
               IMAGE_NAME: saicharan0112/openfasoc_ci:docker_trail
         run: |
           cd $GITHUB_WORKSPACE/docker
           docker build -t $IMAGE_NAME .
-          echo $${secrets.DOCKERHUB_PSW}| docker login -u $${secrets.DOCKERHUB_USR}--password-stdin
           docker push $IMAGE_NAME
 
   # update_readme:
