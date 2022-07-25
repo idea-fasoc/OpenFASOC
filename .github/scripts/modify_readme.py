@@ -35,4 +35,3 @@ for i in data:
 fin = open("README.rst", "wt")
 fin.write(data_mod)
 fin.close()
-

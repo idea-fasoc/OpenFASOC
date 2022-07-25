@@ -43,4 +43,4 @@ RUN apt-get install clang -y && \
 RUN apt-get install klayout -y
 
 # For OpenFASOC
-RUN apt-get install time -y 
+RUN apt-get install time -y

@@ -43,9 +43,8 @@ RUN apt-get install clang -y && \
 RUN apt-get install klayout -y
 
 # For OpenFASOC
-RUN apt-get install time -y 
+RUN apt-get install time -y
 
 # Copy scripts from github docker folder to the scripts directory inside the image
 RUN mkdir /scripts/
 COPY ./scripts /scripts
-

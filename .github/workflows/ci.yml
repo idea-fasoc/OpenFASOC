@@ -1,39 +1,13 @@
-# This is a basic workflow to help you get started with Actions
+#This flow will build the latest docker image, test the OpenFASOC flow in it and if it works, update the readme file and push it for the reference
+name: Build and test the latest version
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  push:
+  #push:
   #pull_request:
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # test_sky130hd_temp:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v2
-
-  #     - name: Test sky130hd Temp sensor
-  #       env:
-  #               IMAGE_NAME: saicharan0112/openfasoc_ci:latest
-  #       run: |
-  #         cd $GITHUB_WORKSPACE
-  #         touch file.log
-  #         docker run --rm \
-  #           -v $PWD:$PWD\
-  #           -w $PWD\
-  #           $IMAGE_NAME\
-  #           bash -c "\
-  #             export PDK_ROOT=/pdk_data/ &&\
-  #             cd ./openfasoc/generators/temp-sense-gen &&\
-  #             make sky130hd_temp\
-  #           ">> file.log
-  #           if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi
-  
-  build_docker_image:
+  Build_docker_image:
     runs-on: self-hosted
     steps:
       - name: Checkout repo
@@ -51,33 +25,54 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/docker
           docker build -t $IMAGE_NAME .
-          echo ${{ secrets.DOCKER_PSW }}| docker login -u ${{ secrets.DOCKERHUB_USR }}--password-stdin
-          docker push $IMAGE_NAME
+          #docker push
 
-  # update_readme:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v2
+  Test_sky130hd_temp:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
 
-  #     - name: Grep the commit numbers of all dependent tools and update README.rst
-  #       env:
-  #             IMAGE_NAME: saicharan0112/openfasoc_ci:latest
-  #       run: |
-  #         cd $GITHUB_WORKSPACE
-  #         docker run --rm \
-  #           -v $PWD:$PWD\
-  #           -w $PWD\
-  #           $IMAGE_NAME\
-  #           bash -c "\
-  #             /scripts/extract_commit_no.sh > commits.txt
-  #             /scripts/modify_readme.py"
+      - name: Test sky130hd Temp sensor
+        env:
+                IMAGE_NAME: saicharan0112/openfasoc_ci:docker_trail
+        run: |
+          cd $GITHUB_WORKSPACE
+          touch file.log
+          docker run --rm \
+            -v $PWD:$PWD\
+            -w $PWD\
+            $IMAGE_NAME\
+            bash -c "\
+              export PDK_ROOT=/pdk_data/ &&\
+              cd ./openfasoc/generators/temp-sense-gen &&\
+              make sky130hd_temp\
+            ">> file.log
+            if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi
 
-  #     - name: Commit README.rst
-  #       run: |
-  #         git config --global user.name 'saicharan0112'
-  #         git config --global user.email 'saicharan0112@users.noreply.github.com'
-  #         git commit -am "Updated README with latest stable commit numbers of dependent tools"
-  #         git push
-  
-              
+  Update_readme:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Grep the commit numbers of all dependent tools and update README.rst
+        env:
+              IMAGE_NAME: saicharan0112/openfasoc_ci:docker_trail
+        run: |
+          cd $GITHUB_WORKSPACE
+          docker run --rm \
+            -v $PWD:$PWD\
+            -w $PWD\
+            $IMAGE_NAME\
+            bash -c "\
+              /scripts/extract_commit_no.sh > commits.txt
+              /scripts/modify_readme.py"
+          docker tag saicharan0112/openfasoc_ci:docker_trail saicharan0112/openfasoc_ci:stable
+
+      - name: Commit README.rst
+        run: |
+          git config --global user.name 'idea-fasoc'
+          git config --global user.email 'idea-fasoc'@users.noreply.github.com'
+          git commit -am "Updated README with latest stable commit numbers of dependent tools"
+          git push
