@@ -1,5 +1,0 @@
-klayout - 0.27.10-1
-openroad - 2.0_4532
-yosys - 0.19+36
-magic  - 8.3.315
-open_pdks - 1.0.321
