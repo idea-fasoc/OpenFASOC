@@ -51,8 +51,10 @@ with open(args.outputCdl, "w") as wf:
     ckt_cells = ckt_cells.replace("\n+", "").split("\n")
 
     wf.write(".INCLUDE '" + os.path.abspath(args.stdCdl) + "'\n")
-    #ckt_head=ckt_head.replace("\n+", "")#to one line
-    #wf.write(ckt_head)# proper top level heading if you want to include it
+    # to one line
+    # ckt_head=ckt_head.replace("\n+", "")
+    # proper top level heading if you want to include it
+    # wf.write(ckt_head)
 
     for ckt_cell in ckt_cells:
         if not ckt_cell or re.search("FILLER", ckt_cell):
@@ -77,9 +79,10 @@ with open(args.outputCdl, "w") as wf:
                     print("cell: " + ckt_cell + " pin: " + pin + " is missing")
                     sys.exit(0)
         ordered_cell.append(ckt_cell_list[-1])
-        ordered_cell=ckt_cell_list#cell list is correct so no process is needed
+        ordered_cell = ckt_cell_list  # cell list is correct so no process is needed
 
         wf.write(" ".join(ordered_cell))
         wf.write("\n")
-    wf.write(".end")#does not matter because lvs only checks the cells
-    #wf.write(ckt_end)# the proper toplevel subckt ending if you want to include it
+    wf.write(".end")  # does not matter because lvs only checks the cells
+    # the proper toplevel subckt ending if you want to include it
+    # wf.write(ckt_end)
