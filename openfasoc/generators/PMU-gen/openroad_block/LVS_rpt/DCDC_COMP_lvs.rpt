@@ -1,0 +1,54 @@
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__nfet_01v8         |Circuit 2: sky130_fd_pr__nfet_01v8
+-------------------------------------------|-------------------------------------------
+1                                          |1
+2                                          |2
+3                                          |3
+4                                          |4
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__nfet_01v8 and sky130_fd_pr__nfet_01v8 are equivalent.
+Warning: Equate pins:  cell sky130_fd_pr__pfet_01v8 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__pfet_01v8 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__pfet_01v8         |Circuit 2: sky130_fd_pr__pfet_01v8
+-------------------------------------------|-------------------------------------------
+1                                          |1
+2                                          |2
+3                                          |3
+4                                          |4
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__pfet_01v8 and sky130_fd_pr__pfet_01v8 are equivalent.
+
+Class DCDC_COMP (0):  Merged 11 parallel devices.
+Subcircuit summary:
+Circuit 1: DCDC_COMP                       |Circuit 2: DCDC_COMP
+-------------------------------------------|-------------------------------------------
+sky130_fd_pr__nfet_01v8 (10->5)            |sky130_fd_pr__nfet_01v8 (10->5)
+sky130_fd_pr__pfet_01v8 (12->6)            |sky130_fd_pr__pfet_01v8 (12->6)
+Number of devices: 11                      |Number of devices: 11
+Number of nets: 10                         |Number of nets: 10
+---------------------------------------------------------------------------------------
+Resolving automorphisms by property value.
+Resolving automorphisms by pin name.
+Netlists match uniquely.
+Circuits match correctly.
+
+Subcircuit pins:
+Circuit 1: DCDC_COMP                       |Circuit 2: DCDC_COMP
+-------------------------------------------|-------------------------------------------
+VPWR                                       |VPWR
+CLK                                        |CLK
+VOP                                        |VOP
+VGND                                       |VGND
+VIN                                        |VIN
+VIP                                        |VIP
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes DCDC_COMP and DCDC_COMP are equivalent.
+Circuits match uniquely.
