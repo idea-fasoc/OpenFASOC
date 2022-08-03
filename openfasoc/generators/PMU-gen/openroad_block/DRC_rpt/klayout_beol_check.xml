@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="utf-8"?>
+<report-database>
+ <description>SKY130 DRC runset</description>
+ <original-file/>
+ <generator>drc: script='/home/elonjia/mpw_precheck/checks/tech-files/sky130A_mr.drc'</generator>
+ <top-cell>user_analog_project_wrapper</top-cell>
+ <tags>
+ </tags>
+ <categories>
+  <category>
+   <name>li.1</name>
+   <description>li.1 : min. li width : 0.17um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>li.3</name>
+   <description>li.3 : min. li spacing : 0.17um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>li.5</name>
+   <description>li.5 : min. li enclosure of licon of 2 adjacent edges : 0.08um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>li.6</name>
+   <description>li.6 : min. li area : 0.0561um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ct.1</name>
+   <description>ct.1: non-ring mcon should be rectangular</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ct.1_a</name>
+   <description>ct.1_a : minimum width of mcon : 0.17um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ct.1_b</name>
+   <description>ct.1_b : maximum length of mcon : 0.17um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ct.2</name>
+   <description>ct.2 : min. mcon spacing : 0.19um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ct.4</name>
+   <description>ct.4 : mcon should covered by li</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.1</name>
+   <description>m1.1 : min. m1 width : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.2</name>
+   <description>m1.2 : min. m1 spacing : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.3ab</name>
+   <description>m1.3ab : min. 3um.m1 spacing m1 : 0.28um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>791_m1.4</name>
+   <description>791_m1.4 : min. m1 enclosure of mcon : 0.03um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.4</name>
+   <description>m1.4 : mcon periphery must be enclosed by m1</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.4a</name>
+   <description>m1.4a : min. m1 enclosure of mcon for specific cells : 0.005um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.4a_a</name>
+   <description>m1.4a_a : mcon periph must be enclosed by met1 for specific cells</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.6</name>
+   <description>m1.6 : min. m1 area : 0.083um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.7</name>
+   <description>m1.7 : min. m1 with holes area : 0.14um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.5</name>
+   <description>m1.5 : min. m1 enclosure of mcon of 2 adjacent edges : 0.06um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via.1a</name>
+   <description>via.1a : via outside of moduleCut should be rectangular</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via.1a_a</name>
+   <description>via.1a_a : min. width of via outside of moduleCut : 0.15um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via.1a_b</name>
+   <description>via.1a_b : maximum length of via : 0.15um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via.2</name>
+   <description>via.2 : min. via spacing : 0.17um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via.4a</name>
+   <description>via.4a : min. m1 enclosure of 0.15um via : 0.055um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via.4a_a</name>
+   <description>via.4a_a : 0.15um via must be enclosed by met1</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via.5a</name>
+   <description>via.5a : min. m1 enclosure of 0.15um via of 2 adjacent edges : 0.085um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.1</name>
+   <description>m2.1 : min. m2 width : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.2</name>
+   <description>m2.2 : min. m2 spacing : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.3ab</name>
+   <description>m2.3ab : min. 3um.m2 spacing m2 : 0.28um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.6</name>
+   <description>m2.6 : min. m2 area : 0.0676um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.7</name>
+   <description>m2.7 : min. m2 holes area : 0.14um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.4</name>
+   <description>m2.4 : min. m2 enclosure of via : 0.055um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.4_a</name>
+   <description>m2.4_a : via in periphery must be enclosed by met2</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.5</name>
+   <description>m2.5 : min. m2 enclosure of via of 2 adjacent edges : 0.085um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2.1a</name>
+   <description>via2.1a : via2 outside of moduleCut should be rectangular</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2.1a_a</name>
+   <description>via2.1a_a : min. width of via2 outside of moduleCut : 0.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2.1a_b</name>
+   <description>via2.1a_b : maximum length of via2 : 0.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2.2</name>
+   <description>via2.2 : min. via2 spacing : 0.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2.4</name>
+   <description>via2.4 : min. m2 enclosure of via2 : 0.04um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2.4_a</name>
+   <description>via2.4_a : via must be enclosed by met2</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2.5</name>
+   <description>via2.5 : min. m3 enclosure of via2 of 2 adjacent edges : 0.085um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m3.1</name>
+   <description>m3.1 : min. m3 width : 0.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m3.2</name>
+   <description>m3.2 : min. m3 spacing : 0.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m3.3cd</name>
+   <description>m3.3cd : min. 3um.m3 spacing m3 : 0.4um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m3.4</name>
+   <description>m3.4 : min. m3 enclosure of via2 : 0.065um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m3.4_a</name>
+   <description>m3.4_a : via2 must be enclosed by met3</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3.1</name>
+   <description>via3.1 : via3 outside of moduleCut should be rectangular</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3.1_a</name>
+   <description>via3.1_a : min. width of via3 outside of moduleCut : 0.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3.1_b</name>
+   <description>via3.1_b : maximum length of via3 : 0.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3.2</name>
+   <description>via3.2 : min. via3 spacing : 0.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3.4</name>
+   <description>via3.4 : min. m3 enclosure of via3 : 0.06um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3.4_a</name>
+   <description>via3.4_a : non-ring via3 must be enclosed by met3</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3.5</name>
+   <description>via3.5 : min. m3 enclosure of via3 of 2 adjacent edges : 0.09um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4.1</name>
+   <description>m4.1 : min. m4 width : 0.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4.2</name>
+   <description>m4.2 : min. m4 spacing : 0.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4.4a</name>
+   <description>m4.4a : min. m4 area : 0.240um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4.5ab</name>
+   <description>m4.5ab : min. 3um.m4 spacing m4 : 0.4um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4.3</name>
+   <description>m4.3 : min. m4 enclosure of via3 : 0.065um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4.3_a</name>
+   <description>m4.3_a : via3 must be enclosed by met4</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via4.1</name>
+   <description>via4.1 : via4 outside of moduleCut should be rectangular</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via4.1_a</name>
+   <description>via4.1_a : min. width of via4 outside of moduleCut : 0.8um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via4.1_b</name>
+   <description>via4.1_b : maximum length of via4 : 0.8um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via4.2</name>
+   <description>via4.2 : min. via4 spacing : 0.8um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via4.4</name>
+   <description>via4.4 : min. m4 enclosure of via4 : 0.19um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via4.4_a</name>
+   <description>via4.4_a : m4 must enclose all via4</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m5.1</name>
+   <description>m5.1 : min. m5 width : 1.6um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m5.2</name>
+   <description>m5.2 : min. m5 spacing : 1.6um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m5.3</name>
+   <description>m5.3 : min. m5 enclosure of via4 : 0.31um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m5.3_a</name>
+   <description>m5.3_a : via must be enclosed by m5</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m5.4</name>
+   <description>m5.4 : min. m5 area : 4.0um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pad.2</name>
+   <description>pad.2 : min. pad spacing : 1.27um</description>
+   <categories>
+   </categories>
+  </category>
+ </categories>
+ <cells>
+  <cell>
+   <name>user_analog_project_wrapper</name>
+   <variant/>
+   <references>
+   </references>
+  </cell>
+ </cells>
+ <items>
+ </items>
+</report-database>

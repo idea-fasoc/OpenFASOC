@@ -1,0 +1,12 @@
+  violation type: N_diff_distance_to_P_tap_must_be_lt_15dot0um_LUdot2
+    srcs: N/A N/A
+    bbox = ( 20.125, 569.875 ) - ( 22.060, 570.165 ) on Layer LU
+  violation type: N_diff_distance_to_P_tap_must_be_lt_15dot0um_LUdot2
+    srcs: N/A N/A
+    bbox = ( 20.125, 489.875 ) - ( 22.060, 490.165 ) on Layer LU
+  violation type: N_diff_distance_to_P_tap_must_be_lt_15dot0um_LUdot2
+    srcs: N/A N/A
+    bbox = ( 20.125, 409.875 ) - ( 22.060, 410.165 ) on Layer LU
+  violation type: N_diff_distance_to_P_tap_must_be_lt_15dot0um_LUdot2
+    srcs: N/A N/A
+    bbox = ( 20.125, 644.875 ) - ( 27.960, 675.165 ) on Layer LU

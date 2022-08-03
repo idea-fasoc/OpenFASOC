@@ -1,0 +1,63 @@
+Warning: Equate pins:  cell sky130_fd_pr__pfet_01v8 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__pfet_01v8 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__pfet_01v8         |Circuit 2: sky130_fd_pr__pfet_01v8
+-------------------------------------------|-------------------------------------------
+1                                          |1
+2                                          |2
+3                                          |3
+4                                          |4
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__pfet_01v8 and sky130_fd_pr__pfet_01v8 are equivalent.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__nfet_01v8         |Circuit 2: sky130_fd_pr__nfet_01v8
+-------------------------------------------|-------------------------------------------
+1                                          |1
+2                                          |2
+3                                          |3
+4                                          |4
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__nfet_01v8 and sky130_fd_pr__nfet_01v8 are equivalent.
+Flattening unmatched subcell DCDC_HUNIT_CONV2to1 in circuit DCDC_CONV2TO1 (1)(2 instances)
+Flattening unmatched subcell DCDC_XSW_PMOS in circuit DCDC_CONV2TO1 (1)(2 instances)
+Flattening unmatched subcell DCDC_XSW_NMOS in circuit DCDC_CONV2TO1 (1)(2 instances)
+
+Subcircuit summary:
+Circuit 1: DCDC_CONV2TO1                   |Circuit 2: DCDC_CONV2TO1
+-------------------------------------------|-------------------------------------------
+sky130_fd_pr__pfet_01v8 (16)               |sky130_fd_pr__pfet_01v8 (16)
+sky130_fd_pr__nfet_01v8 (8)                |sky130_fd_pr__nfet_01v8 (8)
+Number of devices: 24                      |Number of devices: 24
+Number of nets: 21                         |Number of nets: 21
+---------------------------------------------------------------------------------------
+Resolving automorphisms by property value.
+Resolving automorphisms by pin name.
+Netlists match uniquely.
+Circuits match correctly.
+
+Subcircuit pins:
+Circuit 1: DCDC_CONV2TO1                   |Circuit 2: DCDC_CONV2TO1
+-------------------------------------------|-------------------------------------------
+VGND                                       |VGND
+VPWR                                       |VPWR
+VMID                                       |vmid
+Y0_TOP                                     |y0_top
+Y1_TOP                                     |y1_top
+Y0_BOT                                     |y0_bot
+Y1_BOT                                     |y1_bot
+VHIGH                                      |vhigh
+VLOW                                       |vlow
+CLK0                                       |clk0
+CLK1                                       |clk1
+CLK0B                                      |clk0b
+CLK1B                                      |clk1b
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes DCDC_CONV2TO1 and DCDC_CONV2TO1 are equivalent.
+Circuits match uniquely.
