@@ -6,8 +6,7 @@
 Welcome to OpenFASOC documentation!
 ==========================================
 OpenFASOC is focused on open-source automate analog generation from user specification to GDSII with fully open-sourced tools.
-This project is led by a team of researchers at the Universities of Michigan and is inspired from FASOC which sits on proprietary tools.
-For more info, visit https://fasoc.engin.umich.edu/
+This project is led by a team of researchers at the Universities of Michigan and is inspired from FASOC which sits on proprietary tools.(For more info on FASOC, visit https://fasoc.engin.umich.edu/)
 
 
 Code of conduct
@@ -18,6 +17,9 @@ Documentation
 ----------------------
 Here is the brief documentation of the OpenFASoC - :doc:`README`
 
+Get Started
+-------------------
+Follow the steps shown here to give the OpenFASOC a try - :doc:`getting-started`
 
 How to contribute
 ----------------------
@@ -38,5 +40,4 @@ How to get in touch
    developers-guide
    README
    getting-started
-
    contact
