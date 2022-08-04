@@ -19,7 +19,7 @@ else
                         exit
                 fi
 
-        elif cat /etc/os-release | grep "centos" >> /dev/null
+        elif cat /etc/os-release | grep -e "centos" -e "el7" -e "el8" >> /dev/null
         then
                 echo "Centos"
                 yum install python3-pip -y
@@ -67,13 +67,17 @@ then
 	dpkg -i klayout_0.27.10-1_amd64.deb
 	apt install time -y
 	strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5
-elif cat /etc/os-release | grep "centos" >> /dev/null
+
+elif cat /etc/os-release | grep -e "centos" >> /dev/null
 then
 	yum group install "Development Tools" -y
 	yum install qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev qt-x11 -y
 	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.27.10-0.x86_64.rpm
 	rpm -i klayout-0.27.10-0.x86_64.rpm
 	yum install time -y
+elif cat /etc/os-release | grep -e "el7" -e "el8" >> /dev/null
+then
+	echo "Please install Klayout manually if not installed already. This script can't support KLayout installations on RHEL distribution yet"
 else
 	echo "Cannot install klayout for other linux distrbutions via this script"
 fi
