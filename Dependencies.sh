@@ -53,6 +53,7 @@ then
 	export PATH=/usr/bin/miniconda3/bin:$PATH
 	conda update -y conda
         if [ $? == 0 ];then conda install -c litex-hub yosys open_pdks.sky130a magic netgen -y ; else echo "Failed to install conda packages" ; fi
+        conda install -c conda-forge ngspice
         if [ $? == 0 ];then conda install -c litex-hub openroad -y ; else echo "Failed to install openroad conda package" ; fi
 else
 	echo "Failed to install conda packages"

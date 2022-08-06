@@ -4,7 +4,7 @@ Getting Started with OpenFASoC
 Install Dependencies
 ###########################
 
-Go to the home location of this repository (where this README.rst file is located) and run `source ./Dependencies.sh`. This will install all the python libraries required for OpenFASoC, tools (openroad, Yosys, magic, netgen, Klayout) via conda packages and skywater-pdk on your machine. This will also set the environment variable PDK_ROOT to the pdk data location. The script supports Ubuntu20.04 and Centos7. 
+Go to the home location of this repository (where this README.rst file is located) and run `source ./Dependencies.sh`. This will install all the python libraries required for OpenFASoC, tools (openroad, Yosys, magic, netgen, Klayout, Ngspice) via conda packages and skywater-pdk on your machine. This will also set the environment variable PDK_ROOT to the pdk data location. The script supports Ubuntu and CentOS. For RHEL 7 and 8, the script will install all dependencies except Klayout. 
 
 
 Run OpenFASoC flow
@@ -67,14 +67,16 @@ Below is an example for the temp-sense generator
 Run OpenFASoC via docker
 .........................
 
-**Another way to run the generators is using the efabless docker image which is currently used to test the temp-sense generator flow during smoke test**
+**Another way to run the generators is using the openfasoc docker image which is currently used to test the temp-sense generator flow during smoke test**
 
 Install docker on your machine before you proceed
 
 1. Clone the OpenFASOC repository - `git clone https://github.com/idea-fasoc/OpenFASOC.git`
 
-2. Run this command to access OpenFASOC folder from the container - `docker run -v /path/to/OpenFASOC/clone:/shared/OpenFASOC/ -w /shared/OpenFASOC/ saicharan0112/openfasoc_ci:klayout_deb bash -c "pip3 install -r requirements.txt && cd openfasoc/generators/temp-sense-gen/ && make clean && make sky130hd_temp"`
+2. Run this command to access OpenFASOC folder from the container - `docker run -v </path/to/OpenFASOC/clone>:/shared/OpenFASOC/ -w /shared/OpenFASOC/ msaligane/openfasoc:stable bash -c "pip3 install -r requirements.txt && cd openfasoc/generators/temp-sense-gen/ && make clean && make sky130hd_temp"`
 
-3. To view results, go to `/<path_to_OpenFASOC>/openfasoc/generators/temp-sense/work` where you could find the final gds and def files, drc and lvs reports, the spice netlists and the verilog file.
+3. To view results after the PnR run, go to `/<path_to_OpenFASOC>/openfasoc/generators/temp-sense/work` where you could find the final gds and def files, drc and lvs reports, the spice netlists and the verilog file.
+
+4. To view results after the full run (including simulations), go to `/<path_to_OpenFASOC>/openfasoc/generators/temp-sense/simulations/run/` where you can find the directory for the type of inverter-header combination in which you can find the simulation log files along with the spice netlists for various temperature calibrations. 
 
 **Note** Files will be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.

@@ -40,4 +40,6 @@ How to get in touch
    developers-guide
    README
    getting-started
+   create-your-own-generator
+   ci
    contact

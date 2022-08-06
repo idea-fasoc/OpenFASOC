@@ -26,4 +26,6 @@ RUN apt install time -y
 ENV PDK_ROOT=/usr/bin/miniconda3/share/pdk/
 RUN strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5
 
+RUN conda install -c conda-forge ngspice
+
 COPY ./scripts /scripts
