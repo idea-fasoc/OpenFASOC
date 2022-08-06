@@ -1,7 +1,7 @@
 Developer's Guide
 ===============================
 
-* First setup the environment by installing all dependencies using the Dependencies.sh script present in the home of OpenFASOC github repository. To test whether the installation happened correctly or not, try running the temp-sense-gen. 
+* First setup the environment by installing all dependencies using the Dependencies.sh script present in the home of OpenFASOC github repository. To test whether the installation happened correctly or not, try running the temp-sense-gen.
 
 * Once the setup is ready, read the "Things to improve" under this section (right below) and start working on them.
 
@@ -13,7 +13,7 @@ Things to improve
 
 To improve our tools, flow, and QoR. The following limitations are currently being addressed -
 
-* In OpenROAD tool - 
+* In OpenROAD tool -
     - Add the power pins extraction in OpenROAD tool
     - LEF modification for NDR needs to be within the tool (no additional script)
     - write_cdl bug fix in source code

@@ -4,7 +4,7 @@ Getting Started with OpenFASoC
 Install Dependencies
 ###########################
 
-Go to the home location of this repository (where this README.rst file is located) and run `source ./Dependencies.sh`. This will install all the python libraries required for OpenFASoC, tools (openroad, Yosys, magic, netgen, Klayout, Ngspice) via conda packages and skywater-pdk on your machine. This will also set the environment variable PDK_ROOT to the pdk data location. The script supports Ubuntu and CentOS. For RHEL 7 and 8, the script will install all dependencies except Klayout. 
+Go to the home location of this repository (where this README.rst file is located) and run `source ./Dependencies.sh`. This will install all the python libraries required for OpenFASoC, tools (openroad, Yosys, magic, netgen, Klayout, Ngspice) via conda packages and skywater-pdk on your machine. This will also set the environment variable PDK_ROOT to the pdk data location. The script supports Ubuntu and CentOS. For RHEL 7 and 8, the script will install all dependencies except Klayout.
 
 
 Run OpenFASoC flow
@@ -77,6 +77,6 @@ Install docker on your machine before you proceed
 
 3. To view results after the PnR run, go to `/<path_to_OpenFASOC>/openfasoc/generators/temp-sense/work` where you could find the final gds and def files, drc and lvs reports, the spice netlists and the verilog file.
 
-4. To view results after the full run (including simulations), go to `/<path_to_OpenFASOC>/openfasoc/generators/temp-sense/simulations/run/` where you can find the directory for the type of inverter-header combination in which you can find the simulation log files along with the spice netlists for various temperature calibrations. 
+4. To view results after the full run (including simulations), go to `/<path_to_OpenFASOC>/openfasoc/generators/temp-sense/simulations/run/` where you can find the directory for the type of inverter-header combination in which you can find the simulation log files along with the spice netlists for various temperature calibrations.
 
 **Note** Files will be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.

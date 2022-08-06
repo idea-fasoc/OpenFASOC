@@ -2,7 +2,7 @@ name: sky130hd_temp-sense-generator
 
 on:
   push:
-    branches: 
+    branches:
     - main
   pull_request:
   workflow_dispatch:
