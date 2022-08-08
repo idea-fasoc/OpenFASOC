@@ -1,3 +1,4 @@
+# WIP : Building tools in docker from scratch from source code isn't working yet - please do not use
 FROM ubuntu:20.04
 RUN apt-get -y update && apt-get -y upgrade
 
