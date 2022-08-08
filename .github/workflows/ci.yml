@@ -1,0 +1,107 @@
+#This flow will build the latest docker image, test the OpenFASOC flow in it and if it works, update the readme file and push it to the docker hub for reference
+
+name: Build and test with the latest version of tools set
+
+on:
+  #push:
+  #pull_request:
+  workflow_dispatch:
+  # schedule:
+  # - cron: 0 1 * * * # run at 1 AM UTC
+
+jobs:
+  build_docker_image:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USR }}
+          password: ${{ secrets.DOCKERHUB_PSW }}
+
+      - name: build the docker image
+        env:
+              IMAGE_NAME: msaligane/openfasoc:alpha
+        run: |
+          cd $GITHUB_WORKSPACE/docker/conda
+          docker build -t $IMAGE_NAME .
+          docker push
+
+  sky130hd_temp:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Test sky130hd Temp sensor
+        env:
+                IMAGE_NAME: msaligane/openfasoc:alpha
+        run: |
+          cd $GITHUB_WORKSPACE
+          touch flow_report.log
+          docker run --rm \
+            -v $PWD:$PWD\
+            -w $PWD\
+            $IMAGE_NAME\
+            bash -c "\
+              pip3 install -r requirements.txt &&\
+              cd ./openfasoc/generators/temp-sense-gen &&\
+              make clean &&\
+              make sky130hd_temp\
+            ">> flow_report.log
+            if grep "\[ERROR\]" flow_report.log; then exit 1; else exit 0; fi
+
+  sky130hd_temp_full:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Test sky130hd Temp sensor
+        env:
+                IMAGE_NAME: msaligane/openfasoc:alpha
+        run: |
+          cd $GITHUB_WORKSPACE
+          touch flow_report.log
+          docker run --rm \
+            -v $PWD:$PWD\
+            -w $PWD\
+            $IMAGE_NAME\
+            bash -c "\
+              pip3 install -r requirements.txt &&\
+              cd ./openfasoc/generators/temp-sense-gen &&\
+              make clean &&\
+              make sky130hd_temp_full\
+            ">> flow_report.log
+            if grep "\[ERROR\]" flow_report.log; then exit 1; else exit 0; fi
+
+  update_readme:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Grep the commit numbers of all dependent tools and update README.rst
+        env:
+              IMAGE_NAME: msaligane/openfasoc:alpha
+        run: |
+          cd $GITHUB_WORKSPACE
+          docker run --rm \
+            -v $PWD:$PWD\
+            -w $PWD\
+            $IMAGE_NAME\
+            bash -c "\
+              /scripts/extract_conda_versions.sh > conda_versions.txt
+              /scripts/extract_tool_versions.sh > versions.txt
+              /scripts/modify_readme.py"
+          docker tag msaligane/openfasoc:alpha msaligane/openfasoc:stable
+
+      - name: Commit README.rst
+        run: |
+          git config --global user.name 'idea-fasoc'
+          git config --global user.email 'idea-fasoc'@users.noreply.github.com'
+          git commit -am "Updated README with latest stable version numbers of dependent tools"
+          git push

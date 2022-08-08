@@ -171,7 +171,9 @@ print("#----------------------------------------------------------------------")
 
 p = sp.Popen(["make", "finish"], cwd=flowDir)
 p.wait()
-
+if p.returncode:
+    print("[Error] Place and Route failed. Refer to the log file")
+    exit(1)
 
 print("#----------------------------------------------------------------------")
 print("# Place and Route finished")
@@ -181,6 +183,9 @@ time.sleep(2)
 
 p = sp.Popen(["make", "magic_drc"], cwd=flowDir)
 p.wait()
+if p.returncode:
+    print("[Error] DRC failed. Refer to the report")
+    exit(1)
 
 print("#----------------------------------------------------------------------")
 print("# DRC finished")
@@ -190,7 +195,9 @@ time.sleep(2)
 
 p = sp.Popen(["make", "netgen_lvs"], cwd=flowDir)
 p.wait()
-
+if p.returncode:
+    print("[Error] LVS failed. Refer to the report")
+    exit(1)
 
 print("#----------------------------------------------------------------------")
 print("# LVS finished")

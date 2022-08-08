@@ -1,9 +1,9 @@
-name: Sky130hd_temp-sense-generator
+name: sky130hd_temp-sense-generator
 
 on:
   push:
     branches:
-      - main
+    - main
   pull_request:
   workflow_dispatch:
 
@@ -14,21 +14,18 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Make Sky130HD Temp
+      - name: Test sky130hd Temp sensor
         env:
-                IMAGE_NAME: saicharan0112/openfasoc:stable
+                IMAGE_NAME: saicharan0112/openfasoc_ci:klayout_deb
         run: |
           cd $GITHUB_WORKSPACE
           touch file.log
-          docker run --rm\
-            -e GITHUB_ACTIONS=1\
-            -v $PDK_ROOT:$PDK_ROOT\
-            -e PDK_ROOT=$PDK_ROOT\
+          docker run --rm \
             -v $PWD:$PWD\
             -w $PWD\
             $IMAGE_NAME\
             bash -c "\
-              export PDK_ROOT=/pdk_data/ &&\
+              pip3 install -r requirements.txt &&\
               cd ./openfasoc/generators/temp-sense-gen &&\
               make sky130hd_temp\
             ">> file.log
