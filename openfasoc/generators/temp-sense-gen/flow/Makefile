@@ -38,7 +38,7 @@ export COMMON_HOME ?= ../../../common
 # - work home - default is current directory
 # - utils, scripts, test - default is under current directory
 export DESIGN_HOME   ?= $(FLOW_HOME)/design
-export PLATFORM_HOME ?= $(FLOW_HOME)/platforms
+export PLATFORM_HOME ?= $(COMMON_HOME)/platforms
 export WORK_HOME     ?= .
 
 export UTILS_DIR     ?= $(FLOW_HOME)/util
