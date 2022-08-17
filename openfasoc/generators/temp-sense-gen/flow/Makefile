@@ -90,7 +90,7 @@ export SYNTH_ARGS ?= -flatten
 # Global setting for Floorplan
 export PLACE_PINS_ARGS
 
-export FLOW_VARIANT ?= base
+#export FLOW_VARIANT ?= base
 
 export GPL_TIMING_DRIVEN ?= 1
 export GPL_ROUTABILITY_DRIVEN ?= 1
@@ -647,7 +647,7 @@ magic_drc: $(RESULTS_DIR)/6_final.gds
 	$(COMMON_VERIF_DIR)/run_drc.sh
 	# magic -rcfile $(COMMON_VERIF_DIR)/sky130A/sky130A.magicrc -noconsole -dnull $(COMMON_VERIF_DIR)/magic_commands.tcl < /dev/null
 
-netgen_lvs: $(RESULTS_DIR)/6_final.gds
+netgen_lvs: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.cdl
 	python $(UTILS_DIR)/openfasoc/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(PLATFORM_DIR)/cdl/sky130_fd_sc_hd.spice -o $(DESIGN_NAME).spice
 	$(COMMON_VERIF_DIR)/run_lvspex.sh $(RESULTS_DIR)/6_final.gds $(DESIGN_NAME) $(REPORTS_DIR)/6_final_lvs.rpt
 

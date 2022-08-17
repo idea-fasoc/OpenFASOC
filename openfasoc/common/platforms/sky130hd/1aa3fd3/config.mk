@@ -108,7 +108,7 @@ export MACRO_PLACE_CHANNEL ?= 80 80
 #---------------------------------------------------------
 # Place
 # --------------------------------------------------------
-# default cell padding for cells (following current openfasoc setup)
+# default cell padding for cells
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 1
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
 #
@@ -155,3 +155,10 @@ export RCX_RULES = $(PLATFORM_DIR)/rcx_patterns.rules
 export PWR_NETS_VOLTAGES  ?= "VDD 1.8"
 export GND_NETS_VOLTAGES  ?= "VSS 0.0"
 export IR_DROP_LAYER ?= met1
+
+# ---------------------------------------------------------
+#  OpenFASOC
+# ---------------------------------------------------------
+
+# Platform cdl file for post-run LVS
+export CDL_FILE = $(PLATFORM_DIR)/cdl/sky130_fd_sc_hd.spice
