@@ -155,8 +155,8 @@ C {devices/opin.sym} 55 -40 0 1 {name=p3 lab=outp}
 C {sky130_fd_pr/cap_mim_m3_1.sym} 415 -40 3 0 {name=C2 model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
 C {sky130_fd_pr/nfet3_01v8_lvt.sym} 265 -100 3 1 {name=M6
 L=0.15
-W=4.8
-nf=2
+W=2.4
+nf=1
 mult=1
 body=GND
 ad="'int((nf+1)/2) * W/nf * 0.29'" 
@@ -204,8 +204,8 @@ C {sky130_fd_pr/cap_mim_m3_1.sym} 125 -40 3 0 {name=C1 model=cap_mim_m3_1 W=1 L=
 C {sky130_fd_pr/cap_mim_m3_1.sym} 420 -225 3 0 {name=C4[1:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
 C {sky130_fd_pr/nfet3_01v8_lvt.sym} 270 -285 3 1 {name=M3
 L=0.15
-W=4.8
-nf=1
+W=2.4
+nf=2
 mult=1
 body=GND
 ad="'int((nf+1)/2) * W/nf * 0.29'" 
@@ -449,10 +449,10 @@ spiceprefix=X
 C {devices/gnd.sym} 857.5 -357.5 0 0 {name=l12 lab=GND}
 C {sky130_fd_pr/cap_mim_m3_1.sym} 717.5 -227.5 3 0 {name=C11[31:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
 C {sky130_fd_pr/cap_mim_m3_1.sym} 1007.5 -422.5 3 0 {name=C14[63:0] model=cap_mim_m3_1 W=1 L=1 MF=1 spiceprefix=X}
-C {sky130_fd_pr/nfet3_01v8_lvt.sym} 857.5 -482.5 3 1 {name=M19
+C {sky130_fd_pr/nfet3_01v8_lvt.sym} 857.5 -482.5 3 1 {name=M19[1:0]
 L=0.15
 W=4.8
-nf=11
+nf=8
 mult=2
 body=GND
 ad="'int((nf+1)/2) * W/nf * 0.29'" 
@@ -550,3 +550,4 @@ C {devices/iopin.sym} 530 -163 0 0 {name=p1 lab=GND
 }
 C {devices/lab_wire.sym} 657.5 -485.5 0 0 {name=l17 sig_type=std_logic lab=outp}
 C {devices/lab_wire.sym} 1062.5 -381.5 0 1 {name=l18 sig_type=std_logic lab=outn}
+C {devices/gnd.sym} 590 -600 0 0 {name=l19 lab=GND}
