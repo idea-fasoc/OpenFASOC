@@ -57,6 +57,28 @@ Idctail VDD tail_c 'Icurr'
 xlccore tail_c outn outp open VDD 0 LC_Cell_3
 xswcap_3M2C outn outp sw7 sw6 sw5 sw4 sw3 sw2 sw1 sw0 0 swcap_3M2C
 
+* TIA to CMOS output
+***--Load
+Coutp outp outpndc 300f
+Coutn outn outnndc 300f
+**
+**** TIA
+xinv1 outpndc 0 0 VDD VDD tiaoutp sky130_fd_sc_hs__clkinv_4
+xinv2 outnndc 0 0 VDD VDD tiaoutn sky130_fd_sc_hs__clkinv_4
+
+R1 outpndc tiaoutp 20000
+R2 outnndc tiaoutn 20000
+** CD
+xinv3 tiaoutp 0 0 VDD VDD tiaoutn sky130_fd_sc_hs__clkinv_2
+xinv4 tiaoutn 0 0 VDD VDD tiaoutp sky130_fd_sc_hs__clkinv_2
+
+xsky130_fd_sc_hs__dfxtp_1 tiaoutp Qb 0 0 VDD VDD Qp sky130_fd_sc_hs__dfxtp_1
+xsky130_fd_sc_hs__dfxtp_2 tiaoutn Qbn 0 0 VDD VDD Qn sky130_fd_sc_hs__dfxtp_1
+
+xsky130_fd_sc_hs__clkinv_1 Qp 0 0 VDD VDD Qbp sky130_fd_sc_hs__clkinv_4
+xsky130_fd_sc_hs__clkinv_2 Qn 0 0 VDD VDD Qbn sky130_fd_sc_hs__clkinv_4
+
+
 ** Initial Condition**
 .ic v(outn)='pvdd'
 .ic v(outp)= 0
@@ -90,7 +112,7 @@ xswcap_3M2C outn outp sw7 sw6 sw5 sw4 sw3 sw2 sw1 sw0 0 swcap_3M2C
 *** Single Measure
 
 .control
-option numdgt =7
+option numdgt =6
 run
 save all
 set filetype=ascii

@@ -4,8 +4,8 @@
 module decode_dco(
     input prop_gain,
     output dc_swval,
-    input freq_val,
-
+    input dco_inval
 );
+
 
 endmodule : decode_dco
