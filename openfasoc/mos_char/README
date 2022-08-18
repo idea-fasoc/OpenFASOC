@@ -1,0 +1,38 @@
+# ATTN: Mehdi.S
+# By Chandru Ramamurthy
+# Initial Set of tests to run sky130 transistors with Xyce
+
+1. Simple 1st order test , Runs 6 transistors IV characteristic for
+usage run_Xyce.sh <netlist_name> /run_Xyce.sh gmId.netlist
+sky130_fd_pr__nfet_01v8_lvt L=0.15 W=0.42
+sky130_fd_pr__nfet_01v8 L=0.15 W=0.42
+*sky130_fd_pr__pfet_01v8_lvt L=0.15 W=0.42
+sky130_fd_pr__pfet_01v8 L=0.15 W=0.42
+sky130_fd_pr__pfet_01v8_hvt L=0.15 W=0.42
+*sky130_fd_pr__nfet_03v3_nvt L=0.15 W=0.42
+*sky130_fd_pr__nfet_05v0_nvt L=0.15 W=0.42
+
+Ones starting with * fail
+
+2.Characterization scripts run_sim.py, Python script which sets mean length and width specified in the bins (set as a dictionary), The results fail for the transistors (pfet_lvt, nfet_lvt and nfet_3v3)
+
+usage: run_sim.py [-h] --filename FILENAME --mostype MOSTYPE
+
+Simulation input
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --filename FILENAME  inputs spice file
+  --mostype MOSTYPE    Mosfet Type
+
+Usage:
+python3 run_sim.py --filename gmId.netlist --mostype nfet_lvt
+
+This can be extended to any transistor type once the simulation/Model interaction issues are resolved
+
+Issues:
+1. Unstable/Random behavior, binning was proposed as the issue with the failing transistors
+2. When mean values from bins are used we expect the simulations should be clean. failure to find the model is unexpected
+3. Is the scale value being applied properly ?
+4. Model correlation with https://skywater-pdk.readthedocs.io/en/main/rules/device-details.html#id48, are the value close to the published hardware results ?
+5. Is binning happening properly

@@ -18,6 +18,3 @@ fig = 1;
 ExploreLowRangeFoM;
 ExploreMidRangeFoM;
 ExploreHighRangeFoM;
-
-
-

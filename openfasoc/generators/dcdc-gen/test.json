@@ -1,0 +1,8 @@
+{
+    "module_name": "DCDC_SIX_STAGES_CONV",
+    "generator": "dcdc-gen",
+    "specifications": {
+		"Iload (mA)": 0.1,
+		"Clock frequency (kHz)": 50000
+	}
+}

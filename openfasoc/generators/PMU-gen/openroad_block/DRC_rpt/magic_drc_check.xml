@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<report-database>
+    <categories>
+        <category>
+            <name>N_diff_distance_to_P_tap_must_be_lt_15dot0um_LUdot2</name>
+        </category>
+    </categories>
+    <cells>
+        <cell>
+            <name>user_analog_project_wrapper</name>
+        </cell>
+    </cells>
+    <items>
+        <item>
+            <category>'N_diff_distance_to_P_tap_must_be_lt_15dot0um_LUdot2'</category>
+            <cell>user_analog_project_wrapper</cell>
+            <visited>false</visited>
+            <multiplicity>1</multiplicity>
+            <values>
+                <value>box: (20.125,569.875;22.060,570.165)</value>
+                <value>text: 'On layer LU'</value>
+                <value>text: 'Between N/A N/A'</value>
+            </values>
+        </item>
+        <item>
+            <category>'N_diff_distance_to_P_tap_must_be_lt_15dot0um_LUdot2'</category>
+            <cell>user_analog_project_wrapper</cell>
+            <visited>false</visited>
+            <multiplicity>1</multiplicity>
+            <values>
+                <value>box: (20.125,489.875;22.060,490.165)</value>
+                <value>text: 'On layer LU'</value>
+                <value>text: 'Between N/A N/A'</value>
+            </values>
+        </item>
+        <item>
+            <category>'N_diff_distance_to_P_tap_must_be_lt_15dot0um_LUdot2'</category>
+            <cell>user_analog_project_wrapper</cell>
+            <visited>false</visited>
+            <multiplicity>1</multiplicity>
+            <values>
+                <value>box: (20.125,409.875;22.060,410.165)</value>
+                <value>text: 'On layer LU'</value>
+                <value>text: 'Between N/A N/A'</value>
+            </values>
+        </item>
+        <item>
+            <category>'N_diff_distance_to_P_tap_must_be_lt_15dot0um_LUdot2'</category>
+            <cell>user_analog_project_wrapper</cell>
+            <visited>false</visited>
+            <multiplicity>1</multiplicity>
+            <values>
+                <value>box: (20.125,644.875;27.960,675.165)</value>
+                <value>text: 'On layer LU'</value>
+                <value>text: 'Between N/A N/A'</value>
+            </values>
+        </item>
+    </items>
+</report-database>

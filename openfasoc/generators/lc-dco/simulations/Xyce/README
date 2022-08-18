@@ -1,0 +1,5 @@
+Simulations Using Xyce ith skywater 130 nm tech
+1. Update thee link to ngspice in run_Xyce.sh
+2. Update the path to models if they dont already work
+3. We can update this to a python script which we use vary parameters, more in line with OpenFASOC methodology
+4.

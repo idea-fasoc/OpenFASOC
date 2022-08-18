@@ -41,12 +41,12 @@ b4_pos(1,1).FaceColor = cell2mat(color(3)); b4_pos(1,1).EdgeColor = cell2mat(col
 b4_pos(1,2).FaceColor = cell2mat(color(4)); b4_pos(1,2).EdgeColor = cell2mat(color(4));
 b4_neg(1,1).FaceColor = cell2mat(color(3)); b4_neg(1,1).EdgeColor = cell2mat(color(3));
 b4_neg(1,2).FaceColor = cell2mat(color(4)); b4_neg(1,2).EdgeColor = cell2mat(color(4));
-    
+
     % Plot a black baseline
 plot(0:17, zeros(1, 18), '-k', 'LineWidth', 1);
 xlim([0.5, 16.5]);
 ylim([-2 2.5]); yticks(-2:0.5:2.5);
-    
+
     % X-axis labels
 set(gca, 'XTick', 1:16, 'XTickLabel', groups, 'FontSize', 16);
 set(gcf, 'Position', [0 0 2000 400]);
@@ -61,7 +61,7 @@ ylabel('Error (°C)', 'FontSize', 24);
 %     'FontSize', 18, 'Location', 'Northwest', 'Box', 'off');
 legend([b1_pos(1, 1), b1_pos(1, 2)], ...
     'w/o SEC', 'w/ SEC', ...
-    'FontSize', 18, 'Location', 'Northwest', 'Box', 'off');     
+    'FontSize', 18, 'Location', 'Northwest', 'Box', 'off');
 
     % title
 if err_type == 0 % Min/Max
@@ -70,7 +70,6 @@ else
     err_type = '3\sigma';
 end
 title(['20°C ~ 120°C ', err_type, ' Errors of Representative Instances from Each Group'], 'FontSize', 24);
-    
+
 figout = figin + 1;
 end
-

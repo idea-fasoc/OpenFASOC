@@ -35,7 +35,7 @@ for c=1:length(ChipNo_list)
             k = (temp_list(p2)-temp_list(p1)) / (log(freq_list(p2))*(temp_list(p2) + TZiK)*scale - log(freq_list(p1))*(temp_list(p1) + TZiK)*scale);
             b = -k*log(freq_list(p1))*(temp_list(p1) + TZiK)*scale;
             param_array(1, s, c, design) = k; param_array(2, s, c, design) = b;
-            
+
             for t = 1:length(temp_list)
                 T_array(t, s, c, design) = (scale * TZiK * k * log(freq_list(t)) + b) / (1 - scale * k * log(freq_list(t)));
                 T_err_array(t, s, c, design) = T_array(t, s, c, design) - temp_list(t);

@@ -1,0 +1,46 @@
+.options nonlin contiuation=gmin
+.options timeint method=trap
+.options device temp=25
+.options parser model_binning=true
+
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.lib "/home/chenliyu/OpenLane/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice" tt
+*.lib "/n/ludington/y/chenliyu/skywater-pdk/libraries/sky130_fd_pr_ngspice/latest/models/sky130.lib.spice" tt
+*.include "/n/ludington/y/chenliyu/skywater-pdk/libraries/sky130_fd_pr_ngspice/latest/models/r+c/res_typical__cap_typical__lin.spice"
+*.include "/n/ludington/y/chenliyu/skywater-pdk/libraries/sky130_fd_pr_ngspice/latest/models/r+c/res_typical__cap_typical.spice"
+*.include "/n/ludington/y/chenliyu/skywater-pdk/libraries/sky130_fd_pr_ngspice/latest/models/corners/tt.spice"
+
+.param kw = 1
+.param pvdd = 1.8
+*.param len = 1
+vdd  supply 0 dc 'pvdd'
+vsig vi     0 dc 1.8
+*vds1  vd1    0 dc 0.5
+vds2  vd2    0 dc 0
+
+*XM1 supply vi 0 0 sky130_fd_pr__nfet_01v8 L=0.15 W=0.42
+*XM1 vi vi 0 0 sky130_fd_pr__nfet_01v8 L=0.15 W=2.1
+XM2 vi vi 0 0 sky130_fd_pr__nfet_01v8 L=7.5 W=42
+
+.op
+.DC vsig 0 1.8 0.1
+*.DC len 1 10 1
+
+*.print dc FORMAT=GNUPLOT V(vi)
+*.print dc FORMAT=GNUPLOT N(XM1:MSKY130_FD_PR__NFET_01V8:Vth)
+*.print dc FORMAT=GNUPLOT N(XM1:MSKY130_FD_PR__NFET_01V8:gds)
+.print dc FORMAT=GNUPLOT N(XM2:MSKY130_FD_PR__NFET_01V8:gds)
+.print dc FORMAT=GNUPLOT N(XM2:MSKY130_FD_PR__NFET_01V8:gm)
+*.print dc FORMAT=GNUPLOT N(XM1:MSKY130_FD_PR__NFET_01V8:gm)
+*.print dc FORMAT=GNUPLOT N(XM1:MSKY130_FD_PR__NFET_01V8:Vdsat)
+*.print dc FORMAT=GNUPLOT N(XM1:MSKY130_FD_PR__NFET_01V8:Cgs)
+*.print dc FORMAT=GNUPLOT N(XM1:MSKY130_FD_PR__NFET_01V8:Cgd)
+
+*.print dc FORMAT=GNUPLOT ID(XM1:MSKY130_FD_PR__NFET_01V8)
+*.print dc FORMAT=GNUPLOT ID(XM2:MSKY130_FD_PR__NFET_01V8)
+
+*.print dc FORMAT=GNUPLOT (XM2:MSKY130_FD_PR__NFET_01V8:NTNOI)
+*.print dc FORMAT=GNUPLOT (XM2:MSKY130_FD_PR__NFET_01V8:TOX)
+*.print dc FORMAT=GNUPLOT I(*) V(*)
+.end

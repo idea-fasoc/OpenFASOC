@@ -1,0 +1,30 @@
+.options nonlin contiuation=gmin
+*.options timeint method=trap
+.options device temp=26.85
+.options parser model_binning=true
+
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+.lib "/home/chenliyu/OpenLane/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice" tt
+
+.param kw = 1
+.param pvdd = 1.8
+
+*Change Vdd1 to different voltages
+Vdd1 out 0 0
+Vin in 0 dc 1.8 ac 1
+
+XM1 out in 0 0 sky130_fd_pr__nfet_01v8 L=0.15 W=0.42
+H1 out_p 0 Vdd1 1
+
+.noise v(out_p) Vin dec 10 1k 100000000T 1
+
+.print noise inoise onoise DNI(XM1:MSKY130_FD_PR__NFET_01V8,ID) DNO(XM1:MSKY130_FD_PR__NFET_01V8,ID)
++DNI(XM1:MSKY130_FD_PR__NFET_01V8,FL)
++DNO(XM1:MSKY130_FD_PR__NFET_01V8,FL)
++DNI(XM1:MSKY130_FD_PR__NFET_01V8,RD)
++DNO(XM1:MSKY130_FD_PR__NFET_01V8,RD)
++DNI(XM1:MSKY130_FD_PR__NFET_01V8,RBPS)
++DNO(XM1:MSKY130_FD_PR__NFET_01V8,RBPS)
+
+.end

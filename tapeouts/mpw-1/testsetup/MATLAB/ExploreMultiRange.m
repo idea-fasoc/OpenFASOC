@@ -14,6 +14,3 @@ fig = 1;
 ExploreLowRange;
 ExploreMidRange;
 ExploreHighRange;
-
-
-

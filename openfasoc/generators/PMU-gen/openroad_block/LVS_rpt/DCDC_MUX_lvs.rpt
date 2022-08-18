@@ -1,0 +1,58 @@
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__nfet_01v8         |Circuit 2: sky130_fd_pr__nfet_01v8
+-------------------------------------------|-------------------------------------------
+1                                          |1
+2                                          |2
+3                                          |3
+4                                          |4
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__nfet_01v8 and sky130_fd_pr__nfet_01v8 are equivalent.
+Warning: Equate pins:  cell sky130_fd_pr__pfet_01v8 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__pfet_01v8 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__pfet_01v8         |Circuit 2: sky130_fd_pr__pfet_01v8
+-------------------------------------------|-------------------------------------------
+1                                          |1
+2                                          |2
+3                                          |3
+4                                          |4
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__pfet_01v8 and sky130_fd_pr__pfet_01v8 are equivalent.
+Flattening unmatched subcell inv_4 in circuit DCDC_MUX (1)(2 instances)
+Flattening unmatched subcell DCDC_MUX_PMOS in circuit DCDC_MUX (1)(1 instance)
+Flattening unmatched subcell DCDC_MUX_TGATE in circuit DCDC_MUX (1)(2 instances)
+Flattening unmatched subcell DCDC_MUX_NMOS in circuit DCDC_MUX (1)(1 instance)
+
+Class DCDC_MUX (0):  Merged 20 parallel devices.
+Class DCDC_MUX (1):  Merged 2 parallel devices.
+Subcircuit summary:
+Circuit 1: DCDC_MUX                        |Circuit 2: DCDC_MUX
+-------------------------------------------|-------------------------------------------
+sky130_fd_pr__pfet_01v8 (16->5)            |sky130_fd_pr__pfet_01v8 (16->5)
+sky130_fd_pr__nfet_01v8 (14->5)            |sky130_fd_pr__nfet_01v8 (14->5)
+Number of devices: 10                      |Number of devices: 10
+Number of nets: 9                          |Number of nets: 9
+---------------------------------------------------------------------------------------
+Circuits match uniquely.
+Netlists match uniquely.
+
+Subcircuit pins:
+Circuit 1: DCDC_MUX                        |Circuit 2: DCDC_MUX
+-------------------------------------------|-------------------------------------------
+(no matching pin)                          |VGND
+(no matching pin)                          |VPWR
+(no matching pin)                          |SEL_H
+(no matching pin)                          |SEL_L
+(no matching pin)                          |VIN
+(no matching pin)                          |VOUT_H
+(no matching pin)                          |VOUT_L
+proxyVOUT_L                                |(no matching pin)
+---------------------------------------------------------------------------------------
+Cell pin lists for DCDC_MUX and DCDC_MUX altered to match.
+Cells failed matching, or top level cell failed pin matching.

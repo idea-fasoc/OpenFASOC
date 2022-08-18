@@ -1,0 +1,69 @@
+VERSION 5.7 ;
+  NOWIREEXTENSIONATPIN ON ;
+  DIVIDERCHAR "/" ;
+  BUSBITCHARS "[]" ;
+MACRO DCDC_INVERTER
+  CLASS BLOCK ;
+  FOREIGN DCDC_INVERTER ;
+  ORIGIN -0.190 -0.240 ;
+  SIZE 1.380 BY 2.720 ;
+  PIN Y
+    ANTENNADIFFAREA 0.429000 ;
+    PORT
+      LAYER li1 ;
+        RECT 0.910 1.725 1.240 2.705 ;
+        RECT 1.010 1.125 1.240 1.725 ;
+        RECT 0.910 0.495 1.240 1.125 ;
+    END
+  END Y
+  PIN A
+    ANTENNAGATEAREA 0.247500 ;
+    PORT
+      LAYER li1 ;
+        RECT 0.510 1.315 0.840 1.555 ;
+    END
+  END A
+  PIN VNB
+    PORT
+      LAYER pwell ;
+        RECT 0.400 0.345 1.330 1.255 ;
+        RECT 0.400 0.325 0.505 0.345 ;
+        RECT 0.335 0.155 0.505 0.325 ;
+    END
+  END VNB
+  PIN VPB
+    PORT
+      LAYER nwell ;
+        RECT 0.000 1.545 1.760 3.150 ;
+    END
+  END VPB
+  PIN VGND
+    USE GROUND ;
+    PORT
+      LAYER li1 ;
+        RECT 0.510 0.325 0.740 1.145 ;
+        RECT 0.190 0.155 1.570 0.325 ;
+      LAYER mcon ;
+        RECT 0.335 0.155 0.505 0.325 ;
+        RECT 0.795 0.155 0.965 0.325 ;
+        RECT 1.255 0.155 1.425 0.325 ;
+      LAYER met1 ;
+        RECT 0.190 0.000 1.570 0.480 ;
+    END
+  END VGND
+  PIN VPWR
+    USE POWER ;
+    PORT
+      LAYER li1 ;
+        RECT 0.190 2.875 1.570 3.045 ;
+        RECT 0.530 1.735 0.740 2.875 ;
+      LAYER mcon ;
+        RECT 0.335 2.875 0.505 3.045 ;
+        RECT 0.795 2.875 0.965 3.045 ;
+        RECT 1.255 2.875 1.425 3.045 ;
+      LAYER met1 ;
+        RECT 0.190 2.720 1.570 3.200 ;
+    END
+  END VPWR
+END DCDC_INVERTER
+END LIBRARY

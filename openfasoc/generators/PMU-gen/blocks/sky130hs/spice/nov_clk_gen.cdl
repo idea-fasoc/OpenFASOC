@@ -1,0 +1,108 @@
+
+*-----------------------------------------------------------------------------------------------------
+*NON-OVERLAPPING CLOCK GENERATOR CELL
+*-----------------------------------------------------------------------------------------------------
+*inverter
+.subckt NON_CLK_INV VPWR VGND VIN VOUT number=1
+x1  VOUT VIN VPWR VPWR sky130_fd_pr__pfet_01v8 w=0.84 l=0.15 m={number}
+x2  VOUT VIN VGND VGND sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 m={number}
+.ends NON_CLK_INV
+
+*buffer
+.subckt NON_CLK_BUFFER VPWR VGND VIN VOUT number=1
+x1  VOUT0 VIN VPWR VPWR sky130_fd_pr__pfet_01v8 w=2.52 l=0.15 m={number}
+x2  VOUT0 VIN VGND VGND sky130_fd_pr__nfet_01v8 w=1.26 l=0.15 m={number}
+x3  VOUT VOUT0 VPWR VPWR sky130_fd_pr__pfet_01v8 w=1.68 l=0.15 m={number}
+x4  VOUT VOUT0 VGND VGND sky130_fd_pr__nfet_01v8 w=0.84 l=0.15 m={number}
+.ends NON_CLK_BUFFER
+
+*buffer_amp two stage chain to amplify the drive ability
+.subckt NON_CLK_BUF_AMP VPWR VGND VIN VOUT number=1
+x1  VOUT0 VIN VPWR VPWR sky130_fd_pr__pfet_01v8 w=0.84 l=0.15 m={number*4}
+x2  VOUT0 VIN VGND VGND sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 m={number*4}
+x3  VOUT VOUT0 VPWR VPWR sky130_fd_pr__pfet_01v8 w=0.84 l=0.15 m={number*8}
+x4  VOUT VOUT0 VGND VGND sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 m={number*8}
+.ends NON_CLK_BUF_AMP
+
+*and2
+.subckt NON_CLK_AND VPWR VGND A B VOUT number=1
+x1  NODE0 A VPWR VPWR sky130_fd_pr__pfet_01v8 w=1.68 l=0.15 m={number}
+x2  NODE0 B VPWR VPWR sky130_fd_pr__pfet_01v8 w=1.68 l=0.15 m={number}
+x3  NODE0 A NODE1 VGND sky130_fd_pr__nfet_01v8 w=1.68 l=0.15 m={number}
+x4  NODE1 B VGND VGND sky130_fd_pr__nfet_01v8 w=1.68 l=0.15 m={number}
+x5 VPWR VGND NODE0 VOUT NON_CLK_INV number={number}
+.ends NON_CLK_AND
+
+*or2
+.subckt NON_CLK_OR VPWR VGND A B VOUT number=1
+x1  NODE0 B VPWR VPWR sky130_fd_pr__pfet_01v8 w=3.36 l=0.15 m={number} $d g s b
+x2  NODE1 A NODE0 VPWR sky130_fd_pr__pfet_01v8 w=3.36 l=0.15 m={number}
+x3  NODE1 A VGND VGND sky130_fd_pr__nfet_01v8 w=0.84 l=0.15 m={number}
+x4  NODE1 B VGND VGND sky130_fd_pr__nfet_01v8 w=0.84 l=0.15 m={number}
+x5 VPWR VGND NODE1 VOUT NON_CLK_INV number={number}
+.ends NON_CLK_OR
+
+*DCDE ----use C to adjust the delay (more power, more delay)
+.subckt DCDE VPWR VGND VIN A[3] A[2] A[1] A[0] VOUT number=1
+.param w_inv_n = 0.48 w_inv_p = {w_inv_n * 2} $1.68, 0.84, 0.42
+.param w_tg_n = 0.6 w_tg_p = {w_tg_n * 2}
+.param w_c = 1 l_c = 1
+x1 NODE1 VIN VPWR VPWR sky130_fd_pr__pfet_01v8 w=w_inv_p l=0.15 m={number}
+x2 NODE1 VIN VGND VGND sky130_fd_pr__nfet_01v8 w=w_inv_n l=0.15 m={number}
+x3 COUT1 a[0] NODE1 VGND sky130_fd_pr__nfet_01v8 w=w_tg_n l=0.15 m={number}
+x4 COUT1 a_[0] NODE1 VPWR sky130_fd_pr__pfet_01v8 w=w_tg_p l=0.15 m={number}
+x5 COUT1 VGND sky130_fd_pr__cap_mim_m3_1 w=w_c l=l_c m={number}
+x6 COUT_1 a[1] NODE1 VGND sky130_fd_pr__nfet_01v8 w=w_tg_n l=0.15 m={number}
+x7 COUT_1 a_[1] NODE1 VPWR sky130_fd_pr__pfet_01v8 w=w_tg_p l=0.15 m={number}
+x8 COUT_1 VGND sky130_fd_pr__cap_mim_m3_1 w=w_c*2 l=l_c m={number}
+
+x9 NODE2 NODE1 VPWR VPWR sky130_fd_pr__pfet_01v8 w=w_inv_p l=0.15 m={number}
+x10 NODE2 NODE1 VGND VGND sky130_fd_pr__nfet_01v8 w=w_inv_n l=0.15 m={number}
+x11 COUT2 a[2] NODE2 VGND sky130_fd_pr__nfet_01v8 w=w_tg_n l=0.15 m={number*2}
+x12 COUT2 a_[2] NODE2 VPWR sky130_fd_pr__pfet_01v8 w=w_tg_p l=0.15 m={number*2}
+x13 COUT2 VGND sky130_fd_pr__cap_mim_m3_1 w=w_c*5 l=l_c m={number}
+
+x14 NODE3 NODE2 VPWR VPWR sky130_fd_pr__pfet_01v8 w=w_inv_p l=0.15 m={number}
+x15 NODE3 NODE2 VGND VGND sky130_fd_pr__nfet_01v8 w=w_inv_n l=0.15 m={number}
+x16 COUT3 a[3] NODE3 VGND sky130_fd_pr__nfet_01v8 w=w_tg_n l=0.15 m={number*5}
+x17 COUT3 a_[3] NODE3 VPWR sky130_fd_pr__pfet_01v8 w=w_tg_p l=0.15 m={number*5}
+x18 COUT3 VGND sky130_fd_pr__cap_mim_m3_1 w=w_c*15 l=l_c m={number}
+
+x26 VOUT NODE3 VPWR VPWR sky130_fd_pr__pfet_01v8 w=w_inv_p l=0.15 m={number}
+x27 VOUT NODE3 VGND VGND sky130_fd_pr__nfet_01v8 w=w_inv_n l=0.15 m={number}
+
+x34 VPWR VGND A[3] a[3] NON_CLK_BUFFER number={number}
+x35 VPWR VGND A[3] a_[3] NON_CLK_INV number={number}
+x36 VPWR VGND A[2] a[2] NON_CLK_BUFFER number={number}
+x37 VPWR VGND A[2] a_[2] NON_CLK_INV number={number}
+x38 VPWR VGND A[1] a[1] NON_CLK_BUFFER number={number}
+x39 VPWR VGND A[1] a_[1] NON_CLK_INV number={number}
+x40 VPWR VGND A[0] a[0] NON_CLK_BUFFER number={number}
+x41 VPWR VGND A[0] a_[0] NON_CLK_INV number={number}
+.ends DCDE
+
+*NON_CLK_GEN should set the number as '1' (if want to duoble the circuit, just set number=2 or more)------------------------------
+
+.subckt NON_CLK_GEN VPWR VGND CLK_IN A[3] A[2] A[1] A[0] CLK0 CLK0_B CLK1 CLK1_B number=1
+x1 VPWR VGND CLK_IN NODE0 NON_CLK_BUFFER number={number}
+x2 VPWR VGND NODE0 A[3] A[2] A[1] A[0] NODE1 DCDE number={number}
+
+*CLK0
+x3 VPWR VGND NODE0 NODE1 NODE2 NON_CLK_AND number={number}
+x4 VPWR VGND NODE2 lCLK0 NON_CLK_BUFFER number={number}
+x5 VPWR VGND NODE2 lCLK0_B NON_CLK_INV number={number}
+
+*buffer chain
+x6 VPWR VGND lCLK0 CLK0 NON_CLK_BUF_AMP number={number}
+x7 VPWR VGND lCLK0_B CLK0_B NON_CLK_BUF_AMP number={number}
+
+*CLK1
+x8 VPWR VGND NODE0 NODE1 NODE3 NON_CLK_OR number={number}
+x9 VPWR VGND NODE3 lCLK1_B NON_CLK_BUFFER number={number}
+x10 VPWR VGND NODE3 lCLK1 NON_CLK_INV number={number}
+
+*buffer chain
+x11 VPWR VGND lCLK1_B CLK1_B NON_CLK_BUF_AMP number={number}
+x12 VPWR VGND lCLK1 CLK1 NON_CLK_BUF_AMP number={number}
+
+.ends NON_CLK_GEN

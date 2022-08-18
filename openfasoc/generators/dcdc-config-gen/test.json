@@ -1,0 +1,8 @@
+{
+    "module_name": "dcdc_config",
+    "generator": "dcdc-config-gen",
+    "specifications": {
+		"Clock frequency (kHz)": 50000
+	}
+	}
+}

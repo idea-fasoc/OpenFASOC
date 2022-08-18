@@ -1,3 +1,0 @@
-.subcircuit ind_top outp outn VDD
-XL1 outp outn VDD sky130_fd_pr__ind_05_220
-.ends 

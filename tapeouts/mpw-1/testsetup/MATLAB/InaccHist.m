@@ -23,7 +23,7 @@ indlist_B_arr = zeros(2, Nc_B, 64);
 for design = 1:64
     freq_arr = freq_data_array(:, :, design);
     [params, inacc, params_sec, inacc_sec, Nc_A, indlist_A, inacc_B, indlist_B] = ...
-        EvalDesignGivenRange(freq_arr, tlist, tstart_ind, twin_len, pcalib, inacc_th, Nc_B, order_sec);    
+        EvalDesignGivenRange(freq_arr, tlist, tstart_ind, twin_len, pcalib, inacc_th, Nc_B, order_sec);
     params_arr(:, :, design) = params;
     inacc_arr(:, :, design) = inacc;
     params_sec_arr(:, design) = params_sec;
@@ -36,8 +36,8 @@ end
 
 % Find the best designs in each group
 inacc_hist_design = zeros(2, 16);
-inacc_hist_minmax = zeros(2, 16); 
-inacc_hist_minmax_sec = zeros(2, 16); 
+inacc_hist_minmax = zeros(2, 16);
+inacc_hist_minmax_sec = zeros(2, 16);
 inacc_hist_sigma  = zeros(2, 16);
 inacc_hist_sigma_sec  = zeros(2, 16);
 
@@ -47,7 +47,7 @@ for i = 1:16
         EvalDesignInacc((4*i-3):4*i, inacc_arr, inacc_arr_sec, inacc_B_arr, indlist_B_arr, tstart_ind, twin_len);
     inacc_hist_design(1, i) = design;
     inacc_hist_minmax(1, i) = pos_inacc(1); inacc_hist_minmax(2, i) = neg_inacc(1);
-    inacc_hist_minmax_sec(1, i) = pos_inacc(2); inacc_hist_minmax_sec(2, i) = neg_inacc(2);    
+    inacc_hist_minmax_sec(1, i) = pos_inacc(2); inacc_hist_minmax_sec(2, i) = neg_inacc(2);
     inacc_hist_sigma(1, i) = pos_sigma_inacc(1); inacc_hist_sigma(2, i) = neg_sigma_inacc(1);
     inacc_hist_sigma_sec(1, i) = pos_sigma_inacc(2); inacc_hist_sigma_sec(2, i) = neg_sigma_inacc(2);
     % If max pre-SEC inacc is too large, treat it as not working across multiple chips

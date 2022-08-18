@@ -1,0 +1,48 @@
+.options nonlin contiuation=gmin
+*.options timeint method=trap
+.options device temp=25
+.options parser model_binning=true
+
+.param mc_mm_switch=0
+.param mc_pr_switch=0
+*.lib "/home/chenliyu/OpenLane/pdks/sky130A/libs.tech/ngspice/sky130.lib.spice" tt
+*.lib "/home/chenliyu/OpenLane/pdks/sky130A/libs.ref/sky130_fd_pr/spice/sky130_fd_pr__ind_03_90.model.spice" tt
+*.lib "/n/ludington/y/chenliyu/skywater-pdk/libraries/sky130_fd_pr_ngspice/latest/cells/ind_03/sky130_fd_pr__ind_03_90.model.spice"
+*.include "/n/ludington/y/chenliyu/skywater-pdk/libraries/sky130_fd_pr_ngspice/latest/models/r+c/res_typical__cap_typical__lin.spice"
+*.include "/n/ludington/y/chenliyu/skywater-pdk/libraries/sky130_fd_pr_ngspice/latest/models/r+c/res_typical__cap_typical.spice"
+*.include "/n/ludington/y/chenliyu/skywater-pdk/libraries/sky130_fd_pr_ngspice/latest/models/corners/tt.spice"
+
+.param kw = 1
+.param pvdd = 1.8
+
+*vdd  supply 0 dc 'pvdd'
+
+.subckt  sky130_fd_pr__ind_03_90 a b ct sub
+R31 net27 b r='1e-2'
+R26 a net23 r='1e-2'
+C24 net35 net27 c='8.337e-15'
+C25 net23 net37 c='53.8e-15'
+C0 net27 net31 c='53.8e-15'
+R1 sub net31 r='21.56'
+R13 net23 net35 r='50.11'
+R10 sub net37 r='21.56'
+R0 net41 net27 r='1.019'
+R9 net23 net39 r='1.019'
+    L0 ct net41 l=760.5e-12
+    L1 net39 ct l=760.5e-12
+.ends sky130_fd_pr__ind_03_90
+
+P1 a 0 port=1
+XL1 a 0 0 0 sky130_fd_pr__ind_03_90
+
+.ac dec 10 100 100000Meg
+*.ac dec 10 1 10
+*.ac dec 1 1000G 10000000000000000000000G
+*.ac dec 10 1e22 1e24
+
+
+.LIN FORMAT=TOUCHSTONE sparcalc=1
+
+.print AC ZR(1,1) ZI(1,1)
+
+.end

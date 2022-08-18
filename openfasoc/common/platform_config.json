@@ -1,0 +1,13 @@
+{
+  "simTool": "ngspice",
+  "simMode": "partial",
+  "open_pdks_GCP": "/shared/OpenLane/pdks/sky130A",
+  "open_pdks_GHA": "/home/runner/work/sky130A",
+  "open_pdks": "../open_pdks/pdks/sky130A",
+  "platforms": {
+    "sky130hd": {
+      "nominal_voltage": 1.8,
+      "model_corner": "tt"
+    }
+  }
+}

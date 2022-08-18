@@ -26,7 +26,7 @@ indlist_B_arr = zeros(2, Nc_B, 64);
 for design = 1:64
     freq_arr = freq_data_array(:, :, design);
     [params, inacc, params_sec, inacc_sec, Nc_A, indlist_A, inacc_B, indlist_B] = ...
-        EvalDesignGivenRange(freq_arr, tlist, tstart_ind, twin_len, pcalib, inacc_th, Nc_B, order_sec);    
+        EvalDesignGivenRange(freq_arr, tlist, tstart_ind, twin_len, pcalib, inacc_th, Nc_B, order_sec);
     params_arr(:, :, design) = params;
     inacc_arr(:, :, design) = inacc;
     params_sec_arr(:, design) = params_sec;
@@ -74,7 +74,7 @@ hdrB_hd_scatter_data = [];
 err_th = 5.0; order_min = 1;
 for d = 1:32
     % Only plot designs with a reasonable inaccuracy
-    if (inacc_B_arr(1, d) < err_th) 
+    if (inacc_B_arr(1, d) < err_th)
         [~, sorted_ind] = sort(FoM2_B_arr(1, :, d));
         for i = order_min:Nc_B
             if (FoM2_B_arr(1, sorted_ind(i), d) > 0) && (T_res2_B_arr(1, sorted_ind(i), d) > 0.01)
@@ -88,9 +88,9 @@ for d = 1:32
         rInacc_wSEC = 100 * (pos_sigma_inacc(2) - neg_sigma_inacc(2)) / (twin_len * 10);
         data = [d; power_mean; rInacc_woSEC; rInacc_wSEC];
         if (d <= 16) % hdrA_hs
-            hdrA_hs_scatter_data = [hdrA_hs_scatter_data, data];                
+            hdrA_hs_scatter_data = [hdrA_hs_scatter_data, data];
         else % hdrA_hd
-            hdrA_hd_scatter_data = [hdrA_hd_scatter_data, data];        
+            hdrA_hd_scatter_data = [hdrA_hd_scatter_data, data];
         end
     end
 end
@@ -98,7 +98,7 @@ end
 err_th = 5.0; order_min = 1;
 for d = 33:64
     % Only plot designs with a reasonable inaccuracy
-    if (inacc_B_arr(1, d) < err_th) 
+    if (inacc_B_arr(1, d) < err_th)
         [~, sorted_ind] = sort(FoM2_B_arr(1, :, d));
         for i = order_min:Nc_B
             if (FoM2_B_arr(1, sorted_ind(i), d) > 0) && (T_res2_B_arr(1, sorted_ind(i), d) > 0.01)
@@ -112,9 +112,9 @@ for d = 33:64
         rInacc_wSEC = 100 * (pos_sigma_inacc(2) - neg_sigma_inacc(2)) / (twin_len * 10);
         data = [d; power_mean; rInacc_woSEC; rInacc_wSEC];
         if (d <= 48) % hdrB_hs
-            hdrB_hs_scatter_data = [hdrB_hs_scatter_data, data];                
+            hdrB_hs_scatter_data = [hdrB_hs_scatter_data, data];
         else % hdrB_hd
-            hdrB_hd_scatter_data = [hdrB_hd_scatter_data, data];        
+            hdrB_hd_scatter_data = [hdrB_hd_scatter_data, data];
         end
     end
 end
@@ -137,7 +137,7 @@ ylabel('Relative Inaccuracy (%)', 'FontSize', 18);
     % Legend
 leg = legend([s1, s2, s3, s4], ...
             "Header A and 'hs' cells", "Header A and 'hd' cells", ...
-            "Header B and 'hs' cells", "Header B and 'hd' cells", ... 
+            "Header B and 'hs' cells", "Header B and 'hd' cells", ...
             'FontSize', 18, 'Location', 'SouthEast');
 leg.ItemTokenSize = [24, 24];
     % Set Figure Size
@@ -164,7 +164,7 @@ saveas(hdl, './Figures/PowerInaccScatter1.emf');
 %     % Legend
 % leg = legend([s1, s2, s3, s4], ...
 %             "Header A and 'hs' cells", "Header A and 'hd' cells", ...
-%             "Header B and 'hs' cells", "Header B and 'hd' cells", ... 
+%             "Header B and 'hs' cells", "Header B and 'hd' cells", ...
 %             'FontSize', 16);
 % leg.ItemTokenSize = [24, 24];
 %     % Set Figure Size
