@@ -3,3 +3,7 @@ work/
 *.log
 core.*
 *.swp
+
+error_within_x.csv
+golden_error_opt.csv
+search_result.csv
