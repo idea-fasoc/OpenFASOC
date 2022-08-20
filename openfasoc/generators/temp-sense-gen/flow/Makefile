@@ -51,21 +51,14 @@ include $(DESIGN_CONFIG)
 
 PUBLIC=nangate45 sky130hd sky130hs asap7
 
-# ifneq ($(wildcard $(PLATFORM_HOME)/$(PLATFORM)),)
-#   export PLATFORM_DIR = $(PLATFORM_HOME)/$(PLATFORM)
-# else ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
-#   export PLATFORM_DIR = ./platforms/$(PLATFORM)
-# else ifneq ($(wildcard ../../$(PLATFORM)),)
-#   export PLATFORM_DIR = ../../$(PLATFORM)
-# else
-#   $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found.)
-# endif
-
-# Get directly the version of sky130hd used in the temp-sense-gen (1aa3fd3)
-ifneq ($(wildcard $(PLATFORM_HOME)/$(PLATFORM)/1aa3fd3),)
-  export PLATFORM_DIR = $(PLATFORM_HOME)/$(PLATFORM)/1aa3fd3
+ifneq ($(wildcard $(PLATFORM_HOME)/$(PLATFORM)),)
+  export PLATFORM_DIR = $(PLATFORM_HOME)/$(PLATFORM)
+else ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
+  export PLATFORM_DIR = ./platforms/$(PLATFORM)
+else ifneq ($(wildcard ../../$(PLATFORM)),)
+  export PLATFORM_DIR = ../../$(PLATFORM)
 else
-  $(error [ERROR][FLOW] Platform directory sky130hd/1aa3fd3/ not found.)
+  $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found.)
 endif
 
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
