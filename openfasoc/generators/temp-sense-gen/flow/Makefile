@@ -173,7 +173,8 @@ endif
 #       2 user explicit set with variable in Makefile or command line
 OPENROAD_EXE            ?= $(shell command -v openroad)
 ifeq ($(OPENROAD_EXE),)
-  OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+#   OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+  $(error OpenROAD not found in PATH)
 endif
 OPENROAD_ARGS            = -no_init $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
@@ -182,7 +183,8 @@ OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
 
 YOSYS_CMD               ?= $(shell command -v yosys)
 ifeq ($(YOSYS_CMD),)
-  YOSYS_CMD              = $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
+#  YOSYS_CMD              = $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
+  $(error Yosys not found in PATH)
 endif
 
 KLAYOUT_CMD             ?= $(shell command -v klayout)
@@ -644,10 +646,19 @@ endif
 export COMMON_VERIF_DIR = $(COMMON_HOME)/drc-lvs-check
 
 magic_drc: $(RESULTS_DIR)/6_final.gds
+ifeq ($(shell command -v magic),)
+	$(error Magic not found in PATH)
+endif
 	$(COMMON_VERIF_DIR)/run_drc.sh
 	# magic -rcfile $(COMMON_VERIF_DIR)/sky130A/sky130A.magicrc -noconsole -dnull $(COMMON_VERIF_DIR)/magic_commands.tcl < /dev/null
 
 netgen_lvs: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.cdl
+ifeq ($(shell command -v netgen),)
+	$(error Netgen not found in PATH)
+endif
+ifeq ($(shell command -v magic),)
+	$(error Magic not found in PATH)
+endif
 	mkdir -p $(OBJECTS_DIR)/netgen_lvs/spice $(OBJECTS_DIR)/netgen_lvs/ext
 	python $(UTILS_DIR)/openfasoc/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(PLATFORM_DIR)/cdl/sky130_fd_sc_hd.spice -o $(OBJECTS_DIR)/netgen_lvs/spice/$(DESIGN_NAME).spice
 	$(COMMON_VERIF_DIR)/run_lvspex.sh $(RESULTS_DIR)/6_final.gds $(DESIGN_NAME) $(REPORTS_DIR)/6_final_lvs.rpt
