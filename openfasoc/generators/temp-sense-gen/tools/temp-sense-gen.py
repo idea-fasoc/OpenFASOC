@@ -17,6 +17,7 @@ designDir = genDir + "designs/src/tempsense/"
 simDir = genDir + "simulations/"
 commonDir = genDir + "../../common/"
 platformDir = genDir + "../../common/platforms/" + args.platform + "/"
+objDir = flowDir + "objects/" + args.platform + "/tempsense/"
 
 # ------------------------------------------------------------------------------
 # Clean the workspace
@@ -230,11 +231,11 @@ shutil.copyfile(
     genDir + args.outputDir + "/" + designName + ".sdc",
 )
 shutil.copyfile(
-    flowDir + designName + ".spice",
+    objDir + "netgen_lvs/spice/" + designName + ".spice",
     genDir + args.outputDir + "/" + designName + ".spice",
 )
 shutil.copyfile(
-    flowDir + designName + "_pex.spice",
+    objDir + "netgen_lvs/spice/" + designName + "_pex.spice",
     genDir + args.outputDir + "/" + designName + "_pex.spice",
 )
 shutil.copyfile(

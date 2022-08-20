@@ -27,9 +27,9 @@ SHELL          = /bin/bash
 # Setup variables to point to root / head of the OpenROAD directory
 # - the following settings allowed user to point OpenROAD binaries to different
 #   location
-# - default follows OpenFASOC's directory structure
-export FLOW_HOME ?= .
-export COMMON_HOME ?= ../../../common
+# - default follows OpenFASOC's directory structure, with absolute path to flow/
+export FLOW_HOME ?= $(shell pwd)
+export COMMON_HOME ?= $(FLOW_HOME)/../../../common
 
 #-------------------------------------------------------------------------------
 # Setup variables to point to other location for the following sub directory
@@ -39,7 +39,7 @@ export COMMON_HOME ?= ../../../common
 # - utils, scripts, test - default is under current directory
 export DESIGN_HOME   ?= $(FLOW_HOME)/design
 export PLATFORM_HOME ?= $(COMMON_HOME)/platforms
-export WORK_HOME     ?= .
+export WORK_HOME     ?= $(shell pwd)
 
 export UTILS_DIR     ?= $(FLOW_HOME)/util
 export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
@@ -648,7 +648,8 @@ magic_drc: $(RESULTS_DIR)/6_final.gds
 	# magic -rcfile $(COMMON_VERIF_DIR)/sky130A/sky130A.magicrc -noconsole -dnull $(COMMON_VERIF_DIR)/magic_commands.tcl < /dev/null
 
 netgen_lvs: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.cdl
-	python $(UTILS_DIR)/openfasoc/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(PLATFORM_DIR)/cdl/sky130_fd_sc_hd.spice -o $(DESIGN_NAME).spice
+	mkdir -p $(OBJECTS_DIR)/netgen_lvs/spice $(OBJECTS_DIR)/netgen_lvs/ext
+	python $(UTILS_DIR)/openfasoc/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(PLATFORM_DIR)/cdl/sky130_fd_sc_hd.spice -o $(OBJECTS_DIR)/netgen_lvs/spice/$(DESIGN_NAME).spice
 	$(COMMON_VERIF_DIR)/run_lvspex.sh $(RESULTS_DIR)/6_final.gds $(DESIGN_NAME) $(REPORTS_DIR)/6_final_lvs.rpt
 
 clean_finish:
