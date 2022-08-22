@@ -78,4 +78,3 @@ if { [info exist ::env(REPORTS_DIR)] && [file isfile $::env(REPORTS_DIR)/synth_h
   }
   close $out_script_ptr
 }
-
