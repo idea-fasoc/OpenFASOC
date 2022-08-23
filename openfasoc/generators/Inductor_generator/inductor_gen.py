@@ -3,8 +3,9 @@ import os, sys
 import gdsfactory as gf
 import sky130
 import argparse
-
+import pdb
 import yaml
+from sky130.layers import LAYER, LAYER_COLORS, LAYER_STACK
 from sky130 import cells as sky130_cells
 from sky130 import tech as sky130_tech
 
@@ -88,7 +89,7 @@ output_file = 'inductor_cell.gds'
 
 # load the sky130 pcells
 Sky130()
-print("## Skywaters 130nm PDK Pcells loaded.")
+print("## Skywaters 131nm PDK Pcells loaded.")
 # Inductor
 # ------------
 
@@ -117,8 +118,8 @@ printPcellParams(layout, 'diff_octagon_inductor', 'SKY130')
 createPCellInstance(layout=layout, pcell_name='diff_octagon_inductor', lib_name='SKY130', params=inductor_params, x=0,
                     y=0)
 
-#createPCellInstance(layout=layout, pcell_name='diff_square_inductor', lib_name='SKY130', params=inductor_params, x=300,
-#                    y=0)
+createPCellInstance(layout=layout, pcell_name='diff_square_inductor', lib_name='SKY130', params=inductor_params, x=300,
+                    y=0)
 
 params_via = {
     "starting_metal": 3,
@@ -128,7 +129,7 @@ params_via = {
 }
 
 layout.write(output_file)
-exit()
+
 # VIA DROP USING MABRAIN PCELL if Needed
 # p_n_spacing = 8
 # for i in range(5):
@@ -139,7 +140,16 @@ exit()
 # Write Output of Inductor to gds to be read back in to connect the design in gdsfactory
 # --------------------------------------------------------------------------------------------
 # Read GDS Input
-inductor_in = gf.import_gds(output_file, cellname="diff_octagon_inductor")
+add_ports_m5 = gf.partial(
+    gf.add_ports.add_ports_from_labels,
+    port_layer=LAYER.met5drawing,
+    layer_label=LAYER.met5label,
+    port_type="electrical",
+    port_width=0.2,
+    get_name_from_label=True,
+    guess_port_orientation=True,
+)
+inductor_in = gf.import_gds(output_file, cellname="diff_square_inductor", decorator=add_ports_m5)
 # Create Top level Component
 pad = gf.Component("Octagon Ind with GSGSG Pads")
 pad1 = gf.components.pad(size=(100, 100), layer="met5drawing")
@@ -149,21 +159,25 @@ pt = pad << gf.components.pad_array(orientation=270, columns=5, spacing=(120.0, 
 lc = pad << inductor_in
 # Move Inductor
 lc_xoffset = 240
-lc.move([(0 + lc_xoffset), 200])
+lc.move([(0 + lc_xoffset), 100])
 # TODO Need to Figure out the placement of Ports for the ind cells
 lc_out = inductor_in.add_port(name='P', width=100, layer="met5label", orientation=0,
                               center=(240, 200), port_type="electrical")
-
-
+#print(inductor_in.ports)
+#pdb.set_trace()
 #print("Ind y min", lc.x, lc.y)
 
 # Routing of Pad to Inductor (once the port has been figured out)
-steps = [{"y": 150},]
-route = gf.routing.get_route_electrical(
-    inductor_in.ports["P"], pt.ports["e11"], layer='met5drawing'
+routep = gf.routing.get_route_electrical(
+    lc.ports["Outp"], pt.ports["e12"], layer='met5drawing'
 )
+routen = gf.routing.get_route_electrical(
+    lc.ports["Outn"], pt.ports["e14"], layer='met5drawing',
+)
+# Routing diff pair
+for i in [routep, routen]:
+    pad.add(i.references)
 # Routing using gdsfactory
-pad.add(route.references)
 # Output gds name
 gf_gds_out = "output_pad.gds"
 pad.write_gds(gf_gds_out)
