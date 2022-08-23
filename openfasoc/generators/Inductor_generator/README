@@ -1,0 +1,11 @@
+Added a basic python inductor generator
+
+Dependencies
+1. skywater130 from gdsfactory (https://github.com/gdsfactory/skywater130)
+2. Mabrains library sky130_klayout_pdk/ including the pycells for Inductors (https://github.com/mabrains/sky130_klayout_pdk.git)
+3. Figure out where these repos will reside so that these can be added to pythonpath ATTN: SAI
+4. Workflow
+	a. Write inductor gds using mabrains pcells 
+	b. Read inductor gds back using gdsfactory
+	c. Add pad cages to the gds
+	d. Add routing between pad and inductor (WIP)
