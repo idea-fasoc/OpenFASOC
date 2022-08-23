@@ -18,6 +18,23 @@ if {![info exists standalone] || $standalone} {
 } else {
   puts "Starting detailed placement"
 }
+
+# Note: Ali B Hammoud 8/11/22
+# template procedure which will place cells in the large voltage domain off east
+# with name "cell_name" semi-stacked starting from row "row_num" (0 indexed)
+# No error checking is used, so you must ensure the target row and block object are correct
+proc customPlace_east {block_object cell_name row_num} {
+	set target_row [lindex [$block_object getRows] $row_num]
+	set y_initial [expr {[lindex [$target_row getOrigin] 1] / 1000.0}]
+	set row_ydim [expr {[[$target_row getSite] getHeight] / 1000.0}]
+	foreach inst [$block_object getInsts] {
+		if {[[$inst getMaster] getName] == $cell_name} {
+			place_cell -cell $cell_name -inst_name [$inst getName] -origin [list 82.8 $y_initial] -orient R0 -status PLACED
+			set y_initial [expr {$y_initial + $row_ydim}]
+		}
+	}
+}
+
 set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hd__decap_4
 
 set_placement_padding -global \
@@ -29,13 +46,15 @@ set tech [$db getTech]
 set libs [$db getLibs]
 set block [[$db getChip] getBlock]
 
+customPlace_east $block "HEADER" 10
+
 set has_domain 0
 foreach region [$block getRegions] {
   set domain $region
   set domain_name [$region getName]
   set has_domain 1
 }
-
+# delete rows from the smaller voltage domain
 set domain_rows []
 if {$has_domain == 1} {
   foreach row [$block getRows] {
@@ -56,8 +75,10 @@ set row_site [$row getSite]
 set site_width [$row_site getWidth]
 set row_height [$row_site getHeight]
 
+# run detailed placement
 detailed_placement
 
+#recreate the small voltage domain
 foreach row $domain_rows {
   odb::dbRow_create $block [lindex $row 0] \
                            [lindex $row 1] \
@@ -97,7 +118,7 @@ if {$has_domain == 1} {
       odb::dbRow_destroy $row
     }
   }
-
+#rerun detailed place
   detailed_placement
 
   foreach row $core_rows {

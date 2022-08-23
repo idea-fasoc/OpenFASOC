@@ -12,12 +12,14 @@ else:
 # LVS Bypassed
 
 lvs_filename = "flow/reports/sky130hd/tempsense/6_final_lvs.rpt"
-lvs_line = subprocess.check_output(['tail', '-1', lvs_filename]).decode(sys.stdout.encoding)
+lvs_line = subprocess.check_output(["tail", "-1", lvs_filename]).decode(
+    sys.stdout.encoding
+)
 
 regex = r"Netlists do not match"
 match = re.search(regex, lvs_line)
 
 if match != None:
-	raise ValueError("LVS failed!")
+    raise ValueError("LVS failed!")
 else:
-	print("LVS is clean!")
+    print("LVS is clean!")
