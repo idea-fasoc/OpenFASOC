@@ -180,8 +180,6 @@ print("#----------------------------------------------------------------------")
 print("# Place and Route finished")
 print("#----------------------------------------------------------------------")
 
-time.sleep(2)
-
 p = sp.Popen(["make", "magic_drc"], cwd=flowDir)
 p.wait()
 if p.returncode:
@@ -191,8 +189,6 @@ if p.returncode:
 print("#----------------------------------------------------------------------")
 print("# DRC finished")
 print("#----------------------------------------------------------------------")
-
-time.sleep(2)
 
 p = sp.Popen(["make", "netgen_lvs"], cwd=flowDir)
 p.wait()
@@ -247,8 +243,6 @@ shutil.copyfile(
     genDir + args.outputDir + "/6_final_lvs.rpt",
 )
 
-
-time.sleep(2)
 
 print("#----------------------------------------------------------------------")
 print("# Macro Generated")
