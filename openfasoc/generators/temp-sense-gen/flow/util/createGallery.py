@@ -1,7 +1,6 @@
 # This is a KLoayout script to create a screenshot gallery
-import json
-
 import pya
+import json
 
 # Load technology file
 tech = pya.Technology()

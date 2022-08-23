@@ -4,11 +4,16 @@
 # -------------------------------------------------------------------------
 
 import argparse  # argument parsing
-import csv
 import json  # json parsing
-import os  # filesystem manipulation
 import sys
+import re
+import os  # filesystem manipulation
+
+import csv
+import datetime
+import uuid
 from collections import OrderedDict
+
 
 # Parse and validate arguments
 # ==============================================================================

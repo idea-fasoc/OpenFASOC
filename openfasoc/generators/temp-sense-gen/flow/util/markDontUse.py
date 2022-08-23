@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-import argparse  # argument parsing
 import re
+import sys
+import gzip
+import argparse  # argument parsing
 
 # Parse and validate arguments
 # ==============================================================================
@@ -18,8 +20,11 @@ patternList = args.patterns.replace("*", ".*").split()
 
 # Read input file
 print("Opening file for replace:", args.inputFile)
-f = open(args.inputFile)
-content = f.read()
+if args.inputFile.endswith(".gz") or args.inputFile.endswith(".GZ"):
+    f = gzip.open(args.inputFile, "rt", encoding="utf-8")
+else:
+    f = open(args.inputFile, encoding="utf-8")
+content = f.read().encode("ascii", "ignore").decode("ascii")
 f.close()
 
 # Pattern to match a cell header
@@ -37,6 +42,12 @@ pattern = r"(.*original_pin.*)"
 replace = r"/* \1 */;"
 content, count = re.subn(pattern, replace, content)
 print("Commented", count, 'lines containing "original_pin"')
+
+# Yosys, does not like properties that start with : !, without quotes
+pattern = r":\s+(!.*)\s+;"
+replace = r': "\1" ;'
+content, count = re.subn(pattern, replace, content)
+print("Replaced malformed functions", count)
 
 # Write output file
 print("Writing replaced file:", args.outputFile)
