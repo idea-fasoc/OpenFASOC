@@ -647,11 +647,9 @@ def main():
             if Optimization == "power":
                 # THIS IS THE MAIN FUNCTION for power optimization
                 print("*********Performing Power Optimization*********")
-                time.sleep(5)
                 return calculate_min_error_new(df, delta_1st_pass, number_rows)
             elif Optimization == "error":
                 print("*********Performing Error Optimization*********")
-                time.sleep(5)
                 # THIS IS THE MAIN FUNCTION for error optimization
                 return calculate_min_power_new(df, delta_1st_pass, number_rows)
 
