@@ -33,8 +33,7 @@ export BLACKBOX_V_FILE = ../../../common/platforms/$(PLATFORM)/sky130_fd_sc_hvl.
 # This can be found in the technology lef
 export PLACE_SITE = unithv
 
-export PLACE_DENSITY = 0.30
-#export PLACE_MAX_PHI_COEF = 1.00
+#export PLACE_DENSITY = 0.30
 
 
 export TECH_LEF = ../../../common/platforms/$(PLATFORM)/lef/sky130_fd_sc_hvl.tlef
@@ -65,10 +64,10 @@ export CTS_MAX_SLEW   = 1.5e-9
 export CTS_MAX_CAP    = .1532e-12
 export CTS_TECH_DIR   = ../../../common/platforms/$(PLATFORM)/tritonCTShd
 
-export MACRO_PLACE_HALO ?= 1 1
-export MACRO_PLACE_CHANNEL ?= 20 20
-#export MACRO_FENCE_REGION = 250 30 490 170
-export MACRO_PLACEMENT = ../blocks/$(PLATFORM)/manual_macro.tcl
+# Macro options
+#export MACRO_PLACE_HALO ?= 1 1
+#export MACRO_PLACE_CHANNEL ?= 20 20
+
 
 # FastRoute options
 export MIN_ROUTING_LAYER = met1
@@ -117,8 +116,8 @@ export IO_PLACER_H = met3
 export IO_PLACER_V = met2
 
 # keep with gf
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 1
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 0
+#export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 1
+#export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 0
 
 # Define fill cells
 export FILL_CELLS = sky130_fd_sc_hvl__fill_1 sky130_fd_sc_hvl__fill_2 sky130_fd_sc_hvl__fill_4 sky130_fd_sc_hvl__fill_8
