@@ -37,11 +37,11 @@ if {[info exists ::env(FOOTPRINT)]} {
   initialize_floorplan -die_area $::env(DIE_AREA) \
                        -core_area $::env(CORE_AREA) \
                        -site $::env(PLACE_SITE)
-                       
+
    if {[info exist ::env(DOMAIN_INSTS_LIST)]} {
     read_domain_instances LDO_VREG $::env(DOMAIN_INSTS_LIST)
   }
-           
+
 }
 
 if { [info exists ::env(MAKE_TRACKS)] } {

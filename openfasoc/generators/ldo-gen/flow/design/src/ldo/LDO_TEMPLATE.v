@@ -20,7 +20,7 @@ module ldoInst(
 
    reg             ctrl_in, mode;
    reg [ARRSZ-1:0] pt_ctrl_word;
-   
+
    wire 	   VREF;
 
    LDO_COMPARATOR_LATCH cmp1 (.CLK(clk),
@@ -35,7 +35,7 @@ module ldoInst(
                     .std_pt_in_cnt(std_pt_in_cnt),
                     .ctrl_word(pt_ctrl_word),
                     .ctrl_word_cnt(ctrl_out));
-    //[ARRSZ-1:0] 
+    //[ARRSZ-1:0]
    PT_UNIT_CELL pt_array_unit1 (.CTRL(pt_ctrl_word[0]));
    PT_UNIT_CELL pt_array_unit2 (.CTRL(pt_ctrl_word[1]));
    PT_UNIT_CELL pt_array_unit3 (.CTRL(pt_ctrl_word[2]));
@@ -86,7 +86,7 @@ module ldoInst(
    PT_UNIT_CELL pt_array_unit48 (.CTRL(pt_ctrl_word[47]));
    PT_UNIT_CELL pt_array_unit49 (.CTRL(pt_ctrl_word[48]));
    PT_UNIT_CELL pt_array_unit50 (.CTRL(pt_ctrl_word[49]));
-   
+
    vref_gen_nmos_with_trim vref_gen (.trim1(trim1),
                           .trim2(trim2),
                           .trim3(trim3),

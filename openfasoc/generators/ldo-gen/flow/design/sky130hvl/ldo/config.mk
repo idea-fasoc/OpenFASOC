@@ -16,7 +16,7 @@ export CORE_AREA   		= 15 15 265 315
 
 export VREG_AREA                = 55 40 230 170
 
-# PDN 
+# PDN
 export PDN_TCL 			= ../blocks/$(PLATFORM)/pdn.tcl
 
 #Placement options
