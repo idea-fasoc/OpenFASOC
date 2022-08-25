@@ -28,12 +28,10 @@ Mabrains Via Generator for Skywaters 130nm
 """
 
 
-
 class single_octagon_ind_Generator(pya.PCellDeclarationHelper):
     """
     Mabrains Via Generator for Skywaters 130nm
     """
-
 
     def __init__(self):
         ## Initialize super class.
@@ -44,12 +42,9 @@ class single_octagon_ind_Generator(pya.PCellDeclarationHelper):
         self.param("W", self.TypeDouble, "Width of the conductors", default=2)
         self.param("S", self.TypeDouble, "Spacing between conductors", default=4)
         self.param("Louter", self.TypeDouble, "outer dimension", default=40)
-        #self.param("distance_input", self.TypeDouble, "Input distance", default=40)
+        # self.param("distance_input", self.TypeDouble, "Input distance", default=40)
 
-
-
-
-        #self.param("via", self.TypeLayer, "via_layer", default = pya.LayerInfo(via_lay_num,via_lay_dt), hidden = True)
+        # self.param("via", self.TypeLayer, "via_layer", default = pya.LayerInfo(via_lay_num,via_lay_dt), hidden = True)
 
         # Below shows how to create hidden parameter is used to determine whether the radius has changed
         # or the "s" handle has been moved
@@ -58,7 +53,7 @@ class single_octagon_ind_Generator(pya.PCellDeclarationHelper):
 
     def display_text_impl(self):
         # Provide a descriptive text for the cell
-        return "( single_octagon" + str(self.N) + " width = "+str(self.W) +")"
+        return "( single_octagon" + str(self.N) + " width = " + str(self.W) + ")"
 
     def coerce_parameters_impl(self):
 
@@ -76,8 +71,8 @@ class single_octagon_ind_Generator(pya.PCellDeclarationHelper):
     def parameters_from_shape_impl(self):
         # Implement the "Create PCell from shape" protocol: we set r and l from the shape's
         # bounding box width and layer
-        #self.w = self.shape.bbox().width() * self.layout.dbu
-        #self.l = self.shape.bbox().length() * self.layout.dbu
+        # self.w = self.shape.bbox().width() * self.layout.dbu
+        # self.l = self.shape.bbox().length() * self.layout.dbu
         self.ls = self.layout.get_info(self.layer)
 
     def transformation_from_shape_impl(self):
@@ -109,10 +104,12 @@ class single_octagon_ind_Generator(pya.PCellDeclarationHelper):
         via4 = self.layout.layer(via4_lay_num, via4_lay_dt)
 
         N = self.N  # number of turns
-        W = self.W* PERCISION  # width of the conductors
+        W = self.W * PERCISION  # width of the conductors
         S = self.S * PERCISION  # spacing between the conductors
         Louter = self.Louter * PERCISION  # outer dimension
-        angle = math.pi / 4  # outer angle of the side is 60 degrees (written here in radian)
+        angle = (
+            math.pi / 4
+        )  # outer angle of the side is 60 degrees (written here in radian)
         X_angle = math.cos(angle)
         Y_angle = math.sin(angle)
         Z_angle = math.tan(math.pi * 3 / 8)
@@ -140,7 +137,9 @@ class single_octagon_ind_Generator(pya.PCellDeclarationHelper):
                 if j == 0:
                     xcor = xcor
                     ycor = ycor
-                elif j == (4 * hor_side + 1):  # if number of conductor 1 (increase )and 4(decrease) in xaxis only
+                elif j == (
+                    4 * hor_side + 1
+                ):  # if number of conductor 1 (increase )and 4(decrease) in xaxis only
                     if xpos == 1:
                         xcor = xcor + Side_lengthCor
                         xpos = 0
@@ -149,7 +148,9 @@ class single_octagon_ind_Generator(pya.PCellDeclarationHelper):
                         xcor = xcor - Side_lengthCor
                         xpos = 1
                         hor_side = 0
-                elif j == (4 * ver_side + 3):  # if number of conductor 3 (increase )and 7 (decrease) in yaxis only
+                elif j == (
+                    4 * ver_side + 3
+                ):  # if number of conductor 3 (increase )and 7 (decrease) in yaxis only
                     if ypos == 1:
                         ycor = ycor + Side_lengthCor
                         ypos = 0
@@ -183,11 +184,16 @@ class single_octagon_ind_Generator(pya.PCellDeclarationHelper):
                 xcor = xcor + Side_lengthCor / 2
                 PointCoordinates = pya.Point(xcor, ycor)
                 all_points.append(PointCoordinates)
-                self.cell.shapes(via4).insert(pya.Box(xcor - Side_lengthCor / 4, ycor - W / 2, xcor, ycor + W / 2))
+                self.cell.shapes(via4).insert(
+                    pya.Box(xcor - Side_lengthCor / 4, ycor - W / 2, xcor, ycor + W / 2)
+                )
                 self.cell.shapes(met4).insert(
-                    pya.Box(xcor - Side_lengthCor / 4, ycor - W / 2, xcor + Side_length + Side_length * X_angle,
-                            ycor + W / 2))
+                    pya.Box(
+                        xcor - Side_lengthCor / 4,
+                        ycor - W / 2,
+                        xcor + Side_length + Side_length * X_angle,
+                        ycor + W / 2,
+                    )
+                )
 
         self.cell.shapes(met5).insert(pya.Path(all_points, W))
-
-

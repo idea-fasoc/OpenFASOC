@@ -19,91 +19,117 @@ import pandas as pd
 import pya
 import os
 
-#print(os.system('pwd'))
-lay_csv_map = os.path.join(os.path.dirname(os.path.realpath(__file__)), "gds_layers.csv")
+# print(os.system('pwd'))
+lay_csv_map = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), "gds_layers.csv"
+)
 lay_df = pd.read_csv(lay_csv_map)
 
 # print(lay_df)
-nsdm_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "nsdm") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
-psdm_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "psdm") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
+nsdm_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "nsdm") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
+psdm_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "psdm") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
 
-diff_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "diff") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
-poly_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "poly") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
+diff_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "diff") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
+poly_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "poly") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
 licon_lay_str = lay_df.loc[
-    (lay_df["Layer name"] == "licon1") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[0]
-npc_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "npc") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
-li_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "li1") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
-mcon_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "mcon") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
-met1_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "met1") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
-tap_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "tap") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
+    (lay_df["Layer name"] == "licon1") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
+npc_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "npc") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
+li_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "li1") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
+mcon_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "mcon") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
+met1_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "met1") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
+tap_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "tap") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
 
-nwell_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "nwell") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
+nwell_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "nwell") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
 
-via_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "via") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
+via_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "via") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
 
-met2_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "met2") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
+met2_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "met2") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
 
-met3_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "met3") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
+met3_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "met3") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
 
-met4_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "met4") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
+met4_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "met4") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
 
-met5_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "met5") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
+met5_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "met5") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
 
-via2_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "via2") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
+via2_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "via2") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
 
-via3_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "via3") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
+via3_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "via3") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
 
-via2_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "via2") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
+via2_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "via2") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
 
-via3_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "via3") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
+via3_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "via3") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
 
-via4_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "via4") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
-urpm_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "urpm") & (lay_df["Purpose"].str.contains("drawing")), "GDS layer:datatype"].values[
-    0]
-poly_res_lay_str = \
-lay_df.loc[(lay_df["Layer name"] == "poly") & (lay_df["Purpose"].str.contains("resistor")), "GDS layer:datatype"].values[
-    0]
+via4_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "via4") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
+urpm_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "urpm") & (lay_df["Purpose"].str.contains("drawing")),
+    "GDS layer:datatype",
+].values[0]
+poly_res_lay_str = lay_df.loc[
+    (lay_df["Layer name"] == "poly") & (lay_df["Purpose"].str.contains("resistor")),
+    "GDS layer:datatype",
+].values[0]
 
 
 # print(diff_lay_str)
@@ -172,9 +198,6 @@ poly_res_lay_num = int(poly_res_lay_str.split(":")[0])
 poly_res_lay_dt = int(poly_res_lay_str.split(":")[1])
 
 
-
-
-
 # Create layer #'s
 # l_diff = layout.layer(diff_lay_num, diff_lay_dt)  # Diffusion
 # l_poly = layout.layer(poly_lay_num, poly_lay_dt)  # Poly
@@ -188,6 +211,3 @@ poly_res_lay_dt = int(poly_res_lay_str.split(":")[1])
 # l_tap = layout.layer(tap_lay_num, tap_lay_dt)
 # l_nwell = layout.layer(nwell_lay_num, nwell_lay_dt)
 # l_via = layout.layer(via_lay_num, via_lay_dt)
-
-
-

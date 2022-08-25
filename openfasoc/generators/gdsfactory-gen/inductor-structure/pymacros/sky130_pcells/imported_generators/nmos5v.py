@@ -37,40 +37,91 @@ class nmos5(nmos18_device):
     diff_hvntm_enc = 0.185
     hvi_extension = 0.06
 
-    def __init__(self, w=0.5, l=0.5, nf=1, gr=1,
-                 dsa=1,
-                 connection=0,
-                 n=1,
-                 x_offest=0,
-                 y_offest=0,
-                 connection_labels=1,
-                 conn_num="0",
-                 gate_connection="gate_connection_",
-                 gate_connection_up="gate_connection_up_",
-                 gate_connection_down="gate_connection_down_",
-                 drain_connection="drain_connection_",
-                 source_connection="source_connection_",
-                 connected_gates = 1,
-                 layout=None):
-        super().__init__(w=w, l=l, nf=nf, gr=gr, dsa=dsa, connection=connection, 
-                        n=n, x_offest=x_offest, y_offest=y_offest, conn_num=conn_num, gate_connection=gate_connection,
-                         gate_connection_up=gate_connection_up, gate_connection_down=gate_connection_down, drain_connection=drain_connection, 
-                         source_connection=source_connection, layout=layout,connection_labels=connection_labels,connected_gates=connected_gates)
+    def __init__(
+        self,
+        w=0.5,
+        l=0.5,
+        nf=1,
+        gr=1,
+        dsa=1,
+        connection=0,
+        n=1,
+        x_offest=0,
+        y_offest=0,
+        connection_labels=1,
+        conn_num="0",
+        gate_connection="gate_connection_",
+        gate_connection_up="gate_connection_up_",
+        gate_connection_down="gate_connection_down_",
+        drain_connection="drain_connection_",
+        source_connection="source_connection_",
+        connected_gates=1,
+        layout=None,
+    ):
+        super().__init__(
+            w=w,
+            l=l,
+            nf=nf,
+            gr=gr,
+            dsa=dsa,
+            connection=connection,
+            n=n,
+            x_offest=x_offest,
+            y_offest=y_offest,
+            conn_num=conn_num,
+            gate_connection=gate_connection,
+            gate_connection_up=gate_connection_up,
+            gate_connection_down=gate_connection_down,
+            drain_connection=drain_connection,
+            source_connection=source_connection,
+            layout=layout,
+            connection_labels=connection_labels,
+            connected_gates=connected_gates,
+        )
         self.l_hvntm = self.layout.layer(hvntm_lay_num, hvntm_lay_dt)
         self.l_hvi = self.layout.layer(hvi_lay_num, hvi_lay_dt)
-        self.cell_str = "nmos5_w" + str(self.w).replace(".", "p") + "u_l" + str(self.l).replace(".", "p") + "u_nf" + str(
-            self.nf) + "_drain_area" + str(self.dsa) + "_gate_connection" + str(self.connection) + "alt" + str(self.n)
-        self.percision = 1/self.layout.dbu
+        self.cell_str = (
+            "nmos5_w"
+            + str(self.w).replace(".", "p")
+            + "u_l"
+            + str(self.l).replace(".", "p")
+            + "u_nf"
+            + str(self.nf)
+            + "_drain_area"
+            + str(self.dsa)
+            + "_gate_connection"
+            + str(self.connection)
+            + "alt"
+            + str(self.n)
+        )
+        self.percision = 1 / self.layout.dbu
 
-    def draw_guard_ring(self, layout, x, y, guard_width, guard_height, precision, cell, tap_width=0.29):
-        return super().draw_guard_ring(layout, x, y, guard_width, guard_height, precision, tap_width=tap_width, cell=cell)
+    def draw_guard_ring(
+        self, layout, x, y, guard_width, guard_height, precision, cell, tap_width=0.29
+    ):
+        return super().draw_guard_ring(
+            layout,
+            x,
+            y,
+            guard_width,
+            guard_height,
+            precision,
+            tap_width=tap_width,
+            cell=cell,
+        )
 
     def draw_nmos5(self):
         self.nmos_cell = super().draw_nmos()
         self.nmos_cell.shapes(self.l_hvntm).insert(
-            self.diff_box.enlarge(nmos5.diff_hvntm_enc*1000, nmos5.diff_hvntm_enc*1000))
-        self.nmos_cell.shapes(self.l_hvi).insert(self.nmos_cell.bbox().enlarge(
-            nmos5.hvi_extension*1000, nmos5.hvi_extension*1000))
+            self.diff_box.enlarge(
+                nmos5.diff_hvntm_enc * 1000, nmos5.diff_hvntm_enc * 1000
+            )
+        )
+        self.nmos_cell.shapes(self.l_hvi).insert(
+            self.nmos_cell.bbox().enlarge(
+                nmos5.hvi_extension * 1000, nmos5.hvi_extension * 1000
+            )
+        )
 
         return self.nmos_cell
 

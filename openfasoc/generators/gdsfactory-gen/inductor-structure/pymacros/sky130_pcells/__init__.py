@@ -49,6 +49,7 @@ from .pnp_gen import pnp_bjt
 
 from .layers_definiations import *
 
+
 class Sky130(pya.Library):
     """
     The library where we will put the PCell into
@@ -65,26 +66,27 @@ class Sky130(pya.Library):
         self.layout().register_pcell("pmos18", PMOS18())
         self.layout().register_pcell("poly_res", PolyRes_gen())
         self.layout().register_pcell("inductor", IndGenerator())
-        self.layout().register_pcell("rectangular_shielding", rectangular_shielding_Generator())
-        self.layout().register_pcell("triangular_shielding", triangular_shielding_Generator())
+        self.layout().register_pcell(
+            "rectangular_shielding", rectangular_shielding_Generator()
+        )
+        self.layout().register_pcell(
+            "triangular_shielding", triangular_shielding_Generator()
+        )
         self.layout().register_pcell("diff_square_inductor", diff_squar_ind_Generator())
-        self.layout().register_pcell("diff_octagon_inductor", diff_octagon_ind_Generator())
-        self.layout().register_pcell("single_octagon_ind", single_octagon_ind_Generator())
-        self.layout().register_pcell("new_single_octagon_ind", new_single_octagon_Generator())
+        self.layout().register_pcell(
+            "diff_octagon_inductor", diff_octagon_ind_Generator()
+        )
+        self.layout().register_pcell(
+            "single_octagon_ind", single_octagon_ind_Generator()
+        )
+        self.layout().register_pcell(
+            "new_single_octagon_ind", new_single_octagon_Generator()
+        )
         self.layout().register_pcell("nmos5d10", nmos5d10_gen())
         self.layout().register_pcell("pmos5d10", pmos5d10_gen())
         self.layout().register_pcell("mimcap_1", mimcap_1_gen())
         self.layout().register_pcell("mimcap_2", mimcap_2_gen())
         self.layout().register_pcell("BNB BJT", pnp_bjt())
-
-
-
-
-
-
-
-
-
 
         # Register us with the name "MyLib".
         self.register("SKY130")

@@ -50,7 +50,13 @@ class triangular_shielding_Generator(pya.PCellDeclarationHelper):
 
     def display_text_impl(self):
         # Provide a descriptive text for the cell
-        return "( triangular_shielding spacing" + str(self.S) + " width = " + str(self.W) + ")"
+        return (
+            "( triangular_shielding spacing"
+            + str(self.S)
+            + " width = "
+            + str(self.W)
+            + ")"
+        )
 
     def coerce_parameters_impl(self):
 
@@ -101,9 +107,13 @@ class triangular_shielding_Generator(pya.PCellDeclarationHelper):
         nsdm = self.layout.layer(nsdm_lay_num, nsdm_lay_dt)
 
         W = self.W * PERCISION  # width of the conductors
-        S = self.S * PERCISION  # minimum spacing between the conductors is 1.27*PERCISION due to the N_well
+        S = (
+            self.S * PERCISION
+        )  # minimum spacing between the conductors is 1.27*PERCISION due to the N_well
         S_min = 1.27 * PERCISION
-        Lver = self.Louter * PERCISION  # Lver==Lhor because it's assumed that the overall shape is square
+        Lver = (
+            self.Louter * PERCISION
+        )  # Lver==Lhor because it's assumed that the overall shape is square
         Lhor = self.Louter * PERCISION
         N_Conductors = int((Lhor + S) / (S + W))  # number of conductors
         xcor = 0
@@ -150,26 +160,53 @@ class triangular_shielding_Generator(pya.PCellDeclarationHelper):
         Mcon_Spacing = 0.19 * PERCISION
 
         # find the number of licon needed for the horizontal distance
-        N_Licon_hor = int((W - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing) / (Licon_Width_Length + Licon_Spacing))
-        Remaining_Licon_hor = W - 2 * Li_Encloses_Licon_Two_Sides - N_Licon_hor * Licon_Width_Length - (
-                    N_Licon_hor - 1) * Licon_Spacing
+        N_Licon_hor = int(
+            (W - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing)
+            / (Licon_Width_Length + Licon_Spacing)
+        )
+        Remaining_Licon_hor = (
+            W
+            - 2 * Li_Encloses_Licon_Two_Sides
+            - N_Licon_hor * Licon_Width_Length
+            - (N_Licon_hor - 1) * Licon_Spacing
+        )
 
         N_Licon_ver = int(
-            (Lver - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing) / (Licon_Width_Length + Licon_Spacing))
-        Remaining_Licon_ver = Lver - 2 * Li_Encloses_Licon_Two_Sides - N_Licon_ver * Licon_Width_Length - (
-                    N_Licon_ver - 1) * Licon_Spacing
+            (Lver - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing)
+            / (Licon_Width_Length + Licon_Spacing)
+        )
+        Remaining_Licon_ver = (
+            Lver
+            - 2 * Li_Encloses_Licon_Two_Sides
+            - N_Licon_ver * Licon_Width_Length
+            - (N_Licon_ver - 1) * Licon_Spacing
+        )
 
         xcor_Licon = 0
         ycor_Licon = 0
         # print(N_Licon_hor,N_Licon_ver)
         # find the number of mcon needed for the horizontal distance
-        N_Mcon_hor = int((W - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing) / (Mcon_Width_Length + Mcon_Spacing))
-        Remaining_Mcon_hor = W - 2 * Met1_Encloses_Mcon_Two_Sides - N_Mcon_hor * Mcon_Width_Length - (
-                    N_Mcon_hor - 1) * Mcon_Spacing
+        N_Mcon_hor = int(
+            (W - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing)
+            / (Mcon_Width_Length + Mcon_Spacing)
+        )
+        Remaining_Mcon_hor = (
+            W
+            - 2 * Met1_Encloses_Mcon_Two_Sides
+            - N_Mcon_hor * Mcon_Width_Length
+            - (N_Mcon_hor - 1) * Mcon_Spacing
+        )
 
-        N_Mcon_ver = int((Lver - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing) / (Mcon_Width_Length + Mcon_Spacing))
-        Remaining_Mcon_ver = Lver - 2 * Met1_Encloses_Mcon_Two_Sides - N_Mcon_ver * Mcon_Width_Length - (
-                    N_Mcon_ver - 1) * Mcon_Spacing
+        N_Mcon_ver = int(
+            (Lver - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing)
+            / (Mcon_Width_Length + Mcon_Spacing)
+        )
+        Remaining_Mcon_ver = (
+            Lver
+            - 2 * Met1_Encloses_Mcon_Two_Sides
+            - N_Mcon_ver * Mcon_Width_Length
+            - (N_Mcon_ver - 1) * Mcon_Spacing
+        )
 
         xcor_Mcon = 0
         ycor_Mcon = 0
@@ -182,108 +219,237 @@ class triangular_shielding_Generator(pya.PCellDeclarationHelper):
         N_of_half_Conductors = int(N_Conductors / 2)
 
         for i in range(N_of_half_Conductors):  # draw the vertical conductors
-            xcor = - Lhor / 2 + i * (W + S)
+            xcor = -Lhor / 2 + i * (W + S)
             ycor = -Lver / 2
             self.cell.shapes(met1).insert(
-                pya.Box(xcor, ycor, xcor + W, ycor + (i + 1) * (W + S) * Slope))  # left down vertical conductors
+                pya.Box(xcor, ycor, xcor + W, ycor + (i + 1) * (W + S) * Slope)
+            )  # left down vertical conductors
             self.cell.shapes(met1).insert(
-                pya.Box(-xcor, ycor, -xcor - W, ycor + (i + 1) * (W + S) * Slope))  # right down vertical conductors
-            self.cell.shapes(met1).insert(pya.Box(xcor, ycor + Lver, xcor + W, ycor + Lver - (i + 1) * (
-                        W + S) * Slope))  # left up vertical conductors
-            self.cell.shapes(met1).insert(pya.Box(-xcor, ycor + Lver, -xcor - W, ycor + Lver - (i + 1) * (
-                        W + S) * Slope))  # right up vertical conductors
+                pya.Box(-xcor, ycor, -xcor - W, ycor + (i + 1) * (W + S) * Slope)
+            )  # right down vertical conductors
+            self.cell.shapes(met1).insert(
+                pya.Box(
+                    xcor, ycor + Lver, xcor + W, ycor + Lver - (i + 1) * (W + S) * Slope
+                )
+            )  # left up vertical conductors
+            self.cell.shapes(met1).insert(
+                pya.Box(
+                    -xcor,
+                    ycor + Lver,
+                    -xcor - W,
+                    ycor + Lver - (i + 1) * (W + S) * Slope,
+                )
+            )  # right up vertical conductors
 
             if Shielding_with_diffusion == 1:
                 self.cell.shapes(nwell).insert(
-                    pya.Box(xcor, ycor, xcor + W, ycor + (i + 1) * (W + S) * Slope))  # left down vertical conductors
+                    pya.Box(xcor, ycor, xcor + W, ycor + (i + 1) * (W + S) * Slope)
+                )  # left down vertical conductors
                 self.cell.shapes(nwell).insert(
-                    pya.Box(-xcor, ycor, -xcor - W, ycor + (i + 1) * (W + S) * Slope))  # right down vertical conductors
-                self.cell.shapes(nwell).insert(pya.Box(xcor, ycor + Lver, xcor + W,
-                                                       ycor + Lver - (i + 1) * (
-                                                                   W + S) * Slope))  # left up vertical conductors
-                self.cell.shapes(nwell).insert(pya.Box(-xcor, ycor + Lver, -xcor - W,
-                                                       ycor + Lver - (i + 1) * (
-                                                                   W + S) * Slope))  # right up vertical conductors
+                    pya.Box(-xcor, ycor, -xcor - W, ycor + (i + 1) * (W + S) * Slope)
+                )  # right down vertical conductors
+                self.cell.shapes(nwell).insert(
+                    pya.Box(
+                        xcor,
+                        ycor + Lver,
+                        xcor + W,
+                        ycor + Lver - (i + 1) * (W + S) * Slope,
+                    )
+                )  # left up vertical conductors
+                self.cell.shapes(nwell).insert(
+                    pya.Box(
+                        -xcor,
+                        ycor + Lver,
+                        -xcor - W,
+                        ycor + Lver - (i + 1) * (W + S) * Slope,
+                    )
+                )  # right up vertical conductors
 
                 self.cell.shapes(li1).insert(
-                    pya.Box(xcor, ycor, xcor + W, ycor + (i + 1) * (W + S) * Slope))  # left down vertical conductors
+                    pya.Box(xcor, ycor, xcor + W, ycor + (i + 1) * (W + S) * Slope)
+                )  # left down vertical conductors
                 self.cell.shapes(li1).insert(
-                    pya.Box(-xcor, ycor, -xcor - W, ycor + (i + 1) * (W + S) * Slope))  # right down vertical conductors
-                self.cell.shapes(li1).insert(pya.Box(xcor, ycor + Lver, xcor + W,
-                                                     ycor + Lver - (i + 1) * (
-                                                                 W + S) * Slope))  # left up vertical conductors
-                self.cell.shapes(li1).insert(pya.Box(-xcor, ycor + Lver, -xcor - W,
-                                                     ycor + Lver - (i + 1) * (
-                                                                 W + S) * Slope))  # right up vertical conductors
+                    pya.Box(-xcor, ycor, -xcor - W, ycor + (i + 1) * (W + S) * Slope)
+                )  # right down vertical conductors
+                self.cell.shapes(li1).insert(
+                    pya.Box(
+                        xcor,
+                        ycor + Lver,
+                        xcor + W,
+                        ycor + Lver - (i + 1) * (W + S) * Slope,
+                    )
+                )  # left up vertical conductors
+                self.cell.shapes(li1).insert(
+                    pya.Box(
+                        -xcor,
+                        ycor + Lver,
+                        -xcor - W,
+                        ycor + Lver - (i + 1) * (W + S) * Slope,
+                    )
+                )  # right up vertical conductors
 
                 self.cell.shapes(nsdm).insert(
-                    pya.Box(xcor, ycor, xcor + W, ycor + (i + 1) * (W + S) * Slope))  # left down vertical conductors
+                    pya.Box(xcor, ycor, xcor + W, ycor + (i + 1) * (W + S) * Slope)
+                )  # left down vertical conductors
                 self.cell.shapes(nsdm).insert(
-                    pya.Box(-xcor, ycor, -xcor - W, ycor + (i + 1) * (W + S) * Slope))  # right down vertical conductors
-                self.cell.shapes(nsdm).insert(pya.Box(xcor, ycor + Lver, xcor + W,
-                                                      ycor + Lver - (i + 1) * (
-                                                                  W + S) * Slope))  # left up vertical conductors
-                self.cell.shapes(nsdm).insert(pya.Box(-xcor, ycor + Lver, -xcor - W,
-                                                      ycor + Lver - (i + 1) * (
-                                                                  W + S) * Slope))  # right up vertical conductors
+                    pya.Box(-xcor, ycor, -xcor - W, ycor + (i + 1) * (W + S) * Slope)
+                )  # right down vertical conductors
+                self.cell.shapes(nsdm).insert(
+                    pya.Box(
+                        xcor,
+                        ycor + Lver,
+                        xcor + W,
+                        ycor + Lver - (i + 1) * (W + S) * Slope,
+                    )
+                )  # left up vertical conductors
+                self.cell.shapes(nsdm).insert(
+                    pya.Box(
+                        -xcor,
+                        ycor + Lver,
+                        -xcor - W,
+                        ycor + Lver - (i + 1) * (W + S) * Slope,
+                    )
+                )  # right up vertical conductors
 
                 N_Licon_hor = int(
-                    (W - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing) / (Licon_Width_Length + Licon_Spacing))
-                Remaining_Licon_hor = W - 2 * Li_Encloses_Licon_Two_Sides - N_Licon_hor * Licon_Width_Length - (
-                        N_Licon_hor - 1) * Licon_Spacing
+                    (W - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing)
+                    / (Licon_Width_Length + Licon_Spacing)
+                )
+                Remaining_Licon_hor = (
+                    W
+                    - 2 * Li_Encloses_Licon_Two_Sides
+                    - N_Licon_hor * Licon_Width_Length
+                    - (N_Licon_hor - 1) * Licon_Spacing
+                )
 
-                N_Licon_ver = int(((i + 1) * (W + S) * Slope - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing) / (
-                            Licon_Width_Length + Licon_Spacing))
-                Remaining_Licon_ver = (i + 1) * (
-                            W + S) * Slope - 2 * Li_Encloses_Licon_Two_Sides - N_Licon_ver * Licon_Width_Length - (
-                                              N_Licon_ver - 1) * Licon_Spacing
+                N_Licon_ver = int(
+                    (
+                        (i + 1) * (W + S) * Slope
+                        - 2 * Li_Encloses_Licon_Two_Sides
+                        + Licon_Spacing
+                    )
+                    / (Licon_Width_Length + Licon_Spacing)
+                )
+                Remaining_Licon_ver = (
+                    (i + 1) * (W + S) * Slope
+                    - 2 * Li_Encloses_Licon_Two_Sides
+                    - N_Licon_ver * Licon_Width_Length
+                    - (N_Licon_ver - 1) * Licon_Spacing
+                )
                 for u in range(N_Licon_ver):
-                    ycor_Licon = Li_Encloses_Licon_Two_Sides + Remaining_Licon_ver / 2 + u * (
-                                Licon_Width_Length + Licon_Spacing)
+                    ycor_Licon = (
+                        Li_Encloses_Licon_Two_Sides
+                        + Remaining_Licon_ver / 2
+                        + u * (Licon_Width_Length + Licon_Spacing)
+                    )
                     for k in range(N_Licon_hor):
-                        xcor_Licon = Li_Encloses_Licon_Two_Sides + Remaining_Licon_hor / 2 + k * (
-                                    Licon_Width_Length + Licon_Spacing)
-                        self.cell.shapes(licon1).insert(pya.Box(xcor + xcor_Licon, ycor + ycor_Licon,
-                                                                xcor + xcor_Licon + Licon_Width_Length,
-                                                                ycor + ycor_Licon + Licon_Width_Length))
-                        self.cell.shapes(licon1).insert(pya.Box(-xcor - xcor_Licon, ycor + ycor_Licon,
-                                                                -xcor - xcor_Licon - Licon_Width_Length,
-                                                                ycor + ycor_Licon + Licon_Width_Length))
-                        self.cell.shapes(licon1).insert(pya.Box(xcor + xcor_Licon, ycor + Lver - ycor_Licon,
-                                                                xcor + xcor_Licon + Licon_Width_Length,
-                                                                ycor + Lver - ycor_Licon - Licon_Width_Length))
-                        self.cell.shapes(licon1).insert(pya.Box(-xcor - xcor_Licon, ycor + Lver - ycor_Licon,
-                                                                -xcor - xcor_Licon - Licon_Width_Length,
-                                                                ycor + Lver - ycor_Licon - Licon_Width_Length))
+                        xcor_Licon = (
+                            Li_Encloses_Licon_Two_Sides
+                            + Remaining_Licon_hor / 2
+                            + k * (Licon_Width_Length + Licon_Spacing)
+                        )
+                        self.cell.shapes(licon1).insert(
+                            pya.Box(
+                                xcor + xcor_Licon,
+                                ycor + ycor_Licon,
+                                xcor + xcor_Licon + Licon_Width_Length,
+                                ycor + ycor_Licon + Licon_Width_Length,
+                            )
+                        )
+                        self.cell.shapes(licon1).insert(
+                            pya.Box(
+                                -xcor - xcor_Licon,
+                                ycor + ycor_Licon,
+                                -xcor - xcor_Licon - Licon_Width_Length,
+                                ycor + ycor_Licon + Licon_Width_Length,
+                            )
+                        )
+                        self.cell.shapes(licon1).insert(
+                            pya.Box(
+                                xcor + xcor_Licon,
+                                ycor + Lver - ycor_Licon,
+                                xcor + xcor_Licon + Licon_Width_Length,
+                                ycor + Lver - ycor_Licon - Licon_Width_Length,
+                            )
+                        )
+                        self.cell.shapes(licon1).insert(
+                            pya.Box(
+                                -xcor - xcor_Licon,
+                                ycor + Lver - ycor_Licon,
+                                -xcor - xcor_Licon - Licon_Width_Length,
+                                ycor + Lver - ycor_Licon - Licon_Width_Length,
+                            )
+                        )
                 N_Mcon_hor = int(
-                    (W - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing) / (Mcon_Width_Length + Mcon_Spacing))
-                Remaining_Mcon_hor = W - 2 * Met1_Encloses_Mcon_Two_Sides - N_Mcon_hor * Mcon_Width_Length - (
-                        N_Mcon_hor - 1) * Mcon_Spacing
+                    (W - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing)
+                    / (Mcon_Width_Length + Mcon_Spacing)
+                )
+                Remaining_Mcon_hor = (
+                    W
+                    - 2 * Met1_Encloses_Mcon_Two_Sides
+                    - N_Mcon_hor * Mcon_Width_Length
+                    - (N_Mcon_hor - 1) * Mcon_Spacing
+                )
 
-                N_Mcon_ver = int(((i + 1) * (W + S) * Slope - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing) / (
-                            Mcon_Width_Length + Mcon_Spacing))
-                Remaining_Mcon_ver = (i + 1) * (
-                            W + S) * Slope - 2 * Met1_Encloses_Mcon_Two_Sides - N_Mcon_ver * Mcon_Width_Length - (
-                                             N_Mcon_ver - 1) * Mcon_Spacing
+                N_Mcon_ver = int(
+                    (
+                        (i + 1) * (W + S) * Slope
+                        - 2 * Met1_Encloses_Mcon_Two_Sides
+                        + Mcon_Spacing
+                    )
+                    / (Mcon_Width_Length + Mcon_Spacing)
+                )
+                Remaining_Mcon_ver = (
+                    (i + 1) * (W + S) * Slope
+                    - 2 * Met1_Encloses_Mcon_Two_Sides
+                    - N_Mcon_ver * Mcon_Width_Length
+                    - (N_Mcon_ver - 1) * Mcon_Spacing
+                )
 
                 for u in range(N_Mcon_ver):
-                    ycor_Mcon = Met1_Encloses_Mcon_Two_Sides + Remaining_Mcon_ver / 2 + u * (
-                                Mcon_Width_Length + Mcon_Spacing)
+                    ycor_Mcon = (
+                        Met1_Encloses_Mcon_Two_Sides
+                        + Remaining_Mcon_ver / 2
+                        + u * (Mcon_Width_Length + Mcon_Spacing)
+                    )
                     for k in range(N_Mcon_hor):
-                        xcor_Mcon = Met1_Encloses_Mcon_Two_Sides + Remaining_Mcon_hor / 2 + k * (
-                                    Mcon_Width_Length + Mcon_Spacing)
-                        self.cell.shapes(mcon).insert(pya.Box(xcor + xcor_Mcon, ycor + ycor_Mcon,
-                                                              xcor + xcor_Mcon + Mcon_Width_Length,
-                                                              ycor + ycor_Mcon + Mcon_Width_Length))
-                        self.cell.shapes(mcon).insert(pya.Box(-xcor - xcor_Mcon, ycor + ycor_Mcon,
-                                                              -xcor - xcor_Mcon - Mcon_Width_Length,
-                                                              ycor + ycor_Mcon + Mcon_Width_Length))
-                        self.cell.shapes(mcon).insert(pya.Box(xcor + xcor_Mcon, ycor + Lver - ycor_Mcon,
-                                                              xcor + xcor_Mcon + Mcon_Width_Length,
-                                                              ycor + Lver - ycor_Mcon - Mcon_Width_Length))
-                        self.cell.shapes(mcon).insert(pya.Box(-xcor - xcor_Mcon, ycor + Lver - ycor_Mcon,
-                                                              -xcor - xcor_Mcon - Mcon_Width_Length,
-                                                              ycor + Lver - ycor_Mcon - Mcon_Width_Length))
+                        xcor_Mcon = (
+                            Met1_Encloses_Mcon_Two_Sides
+                            + Remaining_Mcon_hor / 2
+                            + k * (Mcon_Width_Length + Mcon_Spacing)
+                        )
+                        self.cell.shapes(mcon).insert(
+                            pya.Box(
+                                xcor + xcor_Mcon,
+                                ycor + ycor_Mcon,
+                                xcor + xcor_Mcon + Mcon_Width_Length,
+                                ycor + ycor_Mcon + Mcon_Width_Length,
+                            )
+                        )
+                        self.cell.shapes(mcon).insert(
+                            pya.Box(
+                                -xcor - xcor_Mcon,
+                                ycor + ycor_Mcon,
+                                -xcor - xcor_Mcon - Mcon_Width_Length,
+                                ycor + ycor_Mcon + Mcon_Width_Length,
+                            )
+                        )
+                        self.cell.shapes(mcon).insert(
+                            pya.Box(
+                                xcor + xcor_Mcon,
+                                ycor + Lver - ycor_Mcon,
+                                xcor + xcor_Mcon + Mcon_Width_Length,
+                                ycor + Lver - ycor_Mcon - Mcon_Width_Length,
+                            )
+                        )
+                        self.cell.shapes(mcon).insert(
+                            pya.Box(
+                                -xcor - xcor_Mcon,
+                                ycor + Lver - ycor_Mcon,
+                                -xcor - xcor_Mcon - Mcon_Width_Length,
+                                ycor + Lver - ycor_Mcon - Mcon_Width_Length,
+                            )
+                        )
 
             if i == N_of_half_Conductors - 1:
                 y_check = ycor + (i + 1) * (W + S) * Slope
@@ -300,256 +466,596 @@ class triangular_shielding_Generator(pya.PCellDeclarationHelper):
             self.cell.shapes(nsdm).insert(pya.Box(xcor, ycor, -xcor, -S / 2))
             self.cell.shapes(nsdm).insert(pya.Box(xcor, ycor + Lver, -xcor, S / 2))
             N_Licon_hor = int(
-                (-2 * xcor - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing) / (Licon_Width_Length + Licon_Spacing))
-            Remaining_Licon_hor = -2 * xcor - 2 * Li_Encloses_Licon_Two_Sides - N_Licon_hor * Licon_Width_Length - (
-                    N_Licon_hor - 1) * Licon_Spacing
+                (-2 * xcor - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing)
+                / (Licon_Width_Length + Licon_Spacing)
+            )
+            Remaining_Licon_hor = (
+                -2 * xcor
+                - 2 * Li_Encloses_Licon_Two_Sides
+                - N_Licon_hor * Licon_Width_Length
+                - (N_Licon_hor - 1) * Licon_Spacing
+            )
 
-            N_Licon_ver = int(((-ycor - S / 2) - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing) / (
-                    Licon_Width_Length + Licon_Spacing))
+            N_Licon_ver = int(
+                ((-ycor - S / 2) - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing)
+                / (Licon_Width_Length + Licon_Spacing)
+            )
             Remaining_Licon_ver = (
-                                              -ycor - S / 2) - 2 * Li_Encloses_Licon_Two_Sides - N_Licon_ver * Licon_Width_Length - (
-                                          N_Licon_ver - 1) * Licon_Spacing
+                (-ycor - S / 2)
+                - 2 * Li_Encloses_Licon_Two_Sides
+                - N_Licon_ver * Licon_Width_Length
+                - (N_Licon_ver - 1) * Licon_Spacing
+            )
             for u in range(N_Licon_ver):
-                ycor_Licon = Li_Encloses_Licon_Two_Sides + Remaining_Licon_ver / 2 + u * (
-                            Licon_Width_Length + Licon_Spacing)
+                ycor_Licon = (
+                    Li_Encloses_Licon_Two_Sides
+                    + Remaining_Licon_ver / 2
+                    + u * (Licon_Width_Length + Licon_Spacing)
+                )
                 for k in range(N_Licon_hor):
-                    xcor_Licon = Li_Encloses_Licon_Two_Sides + Remaining_Licon_hor / 2 + k * (
-                                Licon_Width_Length + Licon_Spacing)
-                    self.cell.shapes(licon1).insert(pya.Box(xcor + xcor_Licon, ycor + ycor_Licon,
-                                                            xcor + xcor_Licon + Licon_Width_Length,
-                                                            ycor + ycor_Licon + Licon_Width_Length))
-                    self.cell.shapes(licon1).insert(pya.Box(xcor + xcor_Licon, ycor + Lver - ycor_Licon,
-                                                            xcor + xcor_Licon + Licon_Width_Length,
-                                                            ycor + Lver - ycor_Licon - Licon_Width_Length))
+                    xcor_Licon = (
+                        Li_Encloses_Licon_Two_Sides
+                        + Remaining_Licon_hor / 2
+                        + k * (Licon_Width_Length + Licon_Spacing)
+                    )
+                    self.cell.shapes(licon1).insert(
+                        pya.Box(
+                            xcor + xcor_Licon,
+                            ycor + ycor_Licon,
+                            xcor + xcor_Licon + Licon_Width_Length,
+                            ycor + ycor_Licon + Licon_Width_Length,
+                        )
+                    )
+                    self.cell.shapes(licon1).insert(
+                        pya.Box(
+                            xcor + xcor_Licon,
+                            ycor + Lver - ycor_Licon,
+                            xcor + xcor_Licon + Licon_Width_Length,
+                            ycor + Lver - ycor_Licon - Licon_Width_Length,
+                        )
+                    )
 
             N_Mcon_hor = int(
-                (-2 * xcor - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing) / (Mcon_Width_Length + Mcon_Spacing))
-            Remaining_Mcon_hor = -2 * xcor - 2 * Met1_Encloses_Mcon_Two_Sides - N_Mcon_hor * Mcon_Width_Length - (
-                    N_Mcon_hor - 1) * Mcon_Spacing
+                (-2 * xcor - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing)
+                / (Mcon_Width_Length + Mcon_Spacing)
+            )
+            Remaining_Mcon_hor = (
+                -2 * xcor
+                - 2 * Met1_Encloses_Mcon_Two_Sides
+                - N_Mcon_hor * Mcon_Width_Length
+                - (N_Mcon_hor - 1) * Mcon_Spacing
+            )
 
-            N_Mcon_ver = int(((-ycor - S / 2) - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing) / (
-                    Mcon_Width_Length + Mcon_Spacing))
-            Remaining_Mcon_ver = (-ycor - S / 2) - 2 * Met1_Encloses_Mcon_Two_Sides - N_Mcon_ver * Mcon_Width_Length - (
-                    N_Mcon_ver - 1) * Mcon_Spacing
+            N_Mcon_ver = int(
+                ((-ycor - S / 2) - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing)
+                / (Mcon_Width_Length + Mcon_Spacing)
+            )
+            Remaining_Mcon_ver = (
+                (-ycor - S / 2)
+                - 2 * Met1_Encloses_Mcon_Two_Sides
+                - N_Mcon_ver * Mcon_Width_Length
+                - (N_Mcon_ver - 1) * Mcon_Spacing
+            )
 
             for u in range(N_Mcon_ver):
-                ycor_Mcon = Met1_Encloses_Mcon_Two_Sides + Remaining_Mcon_ver / 2 + u * (
-                            Mcon_Width_Length + Mcon_Spacing)
+                ycor_Mcon = (
+                    Met1_Encloses_Mcon_Two_Sides
+                    + Remaining_Mcon_ver / 2
+                    + u * (Mcon_Width_Length + Mcon_Spacing)
+                )
                 for k in range(N_Mcon_hor):
-                    xcor_Mcon = Met1_Encloses_Mcon_Two_Sides + Remaining_Mcon_hor / 2 + k * (
-                                Mcon_Width_Length + Mcon_Spacing)
-                    self.cell.shapes(mcon).insert(pya.Box(xcor + xcor_Mcon, ycor + ycor_Mcon,
-                                                          xcor + xcor_Mcon + Mcon_Width_Length,
-                                                          ycor + ycor_Mcon + Mcon_Width_Length))
-                    self.cell.shapes(mcon).insert(pya.Box(xcor + xcor_Mcon, ycor + Lver - ycor_Mcon,
-                                                          xcor + xcor_Mcon + Mcon_Width_Length,
-                                                          ycor + Lver - ycor_Mcon - Mcon_Width_Length))
+                    xcor_Mcon = (
+                        Met1_Encloses_Mcon_Two_Sides
+                        + Remaining_Mcon_hor / 2
+                        + k * (Mcon_Width_Length + Mcon_Spacing)
+                    )
+                    self.cell.shapes(mcon).insert(
+                        pya.Box(
+                            xcor + xcor_Mcon,
+                            ycor + ycor_Mcon,
+                            xcor + xcor_Mcon + Mcon_Width_Length,
+                            ycor + ycor_Mcon + Mcon_Width_Length,
+                        )
+                    )
+                    self.cell.shapes(mcon).insert(
+                        pya.Box(
+                            xcor + xcor_Mcon,
+                            ycor + Lver - ycor_Mcon,
+                            xcor + xcor_Mcon + Mcon_Width_Length,
+                            ycor + Lver - ycor_Mcon - Mcon_Width_Length,
+                        )
+                    )
 
         for j in range(N_of_half_Conductors - 1):  # For loop for horizontal conductors
             xcor2 = -Lhor / 2
             ycor2 = -Lver / 2
             self.cell.shapes(met1).insert(
-                pya.Box(xcor2, ycor2 + (j + 1) * (W + S) * Slope + S, xcor2 + (j + 1) * (W + S) * Slope - S
-                        , ycor2 + (j + 1) * (W + S) * Slope + S + W))  # left down horizontal conductors
+                pya.Box(
+                    xcor2,
+                    ycor2 + (j + 1) * (W + S) * Slope + S,
+                    xcor2 + (j + 1) * (W + S) * Slope - S,
+                    ycor2 + (j + 1) * (W + S) * Slope + S + W,
+                )
+            )  # left down horizontal conductors
 
             self.cell.shapes(met1).insert(
-                pya.Box(xcor2, ycor2 + Lver - (j + 1) * (W + S) * Slope - S, xcor2 + (j + 1) * (W + S) * Slope - S
-                        , ycor2 + Lver - (j + 1) * (W + S) * Slope - S - W))  # left up horizontal conductors
+                pya.Box(
+                    xcor2,
+                    ycor2 + Lver - (j + 1) * (W + S) * Slope - S,
+                    xcor2 + (j + 1) * (W + S) * Slope - S,
+                    ycor2 + Lver - (j + 1) * (W + S) * Slope - S - W,
+                )
+            )  # left up horizontal conductors
 
-            self.cell.shapes(met1).insert(pya.Box(xcor2 + Lhor, ycor2 + (j + 1) * (W + S) * Slope + S,
-                                                  xcor2 + Lhor - (j + 1) * (W + S) * Slope + S
-                                                  , ycor2 + (j + 1) * (
-                                                              W + S) * Slope + S + W))  # right down horizontal conductors
+            self.cell.shapes(met1).insert(
+                pya.Box(
+                    xcor2 + Lhor,
+                    ycor2 + (j + 1) * (W + S) * Slope + S,
+                    xcor2 + Lhor - (j + 1) * (W + S) * Slope + S,
+                    ycor2 + (j + 1) * (W + S) * Slope + S + W,
+                )
+            )  # right down horizontal conductors
 
-            self.cell.shapes(met1).insert(pya.Box(xcor2 + Lhor, ycor2 + Lver - (j + 1) * (W + S) * Slope - S,
-                                                  xcor2 + Lhor - (j + 1) * (W + S) * Slope + S
-                                                  , ycor2 + Lver - (j + 1) * (
-                                                              W + S) * Slope - S - W))  # right up horizontal conductors
+            self.cell.shapes(met1).insert(
+                pya.Box(
+                    xcor2 + Lhor,
+                    ycor2 + Lver - (j + 1) * (W + S) * Slope - S,
+                    xcor2 + Lhor - (j + 1) * (W + S) * Slope + S,
+                    ycor2 + Lver - (j + 1) * (W + S) * Slope - S - W,
+                )
+            )  # right up horizontal conductors
             if Shielding_with_diffusion == 1:
                 self.cell.shapes(nwell).insert(
-                    pya.Box(xcor2, ycor2 + (j + 1) * (W + S) * Slope + S, xcor2 + (j + 1) * (W + S) * Slope - S
-                            , ycor2 + (j + 1) * (W + S) * Slope + S + W))  # left down horizontal conductors
+                    pya.Box(
+                        xcor2,
+                        ycor2 + (j + 1) * (W + S) * Slope + S,
+                        xcor2 + (j + 1) * (W + S) * Slope - S,
+                        ycor2 + (j + 1) * (W + S) * Slope + S + W,
+                    )
+                )  # left down horizontal conductors
 
                 self.cell.shapes(nwell).insert(
-                    pya.Box(xcor2, ycor2 + Lver - (j + 1) * (W + S) * Slope - S, xcor2 + (j + 1) * (W + S) * Slope - S
-                            , ycor2 + Lver - (j + 1) * (W + S) * Slope - S - W))  # left up horizontal conductors
+                    pya.Box(
+                        xcor2,
+                        ycor2 + Lver - (j + 1) * (W + S) * Slope - S,
+                        xcor2 + (j + 1) * (W + S) * Slope - S,
+                        ycor2 + Lver - (j + 1) * (W + S) * Slope - S - W,
+                    )
+                )  # left up horizontal conductors
 
                 self.cell.shapes(nwell).insert(
-                    pya.Box(xcor2 + Lhor, ycor2 + (j + 1) * (W + S) * Slope + S,
-                            xcor2 + Lhor - (j + 1) * (W + S) * Slope + S
-                            , ycor2 + (j + 1) * (W + S) * Slope + S + W))  # left down horizontal conductors
+                    pya.Box(
+                        xcor2 + Lhor,
+                        ycor2 + (j + 1) * (W + S) * Slope + S,
+                        xcor2 + Lhor - (j + 1) * (W + S) * Slope + S,
+                        ycor2 + (j + 1) * (W + S) * Slope + S + W,
+                    )
+                )  # left down horizontal conductors
 
-                self.cell.shapes(nwell).insert(pya.Box(xcor2 + Lhor, ycor2 + Lver - (j + 1) * (W + S) * Slope - S,
-                                                       xcor2 + Lhor - (j + 1) * (W + S) * Slope + S
-                                                       , ycor2 + Lver - (j + 1) * (
-                                                               W + S) * Slope - S - W))  # left up horizontal conductors
+                self.cell.shapes(nwell).insert(
+                    pya.Box(
+                        xcor2 + Lhor,
+                        ycor2 + Lver - (j + 1) * (W + S) * Slope - S,
+                        xcor2 + Lhor - (j + 1) * (W + S) * Slope + S,
+                        ycor2 + Lver - (j + 1) * (W + S) * Slope - S - W,
+                    )
+                )  # left up horizontal conductors
 
                 self.cell.shapes(li1).insert(
-                    pya.Box(xcor2, ycor2 + (j + 1) * (W + S) * Slope + S, xcor2 + (j + 1) * (W + S) * Slope - S
-                            , ycor2 + (j + 1) * (W + S) * Slope + S + W))  # left down horizontal conductors
+                    pya.Box(
+                        xcor2,
+                        ycor2 + (j + 1) * (W + S) * Slope + S,
+                        xcor2 + (j + 1) * (W + S) * Slope - S,
+                        ycor2 + (j + 1) * (W + S) * Slope + S + W,
+                    )
+                )  # left down horizontal conductors
 
                 self.cell.shapes(li1).insert(
-                    pya.Box(xcor2, ycor2 + Lver - (j + 1) * (W + S) * Slope - S, xcor2 + (j + 1) * (W + S) * Slope - S
-                            , ycor2 + Lver - (j + 1) * (W + S) * Slope - S - W))  # left up horizontal conductors
+                    pya.Box(
+                        xcor2,
+                        ycor2 + Lver - (j + 1) * (W + S) * Slope - S,
+                        xcor2 + (j + 1) * (W + S) * Slope - S,
+                        ycor2 + Lver - (j + 1) * (W + S) * Slope - S - W,
+                    )
+                )  # left up horizontal conductors
 
                 self.cell.shapes(li1).insert(
-                    pya.Box(xcor2 + Lhor, ycor2 + (j + 1) * (W + S) * Slope + S,
-                            xcor2 + Lhor - (j + 1) * (W + S) * Slope + S
-                            , ycor2 + (j + 1) * (W + S) * Slope + S + W))  # left down horizontal conductors
+                    pya.Box(
+                        xcor2 + Lhor,
+                        ycor2 + (j + 1) * (W + S) * Slope + S,
+                        xcor2 + Lhor - (j + 1) * (W + S) * Slope + S,
+                        ycor2 + (j + 1) * (W + S) * Slope + S + W,
+                    )
+                )  # left down horizontal conductors
 
-                self.cell.shapes(li1).insert(pya.Box(xcor2 + Lhor, ycor2 + Lver - (j + 1) * (W + S) * Slope - S,
-                                                     xcor2 + Lhor - (j + 1) * (W + S) * Slope + S
-                                                     , ycor2 + Lver - (j + 1) * (
-                                                             W + S) * Slope - S - W))  # left up horizontal conductors
+                self.cell.shapes(li1).insert(
+                    pya.Box(
+                        xcor2 + Lhor,
+                        ycor2 + Lver - (j + 1) * (W + S) * Slope - S,
+                        xcor2 + Lhor - (j + 1) * (W + S) * Slope + S,
+                        ycor2 + Lver - (j + 1) * (W + S) * Slope - S - W,
+                    )
+                )  # left up horizontal conductors
 
                 self.cell.shapes(nsdm).insert(
-                    pya.Box(xcor2, ycor2 + (j + 1) * (W + S) * Slope + S, xcor2 + (j + 1) * (W + S) * Slope - S
-                            , ycor2 + (j + 1) * (W + S) * Slope + S + W))  # left down horizontal conductors
+                    pya.Box(
+                        xcor2,
+                        ycor2 + (j + 1) * (W + S) * Slope + S,
+                        xcor2 + (j + 1) * (W + S) * Slope - S,
+                        ycor2 + (j + 1) * (W + S) * Slope + S + W,
+                    )
+                )  # left down horizontal conductors
 
                 self.cell.shapes(nsdm).insert(
-                    pya.Box(xcor2, ycor2 + Lver - (j + 1) * (W + S) * Slope - S, xcor2 + (j + 1) * (W + S) * Slope - S
-                            , ycor2 + Lver - (j + 1) * (W + S) * Slope - S - W))  # left up horizontal conductors
+                    pya.Box(
+                        xcor2,
+                        ycor2 + Lver - (j + 1) * (W + S) * Slope - S,
+                        xcor2 + (j + 1) * (W + S) * Slope - S,
+                        ycor2 + Lver - (j + 1) * (W + S) * Slope - S - W,
+                    )
+                )  # left up horizontal conductors
 
                 self.cell.shapes(nsdm).insert(
-                    pya.Box(xcor2 + Lhor, ycor2 + (j + 1) * (W + S) * Slope + S,
-                            xcor2 + Lhor - (j + 1) * (W + S) * Slope + S
-                            , ycor2 + (j + 1) * (W + S) * Slope + S + W))  # left down horizontal conductors
+                    pya.Box(
+                        xcor2 + Lhor,
+                        ycor2 + (j + 1) * (W + S) * Slope + S,
+                        xcor2 + Lhor - (j + 1) * (W + S) * Slope + S,
+                        ycor2 + (j + 1) * (W + S) * Slope + S + W,
+                    )
+                )  # left down horizontal conductors
 
-                self.cell.shapes(nsdm).insert(pya.Box(xcor2 + Lhor, ycor2 + Lver - (j + 1) * (W + S) * Slope - S,
-                                                      xcor2 + Lhor - (j + 1) * (W + S) * Slope + S
-                                                      , ycor2 + Lver - (j + 1) * (
-                                                              W + S) * Slope - S - W))  # left up horizontal conductors
+                self.cell.shapes(nsdm).insert(
+                    pya.Box(
+                        xcor2 + Lhor,
+                        ycor2 + Lver - (j + 1) * (W + S) * Slope - S,
+                        xcor2 + Lhor - (j + 1) * (W + S) * Slope + S,
+                        ycor2 + Lver - (j + 1) * (W + S) * Slope - S - W,
+                    )
+                )  # left up horizontal conductors
 
-                N_Licon_hor = int(((j + 1) * (W + S) * Slope - S - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing) / (
-                            Licon_Width_Length + Licon_Spacing))
-                Remaining_Licon_hor = (j + 1) * (
-                            W + S) * Slope - S - 2 * Li_Encloses_Licon_Two_Sides - N_Licon_hor * Licon_Width_Length - (
-                                              N_Licon_hor - 1) * Licon_Spacing
+                N_Licon_hor = int(
+                    (
+                        (j + 1) * (W + S) * Slope
+                        - S
+                        - 2 * Li_Encloses_Licon_Two_Sides
+                        + Licon_Spacing
+                    )
+                    / (Licon_Width_Length + Licon_Spacing)
+                )
+                Remaining_Licon_hor = (
+                    (j + 1) * (W + S) * Slope
+                    - S
+                    - 2 * Li_Encloses_Licon_Two_Sides
+                    - N_Licon_hor * Licon_Width_Length
+                    - (N_Licon_hor - 1) * Licon_Spacing
+                )
 
-                N_Licon_ver = int((W - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing) / (
-                        Licon_Width_Length + Licon_Spacing))
-                Remaining_Licon_ver = W - 2 * Li_Encloses_Licon_Two_Sides - N_Licon_ver * Licon_Width_Length - (
-                        N_Licon_ver - 1) * Licon_Spacing
+                N_Licon_ver = int(
+                    (W - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing)
+                    / (Licon_Width_Length + Licon_Spacing)
+                )
+                Remaining_Licon_ver = (
+                    W
+                    - 2 * Li_Encloses_Licon_Two_Sides
+                    - N_Licon_ver * Licon_Width_Length
+                    - (N_Licon_ver - 1) * Licon_Spacing
+                )
                 for u in range(N_Licon_ver):
-                    ycor_Licon = Li_Encloses_Licon_Two_Sides + Remaining_Licon_ver / 2 + u * (
-                            Licon_Width_Length + Licon_Spacing)
+                    ycor_Licon = (
+                        Li_Encloses_Licon_Two_Sides
+                        + Remaining_Licon_ver / 2
+                        + u * (Licon_Width_Length + Licon_Spacing)
+                    )
                     for k in range(N_Licon_hor):
-                        xcor_Licon = Li_Encloses_Licon_Two_Sides + Remaining_Licon_hor / 2 + k * (
-                                Licon_Width_Length + Licon_Spacing)
+                        xcor_Licon = (
+                            Li_Encloses_Licon_Two_Sides
+                            + Remaining_Licon_hor / 2
+                            + k * (Licon_Width_Length + Licon_Spacing)
+                        )
                         self.cell.shapes(licon1).insert(
-                            pya.Box(xcor2 + xcor_Licon, ycor2 + (j + 1) * (W + S) * Slope + S + ycor_Licon,
-                                    xcor2 + xcor_Licon + Licon_Width_Length,
-                                    ycor2 + (j + 1) * (W + S) * Slope + S + ycor_Licon + Licon_Width_Length))
+                            pya.Box(
+                                xcor2 + xcor_Licon,
+                                ycor2 + (j + 1) * (W + S) * Slope + S + ycor_Licon,
+                                xcor2 + xcor_Licon + Licon_Width_Length,
+                                ycor2
+                                + (j + 1) * (W + S) * Slope
+                                + S
+                                + ycor_Licon
+                                + Licon_Width_Length,
+                            )
+                        )
                         self.cell.shapes(licon1).insert(
-                            pya.Box(xcor2 + xcor_Licon, ycor2 + Lver - (j + 1) * (W + S) * Slope - S - ycor_Licon,
-                                    xcor2 + xcor_Licon + Licon_Width_Length,
-                                    ycor2 + Lver - (j + 1) * (W + S) * Slope - S - ycor_Licon - Licon_Width_Length))
+                            pya.Box(
+                                xcor2 + xcor_Licon,
+                                ycor2
+                                + Lver
+                                - (j + 1) * (W + S) * Slope
+                                - S
+                                - ycor_Licon,
+                                xcor2 + xcor_Licon + Licon_Width_Length,
+                                ycor2
+                                + Lver
+                                - (j + 1) * (W + S) * Slope
+                                - S
+                                - ycor_Licon
+                                - Licon_Width_Length,
+                            )
+                        )
                         self.cell.shapes(licon1).insert(
-                            pya.Box(xcor2 + Lhor - xcor_Licon, ycor2 + (j + 1) * (W + S) * Slope + S + ycor_Licon,
-                                    xcor2 + Lhor - xcor_Licon - Licon_Width_Length,
-                                    ycor2 + (j + 1) * (W + S) * Slope + S + ycor_Licon + Licon_Width_Length))
+                            pya.Box(
+                                xcor2 + Lhor - xcor_Licon,
+                                ycor2 + (j + 1) * (W + S) * Slope + S + ycor_Licon,
+                                xcor2 + Lhor - xcor_Licon - Licon_Width_Length,
+                                ycor2
+                                + (j + 1) * (W + S) * Slope
+                                + S
+                                + ycor_Licon
+                                + Licon_Width_Length,
+                            )
+                        )
                         self.cell.shapes(licon1).insert(
-                            pya.Box(xcor2 + Lhor - xcor_Licon,
-                                    ycor2 + Lver - (j + 1) * (W + S) * Slope - S - ycor_Licon,
-                                    xcor2 + Lhor - xcor_Licon - Licon_Width_Length,
-                                    ycor2 + Lver - (j + 1) * (W + S) * Slope - S - ycor_Licon - Licon_Width_Length))
-                N_Mcon_hor = int(((j + 1) * (W + S) * Slope - S - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing) / (
-                            Mcon_Width_Length + Mcon_Spacing))
-                Remaining_Mcon_hor = (j + 1) * (
-                            W + S) * Slope - S - 2 * Met1_Encloses_Mcon_Two_Sides - N_Mcon_hor * Mcon_Width_Length - (
-                                             N_Mcon_hor - 1) * Mcon_Spacing
+                            pya.Box(
+                                xcor2 + Lhor - xcor_Licon,
+                                ycor2
+                                + Lver
+                                - (j + 1) * (W + S) * Slope
+                                - S
+                                - ycor_Licon,
+                                xcor2 + Lhor - xcor_Licon - Licon_Width_Length,
+                                ycor2
+                                + Lver
+                                - (j + 1) * (W + S) * Slope
+                                - S
+                                - ycor_Licon
+                                - Licon_Width_Length,
+                            )
+                        )
+                N_Mcon_hor = int(
+                    (
+                        (j + 1) * (W + S) * Slope
+                        - S
+                        - 2 * Met1_Encloses_Mcon_Two_Sides
+                        + Mcon_Spacing
+                    )
+                    / (Mcon_Width_Length + Mcon_Spacing)
+                )
+                Remaining_Mcon_hor = (
+                    (j + 1) * (W + S) * Slope
+                    - S
+                    - 2 * Met1_Encloses_Mcon_Two_Sides
+                    - N_Mcon_hor * Mcon_Width_Length
+                    - (N_Mcon_hor - 1) * Mcon_Spacing
+                )
 
-                N_Mcon_ver = int((W - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing) / (
-                        Mcon_Width_Length + Mcon_Spacing))
-                Remaining_Mcon_ver = W - 2 * Met1_Encloses_Mcon_Two_Sides - N_Mcon_ver * Mcon_Width_Length - (
-                        N_Mcon_ver - 1) * Mcon_Spacing
+                N_Mcon_ver = int(
+                    (W - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing)
+                    / (Mcon_Width_Length + Mcon_Spacing)
+                )
+                Remaining_Mcon_ver = (
+                    W
+                    - 2 * Met1_Encloses_Mcon_Two_Sides
+                    - N_Mcon_ver * Mcon_Width_Length
+                    - (N_Mcon_ver - 1) * Mcon_Spacing
+                )
                 for u in range(N_Mcon_ver):
-                    ycor_Mcon = Met1_Encloses_Mcon_Two_Sides + Remaining_Mcon_ver / 2 + u * (
-                                Mcon_Width_Length + Mcon_Spacing)
+                    ycor_Mcon = (
+                        Met1_Encloses_Mcon_Two_Sides
+                        + Remaining_Mcon_ver / 2
+                        + u * (Mcon_Width_Length + Mcon_Spacing)
+                    )
                     for k in range(N_Mcon_hor):
-                        xcor_Mcon = Met1_Encloses_Mcon_Two_Sides + Remaining_Mcon_hor / 2 + k * (
-                                Mcon_Width_Length + Mcon_Spacing)
+                        xcor_Mcon = (
+                            Met1_Encloses_Mcon_Two_Sides
+                            + Remaining_Mcon_hor / 2
+                            + k * (Mcon_Width_Length + Mcon_Spacing)
+                        )
                         self.cell.shapes(mcon).insert(
-                            pya.Box(xcor2 + xcor_Mcon, ycor2 + (j + 1) * (W + S) * Slope + S + ycor_Mcon,
-                                    xcor2 + xcor_Mcon + Mcon_Width_Length,
-                                    ycor2 + (j + 1) * (W + S) * Slope + S + ycor_Mcon + Mcon_Width_Length))
+                            pya.Box(
+                                xcor2 + xcor_Mcon,
+                                ycor2 + (j + 1) * (W + S) * Slope + S + ycor_Mcon,
+                                xcor2 + xcor_Mcon + Mcon_Width_Length,
+                                ycor2
+                                + (j + 1) * (W + S) * Slope
+                                + S
+                                + ycor_Mcon
+                                + Mcon_Width_Length,
+                            )
+                        )
                         self.cell.shapes(mcon).insert(
-                            pya.Box(xcor2 + xcor_Mcon, ycor2 + Lver - (j + 1) * (W + S) * Slope - S - ycor_Mcon,
-                                    xcor2 + xcor_Mcon + Mcon_Width_Length,
-                                    ycor2 + Lver - (j + 1) * (W + S) * Slope - S - ycor_Mcon - Mcon_Width_Length))
+                            pya.Box(
+                                xcor2 + xcor_Mcon,
+                                ycor2
+                                + Lver
+                                - (j + 1) * (W + S) * Slope
+                                - S
+                                - ycor_Mcon,
+                                xcor2 + xcor_Mcon + Mcon_Width_Length,
+                                ycor2
+                                + Lver
+                                - (j + 1) * (W + S) * Slope
+                                - S
+                                - ycor_Mcon
+                                - Mcon_Width_Length,
+                            )
+                        )
                         self.cell.shapes(mcon).insert(
-                            pya.Box(xcor2 + Lhor - xcor_Mcon, ycor2 + (j + 1) * (W + S) * Slope + S + ycor_Mcon,
-                                    xcor2 + Lhor - xcor_Mcon - Mcon_Width_Length,
-                                    ycor2 + (j + 1) * (W + S) * Slope + S + ycor_Mcon + Mcon_Width_Length))
+                            pya.Box(
+                                xcor2 + Lhor - xcor_Mcon,
+                                ycor2 + (j + 1) * (W + S) * Slope + S + ycor_Mcon,
+                                xcor2 + Lhor - xcor_Mcon - Mcon_Width_Length,
+                                ycor2
+                                + (j + 1) * (W + S) * Slope
+                                + S
+                                + ycor_Mcon
+                                + Mcon_Width_Length,
+                            )
+                        )
                         self.cell.shapes(mcon).insert(
-                            pya.Box(xcor2 + Lhor - xcor_Mcon, ycor2 + Lver - (j + 1) * (W + S) * Slope - S - ycor_Mcon,
-                                    xcor2 + Lhor - xcor_Mcon - Mcon_Width_Length,
-                                    ycor2 + Lver - (j + 1) * (W + S) * Slope - S - ycor_Mcon - Mcon_Width_Length))
+                            pya.Box(
+                                xcor2 + Lhor - xcor_Mcon,
+                                ycor2
+                                + Lver
+                                - (j + 1) * (W + S) * Slope
+                                - S
+                                - ycor_Mcon,
+                                xcor2 + Lhor - xcor_Mcon - Mcon_Width_Length,
+                                ycor2
+                                + Lver
+                                - (j + 1) * (W + S) * Slope
+                                - S
+                                - ycor_Mcon
+                                - Mcon_Width_Length,
+                            )
+                        )
 
             # y_check is used for drawing the rest of spaces for the horizontal conductors
             if j == N_of_half_Conductors - 2:
                 x_check = xcor2 + (j + 1) * (W + S) * Slope + W
         if (-y_check * 2) >= (2 * S + 0.14):
-            self.cell.shapes(met1).insert(pya.Box(xcor2, y_check + S, x_check, -y_check - S))
-            self.cell.shapes(met1).insert(pya.Box(xcor2 + Lhor, y_check + S, -x_check, -y_check - S))
+            self.cell.shapes(met1).insert(
+                pya.Box(xcor2, y_check + S, x_check, -y_check - S)
+            )
+            self.cell.shapes(met1).insert(
+                pya.Box(xcor2 + Lhor, y_check + S, -x_check, -y_check - S)
+            )
             if Shielding_with_diffusion == 1:
-                self.cell.shapes(nwell).insert(pya.Box(xcor2, y_check + S, x_check, -y_check - S))
-                self.cell.shapes(nwell).insert(pya.Box(xcor2 + Lhor, y_check + S, -x_check, -y_check - S))
-                self.cell.shapes(li1).insert(pya.Box(xcor2, y_check + S, x_check, -y_check - S))
-                self.cell.shapes(li1).insert(pya.Box(xcor2 + Lhor, y_check + S, -x_check, -y_check - S))
-                self.cell.shapes(nsdm).insert(pya.Box(xcor2, y_check + S, x_check, -y_check - S))
-                self.cell.shapes(nsdm).insert(pya.Box(xcor2 + Lhor, y_check + S, -x_check, -y_check - S))
-                N_Licon_hor = int(((x_check - xcor2) - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing) / (
-                        Licon_Width_Length + Licon_Spacing))
+                self.cell.shapes(nwell).insert(
+                    pya.Box(xcor2, y_check + S, x_check, -y_check - S)
+                )
+                self.cell.shapes(nwell).insert(
+                    pya.Box(xcor2 + Lhor, y_check + S, -x_check, -y_check - S)
+                )
+                self.cell.shapes(li1).insert(
+                    pya.Box(xcor2, y_check + S, x_check, -y_check - S)
+                )
+                self.cell.shapes(li1).insert(
+                    pya.Box(xcor2 + Lhor, y_check + S, -x_check, -y_check - S)
+                )
+                self.cell.shapes(nsdm).insert(
+                    pya.Box(xcor2, y_check + S, x_check, -y_check - S)
+                )
+                self.cell.shapes(nsdm).insert(
+                    pya.Box(xcor2 + Lhor, y_check + S, -x_check, -y_check - S)
+                )
+                N_Licon_hor = int(
+                    (
+                        (x_check - xcor2)
+                        - 2 * Li_Encloses_Licon_Two_Sides
+                        + Licon_Spacing
+                    )
+                    / (Licon_Width_Length + Licon_Spacing)
+                )
                 Remaining_Licon_hor = (
-                                                  x_check - xcor2) - 2 * Li_Encloses_Licon_Two_Sides - N_Licon_hor * Licon_Width_Length - (
-                                              N_Licon_hor - 1) * Licon_Spacing
+                    (x_check - xcor2)
+                    - 2 * Li_Encloses_Licon_Two_Sides
+                    - N_Licon_hor * Licon_Width_Length
+                    - (N_Licon_hor - 1) * Licon_Spacing
+                )
 
-                N_Licon_ver = int((-y_check * 2 - 2 * S - 2 * Li_Encloses_Licon_Two_Sides + Licon_Spacing) / (
-                        Licon_Width_Length + Licon_Spacing))
-                Remaining_Licon_ver = -y_check * 2 - 2 * S - 2 * Li_Encloses_Licon_Two_Sides - N_Licon_ver * Licon_Width_Length - (
-                        N_Licon_ver - 1) * Licon_Spacing
+                N_Licon_ver = int(
+                    (
+                        -y_check * 2
+                        - 2 * S
+                        - 2 * Li_Encloses_Licon_Two_Sides
+                        + Licon_Spacing
+                    )
+                    / (Licon_Width_Length + Licon_Spacing)
+                )
+                Remaining_Licon_ver = (
+                    -y_check * 2
+                    - 2 * S
+                    - 2 * Li_Encloses_Licon_Two_Sides
+                    - N_Licon_ver * Licon_Width_Length
+                    - (N_Licon_ver - 1) * Licon_Spacing
+                )
                 for u in range(N_Licon_ver):
-                    ycor_Licon = Li_Encloses_Licon_Two_Sides + Remaining_Licon_ver / 2 + u * (
-                            Licon_Width_Length + Licon_Spacing)
+                    ycor_Licon = (
+                        Li_Encloses_Licon_Two_Sides
+                        + Remaining_Licon_ver / 2
+                        + u * (Licon_Width_Length + Licon_Spacing)
+                    )
                     for k in range(N_Licon_hor):
-                        xcor_Licon = Li_Encloses_Licon_Two_Sides + Remaining_Licon_hor / 2 + k * (
-                                Licon_Width_Length + Licon_Spacing)
+                        xcor_Licon = (
+                            Li_Encloses_Licon_Two_Sides
+                            + Remaining_Licon_hor / 2
+                            + k * (Licon_Width_Length + Licon_Spacing)
+                        )
                         self.cell.shapes(licon1).insert(
-                            pya.Box(xcor2 + xcor_Licon, y_check + S + ycor_Licon,
-                                    xcor2 + xcor_Licon + Licon_Width_Length,
-                                    y_check + S + ycor_Licon + Licon_Width_Length))
+                            pya.Box(
+                                xcor2 + xcor_Licon,
+                                y_check + S + ycor_Licon,
+                                xcor2 + xcor_Licon + Licon_Width_Length,
+                                y_check + S + ycor_Licon + Licon_Width_Length,
+                            )
+                        )
 
                         self.cell.shapes(licon1).insert(
-                            pya.Box(xcor2 + Lhor - xcor_Licon, y_check + S + ycor_Licon,
-                                    xcor2 + Lhor - xcor_Licon - Licon_Width_Length,
-                                    y_check + S + ycor_Licon + Licon_Width_Length))
+                            pya.Box(
+                                xcor2 + Lhor - xcor_Licon,
+                                y_check + S + ycor_Licon,
+                                xcor2 + Lhor - xcor_Licon - Licon_Width_Length,
+                                y_check + S + ycor_Licon + Licon_Width_Length,
+                            )
+                        )
 
-                N_Mcon_hor = int(((x_check - xcor2) - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing) / (
-                        Mcon_Width_Length + Mcon_Spacing))
+                N_Mcon_hor = int(
+                    (
+                        (x_check - xcor2)
+                        - 2 * Met1_Encloses_Mcon_Two_Sides
+                        + Mcon_Spacing
+                    )
+                    / (Mcon_Width_Length + Mcon_Spacing)
+                )
                 Remaining_Mcon_hor = (
-                                                 x_check - xcor2) - 2 * Met1_Encloses_Mcon_Two_Sides - N_Mcon_hor * Mcon_Width_Length - (
-                                             N_Mcon_hor - 1) * Mcon_Spacing
+                    (x_check - xcor2)
+                    - 2 * Met1_Encloses_Mcon_Two_Sides
+                    - N_Mcon_hor * Mcon_Width_Length
+                    - (N_Mcon_hor - 1) * Mcon_Spacing
+                )
 
-                N_Mcon_ver = int((-y_check * 2 - 2 * S - 2 * Met1_Encloses_Mcon_Two_Sides + Mcon_Spacing) / (
-                        Mcon_Width_Length + Mcon_Spacing))
-                Remaining_Mcon_ver = -y_check * 2 - 2 * S - 2 * Met1_Encloses_Mcon_Two_Sides - N_Mcon_ver * Mcon_Width_Length - (
-                        N_Mcon_ver - 1) * Mcon_Spacing
+                N_Mcon_ver = int(
+                    (
+                        -y_check * 2
+                        - 2 * S
+                        - 2 * Met1_Encloses_Mcon_Two_Sides
+                        + Mcon_Spacing
+                    )
+                    / (Mcon_Width_Length + Mcon_Spacing)
+                )
+                Remaining_Mcon_ver = (
+                    -y_check * 2
+                    - 2 * S
+                    - 2 * Met1_Encloses_Mcon_Two_Sides
+                    - N_Mcon_ver * Mcon_Width_Length
+                    - (N_Mcon_ver - 1) * Mcon_Spacing
+                )
 
                 for u in range(N_Mcon_ver):
-                    ycor_Mcon = Met1_Encloses_Mcon_Two_Sides + Remaining_Mcon_ver / 2 + u * (
-                                Mcon_Width_Length + Mcon_Spacing)
+                    ycor_Mcon = (
+                        Met1_Encloses_Mcon_Two_Sides
+                        + Remaining_Mcon_ver / 2
+                        + u * (Mcon_Width_Length + Mcon_Spacing)
+                    )
                     for k in range(N_Mcon_hor):
-                        xcor_Mcon = Met1_Encloses_Mcon_Two_Sides + Remaining_Mcon_hor / 2 + k * (
-                                Mcon_Width_Length + Mcon_Spacing)
+                        xcor_Mcon = (
+                            Met1_Encloses_Mcon_Two_Sides
+                            + Remaining_Mcon_hor / 2
+                            + k * (Mcon_Width_Length + Mcon_Spacing)
+                        )
                         self.cell.shapes(mcon).insert(
-                            pya.Box(xcor2 + xcor_Mcon, y_check + S + ycor_Mcon,
-                                    xcor2 + xcor_Mcon + Mcon_Width_Length,
-                                    y_check + S + ycor_Mcon + Mcon_Width_Length))
+                            pya.Box(
+                                xcor2 + xcor_Mcon,
+                                y_check + S + ycor_Mcon,
+                                xcor2 + xcor_Mcon + Mcon_Width_Length,
+                                y_check + S + ycor_Mcon + Mcon_Width_Length,
+                            )
+                        )
 
                         self.cell.shapes(mcon).insert(
-                            pya.Box(xcor2 + Lhor - xcor_Mcon, y_check + S + ycor_Mcon,
-                                    xcor2 + Lhor - xcor_Mcon - Mcon_Width_Length,
-                                    y_check + S + ycor_Mcon + Mcon_Width_Length))
-
-
+                            pya.Box(
+                                xcor2 + Lhor - xcor_Mcon,
+                                y_check + S + ycor_Mcon,
+                                xcor2 + Lhor - xcor_Mcon - Mcon_Width_Length,
+                                y_check + S + ycor_Mcon + Mcon_Width_Length,
+                            )
+                        )

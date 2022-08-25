@@ -25,7 +25,6 @@ from .layers_definiations import *
 from .imported_generators.polyres import *
 
 
-
 class PolyRes_gen(pya.PCellDeclarationHelper):
     """
     Mabrains poly resistor Generator for Skywaters 130nm
@@ -36,10 +35,30 @@ class PolyRes_gen(pya.PCellDeclarationHelper):
         super(PolyRes_gen, self).__init__()
 
         # declare the parameters
-        self.param("Model", self.TypeString, "Model", default="sky130_fd_pr__res_xhigh_po",readonly=True)
-        self.param("Sheet Resistance", self.TypeInt, "Sheet Resistance", default="2000",unit = "ohm/sq" ,readonly=True)
-        self.R = self.param("Rtotal", self.TypeDouble, "Total Resistance", default="2", readonly=True,unit = "Kohm")
-        self.width = self.param("w", self.TypeList, "Width",default=0.35)  # Width
+        self.param(
+            "Model",
+            self.TypeString,
+            "Model",
+            default="sky130_fd_pr__res_xhigh_po",
+            readonly=True,
+        )
+        self.param(
+            "Sheet Resistance",
+            self.TypeInt,
+            "Sheet Resistance",
+            default="2000",
+            unit="ohm/sq",
+            readonly=True,
+        )
+        self.R = self.param(
+            "Rtotal",
+            self.TypeDouble,
+            "Total Resistance",
+            default="2",
+            readonly=True,
+            unit="Kohm",
+        )
+        self.width = self.param("w", self.TypeList, "Width", default=0.35)  # Width
         self.width.add_choice("0.35", 0.35)
         self.width.add_choice("0.69", 0.69)
         self.width.add_choice("1.41", 1.41)
@@ -49,8 +68,12 @@ class PolyRes_gen(pya.PCellDeclarationHelper):
         self.param("rx", self.TypeInt, "Repeat X(odd number)", default=1)  # Repeat X"
         self.param("ry", self.TypeInt, "Repeat Y", default=1)  # Repeat Y
 
-        self.param("gr", self.TypeBoolean, "Include Guard Ring", default=0)  # Include Guard Ring
-        self.param("series", self.TypeBoolean, "Include series Connection", default=0)  # Include series connection
+        self.param(
+            "gr", self.TypeBoolean, "Include Guard Ring", default=0
+        )  # Include Guard Ring
+        self.param(
+            "series", self.TypeBoolean, "Include series Connection", default=0
+        )  # Include series connection
 
         # # constants
         # self.licon_enclosure = 0.08
@@ -69,7 +92,7 @@ class PolyRes_gen(pya.PCellDeclarationHelper):
 
     def display_text_impl(self):
         # Provide a descriptive text for the cell
-        return "POLY_RES(L=" + ('%.3f' % self.l) + ",W=" + ('%.3f' % self.w) + ")"
+        return "POLY_RES(L=" + ("%.3f" % self.l) + ",W=" + ("%.3f" % self.w) + ")"
 
     def coerce_parameters_impl(self):
         # We employ coerce_parameters_impl to decide whether the handle or the
@@ -77,8 +100,8 @@ class PolyRes_gen(pya.PCellDeclarationHelper):
         # radius ru) and set ru to the effective radius. We also update the
         # numerical value or the shape, depending on which on has not changed.
         # print(self.w)
-        total_resistance = (self.l / self.w) *self.rx *self.ry* 2
-        self.Rtotal = ('%.3f' % total_resistance)
+        total_resistance = (self.l / self.w) * self.rx * self.ry * 2
+        self.Rtotal = "%.3f" % total_resistance
 
     def can_create_from_shape_impl(self):
         # Implement the "Create PCell from shape" protocol: we can use any shape which
@@ -92,8 +115,9 @@ class PolyRes_gen(pya.PCellDeclarationHelper):
         # self.r = self.shape.bbox().width() * self.layout.dbu / 2
         # self.l = self.layout.get_info(self.layer)
         pass
+
     def transformation_from_shape_impl(self):
-        #Implement the "Create PCell from shape" protocol: we use the center of the shape's
+        # Implement the "Create PCell from shape" protocol: we use the center of the shape's
         # bounding box to determine the transformation
         # return pya.Trans(self.shape.bbox().center())
         pass
@@ -101,7 +125,6 @@ class PolyRes_gen(pya.PCellDeclarationHelper):
     def produce_impl(self):
         # # precision value for scaling
         # PERCISION = 1/self.layout.dbu
-
 
         # # layers_definations
         # self.l_poly = self.layout.layer(poly_lay_num, poly_lay_dt)  # Poly
@@ -148,18 +171,27 @@ class PolyRes_gen(pya.PCellDeclarationHelper):
         # if self.gr:
         #     self.draw_guard_ring(lfx, lfy, gr_width, gr_height, PERCISION)
 
-
-        self.percision = 1/self.layout.dbu
-        poly_instance = PolyRes(layout=self.layout,w=self.w,
-                                l=self.l,rx = self.rx , 
-                                ry = self.ry,gr=self.gr,series=self.series,connection_labels = 0)
+        self.percision = 1 / self.layout.dbu
+        poly_instance = PolyRes(
+            layout=self.layout,
+            w=self.w,
+            l=self.l,
+            rx=self.rx,
+            ry=self.ry,
+            gr=self.gr,
+            series=self.series,
+            connection_labels=0,
+        )
         polyres_cell = poly_instance.draw_polyres()
-        write_cells = pya.CellInstArray(polyres_cell.cell_index(), pya.Trans(pya.Point(0, 0)),
-                              pya.Vector(0, 0), pya.Vector(0, 0),1 , 1)
-        
-        
+        write_cells = pya.CellInstArray(
+            polyres_cell.cell_index(),
+            pya.Trans(pya.Point(0, 0)),
+            pya.Vector(0, 0),
+            pya.Vector(0, 0),
+            1,
+            1,
+        )
+
         self.cell.insert(write_cells)
         self.cell.flatten(1)
         self.layout.cleanup()
-
-    

@@ -26,12 +26,12 @@ from .imported_generators.pmos5v import *
 
 """
 This sample PCell implements a library called "MyLib" with a single PCell that
-draws a nmos5d10_gen. It demonstrates the basic implementation techniques for a PCell 
+draws a nmos5d10_gen. It demonstrates the basic implementation techniques for a PCell
 and how to use the "guiding shape" feature to implement a handle for the nmos5d10_gen
 radius.
 
 NOTE: after changing the code, the macro needs to be rerun to install the new
-implementation. The macro is also set to "auto run" to install the PCell 
+implementation. The macro is also set to "auto run" to install the PCell
 when KLayout is run.
 """
 
@@ -52,21 +52,34 @@ class pmos5d10_gen(pya.PCellDeclarationHelper):
         self.param("l", self.TypeDouble, "Length", default=0.15)
         self.param("nf", self.TypeInt, "Number of Fingers", default=1)
         self.param("gr", self.TypeBoolean, "guard ring", default=1)
-        self.param("dsa", self.TypeInt,
-                   "drain and source number of contacts", default=1)
+        self.param(
+            "dsa", self.TypeInt, "drain and source number of contacts", default=1
+        )
         self.param("connection", self.TypeInt, "Connection Option", default=0)
-        self.param("n", self.TypeInt,
-                   "Alternate Factor(for Alternate Connection)", default=1)
+        self.param(
+            "n", self.TypeInt, "Alternate Factor(for Alternate Connection)", default=1
+        )
         # connection_option.add_choice("Connection Up",0)
         # connection_option.add_choice("Connection Down",1)
         # connection_option.add_choice("Alternate connection",2)
-        self.param("connected_gates", self.TypeBoolean,
-                   "Connected Gates", default=1)
+        self.param("connected_gates", self.TypeBoolean, "Connected Gates", default=1)
 
     def display_text_impl(self):
         # Provide a descriptive text for the cell
-        cell_str = "pmos5_w" + str(self.w).replace(".", "p") + "u_l" + str(self.l).replace(".", "p") + "u_nf" + str(
-            self.nf) + "_drain_area" + str(self.dsa) + "_gate_connection" + str(self.connection) + "alt" + str(self.n)
+        cell_str = (
+            "pmos5_w"
+            + str(self.w).replace(".", "p")
+            + "u_l"
+            + str(self.l).replace(".", "p")
+            + "u_nf"
+            + str(self.nf)
+            + "_drain_area"
+            + str(self.dsa)
+            + "_gate_connection"
+            + str(self.connection)
+            + "alt"
+            + str(self.n)
+        )
         return cell_str
 
     def coerce_parameters_impl(self):
@@ -113,12 +126,27 @@ class pmos5d10_gen(pya.PCellDeclarationHelper):
 
     def produce_impl(self):
         # This is the main part of the implementation: create the layout
-        pmos5_instance = pmos5(w=self.w, l=self.l, nf=self.nf, connection=self.connection,
-                               layout=self.layout, gr=self.gr, connection_labels=0, connected_gates=self.connected_gates,dsa=self.dsa)
+        pmos5_instance = pmos5(
+            w=self.w,
+            l=self.l,
+            nf=self.nf,
+            connection=self.connection,
+            layout=self.layout,
+            gr=self.gr,
+            connection_labels=0,
+            connected_gates=self.connected_gates,
+            dsa=self.dsa,
+        )
         pmos_cell = pmos5_instance.draw_pmos5()
 
-        write_cells = pya.CellInstArray(pmos_cell.cell_index(), pya.Trans(pya.Point(0, 0)),
-                                        pya.Vector(0, 0), pya.Vector(0, 0), 1, 1)
-        
+        write_cells = pya.CellInstArray(
+            pmos_cell.cell_index(),
+            pya.Trans(pya.Point(0, 0)),
+            pya.Vector(0, 0),
+            pya.Vector(0, 0),
+            1,
+            1,
+        )
+
         self.cell.insert(write_cells)
         self.cell.flatten(1)

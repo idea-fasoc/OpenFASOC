@@ -46,21 +46,24 @@ class NMOS18(pya.PCellDeclarationHelper):
         self.param("l", self.TypeDouble, "Length", default=0.15)
         self.param("nf", self.TypeInt, "Number of Fingers", default=1)
         self.param("gr", self.TypeBoolean, "guard ring", default=1)
-        self.param("dsa", self.TypeInt,
-                   "drain and source number of contacts", default=1)
+        self.param(
+            "dsa", self.TypeInt, "drain and source number of contacts", default=1
+        )
         connection_option = self.param(
-            "connection", self.TypeString, "Connection Option", default=0)
+            "connection", self.TypeString, "Connection Option", default=0
+        )
         connection_option.add_choice("Connection Up", 0)
         connection_option.add_choice("Connection Down", 1)
         connection_option.add_choice("Alternate connection", 2)
         self.param("connected_gates", self.TypeBoolean, "Connected Gates", default=1)
 
-        self.param("n", self.TypeInt,
-                   "Alternate Factor(for Alternate Connection)", default=1)
+        self.param(
+            "n", self.TypeInt, "Alternate Factor(for Alternate Connection)", default=1
+        )
 
-        #self.param("down_connection", self.TypeBoolean, "Gate connection down", default=1)
-        #self.param("up_connection", self.TypeBoolean, "Gate connection up", default=0)
-        #self.param("alternate_connection",self.TypeBoolean, "Alternate gate connection",default=0)
+        # self.param("down_connection", self.TypeBoolean, "Gate connection down", default=1)
+        # self.param("up_connection", self.TypeBoolean, "Gate connection up", default=0)
+        # self.param("alternate_connection",self.TypeBoolean, "Alternate gate connection",default=0)
 
         # Below shows how to create hidden parameter is used to determine whether the radius has changed
         # or the "s" handle has been moved
@@ -69,7 +72,7 @@ class NMOS18(pya.PCellDeclarationHelper):
 
     def display_text_impl(self):
         # Provide a descriptive text for the cell
-        return "NMOS18(L=" + ('%.3f' % self.l) + ",W=" + ('%.3f' % self.w) + ")"
+        return "NMOS18(L=" + ("%.3f" % self.l) + ",W=" + ("%.3f" % self.w) + ")"
 
     def coerce_parameters_impl(self):
         # We employ coerce_parameters_impl to decide whether the handle or the
@@ -95,11 +98,26 @@ class NMOS18(pya.PCellDeclarationHelper):
         return pya.Trans(self.shape.bbox().center())
 
     def produce_impl(self):
-        nmos18_instance = nmos18_device(w=self.w, l=self.l, nf=self.nf, connection=int(self.connection),
-                                        layout=self.layout, gr=self.gr, connection_labels=0, dsa=self.dsa,connected_gates=self.connected_gates)
+        nmos18_instance = nmos18_device(
+            w=self.w,
+            l=self.l,
+            nf=self.nf,
+            connection=int(self.connection),
+            layout=self.layout,
+            gr=self.gr,
+            connection_labels=0,
+            dsa=self.dsa,
+            connected_gates=self.connected_gates,
+        )
         nmos_cell = nmos18_instance.draw_nmos()
 
-        write_cells = pya.CellInstArray(nmos_cell.cell_index(), pya.Trans(pya.Point(0, 0)),
-                                        pya.Vector(0, 0), pya.Vector(0, 0), 1, 1)
+        write_cells = pya.CellInstArray(
+            nmos_cell.cell_index(),
+            pya.Trans(pya.Point(0, 0)),
+            pya.Vector(0, 0),
+            pya.Vector(0, 0),
+            1,
+            1,
+        )
         self.cell.flatten(1)
         self.cell.insert(write_cells)

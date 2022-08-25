@@ -35,42 +35,88 @@ import sys
 
 
 class pmos5(pmos18_device):
-    # this value will be used as an alternative to the nwell extension 
+    # this value will be used as an alternative to the nwell extension
     hv_nwell_extension = 0.205
-    def __init__(self, w=0.5, l=0.5, nf=1, gr=1,
-                 dsa=1,
-                 connection=0,
-                 n=1,
-                 x_offest=0,
-                 y_offest=0,
-                 connection_labels=1,
-                 conn_num="0",
-                 gate_connection="gate_connection_",
-                 gate_connection_up="gate_connection_up_",
-                 gate_connection_down="gate_connection_down_",
-                 drain_connection="drain_connection_",
-                 source_connection="source_connection_",
-                 bulk_connection="bulk_connection_",
-                 connected_gates=1,
-                 layout=None):
-        super().__init__(w=w, l=l, nf=nf, gr=gr, dsa=dsa, connection=connection, 
-                        n=n, x_offest=x_offest, y_offest=y_offest, conn_num=conn_num, gate_connection=gate_connection,
-                        gate_connection_up=gate_connection_up, gate_connection_down=gate_connection_down, drain_connection=drain_connection, 
-                        source_connection=source_connection, layout=layout,connection_labels=connection_labels,connected_gates=connected_gates)
-        self.cell_str = "pmos5_w" + str(self.w).replace(".", "p") + "u_l" + str(self.l).replace(".", "p") + "u_nf" + str(
-            self.nf) + "_drain_area" + str(self.dsa) + "_gate_connection" + str(self.connection) + "alt" + str(self.n)
+
+    def __init__(
+        self,
+        w=0.5,
+        l=0.5,
+        nf=1,
+        gr=1,
+        dsa=1,
+        connection=0,
+        n=1,
+        x_offest=0,
+        y_offest=0,
+        connection_labels=1,
+        conn_num="0",
+        gate_connection="gate_connection_",
+        gate_connection_up="gate_connection_up_",
+        gate_connection_down="gate_connection_down_",
+        drain_connection="drain_connection_",
+        source_connection="source_connection_",
+        bulk_connection="bulk_connection_",
+        connected_gates=1,
+        layout=None,
+    ):
+        super().__init__(
+            w=w,
+            l=l,
+            nf=nf,
+            gr=gr,
+            dsa=dsa,
+            connection=connection,
+            n=n,
+            x_offest=x_offest,
+            y_offest=y_offest,
+            conn_num=conn_num,
+            gate_connection=gate_connection,
+            gate_connection_up=gate_connection_up,
+            gate_connection_down=gate_connection_down,
+            drain_connection=drain_connection,
+            source_connection=source_connection,
+            layout=layout,
+            connection_labels=connection_labels,
+            connected_gates=connected_gates,
+        )
+        self.cell_str = (
+            "pmos5_w"
+            + str(self.w).replace(".", "p")
+            + "u_l"
+            + str(self.l).replace(".", "p")
+            + "u_nf"
+            + str(self.nf)
+            + "_drain_area"
+            + str(self.dsa)
+            + "_gate_connection"
+            + str(self.connection)
+            + "alt"
+            + str(self.n)
+        )
         self.l_hvi = self.layout.layer(hvi_lay_num, hvi_lay_dt)
         self.nwell_extension = pmos5.hv_nwell_extension * self.percision
-        self.percision = 1/self.layout.dbu
-        self.bulk_connection = bulk_connection +str(conn_num)
+        self.percision = 1 / self.layout.dbu
+        self.bulk_connection = bulk_connection + str(conn_num)
 
-    def draw_guard_ring(self, layout, x, y, guard_width, guard_height, precision, cell, tap_width=0.29):
-        return super().draw_guard_ring(layout, x, y, guard_width, guard_height, precision, tap_width=tap_width, cell=cell,guard_label=self.bulk_connection)
+    def draw_guard_ring(
+        self, layout, x, y, guard_width, guard_height, precision, cell, tap_width=0.29
+    ):
+        return super().draw_guard_ring(
+            layout,
+            x,
+            y,
+            guard_width,
+            guard_height,
+            precision,
+            tap_width=tap_width,
+            cell=cell,
+            guard_label=self.bulk_connection,
+        )
 
     def draw_pmos5(self):
         self.pmos_cell = super().draw_nmos()
 
-        
         self.pmos_cell.shapes(self.l_hvi).insert(self.pmos_cell.bbox())
 
         return self.pmos_cell

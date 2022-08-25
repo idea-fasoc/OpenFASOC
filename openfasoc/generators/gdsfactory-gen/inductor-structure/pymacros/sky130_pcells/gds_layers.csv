@@ -56,7 +56,7 @@ areaid.mt,identifier,81:10,Location of e-test modules within the frame
 areaid.dt,identifier,81:11,Location of dice within the frame
 areaid.ft,identifier,81:12,Boundary of the frame
 areaid.ww,identifier,81:13,Waffle window (used to prevent waffle shifting)
-areaid.ld,identifier,81:14,Low tap density (15um between taps) area.  Must be at least 50um from padframe 
+areaid.ld,identifier,81:14,Low tap density (15um between taps) area.  Must be at least 50um from padframe
 areaid.ns,identifier,81:15,Non-critical side.  Blocks stress DRC rules
 areaid.ij,identifier,81:17,Identification for areas susceptible to injection
 areaid.zr,identifier,81:18,Zener diode identifier

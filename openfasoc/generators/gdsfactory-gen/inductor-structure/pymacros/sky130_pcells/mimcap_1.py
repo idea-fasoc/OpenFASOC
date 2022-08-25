@@ -1,4 +1,3 @@
-
 ########################################################################################################################
 ##
 # Mabrains Company LLC ("Mabrains Company LLC") CONFIDENTIAL
@@ -15,8 +14,6 @@ import math
 from .imported_generators.mimcap import *
 
 
-
-
 class mimcap_1_gen(pya.PCellDeclarationHelper):
     """
     The PCell declaration for the mimcap_1
@@ -28,20 +25,24 @@ class mimcap_1_gen(pya.PCellDeclarationHelper):
         super(mimcap_1_gen, self).__init__()
 
         # declare the parameters
-        self.param("l", self.TypeDouble, "Length", default=1,unit="um")
-        self.param("w", self.TypeDouble, "Width", default=1,unit="um")
+        self.param("l", self.TypeDouble, "Length", default=1, unit="um")
+        self.param("w", self.TypeDouble, "Width", default=1, unit="um")
         self.param("array_x", self.TypeInt, "elements in x_direction", default=1)
         self.param("array_y", self.TypeInt, "elements in y_direction", default=1)
-        self.param("x_spacing", self.TypeDouble, "spacing in x_direction", default=1,unit="um")
-        self.param("y_spacing", self.TypeDouble, "spacing in y_direction", default=1,unit="um")
-        self.param("totalcap", self.TypeDouble, "Total Capcitance",unit="fF",readonly=True)
+        self.param(
+            "x_spacing", self.TypeDouble, "spacing in x_direction", default=1, unit="um"
+        )
+        self.param(
+            "y_spacing", self.TypeDouble, "spacing in y_direction", default=1, unit="um"
+        )
+        self.param(
+            "totalcap", self.TypeDouble, "Total Capcitance", unit="fF", readonly=True
+        )
         # self.set_totalcap(4)
-        
-
 
     def display_text_impl(self):
         # Provide a descriptive text for the cell
-        return "sky130_fd_pr__cap_mim_m3_1_w"+str(self.w)+"_l"+str(self.l)
+        return "sky130_fd_pr__cap_mim_m3_1_w" + str(self.w) + "_l" + str(self.l)
 
     def coerce_parameters_impl(self):
 
@@ -86,13 +87,20 @@ class mimcap_1_gen(pya.PCellDeclarationHelper):
         pass
 
     def produce_impl(self):
-       
-        self.percision = 1/self.layout.dbu
-        mimcap_instance = mimcap(layout=self.layout,w=self.w,l=self.l,connection_labels=0)
+
+        self.percision = 1 / self.layout.dbu
+        mimcap_instance = mimcap(
+            layout=self.layout, w=self.w, l=self.l, connection_labels=0
+        )
         mimcap_cell = mimcap_instance.draw_cap()
-        write_cells = pya.CellInstArray(mimcap_cell.cell_index(), pya.Trans(pya.Point(0, 0)),
-                              pya.Vector(self.x_spacing*self.percision, 0), pya.Vector(0, self.y_spacing*self.percision),self.array_x , self.array_y)
-        
-        
+        write_cells = pya.CellInstArray(
+            mimcap_cell.cell_index(),
+            pya.Trans(pya.Point(0, 0)),
+            pya.Vector(self.x_spacing * self.percision, 0),
+            pya.Vector(0, self.y_spacing * self.percision),
+            self.array_x,
+            self.array_y,
+        )
+
         self.cell.insert(write_cells)
         self.cell.flatten(1)
