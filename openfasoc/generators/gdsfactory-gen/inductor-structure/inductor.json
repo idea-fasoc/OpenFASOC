@@ -1,0 +1,34 @@
+{
+    "name": "InductorTestStructure",
+    "origin": [0, 0],
+    "cells": {
+        "inductor": {
+            "pcell": "diff_octagon_inductor",
+            "lib": "SKY130",
+            "params": {
+                "N": 8,
+                "W": 5,
+                "S": 3,
+                "distance_input": 20,
+                "spacing_input": 20,
+                "Louter": 200,
+                "shielding": 200,
+                "W_shielding": 2,
+                "S_shielding": 4,
+                "diffusion_shielding": 0
+            },
+            "position": [0, 0],
+            "orientation": 0,
+            "ports": ["ind1_in", "ind1_out"],
+            "pads": {
+                "type": "GSGSG",
+                "padding": 120,
+                "pitch": 120,
+                "routing": {
+                    "io1": "ind1_in",
+                    "io3": "ind1_out"
+                }
+            }
+        }
+    }
+}
