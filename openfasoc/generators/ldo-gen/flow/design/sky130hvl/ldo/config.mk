@@ -16,8 +16,22 @@ export CORE_AREA   		= 15 15 265 315
 
 export VREG_AREA                = 55 40 230 170
 
+# PDN 
 export PDN_TCL 			= ../blocks/$(PLATFORM)/pdn.tcl
 
+#Placement options
+export PLACE_DENSITY = 0.30
+
+# Macro options
+export MACRO_PLACE_HALO         = 1 1
+export MACRO_PLACE_CHANNEL      = 20 20
+export MACRO_PLACEMENT          = ../blocks/$(PLATFORM)/manual_macro.tcl
+
+# keep with gf
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 1
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 0
+
+# Additional files
 export ADDITIONAL_LEFS  	= ../blocks/$(PLATFORM)/lef/capacitor_test_nf.lef \
                         	  ../blocks/$(PLATFORM)/lef/LDO_COMPARATOR_LATCH.lef \
 				  ../blocks/$(PLATFORM)/lef/PMOS.lef \
