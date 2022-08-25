@@ -1,9 +1,12 @@
 # Ryan W & Chandru R 2022
+
 import pya
 import os, sys
 import argparse, json
+
 import gdsfactory as gf
 from gdsfactory.layers import lyp_to_dataclass
+
 import sky130
 
 from sky130 import cells as sky130_cells
@@ -11,6 +14,7 @@ from sky130 import tech as sky130_tech
 
 # Local pymacros
 local_pymacros = os.path.relpath("./pymacros")
+
 # gdsfactory tech
 gdsfactory_tech = os.path.relpath("./sky130_tech.lyp")
 PATH_TO_PAD_GDSII = "./pad_forty_met1_met5.gds"
