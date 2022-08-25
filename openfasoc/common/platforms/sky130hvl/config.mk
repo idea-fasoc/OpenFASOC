@@ -2,7 +2,7 @@
 export PROCESS = 130
 
 # Rules for metal fill
-export FILL_CONFIG = ./platforms/$(PLATFORM)/fill.json
+export FILL_CONFIG = ../../../common/platforms/$(PLATFORM)/fill.json
 
 # Set the TIEHI/TIELO cells
 # These are used in yosys synthesis to avoid logical 1/0's in the netlist
@@ -17,7 +17,7 @@ export MAX_FANOUT = 5
 
 # Blackbox verilog file
 # List all standard cells and cells yosys should treat as blackboxes here
-export BLACKBOX_V_FILE = ./platforms/$(PLATFORM)/sky130_fd_sc_hvl.blackbox.v
+export BLACKBOX_V_FILE = ../../../common/platforms/$(PLATFORM)/sky130_fd_sc_hvl.blackbox.v
 
 # Yosys mapping files
 #export LATCH_MAP_FILE = ../../../common/platforms/$(PLATFORM)/cells_latch_hvl.v
@@ -25,8 +25,8 @@ export BLACKBOX_V_FILE = ./platforms/$(PLATFORM)/sky130_fd_sc_hvl.blackbox.v
 #export BLACKBOX_MAP_TCL = ../../../common/platforms/$(PLATFORM)/blackbox_map.tcl
 #Floorplan initialiazation
 
-export DIE_AREA   	 	= 0 0 300 350
-export CORE_AREA   		= 15 15 285 335
+#export DIE_AREA   	 	= 0 0 280 330
+#export CORE_AREA   		= 15 15 265 315
 
 
 # Placement site for core cells
@@ -37,15 +37,15 @@ export PLACE_DENSITY = 0.30
 #export PLACE_MAX_PHI_COEF = 1.00
 
 
-export TECH_LEF = ./platforms/$(PLATFORM)/lef/sky130_fd_sc_hvl.tlef
+export TECH_LEF = ../../../common/platforms/$(PLATFORM)/lef/sky130_fd_sc_hvl.tlef
 
-export SC_LEF = ./platforms/$(PLATFORM)/lef/sky130_fd_sc_hvl_merged.lef
+export SC_LEF = ../../../common/platforms/$(PLATFORM)/lef/sky130_fd_sc_hvl_merged.lef
 
 
-export LIB_FILES = ./platforms/$(PLATFORM)/lib/sky130_fd_sc_hvl__tt_025C_3v30.lib \
+export LIB_FILES = ../../../common/platforms/$(PLATFORM)/lib/sky130_fd_sc_hvl__tt_025C_3v30.lib \
                      $(ADDITIONAL_LIBS)
 
-export GDS_FILES = ./platforms/$(PLATFORM)/gds/sky130_fd_sc_hvl.gds \
+export GDS_FILES = ../../../common/platforms/$(PLATFORM)/gds/sky130_fd_sc_hvl.gds \
 	             $(ADDITIONAL_GDS)
 
 
@@ -57,18 +57,18 @@ export GDS_FILES = ./platforms/$(PLATFORM)/gds/sky130_fd_sc_hvl.gds \
 export CELL_PAD_IN_SITES = 4
 
 # Endcap and Welltie cells
-export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
+export TAPCELL_TCL = ../../../common/platforms/$(PLATFORM)/tapcell.tcl
 
 # TritonCTS options
 export CTS_BUF_CELL   = sky130_fd_sc_hvl__buf_1
 export CTS_MAX_SLEW   = 1.5e-9
 export CTS_MAX_CAP    = .1532e-12
-export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShd
+export CTS_TECH_DIR   = ../../../common/platforms/$(PLATFORM)/tritonCTShd
 
 export MACRO_PLACE_HALO ?= 1 1
 export MACRO_PLACE_CHANNEL ?= 20 20
 #export MACRO_FENCE_REGION = 250 30 490 170
-export MACRO_PLACEMENT = ./platforms/$(PLATFORM)/macro.tcl
+export MACRO_PLACEMENT = ../blocks/$(PLATFORM)/manual_macro.tcl
 
 # FastRoute options
 export MIN_ROUTING_LAYER = met1
@@ -81,7 +81,7 @@ export IO_PIN_MARGIN = 70
 export WIRE_RC_LAYER = met3
 
 # KLayout technology file
-export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/$(PLATFORM).lyt
+export KLAYOUT_TECH_FILE = ../../../common/platforms/$(PLATFORM)/$(PLATFORM).lyt
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
@@ -99,13 +99,13 @@ export ABC_LOAD_IN_FF = 5
 
 
 #Define default PDN config
-export PDN_TCL ?= ./platforms/$(PLATFORM)/pdn.tcl
+#export PDN_TCL ?= ./platforms/$(PLATFORM)/pdn.tcl
 
 # Define fastRoute tcl
-export FASTROUTE_TCL = ./platforms/$(PLATFORM)/fastroute.tcl
+export FASTROUTE_TCL = ../../../common/platforms/$(PLATFORM)/fastroute.tcl
 
 # Template definition for power grid analysis
-export TEMPLATE_PGA_CFG ?= ./platforms/sky130/template_pga.cfg
+export TEMPLATE_PGA_CFG ?= ../../../common/platforms/sky130/template_pga.cfg
 
 
 
@@ -126,7 +126,7 @@ export FILL_CELLS = sky130_fd_sc_hvl__fill_1 sky130_fd_sc_hvl__fill_2 sky130_fd_
 # resizer repair_long_wires -max_length
 export MAX_WIRE_LENGTH = 21000
 
-export CDL_FILE = ./platforms/sky130hvl/cdl/sky130_fd_sc_hvl.spice
+export CDL_FILE = ../../../common/platforms/sky130hvl/cdl/sky130_fd_sc_hvl.spice
 
 #export ENABLE_DPO = 1
 #export DPO_MAX_DISPLACEMENT = 390 390
