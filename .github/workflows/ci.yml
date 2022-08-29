@@ -16,11 +16,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USR }}
-          password: ${{ secrets.DOCKERHUB_PSW }}
+      # - name: Login to DockerHub
+      #   uses: docker/login-action@v2
+      #   with:
+      #     username: ${{ secrets.DOCKERHUB_USR }}
+      #     password: ${{ secrets.DOCKERHUB_PSW }}
 
       - name: build the docker image
         env:
@@ -28,7 +28,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/docker/conda
           docker build -t $IMAGE_NAME .
-          docker push
+          # docker push
 
   sky130hd_temp:
     runs-on: ubuntu-latest 
