@@ -24,7 +24,7 @@ jobs:
 
       - name: build the docker image
         env:
-              IMAGE_NAME: msaligane/openfasoc:alpha
+              IMAGE_NAME: saicharan0112/openfasoc:alpha
         run: |
           cd $GITHUB_WORKSPACE/docker/conda
           docker build -t $IMAGE_NAME .
@@ -38,7 +38,7 @@ jobs:
 
       - name: Test sky130hd Temp sensor
         env:
-                IMAGE_NAME: msaligane/openfasoc:alpha
+                IMAGE_NAME: saicharan0112/openfasoc:alpha
         run: |
           cd $GITHUB_WORKSPACE
           touch flow_report.log
@@ -62,7 +62,7 @@ jobs:
 
       - name: Test sky130hd Temp sensor
         env:
-                IMAGE_NAME: msaligane/openfasoc:alpha
+                IMAGE_NAME: saicharan0112/openfasoc:alpha
         run: |
           cd $GITHUB_WORKSPACE
           touch flow_report.log
@@ -86,7 +86,7 @@ jobs:
 
       - name: Grep the commit numbers of all dependent tools and update README.rst
         env:
-              IMAGE_NAME: msaligane/openfasoc:alpha
+              IMAGE_NAME: saicharan0112/openfasoc:alpha
         run: |
           cd $GITHUB_WORKSPACE
           docker run --rm \
@@ -97,7 +97,7 @@ jobs:
               /scripts/extract_conda_versions.sh > conda_versions.txt
               /scripts/extract_tool_versions.sh > versions.txt
               /scripts/modify_readme.py"
-          docker tag msaligane/openfasoc:alpha msaligane/openfasoc:stable
+          docker tag saicharan0112/openfasoc:alpha saicharan0112/openfasoc:stable
 
       - name: Commit README.rst
         run: |
