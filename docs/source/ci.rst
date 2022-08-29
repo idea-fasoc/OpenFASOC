@@ -3,7 +3,7 @@ Continuous Integration
 
 The Continuous Integration and Deployment for OpenFASoC will be running on a self-hosted VM on the GCP. The CI/CD flow is described like below -
 
-.. image:: /../../source/openfasoc_ci.png
+.. image:: openfasoc_ci.png
   :width: 500
 
 

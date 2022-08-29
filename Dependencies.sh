@@ -13,10 +13,10 @@ then
     echo "[Warning] python version less than 3.6 . Not compatable. You atleast need version above or equal to 3.7."
     sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
     echo "[Warning] Skipping installing the gdsfactory python package because of that error. Continuing installation..."
-else 
+else
     echo "Compatable python version exists: $ma_ver . $mi_ver"
 fi
- 
+
 
 if which pip3 >> /dev/null
 then
