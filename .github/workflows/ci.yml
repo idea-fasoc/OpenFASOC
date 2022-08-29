@@ -11,7 +11,7 @@ on:
 
 jobs:
   build_docker_image:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -31,7 +31,7 @@ jobs:
           docker push
 
   sky130hd_temp:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -54,32 +54,32 @@ jobs:
             ">> flow_report.log
             if grep "\[ERROR\]" flow_report.log; then exit 1; else exit 0; fi
 
-  sky130hd_temp_full:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
+  # sky130hd_temp_full:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v2
 
-      - name: Test sky130hd Temp sensor
-        env:
-                IMAGE_NAME: saicharan0112/openfasoc:alpha
-        run: |
-          cd $GITHUB_WORKSPACE
-          touch flow_report.log
-          docker run --rm \
-            -v $PWD:$PWD\
-            -w $PWD\
-            $IMAGE_NAME\
-            bash -c "\
-              pip3 install -r requirements.txt &&\
-              cd ./openfasoc/generators/temp-sense-gen &&\
-              make clean &&\
-              make sky130hd_temp_full\
-            ">> flow_report.log
-            if grep "\[ERROR\]" flow_report.log; then exit 1; else exit 0; fi
+  #     - name: Test sky130hd Temp sensor
+  #       env:
+  #               IMAGE_NAME: saicharan0112/openfasoc:alpha
+  #       run: |
+  #         cd $GITHUB_WORKSPACE
+  #         touch flow_report.log
+  #         docker run --rm \
+  #           -v $PWD:$PWD\
+  #           -w $PWD\
+  #           $IMAGE_NAME\
+  #           bash -c "\
+  #             pip3 install -r requirements.txt &&\
+  #             cd ./openfasoc/generators/temp-sense-gen &&\
+  #             make clean &&\
+  #             make sky130hd_temp_full\
+  #           ">> flow_report.log
+  #           if grep "\[ERROR\]" flow_report.log; then exit 1; else exit 0; fi
 
   update_readme:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
