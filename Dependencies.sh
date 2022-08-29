@@ -122,17 +122,6 @@ fi
 
 export PATH=/usr/bin/miniconda3/bin:$PATH
 
-#Checking for all installed binaries
-for i in magic netgen openroad yosys ngspice klayout
-do
- if which $i
- then
-  echo "$i installed successfully"
- else
-  echo "$i not installed"
- fi
-done
-
 if [ -x /usr/bin/miniconda3/share/pdk/ ]
 then
  export PDK_ROOT=/usr/bin/miniconda3/share/pdk/
@@ -140,3 +129,5 @@ then
 else
  echo "PDK not installed"
 fi
+
+echo "To access the installed binaries, please run this command - export PATH=/usr/bin/miniconda3/bin:\$PATH"
