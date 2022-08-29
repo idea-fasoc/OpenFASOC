@@ -1,5 +1,21 @@
 #/bin/bash
 
+ma_ver=$(python -c"import sys; print(str(sys.version_info.major))")
+mi_ver=$(python -c"import sys; print(str(sys.version_info.minor))")
+
+#if [[ "$ma_ver" -lt 3 ]]
+#then
+#    echo "python version less than 3.* . Not compatable. Exiting..."
+#    exit
+#elif [[ "$mi_ver" -lt 6 ]]
+#then
+#    echo "python version less than 3.6 . Not compatable. Exiting..."
+#    exit
+#else 
+#    echo "Compatable python version exists: $ma_ver . $mi_ver"
+#fi
+ 
+
 if which pip3 >> /dev/null
 then
         echo "Pip3 exists"
@@ -39,36 +55,49 @@ fi
 
 if [ $? == 0 ]
 then
+ echo "Python packages installed successfully. Continuing the installation...\n"
+if ! [ -x /usr/bin/miniconda3 ]
+then
       wget https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64.sh \
     && bash Miniconda3-py37_4.12.0-Linux-x86_64.sh -b -p /usr/bin/miniconda3/ \
     && rm -f Miniconda3-py37_4.12.0-Linux-x86_64.sh
 else
-	echo "Failed to install conda"
+    echo "Found miniconda3. Continuing the installation...\n"
+fi
+else
+	echo "Failed to install python packages. Check above for error messages."
 	exit
 fi
 
 
 if [ $? == 0 ] && [ -x /usr/bin/miniconda3 ]
 then
+        echo "miniconda3 installed successfully. Continuing the installation...\n"
 	export PATH=/usr/bin/miniconda3/bin:$PATH
 	conda update -y conda
-        if [ $? == 0 ];then conda install -c litex-hub yosys open_pdks.sky130a magic netgen -y ; else echo "Failed to install conda packages" ; fi
-        conda install -c conda-forge ngspice
-        if [ $? == 0 ];then conda install -c litex-hub openroad -y ; else echo "Failed to install openroad conda package" ; fi
+        if [ $? == 0 ];then conda install -c litex-hub yosys open_pdks.sky130a magic netgen -y ; else echo "Failed to update conda" ; fi
+        if [ $? == 0 ];then conda install -c litex-hub openroad -y ; else echo "Failed to install conda packages" ; fi
+        conda install -c conda-forge ngspice -y
 else
-	echo "Failed to install conda packages"
+	echo "Failed to install miniconda. Check above for error messages."
 	exit
+fi
+
+if [ $? == 0 ]
+then
+ echo "Magic, Netgen, OpenROAD, Yosys, Ngspice are installed. Checking pending. Continuing the installation...\n"
+else
+ echo "Failed to install Magic, Netgen, OpenROAD, Yosys, Ngspice"
+ exit
 fi
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null
 then
-
 	apt install qt5-default qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y
 	wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.27.10-1_amd64.deb
 	dpkg -i klayout_0.27.10-1_amd64.deb
 	apt install time -y
 	strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5
-
 elif cat /etc/os-release | grep -e "centos" >> /dev/null
 then
 	yum group install "Development Tools" -y
@@ -83,4 +112,31 @@ else
 	echo "Cannot install klayout for other linux distrbutions via this script"
 fi
 
-export PDK_ROOT=/usr/bin/miniconda3/share/pdk/
+if [ $? == 0 ]
+then
+ echo "Installed Klayout successfully. Checking pending..."
+else
+ echo "Failed to install Klayout successfully"
+ exit
+fi
+
+export PATH=/usr/bin/miniconda3/bin:$PATH
+
+#Checking for all installed binaries
+for i in magic netgen openroad yosys ngspice klayout
+do
+ if which $i
+ then
+  echo "$i installed successfully"
+ else
+  echo "$i not installed"
+ fi
+done
+
+if [ -x /usr/bin/miniconda3/share/pdk/ ]
+then
+ export PDK_ROOT=/usr/bin/miniconda3/share/pdk/
+ echo "PDK_ROOT is set to /usr/bin/miniconda3/share/pdk/"
+else
+ echo "PDK not installed"
+fi
