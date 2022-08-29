@@ -28,7 +28,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/docker/conda
           docker build -t $IMAGE_NAME .
-          docker push
+          docker push $IMAGE_NAME
 
   sky130hd_temp:
     needs: build_docker_image
