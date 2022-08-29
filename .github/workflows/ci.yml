@@ -31,6 +31,7 @@ jobs:
           # docker push
 
   sky130hd_temp:
+    needs: build_docker_image
     runs-on: ubuntu-latest 
     steps:
       - name: Checkout repo
@@ -79,6 +80,7 @@ jobs:
   #           if grep "\[ERROR\]" flow_report.log; then exit 1; else exit 0; fi
 
   update_readme:
+    needs: sky130hd_temp
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
