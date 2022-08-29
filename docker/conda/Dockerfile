@@ -1,8 +1,9 @@
 FROM ubuntu:20.04
 
-RUN apt -y update
-RUN apt -y upgrade
-RUN apt install wget -y
+RUN apt-get -y update
+RUN apt-get -y upgrade
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get install wget -y
 
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64.sh \
     && bash Miniconda3-py37_4.12.0-Linux-x86_64.sh -b -p /usr/bin/miniconda3/ \
