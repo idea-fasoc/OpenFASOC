@@ -48,7 +48,7 @@ jobs:
             -w $PWD\
             $IMAGE_NAME\
             bash -c "\
-              yum install git -y
+              apt-get install git -y
               pip3 install -r requirements.txt &&\
               cd ./openfasoc/generators/temp-sense-gen &&\
               make sky130hd_temp\

@@ -4,6 +4,7 @@ RUN apt-get -y update
 RUN apt-get -y upgrade
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get install wget -y
+RUN apt-get install git -y
 
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64.sh \
     && bash Miniconda3-py37_4.12.0-Linux-x86_64.sh -b -p /usr/bin/miniconda3/ \
