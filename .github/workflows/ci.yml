@@ -117,5 +117,6 @@ jobs:
         run: |
           git config --global user.name 'saicharan0112'
           git config --global user.email 'saicharan0112@users.noreply.github.com'
-          git commit -am "Updated README with latest stable version numbers of dependent tools"
+          git add -A
+          git commit -m "Updated README with latest stable version numbers of dependent tools"
           git push
