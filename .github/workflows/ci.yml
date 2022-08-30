@@ -96,7 +96,9 @@ jobs:
             -w $PWD\
             $IMAGE_NAME\
             bash -c "\
+              chmod 755 /scripts/extract_conda_versions.sh
               /scripts/extract_conda_versions.sh > conda_versions.txt
+              chmod 755 /scripts/extract_tool_versions.sh
               /scripts/extract_tool_versions.sh > versions.txt
               /scripts/modify_readme.py"
 
