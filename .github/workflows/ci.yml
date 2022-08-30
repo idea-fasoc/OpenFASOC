@@ -22,7 +22,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: build the docker image
+      - name: Build the docker image
         env:
               IMAGE_NAME: saicharan0112/openfasoc:alpha
         run: |
@@ -32,7 +32,7 @@ jobs:
 
   sky130hd_temp:
     needs: build_docker_image
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -42,7 +42,7 @@ jobs:
                 IMAGE_NAME: saicharan0112/openfasoc:alpha
         run: |
           cd $GITHUB_WORKSPACE
-          touch flow_report.log
+          touch file.log
           docker run --rm \
             -v $PWD:$PWD\
             -w $PWD\
@@ -50,10 +50,9 @@ jobs:
             bash -c "\
               pip3 install -r requirements.txt &&\
               cd ./openfasoc/generators/temp-sense-gen &&\
-              make clean &&\
               make sky130hd_temp\
-            ">> flow_report.log
-            if grep "\[ERROR\]" flow_report.log; then exit 1; else exit 0; fi
+            ">> file.log
+            if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi
 
   # sky130hd_temp_full:
   #   runs-on: self-hosted
@@ -99,11 +98,23 @@ jobs:
               /scripts/extract_conda_versions.sh > conda_versions.txt
               /scripts/extract_tool_versions.sh > versions.txt
               /scripts/modify_readme.py"
-          docker tag saicharan0112/openfasoc:alpha saicharan0112/openfasoc:stable
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push the docker image
+        env:
+              IMAGE_NAME: saicharan0112/openfasoc:stable
+        run: |
+          docker tag saicharan0112/openfasoc:alpha saicharan0112/openfasoc:stable
+          docker push $IMAGE_NAME
+          
       - name: Commit README.rst
         run: |
-          git config --global user.name 'idea-fasoc'
-          git config --global user.email 'idea-fasoc'@users.noreply.github.com'
+          git config --global user.name 'saicharan0112'
+          git config --global user.email 'saicharan0112'@users.noreply.github.com'
           git commit -am "Updated README with latest stable version numbers of dependent tools"
           git push
