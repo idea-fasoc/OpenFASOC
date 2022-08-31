@@ -131,3 +131,10 @@ Tapeouts and testing setup
 *********************************
 
 Please refer to our testing setup in our tapeouts and testing setup [section](./tapeouts/mpw-1/testsetup/README.md#section).
+
+Citation
+****************
+
+If you find this tool useful in your research, we kindly request to cite our `paper <https://ieeexplore.ieee.org/document/9344104>`_:
+
+ - Tutu Ajayi et al., “An open-source framework for autonomous soc design with analog block generation,” in 2020 IFIP/IEEE 28th International Conference on Very Large Scale Integration (VLSI-SOC). IEEE, 2020.
