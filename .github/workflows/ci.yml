@@ -24,7 +24,7 @@ jobs:
 
       - name: Build the docker image
         env:
-              IMAGE_NAME: saicharan0112/openfasoc:alpha
+              IMAGE_NAME: msaligane/openfasoc:alpha
         run: |
           cd $GITHUB_WORKSPACE/docker/conda
           docker build -t $IMAGE_NAME .
@@ -39,7 +39,7 @@ jobs:
 
       - name: Test sky130hd Temp sensor
         env:
-                IMAGE_NAME: saicharan0112/openfasoc:alpha
+                IMAGE_NAME: msaligane/openfasoc:alpha
         run: |
           cd $GITHUB_WORKSPACE
           touch file.log
@@ -63,7 +63,7 @@ jobs:
 
   #     - name: Test sky130hd Temp sensor
   #       env:
-  #               IMAGE_NAME: saicharan0112/openfasoc:alpha
+  #               IMAGE_NAME: msaligane/openfasoc:alpha
   #       run: |
   #         cd $GITHUB_WORKSPACE
   #         touch flow_report.log
@@ -88,7 +88,7 @@ jobs:
 
       - name: Grep the commit numbers of all dependent tools and update README.rst
         env:
-              IMAGE_NAME: saicharan0112/openfasoc:alpha
+              IMAGE_NAME: msaligane/openfasoc:alpha
         run: |
           cd $GITHUB_WORKSPACE
           docker run --rm \
@@ -110,15 +110,15 @@ jobs:
 
       - name: Push the docker image
         env:
-              IMAGE_NAME: saicharan0112/openfasoc:stable
+              IMAGE_NAME: msaligane/openfasoc:stable
         run: |
-          docker tag saicharan0112/openfasoc:alpha saicharan0112/openfasoc:stable
+          docker tag msaligane/openfasoc:alpha msaligane/openfasoc:stable
           docker push $IMAGE_NAME
 
       - name: Commit README.rst
         run: |
-          git config --global user.name 'saicharan0112'
-          git config --global user.email 'saicharan0112@users.noreply.github.com'
+          git config --global user.name 'idea-fasoc'
+          git config --global user.email 'idea-fasoc@users.noreply.github.com'
           git add -A
           git commit -m "Updated README with latest stable version numbers of dependent tools"
           git push
