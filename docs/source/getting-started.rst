@@ -80,4 +80,4 @@ Install docker on your machine before you proceed
 
 4. To view results after the full run (including simulations), go to `/<path_to_OpenFASOC>/openfasoc/generators/temp-sense/simulations/run/` where you can find the directory for the type of inverter-header combination in which you can find the simulation log files along with the spice netlists for various temperature calibrations.
 
-**Note** Files will be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.
+**Note** In this case, files are be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.

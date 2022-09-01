@@ -11,13 +11,17 @@ Developer's Guide
 Things to improve
 ********************
 
-To improve our tools, flow, and QoR. The following limitations are currently being addressed -
+To improve our generators, flow, and the QoR, efforts are directed towards the following items under different categories -
 
-* In OpenROAD tool -
-    - Add the power pins extraction in OpenROAD tool
-    - LEF modification for NDR needs to be within the tool (no additional script)
-    - write_cdl bug fix in source code
-    - fence aware placement step needs to be added
-    - ioplacment step is now skipped at placement and is set to random palcement by default at floorplaning so it doesn't put power pins of additional voltage domains at the edge
-* Enable the stable spice simulation flow and modeling (ngspice and Xyce)
-* Add sky130_fd_sc_hs support
+* Infrastructure:
+    * Add more regression tests to the CI.
+    * Checks at each step (Verilog generation, Synthesis, APAR, DRC and LVS) inside each generator.
+    * Simulation after synthesis.
+
+* Circuit level
+    * Multi-config enablement for each generator.
+    * Circuit-level optimization
+
+* General
+    * Enable the stable spice simulation flow and modeling (ngspice and Xyce)
+    * Add sky130_fd_sc_hs support
