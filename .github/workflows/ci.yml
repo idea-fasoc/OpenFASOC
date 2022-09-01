@@ -114,7 +114,7 @@ jobs:
         run: |
           docker tag saicharan0112/openfasoc:alpha saicharan0112/openfasoc:stable
           docker push $IMAGE_NAME
-          
+
       - name: Commit README.rst
         run: |
           git config --global user.name 'saicharan0112'
