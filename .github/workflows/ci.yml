@@ -6,8 +6,8 @@ on:
   #push:
   #pull_request:
   workflow_dispatch:
-  # schedule:
-  # - cron: 0 1 * * * # run at 1 AM UTC
+  schedule:
+   - cron: 0 1 * * * # run at 1 AM UTC
 
 jobs:
   build_docker_image:
