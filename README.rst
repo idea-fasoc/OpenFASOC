@@ -18,20 +18,20 @@ Prerequisites
 
 Please install the following tools with the recommended commit ids for a stable functioning of the flow:
 
-  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:)
+  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.315)
 
-  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:)
+  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.227)
 
-  3. `Klayout <https://github.com/KLayout/klayout>`_ (version:)
+  3. `Klayout <https://github.com/KLayout/klayout>`_ (version:0.27.10-1)
 
       - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
-  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:)
+  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.20+45)
 
-  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:)
+  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_4752)
 
-  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:)
+  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.323)
 
    - open_pdks is required to run drc/lvs check and the simulations
    - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
@@ -131,3 +131,10 @@ Tapeouts and testing setup
 *********************************
 
 Please refer to our testing setup in our tapeouts and testing setup [section](./tapeouts/mpw-1/testsetup/README.md#section).
+
+Citation
+****************
+
+If you find this tool useful in your research, we kindly request to cite our `paper <https://ieeexplore.ieee.org/document/9344104>`_:
+
+ - Tutu Ajayi et al., “An open-source framework for autonomous soc design with analog block generation,” in 2020 IFIP/IEEE 28th International Conference on Very Large Scale Integration (VLSI-SOC). IEEE, 2020.
