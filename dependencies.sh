@@ -5,16 +5,16 @@ mi_ver=$(python -c"import sys; print(str(sys.version_info.minor))")
 
 if [[ "$ma_ver" -lt 3 ]]
 then
-    echo "[Warning] python version less than 3.* . Not compatable. You atleast need version above or equal to 3.7."
+    echo "[Warning] python version less than 3.* . Not compatible. You atleast need version above or equal to 3.7."
     sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
     echo "[Warning] Skipping installing the gdsfactory python package because of that error. Continuing installation..."
 elif [[ "$mi_ver" -lt 6 ]]
 then
-    echo "[Warning] python version less than 3.6 . Not compatable. You atleast need version above or equal to 3.7."
+    echo "[Warning] python version less than 3.6 . Not compatible. You atleast need version above or equal to 3.7."
     sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
     echo "[Warning] Skipping installing the gdsfactory python package because of that error. Continuing installation..."
 else
-    echo "Compatable python version exists: $ma_ver . $mi_ver"
+    echo "Compatible python version exists: $ma_ver . $mi_ver"
 fi
 
 
