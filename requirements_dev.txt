@@ -18,4 +18,3 @@ sphinx-click
 sphinx-markdown-tables
 tox
 xdoctest
-nbsphinx
