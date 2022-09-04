@@ -79,10 +79,16 @@ then
 	conda update -y conda
         if [ $? == 0 ];then conda install -c litex-hub yosys open_pdks.sky130a magic netgen -y ; else echo "Failed to update conda" ; fi
         if [ $? == 0 ];then conda install -c litex-hub openroad -y ; else echo "Failed to install conda packages" ; fi
-        conda install -c conda-forge ngspice -y
 else
 	echo "Failed to install miniconda. Check above for error messages."
 	exit
+fi
+
+if cat /etc/os-release | grep "ubuntu" >> /dev/null
+then
+	apt install bison flex libx11-dev libx11-6 libxaw7-dev libreadline6-dev autoconf libtool automake -y
+	git clone http://git.code.sf.net/p/ngspice/ngspice
+	cd ngspice && ./compile_linux.sh
 fi
 
 if [ $? == 0 ]
@@ -99,7 +105,7 @@ then
 	wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.27.10-1_amd64.deb
 	dpkg -i klayout_0.27.10-1_amd64.deb
 	apt install time -y
-	strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5
+	strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5 #https://stackoverflow.com/questions/63627955/cant-load-shared-library-libqt5core-so-5
 elif cat /etc/os-release | grep -e "centos" >> /dev/null
 then
 	yum group install "Development Tools" -y
