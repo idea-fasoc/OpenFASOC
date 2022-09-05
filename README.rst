@@ -130,11 +130,13 @@ To run the simulation, please edit your local model file in `common/platform_con
 Tapeouts and testing setup
 *********************************
 
-Please refer to our testing setup in our tapeouts and testing setup [section](./tapeouts/mpw-1/testsetup/README.md#section).
+Please refer to our testing setup in our `tapeouts and testing setup section <tapeouts/mpw-1/testsetup/>`_.
 
 Citation
 ****************
 
-If you find this tool useful in your research, we kindly request to cite our `paper <https://ieeexplore.ieee.org/document/9344104>`_:
+If you find this tool useful in your research, we kindly request to cite our papers:
 
- - Tutu Ajayi et al., “An open-source framework for autonomous soc design with analog block generation,” in 2020 IFIP/IEEE 28th International Conference on Very Large Scale Integration (VLSI-SOC). IEEE, 2020.
+ - Tutu Ajayi et al., "`An Open-source Framework for Autonomous SoC Design with Analog Block Generation <https://ieeexplore.ieee.org/document/9344104>`_," 2020 IFIP/IEEE 28th International Conference on Very Large Scale Integration (VLSI-SOC), 2020, pp. 141-146.
+
+ - Qirui Zhang et al., "`An Open-Source and Autonomous Temperature Sensor Generator Verified With 64 Instances in SkyWater 130 nm for Comprehensive Design Space Exploration <https://ieeexplore.ieee.org/abstract/document/9816083>`_," in IEEE Solid-State Circuits Letters, vol. 5, pp. 174-177, 2022.
