@@ -1,6 +1,6 @@
 clc; clear all;
-% This script generates an excel sheet that maps the design number of a 
-% sensor to its silicon configurations: header type, std cell type, N_hdr 
+% This script generates an excel sheet that maps the design number of a
+% sensor to its silicon configurations: header type, std cell type, N_hdr
 % and N_inv.
 
 % Initialize Arrays
@@ -12,7 +12,7 @@ N_inv = zeros(64,1);
 
 for i = 0:63
     SensorDesign(i+1, 1) = i;
-    
+
     % Determine Header Type
     hdrType = floor(i/32);
     if (hdrType == 0)
@@ -20,7 +20,7 @@ for i = 0:63
     else
         HeaderType(i+1, 1) = "B";
     end
-    
+
     % Determine StdCellType
     stdCellType = floor(mod(i, 32)/16);
     if (stdCellType == 0)
@@ -28,10 +28,10 @@ for i = 0:63
     else
         StdCellType(i+1, 1) = "hd";
     end
-    
+
     % Determine N_hdr
     N_hdr(i+1, 1) = 2*floor(mod(i, 16)/4) + 3;
-    
+
     % Determine N_inv
     N_inv(i+1, 1) = 2*mod(i, 4) + 5;
 end
