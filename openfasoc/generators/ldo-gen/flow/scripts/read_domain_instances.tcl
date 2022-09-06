@@ -14,7 +14,7 @@ proc read_domain_instances {voltage_domain_name instances_list} {
 
     set inst_name [lindex $line 0]
     #$domain_region addInst [$block findInst $inst_name]
-    $domain_group addInst [$block findInst $inst_name]
+    $domain_group addInst [$block findInst $inst_name] 
   }
 
   close $ch
