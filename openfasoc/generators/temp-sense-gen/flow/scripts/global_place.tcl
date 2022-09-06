@@ -50,20 +50,6 @@ global_placement -density $place_density \
 
 estimate_parasitics -placement
 
-# openfasoc: fix for pdngen problem (issue #81)
-# using pdn.cfg, the tracks are placed correctly, but temp_analog_0 instances
-# have their VPWR pins associated to VDD (and not VIN) in the database
-# (the output layout is right still, this just caused problems for LVS)
-set block [ord::get_db_block]
-set group [$block findGroup TEMP_ANALOG]
-set net_vin [$block findNet VIN]
-foreach inst [$group getInsts] {
-  set pin_vpwr [$inst findITerm VPWR]
-  set pin_vpb [$inst findITerm VPB]
-  $pin_vpwr connect $net_vin
-  $pin_vpb connect $net_vin
-}
-
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "global place" false
 
