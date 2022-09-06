@@ -30,4 +30,3 @@ To improve our generators, flow, and the QoR, efforts are directed towards the f
     * Simulation after synthesis.
     * Add Special Router in OpenROAD
     * PCells in gdsfactory
-
