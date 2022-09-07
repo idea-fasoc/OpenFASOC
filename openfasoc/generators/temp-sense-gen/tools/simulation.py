@@ -8,7 +8,7 @@ from itertools import product
 
 import TEMP_netlist
 
-
+# Note 7/9/22: this function does NOT implement PEX simulations. Netlist is from flow/results...
 def generate_runs(
     genDir,
     designName,
@@ -25,7 +25,7 @@ def generate_runs(
     platformConfig = jsonConfig["platforms"][platform]
     simTool = jsonConfig["simTool"]
     model_file = jsonConfig["open_pdks"] + "/libs.tech/ngspice/sky130.lib.spice"
-    # avoid breaking function calls to this function by making this the defualt option
+    # avoid breaking function calls to this function by making a defualt option based on genDir
     if not spiceDir:
         spiceDir = genDir + "/work"
 
