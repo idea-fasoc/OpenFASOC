@@ -25,7 +25,7 @@ def generate_runs(
     simTool = jsonConfig["simTool"]
     model_file = jsonConfig["open_pdks"] + "/libs.tech/ngspice/sky130.lib.spice"
     # avoid breaking function calls to this function by making this the defualt option
-    if !spiceDir:
+    if not spiceDir:
         spiceDir=genDir+"/work"
 
     platformSpice = glob.glob(
