@@ -8,7 +8,6 @@ from itertools import product
 
 import TEMP_netlist
 
-
 def generate_runs(
     genDir,
     designName,
@@ -18,12 +17,16 @@ def generate_runs(
     jsonConfig,
     platform,
     modeling=False,
+    spiceDir=None
 ) -> None:
     simDir = genDir + "simulations/"
     flowDir = genDir + "flow/"
     platformConfig = jsonConfig["platforms"][platform]
     simTool = jsonConfig["simTool"]
     model_file = jsonConfig["open_pdks"] + "/libs.tech/ngspice/sky130.lib.spice"
+    # avoid breaking function calls to this function by making this the defualt option
+    if !spiceDir:
+        spiceDir=genDir+"/work"
 
     platformSpice = glob.glob(
         genDir + "../../common/platforms/%s/cdl/*.spice" % (platform)
@@ -89,7 +92,7 @@ def generate_runs(
             with open(dstNetlist, "w") as wf:
                 filedata = wf.write(filedata)
         else:
-            srcNetlist = flowDir + designName + ".spice"
+            srcNetlist = spiceDir + "/" + designName + ".spice"
             dstNetlist = runDir + designName + ".spice"
             simTestbench = re.sub(
                 "@netlist",
@@ -101,6 +104,7 @@ def generate_runs(
         for temp in tempList:
             w_file = open(runDir + "/%s_sim_%d.sp" % (designName, temp), "w")
             wfdata = re.sub("@temp", str(temp), simTestbench)
+            wfdata = re.sub("@design_nickname", designName, wfdata)
             w_file.write(wfdata)
             w_file.close()
 
@@ -112,11 +116,6 @@ def generate_runs(
 def update_netlist(srcNetlist, dstNetlist, simMode) -> None:
     with open(srcNetlist, "r") as rf:
         netlist = rf.read()
-        netlist = re.sub(
-            "(\.INCLUDE.*\n)",
-            "\g<1>.SUBCKT tempsenseInst CLK_REF DONE DOUT[0] DOUT[10] DOUT[11]\n+ DOUT[12] DOUT[13] DOUT[14] DOUT[15] DOUT[16] DOUT[17] DOUT[18]\n+ DOUT[19] DOUT[1] DOUT[20] DOUT[21] DOUT[22] DOUT[23] DOUT[2]\n+ DOUT[3] DOUT[4] DOUT[5] DOUT[6] DOUT[7] DOUT[8] DOUT[9] RESET_COUNTERn\n+ SEL_CONV_TIME[0] SEL_CONV_TIME[1] SEL_CONV_TIME[2] SEL_CONV_TIME[3]\n+ VDD VIN VSS en lc_out out outb\n",
-            netlist,
-        )
         netlist = re.sub("\.end", ".ends", netlist)
         spice_netlist_re = re.search("\.INCLUDE '(.*)'", netlist)
         spice_netlist = spice_netlist_re.group(1)
