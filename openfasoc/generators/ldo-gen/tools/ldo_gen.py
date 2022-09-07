@@ -312,7 +312,6 @@ if match_found == 1:
    for line in filedata:
        x = re.findall("^{pt", line)
        if not x:
-                print(line)
                 temp_list.append(line)
                
    with open(blocksDir + "/ldo_domain_insts.txt",'w') as fw:
