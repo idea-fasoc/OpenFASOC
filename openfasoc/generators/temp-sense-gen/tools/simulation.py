@@ -8,6 +8,7 @@ from itertools import product
 
 import TEMP_netlist
 
+
 def generate_runs(
     genDir,
     designName,
@@ -17,7 +18,7 @@ def generate_runs(
     jsonConfig,
     platform,
     modeling=False,
-    spiceDir=None
+    spiceDir=None,
 ) -> None:
     simDir = genDir + "simulations/"
     flowDir = genDir + "flow/"
@@ -26,7 +27,7 @@ def generate_runs(
     model_file = jsonConfig["open_pdks"] + "/libs.tech/ngspice/sky130.lib.spice"
     # avoid breaking function calls to this function by making this the defualt option
     if not spiceDir:
-        spiceDir=genDir+"/work"
+        spiceDir = genDir + "/work"
 
     platformSpice = glob.glob(
         genDir + "../../common/platforms/%s/cdl/*.spice" % (platform)

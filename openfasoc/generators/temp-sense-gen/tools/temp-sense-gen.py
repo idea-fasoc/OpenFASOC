@@ -268,7 +268,14 @@ for i in range(0, temp_points + 1):
     temp_list.append(temp_start + i * temp_step)
 
 generate_runs(
-    genDir, designName, header_var, stage_var, temp_list, jsonConfig, args.platform, spiceDir=args.outputDir
+    genDir,
+    designName,
+    header_var,
+    stage_var,
+    temp_list,
+    jsonConfig,
+    args.platform,
+    spiceDir=args.outputDir,
 )
 
 # shutil.copyfile(flowDir + designName + '_pex.spice', runDir + designName + '_pex.spice')
