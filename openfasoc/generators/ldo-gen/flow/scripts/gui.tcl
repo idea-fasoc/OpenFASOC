@@ -21,7 +21,7 @@ if {[info exist ::env(DEF_FILE)]} {
 if {![info exist ::env(GUI_NO_TIMING)]} {
   # Determine design stage (1 ... 6)
   set design_stage [lindex [split [file tail $input_file] "_"] 0]
-  
+
   # Read SDC, first try to find the most recent SDC file for the stage
   set sdc_file ""
   for {set s $design_stage} {$s > 0} {incr s -1} {
@@ -37,13 +37,13 @@ if {![info exist ::env(GUI_NO_TIMING)]} {
   if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
     source $::env(PLATFORM_DIR)/derate.tcl
   }
-  
+
   source $::env(PLATFORM_DIR)/setRC.tcl
   if {$design_stage >= 4} {
     # CTS has run, so propagate clocks
     set_propagated_clock [all_clocks]
   }
-  
+
   if {$design_stage >= 6 && [file exist $::env(RESULTS_DIR)/6_final.spef]} {
     puts "Loading spef"
     read_spef $::env(RESULTS_DIR)/6_final.spef
@@ -51,7 +51,7 @@ if {![info exist ::env(GUI_NO_TIMING)]} {
     puts "Estimating parasitics"
     estimate_parasitics -placement
   }
-  
+
   # Cleanup temporary variables
   unset sdc_file s design_stage
 }

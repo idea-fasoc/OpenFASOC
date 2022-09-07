@@ -42,7 +42,7 @@ if {[find_macros] != ""} {
   set channel_max [expr max($channel_x, $channel_y)]
   set blockage_width [expr max($halo_max, $channel_max/2)]
 
-  
+
   if {[info exists ::env(MACRO_BLOCKAGE_HALO)]} {
     set blockage_width $::env(MACRO_BLOCKAGE_HALO)
   }
@@ -64,7 +64,7 @@ if {[find_macros] != ""} {
     }
 
     set additional_rtlmp_args ""
-    
+
     append additional_rtlmp_args " -macro_halo $halo_max"
 
     if { [info exists ::env(RTLMP_AREA_WT)]} {
@@ -124,7 +124,7 @@ if {[find_macros] != ""} {
   }
 
   source $::env(SCRIPTS_DIR)/placement_blockages.tcl
-  block_channels $blockage_width 
+  block_channels $blockage_width
 } else {
   puts "No macros found: Skipping macro_placement"
 }

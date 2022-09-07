@@ -35,9 +35,9 @@ module ldoInst(
                     .std_pt_in_cnt(std_pt_in_cnt),
                     .ctrl_word(pt_ctrl_word),
                     .ctrl_word_cnt(ctrl_out));
-   
+
    PT_UNIT_CELL pt_array_unit [ARRSZ-1:0] (.CTRL(pt_ctrl_word));
-   
+
    vref_gen_nmos_with_trim vref_gen (.trim1(trim1),
                           .trim2(trim2),
                           .trim3(trim3),

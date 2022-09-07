@@ -6,7 +6,7 @@ import re
 import shutil
 import sys
 
-# Adding a temp_list 
+# Adding a temp_list
 temp_list = []
 
 # ------------------------------------------------------------------------------
@@ -297,38 +297,38 @@ N = int(math.ceil(N))
 arrSize = N
 print("# LDO - Power Transistor array Size = " + str(arrSize))
 # ---------------------------------------------------------------------------
-#Updating the ldo_domain_insts.txt as per power transistor array size
-#----------------------------------------------------------------------------
+# Updating the ldo_domain_insts.txt as per power transistor array size
+# ----------------------------------------------------------------------------
 
-#opens file in read mode
-with open(blocksDir + "/ldo_domain_insts.txt",'r') as fr:    
-     filedata = fr.readlines()
-for line in filedata:    
-    if re.search("^{pt",line):
-       match_found = 1
+# opens file in read mode
+with open(blocksDir + "/ldo_domain_insts.txt", "r") as fr:
+    filedata = fr.readlines()
+for line in filedata:
+    if re.search("^{pt", line):
+        match_found = 1
     else:
         match_found = 0
-if match_found == 1:         
-   for line in filedata:
-       x = re.findall("^{pt", line)
-       if not x:
-                temp_list.append(line)
-               
-   with open(blocksDir + "/ldo_domain_insts.txt",'w') as fw:
+if match_found == 1:
+    for line in filedata:
+        x = re.findall("^{pt", line)
+        if not x:
+            temp_list.append(line)
+
+    with open(blocksDir + "/ldo_domain_insts.txt", "w") as fw:
         fw.writelines(temp_list)
-    
-# Add the pt_array_unit instance as per N
-   for i in range(arrSize):
-       with open(blocksDir + "/ldo_domain_insts.txt", 'a') as f:
-            f.write('{pt_array_unit\['+ str(i) +'\]}')
-            f.write('\n')
-     
+
+    # Add the pt_array_unit instance as per N
+    for i in range(arrSize):
+        with open(blocksDir + "/ldo_domain_insts.txt", "a") as f:
+            f.write("{pt_array_unit\[" + str(i) + "\]}")
+            f.write("\n")
+
 else:
-     for i in range(arrSize):
-         with open(blocksDir + "/ldo_domain_insts.txt", 'a') as f:
-              f.write('{pt_array_unit\['+ str(i) +'\]}')
-              f.write('\n')
-              
+    for i in range(arrSize):
+        with open(blocksDir + "/ldo_domain_insts.txt", "a") as f:
+            f.write("{pt_array_unit\[" + str(i) + "\]}")
+            f.write("\n")
+
 # Get the estimate of the area
 coefLength = len(jsonModel["area"])
 for i in range(coefLength):
