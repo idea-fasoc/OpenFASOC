@@ -68,4 +68,3 @@ set fileId [open $outputLef "w"]
 puts -nonewline $fileId $data
 
 close $fileId
-
