@@ -78,6 +78,9 @@ c0 lc_out 0 1f
 
 .control
 run
+* power calculations within control block
+let power_array = -i(vVDD)*v(VDD)
+meas tran power avg power_array from=10u
 .endc
 
 .END
