@@ -3,7 +3,7 @@
   "module_name": "ldo",
   "generator": "ldo-gen",
   "specifications": {
-    "vin": 0.8,
+    "vin": 1.8,
     "imax": "1e-03"
   }
 }

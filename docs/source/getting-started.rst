@@ -4,8 +4,9 @@ Getting Started with OpenFASoC
 Install Dependencies
 ###########################
 
-Go to the home location of this repository (where this README.rst file is located) and run `source ./Dependencies.sh`. This will install all the python libraries required for OpenFASoC, tools (openroad, Yosys, magic, netgen, Klayout, Ngspice) via conda packages and skywater-pdk on your machine. This will also set the environment variable PDK_ROOT to the pdk data location. The script supports Ubuntu and CentOS. For RHEL 7 and 8, the script will install all dependencies except Klayout.
+Go to the home location of this repository (where this README.rst file is located) and run `sudo ./dependencies.sh`. This will install all the python libraries required for OpenFASoC, tools (openroad, Yosys, magic, netgen, Klayout, Ngspice) via conda packages and skywater-pdk on your machine. This will also set the environment variable PDK_ROOT to the pdk data location. The script supports Ubuntu and CentOS. For RHEL 7 and 8, the script will install all dependencies except Klayout.
 
+[Note] gdsfactory, a python package used by a few generators, required python version >= 3.7. If your machine does not have the latest version, the installation of the gdsfactory is skipped.
 
 Run OpenFASoC flow
 ##############################
@@ -67,7 +68,7 @@ Below is an example for the temp-sense generator
 Run OpenFASoC via docker
 .........................
 
-**Another way to run the generators is using the openfasoc docker image which is currently used to test the temp-sense generator flow during smoke test**
+**Another way to run the generators is using the openfasoc docker image which is currently used to test the temp-sense generator flow during CI**
 
 Install docker on your machine before you proceed
 
@@ -79,4 +80,4 @@ Install docker on your machine before you proceed
 
 4. To view results after the full run (including simulations), go to `/<path_to_OpenFASOC>/openfasoc/generators/temp-sense/simulations/run/` where you can find the directory for the type of inverter-header combination in which you can find the simulation log files along with the spice netlists for various temperature calibrations.
 
-**Note** Files will be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.
+**Note** In this case, files are be generated with root privileges. So, while cleaning the run, use `sudo` to have a complete clean.

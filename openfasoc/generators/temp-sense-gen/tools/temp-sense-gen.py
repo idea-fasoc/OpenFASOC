@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import json
 import os
 import re
@@ -17,6 +19,7 @@ designDir = genDir + "designs/src/tempsense/"
 simDir = genDir + "simulations/"
 commonDir = genDir + "../../common/"
 platformDir = genDir + "../../common/platforms/" + args.platform + "/"
+objDir = flowDir + "objects/" + args.platform + "/tempsense/"
 
 # ------------------------------------------------------------------------------
 # Clean the workspace
@@ -226,11 +229,11 @@ shutil.copyfile(
     genDir + args.outputDir + "/" + designName + ".sdc",
 )
 shutil.copyfile(
-    flowDir + designName + ".spice",
+    objDir + "netgen_lvs/spice/" + designName + ".spice",
     genDir + args.outputDir + "/" + designName + ".spice",
 )
 shutil.copyfile(
-    flowDir + designName + "_pex.spice",
+    objDir + "netgen_lvs/spice/" + designName + "_pex.spice",
     genDir + args.outputDir + "/" + designName + "_pex.spice",
 )
 shutil.copyfile(
@@ -265,7 +268,14 @@ for i in range(0, temp_points + 1):
     temp_list.append(temp_start + i * temp_step)
 
 generate_runs(
-    genDir, designName, header_var, stage_var, temp_list, jsonConfig, args.platform
+    genDir,
+    designName,
+    header_var,
+    stage_var,
+    temp_list,
+    jsonConfig,
+    args.platform,
+    spiceDir=args.outputDir,
 )
 
 # shutil.copyfile(flowDir + designName + '_pex.spice', runDir + designName + '_pex.spice')
