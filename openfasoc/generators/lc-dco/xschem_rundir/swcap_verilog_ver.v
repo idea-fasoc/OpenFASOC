@@ -10,7 +10,7 @@ wire net1  ;
 wire net2  ;
 
 nfet_01v8_lvt
-M1 ( 
+M1 (
  .D( net1 ),
  .G( sw ),
  .S( net2 ),
@@ -19,7 +19,7 @@ M1 (
 
 
 nfet_01v8_lvt
-M2 ( 
+M2 (
  .D( GND ),
  .G( sw ),
  .S( net1 ),
@@ -28,7 +28,7 @@ M2 (
 
 
 nfet_01v8_lvt
-M3 ( 
+M3 (
  .D( net2 ),
  .G( sw ),
  .S( GND ),
@@ -40,7 +40,7 @@ cap_mim_m3_1
 #(
 .model ( cap_mim_m3_1 )
 )
-C1 ( 
+C1 (
  .c0( outn ),
  .c1( net2 )
 );
@@ -50,7 +50,7 @@ cap_mim_m3_1
 #(
 .model ( cap_mim_m3_1 )
 )
-C2 ( 
+C2 (
  .c0( net1 ),
  .c1( outp )
 );

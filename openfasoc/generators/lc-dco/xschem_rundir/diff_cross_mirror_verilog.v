@@ -11,7 +11,7 @@ wire net3  ;
 wire GND  ;
 
 nfet3_01v8_lvt
-M1 ( 
+M1 (
  .D( outp ),
  .G( outn ),
  .S( net2 )
@@ -19,7 +19,7 @@ M1 (
 
 
 nfet3_01v8_lvt
-M2 ( 
+M2 (
  .D( outn ),
  .G( outp ),
  .S( net1 )
@@ -27,7 +27,7 @@ M2 (
 
 
 nfet3_01v8_lvt
-M4 ( 
+M4 (
  .D( net1 ),
  .G( Ibias ),
  .S( GND )
@@ -35,7 +35,7 @@ M4 (
 
 
 nfet3_01v8_lvt
-M5 ( 
+M5 (
  .D( Ibias ),
  .G( Ibias ),
  .S( GND )
@@ -43,7 +43,7 @@ M5 (
 
 
 nfet3_01v8_lvt
-M3 ( 
+M3 (
  .D( net2 ),
  .G( Ibias ),
  .S( net3 )

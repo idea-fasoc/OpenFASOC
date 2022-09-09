@@ -34,9 +34,9 @@ L=Lsw
 W=Wsw
 nf=nsw
 mult=1
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -47,9 +47,9 @@ L=Wpd
 W=Wpd
 nf=npd
 mult=1
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0
@@ -61,9 +61,9 @@ L=Lpd
 W=Wpd
 nf=npd
 mult=1
-ad="'int((nf+1)/2) * W/nf * 0.29'" 
+ad="'int((nf+1)/2) * W/nf * 0.29'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.29)'"
-as="'int((nf+2)/2) * W/nf * 0.29'" 
+as="'int((nf+2)/2) * W/nf * 0.29'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.29)'"
 nrd="'0.29 / W'" nrs="'0.29 / W'"
 sa=0 sb=0 sd=0

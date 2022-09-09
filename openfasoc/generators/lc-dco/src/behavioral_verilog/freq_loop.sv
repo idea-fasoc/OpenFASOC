@@ -95,4 +95,3 @@ floop_lock_range,freq_update, freq_incr_decr,freq_diff);
     // If the freq_diff is within the  freq_lock_range
 
 endmodule : freq_loop
-
