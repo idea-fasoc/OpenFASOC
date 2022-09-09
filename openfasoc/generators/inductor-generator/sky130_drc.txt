@@ -1,0 +1,4623 @@
+<?xml version="1.0" encoding="utf-8"?>
+<report-database>
+ <description>SKY130 DRC runset</description>
+ <original-file/>
+ <generator>drc: script='/home/chandru/.klayout/tech/sky130/drc/drc_sky130.lydrc'</generator>
+ <top-cell>Octagon Ind with GSGSG Pads</top-cell>
+ <tags>
+ </tags>
+ <categories>
+  <category>
+   <name>dnwell.2</name>
+   <description>dnwell.2 : min. dnwell width : 3.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>dnwell.3</name>
+   <description>dnwell.3 : min. dnwell spacing : 6.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>dnwell.4</name>
+   <description>dnwell.4 : dnwell must not overlap pnp</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>dnwell.5</name>
+   <description>p+ must not straddle dnwell</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nwell.1</name>
+   <description>nwell.1 : min. nwell width : 0.84um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nwell.2a</name>
+   <description>nwell.2a : min. nwell spacing (merged if less) : 1.27um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nwell.5</name>
+   <description>nwell.5 : min. nwell enclosing dnwell exempt unside uhvi : 0.4um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nwell.6</name>
+   <description>nwell.6 : min. dnwell enclosing nwell exempt unside uhvi : 1.03um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nwell.7</name>
+   <description>nwell.7 : min. dnwell separation nwell : 4.5um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwbm</name>
+   <description>pwbm must be inside uhvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwbm.4</name>
+   <description>pwbm.4 : dnwell inside uhvi must be enclosed by pwbm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwdem.3</name>
+   <description>pwdem.3 : pwde must be inside pwbm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwdem.4</name>
+   <description>pwdem.4 : pwde must be inside uhvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwdem.5</name>
+   <description>pwdem.5 : pwde must be inside dnwell</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvtp.1</name>
+   <description>hvtp.1 : min. hvtp width : 0.38um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvtp.2</name>
+   <description>hvtp.2 : min. hvtp spacing : 0.38um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvtp.3</name>
+   <description>hvtp.3 : min. hvtp enclosure of pfet gate : 0.18um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvtp.4</name>
+   <description>hvtp.4 : min. hvtp spacing pfet gate: 0.18um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvtp.5</name>
+   <description>hvtp.5 : min. hvtp area : 0.265um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvtr.1</name>
+   <description>hvtr.1 : min. hvtr width : 0.38um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvtr.2</name>
+   <description>hvtr.2 : min. hvtr spacing : 0.38um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>lvtn.1</name>
+   <description>lvtn.1 : min. lvtn width : 0.38um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>lvtn.2</name>
+   <description>lvtn.2 : min. lvtn spacing : 0.38um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>lvtn.3a</name>
+   <description>lvtn.3a : min. lvtn spacing to gate : 0.18um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>lvtn.3b</name>
+   <description>lvtn.3b : min. lvtn spacing to pfet s/d : 0.18um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>lvtn.4b</name>
+   <description>lvtn.4b : min. lvtn enclosing to gate : 0.18um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>lvtn.9</name>
+   <description>lvtn.9 : min. lvtn spacing hvtp : 0.38um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>lvtn.4b</name>
+   <description>lvtn.4b : min. lvtn enclosure of gate : 0.18um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>lvtn.12</name>
+   <description>lvtn.12 : min. lvtn spacing nwell inside areaid.ce : 0.38um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>lvtn.13</name>
+   <description>lvtn.13 : min. lvtn area : 0.265um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ncm.x.3</name>
+   <description>ncm.x.3 : ncm must not overlap n+diff</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ncm.1</name>
+   <description>ncm.1 : min. ncm width : 0.38um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ncm.2</name>
+   <description>ncm.2 : min. ncm spacing manual merge if smaller : 0.38um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ncm.3</name>
+   <description>ncm.3 : min. ncm enclosure of p+diff : 0.18um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ncm.5</name>
+   <description>ncm.5 : min. ncm spacing lvtn diff : 0.23um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ncm.6</name>
+   <description>ncm.6 : min. ncm spacing nfet : 0.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ncm.7</name>
+   <description>ncm.13 : min. ncm area : 0.265um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>difftap.1</name>
+   <description>difftap.1 : min. difftap width : 0.15um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>difftap.2</name>
+   <description>difftap.2: min. gate (exempt areaid.sc) width : 0.42um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>difftap.2</name>
+   <description>difftap.2: min. gate inside areaid.sc width : 0.36um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>difftap.3</name>
+   <description>difftap.3 : min. difftap spacing : 0.27um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>difftap.4</name>
+   <description>difftap.4 : min. tap bound by diffusion : 0.29um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>difftap.5</name>
+   <description>difftap.5 : min. tap bound by 2 diffusions : 0.4um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>difftap.6</name>
+   <description>difftap.6 : diff and tap not allowed to extend beyong their abutting ege</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>difftap.7</name>
+   <description>difftap.7 : min. diff/tap spacing to non-coincident diff edge : 0.13um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>difftap.7</name>
+   <description>difftap.7 : min. diff/tap spacing to non-coincident tap edge : 0.13um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>difftap.8</name>
+   <description>difftap.8 : min. p+diff enclosure by nwell : 0.18um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>difftap.9</name>
+   <description>difftap.9 : min. n+diff spacing to nwell : 0.34um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>difftap.10</name>
+   <description>difftap.10 : min. n+tap enclosure by nwell : 0.18um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>difftap.11</name>
+   <description>difftap.11 : min. p+tap spacing to nwell : 0.13um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>tunm.1</name>
+   <description>tunm.1 : min. tunm width : 0.41um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>tunm.2</name>
+   <description>tunm.2 : min. tunm spacing : 0.5um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>tunm.3</name>
+   <description>tunm.3 : min. tunm beyond gate : 0.095um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>tunm.4</name>
+   <description>tunm.4 : min. tunm spacing to gate outside tunm: 0.095um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>tunm.5</name>
+   <description>tunm.5 : gate must not straddle tunm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>tunm.6a</name>
+   <description>tunm.6a : tunm not allowed outside dnwell</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>tunm.7</name>
+   <description>tunm.7 : min. tunm area : 0.672um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly.1a</name>
+   <description>poly.1a : min. poly width : 0.15um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly.1b</name>
+   <description>poly.1b: min. lvtn gate width : 0.35um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly.2</name>
+   <description>poly.2 : min. poly spacing : 0.21um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly.3</name>
+   <description>poly.3 : min. poly resistor width : 0.33um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly.4</name>
+   <description>poly.4 : min. poly on field spacing to diff : 0.075um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly.5</name>
+   <description>poly.5 : min. poly on field spacing to tap : 0.055um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly.6</name>
+   <description>poly.6 : min. gate spacing to tap : 0.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly.7</name>
+   <description>poly.7 : min. source/drain length : 0.25um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly.8</name>
+   <description>poly.8 : min. poly extention gate (endcap) : 0.13um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly.9</name>
+   <description>poly.9 : min. poly resistor space to poly or diff/tap : 0.48um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly.10</name>
+   <description>poly.10 : poly must not overlap diff corner</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly.11</name>
+   <description>poly.11 : non 90 degree angle gate</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly.12</name>
+   <description>poly.12 : poly must not overlap tap</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly.15</name>
+   <description>poly.15 : poly must not overlap diff resistor</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>rpm.1a</name>
+   <description>rpm.1a : min. rpm width : 1.27um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>rpm.2</name>
+   <description>rpm.2 : min. rpm spacing : 0.84um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>rpm.3</name>
+   <description>rpm.3 : min. rpm enclosure of poly resistor : 0.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>rpm.4</name>
+   <description>rpm.4 : min. psdm enclosure of poly resistor : 0.11um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>rpm.5</name>
+   <description>rpm.5 : min. npc enclosure of poly resistor : 0.095um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>rpm.6</name>
+   <description>rpm.6 : min. rpm spacing nsdm: 0.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>rpm.7</name>
+   <description>rpm.7 : min. rpm spacing poly: 0.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>rpm.8</name>
+   <description>rpm.8 : poly must not straddle rpm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>rpm.9</name>
+   <description>rpm.9 : min. poly resistor spacing hvntm: 0.185um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>rpm.10</name>
+   <description>rpm.107 : min. rpm spacing pwbm: na</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>varac.1</name>
+   <description>varac.1: min. varac channel length : 0.18um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>varac.2</name>
+   <description>varac.2: min. varac channel wdth : 1.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>varac.3</name>
+   <description>varac.3: min. varac channel space to hvtp : 0.18um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>varac.4</name>
+   <description>varac.4: min. varac channel space to licon on tap : 0.25um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>varac.5</name>
+   <description>varac.5: min. nwell enclosure of poly overlapping varac channel : 0.15um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>varac.6</name>
+   <description>varac.6: min. varac channel tap space to difftap : 0.27um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>varac.7</name>
+   <description>varac.7:  nwell overlapping varac channel must not overlap p+diff</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>photo.2</name>
+   <description>photo.2 : minimum/maximum width of photodiode : 3.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>photo.3</name>
+   <description>photo.3 : mini. photodiode spacing : 5.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>photo.4</name>
+   <description>photo.4 : mini. photodiode spacing to dnwell : 5.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>photo.5.6</name>
+   <description>photo.5.6 : photodiode edges must coincide areaid.po and enclosed by dnwell</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>photo.7</name>
+   <description>photo.7 : photodiode must be enclosed by p+tap ring</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>photo.8</name>
+   <description>photo.8 : minimum/maximum width of nwell inside photodiode : 0.84um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>photo.9</name>
+   <description>photo.9 : minimum/maximum enclosure of nwell by photodiode : 1.08um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>photo.10</name>
+   <description>photo.10 : minimum/maximum width of tap inside photodiode : 0.41um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>npc.1</name>
+   <description>npc.1 : min. npc width : 0.27um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>npc.2</name>
+   <description>npc.2 : min. npc spacing, should be mnually merge if less : 0.27um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>npc.4</name>
+   <description>npc.4 : min. npc spacing to gate : 0.09um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsdm.1</name>
+   <description>nsdm.1 : min. nsdm width : 0.38um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>psdm.1</name>
+   <description>psdm.1 : min. psdm width : 0.38um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>n/psdm.1</name>
+   <description>n/psdm.1 : min. nsdm spacing, should be mnually merge if less : 0.38um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>n/psdm.1</name>
+   <description>n/psdm.1 : min. psdm spacing, should be mnually merge if less : 0.38um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>n/psdm.5a</name>
+   <description>n/psdm.5a : min. n/psdm enclosure diff except butting edge : 0.125um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>n/psdm.5b</name>
+   <description>n/psdm.5b : min. n/psdm enclosure tap except butting edge : 0.125um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>n/psdm.6</name>
+   <description>n/psdm.6 : min. n/psdm enclosure of butting edge : 0.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>n/psdm.7</name>
+   <description>n/psdm.7 : min. nsdm diff spacing to psdm diff except butting edge : 0.13um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>n/psdm.8</name>
+   <description>n/psdm.8 : diff should be the opposite type of well/substrate underneath</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>n/psdm.8</name>
+   <description>n/psdm.8 : tap should be the same type of well/substrate underneath</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>tap and diff</name>
+   <description>tap and diff must not overlap</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>n/psdm.10a</name>
+   <description>n/psdm.10a : min. nsdm area : 0.265um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>n/psdm.10b</name>
+   <description>n/psdm.10b : min. psdm area : 0.265um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.1</name>
+   <description>licon.1 : minimum/maximum width of licon : 0.17um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.1b/c</name>
+   <description>licon.1b/c : minimum/maximum width/length of licon inside poly resistor : 2.0/0.19um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.2</name>
+   <description>licon.2 : min. licon spacing : 0.17um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.2b</name>
+   <description>licon.2b : min. licon 0.19um edge on resistor spacing : 0.35um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.2c</name>
+   <description>licon.2c : min. licon 2.0um edge on resistor spacing : 0.51um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.2d</name>
+   <description>licon.2d : min. licon on resistor spacing other licon : 0.51um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.4</name>
+   <description>licon.4 : min. licon must overlap li and (poly or tap or diff) </description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.5</name>
+   <description>licon.5 : min. diff enclosure of licon : 0.04um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.6</name>
+   <description>licon.6 : min. abutting edge spacing to licon tap : 0.06um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.7</name>
+   <description>licon.7 : min. tap enclosure of licon by one of 2 opposite edges : 0.12um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.8</name>
+   <description>licon.8 : min. poly enclosure of licon : 0.05um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.8a</name>
+   <description>licon.8a : min. poly enclosure of licon by one of 2 opposite edges : 0.08um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.10</name>
+   <description>licon.10 : min. licon spacing to varac channel : 0.25um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.11</name>
+   <description>licon.11 : min. licon spacing to gate : 0.055um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.11a</name>
+   <description>licon.11a : min. licon spacing to gate inside areaid.sc : 0.05um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.11c</name>
+   <description>licon.11c : min. licon spacing to gate for specific cells: 0.04um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.12</name>
+   <description>licon.12 : max. sd width without licon : 5.7um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.13</name>
+   <description>licon.13 : min. difftap licon spacing to npc : 0.09um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.14</name>
+   <description>licon.14 : min. poly licon spacing to difftap : 0.19um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.15</name>
+   <description>licon.15 : min. npc enclosure of poly-licon : 0.1um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.16</name>
+   <description>licon.16 : tap must enclose one licon</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.17</name>
+   <description>licon.17 : tap must not straddle poly</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon.18</name>
+   <description>licon.18 : npc mut enclosed one poly-licon</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>li.1</name>
+   <description>li.1 : min. li width : 0.17um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>li.1a</name>
+   <description>li.1a : min. li width for the cells s8rf2_xcmvpp_hd5_* : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>li.3</name>
+   <description>li.3 : min. li spacing : 0.17um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>li.3a</name>
+   <description>li.3a : min. li spacing for the cells s8rf2_xcmvpp_hd5_* : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>li.5</name>
+   <description>li.5 : min. li enclosure of licon of 2 opposite edges : 0.08um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>li.6</name>
+   <description>li.6 : min. li area : 0.0561um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vpp.1</name>
+   <description>vpp.1 : min. vpp width : 1.43um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vpp.3</name>
+   <description>vpp.3 : vpp must not overlapp poly or diff or tap</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vpp.4</name>
+   <description>vpp.4 : vpp must not straddle nwell</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vpp.4</name>
+   <description>vpp.4 : vpp must not straddle dnwell</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vpp.5</name>
+   <description>vpp.5 : min. vpp spacing to poly or li or m1 or m2 : 1.5um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vpp.5a</name>
+   <description>vpp.5a : max. m3 density in vpp : 0.25</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vpp.5b</name>
+   <description>vpp.5b : max. m4 density in vpp : 0.3</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vpp.5c</name>
+   <description>vpp.5c : max. m5 density in vpp : 0.4</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vpp.8</name>
+   <description>vpp.8 : nwell enclosure of vpp : 1.5</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vpp.9</name>
+   <description>vpp.9 : vpp spacing to nwell : 1.5</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.1</name>
+   <description>capm.1 : min. capm width : 1.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.2a</name>
+   <description>capm.2a : min. capm spacing : 0.84um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.2b</name>
+   <description>capm.2b : min. capm spacing : 1.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.3</name>
+   <description>capm.3 : min. m2 enclosure of capm : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.4</name>
+   <description>capm.4 : min. capm enclosure of via2 : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.5</name>
+   <description>capm.5 : min. capm spacing to via2 : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.6</name>
+   <description>capm.6 : max. capm lenght/width : 20um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.7</name>
+   <description>capm.7 : capm not rectangle</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.8</name>
+   <description>capm.8 : min. capm spacing to via : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.10</name>
+   <description>capm.10 : capm must not straddle nwell</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.10</name>
+   <description>capm.10 : capm must not straddle diff</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.10</name>
+   <description>capm.10 : capm must not straddle tap</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.10</name>
+   <description>capm.10 : capm must not straddle poly</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.10</name>
+   <description>capm.10 : capm must not straddle li</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.10</name>
+   <description>capm.10 : capm must not straddle m1</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>capm.11</name>
+   <description>capm.11 : min. capm spacing to m2 not overlapping capm : 0.5um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ct.1</name>
+   <description>ct.1 : minimum/maximum width of mcon : 0.17um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ct.2</name>
+   <description>ct.2 : min. mcon spacing : 0.19um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ct.4</name>
+   <description>ct.4 : mcon should covered by li</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.1</name>
+   <description>m1.1 : min. m1 width : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.2</name>
+   <description>m1.2 : min. m1 spacing : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.3ab</name>
+   <description>m1.3ab : min. 3um.m1 spacing m1 : 0.28um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.4</name>
+   <description>m1.4 : min. m1 enclosure of mcon : 0.03um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.4a</name>
+   <description>m1.4a : min. m1 enclosure of mcon for specific cells : 0.005um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.6</name>
+   <description>m1.6 : min. m1 area : 0.083um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.7</name>
+   <description>m1.7 : min. m1 holes area : 0.14um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1.5</name>
+   <description>m1.5 : min. m1 enclosure of mcon of 2 opposite edges : 0.06um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via.4c.5c</name>
+   <description>via.4c.5c : m1 must enclose all via</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via.1a</name>
+   <description>via.1a : minimum/maximum width of via : 0.15um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via.1b</name>
+   <description>via.1b : minimum/maximum width of via in areaid.mt: 0.15um or 0.23um or 0.28um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via.2</name>
+   <description>via.2 : min. via spacing : 0.17um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via.4a</name>
+   <description>via.4a : min. m1 enclosure of 0.15um via : 0.055um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via.4b</name>
+   <description>via.4b : min. m1 enclosure of 0.23um via : 0.03um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via1.5a</name>
+   <description>via1.5a : min. m1 enclosure of 0.15um via of 2 opposite edges : 0.085um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via1.5b</name>
+   <description>via1.5b : min. m1 enclosure of 0.23um via of 2 opposite edges : 0.06um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.1</name>
+   <description>m2.1 : min. m2 width : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.2</name>
+   <description>m2.2 : min. m2 spacing : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.3ab</name>
+   <description>m2.3ab : min. 3um.m2 spacing m2 : 0.28um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.6</name>
+   <description>m2.6 : min. m2 area : 0.0676um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.7</name>
+   <description>m2.7 : min. m2 holes area : 0.14um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.via</name>
+   <description>m2.via : m2 must enclose via</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.4</name>
+   <description>m2.4 : min. m2 enclosure of via : 0.055um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2.5</name>
+   <description>m2.5 : min. m2 enclosure of via of 2 opposite edges : 0.085um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2</name>
+   <description>via2 : m2 must enclose all via2</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2.1a</name>
+   <description>via2.1a : minimum/maximum width of via2 : 0.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2.1b</name>
+   <description>via2.1b : minimum/maximum width of via2 in areaid.mt: 0.2um or 1.2um or 1.5um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2.2</name>
+   <description>via2.2 : min. via2 spacing : 0.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2.4</name>
+   <description>via2.4 : min. m2 enclosure of via2 : 0.04um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2.4a</name>
+   <description>via2.4a : min. m2 enclosure of 1.5um via2 : 0.14um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2.5</name>
+   <description>via2.5 : min. m2 enclosure of via2 of 2 opposite edges : 0.085um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m3.1</name>
+   <description>m3.1 : min. m3 width : 0.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m3.2</name>
+   <description>m3.2 : min. m3 spacing : 0.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m3.3ab</name>
+   <description>m3.3ab : min. 3um.m3 spacing m3 : 0.4um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m3.6</name>
+   <description>m3.6 : min. m2 area : 0.24um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m3.via2</name>
+   <description>m3.via2 : m3 must enclose via2</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m3.4</name>
+   <description>m3.4 : min. m3 enclosure of via2 : 0.065um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m3.5</name>
+   <description>m3.5 : min. m3 enclosure of via2 of 2 opposite edges : 0.085um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3</name>
+   <description>via3 : m3 must enclose all via3</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3.1a</name>
+   <description>via3.1a : minimum/maximum width of via3 : 0.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3.1a</name>
+   <description>via3.1a : minimum/maximum width of via3 in areaid.mt: 0.2um or 0.8um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3.2</name>
+   <description>via3.2 : min. via3 spacing : 0.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3.4</name>
+   <description>via3.4 : min. m3 enclosure of via3 : 0.06um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3.5</name>
+   <description>via3.5 : min. m2 enclosure of via3 of 2 opposite edges : 0.09um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.1</name>
+   <description>nsm.1 : min. nsm width : 3.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.2</name>
+   <description>nsm.2 : min. nsm spacing : 4.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.4</name>
+   <description>nsm.4 : min. nsm enclosure of diff : 3.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.4</name>
+   <description>nsm.4 : min. nsm enclosure of tap : 3.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.4</name>
+   <description>nsm.4 : min. nsm enclosure of poly : 3.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.4</name>
+   <description>nsm.4 : min. nsm enclosure of li : 3.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.4</name>
+   <description>nsm.4 : min. nsm enclosure of m1 : 3.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.4</name>
+   <description>nsm.4 : min. nsm enclosure of m2 : 3.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.4</name>
+   <description>nsm.4 : min. nsm enclosure of m3 : 3.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.4</name>
+   <description>nsm.4 : min. nsm enclosure of m4 : 3.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.4</name>
+   <description>nsm.4 : min. nsm enclosure of m5 : 3.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.4</name>
+   <description>nsm.4 : min. nsm enclosure of cfom : 3.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.3</name>
+   <description>nsm.3 : min. nsm spacing to diff : 1.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.3</name>
+   <description>nsm.3 : min. nsm spacing to tap : 1.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.3</name>
+   <description>nsm.3 : min. nsm spacing to poly : 1.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.3</name>
+   <description>nsm.3 : min. nsm spacing to li : 1.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.3</name>
+   <description>nsm.3 : min. nsm spacing to m1 : 1.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.3</name>
+   <description>nsm.3 : min. nsm spacing to m2 : 1.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.3</name>
+   <description>nsm.3 : min. nsm spacing to m3 : 1.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.3</name>
+   <description>nsm.3 : min. nsm spacing to m4 : 1.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.3</name>
+   <description>nsm.3 : min. nsm spacing to m5 : 1.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm.3</name>
+   <description>nsm.3 : min. nsm spacing to cfom : 1.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4.1</name>
+   <description>m4.1 : min. m4 width : 0.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4.2</name>
+   <description>m4.2 : min. m4 spacing : 0.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4.4</name>
+   <description>m4.4 : min. m2 area : 0.24um²</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4.5ab</name>
+   <description>m4.5ab : min. 3um.m4 spacing m4 : 0.4um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4.via3</name>
+   <description>m4.via3 : m4 must enclose via3</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4.3</name>
+   <description>m4.3 : min. m4 enclosure of via3 : 0.065um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4.5</name>
+   <description>m4.5 : min. m4 enclosure of via3 of 2 opposite edges : 0.085um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via4.1a</name>
+   <description>via4.1a : minimum/maximum width of via4 : 0.8um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via4.2</name>
+   <description>via4.2 : min. via4 spacing : 0.8um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via4.4</name>
+   <description>via4.4 : min. m4 enclosure of via4 : 0.19um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via4</name>
+   <description>via4 : m4 must enclose all via4</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m5.1</name>
+   <description>m5.1 : min. m5 width : 1.6um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m5.2</name>
+   <description>m5.2 : min. m5 spacing : 1.6um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m5.via4</name>
+   <description>m5.via4 : m5 must enclose via4</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m5.3</name>
+   <description>m4.3 : min. m5 enclosure of via4 : 0.31um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pad.2</name>
+   <description>pad.2 : min. pad spacing : 1.27um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>mf.1</name>
+   <description>mf.1 : minimum/maximum width of fuse : 0.8um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>mf.2</name>
+   <description>mf.2 : minimum/maximum length of fuse : 7.2um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>mf.3</name>
+   <description>mf.3 : min. fuse center spacing : 2.76um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvi.1</name>
+   <description>hvi.1 : min. hvi width : 0.6um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvi.2</name>
+   <description>hvi.2 : min. hvi spacing, merge if less : 0.7um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvi.4</name>
+   <description>hvi.4 : hvi must not overlapp tunm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvnwell.8</name>
+   <description>hvnwelli.8 : min. hvnwel spacing to nwell : 2.0</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvnwel.9</name>
+   <description>hvnwell.9 : hvi must overlapp hvnwell</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.14</name>
+   <description>hvdifftap.14 : min. diff inside hvi width : 0.29um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.14a</name>
+   <description>hvdifftap.14a : min. p+diff resistor inside hvi width : 0.15um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.15a</name>
+   <description>hvdifftap.15a : min. diff inside hvi spacing : 0.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.15b</name>
+   <description>hvdifftap.15b : min. n+diff inside hvi spacing to p+diff inside hvi except abutting: 0.37um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.16</name>
+   <description>hvdifftap.16 : min. tap inside hvi abuttng diff : 0.7um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.17</name>
+   <description>hvdifftap.17 : min. hvnwell enclosure of p+diff : 0.33um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.18</name>
+   <description>hvdifftap.18 : min. hvnwell spacing to n+diff : 0.43um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.19</name>
+   <description>hvdifftap.19 : min. hvnwell enclosure of n+tap : 0.33um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.20</name>
+   <description>hvdifftap.20 : min. hvnwell spacing to p+tap : 0.43um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.21</name>
+   <description>hvdifftap.21 : diff must not straddle hvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.21</name>
+   <description>hvdifftap.21 : tap must not straddle hvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.22</name>
+   <description>hvdifftap.22 : min. hvi enclosure of diff or tap : 0.18um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.23</name>
+   <description>hvdifftap.23 : min. hvi spacing to diff or tap : 0.18um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.24</name>
+   <description>hvdifftap.24 : min. hv n+diff spacing to nwell : 0.43um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvdifftap.25</name>
+   <description>hvdifftap.25 : min. n+diff inside hvi spacing accros p+tap  : 1.07um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvpoly.13</name>
+   <description>hvpoly.13: min. hvi gate length : 0.5um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvpoly.14</name>
+   <description>hvpoly.14 : poly must not straddle hvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvntm.1</name>
+   <description>hvntm.1 : min. hvntm width : 0.7um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvntm.2</name>
+   <description>hvntm.2 : min. hvntm spacing : 0.7um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvntm.3</name>
+   <description>hvntm.3 : min. hvntm enclosure of hv n+diff : 0.185um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvntm.4</name>
+   <description>hvntm.4 : min. hvntm spacing to n+diff : 0.185um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvntm.5</name>
+   <description>hvntm.5 : min. hvntm spacing to p+diff : 0.185um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvntm.6a</name>
+   <description>hvntm.6a : min. hvntm spacing to p+tap : 0.185um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvntm.9</name>
+   <description>hvntm.9 : hvntm must not overlapp areaid.ce</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.1</name>
+   <description>denmos.1 : min. de_nfet gate width : 1.055um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.2</name>
+   <description>denmos.2 : min. de_nfet source ouside poly width : 0.28um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.3</name>
+   <description>denmos.3 : min. de_nfet source inside poly width : 0.925um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.4</name>
+   <description>denmos.4 : min. de_nfet drain width : 0.17um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.5</name>
+   <description>denmos.5 : min. de_nfet source inside nwell width : 0.225m</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.6</name>
+   <description>denmos.6 : min. de_nfet source spacing to drain : 1.585um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.7</name>
+   <description>denmos.7 : min. de_nfet channel width : 5.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.8</name>
+   <description>denmos.8 : 90deg. not allowed for de_nfet drain</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.9a</name>
+   <description>denmos.9a : 90deg. not allowed for de_nfet nwell</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.9a</name>
+   <description>denmos.9a : 45deg. bevels of de_nfet nwell should be 0.43um from corners</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.9a</name>
+   <description>denmos.9a : 45deg. bevels of de_nfet nwell should be 0.43um from corners</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.9b</name>
+   <description>denmos.9b : 45deg. bevels of de_nfet drain should be 0.05um from corners</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.9b</name>
+   <description>denmos.9b : 45deg. bevels of de_nfet drain should be 0.05um from corners</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.10</name>
+   <description>denmos.10 : min. nwell enclosure of de_nfet drain : 0.66um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.11</name>
+   <description>denmos.11 : min. de_nfet nwell spacing to tap : 0.86um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.12</name>
+   <description>denmos.12 : min. de_nfet nwell : 2.4um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>denmos.13</name>
+   <description>denmos.13 : min. nsdm enclosure of de_nfet source : 0.13um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.1</name>
+   <description>depmos.1 : min. de_pfet gate width : 1.05um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.2</name>
+   <description>depmos.2 : min. de_pfet source ouside poly width : 0.28um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.3</name>
+   <description>depmos.3 : min. de_pfet source inside poly width : 0.92um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.4</name>
+   <description>depmos.4 : min. de_pfet drain width : 0.17um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.5</name>
+   <description>depmos.5 : min. de_pfet source inside nwell width : 0.26m</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.6</name>
+   <description>depmos.6 : min. de_pfet source spacing to drain : 1.19um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.7</name>
+   <description>depmos.7 : min. de_pfet channel width : 5.0um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.8</name>
+   <description>depmos.8 : 90deg. not allowed for de_pfet drain</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.9a</name>
+   <description>depmos.9a : 90deg. not allowed for de_pfet pwell</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.9a</name>
+   <description>depmos.9a : 45deg. bevels of de_pfet pwell should be 0.43um from corners</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.9a</name>
+   <description>depmos.9a : 45deg. bevels of de_pfet pwell should be 0.43um from corners</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.9b</name>
+   <description>depmos.9b : 45deg. bevels of de_pfet drain should be 0.05um from corners</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.9b</name>
+   <description>depmos.9b : 45deg. bevels of de_pfet drain should be 0.05um from corners</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.10</name>
+   <description>depmos.10 : min. pwell enclosure of de_pfet drain : 0.86um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.11</name>
+   <description>depmos.11 : min. de_pfet pwell spacing to tap : 0.66um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>depmos.12</name>
+   <description>depmos.12 : min. psdm enclosure of de_pfet source : 0.13um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>extd.1</name>
+   <description>extd.1 : difftap must not straddle areaid.en</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>extd.2</name>
+   <description>extd.2 : poly must not overlapp entirely difftap in areaid.en</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vhvi.1</name>
+   <description>vhvi.1 : min. vhvi width : 0.02um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vhvi.2</name>
+   <description>vhvi.2 : vhvi must not overlap areaid.ce</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vhvi.3</name>
+   <description>vhvi.3 : vhvi must not overlap hvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vhvi.5</name>
+   <description>vhvi.5 : vhvi must not straddle diff</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vhvi.5</name>
+   <description>vhvi.5 : vhvi must not straddle tap</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vhvi.7</name>
+   <description>vhvi.7 : vhvi must not straddle poly</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hv.nwell.1</name>
+   <description>hv.nwell.1 : min. vhvi nwell spacing to nwell : 2.5um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hv.diff.1</name>
+   <description>hv.diff.1 : min. vhvi diff spacing : 0.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hv.diff.2</name>
+   <description>hv.diff.2 : min. vhvi nwell spacing n+diff : 0.43um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hv.diff.3a</name>
+   <description>hv.diff.3a : min. vhvi n+diff spacing nwell : 0.55um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hv.poly.2</name>
+   <description>hv.poly.2 : min. vhvi poly spacing to diff : 0.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hv.poly.3</name>
+   <description>hv.poly.3 : min. vhvi poly spacing to nwell : 0.55um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hv.poly.4</name>
+   <description>hv.poly.4 : min. nwell enclosure of vhvi poly : 0.3um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>uhvi.1</name>
+   <description>uhvi.1 : diff must not straddle uhvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>uhvi.1</name>
+   <description>uhvi.1 : tap must not straddle uhvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>uhvi.2</name>
+   <description>uhvi.2 : poly must not straddle uhvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>uhvi.3</name>
+   <description>uhvi.3 : uhvi must not enclose pwbm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>uhvi.4</name>
+   <description>uhvi.4 : dnwell must not straddle uhvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>uhvi.5</name>
+   <description>uhvi.5 : uhvi must not enclose areaid.en20</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>uhvi.7</name>
+   <description>uhvi.7 : uhvi must not enclose natfet</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwres.2</name>
+   <description>pwres.2 : min. pwell resistor width : 2.65um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwres.2</name>
+   <description>pwres.2 : max. pwell resistor width : 2.65um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwres.3</name>
+   <description>pwres.3 : min. pwell resistor length : 26.5um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwres.4</name>
+   <description>pwres.4 : max. pwell resistor length : 265um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwres.5</name>
+   <description>pwres.5 : min. pwell resistor tap spacing to nwell : 0.22um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwres.5</name>
+   <description>pwres.5 : max. pwell resistor tap spacing to nwell : 0.22um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwres.6</name>
+   <description>pwres.6 : min. width of tap inside pwell resistor : 0.53um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwres.6</name>
+   <description>pwres.6 : max. width of tap inside pwell resistor : 0.53um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwres.8</name>
+   <description>pwres.8 : diff not allowed inside pwell resistor</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwres.8</name>
+   <description>pwres.8 : poly not allowed inside pwell resistor</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>rfdiode.1</name>
+   <description>rfdiode.1 : non 90 degree angle areaid.re</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>rfdiode.2</name>
+   <description>rfdiode.2 : areaid.re must coincide rf nwell diode</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>dnwell_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on dnwell</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>dnwell_angle</name>
+   <description>x.3a : non 45 degree angle dnwell</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nwell_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on nwell</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nwell_angle</name>
+   <description>x.3a : non 45 degree angle nwell</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwbm_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on pwbm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwbm_angle</name>
+   <description>x.3a : non 45 degree angle pwbm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwde_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on pwde</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwde_angle</name>
+   <description>x.3a : non 45 degree angle pwde</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvtp_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on hvtp</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvtp_angle</name>
+   <description>x.3a : non 45 degree angle hvtp</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvtr_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on hvtr</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvtr_angle</name>
+   <description>x.3a : non 45 degree angle hvtr</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>lvtn_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on lvtn</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>lvtn_angle</name>
+   <description>x.3a : non 45 degree angle lvtn</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ncm_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on ncm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ncm_angle</name>
+   <description>x.3a : non 45 degree angle ncm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>diff_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on diff</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>tap_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on tap</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>diff_angle</name>
+   <description>x.2 : non 90 degree angle diff</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>diff_angle</name>
+   <description>x.2c : non 45 degree angle diff</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>tap_angle</name>
+   <description>x.2 : non 90 degree angle tap</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>tap_angle</name>
+   <description>x.2c : non 45 degree angle tap</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>tunm_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on tunm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>tunm_angle</name>
+   <description>x.3a : non 45 degree angle tunm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on poly</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>poly_angle</name>
+   <description>x.2 : non 90 degree angle poly</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>rpm_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on rpm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>rpm_angle</name>
+   <description>x.3a : non 45 degree angle rpm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>npc_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on npc</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>npc_angle</name>
+   <description>x.3a : non 45 degree angle npc</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsdm_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on nsdm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsdm_angle</name>
+   <description>x.3a : non 45 degree angle nsdm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>psdm_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on psdm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>psdm_angle</name>
+   <description>x.3a : non 45 degree angle psdm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on licon</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>licon_angle</name>
+   <description>x.2 : non 90 degree angle licon</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>li_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on li</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>li_angle</name>
+   <description>x.3a : non 45 degree angle li</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ct_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on mcon</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>ct_angle</name>
+   <description>x.2 : non 90 degree angle mcon</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vpp_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on vpp</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vpp_angle</name>
+   <description>x.3a : non 45 degree angle vpp</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on m1</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m1_angle</name>
+   <description>x.3a : non 45 degree angle m1</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on via</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via_angle</name>
+   <description>x.2 : non 90 degree angle via</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on m2</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m2_angle</name>
+   <description>x.3a : non 45 degree angle m2</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on via2</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2_angle</name>
+   <description>x.2 : non 90 degree angle via2</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m3_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on m3</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m3_angle</name>
+   <description>x.3a : non 45 degree angle m3</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on via3</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3_angle</name>
+   <description>x.2 : non 90 degree angle via3</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on nsm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsm_angle</name>
+   <description>x.3a : non 45 degree angle nsm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on m4</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m4_angle</name>
+   <description>x.3a : non 45 degree angle m4</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via4_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on via4</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via4_angle</name>
+   <description>x.2 : non 90 degree angle via4</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m5_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on m5</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>m5_angle</name>
+   <description>x.3a : non 45 degree angle m5</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pad_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on pad</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pad_angle</name>
+   <description>x.3a : non 45 degree angle pad</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>mf_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on mf</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>mf_angle</name>
+   <description>x.2 : non 90 degree angle mf</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvi_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on hvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvi_angle</name>
+   <description>x.3a : non 45 degree angle hvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvntm_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on hvntm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>hvntm_angle</name>
+   <description>x.3a : non 45 degree angle hvntm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vhvi_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on vhvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>vhvi_angle</name>
+   <description>x.3a : non 45 degree angle vhvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>uhvi_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on uhvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>uhvi_angle</name>
+   <description>x.3a : non 45 degree angle uhvi</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwell_rs_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on pwell_rs</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwell_rs_angle</name>
+   <description>x.3a : non 45 degree angle pwell_rs</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>areaid_re_OFFGRID</name>
+   <description>x.1b : OFFGRID vertex on areaid.re</description>
+   <categories>
+   </categories>
+  </category>
+ </categories>
+ <cells>
+  <cell>
+   <name>Octagon Ind with GSGSG Pads</name>
+   <variant/>
+   <references>
+   </references>
+  </cell>
+  <cell>
+   <name>diff_octagon_inductor</name>
+   <variant/>
+   <references>
+    <ref>
+     <parent>Octagon Ind with GSGSG Pads</parent>
+     <trans>r0 *1 240,100</trans>
+    </ref>
+   </references>
+  </cell>
+ </cells>
+ <items>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-8.159,221.505;-8.159,221.505)/(-8.159,221.505;-8.159,221.505)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (6.841,230.005;6.841,230.005)/(6.841,230.005;6.841,230.005)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (8.159,225.005;8.159,225.005)/(8.159,225.005;8.159,225.005)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-6.841,216.505;-6.841,216.505)/(-6.841,216.505;-6.841,216.505)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-8.159,43.5;-8.159,43.5)/(-8.159,43.5;-8.159,43.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (6.841,52;6.841,52)/(6.841,52;6.841,52)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (8.159,47;8.159,47)/(8.159,47;8.159,47)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-6.841,38.5;-6.841,38.5)/(-6.841,38.5;-6.841,38.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-8.159,204.515;-8.159,204.515)/(-8.159,204.515;-8.159,204.515)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (6.841,213.015;6.841,213.015)/(6.841,213.015;6.841,213.015)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (8.159,208.015;8.159,208.015)/(8.159,208.015;8.159,208.015)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-6.841,199.515;-6.841,199.515)/(-6.841,199.515;-6.841,199.515)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-8.159,60.5;-8.159,60.5)/(-8.159,60.5;-8.159,60.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (6.841,69;6.841,69)/(6.841,69;6.841,69)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (8.159,64;8.159,64)/(8.159,64;8.159,64)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-6.841,55.5;-6.841,55.5)/(-6.841,55.5;-6.841,55.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-8.159,187.525;-8.159,187.525)/(-8.159,187.525;-8.159,187.525)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (6.841,196.025;6.841,196.025)/(6.841,196.025;6.841,196.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (8.159,191.025;8.159,191.025)/(8.159,191.025;8.159,191.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-6.841,182.525;-6.841,182.525)/(-6.841,182.525;-6.841,182.525)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-8.159,77.5;-8.159,77.5)/(-8.159,77.5;-8.159,77.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (6.841,86;6.841,86)/(6.841,86;6.841,86)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (8.159,81;8.159,81)/(8.159,81;8.159,81)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-6.841,72.5;-6.841,72.5)/(-6.841,72.5;-6.841,72.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-8.159,170.525;-8.159,170.525)/(-8.159,170.525;-8.159,170.525)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (6.841,179.025;6.841,179.025)/(6.841,179.025;6.841,179.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (8.159,174.025;8.159,174.025)/(8.159,174.025;8.159,174.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m4_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-6.841,165.525;-6.841,165.525)/(-6.841,165.525;-6.841,165.525)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (248.159,321.505;248.159,321.505)/(248.159,321.505;248.159,321.505)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (276.436,321.505;276.436,321.505)/(276.436,321.505;276.436,321.505)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (331.5,266.441;331.5,266.441)/(331.5,266.441;331.5,266.441)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (248.159,304.515;248.159,304.515)/(248.159,304.515;248.159,304.515)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (269.396,304.515;269.396,304.515)/(269.396,304.515;269.396,304.515)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (314.505,259.406;314.505,259.406)/(314.505,259.406;314.505,259.406)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (248.159,287.525;248.159,287.525)/(248.159,287.525;248.159,287.525)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (262.356,287.525;262.356,287.525)/(262.356,287.525;262.356,287.525)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (297.51,252.371;297.51,252.371)/(297.51,252.371;297.51,252.371)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (248.141,270.535;248.141,270.535)/(248.141,270.535;248.141,270.535)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (255.316,270.535;255.316,270.535)/(255.316,270.535;255.316,270.535)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (280.515,245.336;280.515,245.336)/(280.515,245.336;280.515,245.336)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (275.515,243.264;275.515,243.264)/(275.515,243.264;275.515,243.264)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (253.244,265.535;253.244,265.535)/(253.244,265.535;253.244,265.535)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (246.841,265.525;246.841,265.525)/(246.841,265.525;246.841,265.525)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (292.51,250.299;292.51,250.299)/(292.51,250.299;292.51,250.299)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (260.284,282.525;260.284,282.525)/(260.284,282.525;260.284,282.525)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (246.841,282.525;246.841,282.525)/(246.841,282.525;246.841,282.525)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (309.505,257.334;309.505,257.334)/(309.505,257.334;309.505,257.334)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (267.324,299.515;267.324,299.515)/(267.324,299.515;267.324,299.515)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (246.841,299.515;246.841,299.515)/(246.841,299.515;246.841,299.515)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (326.5,264.369;326.5,264.369)/(326.5,264.369;326.5,264.369)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (274.364,316.505;274.364,316.505)/(274.364,316.505;274.364,316.505)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (246.841,316.505;246.841,316.505)/(246.841,316.505;246.841,316.505)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (335,267.889;335,267.889)/(335,267.889;335,267.889)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (277.884,325.005;277.884,325.005)/(277.884,325.005;277.884,325.005)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (279.956,330.005;279.956,330.005)/(279.956,330.005;279.956,330.005)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (340,269.961;340,269.961)/(340,269.961;340,269.961)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (173.99,255.891;173.99,255.891)/(173.99,255.891;173.99,255.891)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (214.124,296.025;214.124,296.025)/(214.124,296.025;214.124,296.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (233.159,296.025;233.159,296.025)/(233.159,296.025;233.159,296.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (231.841,274.025;231.841,274.025)/(231.841,274.025;231.841,274.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (223.236,274.025;223.236,274.025)/(223.236,274.025;223.236,274.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (195.99,246.779;195.99,246.779)/(195.99,246.779;195.99,246.779)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (156.995,262.926;156.995,262.926)/(156.995,262.926;156.995,262.926)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (207.084,313.015;207.084,313.015)/(207.084,313.015;207.084,313.015)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (233.159,313.015;233.159,313.015)/(233.159,313.015;233.159,313.015)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (231.841,291.025;231.841,291.025)/(231.841,291.025;231.841,291.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (216.196,291.025;216.196,291.025)/(216.196,291.025;216.196,291.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (178.99,253.819;178.99,253.819)/(178.99,253.819;178.99,253.819)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (190.99,248.851;190.99,248.851)/(190.99,248.851;190.99,248.851)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (221.164,279.025;221.164,279.025)/(221.164,279.025;221.164,279.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (233.159,279.025;233.159,279.025)/(233.159,279.025;233.159,279.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (231.841,308.015;231.841,308.015)/(231.841,308.015;231.841,308.015)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (209.156,308.015;209.156,308.015)/(209.156,308.015;209.156,308.015)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (161.995,260.854;161.995,260.854)/(161.995,260.854;161.995,260.854)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (140,269.961;140,269.961)/(140,269.961;140,269.961)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (200.044,330.005;200.044,330.005)/(200.044,330.005;200.044,330.005)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (233.159,330.005;233.159,330.005)/(233.159,330.005;233.159,330.005)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (231.841,325.005;231.841,325.005)/(231.841,325.005;231.841,325.005)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (202.116,325.005;202.116,325.005)/(202.116,325.005;202.116,325.005)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (145,267.889;145,267.889)/(145,267.889;145,267.889)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (199.485,245.336;199.485,245.336)/(199.485,245.336;199.485,245.336)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (224.684,270.535;224.684,270.535)/(224.684,270.535;224.684,270.535)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (226.756,265.535;226.756,265.535)/(226.756,265.535;226.756,265.535)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (204.485,243.264;204.485,243.264)/(204.485,243.264;204.485,243.264)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (231.841,164;231.841,164)/(231.841,164;231.841,164)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (231.841,181;231.841,181)/(231.841,181;231.841,181)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (178.99,206.206;178.99,206.206)/(178.99,206.206;178.99,206.206)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (216.196,169;216.196,169)/(216.196,169;216.196,169)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (233.159,169;233.159,169)/(233.159,169;233.159,169)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (221.164,181;221.164,181)/(221.164,181;221.164,181)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (204.485,216.771;204.485,216.771)/(204.485,216.771;204.485,216.771)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (226.756,194.5;226.756,194.5)/(226.756,194.5;226.756,194.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (190.99,211.174;190.99,211.174)/(190.99,211.174;190.99,211.174)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (214.124,164;214.124,164)/(214.124,164;214.124,164)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (173.99,204.134;173.99,204.134)/(173.99,204.134;173.99,204.134)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (161.995,199.161;161.995,199.161)/(161.995,199.161;161.995,199.161)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (209.156,152;209.156,152)/(209.156,152;209.156,152)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (233.159,152;233.159,152)/(233.159,152;233.159,152)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (140,190.044;140,190.044)/(140,190.044;140,190.044)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (231.841,147;231.841,147)/(231.841,147;231.841,147)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (207.084,147;207.084,147)/(207.084,147;207.084,147)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (195.99,213.246;195.99,213.246)/(195.99,213.246;195.99,213.246)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (223.236,186;223.236,186)/(223.236,186;223.236,186)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (233.159,186;233.159,186)/(233.159,186;233.159,186)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (145,192.116;145,192.116)/(145,192.116;145,192.116)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (202.116,135;202.116,135)/(202.116,135;202.116,135)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (156.995,197.089;156.995,197.089)/(156.995,197.089;156.995,197.089)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (224.684,189.5;224.684,189.5)/(224.684,189.5;224.684,189.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (199.485,214.699;199.485,214.699)/(199.485,214.699;199.485,214.699)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (200.044,130;200.044,130)/(200.044,130;200.044,130)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (276.436,138.5;276.436,138.5)/(276.436,138.5;276.436,138.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (246.841,138.5;246.841,138.5)/(246.841,138.5;246.841,138.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (248.159,177.5;248.159,177.5)/(248.159,177.5;248.159,177.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (260.284,177.5;260.284,177.5)/(260.284,177.5;260.284,177.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (292.51,209.726;292.51,209.726)/(292.51,209.726;292.51,209.726)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (297.51,207.654;297.51,207.654)/(297.51,207.654;297.51,207.654)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (262.356,172.5;262.356,172.5)/(262.356,172.5;262.356,172.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (248.159,143.5;248.159,143.5)/(248.159,143.5;248.159,143.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (274.364,143.5;274.364,143.5)/(274.364,143.5;274.364,143.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (326.5,195.636;326.5,195.636)/(326.5,195.636;326.5,195.636)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (253.244,194.5;253.244,194.5)/(253.244,194.5;253.244,194.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (275.515,216.771;275.515,216.771)/(275.515,216.771;275.515,216.771)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (246.841,172.5;246.841,172.5)/(246.841,172.5;246.841,172.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (280.515,214.699;280.515,214.699)/(280.515,214.699;280.515,214.699)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (255.316,189.5;255.316,189.5)/(255.316,189.5;255.316,189.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (314.505,200.609;314.505,200.609)/(314.505,200.609;314.505,200.609)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (269.396,155.5;269.396,155.5)/(269.396,155.5;269.396,155.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (248.159,160.5;248.159,160.5)/(248.159,160.5;248.159,160.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (277.884,135;277.884,135)/(277.884,135;277.884,135)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (335,192.116;335,192.116)/(335,192.116;335,192.116)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (267.324,160.5;267.324,160.5)/(267.324,160.5;267.324,160.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (309.505,202.681;309.505,202.681)/(309.505,202.681;309.505,202.681)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (246.841,155.5;246.841,155.5)/(246.841,155.5;246.841,155.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (331.5,193.564;331.5,193.564)/(331.5,193.564;331.5,193.564)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (340,190.044;340,190.044)/(340,190.044;340,190.044)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>Octagon Ind with GSGSG Pads</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (279.956,130;279.956,130)/(279.956,130;279.956,130)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-36.436,38.5;-36.436,38.5)/(-36.436,38.5;-36.436,38.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-91.5,93.564;-91.5,93.564)/(-91.5,93.564;-91.5,93.564)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-91.5,166.441;-91.5,166.441)/(-91.5,166.441;-91.5,166.441)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-36.436,221.505;-36.436,221.505)/(-36.436,221.505;-36.436,221.505)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-34.364,216.505;-34.364,216.505)/(-34.364,216.505;-34.364,216.505)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-86.5,164.369;-86.5,164.369)/(-86.5,164.369;-86.5,164.369)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-86.5,95.636;-86.5,95.636)/(-86.5,95.636;-86.5,95.636)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-34.364,43.5;-34.364,43.5)/(-34.364,43.5;-34.364,43.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (30.844,52;30.844,52)/(30.844,52;30.844,52)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (78.005,99.161;78.005,99.161)/(78.005,99.161;78.005,99.161)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (78.005,160.854;78.005,160.854)/(78.005,160.854;78.005,160.854)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (30.844,208.015;30.844,208.015)/(30.844,208.015;30.844,208.015)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (32.916,213.015;32.916,213.015)/(32.916,213.015;32.916,213.015)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (83.005,162.926;83.005,162.926)/(83.005,162.926;83.005,162.926)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (83.005,97.089;83.005,97.089)/(83.005,97.089;83.005,97.089)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (32.916,47;32.916,47)/(32.916,47;32.916,47)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-29.396,55.5;-29.396,55.5)/(-29.396,55.5;-29.396,55.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-74.505,100.609;-74.505,100.609)/(-74.505,100.609;-74.505,100.609)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-74.505,159.406;-74.505,159.406)/(-74.505,159.406;-74.505,159.406)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-29.396,204.515;-29.396,204.515)/(-29.396,204.515;-29.396,204.515)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-27.324,199.515;-27.324,199.515)/(-27.324,199.515;-27.324,199.515)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-69.505,157.334;-69.505,157.334)/(-69.505,157.334;-69.505,157.334)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-69.505,102.681;-69.505,102.681)/(-69.505,102.681;-69.505,102.681)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-27.324,60.5;-27.324,60.5)/(-27.324,60.5;-27.324,60.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (23.804,69;23.804,69)/(23.804,69;23.804,69)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (61.01,106.206;61.01,106.206)/(61.01,106.206;61.01,106.206)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (61.01,153.819;61.01,153.819)/(61.01,153.819;61.01,153.819)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (23.804,191.025;23.804,191.025)/(23.804,191.025;23.804,191.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (25.876,196.025;25.876,196.025)/(25.876,196.025;25.876,196.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (66.01,155.891;66.01,155.891)/(66.01,155.891;66.01,155.891)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (66.01,104.134;66.01,104.134)/(66.01,104.134;66.01,104.134)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (25.876,64;25.876,64)/(25.876,64;25.876,64)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-22.356,72.5;-22.356,72.5)/(-22.356,72.5;-22.356,72.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-57.51,107.654;-57.51,107.654)/(-57.51,107.654;-57.51,107.654)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-57.51,152.371;-57.51,152.371)/(-57.51,152.371;-57.51,152.371)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-22.356,187.525;-22.356,187.525)/(-22.356,187.525;-22.356,187.525)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-20.284,182.525;-20.284,182.525)/(-20.284,182.525;-20.284,182.525)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-52.51,150.299;-52.51,150.299)/(-52.51,150.299;-52.51,150.299)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-52.51,109.726;-52.51,109.726)/(-52.51,109.726;-52.51,109.726)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (-20.284,77.5;-20.284,77.5)/(-20.284,77.5;-20.284,77.5)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (16.764,86;16.764,86)/(16.764,86;16.764,86)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (44.01,113.246;44.01,113.246)/(44.01,113.246;44.01,113.246)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (44.01,146.779;44.01,146.779)/(44.01,146.779;44.01,146.779)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (16.764,174.025;16.764,174.025)/(16.764,174.025;16.764,174.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (18.836,179.025;18.836,179.025)/(18.836,179.025;18.836,179.025)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (49.01,148.851;49.01,148.851)/(49.01,148.851;49.01,148.851)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (49.01,111.174;49.01,111.174)/(49.01,111.174;49.01,111.174)</value>
+   </values>
+  </item>
+  <item>
+   <tags/>
+   <category>m5_OFFGRID</category>
+   <cell>diff_octagon_inductor</cell>
+   <visited>false</visited>
+   <multiplicity>1</multiplicity>
+   <image/>
+   <values>
+    <value>edge-pair: (18.836,81;18.836,81)/(18.836,81;18.836,81)</value>
+   </values>
+  </item>
+ </items>
+</report-database>
