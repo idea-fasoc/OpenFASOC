@@ -8,7 +8,7 @@ from itertools import product
 
 import TEMP_netlist
 
-# Note 7/9/22: this function does NOT implement PEX simulations. Netlist is from flow/results...
+# note netlist type is either prePEX or (anything else) postPEX
 def generate_runs(
     genDir,
     designName,
@@ -19,7 +19,9 @@ def generate_runs(
     platform,
     modeling=False,
     spiceDir=None,
-) -> None:
+    netlistType="prePEX"
+):
+    """creates and executes simulations (through run_simulations call)"""
     simDir = genDir + "simulations/"
     flowDir = genDir + "flow/"
     platformConfig = jsonConfig["platforms"][platform]
@@ -93,7 +95,10 @@ def generate_runs(
             with open(dstNetlist, "w") as wf:
                 filedata = wf.write(filedata)
         else:
-            srcNetlist = spiceDir + "/" + designName + ".spice"
+            if netlistType="prePEX":
+            	srcNetlist = spiceDir + "/" + designName + ".spice"
+            else:
+            	srcNetlist = spiceDir + "/" + designName + "_pex.spice"
             dstNetlist = runDir + designName + ".spice"
             simTestbench = re.sub(
                 "@netlist",
@@ -113,15 +118,59 @@ def generate_runs(
             runDir, designName, tempList, jsonConfig["simTool"], jsonConfig["simMode"]
         )
 
+def matchNetlistCell(cell_to_test):
+    """returns true if the cell name contains (as a substring) one of the identified cells to remove for partial simulations"""
+    removeCells="""sky130_fd_sc_hd__o211a_1
+sky130_fd_sc_hd__o311a_1
+sky130_fd_sc_hd__o2111a_2
+sky130_fd_sc_hd__a221oi_4
+sky130_fd_sc_hd__nor3_2
+sky130_fd_sc_hd__nor3_1
+sky130_fd_sc_hd__nor2_1
+sky130_fd_sc_hd__or3_1
+sky130_fd_sc_hd__or3b_2
+sky130_fd_sc_hd__or2b_1
+sky130_fd_sc_hd__or2_2
+sky130_fd_sc_hd__nand3b_1
+sky130_fd_sc_hd__mux4_2
+sky130_fd_sc_hd__mux4_1
+sky130_fd_sc_hd__o221ai_1
+sky130_fd_sc_hd__dfrtn_1
+sky130_fd_sc_hd__dfrtp_1
+sky130_fd_sc_hd__conb_1
+sky130_fd_sc_hd__decap_4
+sky130_fd_sc_hd__tapvpwrvgnd_1"""
+    removeCells=removeCells.split("\n")
+    # names may not be exactly the same, but as long as part of the name matches then consider true
+    for cell in removeCells:
+    	if cell in cell_to_test:
+    		return True
+    # if tested all cells and none are true then false
+    return False
 
-def update_netlist(srcNetlist, dstNetlist, simMode) -> None:
-    with open(srcNetlist, "r") as rf:
-        netlist = rf.read()
+def update_netlist(srcNetlist, dstNetlist, simMode):
+    """comments cells if simMode is partial so that the simulation netlist only includes the oscillator"""
+    with open(srcNetlist, "r") as src:
+        netlist = src.read()
         netlist = re.sub("\.end", ".ends", netlist)
-        spice_netlist_re = re.search("\.INCLUDE '(.*)'", netlist)
-        spice_netlist = spice_netlist_re.group(1)
+        netlist = re.sub("\.endss", ".ends", netlist)
         if simMode == "partial":
-            netlist = re.sub("\n(X(?!temp_analog).*)", "\n*\g<1>", netlist)
+            # netlist = re.sub("\n(X(?!temp_analog).*)", "\n*\g<1>", netlist)
+            # search for the tempsense subckt and return it as a match object divided by cells, head, and end
+            tempsense_subckt = re.search("(\.SUBCKT tempsense.*\n(\+.*\n)*)((.*\n)*)(\.ENDS.*)", netlist, re.IGNORECASE)
+            # the body of the subcky is in match group 3. merge all multiline cell instances for easy commenting
+            tempsense_cells_block = tempsense_subckt.group(3)
+            netlist = netlist.replace(tempsense_cells_block,tempsense_cells_block.replace("\n+", ""))
+            tempsense_cells_block = tempsense_cells_block.replace("\n+", "")
+            # make an array of the cells and comment out the cells that should be removed for partial simuations
+            tempsense_cells_array = tempsense_cells_block.split("\n")
+            for cell in tempsense_cells_array:
+            	if cell != '':
+            		cellPinout=cell.split(" ")
+            		cell_commented=cell
+            		if matchNetlistCell(cellPinout[-1]):
+            			cell_commented="*"+cell
+            		netlist = netlist.replace(cell,cell_commented)
         elif simMode == "full":
             pass
         else:
@@ -132,14 +181,6 @@ def update_netlist(srcNetlist, dstNetlist, simMode) -> None:
             sys.exit(1)
     with open(dstNetlist, "w") as wf:
         wf.write(netlist)
-
-    with open(spice_netlist, "r") as rf:
-        filedata = rf.read()
-        filedata = re.sub("\n(R[0-9]+)", "\n*\g<1>", filedata)
-        filedata = re.sub("\n\*(V[0-9]+)", "\n\g<1>", filedata)
-    with open(spice_netlist, "w") as wf:
-        wf.write(filedata)
-
 
 def run_simulations(runDir, designName, temp_list, simTool, simMode) -> None:
     if simTool == "finesim":
