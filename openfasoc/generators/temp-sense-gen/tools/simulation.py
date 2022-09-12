@@ -19,7 +19,7 @@ def generate_runs(
     platform,
     modeling=False,
     spiceDir=None,
-    netlistType="prePEX"
+    netlistType=="prePEX"
 ):
     """creates and executes simulations (through run_simulations call)"""
     simDir = genDir + "simulations/"
@@ -95,7 +95,7 @@ def generate_runs(
             with open(dstNetlist, "w") as wf:
                 filedata = wf.write(filedata)
         else:
-            if netlistType="prePEX":
+            if netlistType=="prePEX":
             	srcNetlist = spiceDir + "/" + designName + ".spice"
             else:
             	srcNetlist = spiceDir + "/" + designName + "_pex.spice"
