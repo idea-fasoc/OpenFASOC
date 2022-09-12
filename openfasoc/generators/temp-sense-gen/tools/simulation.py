@@ -119,9 +119,9 @@ def generate_runs(
         )
 
 
-def matchNetlistCell(cell_to_test):
-    """returns true if the cell name contains (as a substring) one of the identified cells to remove for partial simulations"""
-    removeCells = """sky130_fd_sc_hd__o211a_1
+def matchNetlistCell(cell_instantiation):
+    """returns true if the input contains as a pin (as a substring) one of the identified cells to remove for partial simulations"""
+    removeIfFound = """sky130_fd_sc_hd__o211a_1
 sky130_fd_sc_hd__o311a_1
 sky130_fd_sc_hd__o2111a_2
 sky130_fd_sc_hd__a221oi_4
@@ -140,12 +140,16 @@ sky130_fd_sc_hd__dfrtn_1
 sky130_fd_sc_hd__dfrtp_1
 sky130_fd_sc_hd__conb_1
 sky130_fd_sc_hd__decap_4
-sky130_fd_sc_hd__tapvpwrvgnd_1"""
-    removeCells = removeCells.split("\n")
+sky130_fd_sc_hd__tapvpwrvgnd_1
+SEL_CONV_TIME"""
+    removeIfFound = removeIfFound.split("\n")
     # names may not be exactly the same, but as long as part of the name matches then consider true
-    for cell in removeCells:
-        if cell in cell_to_test:
-            return True
+    # naming will automatically include some portion of the standard cell of origin name in the pin name
+    # and some pins are only used in the large voltage domain. that is why this works...
+    for name in removeIfFound:
+        for pin in cell_instantiation:
+            if name in pin:
+                return True
     # if tested all cells and none are true then false
     return False
 
