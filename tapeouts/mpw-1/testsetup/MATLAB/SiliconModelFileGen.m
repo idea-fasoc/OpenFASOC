@@ -33,7 +33,7 @@ indlist_B_arr = zeros(2, Nc_B, 64);
 for design = 1:64
     freq_arr = freq_data_array(:, :, design);
     [params, inacc, params_sec, inacc_sec, Nc_A, indlist_A, inacc_B, indlist_B] = ...
-        EvalDesignGivenRange(freq_arr, tlist, tstart_ind, twin_len, pcalib, inacc_th, Nc_B, order_sec);    
+        EvalDesignGivenRange(freq_arr, tlist, tstart_ind, twin_len, pcalib, inacc_th, Nc_B, order_sec);
     params_arr(:, :, design) = params;
     inacc_arr(:, :, design) = inacc;
     params_sec_arr(:, design) = params_sec;
@@ -63,13 +63,13 @@ for design = 1:Ndesign_mf
     for tt = 1:Ntemp_mf
         % Temperature
         Temp((design-1)*Ntemp_mf + tt, 1) = tlist(t_ind_mf(tt));
-        
+
         % Determine which chips to use for the design
         clist_mf = indlist_A_arr(1, :, design);
         Nchip_mf = sum(clist_mf > 0);
-        
+
         % Frequency, Power and Error
-        if (Nchip_mf > 0) 
+        if (Nchip_mf > 0)
             % if the design "works"
             Frequency((design-1)*Ntemp_mf + tt, 1) = mean(freq_data_array(t_ind_mf(tt), clist_mf(1:Nchip_mf), design))*1e3; % Hz
             Power((design-1)*Ntemp_mf + tt, 1) = mean(power_data_array(1, clist_mf(1:Nchip_mf), design))*1e-6; % W
@@ -80,7 +80,7 @@ for design = 1:Ndesign_mf
             Power((design-1)*Ntemp_mf + tt, 1) = inf; % Set all power to infinity
             Error((design-1)*Ntemp_mf + tt, 1) = inf; %  Set all error to infinity
         end
-        
+
         % Circuit Config
           % Determine No. inverter
         inv((design-1)*Ntemp_mf + tt, 1) = 2*mod(design-1, 4) + 4;
