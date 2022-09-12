@@ -145,7 +145,6 @@ SEL_CONV_TIME"""
     removeIfFound = removeIfFound.split("\n")
     # names may not be exactly the same, but as long as part of the name matches then consider true
     # naming will automatically include some portion of the standard cell of origin name in the pin name
-    # and some pins are only used in the large voltage domain. that is why this works...
     for name in removeIfFound:
         for pin in cell_instantiation:
             if name in pin:
@@ -180,7 +179,7 @@ def update_netlist(srcNetlist, dstNetlist, simMode):
                 if cell != "":
                     cellPinout = cell.split(" ")
                     cell_commented = cell
-                    if matchNetlistCell(cellPinout[-1]):
+                    if matchNetlistCell(cellPinout):
                         cell_commented = "*" + cell
                     netlist = netlist.replace(cell, cell_commented)
         elif simMode == "full":
