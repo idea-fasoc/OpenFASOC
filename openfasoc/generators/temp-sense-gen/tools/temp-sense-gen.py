@@ -255,46 +255,62 @@ if args.mode == "macro":
     # sys.exit(1)
     exit()
 
+print("#----------------------------------------------------------------------")
+print("# Run Simulations")
+print("#----------------------------------------------------------------------")
+print()
 stage_var = [int(ninv) - 1]
 header_var = [int(nhead)]
 
+# make a temp list, TODO: get from JSON config
 temp_start = -20
 temp_stop = 100
 temp_step = 20
 temp_points = int((temp_stop - temp_start) / temp_step)
-
 temp_list = []
 for i in range(0, temp_points + 1):
     temp_list.append(temp_start + i * temp_step)
 
-generate_runs(
-    genDir,
-    designName,
-    header_var,
-    stage_var,
-    temp_list,
-    jsonConfig,
-    args.platform,
-    spiceDir=args.outputDir,
-)
+# run PEX and/or prePEX simulations based on the command line flags
+if args.pex:
+    print("running PEX simulations")
+    pexDir = generate_runs(
+        genDir,
+        designName,
+        header_var,
+        stage_var,
+        temp_list,
+        jsonConfig,
+        args.platform,
+        spiceDir=args.outputDir,
+        prePEX=False,
+    )
+    if os.path.isfile(pexDir + "all_result"):
+        shutil.copyfile(
+            pexDir + "all_result", genDir + args.outputDir + "/PEX_sim_result"
+        )
+    else:
+        print(pexDir + "PEX all_result file is not generated successfully")
 
-# shutil.copyfile(flowDir + designName + '_pex.spice', runDir + designName + '_pex.spice')
-# shutil.copyfile(genDir + "tools/result.py", runDir + "result.py")
-# shutil.copyfile(genDir + "tools/result_error.py", runDir + "result_error.py")
-
-runDir = simDir + "run/inv{:d}_header{:d}/".format(stage_var[0], header_var[0])
-if os.path.isfile(runDir + "all_result"):
-    shutil.copyfile(runDir + "all_result", genDir + args.outputDir + "/sim_result")
-else:
-    print(runDir + "all_result file is not generated successfully")
-
-
-# with open(spice_netlist, "r") as rf:
-#   filedata = rf.read()
-#   filedata = re.sub("(V[0-9]+)", "*\g<1>", filedata)
-#   filedata = re.sub("\*(R[0-9]+)", "\g<1>", filedata)
-# with open(spice_netlist, "w") as wf:
-#   wf.write(filedata)
+if args.prepex:
+    print("running pre PEX simulations")
+    prepexDir = generate_runs(
+        genDir,
+        designName,
+        header_var,
+        stage_var,
+        temp_list,
+        jsonConfig,
+        args.platform,
+        spiceDir=args.outputDir,
+        prePEX=True,
+    )
+    if os.path.isfile(prepexDir + "all_result"):
+        shutil.copyfile(
+            prepexDir + "all_result", genDir + args.outputDir + "/prePEX_sim_result"
+        )
+    else:
+        print(prepexDir + "prePEX all_result file is not generated successfully")
 
 print("#----------------------------------------------------------------------")
 print("# Simulation output Generated")

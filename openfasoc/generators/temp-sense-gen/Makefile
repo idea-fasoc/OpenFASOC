@@ -32,7 +32,8 @@ sky130hd_temp:
 	tools/verify_op.sh
 
 sky130hd_temp_full:
-	python3 tools/temp-sense-gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode full
+	# add --pex to also run pex simulations
+	python3 tools/temp-sense-gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode full --prepex
 
 clean:
 	rm -f error_within_x.csv golden_error_opt.csv search_result.csv

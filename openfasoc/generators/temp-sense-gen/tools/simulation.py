@@ -8,7 +8,8 @@ from itertools import product
 
 import TEMP_netlist
 
-# note netlist type is either prePEX or (anything else) postPEX
+# note netlist type is either prePEX or postPEX
+# function returns the location of simulations
 def generate_runs(
     genDir,
     designName,
@@ -19,7 +20,7 @@ def generate_runs(
     platform,
     modeling=False,
     spiceDir=None,
-    netlistType="prePEX",
+    prePEX=True,
 ):
     """creates and executes simulations (through run_simulations call)"""
     simDir = genDir + "simulations/"
@@ -68,7 +69,10 @@ def generate_runs(
     for design in designList:
         header = design[0]
         inv = design[1]
-        runDir = simDir + "run/inv{:d}_header{:d}/".format(inv, header)
+        if prePEX:
+            runDir = simDir + "run/prePEX_inv{:d}_header{:d}/".format(inv, header)
+        else:
+            runDir = simDir + "run/PEX_inv{:d}_header{:d}/".format(inv, header)
 
         if os.path.isdir(runDir):
             shutil.rmtree(runDir, ignore_errors=True)
@@ -95,7 +99,7 @@ def generate_runs(
             with open(dstNetlist, "w") as wf:
                 filedata = wf.write(filedata)
         else:
-            if netlistType is "prePEX":
+            if prePEX:
                 srcNetlist = spiceDir + "/" + designName + ".spice"
             else:
                 srcNetlist = spiceDir + "/" + designName + "_pex.spice"
@@ -117,6 +121,7 @@ def generate_runs(
         run_simulations(
             runDir, designName, tempList, jsonConfig["simTool"], jsonConfig["simMode"]
         )
+        return runDir
 
 
 def matchNetlistCell(cell_instantiation):

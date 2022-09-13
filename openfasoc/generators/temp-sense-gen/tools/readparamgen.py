@@ -41,6 +41,8 @@ parser.add_argument(
 )
 parser.add_argument("--ninv", required=False, help="Number of target inverters")
 parser.add_argument("--nhead", required=False, help="Number of target headers")
+parser.add_argument("--pex", action="store_true", help="Simulate PEX")
+parser.add_argument("--prepex", action="store_true", help="Simulate pre PEX")
 parser.add_argument("--clean", action="store_true", help="Clean the workspace.")
 args = parser.parse_args()
 
