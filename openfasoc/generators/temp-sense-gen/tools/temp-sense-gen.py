@@ -272,26 +272,6 @@ for i in range(0, temp_points + 1):
     temp_list.append(temp_start + i * temp_step)
 
 # run PEX and/or prePEX simulations based on the command line flags
-if args.pex:
-    print("running PEX simulations")
-    pexDir = generate_runs(
-        genDir,
-        designName,
-        header_var,
-        stage_var,
-        temp_list,
-        jsonConfig,
-        args.platform,
-        spiceDir=args.outputDir,
-        prePEX=False,
-    )
-    if os.path.isfile(pexDir + "all_result"):
-        shutil.copyfile(
-            pexDir + "all_result", genDir + args.outputDir + "/PEX_sim_result"
-        )
-    else:
-        print(pexDir + "PEX all_result file is not generated successfully")
-
 if args.prepex:
     print("running pre PEX simulations")
     prepexDir = generate_runs(
@@ -311,6 +291,26 @@ if args.prepex:
         )
     else:
         print(prepexDir + "prePEX all_result file is not generated successfully")
+
+if args.pex:
+    print("running PEX simulations")
+    pexDir = generate_runs(
+        genDir,
+        designName,
+        header_var,
+        stage_var,
+        temp_list,
+        jsonConfig,
+        args.platform,
+        spiceDir=args.outputDir,
+        prePEX=False,
+    )
+    if os.path.isfile(pexDir + "all_result"):
+        shutil.copyfile(
+            pexDir + "all_result", genDir + args.outputDir + "/PEX_sim_result"
+        )
+    else:
+        print(pexDir + "PEX all_result file is not generated successfully")
 
 print("#----------------------------------------------------------------------")
 print("# Simulation output Generated")
