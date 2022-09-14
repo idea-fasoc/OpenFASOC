@@ -1,5 +1,5 @@
-Temperature Sensor Flow
-=======================
+Temperature Sensor Generator
+=============================
 
 This page gives an overview of how the Temperature Sensor Generator (temp-sense-gen) works internally in OpenFASoC.
 
