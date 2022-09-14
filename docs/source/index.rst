@@ -44,3 +44,4 @@ How to get in touch
    ci
    contact
    OpenFASoC_temp_sense_gen
+   tempsense-flow
