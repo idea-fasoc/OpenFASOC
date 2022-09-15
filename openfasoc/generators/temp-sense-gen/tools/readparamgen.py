@@ -714,7 +714,7 @@ def plot() -> None:
         myplt = read_plot_power_opt()
     elif Optimization == "error":
         myplt = read_plot_error_opt()
-    myplot.savefig("runstats.png")
+    myplot.savefig("run_stats.svg")
 
 
 # final result is put in these 3 variables that you can use in your
