@@ -596,7 +596,7 @@ def read_plot_power_opt() -> None:
         label="Other simulated points using the same design parameters",
     )
     plt.legend(loc="upper left", frameon=True)
-    plt.show()
+    return plt
 
 
 def read_plot_error_opt() -> None:
@@ -632,7 +632,7 @@ def read_plot_error_opt() -> None:
         label="Other simulated points using the same design parameters",
     )
     plt.legend(loc="upper left", frameon=True)
-    plt.show()
+    return plt
 
 
 def main():
@@ -711,9 +711,10 @@ def check_search_done():
 # plot the appropriate data source and results
 def plot() -> None:
     if Optimization == "power":
-        read_plot_power_opt()
+        myplt = read_plot_power_opt()
     elif Optimization == "error":
-        read_plot_error_opt()
+        myplt = read_plot_error_opt()
+    myplot.savefig("runstats.png")
 
 
 # final result is put in these 3 variables that you can use in your
