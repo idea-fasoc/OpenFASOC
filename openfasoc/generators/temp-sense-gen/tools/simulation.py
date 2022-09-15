@@ -18,6 +18,7 @@ def generate_runs(
     tempList,
     jsonConfig,
     platform,
+    pdk,
     modeling=False,
     spiceDir=None,
     prePEX=True,
@@ -27,7 +28,7 @@ def generate_runs(
     flowDir = genDir + "flow/"
     platformConfig = jsonConfig["platforms"][platform]
     simTool = jsonConfig["simTool"]
-    model_file = jsonConfig["open_pdks"] + "/libs.tech/ngspice/sky130.lib.spice"
+    model_file = pdk + "/libs.tech/ngspice/sky130.lib.spice"
     # avoid breaking function calls to this function by making a defualt option based on genDir
     if not spiceDir:
         spiceDir = genDir + "/work"

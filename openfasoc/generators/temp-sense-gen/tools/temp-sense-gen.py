@@ -282,6 +282,7 @@ if args.prepex:
         temp_list,
         jsonConfig,
         args.platform,
+        pdk,
         spiceDir=args.outputDir,
         prePEX=True,
     )
@@ -302,6 +303,7 @@ if args.pex:
         temp_list,
         jsonConfig,
         args.platform,
+        pdk,
         spiceDir=args.outputDir,
         prePEX=False,
     )
