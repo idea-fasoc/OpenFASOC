@@ -41,6 +41,8 @@ parser.add_argument(
 )
 parser.add_argument("--ninv", required=False, help="Number of target inverters")
 parser.add_argument("--nhead", required=False, help="Number of target headers")
+parser.add_argument("--pex", action="store_true", help="Simulate PEX")
+parser.add_argument("--prepex", action="store_true", help="Simulate pre PEX")
 parser.add_argument("--clean", action="store_true", help="Clean the workspace.")
 args = parser.parse_args()
 
@@ -594,7 +596,7 @@ def read_plot_power_opt() -> None:
         label="Other simulated points using the same design parameters",
     )
     plt.legend(loc="upper left", frameon=True)
-    plt.show()
+    return plt
 
 
 def read_plot_error_opt() -> None:
@@ -630,7 +632,7 @@ def read_plot_error_opt() -> None:
         label="Other simulated points using the same design parameters",
     )
     plt.legend(loc="upper left", frameon=True)
-    plt.show()
+    return plt
 
 
 def main():
@@ -709,9 +711,10 @@ def check_search_done():
 # plot the appropriate data source and results
 def plot() -> None:
     if Optimization == "power":
-        read_plot_power_opt()
+        myplt = read_plot_power_opt()
     elif Optimization == "error":
-        read_plot_error_opt()
+        myplt = read_plot_error_opt()
+    myplot.savefig("run_stats.svg")
 
 
 # final result is put in these 3 variables that you can use in your
