@@ -320,7 +320,7 @@ If an error is found, the generator may not be working properly. You can `file a
 .. note::
   Simulation of the generated circuit to also ensure its correct functioning is currently in development.
 
-Reference article
+Reference Article
 -----------------
 
 Q. Zhang et al., "An Open-Source and Autonomous Temperature Sensor Generator Verified With 64 Instances in SkyWater 130 nm for Comprehensive Design Space Exploration," in IEEE Solid-State Circuits Letters, vol. 5, pp. 174-177, 2022, doi: 10.1109/LSSC.2022.3188925.
