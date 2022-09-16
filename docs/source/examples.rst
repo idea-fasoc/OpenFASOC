@@ -7,3 +7,4 @@ Prefer to learn by example? These notebooks give a practical overview on how to 
     :maxdepth: 1
 
     notebooks/temp-sense-gen.ipynb
+    notebooks/temp_sense_genCollab.ipynb
