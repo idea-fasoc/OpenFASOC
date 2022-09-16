@@ -43,4 +43,4 @@ How to get in touch
    create-your-own-generator
    ci
    contact
-   OpenFASoC_temp_sense_gen
+   temp_sense_genCollab
