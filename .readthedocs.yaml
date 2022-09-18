@@ -5,6 +5,10 @@
 # Required
 version: 2
 
+# Submodules to include in the readthedocs build
+submodules:
+  include: [tapeouts]
+
 # Set the version of Python and other tools you might need
 build:
   os: ubuntu-20.04

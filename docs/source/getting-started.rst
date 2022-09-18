@@ -190,3 +190,5 @@ Additional Resources
 For more information on how each generator works and what circuits they're creating, check :doc:`generators`.
 
 You can also find more examples of how to use OpenFASoC in the :doc:`examples` page.
+
+Tapeouts done with OpenFASoC are described in :doc:`tapeouts`.
