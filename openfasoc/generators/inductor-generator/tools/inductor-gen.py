@@ -16,7 +16,7 @@ parser.add_argument("--output_dir", required=False, default="outputs")
 args = parser.parse_args()
 # Pass Specs to the script when decided (Can wrap into Makefile if needed)
 spec_file = open(args.spec_file, "r")
-tdict = yaml.load(spec_file)
+ind_dict = yaml.safe_load(spec_file)
 
 # -------------------------------------------------------------------------------
 # Import Sky130 pcells (ATTN SAI Where should these reside, they might not be pip installable yet
@@ -35,6 +35,19 @@ from sky130_pcells import Sky130
 # -------------------------------------------------------------------------------
 # createPCellInstance
 # -------------------------------------------------------------------------------
+
+
+def metal_mapping():
+    return {
+        "li": 67,
+        "met1": 68,
+        "met2": 69,
+        "met3": 70,
+        "met4": 71,
+        "met5": 72,
+    }
+
+
 def createPCellInstance(
     layout, pcell_name="CIRCLE", lib_name="Basic", params={}, x=0, y=0
 ):
@@ -50,10 +63,14 @@ def createPCellInstance(
     pv = []
     for p in pcell_decl.get_parameters():
         if p.name in params:
-            pv.append(params[p.name])
+            if p.name == "pin_layer":
+                # Since we dont want to pass layer numbers
+                pv.append(metal_mapping()[params[p.name]])
+            else:
+                pv.append(params[p.name])
         else:
             pv.append(p.default)
-
+    print(pv)
     # create the PCell variant cell
     pcell_var = layout.add_pcell_variant(lib, pcell_decl.id(), pv)
 
@@ -95,7 +112,7 @@ def printPcellParams(layout, pcell_name="CIRCLE", lib_name="Basic"):
 # Main
 # -------------------------------------------------------------------------------
 
-# create a layout
+# create a layout (Need pya till we dont have pcells for inductors in gdsfactory)
 layout = pya.Layout()
 top = layout.create_cell("TOP")
 # Can pass params to the name of gds to maintain many cells parallely
@@ -114,26 +131,14 @@ print("## Skywaters 131nm PDK Pcells loaded.")
 
 # printPcellParams(layout, 'inductor', 'SKY130')
 
-inductor_params = {
-    "N": 8,
-    "W": 5,
-    "S": 3.5,
-    "distance_input": 30,
-    "spacing_input": 15,
-    "Louter": 200,
-    "shielding": 200,
-    "W_shielding": 2,
-    "S_shielding": 4,
-    "diffusion_shielding": 0,
-}
-
 printPcellParams(layout, "diff_octagon_inductor", "SKY130")
 
+# Pcell names diff_square_inductor diff_octagon_inductor inductor work
 createPCellInstance(
     layout=layout,
     pcell_name="diff_octagon_inductor",
     lib_name="SKY130",
-    params=inductor_params,
+    params=ind_dict,
     x=0,
     y=0,
 )
@@ -168,14 +173,24 @@ add_ports_m5 = gf.partial(
     get_name_from_label=True,
     guess_port_orientation=True,
 )
+
+add_ports_m4 = gf.partial(
+    gf.add_ports.add_ports_from_labels,
+    port_layer=LAYER.met4drawing,
+    layer_label=LAYER.met4label,
+    port_type="electrical",
+    port_width=0.2,
+    get_name_from_label=True,
+    guess_port_orientation=True,
+)
+all_ports = gf.compose(add_ports_m4, add_ports_m5)
 inductor_in = gf.import_gds(
-    output_file, cellname="diff_octagon_inductor", decorator=add_ports_m5, flatten=False
+    output_file, cellname="diff_octagon_inductor", decorator=all_ports, flatten=False
 )
 # for shp in inductor_in.paths:
 #    print(shp.points)
 #    #print(shp)
 
-# exit()
 # Create Top level Component
 pad = gf.Component("Octagon Ind with GSGSG Pads")
 pad1 = gf.components.pad(size=(100, 100), layer="met5drawing")
@@ -211,9 +226,7 @@ for i in [routep, routen]:
 gf_gds_out = "output_pad.gds"
 pad.write_gds(gf_gds_out)
 print(__file__.split(".")[0])
-
 # Write out GDS
 # ------------------
 # write the layout to the gds file
 # exit()
-# pya.MainWindow.instance().load_layout('t.gds',1)

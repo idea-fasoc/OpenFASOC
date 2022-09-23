@@ -1,1 +1,13 @@
 gen_name: "Inductor Generator"
+N: 4
+W: 5
+S: 3.5
+distance_input: 30
+spacing_input: 15
+Louter: 200
+shielding: 200
+W_shielding: 2
+S_shielding: 4
+diffusion_shielding: 0
+pin_height : 5
+pin_layer: "met5"
