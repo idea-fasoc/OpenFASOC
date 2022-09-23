@@ -3,12 +3,11 @@
 
 .param mc_mm_switch=0
 .param mc_pr_switch=0
-.lib ../../../PDK/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130.lib.spice tt
-**.include "../../PDK//open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hd/cdl/sky130_fd_sc_hd_Xyce.cdl"
-.include ../../PDK/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
-.include ../../PDK/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hs/spice/sky130_fd_sc_hs.spice
-.include ../../PDK/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_ms/spice/sky130_fd_sc_ms.spice
-.include ../../PDK/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130_fd_pr__model__inductors.model.spice
+.lib /usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+.include /usr/local/share/pdk/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
+.include /usr/local/share/pdk/sky130A/libs.ref/sky130_fd_sc_hs/spice/sky130_fd_sc_hs.spice
+.include /usr/local/share/pdk/sky130A/libs.ref/sky130_fd_sc_ms/spice/sky130_fd_sc_ms.spice
+.include /usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130_fd_pr__model__inductors.model.spice
 *.include ../../PDK/open_pdks/sky130/sky130A/libs.tech/ngspice/capacitors/sky130_fd_pr__model__cap_mim.model.spice
 
 
