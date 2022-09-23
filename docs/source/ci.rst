@@ -3,7 +3,7 @@ Continuous Integration
 
 The Continuous Integration and Deployment for OpenFASoC will be running via GitHub Actions. The CI/CD flow is described like below -
 
-.. image:: openfasoc_ci.png
+.. image:: img/openfasoc_ci.png
   :width: 500
 
 A Cron job is triggered at 1 AM PST everyday to test the enabled generators with the latest tool environments and upon successful run, the tool versions are updated in the README file accordingly.
