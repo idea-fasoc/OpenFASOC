@@ -18,20 +18,20 @@ Prerequisites
 
 Please install the following tools with the recommended commit ids for a stable functioning of the flow:
 
-  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:)
+  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.320)
 
-  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:)
+  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.227)
 
-  3. `Klayout <https://github.com/KLayout/klayout>`_ (version:)
+  3. `Klayout <https://github.com/KLayout/klayout>`_ (version:0.27.10-1)
 
       - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
-  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:)
+  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.20+70)
 
-  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:)
+  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_4865)
 
-  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:)
+  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.328)
 
    - open_pdks is required to run drc/lvs check and the simulations
    - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
@@ -130,4 +130,13 @@ To run the simulation, please edit your local model file in `common/platform_con
 Tapeouts and testing setup
 *********************************
 
-Please refer to our testing setup in our tapeouts and testing setup [section](./tapeouts/mpw-1/testsetup/README.md#section).
+Please refer to our testing setup in our `tapeouts and testing setup section <https://github.com/idea-fasoc/openfasoc-tapeouts>`_.
+
+Citation
+****************
+
+If you find this tool useful in your research, we kindly request to cite our papers:
+
+ - Tutu Ajayi et al., "`An Open-source Framework for Autonomous SoC Design with Analog Block Generation <https://ieeexplore.ieee.org/document/9344104>`_," 2020 IFIP/IEEE 28th International Conference on Very Large Scale Integration (VLSI-SOC), 2020, pp. 141-146.
+
+ - Qirui Zhang et al., "`An Open-Source and Autonomous Temperature Sensor Generator Verified With 64 Instances in SkyWater 130 nm for Comprehensive Design Space Exploration <https://ieeexplore.ieee.org/abstract/document/9816083>`_," in IEEE Solid-State Circuits Letters, vol. 5, pp. 174-177, 2022.

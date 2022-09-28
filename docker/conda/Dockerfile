@@ -2,6 +2,8 @@ FROM ubuntu:20.04
 
 RUN apt-get -y update
 RUN apt-get -y upgrade
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get install wget bison flex libx11-dev libx11-6 libxaw7-dev libreadline6-dev autoconf libtool automake git -y
 
 RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64.sh \
     && bash Miniconda3-py37_4.12.0-Linux-x86_64.sh -b -p /usr/bin/miniconda3/ \
@@ -26,6 +28,7 @@ RUN apt install time -y
 ENV PDK_ROOT=/usr/bin/miniconda3/share/pdk/
 RUN strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5
 
-RUN conda install -c conda-forge ngspice
+RUN git clone http://git.code.sf.net/p/ngspice/ngspice
+RUN cd ngspice && ./compile_linux.sh
 
 COPY ./scripts /scripts
