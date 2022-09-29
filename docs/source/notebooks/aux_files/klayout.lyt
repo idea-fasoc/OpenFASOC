@@ -71,7 +71,7 @@
    <macro-resolution-mode>default</macro-resolution-mode>
    <separate-groups>false</separate-groups>
    <map-file/>
-   <lef-files>/content/OpenFASOC/docs/source/notebookFiles/klayout_tech.lef</lef-files> <lef-files>/content/OpenFASOC/openfasoc/common/platforms/sky130hd/lef/sky130_fd_sc_hd_merged.lef</lef-files> <lef-files>/content/OpenFASOC/openfasoc/generators/temp-sense-gen/blocks/sky130hd/lef/HEADER.lef</lef-files> <lef-files>/content/OpenFASOC/openfasoc/generators/temp-sense-gen/blocks/sky130hd/lef/SLC.lef</lef-files>
+   <lef-files>/content/OpenFASOC/docs/source/notebooks/aux_files/klayout_tech.lef</lef-files> <lef-files>/content/OpenFASOC/openfasoc/common/platforms/sky130hd/lef/sky130_fd_sc_hd_merged.lef</lef-files> <lef-files>/content/OpenFASOC/openfasoc/generators/temp-sense-gen/blocks/sky130hd/lef/HEADER.lef</lef-files> <lef-files>/content/OpenFASOC/openfasoc/generators/temp-sense-gen/blocks/sky130hd/lef/SLC.lef</lef-files>
   </lefdef>
   <dxf>
    <dbu>0.001</dbu>
