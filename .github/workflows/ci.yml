@@ -117,8 +117,21 @@ jobs:
 
       - name: Commit README.rst
         run: |
-          git config --global user.name 'idea-fasoc'
-          git config --global user.email 'idea-fasoc@users.noreply.github.com'
-          git add -A
-          git commit -m "Updated README with latest stable version numbers of dependent tools"
-          git push
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Updated README with latest stable version numbers of dependent tools" -a
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.UPDATE_VERSIONS }}
+          branch: main
+
+
+      # - name: Commit README.rst
+      #   run: |
+      #     git config --global user.name 'idea-fasoc'
+      #     git config --global user.email 'idea-fasoc@users.noreply.github.com'
+      #     git add -A
+      #     git commit -m "Updated README with latest stable version numbers of dependent tools"
+      #     git push
