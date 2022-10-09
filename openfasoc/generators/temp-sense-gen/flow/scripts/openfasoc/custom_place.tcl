@@ -1,7 +1,13 @@
-# Note: Ali B Hammoud 8/11/22
-# template procedure which will place cells in the large voltage domain off east
+# Template procedure which will place cells in the large voltage domain off east
 # with name "cell_name" semi-stacked starting from row "row_num" (0 indexed)
 # No error checking is used, so you must ensure the target row and block object are correct
+#
+# Example of usage (before detailed_placement):
+#
+# source $::env(SCRIPTS_DIR)/openfasoc/custom_place.tcl
+# set block [ord::get_db_block]
+# customPlace_east $block "HEADER" 10
+#
 proc customPlace_east {block_object cell_name row_num} {
 	set target_row [lindex [$block_object getRows] $row_num]
 	set y_initial_row [expr {[lindex [$target_row getOrigin] 1] / 1000.0}]
@@ -24,10 +30,3 @@ proc customPlace_east {block_object cell_name row_num} {
 		}
 	}
 }
-
-# Example of usage (before detailed_placement):
-#
-# source $::env(SCRIPTS_DIR)/openfasoc/custom_place.tcl
-# set block [ord::get_db_block]
-# customPlace_east $block "HEADER" 10
-#
