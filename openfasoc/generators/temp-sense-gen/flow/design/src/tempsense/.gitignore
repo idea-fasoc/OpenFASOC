@@ -1,0 +1,6 @@
+# These files are copied to flow/design/src/ by the temp-sense-gen.py tool:
+counter.v
+TEMP_ANALOG_hv.nl.v
+TEMP_ANALOG_lv.nl.v
+TEMP_AUTO_def.v
+tempsenseInst_error.v
