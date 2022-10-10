@@ -1,3 +1,7 @@
 [submodule "caravel_user_project"]
 	path = caravel_user_project
 	url = https://github.com/efabless/caravel_user_project.git
+[submodule "tapeouts"]
+	path = tapeouts
+	url = https://github.com/idea-fasoc/openfasoc-tapeouts.git
+	branch = main

@@ -8,7 +8,8 @@ from itertools import product
 
 import TEMP_netlist
 
-# Note 7/9/22: this function does NOT implement PEX simulations. Netlist is from flow/results...
+# note netlist type is either prePEX or postPEX
+# function returns the location of simulations
 def generate_runs(
     genDir,
     designName,
@@ -17,14 +18,17 @@ def generate_runs(
     tempList,
     jsonConfig,
     platform,
+    pdk,
     modeling=False,
     spiceDir=None,
-) -> None:
+    prePEX=True,
+):
+    """creates and executes simulations (through run_simulations call)"""
     simDir = genDir + "simulations/"
     flowDir = genDir + "flow/"
     platformConfig = jsonConfig["platforms"][platform]
     simTool = jsonConfig["simTool"]
-    model_file = jsonConfig["open_pdks"] + "/libs.tech/ngspice/sky130.lib.spice"
+    model_file = pdk + "/libs.tech/ngspice/sky130.lib.spice"
     # avoid breaking function calls to this function by making a defualt option based on genDir
     if not spiceDir:
         spiceDir = genDir + "/work"
@@ -66,7 +70,10 @@ def generate_runs(
     for design in designList:
         header = design[0]
         inv = design[1]
-        runDir = simDir + "run/inv{:d}_header{:d}/".format(inv, header)
+        if prePEX:
+            runDir = simDir + "run/prePEX_inv{:d}_header{:d}/".format(inv, header)
+        else:
+            runDir = simDir + "run/PEX_inv{:d}_header{:d}/".format(inv, header)
 
         if os.path.isdir(runDir):
             shutil.rmtree(runDir, ignore_errors=True)
@@ -93,7 +100,10 @@ def generate_runs(
             with open(dstNetlist, "w") as wf:
                 filedata = wf.write(filedata)
         else:
-            srcNetlist = spiceDir + "/" + designName + ".spice"
+            if prePEX:
+                srcNetlist = spiceDir + "/" + designName + ".spice"
+            else:
+                srcNetlist = spiceDir + "/" + designName + "_pex.spice"
             dstNetlist = runDir + designName + ".spice"
             simTestbench = re.sub(
                 "@netlist",
@@ -112,16 +122,72 @@ def generate_runs(
         run_simulations(
             runDir, designName, tempList, jsonConfig["simTool"], jsonConfig["simMode"]
         )
+        return runDir
 
 
-def update_netlist(srcNetlist, dstNetlist, simMode) -> None:
-    with open(srcNetlist, "r") as rf:
-        netlist = rf.read()
+def matchNetlistCell(cell_instantiation):
+    """returns true if the input contains as a pin (as a substring) one of the identified cells to remove for partial simulations"""
+    removeIfFound = """sky130_fd_sc_hd__o211a_1
+sky130_fd_sc_hd__o311a_1
+sky130_fd_sc_hd__o2111a_2
+sky130_fd_sc_hd__a221oi_4
+sky130_fd_sc_hd__nor3_2
+sky130_fd_sc_hd__nor3_1
+sky130_fd_sc_hd__nor2_1
+sky130_fd_sc_hd__or3_1
+sky130_fd_sc_hd__or3b_2
+sky130_fd_sc_hd__or2b_1
+sky130_fd_sc_hd__or2_2
+sky130_fd_sc_hd__nand3b_1
+sky130_fd_sc_hd__mux4_2
+sky130_fd_sc_hd__mux4_1
+sky130_fd_sc_hd__o221ai_1
+sky130_fd_sc_hd__dfrtn_1
+sky130_fd_sc_hd__dfrtp_1
+sky130_fd_sc_hd__conb_1
+sky130_fd_sc_hd__decap_4
+sky130_fd_sc_hd__tapvpwrvgnd_1
+SEL_CONV_TIME"""
+    removeIfFound = removeIfFound.split("\n")
+    # names may not be exactly the same, but as long as part of the name matches then consider true
+    # naming will automatically include some portion of the standard cell of origin name in the pin name
+    for name in removeIfFound:
+        for pin in cell_instantiation:
+            if name in pin:
+                return True
+    # if tested all cells and none are true then false
+    return False
+
+
+def update_netlist(srcNetlist, dstNetlist, simMode):
+    """comments cells if simMode is partial so that the simulation netlist only includes the oscillator"""
+    with open(srcNetlist, "r") as src:
+        netlist = src.read()
         netlist = re.sub("\.end", ".ends", netlist)
-        spice_netlist_re = re.search("\.INCLUDE '(.*)'", netlist)
-        spice_netlist = spice_netlist_re.group(1)
+        netlist = re.sub("\.endss", ".ends", netlist)
+        # search for the tempsense subckt and return it as a match object divided by cells, head, and end
+        tempsense_subckt = re.search(
+            "(\.SUBCKT tempsense.*\n(\+.*\n)*)((.*\n)*)(\.ENDS.*)",
+            netlist,
+            re.IGNORECASE,
+        )
         if simMode == "partial":
-            netlist = re.sub("\n(X(?!temp_analog).*)", "\n*\g<1>", netlist)
+            # netlist = re.sub("\n(X(?!temp_analog).*)", "\n*\g<1>", netlist)
+            # the body of the subcky is in match group 3. merge all multiline cell instances for easy commenting
+            tempsense_cells_block = tempsense_subckt.group(3)
+            netlist = netlist.replace(
+                tempsense_cells_block, tempsense_cells_block.replace("\n+", "")
+            )
+            tempsense_cells_block = tempsense_cells_block.replace("\n+", "")
+            # make an array of the cells and comment out the cells that should be removed for partial simuations
+            tempsense_cells_array = tempsense_cells_block.split("\n")
+            for cell in tempsense_cells_array:
+                if cell != "":
+                    cellPinout = cell.split(" ")
+                    cell_commented = cell
+                    if matchNetlistCell(cellPinout):
+                        cell_commented = "*" + cell
+                    netlist = netlist.replace(cell, cell_commented)
         elif simMode == "full":
             pass
         else:
@@ -130,15 +196,17 @@ def update_netlist(srcNetlist, dstNetlist, simMode) -> None:
                 + " is not a valid mode for simulation, only partial and full modes are supported"
             )
             sys.exit(1)
+        toplevel_pinout = tempsense_subckt.group(1)
+        standardized_pinout = """CLK_REF DONE DOUT[0] DOUT[10] DOUT[11]
++ DOUT[12] DOUT[13] DOUT[14] DOUT[15] DOUT[16] DOUT[17] DOUT[18]
++ DOUT[19] DOUT[1] DOUT[20] DOUT[21] DOUT[22] DOUT[23] DOUT[2]
++ DOUT[3] DOUT[4] DOUT[5] DOUT[6] DOUT[7] DOUT[8] DOUT[9] RESET_COUNTERn
++ SEL_CONV_TIME[0] SEL_CONV_TIME[1] SEL_CONV_TIME[2] SEL_CONV_TIME[3]
++ en lc_out out outb VDD VSS
+"""
+        netlist = netlist.replace(toplevel_pinout.split(" ", 2)[2], standardized_pinout)
     with open(dstNetlist, "w") as wf:
         wf.write(netlist)
-
-    with open(spice_netlist, "r") as rf:
-        filedata = rf.read()
-        filedata = re.sub("\n(R[0-9]+)", "\n*\g<1>", filedata)
-        filedata = re.sub("\n\*(V[0-9]+)", "\n\g<1>", filedata)
-    with open(spice_netlist, "w") as wf:
-        wf.write(filedata)
 
 
 def run_simulations(runDir, designName, temp_list, simTool, simMode) -> None:

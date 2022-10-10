@@ -52,3 +52,6 @@ html_theme = "sphinx_rtd_theme"
 # so a file named "default.css" will overwrite the builtin "default.css".
 
 master_doc = "index"
+
+# Syntax coloring in code samples
+# pygments_style = 'sphinx'
