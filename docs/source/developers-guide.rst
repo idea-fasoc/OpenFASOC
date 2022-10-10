@@ -10,7 +10,7 @@ Developer's Guide
 Once your contribution is ready, run pre-commit to pass the CI test for pull requests:
 
 .. code-block:: bash
-  
+
   pre-commit run --all-files
 
 .. note::
