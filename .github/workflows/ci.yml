@@ -31,7 +31,7 @@ jobs:
           docker push $IMAGE_NAME
 
   sky130hd_temp:
-    # needs: build_docker_image
+    needs: build_docker_image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -87,7 +87,7 @@ jobs:
 
       - name: Grep the commit numbers of all dependent tools and update README.rst
         env:
-              IMAGE_NAME: msaligane/openfasoc:stable
+              IMAGE_NAME: msaligane/openfasoc:alpha
         run: |
           cd $GITHUB_WORKSPACE
           docker run --rm \
@@ -111,7 +111,7 @@ jobs:
         env:
               IMAGE_NAME: msaligane/openfasoc:stable
         run: |
-          docker tag msaligane/openfasoc:alpha msaligane/openfasoc:stable
+          docker tag msaligane/openfasoc:alpha $IMAGE_NAME
           docker push $IMAGE_NAME
 
       - name: Commit README.rst
