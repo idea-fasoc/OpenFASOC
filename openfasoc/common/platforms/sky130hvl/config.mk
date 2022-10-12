@@ -101,7 +101,7 @@ export ABC_LOAD_IN_FF = 5
 #export PDN_TCL ?= ./platforms/$(PLATFORM)/pdn.tcl
 
 # Define fastRoute tcl
-export FASTROUTE_TCL = ../../../common/platforms/$(PLATFORM)/fastroute.tcl
+#export FASTROUTE_TCL = ../../../common/platforms/$(PLATFORM)/fastroute.tcl
 
 # Template definition for power grid analysis
 export TEMPLATE_PGA_CFG ?= ../../../common/platforms/sky130/template_pga.cfg
