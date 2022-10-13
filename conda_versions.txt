@@ -1,6 +1,6 @@
-conda 4.14.0
-magic 8.3.320_0_g4afc476
-netgen 1.5.227_0_g7e9bd9f
-open_pdks.sky130a 1.0.328_0_gb8fdad8
-openroad 2.0_4865_gbbf00fa50
-yosys 0.20_71_g6e907acf8
+conda 22.9.0
+magic 8.3.329_0_gbc50935
+netgen 1.5.234_0_g738abbd
+open_pdks.sky130a 1.0.342_0_gde752ec
+openroad 2.0_5253_g79313e90d
+yosys 0.22_29_g33a2773de
