@@ -27,9 +27,9 @@ Please install the following tools with the recommended commit ids for a stable 
       - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
-  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.22+17)
+  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.22+29)
 
-  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_5253)
+  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_5272)
 
   6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.342)
 
