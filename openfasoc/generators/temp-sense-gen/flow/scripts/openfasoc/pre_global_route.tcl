@@ -1,5 +1,6 @@
 # Create r_VIN net
-source $::env(SCRIPTS_DIR)/openfasoc/create_rVIN.tcl
+source $::env(SCRIPTS_DIR)/openfasoc/create_routable_power_net.tcl
+create_routable_power_net "VIN" $::env(VIN_ROUTE_CONNECTION_POINTS)
 
 # NDR rules
 source $::env(SCRIPTS_DIR)/openfasoc/add_ndr_rules.tcl
