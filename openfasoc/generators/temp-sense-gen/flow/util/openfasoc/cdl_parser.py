@@ -48,9 +48,17 @@ with open(args.inputCdl, "r") as rf:
     filedata = filedata.replace(
         "VIN ", "", 1
     )  # replace VIN with nothing one time (i.e. delete the pin in toplevel)
-    filedata = filedata.replace(
-        "r_VIN", "", 1
-    )  # replace r_VIN with nothing one time (i.e. delete the pin in toplevel)
+
+    if int(os.environ["VIN_ROUTE_CONNECTION_POINTS"]) > 1:
+        for i in range(int(os.environ["VIN_ROUTE_CONNECTION_POINTS"])):
+            filedata = filedata.replace(
+                "r_VIN({})".format(i), "", 1
+            )  # if there are N r_VIN connection pins, delete all pins r_VIN(i) from i=0 to i=N (in toplevel)
+    else:
+        filedata = filedata.replace(
+            "r_VIN", "", 1
+        )  # replace r_VIN with nothing one time (i.e. delete the pin in toplevel)
+
     filedata = filedata.replace(
         " VIN ", " r_VIN "
     )  # replace all instances of “ VIN “ with “ r_VIN “

@@ -38,7 +38,7 @@ export GPL_ROUTABILITY_DRIVEN = 1
 export ENABLE_DPO = 0
 
 #export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 4
-#export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 23
+#export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 2
 
 # configuration for routing
 
@@ -48,4 +48,4 @@ export PRE_GLOBAL_ROUTE = $(SCRIPTS_DIR)/openfasoc/pre_global_route.tcl
 export CUSTOM_CONNECTION 	= ../blocks/$(PLATFORM)/tempsenseInst_custom_net.txt
 
 # indicates in how many points the VIN route from the HEADER cells connects to its power ring
-export VIN_ROUTE_CONNECTION_POINTS = 1
+export VIN_ROUTE_CONNECTION_POINTS = 3

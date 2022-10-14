@@ -1,10 +1,10 @@
 # Create routable net from power net
 #
-# This procedure creates a net that will allow routing from instances that 
+# This procedure creates a net that will allow routing from instances that
 # should connect to a power net other than the grid they're placed in.
-# 
-# For example, in the temp-sense-gen this net allows routing from the HEADER 
-# cells to the VIN power ring, because connections to the regular VIN net 
+#
+# For example, in the temp-sense-gen this net allows routing from the HEADER
+# cells to the VIN power ring, because connections to the regular VIN net
 # aren't routed since it's a power net with a stdcell grid attached.
 #
 # Arguments:
@@ -73,7 +73,7 @@ proc create_routable_power_net {source_net_name {num_connection_points 1}} {
 
                     odb::dbBox_create $r_bpin($n) $layer [$box xMin] $yMin($n) \
                         [$box xMax] $yMax($n) ;# create physical box for net
-                        
+
                 } else {
                     puts "WARNING: Could not determine power net pins orientation. \
                         Failed to create routable power net."
