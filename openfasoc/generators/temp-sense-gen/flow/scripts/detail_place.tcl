@@ -10,7 +10,7 @@ set_placement_padding -global \
 
 # place header cells in the right, starting from row 1 upward (not randomly)
 source $::env(SCRIPTS_DIR)/openfasoc/custom_place.tcl
-customPlace_east [ord::get_db_block] "HEADER" 1
+customPlace_east [ord::get_db_block] "HEADER" 1 no
 
 detailed_placement
 
