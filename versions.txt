@@ -1,6 +1,6 @@
 klayout - 0.27.10-1
-OpenROAD - 2.0_5276
-yosys - 0.22+29
-magic - 8.3.329
+OpenROAD - 2.0_5282
+yosys - 0.22+33
+magic - 8.3.330
 netgen - 1.5.234
-open_pdks - 1.0.342
+open_pdks - 1.0.344
