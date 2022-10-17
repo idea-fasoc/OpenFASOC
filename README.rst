@@ -29,7 +29,7 @@ Please install the following tools with the recommended commit ids for a stable 
 
   4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.22+33)
 
-  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_5282)
+  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_5288)
 
   6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.344)
 

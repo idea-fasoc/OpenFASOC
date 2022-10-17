@@ -2,5 +2,5 @@ conda 22.9.0
 magic 8.3.329_1_geecdc3c
 netgen 1.5.234_0_g738abbd
 open_pdks.sky130a 1.0.344_0_gb622469
-openroad 2.0_5282_g0ef0b33c9
+openroad 2.0_5288_g867deb724
 yosys 0.22_34_gd02ae8f2f
