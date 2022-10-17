@@ -14,7 +14,7 @@ export CORE_AREA   		= 18.4 16.32 137.08 130.56
 export VD1_AREA                 = 33.58 32.64 64.86 62.56
 
 # power delivery network config file
-export PDN_CFG 			= ../blocks/$(PLATFORM)/pdn.cfg
+export PDN_TCL 			= ../blocks/$(PLATFORM)/pdn.tcl
 
 export ADDITIONAL_LEFS  	= ../blocks/$(PLATFORM)/lef/HEADER.lef \
                         	  ../blocks/$(PLATFORM)/lef/SLC.lef

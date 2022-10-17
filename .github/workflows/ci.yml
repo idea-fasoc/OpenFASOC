@@ -31,7 +31,7 @@ jobs:
           docker push $IMAGE_NAME
 
   sky130hd_temp:
-    needs: build_docker_image
+    # needs: build_docker_image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -48,7 +48,6 @@ jobs:
             -w $PWD\
             $IMAGE_NAME\
             bash -c "\
-              apt-get install git -y
               pip3 install -r requirements.txt &&\
               cd ./openfasoc/generators/temp-sense-gen &&\
               make sky130hd_temp\
@@ -88,7 +87,7 @@ jobs:
 
       - name: Grep the commit numbers of all dependent tools and update README.rst
         env:
-              IMAGE_NAME: msaligane/openfasoc:alpha
+              IMAGE_NAME: msaligane/openfasoc:stable
         run: |
           cd $GITHUB_WORKSPACE
           docker run --rm \
@@ -117,8 +116,21 @@ jobs:
 
       - name: Commit README.rst
         run: |
-          git config --global user.name 'idea-fasoc'
-          git config --global user.email 'idea-fasoc@users.noreply.github.com'
-          git add -A
-          git commit -m "Updated README with latest stable version numbers of dependent tools"
-          git push
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Updated README with latest stable version numbers of dependent tools" -a
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.UPDATE_VERSIONS }}
+          branch: main
+
+
+      # - name: Commit README.rst
+      #   run: |
+      #     git config --global user.name 'idea-fasoc'
+      #     git config --global user.email 'idea-fasoc@users.noreply.github.com'
+      #     git add -A
+      #     git commit -m "Updated README with latest stable version numbers of dependent tools"
+      #     git push
