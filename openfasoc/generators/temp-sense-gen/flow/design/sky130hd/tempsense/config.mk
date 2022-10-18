@@ -46,3 +46,6 @@ export PRE_GLOBAL_ROUTE = $(SCRIPTS_DIR)/openfasoc/pre_global_route.tcl
 
 # informs any short circuits that should be forced during routing
 export CUSTOM_CONNECTION 	= ../blocks/$(PLATFORM)/tempsenseInst_custom_net.txt
+
+# indicates with how many connections the VIN route from the HEADER cells connects to the VIN power ring
+export VIN_ROUTE_CONNECTION_POINTS = 3
