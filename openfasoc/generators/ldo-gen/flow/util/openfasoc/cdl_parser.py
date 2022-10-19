@@ -66,7 +66,7 @@ with open(args.outputCdl, "w") as wf:
     wf.write(ckt_head)  # proper top level heading
 
     for ckt_cell in ckt_cells:
-        if not ckt_cell or re.search("FILLER", ckt_cell) :
+        if not ckt_cell or re.search("FILLER", ckt_cell):
             continue
         ckt_cell_list = ckt_cell.split(" ")
         ordered_cell = ckt_cell_list  # cell list is correct so no process is needed
