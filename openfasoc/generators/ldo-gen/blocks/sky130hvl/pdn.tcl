@@ -29,7 +29,7 @@ set_voltage_domain -region {LDO_VREG} -power {VDD} -ground {VSS} -secondary_powe
 ####################################
 define_pdn_grid -name {grid} -pins {met5} -voltage_domains {CORE}
 
-add_pdn_stripe -grid {grid} -layer {met1} -pitch {6.66} -offset {0} -followpins -extend_to_core_ring
+add_pdn_stripe -grid {grid} -layer {met1} -width {0.49} -pitch {5.48} -offset {0} -extend_to_core_ring -followpins
 add_pdn_stripe -grid {grid} -layer {met4} -starts_with POWER -width {1.2} -pitch {27.0} -offset {2} -extend_to_core_ring
 add_pdn_stripe -grid {grid} -layer {met5} -starts_with POWER -width {1.6} -pitch {29.1} -offset {2} -extend_to_core_ring
 
@@ -40,7 +40,7 @@ add_pdn_connect -grid {grid} -layers {met4 met5}
 ####################################
 define_pdn_grid -name stdcell_analog1  -starts_with POWER -voltage_domains LDO_VREG -pins {met3}
 
-add_pdn_stripe -grid stdcell_analog1 -layer met1 -pitch 6.66 -offset 0 -extend_to_core_ring -followpins
+add_pdn_stripe -grid stdcell_analog1 -layer met1 -width {0.49} -pitch {5.48} -offset 0 -extend_to_core_ring -followpins
 add_pdn_ring -grid stdcell_analog1 -layer {met4 met3} -widths {5.0 5.0} -spacings {2.0 2.0} -core_offsets {2.0 2.0}
 #add_pdn_stripe -grid stdcell_analog1 -layer met4 -width 1.2 -pitch 10.0 -offset 2 -extend_to_core_ring
 add_pdn_stripe -grid stdcell_analog1 -layer met3 -width 1.2 -pitch 27.0 -offset 2 -extend_to_core_ring
@@ -62,4 +62,3 @@ define_pdn_grid -name {CORE_macro_grid_1} -voltage_domains {CORE} -macro -orient
 
 add_pdn_connect -grid {CORE_macro_grid_1} -layers {met4 met5}
 add_pdn_connect -grid {CORE_macro_grid_1} -layers {met1 met4}
-

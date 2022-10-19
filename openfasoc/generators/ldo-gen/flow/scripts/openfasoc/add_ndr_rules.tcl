@@ -9,5 +9,6 @@ create_ndr -name NDR_3W_3S \
 set ndr [$block findNonDefaultRule NDR_3W_3S]
 $ndr setHardSpacing 1
 
+
 assign_ndr -ndr NDR_3W_3S -net VREF
 assign_ndr -ndr NDR_3W_3S -net r_VREG

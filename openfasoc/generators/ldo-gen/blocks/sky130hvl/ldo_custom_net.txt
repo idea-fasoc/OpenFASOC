@@ -13,7 +13,7 @@ pmos_2 VREG
 {pt_array_unit\[8\]} VREG
 {pt_array_unit\[9\]} VREG
 {pt_array_unit\[10\]} VREG
-{pt_array_unit\[11\]} VREG 
+{pt_array_unit\[11\]} VREG
 {pt_array_unit\[12\]} VREG
 {pt_array_unit\[13\]} VREG
 {pt_array_unit\[14\]} VREG
@@ -25,4 +25,3 @@ pmos_2 VREG
 {pt_array_unit\[20\]} VREG
 {pt_array_unit\[21\]} VREG
 {pt_array_unit\[22\]} VREG
-

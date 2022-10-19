@@ -7,8 +7,8 @@
 # 1) read 6_final.cdl and...
 # 2) Add VDD VDD to the end of the HEADER pins (because when extracted from GDS you get proxy pins)
 # 3) ASSUME OpenROAD v2.0-4508-ge036ecfac: The top level subckt has last pin being r_vin
-# 3.1) delete the other “VIN” pin (because both r_VIN and VIN are actually the same thing)
-# 4) replace all instance of VIN with r_VIN, so that the pin name is uniform
+# 3.1) delete the other “VREG” pin (because both r_VREG and VREG are actually the same thing)
+# 4) replace all instance of VREG with r_VREG, so that the pin name is uniform
 # 5) write this output into module_name.spice
 
 import argparse
@@ -46,28 +46,10 @@ for std_cell in std_cells_re:
 # The input Cdl netlist (inputz/6_final.cdl). read that entire file into "filedata" i.e. overwrite filedata
 with open(args.inputCdl, "r") as rf:
     filedata = rf.read()
-    filedata = filedata.replace(
-        "VIN ", "", 1
-    )  # replace VIN with nothing one time (i.e. delete the pin in toplevel)
-
-    # If only one connection point for the r_VIN route is specified, then the pin is r_VIN
-    # If multiple connection points are specified for VIN, the pins are r_VIN(0), r_VIN(1) etc., and they also appear in the toplevel subckt of inputCdl
-    if int(os.environ["VIN_ROUTE_CONNECTION_POINTS"]) == 1:
-        filedata = filedata.replace(
-            "r_VIN", "", 1
-        )  # if there is only one r_VIN connection pin, replace r_VIN with nothing one time (i.e. delete the pin in toplevel)
-    elif int(os.environ["VIN_ROUTE_CONNECTION_POINTS"]) > 1:
-        for i in range(int(os.environ["VIN_ROUTE_CONNECTION_POINTS"])):
-            filedata = filedata.replace(
-                "r_VIN({})".format(i), "", 1
-            )  # if there are N r_VIN connection pins, replace all pins r_VIN(i) with nothing one time (i.e. delete the pins in toplevel)
 
     filedata = filedata.replace(
-        " VIN ", " r_VIN "
-    )  # replace all instances of “ VIN “ with “ r_VIN “
-    filedata = filedata.replace(
-        " VIN", " r_VIN "
-    )  # replace all instances of “VIN “ with “ r_VIN “
+        " VREG ", " r_VREG "
+    )  # replace all instances of “ VIN “ with “ r_VREG “
 
 
 with open(args.outputCdl, "w") as wf:
@@ -84,7 +66,7 @@ with open(args.outputCdl, "w") as wf:
     wf.write(ckt_head)  # proper top level heading
 
     for ckt_cell in ckt_cells:
-        if not ckt_cell or re.search("FILLER", ckt_cell):
+        if not ckt_cell or re.search("FILLER", ckt_cell) :
             continue
         ckt_cell_list = ckt_cell.split(" ")
         ordered_cell = ckt_cell_list  # cell list is correct so no process is needed
