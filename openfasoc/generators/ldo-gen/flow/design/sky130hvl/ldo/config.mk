@@ -11,6 +11,7 @@ export VERILOG_FILES 		= $(sort $(wildcard ./design/src/$(DESIGN_NICKNAME)/*.v))
 				  #../flow/design/src/ldo/ldoInst.v \
 				  #../flow/design/src/ldo/LDO_CONTROLLER.v
 
+export CLK_PERIOD_IN_NS         = 1000
 export SDC_FILE    		= ./design/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export DIE_AREA   	 	= 0 0 280 380
@@ -18,6 +19,7 @@ export CORE_AREA   		= 15 15 265 365
 
 #export VREG_AREA                = 55 55 200 85
 export VREG_AREA                 = 52 180 200 220
+
 # PDN
 export PDN_TCL 			= ../blocks/$(PLATFORM)/pdn.tcl
 
@@ -63,7 +65,3 @@ export PRE_GLOBAL_ROUTE = ./scripts/openfasoc/pre_global_route.tcl
 export CUSTOM_CONNECTION 	= ../blocks/$(PLATFORM)/ldo_custom_net.txt
 
 #export CUSTOM_CONNECTION 	= ../blocks/$(PLATFORM)/tempsenseInst_custom_net.txt
-
-#export ADD_NDR_RULE		= 1
-#export NDR_RULE_NETS 		= r_VIN
-#export NDR_RULE 		= NDR_2W_2S

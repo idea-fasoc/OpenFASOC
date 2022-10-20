@@ -1,7 +1,7 @@
-# create_clock [get_ports CLK_REF] -period 4
+
 set clk_name  core_clock
 set clk_port_name clk
-set clk_period 1000
+set clk_period $::env(CLK_PERIOD_IN_NS)
 
 set clk_port [get_ports $clk_port_name]
 
