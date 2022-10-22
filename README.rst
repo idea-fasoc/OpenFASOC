@@ -27,11 +27,11 @@ Please install the following tools with the recommended commit ids for a stable 
       - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
-  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.22+37)
+  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.22+39)
 
-  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_5359)
+  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_5376)
 
-  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.346)
+  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.348)
 
    - open_pdks is required to run drc/lvs check and the simulations
    - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
