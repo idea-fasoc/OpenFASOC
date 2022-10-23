@@ -25,7 +25,7 @@ export ADDITIONAL_GDS_FILES 	= ../blocks/$(PLATFORM)/gds/HEADER.gds \
 # informs what cells should be placed in the smaller voltage domain
 export DOMAIN_INSTS_LIST 	= ../blocks/$(PLATFORM)/tempsenseInst_domain_insts.txt
 
-# configuration for placement
+# ======= configuration for placement =======
 
 # don't run global place w/o IOs
 export HAS_IO_CONSTRAINTS = 1
@@ -40,7 +40,10 @@ export ENABLE_DPO = 0
 #export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 4
 #export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 2
 
-# configuration for routing
+# sets the starting row (from this row upward) to place the HEADER cells
+export HEADERS_STARTING_ROW ?= 1
+
+# ======= configuration for routing =======
 
 export PRE_GLOBAL_ROUTE = $(SCRIPTS_DIR)/openfasoc/pre_global_route.tcl
 
@@ -48,4 +51,4 @@ export PRE_GLOBAL_ROUTE = $(SCRIPTS_DIR)/openfasoc/pre_global_route.tcl
 export CUSTOM_CONNECTION 	= ../blocks/$(PLATFORM)/tempsenseInst_custom_net.txt
 
 # indicates with how many connections the VIN route from the HEADER cells connects to the VIN power ring
-export VIN_ROUTE_CONNECTION_POINTS = 3
+export VIN_ROUTE_CONNECTION_POINTS ?= 3

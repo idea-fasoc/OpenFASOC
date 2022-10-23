@@ -1,5 +1,6 @@
 __pycache__/
 work/
+simulations/run/
 *.log
 core.*
 *.swp
