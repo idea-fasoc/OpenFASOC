@@ -2,9 +2,8 @@
 # and make a marker database.  Markers are categorized by their
 # 'violation type'.
 
-import re
-
 import pya
+import re
 
 app = pya.Application.instance()
 win = app.main_window()

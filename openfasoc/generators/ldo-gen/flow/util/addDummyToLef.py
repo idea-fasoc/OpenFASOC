@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import argparse  # argument parsing
 import re
 import sys
+import argparse  # argument parsing
 
 # Parse and validate arguments
 # ==============================================================================

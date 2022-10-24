@@ -1,16 +1,15 @@
 # This is a KLayout script to load a FastRoute guide file
 # and make a marker database for one net
 
-import re
-
 import pya
+import re
 
 # lx ly ux uy layer_name
 bbox_re = re.compile("(\d+) (\d+) (\d+) (\d+) (\w+)")
 categories = {}
 
 
-def add_box(line) -> bool:
+def add_box(line):
     m = re.match(bbox_re, line)
     if not m:
         assert line.strip() == ")"
