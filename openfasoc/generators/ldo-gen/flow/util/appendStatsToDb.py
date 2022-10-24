@@ -36,8 +36,8 @@ else:
 for testMetadata in args.testMetadataPaths:
 
   if not os.path.isfile(testMetadata):
-    print "Error: testMetadataPath does not exist"
-    print "Path: " + testMetadata
+    print("Error: testMetadataPath does not exist")
+    print( "Path: " + testMetadata)
     sys.exit(1)
 
   # Open test metadata
