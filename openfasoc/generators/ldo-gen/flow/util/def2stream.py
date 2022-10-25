@@ -1,12 +1,14 @@
-import copy
-import json
-import re
-
 import pya
+import re
+import json
+import copy
+import sys
+import os
 
+errors = 0
 
 # Expand layers in json
-def expand_cfg_layers(cfg) -> None:
+def expand_cfg_layers(cfg):
     layers = cfg["layers"]
     expand = [layer for layer in layers if "layers" in layers[layer]]
     for layer in expand:
@@ -106,26 +108,38 @@ def read_fills(top):
 tech = pya.Technology()
 tech.load(tech_file)
 layoutOptions = tech.load_layout_options
+if len(layer_map) > 0:
+    layoutOptions.lefdef_config.map_file = layer_map
 
 # Load def file
 main_layout = pya.Layout()
+print("[INFO] Reporting cells prior to loading DEF ...")
+for i in main_layout.each_cell():
+    print("[INFO] '{0}'".format(i.name))
+
+print("[INFO] Reading DEF ...")
 main_layout.read(in_def, layoutOptions)
+
+# print("[INFO] Reporting cells after loading DEF ...")
+# for i in main_layout.each_cell():
+#  print("[INFO] '{0}'".format(i.name))
 
 # Clear cells
 top_cell_index = main_layout.cell(design_name).cell_index()
 
+# remove orphan cell BUT preserve cell with VIA_
+#  - KLayout is prepending VIA_ when reading DEF that instantiates LEF's via
 print("[INFO] Clearing cells...")
 for i in main_layout.each_cell():
     if i.cell_index() != top_cell_index:
-        if not i.name.startswith("VIA"):
-            # print("\t" + i.name)
+        if not i.name.startswith("VIA_"):
             i.clear()
 
 # Load in the gds to merge
-print("[INFO] Merging GDS files...")
-for gds in in_gds.split():
-    print("\t{0}".format(gds))
-    main_layout.read(gds)
+print("[INFO] Merging GDS/OAS files...")
+for fil in in_files.split():
+    print("\t{0}".format(fil))
+    main_layout.read(fil)
 
 # Copy the top level only to a new layout
 print("[INFO] Copying toplevel cell '{0}'".format(design_name))
@@ -136,27 +150,50 @@ top.copy_tree(main_layout.cell(design_name))
 
 read_fills(top)
 
-print("[INFO] Checking for missing GDS...")
-missing_gds = False
+print("[INFO] Checking for missing cell from GDS/OAS...")
+missing_cell = False
+regex = None
+if "GDS_ALLOW_EMPTY" in os.environ:
+    print("[INFO] Found GDS_ALLOW_EMPTY variable.")
+    regex = os.getenv("GDS_ALLOW_EMPTY")
 for i in top_only_layout.each_cell():
     if i.is_empty():
-        missing_gds = True
-        print(
-            "[ERROR] LEF Cell '{0}' has no matching GDS cell. Cell will be empty".format(
-                i.name
+        missing_cell = True
+        if regex is not None and re.match(regex, i.name):
+            print(
+                "[WARNING] LEF Cell '{0}' ignored. Matches GDS_ALLOW_EMPTY.".format(
+                    i.name
+                )
             )
-        )
+        else:
+            print(
+                "[ERROR] LEF Cell '{0}' has no matching GDS/OAS cell."
+                " Cell will be empty.".format(i.name)
+            )
+            errors += 1
 
-if not missing_gds:
-    print("[INFO] All LEF cells have matching GDS cells")
+if not missing_cell:
+    print("[INFO] All LEF cells have matching GDS/OAS cells")
 
-if seal_gds:
+print("[INFO] Checking for orphan cell in the final layout...")
+orphan_cell = False
+for i in top_only_layout.each_cell():
+    if i.name != design_name and i.parent_cells() == 0:
+        orphan_cell = True
+        print("[ERROR] Found orphan cell '{0}'".format(i.name))
+        errors += 1
+
+if not orphan_cell:
+    print("[INFO] No orphan cells")
+
+
+if seal_file:
 
     top_cell = top_only_layout.top_cell()
 
-    print("[INFO] Reading seal GDS file...")
-    print("\t{0}".format(seal_gds))
-    top_only_layout.read(seal_gds)
+    print("[INFO] Reading seal GDS/OAS file...")
+    print("\t{0}".format(seal_file))
+    top_only_layout.read(seal_file)
 
     for cell in top_only_layout.top_cells():
         if cell != top_cell:
@@ -168,5 +205,7 @@ if seal_gds:
             top.insert(pya.CellInstArray(cell.cell_index(), pya.Trans()))
 
 # Write out the GDS
-print("[INFO] Writing out GDS '{0}'".format(out_gds))
-top_only_layout.write(out_gds)
+print("[INFO] Writing out GDS/OAS '{0}'".format(out_file))
+top_only_layout.write(out_file)
+
+sys.exit(errors)

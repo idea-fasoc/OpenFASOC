@@ -32,8 +32,9 @@ if {[info exists ::env(FOOTPRINT)]} {
 # ----------------------------------------------------------------------------
 } else {
 
-  source scripts/read_domain_instances.tcl
+  source scripts/openfasoc/read_domain_instances.tcl
   create_voltage_domain LDO_VREG -area $::env(VREG_AREA)
+
   initialize_floorplan -die_area $::env(DIE_AREA) \
                        -core_area $::env(CORE_AREA) \
                        -site $::env(PLACE_SITE)
