@@ -508,7 +508,7 @@ MACRO vref_gen_nmos_with_trim
   END vpwr
   PIN vref
     DIRECTION INOUT ;
-    USE POWER ;
+    USE SIGNAL ;
     PORT
       LAYER li1 ;
         RECT 10.105 47.070 11.315 47.580 ;

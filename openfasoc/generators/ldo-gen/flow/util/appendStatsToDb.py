@@ -4,11 +4,16 @@
 # -------------------------------------------------------------------------
 
 import argparse  # argument parsing
-import csv
 import json  # json parsing
-import os  # filesystem manipulation
 import sys
+import re
+import os  # filesystem manipulation
+
+import csv
+import datetime
+import uuid
 from collections import OrderedDict
+
 
 # Parse and validate arguments
 # ==============================================================================
@@ -46,6 +51,7 @@ for testMetadata in args.testMetadataPaths:
             designJson = json.load(f, object_pairs_hook=OrderedDict)
     except ValueError as e:
         print("Error occured opening or loading json file.")
+        print >> sys.stderr, "Exception: %s" % str(e)
         sys.exit(1)
 
     if not designJson["uuid"] in [d["uuid"] for d in masterJson["testcases"]]:

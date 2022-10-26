@@ -60,7 +60,7 @@ MACRO PMOS
   END vnb
   PIN VREG
     DIRECTION INOUT ;
-    USE POWER ;
+    USE SIGNAL ;
     PORT
       LAYER li1 ;
         RECT 0.940 2.655 1.345 3.480 ;

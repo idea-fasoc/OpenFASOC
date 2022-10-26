@@ -1,3 +1,4 @@
+set block [ord::get_db_block]
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 2_5_floorplan_tapcell.odb 1_synth.sdc "Starting PDN generation"
 

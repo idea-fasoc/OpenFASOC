@@ -2,25 +2,29 @@ export DESIGN_NICKNAME = ldo
 export DESIGN_NAME = ldoInst
 #export DESIGN_NAME = tempsenseInst_error
 export PLATFORM    = sky130hvl
-#export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
+#export VERILOG_FILES = $(sort $(wildcard ./design/src/$(DESIGN_NICKNAME)/*.v))
 
 # export VERILOG_FILES 		= ./designs/src/$(DESIGN_NICKNAME)/tempsenseInst.v \
 #   			  			  ./platforms/$(PLATFORM)/tempsense/tempsenseInst.blackbox.v
-export VERILOG_FILES 		= $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v)) \
-				  ../blocks/$(PLATFORM)/ldoInst.blackbox.v
+export VERILOG_FILES 		= $(sort $(wildcard ./design/src/$(DESIGN_NICKNAME)/*.v)) \
+				  ../blocks/$(PLATFORM)/ldoInst.blackbox.v \
+				  #../flow/design/src/ldo/ldoInst.v \
+				  #../flow/design/src/ldo/LDO_CONTROLLER.v
 
-export SDC_FILE    		= ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export CLK_PERIOD_IN_NS         = 1000
+export SDC_FILE    		= ./design/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export DIE_AREA   	 	= 0 0 280 330
-export CORE_AREA   		= 15 15 265 315
+export DIE_AREA   	 	= 0 0 280 380
+export CORE_AREA   		= 15 15 265 365
 
-export VREG_AREA                = 55 40 230 170
+#export VREG_AREA                = 55 55 200 85
+export VREG_AREA                 = 52 180 200 220
 
 # PDN
 export PDN_TCL 			= ../blocks/$(PLATFORM)/pdn.tcl
 
 #Placement options
-export PLACE_DENSITY = 0.30
+export PLACE_DENSITY = 0.70
 
 # Macro options
 export MACRO_PLACE_HALO         = 1 1
@@ -53,8 +57,11 @@ export ADDITIONAL_GDS  	        = ../blocks/$(PLATFORM)/gds/capacitor_test_nf.gd
 
 export DOMAIN_INSTS_LIST 	= ../blocks/$(PLATFORM)/ldo_domain_insts.txt
 
-#export CUSTOM_CONNECTION 	= ../blocks/$(PLATFORM)/tempsenseInst_custom_net.txt
+# configuration for routing
 
-export ADD_NDR_RULE		= 1
-export NDR_RULE_NETS 		= r_VIN
-export NDR_RULE 		= NDR_2W_2S
+export PRE_GLOBAL_ROUTE = ./scripts/openfasoc/pre_global_route.tcl
+
+# informs any short circuits that should be forced during routing
+export CUSTOM_CONNECTION 	= ../blocks/$(PLATFORM)/ldo_custom_net.txt
+
+#export CUSTOM_CONNECTION 	= ../blocks/$(PLATFORM)/tempsenseInst_custom_net.txt
