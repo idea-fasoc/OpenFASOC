@@ -117,7 +117,7 @@ jobs:
       - name: Commit README.rst
         run: |
           git config --local user.email ${{ secrets.EMAIL_ID }}
-          git config --local user.name "saicharan0112"
+          git config --local user.name "msaligane"
           git commit -m "[BOT] Updated README with latest stable version numbers of dependent tools" -a
 
       - name: Push changes
