@@ -10,11 +10,11 @@ OpenFASoC
 .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ci.yml/badge.svg
     :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ci.yml
 
-Notebooks
-^^^^^^^^^^^
+**Notebooks:**
+
 Temperature sensor -
 
-.. image::https://colab.research.google.com/assets/colab-badge.svg
+.. image:: https://colab.research.google.com/assets/colab-badge.svg
     :target: https://colab.research.google.com/github/idea-fasoc/OpenFASOC/blob/main/docs/source/notebooks/temp-sense-gen/temp_sense_genCollab.ipynb
 
 
