@@ -10,12 +10,19 @@ OpenFASoC
 .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ci.yml/badge.svg
     :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ci.yml
 
-**Notebooks:**
 
-Temperature sensor -
+.. list-table:: Notebooks
+   :widths: 25 25 50
+   :header-rows: 1
 
-.. image:: https://colab.research.google.com/assets/colab-badge.svg
+   * - Generator
+
+   * - Temperature sensor
+     -
+     .. image:: https://colab.research.google.com/assets/colab-badge.svg
     :target: https://colab.research.google.com/github/idea-fasoc/OpenFASOC/blob/main/docs/source/notebooks/temp-sense-gen/temp_sense_genCollab.ipynb
+
+
 
 
 OpenFASOC is focused on open-source automate analog generation from user specification to GDSII with fully open-sourced tools.
