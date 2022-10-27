@@ -3,28 +3,27 @@ OpenFASoC
 
 **OpenFASoC: Fully Open-Source Autonomous SoC Synthesis using Customizable Cell-Based Synthesizable Analog Circuits**
 
-.. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/temp_sense_sky130hd.yml/badge.svg
-    :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/temp_sense_sky130hd.yml
 .. image:: https://readthedocs.org/projects/openfasoc/badge/?version=latest
     :target: https://openfasoc.readthedocs.io/en/latest/?badge=latest
-.. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ci.yml/badge.svg
-    :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ci.yml
-
-
-.. list-table:: Notebooks
-   :widths: 25 25 50
-   :header-rows: 1
-
-   * - Generator
-
-   * - Temperature sensor
-
-
-
 
 
 OpenFASOC is focused on open-source automate analog generation from user specification to GDSII with fully open-sourced tools.
 This project is led by a team of researchers at the University of Michigan is inspired from FASoC whcih sits on proprietary tools. (See more about FaSoC at `website <https://fasoc.engin.umich.edu/>`_)
+
+Notebooks
+****************
+    
+* **Temperature sensor -**
+
+    .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/temp_sense_sky130hd.yml/badge.svg
+        :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/temp_sense_sky130hd.yml
+
+    .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ci.yml/badge.svg
+        :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ci.yml
+
+    .. image:: https://colab.research.google.com/assets/colab-badge.svg
+        :target: https://colab.research.google.com/github/idea-fasoc/OpenFASOC/blob/main/docs/source/notebooks/temp-sense-gen/temp_sense_genCollab.ipynb
+
 
 Prerequisites
 ****************
