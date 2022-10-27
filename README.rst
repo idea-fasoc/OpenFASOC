@@ -11,7 +11,7 @@ OpenFASOC is focused on open-source automate analog generation from user specifi
 This project is led by a team of researchers at the University of Michigan is inspired from FASoC whcih sits on proprietary tools. (See more about FaSoC at `website <https://fasoc.engin.umich.edu/>`_)
 
 
-* **Temperature sensor -** 
+* **Temperature sensor -**
     .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/temp_sense_sky130hd.yml/badge.svg
         :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/temp_sense_sky130hd.yml
 
