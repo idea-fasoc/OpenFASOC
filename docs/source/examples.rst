@@ -8,4 +8,4 @@ Prefer to learn by example? These notebooks give a practical overview on how to 
 .. toctree::
     :maxdepth: 1
 
-    notebooks/temp_sense_genCollab.ipynb
+    notebooks/temp-sense-gen/temp_sense_genCollab.ipynb

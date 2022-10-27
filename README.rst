@@ -3,35 +3,46 @@ OpenFASoC
 
 **OpenFASoC: Fully Open-Source Autonomous SoC Synthesis using Customizable Cell-Based Synthesizable Analog Circuits**
 
-.. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/temp_sense_sky130hd.yml/badge.svg
-    :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/temp_sense_sky130hd.yml
 .. image:: https://readthedocs.org/projects/openfasoc/badge/?version=latest
     :target: https://openfasoc.readthedocs.io/en/latest/?badge=latest
-
 
 
 OpenFASOC is focused on open-source automate analog generation from user specification to GDSII with fully open-sourced tools.
 This project is led by a team of researchers at the University of Michigan is inspired from FASoC whcih sits on proprietary tools. (See more about FaSoC at `website <https://fasoc.engin.umich.edu/>`_)
 
+
+* **Temperature sensor -**
+    .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/temp_sense_sky130hd.yml/badge.svg
+        :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/temp_sense_sky130hd.yml
+
+    .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ci.yml/badge.svg
+        :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ci.yml
+
+    .. image:: https://colab.research.google.com/assets/colab-badge.svg
+        :target: https://colab.research.google.com/github/idea-fasoc/OpenFASOC/blob/main/docs/source/notebooks/temp-sense-gen/temp_sense_genCollab.ipynb
+
 Prerequisites
 ****************
 
-Please install the following tools with the recommended commit ids for a stable functioning of the flow:
+Install all the prerequisites using `dependencies.sh` script provided in the home location of this project (where this readme.rst file is found). Supports CentOS7 and Ubuntu20.
 
-  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.320)
 
-  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.227)
+(Or) Please install the following tools by building the tools manually from their code base with the recommended commit ids for a stable functioning of the flow:
+
+  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.332)
+
+  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.236)
 
   3. `Klayout <https://github.com/KLayout/klayout>`_ (version:0.27.10-1)
 
       - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
-  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.20+70)
+  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.22+57)
 
-  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_4865)
+  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_5406)
 
-  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.328)
+  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.349)
 
    - open_pdks is required to run drc/lvs check and the simulations
    - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
@@ -72,13 +83,13 @@ The main idea behind a Digital LDO is the use of an array of small power transis
  For synthesizable on-chip power management circuits, we use the “2:1 SC Cell” auxiliary cell for implementing a switched-capacitor (SC) based DC-DC converter. By varying the number of auxiliary cells, we can achieve a wide range of conversion ratios with fine-grain resolution. It operates similarly to a successive approximation analog to digital converter (SAR ADC). Furthermore, since the total structure is simply composed of auxiliary cells, it is ideal for the proposed flow of automating the analog block design.
 
 
-**Cryo Generator (cryo-gen)** - `link <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/cryo-gen>`_
+**Cryo Generator (cryo-gen)** - `link <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/cryo-gen>`_ TBA
 
-**GDS Factory (gdsfactory)** - `link <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/gdsfactory>`_
+**GDS Factory (gdsfactory)** - `link <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/gdsfactory>`_ TBA
 
-**LC-DCO Generator (lc-dco)** - `link <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/lc-dco>`_
+**LC-DCO Generator (lc-dco)** - `link <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/lc-dco>`_ TBA
 
-**SCPA Generator (cpa-gen)** - `link <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/scpa-gen>`_
+**SCPA Generator (cpa-gen)** - `link <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/scpa-gen>`_ TBA
 
 Our fully open-source flow only supports the temperature sensor generation so far. We are working on adding additional generators in the near future.
 
