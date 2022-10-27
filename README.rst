@@ -12,7 +12,7 @@ This project is led by a team of researchers at the University of Michigan is in
 
 Notebooks
 ****************
-    
+
 * **Temperature sensor -**
 
     .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/temp_sense_sky130hd.yml/badge.svg
