@@ -4,3 +4,4 @@ yosys - 0.22+60
 magic - 8.3.333
 netgen - 1.5.237
 open_pdks - 1.0.351
+dummy-oo
