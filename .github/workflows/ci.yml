@@ -114,17 +114,21 @@ jobs:
           docker tag msaligane/openfasoc:alpha $IMAGE_NAME
           docker push $IMAGE_NAME
 
-      - name: Commit README.rst
-        run: |
-          git config --local user.email ${{ secrets.EMAIL_ID }}
-          git config --local user.name "msaligane"
-          git commit -m "[BOT] Updated README with latest stable version numbers of dependent tools" -a
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
         with:
-          github_token: ${{ secrets.UPDATE_VERSIONS }}
-          branch: main
+          token: ${{ secrets.BOT_TOKEN }}
+          title: "[BOT] Update dependencies successful version records in the repository"
+          author: ${{ secrets.BOT_AUTHOR_LINE }}
+          committer: ${{ secrets.BOT_AUTHOR_LINE }}
+          body: |
+            This is an automated PR.
+            See the individual commits for details.
+          commit-message: |
+            [BOT] Update dependencies successful version records in the repository
+          branch: versions-update-branch
+          push-to-fork: ${{ secrets.FORK_NAME }}
+          delete-branch: true
 
 
       # - name: Commit README.rst
