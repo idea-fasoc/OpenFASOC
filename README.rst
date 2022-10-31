@@ -31,16 +31,16 @@ Install all the prerequisites using `dependencies.sh` script provided in the hom
 
   1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.333)
 
-  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.236)
+  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.237)
 
   3. `Klayout <https://github.com/KLayout/klayout>`_ (version:0.27.10-1)
 
       - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
-  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.22+57)
+  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.22+60)
 
-  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_5428)
+  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_5434)
 
   6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.351)
 
