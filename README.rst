@@ -38,9 +38,9 @@ Install all the prerequisites using `dependencies.sh` script provided in the hom
       - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
-  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.22+60)
+  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.22+62)
 
-  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_5434)
+  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_5460)
 
   6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.351)
 
