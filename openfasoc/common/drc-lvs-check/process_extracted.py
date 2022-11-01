@@ -71,9 +71,13 @@ def toplevel_process(netlist, toplevel_name):
     toplevel_pinout = toplevel_pinout_m.group(0)
     # toplevel_pinout = toplevel_pinout.replace("\n+", "")# make the toplevel pinout one line
     # remove r_VIN if present
-    correct_toplevel_pinout = toplevel_pinout.replace(" r_VIN", "")
-    # remove VIN if present
-    correct_toplevel_pinout = correct_toplevel_pinout.replace(" VIN", "")
+    if toplevel_name == "tempsenseInst_error":
+        correct_toplevel_pinout = toplevel_pinout.replace(" r_VIN", "")
+        # remove VIN if present
+        correct_toplevel_pinout = correct_toplevel_pinout.replace(" VIN", "")
+    else:
+        # remove VREG if present
+        correct_toplevel_pinout = toplevel_pinout.replace(" VREG", "")
     # swap out for the new toplevel pinout
     netlist = netlist.replace(toplevel_pinout, correct_toplevel_pinout)
     return netlist
@@ -94,13 +98,16 @@ args = parser.parse_args()
 # read the entire extracted spice into "extracted_spice"
 with open(args.lvsmag, "r") as rf:
     extracted_spice = rf.read()
-
-# modify "extracted_spice" HEADER cell definition to remove proxy pins
-extracted_spice = HEADER_process(extracted_spice)
-
-# remove the r_VIN and VIN pins in the toplevel cell after checking if a toplevel name was input
-if args.toplevel:
+# remove VREG pin in toplevel cell after checking if a toplevel name was input
+if args.toplevel and args.toplevel == "ldoInst":
     extracted_spice = toplevel_process(extracted_spice, args.toplevel)
+else:
+    # modify "extracted_spice" HEADER cell definition to remove proxy pins
+    extracted_spice = HEADER_process(extracted_spice)
+    # remove the r_VIN and VIN pins in the toplevel cell after checking if a toplevel name was input
+    if args.toplevel:
+        extracted_spice = toplevel_process(extracted_spice, args.toplevel)
+
 
 with open(args.lvsmag, "w") as wf:
     wf.write(extracted_spice)
