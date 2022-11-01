@@ -31,7 +31,7 @@ jobs:
           docker push $IMAGE_NAME
 
   sky130hd_temp:
-    # needs: build_docker_image
+    needs: build_docker_image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -87,7 +87,7 @@ jobs:
 
       - name: Grep the commit numbers of all dependent tools and update README.rst
         env:
-              IMAGE_NAME: msaligane/openfasoc:stable
+              IMAGE_NAME: msaligane/openfasoc:alpha
         run: |
           cd $GITHUB_WORKSPACE
           docker run --rm \
@@ -111,20 +111,27 @@ jobs:
         env:
               IMAGE_NAME: msaligane/openfasoc:stable
         run: |
-          docker tag msaligane/openfasoc:alpha msaligane/openfasoc:stable
+          docker tag msaligane/openfasoc:alpha $IMAGE_NAME
           docker push $IMAGE_NAME
 
-      - name: Commit README.rst
-        run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git commit -m "Updated README with latest stable version numbers of dependent tools" -a
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
         with:
-          github_token: ${{ secrets.UPDATE_VERSIONS }}
-          branch: main
+          token: ${{ secrets.BOT_TOKEN }}
+          title: "[BOT] Update successful version records of dependencies to the repository"
+          author: ${{ secrets.BOT_AUTHOR_LINE }}
+          committer: ${{ secrets.BOT_AUTHOR_LINE }}
+          body: |
+            This is an automated PR.
+            See the individual commits for details.
+          labels: |
+            versions
+            openfasoc-bot
+          commit-message: |
+            [BOT] Update dependencies successful version records in the repository
+          branch: versions-update-branch
+          push-to-fork: ${{ secrets.FORK_NAME }}
+          delete-branch: true
 
 
       # - name: Commit README.rst

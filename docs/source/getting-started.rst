@@ -113,13 +113,13 @@ Install `Docker <https://docs.docker.com/engine/install/ubuntu/>`_ in your machi
 
 .. code-block:: bash
 
-  git clone https://github.com/idea-fasoc/OpenFASOC.git`
+  git clone https://github.com/idea-fasoc/OpenFASOC.git
 
 2. Run this command to access OpenFASOC folder from the container:
 
 .. code-block:: bash
 
-  `docker run -v </path/to/OpenFASOC/clone>:/shared/OpenFASOC/ -w /shared/OpenFASOC/ msaligane/openfasoc:stable bash -c "pip3 install -r requirements.txt && cd openfasoc/generators/temp-sense-gen/ && make clean && make sky130hd_temp"`
+  docker run -v </path/to/OpenFASOC/clone>:/shared/OpenFASOC/ -w /shared/OpenFASOC/ msaligane/openfasoc:stable bash -c "pip3 install -r requirements.txt && cd openfasoc/generators/temp-sense-gen/ && make clean && make sky130hd_temp"
 
 3. To view results after the flow ran (see `Run OpenFASoC flow`_), go to `/<path_to_OpenFASOC>/openfasoc/generators/temp-sense-gen/work` where you can find the final GDS and DEF files, DRC and LVS reports, the spice netlists and the Verilog file.
 
