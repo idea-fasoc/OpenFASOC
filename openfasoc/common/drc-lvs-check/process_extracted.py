@@ -1,72 +1,80 @@
 # by Ali B Hammoud : Nov 1, 2022
 # Templatized LVS work around for "signal" type connections between two voltage domains
+# To use this script with a new generator, see bottom if/elif block
 import sys
 import re
 import argparse
 
-# -----
-# Define any generator specific funcs here. See tempsense example below which processes the HEADER cells.
-# Call these funcs before calling toplevel_process in if/else block labeled below
-# -----
+
+def get_all_instantiations(cell_name, netlist):
+    """returns a list of strings of all instantiations of a cell EXACTLY as they appear
+    i.e. multiline instances using \"+\" are returned exactly as they appear"""
+    cell_instantiations_list = list()
+    netlist_lines = netlist.splitlines()
+    index = 0
+    while index < len(netlist_lines):
+        if netlist_lines[index].endswith(cell_name):
+            cell_instantiation = netlist_lines[index]
+            temp_index = index
+            while netlist_lines[temp_index].startswith("+"):
+                temp_index = temp_index - 1
+                cell_instantiation = (
+                    netlist_lines[temp_index] + "\n" + cell_instantiation
+                )
+            cell_instantiations_list.insert(0, cell_instantiation)
+        index = index + 1
+    return cell_instantiations_list
 
 
-def HEADER_process(netlist):
-    """remove proxy pins in the header cell (if they are present) and correct every instance of HEADER, takes and returns a string"""
-    # return a match to only the pinout of the header cell definition, only non case sensitive on .subckt
-    HEADER_pinout_m = re.search("(?i)\.SUBCKT (?-i:HEADER.*\n(\+.*\n)*)", netlist)
-    # convert match object to string
-    HEADER_pinout = HEADER_pinout_m.group(0)
-    # remove proxy pins
-    correct_HEADER_pinout = HEADER_pinout.replace(" sky130_fd_sc_hd__tap_1_0/VPB", "")
-    correct_HEADER_pinout = correct_HEADER_pinout.replace(
-        " sky130_fd_sc_hd__tap_1_1/VPB", ""
+def voltage_cell_process(netlist, voltage_cell_name, pins_to_remove):
+    """remove proxy pins in the cell which produces the different voltage (if they are present) and correct every instance of such cell, takes and returns a string"""
+    # return a match to only the pinout of the voltage cell definition, only non case sensitive on .subckt
+    voltage_cell_pinout_m = re.search(
+        "(?i)\.SUBCKT (?-i:" + voltage_cell_name + ".*\n(\+.*\n)*)", netlist
     )
-    # swap out for the new HEADER definition
-    netlist = netlist.replace(HEADER_pinout, correct_HEADER_pinout)
-    # *****NOW: correct the inputs for every instantiation of the HEADER cell*****
+    # convert match object to string
+    voltage_cell_pinout = voltage_cell_pinout_m.group(0)
+    # remove proxy pins
+    correct_voltage_cell_pinout = voltage_cell_pinout
+    for pin in pins_to_remove:
+        correct_voltage_cell_pinout = correct_voltage_cell_pinout.replace(" " + pin, "")
+    # swap out for the new voltage cell definition
+    netlist = netlist.replace(voltage_cell_pinout, correct_voltage_cell_pinout)
+    # *****NOW: correct the inputs for every instantiation of the voltage cell*****
     # find the position of the removed pins
-    HEADER_pinout = HEADER_pinout.replace("\n+", "").replace(
-        "\n", ""
-    )  # make the original HEADER pinout one line + del extra /n
-    HEADER_pinout_arr = HEADER_pinout.split(" ")
-    index_0 = index_1 = -1
-    if "sky130_fd_sc_hd__tap_1_0/VPB" in HEADER_pinout_arr:
-        index_0 = HEADER_pinout_arr.index(
-            "sky130_fd_sc_hd__tap_1_0/VPB"
-        )  # first removed pin
-    if "sky130_fd_sc_hd__tap_1_1/VPB" in HEADER_pinout_arr:
-        index_1 = HEADER_pinout_arr.index(
-            "sky130_fd_sc_hd__tap_1_1/VPB"
-        )  # first removed pin
-    # swap (or dont) index_0 and index_1 so that index_0 > index_1 (remove pins from the end first)
-    if index_0 < index_1:
-        temp = index_0
-        index_0 = index_1
-        index_1 = temp
-    # find every line that contains the word "HEADER"
-    HEADER_instances_m = re.findall(".*HEADER.*", netlist)
-    # loop through HEADER instances correcting the inputs
-    first_loop = 1
-    for HEADER_instance in HEADER_instances_m:
-        # skip the first instance of HEADER becuase that is the cell definition
-        if first_loop:
-            first_loop = 0
-            continue
-        HEADER_instance_arr = HEADER_instance.split(" ")
-        # HEADER instance must have name pin1 pin2 pin3 pin4 pin5 pin6 HEADER
-        # delete item at index_0-2 and index_1-2 position in the pin order
-        if (
-            index_0 + 1
-        ):  # check if the index was defined to something (cannot be -1 and -1+1=false)
-            HEADER_instance_arr.pop(index_0 - 1)
-        if index_1 + 1:
-            HEADER_instance_arr.pop(index_1 - 1)
-        correct_HEADER_instance = " ".join(HEADER_instance_arr)
-        netlist = netlist.replace(HEADER_instance, correct_HEADER_instance)
+    # make the original voltage cell pinout one line + del extra /n
+    voltage_cell_pinout = voltage_cell_pinout.replace("\n+", "").replace("\n", "")
+    voltage_cell_pinout_arr = voltage_cell_pinout.split(" ")
+
+    # find the indices in the pinout of pins to remove
+    indices = list()
+    for pin in pins_to_remove:
+        if pin in voltage_cell_pinout_arr:
+            indices.append(voltage_cell_pinout_arr.index(pin))
+    # sort from biggest to smallest because last pin should be removed first to not invalidate other indices
+    indices.sort(reverse=True)
+    # get all voltage cell instances and one line them
+    # voltage_cell_instances_m = re.findall(".*"+voltage_cell_name+"$", netlist,flags=re.MULTILINE)# edit here
+    voltage_cell_instances = get_all_instantiations(voltage_cell_name, netlist)
+    for instance in voltage_cell_instances:
+        netlist = netlist.replace(
+            instance, instance.replace("\n+", "").replace("\n", "")
+        )
+    # update voltage_cell_instances after we have flattend everything (easier to implement than reference for loop)
+    voltage_cell_instances = get_all_instantiations(voltage_cell_name, netlist)
+    # loop through voltage cell instances correcting the inputs
+    for voltage_cell_instance in voltage_cell_instances:
+        voltage_cell_instance_arr = voltage_cell_instance.split(" ")
+        # voltage cell instance must have name pin1 pin2 ... pinN voltage_cell_name
+        # delete pins at index positions in the pin order
+        for pin_position in indices:
+            voltage_cell_instance_arr.pop(pin_position - 1)
+        correct_voltage_cell_instance = " ".join(voltage_cell_instance_arr)
+        netlist = netlist.replace(voltage_cell_instance, correct_voltage_cell_instance)
     return netlist
 
 
-def toplevel_process(netlist, toplevel_name, generator_name):
+def toplevel_process(netlist, toplevel_name, rpin_name, pin_name):
     """remove r_VIN and VIN pins in the toplevel cell def (if they are present), takes 2 and returns 1 string"""
     # construct a regular expression to ONLY match the subckt with the inputted name toplevel
     reg_ex = "(?i)\.SUBCKT (?-i:" + toplevel_name  # only non case sensitive on .subckt
@@ -75,20 +83,12 @@ def toplevel_process(netlist, toplevel_name, generator_name):
     toplevel_pinout_m = re.search(reg_ex, netlist, re.IGNORECASE)
     # take only the toplevel pinout
     toplevel_pinout = toplevel_pinout_m.group(0)
-
-    # insert new generator pin name here with no extra spaces or chars
-    # follow the template below
-    if args.generator == "temp-sense-gen":
-        rpin_name = "r_VIN"
-        pin_name = "VIN"
-    elif args.generator == "ldo-gen":
-        rpin_name = "r_VREG"
-        pin_name = "VREG"
-
-    # remove r_VIN if present
-    correct_toplevel_pinout = toplevel_pinout.replace(" " + rpin_name, "")
-    # remove VIN if present
-    correct_toplevel_pinout = correct_toplevel_pinout.replace(" " + pin_name, "")
+    # remove rpin_name if present
+    if rpin_name:
+        correct_toplevel_pinout = toplevel_pinout.replace(" " + rpin_name, "")
+    # remove pin_name if present
+    if pin_name:
+        correct_toplevel_pinout = correct_toplevel_pinout.replace(" " + pin_name, "")
     # swap out for the new toplevel pinout
     netlist = netlist.replace(toplevel_pinout, correct_toplevel_pinout)
     return netlist
@@ -131,17 +131,36 @@ if args.generator:
         extracted_spice = rf.read()
 
     # generator specific funcs
+    # make edits to the if/elif block below to add a new generator
+    # insert new generator pin name here and cell pins to remove with no extra spaces or chars
+    # follow the template below
     if args.generator == "temp-sense-gen":
-        # modify "extracted_spice" HEADER cell definition to remove proxy pins
-        extracted_spice = HEADER_process(extracted_spice)
+        # set the proxy pins to remove from HEADER
+        voltage_cell_name = "HEADER"
+        pins_to_remove = [
+            "sky130_fd_sc_hd__tap_1_0/VPB",
+            "sky130_fd_sc_hd__tap_1_1/VPB",
+        ]
+        # set remove pins for this generator
+        rpin_name = "r_VIN"
+        pin_name = "VIN"
     elif args.generator == "ldo-gen":
-        print("No gen specific tasks for this ldo.")
+        voltage_cell_name = "LDO_COMPARATOR_LATCH"
+        pins_to_remove = ["a_512_1261#"]
+        rpin_name = "r_VREG"
+        pin_name = "VREG"
 
-    # remove the r_VIN and VIN pins in the toplevel cell after checking if a toplevel name was input
+    # end edits
+
+    # edit the voltage cells to remove proxy pins
+    extracted_spice = voltage_cell_process(
+        extracted_spice, voltage_cell_name, pins_to_remove
+    )
+
+    # remove the rpin and pin pins in the toplevel cell after checking if a toplevel name was passed to the script
     if args.toplevel:
-        # gen specific signal pin must be specified within this func
         extracted_spice = toplevel_process(
-            extracted_spice, args.toplevel, args.generator
+            extracted_spice, args.toplevel, rpin_name, pin_name
         )
 
     with open(args.lvsmag, "w") as wf:
