@@ -41,7 +41,8 @@ EOF
 # Importantly, this script is specific in what it looks for,
 # so is unlikely to break LVS if Magic improves in the future
 # note that --toplevel is optional (specify if you have a top level subckt)
-python3 $COMMON_VERIF_DIR/process_extracted.py --lvsmag $OBJECTS_DIR/netgen_lvs/spice/$2_lvsmag.spice --toplevel $2
+# note also that you must have the global variable "__open_generator_name__" specified to your generator (as described in the python script)
+python $COMMON_VERIF_DIR/process_extracted.py --lvsmag $OBJECTS_DIR/netgen_lvs/spice/$2_lvsmag.spice --toplevel $2 --generator $__open_generator_name__
 
 # run lvs check using netgen
 # netgen lvs $2_lvsmag.spice $2.spice $COMMON_VERIF_DIR/sky130A/sky130A_setup.tcl $3 -full

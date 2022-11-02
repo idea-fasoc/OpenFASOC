@@ -1,7 +1,13 @@
-# by Ali B Hammoud : Aug 4, 2022
+# by Ali B Hammoud : Nov 1, 2022
+# Templatized LVS work around for "signal" type connections between two voltage domains
 import sys
 import re
 import argparse
+
+# -----
+# Define any generator specific funcs here. See tempsense example below which processes the HEADER cells.
+# Call these funcs before calling toplevel_process in if/else block labeled below
+# -----
 
 
 def HEADER_process(netlist):
@@ -60,24 +66,29 @@ def HEADER_process(netlist):
     return netlist
 
 
-def toplevel_process(netlist, toplevel_name):
+def toplevel_process(netlist, toplevel_name, generator_name):
     """remove r_VIN and VIN pins in the toplevel cell def (if they are present), takes 2 and returns 1 string"""
     # construct a regular expression to ONLY match the subckt with the inputted name toplevel
     reg_ex = "(?i)\.SUBCKT (?-i:" + toplevel_name  # only non case sensitive on .subckt
     reg_ex = reg_ex + ".*\n(\+.*\n)*)"
     # return a match to the entire toplevel cell definition from .subckt name to .ENDS, non case sensitive
     toplevel_pinout_m = re.search(reg_ex, netlist, re.IGNORECASE)
-    # take only the pinout of the header cell definition
+    # take only the toplevel pinout
     toplevel_pinout = toplevel_pinout_m.group(0)
-    # toplevel_pinout = toplevel_pinout.replace("\n+", "")# make the toplevel pinout one line
+
+    # insert new generator pin name here with no extra spaces or chars
+    # follow the template below
+    if args.generator == "temp-sense-gen":
+        rpin_name = "r_VIN"
+        pin_name = "VIN"
+    elif args.generator == "ldo-gen":
+        rpin_name = "r_VREG"
+        pin_name = "VREG"
+
     # remove r_VIN if present
-    if toplevel_name == "tempsenseInst_error":
-        correct_toplevel_pinout = toplevel_pinout.replace(" r_VIN", "")
-        # remove VIN if present
-        correct_toplevel_pinout = correct_toplevel_pinout.replace(" VIN", "")
-    else:
-        # remove VREG if present
-        correct_toplevel_pinout = toplevel_pinout.replace(" VREG", "")
+    correct_toplevel_pinout = toplevel_pinout.replace(" " + rpin_name, "")
+    # remove VIN if present
+    correct_toplevel_pinout = correct_toplevel_pinout.replace(" " + pin_name, "")
     # swap out for the new toplevel pinout
     netlist = netlist.replace(toplevel_pinout, correct_toplevel_pinout)
     return netlist
@@ -85,29 +96,57 @@ def toplevel_process(netlist, toplevel_name):
 
 # *****START READING HERE*****
 
+# arg parse
 # add a required input argument for the extracted spice file
 parser = argparse.ArgumentParser(
     description="remove the proxy pins from extracted HEADER cell definition"
 )
-parser.add_argument("--lvsmag", "-l", required=True, help="extracted spice file")
+parser.add_argument(
+    "--lvsmag",
+    "-l",
+    required=True,
+    help="extracted spice file from GDS (i.e. extract 6_final.gds)",
+)
 parser.add_argument(
     "--toplevel", "-t", required=False, help="name of toplevel module to look for"
 )  # there may not be a toplevel
-args = parser.parse_args()
+parser.add_argument(
+    "--generator",
+    "-g",
+    required=False,
+    help='name of generator i.e. "temp-sense-gen" for tempsense. If not specified this script does nothing',
+)
 
-# read the entire extracted spice into "extracted_spice"
-with open(args.lvsmag, "r") as rf:
-    extracted_spice = rf.read()
-# remove VREG pin in toplevel cell after checking if a toplevel name was input
-if args.toplevel and args.toplevel == "ldoInst":
-    extracted_spice = toplevel_process(extracted_spice, args.toplevel)
-else:
-    # modify "extracted_spice" HEADER cell definition to remove proxy pins
-    extracted_spice = HEADER_process(extracted_spice)
+try:
+    args = parser.parse_args()
+except:
+    parser.print_help()
+    sys.exit(2)
+
+# process extracted
+# only process if name of generator is specified
+if args.generator:
+    # read the entire extracted spice into "extracted_spice"
+    with open(args.lvsmag, "r") as rf:
+        extracted_spice = rf.read()
+
+    # generator specific funcs
+    if args.generator == "temp-sense-gen":
+        # modify "extracted_spice" HEADER cell definition to remove proxy pins
+        extracted_spice = HEADER_process(extracted_spice)
+    elif args.generator == "ldo-gen":
+        print("No gen specific tasks for this ldo.")
+
     # remove the r_VIN and VIN pins in the toplevel cell after checking if a toplevel name was input
     if args.toplevel:
-        extracted_spice = toplevel_process(extracted_spice, args.toplevel)
+        # gen specific signal pin must be specified within this func
+        extracted_spice = toplevel_process(
+            extracted_spice, args.toplevel, args.generator
+        )
 
-
-with open(args.lvsmag, "w") as wf:
-    wf.write(extracted_spice)
+    with open(args.lvsmag, "w") as wf:
+        wf.write(extracted_spice)
+else:
+    print(
+        "\nprocess_extracted.py was called with no specfic task.\nA generator must be specified to use this script.\n"
+    )
