@@ -1,6 +1,8 @@
 # by Ali B Hammoud : Nov 1, 2022
 # Templatized LVS work around for "signal" type connections between two voltage domains
+# __open_generator_name__ must be set for this script to run edits
 # To use this script with a new generator, see bottom if/elif block
+# Also, refer to this PR: https://github.com/idea-fasoc/OpenFASOC/pull/121
 import sys
 import re
 import argparse
@@ -97,7 +99,6 @@ def toplevel_process(netlist, toplevel_name, rpin_name, pin_name):
 # *****START READING HERE*****
 
 # arg parse
-# add a required input argument for the extracted spice file
 parser = argparse.ArgumentParser(
     description="remove the proxy pins from extracted HEADER cell definition"
 )
