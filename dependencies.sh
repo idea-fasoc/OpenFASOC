@@ -77,8 +77,8 @@ then
         echo "miniconda3 installed successfully. Continuing the installation...\n"
 	export PATH=/usr/bin/miniconda3/bin:$PATH
 	conda update -y conda
-        if [ $? == 0 ];then conda install -c litex-hub yosys open_pdks.sky130a magic netgen -y ; else echo "Failed to update conda" ; fi
-        if [ $? == 0 ];then conda install -c litex-hub openroad -y ; else echo "Failed to install conda packages" ; fi
+        if [ $? == 0 ];then conda install -c litex-hub --file conda_versions.txt -y ; else echo "Failed to update conda" ; exit ; fi
+        if [ $? == 0 ];then echo "Installed OpenROAD, Yosys, Skywater PDK, Magic and Netgen successfully" ; else echo "Failed to install conda packages" ; exit ; fi
 else
 	echo "Failed to install miniconda. Check above for error messages."
 	exit
@@ -93,9 +93,9 @@ fi
 
 if [ $? == 0 ]
 then
- echo "Magic, Netgen, OpenROAD, Yosys, Ngspice are installed. Checking pending. Continuing the installation...\n"
+ echo "Ngspice are installed. Checking pending. Continuing the installation...\n"
 else
- echo "Failed to install Magic, Netgen, OpenROAD, Yosys, Ngspice"
+ echo "Failed to install Ngspice"
  exit
 fi
 
@@ -133,7 +133,7 @@ export PATH=/usr/bin/miniconda3/bin:$PATH
 if [ -x /usr/bin/miniconda3/share/pdk/ ]
 then
  export PDK_ROOT=/usr/bin/miniconda3/share/pdk/
- echo "PDK_ROOT is set to /usr/bin/miniconda3/share/pdk/"
+ echo "PDK_ROOT is set to /usr/bin/miniconda3/share/pdk/. If this variable is empty, try setting PDK_ROOT variable to /usr/bin/miniconda3/share/pdk/"
 else
  echo "PDK not installed"
 fi
