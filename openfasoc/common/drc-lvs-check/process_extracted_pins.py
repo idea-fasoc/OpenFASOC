@@ -168,5 +168,5 @@ if args.generator:
         wf.write(extracted_spice)
 else:
     print(
-        "\nprocess_extracted.py was called with no specfic task.\nA generator must be specified to use this script.\n"
+        "\nprocess_extracted_pins.py was called with no specfic task.\nA generator must be specified to use this script.\n"
     )
