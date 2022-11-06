@@ -14,7 +14,7 @@ export CORE_AREA   		= 18.4 16.32 137.08 130.56
 export VD1_AREA                 = 33.58 32.64 64.86 62.56
 
 # power delivery network config file
-export PDN_CFG 			= ../blocks/$(PLATFORM)/pdn.cfg
+export PDN_TCL 			= ../blocks/$(PLATFORM)/pdn.tcl
 
 export ADDITIONAL_LEFS  	= ../blocks/$(PLATFORM)/lef/HEADER.lef \
                         	  ../blocks/$(PLATFORM)/lef/SLC.lef
@@ -46,3 +46,6 @@ export PRE_GLOBAL_ROUTE = $(SCRIPTS_DIR)/openfasoc/pre_global_route.tcl
 
 # informs any short circuits that should be forced during routing
 export CUSTOM_CONNECTION 	= ../blocks/$(PLATFORM)/tempsenseInst_custom_net.txt
+
+# indicates with how many connections the VIN route from the HEADER cells connects to the VIN power ring
+export VIN_ROUTE_CONNECTION_POINTS = 3
