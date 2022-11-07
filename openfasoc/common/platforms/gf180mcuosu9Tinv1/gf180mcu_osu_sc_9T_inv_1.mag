@@ -1,0 +1,128 @@
+# Copyright 2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+magic
+tech gf180mcuC
+timestamp 1661875266
+<< nwell >>
+rect 0 61 44 123
+<< nmos >>
+rect 19 19 25 36
+<< pmos >>
+rect 19 70 25 104
+<< ndiff >>
+rect 9 34 19 36
+rect 9 21 11 34
+rect 16 21 19 34
+rect 9 19 19 21
+rect 25 34 35 36
+rect 25 21 28 34
+rect 33 21 35 34
+rect 25 19 35 21
+<< pdiff >>
+rect 9 102 19 104
+rect 9 72 11 102
+rect 16 72 19 102
+rect 9 70 19 72
+rect 25 102 35 104
+rect 25 81 28 102
+rect 33 81 35 102
+rect 25 70 35 81
+<< ndiffc >>
+rect 11 21 16 34
+rect 28 21 33 34
+<< pdiffc >>
+rect 11 72 16 102
+rect 28 81 33 102
+<< psubdiff >>
+rect 9 10 18 12
+rect 9 5 11 10
+rect 16 5 18 10
+rect 9 3 18 5
+<< nsubdiff >>
+rect 9 118 18 120
+rect 9 113 11 118
+rect 16 113 18 118
+rect 9 111 18 113
+<< psubdiffcont >>
+rect 11 5 16 10
+<< nsubdiffcont >>
+rect 11 113 16 118
+<< polysilicon >>
+rect 19 104 25 109
+rect 19 52 25 70
+rect 12 50 25 52
+rect 12 45 14 50
+rect 19 45 25 50
+rect 12 43 25 45
+rect 19 36 25 43
+rect 19 14 25 19
+<< polycontact >>
+rect 14 45 19 50
+<< metal1 >>
+rect 0 118 44 123
+rect 0 112 11 118
+rect 17 112 44 118
+rect 0 111 44 112
+rect 11 102 16 111
+rect 28 102 33 104
+rect 28 76 33 81
+rect 11 70 16 72
+rect 26 70 28 76
+rect 34 70 36 76
+rect 11 44 13 50
+rect 19 44 21 50
+rect 11 34 16 36
+rect 11 12 16 21
+rect 28 34 33 70
+rect 28 19 33 21
+rect 0 11 44 12
+rect 0 5 11 11
+rect 17 5 44 11
+rect 0 0 44 5
+<< via1 >>
+rect 11 113 16 118
+rect 16 113 17 118
+rect 11 112 17 113
+rect 28 70 34 76
+rect 13 45 14 50
+rect 14 45 19 50
+rect 13 44 19 45
+rect 11 10 17 11
+rect 11 5 16 10
+rect 16 5 17 10
+<< metal2 >>
+rect 10 118 18 119
+rect 9 112 11 118
+rect 17 112 19 118
+rect 10 111 18 112
+rect 26 76 36 77
+rect 26 70 28 76
+rect 34 70 36 76
+rect 26 69 36 70
+rect 11 50 21 51
+rect 11 44 13 50
+rect 19 44 21 50
+rect 11 43 21 44
+rect 10 11 18 12
+rect 9 5 11 11
+rect 17 5 19 11
+rect 10 4 18 5
+<< labels >>
+rlabel metal2 14 115 14 115 1 VDD
+rlabel metal2 14 8 14 8 1 VSS
+rlabel metal2 16 47 16 47 1 A
+port 1 n
+rlabel metal2 31 73 31 73 1 Y
+port 2 n
+<< end >>

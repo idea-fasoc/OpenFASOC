@@ -1,0 +1,26 @@
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_clkbuf_2 A Y
+X0 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X1 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X2 VSS A a_9_19 VSS nmos_3p3 w=17 l=6
+X3 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X4 VDD A a_9_19 VDD pmos_3p3 w=34 l=6
+X5 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary

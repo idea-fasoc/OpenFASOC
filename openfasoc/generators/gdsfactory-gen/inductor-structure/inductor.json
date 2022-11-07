@@ -23,7 +23,7 @@
             "pads": {
                 "type": "GSGSG",
                 "padding": 120,
-                "pitch": 120,
+                "pitch": 60,
                 "routing": {
                     "io1": "ind1_in",
                     "io3": "ind1_out"
