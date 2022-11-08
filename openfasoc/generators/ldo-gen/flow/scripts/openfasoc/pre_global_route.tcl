@@ -3,7 +3,7 @@ source $::env(SCRIPTS_DIR)/openfasoc/create_rVREG.tcl
 
 # NDR rules
 source $::env(SCRIPTS_DIR)/openfasoc/add_ndr_rules.tcl
-
+global_connect
 # Custom connections
 source $::env(SCRIPTS_DIR)/openfasoc/create_custom_connections.tcl
 if {[info exist ::env(CUSTOM_CONNECTION)]} {
