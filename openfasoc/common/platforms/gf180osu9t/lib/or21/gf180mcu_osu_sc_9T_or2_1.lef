@@ -1,0 +1,112 @@
+# Copyright 2022 Google LLC
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+VERSION 5.7 ;
+BUSBITCHARS "[]" ;
+DIVIDERCHAR "/" ;
+
+MACRO gf180mcu_osu_sc_9T_or2_1
+  CLASS CORE ;
+  ORIGIN 0 0 ;
+  FOREIGN gf180mcu_osu_sc_9T_or2_1 0 0 ;
+  SIZE 3.8 BY 6.15 ;
+  SYMMETRY X Y ;
+  SITE GF018hv5v_mcu_sc7 ;
+  PIN A
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER MET1 ;
+        RECT 0.9 2.2 1.4 2.5 ;
+      LAYER MET2 ;
+        RECT 0.9 2.15 1.4 2.55 ;
+      LAYER VIA12 ;
+        RECT 1.02 2.22 1.28 2.48 ;
+    END
+  END A
+  PIN B
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER MET1 ;
+        RECT 1.65 2.85 2.15 3.15 ;
+      LAYER MET2 ;
+        RECT 1.65 2.8 2.15 3.2 ;
+      LAYER VIA12 ;
+        RECT 1.77 2.87 2.03 3.13 ;
+    END
+  END B
+  PIN VDD
+    DIRECTION INOUT ;
+    USE POWER ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER MET1 ;
+        RECT 0 5.55 3.8 6.15 ;
+        RECT 1.95 4.3 2.35 6.15 ;
+      LAYER MET2 ;
+        RECT 2.85 5.55 3.35 5.95 ;
+        RECT 1.65 5.55 2.15 5.95 ;
+        RECT 0.45 5.55 0.95 5.95 ;
+      LAYER VIA12 ;
+        RECT 0.57 5.62 0.83 5.88 ;
+        RECT 1.77 5.62 2.03 5.88 ;
+        RECT 2.97 5.62 3.23 5.88 ;
+    END
+  END VDD
+  PIN VSS
+    DIRECTION INOUT ;
+    USE GROUND ;
+    PORT
+      LAYER MET1 ;
+        RECT 0 0 3.8 0.6 ;
+        RECT 2.1 0 2.35 1.8 ;
+        RECT 0.4 0 0.65 1.45 ;
+      LAYER MET2 ;
+        RECT 2.85 0.2 3.35 0.6 ;
+        RECT 1.65 0.2 2.15 0.6 ;
+        RECT 0.45 0.2 0.95 0.6 ;
+      LAYER VIA12 ;
+        RECT 0.57 0.27 0.83 0.53 ;
+        RECT 1.77 0.27 2.03 0.53 ;
+        RECT 2.97 0.27 3.23 0.53 ;
+    END
+  END VSS
+  PIN Y
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER MET1 ;
+        RECT 2.95 1.45 3.45 1.75 ;
+        RECT 2.95 0.95 3.2 1.8 ;
+        RECT 2.95 3.5 3.45 3.8 ;
+        RECT 2.95 3.5 3.2 5.2 ;
+      LAYER MET2 ;
+        RECT 2.95 3.45 3.45 3.85 ;
+        RECT 2.95 1.4 3.45 1.8 ;
+        RECT 3.05 1.4 3.35 3.85 ;
+      LAYER VIA12 ;
+        RECT 3.07 3.52 3.33 3.78 ;
+        RECT 3.07 1.47 3.33 1.73 ;
+    END
+  END Y
+  OBS
+    LAYER MET1 ;
+      RECT 0.55 2.95 0.8 5.2 ;
+      RECT 0.55 3.75 2.7 4.05 ;
+      RECT 2.4 2.95 2.7 4.05 ;
+      RECT 2.4 2.95 2.95 3.25 ;
+      RECT 0.4 1.7 0.65 3.25 ;
+      RECT 0.4 1.7 1.5 1.95 ;
+      RECT 1.25 0.95 1.5 1.95 ;
+  END
+END gf180mcu_osu_sc_9T_or2_1

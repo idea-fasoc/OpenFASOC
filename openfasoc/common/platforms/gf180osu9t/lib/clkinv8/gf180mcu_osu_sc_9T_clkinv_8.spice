@@ -1,0 +1,36 @@
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_clkinv_8 A Y
+X0 VDD A Y VDD pmos_3p3 w=34 l=6
+X1 VDD A Y VDD pmos_3p3 w=34 l=6
+X2 VSS A Y VSS nmos_3p3 w=17 l=6
+X3 Y A VSS VSS nmos_3p3 w=17 l=6
+X4 Y A VSS VSS nmos_3p3 w=17 l=6
+X5 VDD A Y VDD pmos_3p3 w=34 l=6
+X6 Y A VSS VSS nmos_3p3 w=17 l=6
+X7 Y A VDD VDD pmos_3p3 w=34 l=6
+X8 Y A VDD VDD pmos_3p3 w=34 l=6
+X9 Y A VDD VDD pmos_3p3 w=34 l=6
+X10 Y A VSS VSS nmos_3p3 w=17 l=6
+X11 VSS A Y VSS nmos_3p3 w=17 l=6
+X12 Y A VDD VDD pmos_3p3 w=34 l=6
+X13 VSS A Y VSS nmos_3p3 w=17 l=6
+X14 VSS A Y VSS nmos_3p3 w=17 l=6
+X15 VDD A Y VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary

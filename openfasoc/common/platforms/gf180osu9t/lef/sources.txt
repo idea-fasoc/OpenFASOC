@@ -1,0 +1,1 @@
+../sources/gf180mcu_osu_sc/lib/9T/lef/*.lef
