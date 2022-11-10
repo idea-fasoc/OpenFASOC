@@ -328,6 +328,63 @@ else:
         with open(blocksDir + "/ldo_domain_insts.txt", "a") as f:
             f.write("{pt_array_unit\[" + str(i) + "\]}")
             f.write("\n")
+# clear elements from list
+temp_list.clear()
+
+# ---------------------------------------------------------------------------
+# Updating the ldo_custom_net.txt as per power transistor array size
+# ----------------------------------------------------------------------------
+
+# opens file in read mode
+with open(blocksDir + "/ldo_custom_net.txt", "r") as fr:
+    filedata = fr.readlines()
+for line in filedata:
+    if re.search("^{pt", line):
+        match_found = 1
+    else:
+        match_found = 0
+if match_found == 1:
+    for line in filedata:
+        x = re.findall("^{pt", line)
+        if not x:
+            temp_list.append(line)
+
+    with open(blocksDir + "/ldo_custom_net.txt", "w") as fw:
+        fw.writelines(temp_list)
+
+    # Add the pt_array_unit instance as per N
+    for i in range(arrSize):
+        with open(blocksDir + "/ldo_custom_net.txt", "a") as f:
+            f.write("{pt_array_unit\[" + str(i) + "\]}" + " VREG")
+            f.write("\n")
+
+else:
+    for i in range(arrSize):
+        with open(blocksDir + "/ldo_domain_insts.txt", "a") as f:
+            f.write("{pt_array_unit\[" + str(i) + "\]}" + " VREG")
+            f.write("\n")
+# clear elements from list
+temp_list.clear()
+
+# ---------------------------------------------------------------------------
+# Update PLACE_DENSITY as per power transistor array size
+# ---------------------------------------------------------------------------
+
+with open(flowDir + "design/sky130hvl/ldo/config.mk", "r") as fr:
+    lines = fr.readlines()
+# here lines[26] indicates line number in config.mk file
+if N in range(1, 51):
+    lines[26] = "export PLACE_DENSITY = 0.40\n"
+elif N in range(51, 151):
+    lines[26] = "export PLACE_DENSITY = 0.50\n"
+elif N in range(151, 201):
+    lines[26] = "export PLACE_DENSITY = 0.60\n"
+else:
+    lines[26] = "export PLACE_DENSITY = 0.70\n"
+
+with open(flowDir + "design/sky130hvl/ldo/config.mk", "w") as fw:
+    fw.writelines(lines)
+
 
 # Get the estimate of the area
 coefLength = len(jsonModel["area"])
