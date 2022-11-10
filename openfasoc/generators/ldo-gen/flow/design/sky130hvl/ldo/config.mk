@@ -33,7 +33,7 @@ export MACRO_PLACEMENT          = ../blocks/$(PLATFORM)/manual_macro.tcl
 
 # keep with gf
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 1
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 0
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 1
 
 # Additional files
 export ADDITIONAL_LEFS  	= ../blocks/$(PLATFORM)/lef/capacitor_test_nf.lef \

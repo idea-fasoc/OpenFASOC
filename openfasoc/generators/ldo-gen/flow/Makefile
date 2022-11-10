@@ -226,6 +226,10 @@ versions.txt:
 	@echo openroad `$(OPENROAD_EXE) -version` >> $@
 	@$(KLAYOUT_CMD) -zz -v >> $@
 
+# LVS specific global var for this generator
+#-------------------------------------------------------------------------------
+export __open_generator_name__=ldo-gen
+
 # Pre-process libraries
 # ==============================================================================
 
