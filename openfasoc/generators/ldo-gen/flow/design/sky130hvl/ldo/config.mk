@@ -14,17 +14,17 @@ export VERILOG_FILES 		= $(sort $(wildcard ./design/src/$(DESIGN_NICKNAME)/*.v))
 export CLK_PERIOD_IN_NS         = 1000
 export SDC_FILE    		= ./design/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export DIE_AREA   	 	= 0 0 280 380
-export CORE_AREA   		= 15 15 265 365
+export DIE_AREA   	 	= 0 0 340 340
+export CORE_AREA   		= 15 15 325 325
 
-#export VREG_AREA                = 55 55 200 85
-export VREG_AREA                 = 52 180 200 220
+
+export VREG_AREA                 = 60 55 290 80
 
 # PDN
 export PDN_TCL 			= ../blocks/$(PLATFORM)/pdn.tcl
 
 #Placement options
-export PLACE_DENSITY = 0.70
+export PLACE_DENSITY = 0.40
 
 # Macro options
 export MACRO_PLACE_HALO         = 1 1
