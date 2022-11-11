@@ -1,1 +1,0 @@
-../sources/gf180mcu_osu_sc/lib/9T/lib/gf180mcu_9T_TT_3P3_25C*.lib
