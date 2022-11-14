@@ -1,0 +1,1529 @@
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_addf_1 A B CI S CO
+X0 a_9_70 B VDD VDD pmos_3p3 w=34 l=6
+X1 a_110_70 A VDD VDD pmos_3p3 w=34 l=6
+X2 S a_161_19 VSS VSS nmos_3p3 w=17 l=6
+X3 S a_161_19 VDD VDD pmos_3p3 w=34 l=6
+X4 a_195_19 B a_178_19 VSS nmos_3p3 w=17 l=6
+X5 a_178_19 A a_161_19 VSS nmos_3p3 w=17 l=6
+X6 a_195_70 B a_178_70 VDD pmos_3p3 w=34 l=6
+X7 a_110_19 CI VSS VSS nmos_3p3 w=17 l=6
+X8 a_178_70 A a_161_19 VDD pmos_3p3 w=34 l=6
+X9 a_59_19 CI a_9_19 VSS nmos_3p3 w=17 l=6
+X10 VSS B a_110_19 VSS nmos_3p3 w=17 l=6
+X11 a_110_70 CI VDD VDD pmos_3p3 w=34 l=6
+X12 VSS A a_9_19 VSS nmos_3p3 w=17 l=6
+X13 a_59_19 CI a_9_70 VDD pmos_3p3 w=34 l=6
+X14 VDD B a_110_70 VDD pmos_3p3 w=34 l=6
+X15 CO a_59_19 VSS VSS nmos_3p3 w=17 l=6
+X16 VDD A a_9_70 VDD pmos_3p3 w=34 l=6
+X17 VSS CI a_195_19 VSS nmos_3p3 w=17 l=6
+X18 CO a_59_19 VDD VDD pmos_3p3 w=34 l=6
+X19 VDD CI a_195_70 VDD pmos_3p3 w=34 l=6
+X20 VSS A a_76_19 VSS nmos_3p3 w=17 l=6
+X21 a_161_19 a_59_19 a_110_19 VSS nmos_3p3 w=17 l=6
+X22 a_76_19 B a_59_19 VSS nmos_3p3 w=17 l=6
+X23 VDD A a_76_70 VDD pmos_3p3 w=34 l=6
+X24 a_161_19 a_59_19 a_110_70 VDD pmos_3p3 w=34 l=6
+X25 a_9_19 B VSS VSS nmos_3p3 w=17 l=6
+X26 a_110_19 A VSS VSS nmos_3p3 w=17 l=6
+X27 a_76_70 B a_59_19 VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_addh_1 A S CO B
+X0 a_19_14 A VDD VDD pmos_3p3 w=34 l=6
+X1 a_91_19 B a_91_70 VDD pmos_3p3 w=34 l=6
+X2 VSS a_19_14 a_75_19 VSS nmos_3p3 w=17 l=6
+X3 VDD a_19_14 a_91_19 VDD pmos_3p3 w=34 l=6
+X4 a_19_14 B a_42_19 VSS nmos_3p3 w=17 l=6
+X5 VSS a_19_14 CO VSS nmos_3p3 w=17 l=6
+X6 VDD B a_19_14 VDD pmos_3p3 w=34 l=6
+X7 VDD a_19_14 CO VDD pmos_3p3 w=34 l=6
+X8 S a_91_19 VSS VSS nmos_3p3 w=17 l=6
+X9 a_91_19 A a_75_19 VSS nmos_3p3 w=17 l=6
+X10 S a_91_19 VDD VDD pmos_3p3 w=34 l=6
+X11 a_42_19 A VSS VSS nmos_3p3 w=17 l=6
+X12 a_91_70 A VDD VDD pmos_3p3 w=34 l=6
+X13 a_75_19 B a_91_19 VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_and2_1 A B Y
+X0 VDD B a_12_19 VDD pmos_3p3 w=34 l=6
+X1 Y a_12_19 VSS VSS nmos_3p3 w=17 l=6
+X2 Y a_12_19 VDD VDD pmos_3p3 w=34 l=6
+X3 a_12_19 A VDD VDD pmos_3p3 w=34 l=6
+X4 a_28_19 A a_12_19 VSS nmos_3p3 w=17 l=6
+X5 VSS B a_28_19 VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_aoi21_1 Y A0 A1 B
+X0 a_9_70 A1 VDD VDD pmos_3p3 w=34 l=6
+X1 VSS B Y VSS nmos_3p3 w=17 l=6
+X2 Y B a_9_70 VDD pmos_3p3 w=34 l=6
+X3 VDD A0 a_9_70 VDD pmos_3p3 w=34 l=6
+X4 a_28_19 A0 VSS VSS nmos_3p3 w=17 l=6
+X5 Y A1 a_28_19 VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_buf_1 A Y
+X0 VSS A a_9_19 VSS nmos_3p3 w=17 l=6
+X1 VDD A a_9_19 VDD pmos_3p3 w=34 l=6
+X2 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X3 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_buf_2 A Y
+X0 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X1 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X2 VSS A a_9_19 VSS nmos_3p3 w=17 l=6
+X3 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X4 VDD A a_9_19 VDD pmos_3p3 w=34 l=6
+X5 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_buf_4 A Y
+X0 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X1 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X2 VSS A a_9_19 VSS nmos_3p3 w=17 l=6
+X3 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X4 VDD A a_9_19 VDD pmos_3p3 w=34 l=6
+X5 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X6 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X7 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X8 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X9 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_buf_8 A Y
+X0 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X1 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X2 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X3 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X4 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X5 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X6 VSS A a_9_19 VSS nmos_3p3 w=17 l=6
+X7 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X8 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X9 VDD A a_9_19 VDD pmos_3p3 w=34 l=6
+X10 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X11 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X12 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X13 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X14 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X15 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X16 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X17 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_buf_16 A Y
+X0 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X1 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X2 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X3 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X4 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X5 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X6 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X7 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X8 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X9 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X10 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X11 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X12 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X13 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X14 VSS A a_9_19 VSS nmos_3p3 w=17 l=6
+X15 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X16 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X17 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X18 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X19 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X20 VDD A a_9_19 VDD pmos_3p3 w=34 l=6
+X21 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X22 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X23 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X24 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X25 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X26 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X27 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X28 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X29 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X30 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X31 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X32 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X33 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_clkbuf_1 A Y
+X0 VSS A a_9_19 VSS nmos_3p3 w=17 l=6
+X1 VDD A a_9_19 VDD pmos_3p3 w=34 l=6
+X2 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X3 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_clkbuf_2 A Y
+X0 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X1 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X2 VSS A a_9_19 VSS nmos_3p3 w=17 l=6
+X3 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X4 VDD A a_9_19 VDD pmos_3p3 w=34 l=6
+X5 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_clkbuf_4 A Y
+X0 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X1 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X2 VSS A a_9_19 VSS nmos_3p3 w=17 l=6
+X3 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X4 VDD A a_9_19 VDD pmos_3p3 w=34 l=6
+X5 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X6 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X7 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X8 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X9 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_clkbuf_8 A Y
+X0 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X1 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X2 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X3 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X4 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X5 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X6 VSS A a_9_19 VSS nmos_3p3 w=17 l=6
+X7 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X8 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X9 VDD A a_9_19 VDD pmos_3p3 w=34 l=6
+X10 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X11 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X12 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X13 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X14 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X15 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X16 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X17 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_clkbuf_16 A Y
+X0 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X1 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X2 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X3 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X4 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X5 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X6 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X7 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X8 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X9 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X10 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X11 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X12 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X13 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X14 VSS A a_9_19 VSS nmos_3p3 w=17 l=6
+X15 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X16 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X17 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X18 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X19 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X20 VDD A a_9_19 VDD pmos_3p3 w=34 l=6
+X21 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X22 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X23 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X24 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X25 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X26 VSS a_9_19 Y VSS nmos_3p3 w=17 l=6
+X27 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X28 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X29 VDD a_9_19 Y VDD pmos_3p3 w=34 l=6
+X30 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X31 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X32 Y a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X33 Y a_9_19 VDD VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_clkinv_1 A Y
+X0 Y A VSS VSS nmos_3p3 w=17 l=6
+X1 Y A VDD VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_clkinv_2 A Y
+X0 VDD A Y VDD pmos_3p3 w=34 l=6
+X1 Y A VSS VSS nmos_3p3 w=17 l=6
+X2 Y A VDD VDD pmos_3p3 w=34 l=6
+X3 VSS A Y VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_clkinv_4 A Y
+X0 VDD A Y VDD pmos_3p3 w=34 l=6
+X1 Y A VSS VSS nmos_3p3 w=17 l=6
+X2 Y A VSS VSS nmos_3p3 w=17 l=6
+X3 Y A VDD VDD pmos_3p3 w=34 l=6
+X4 Y A VDD VDD pmos_3p3 w=34 l=6
+X5 VSS A Y VSS nmos_3p3 w=17 l=6
+X6 VSS A Y VSS nmos_3p3 w=17 l=6
+X7 VDD A Y VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_clkinv_8 A Y
+X0 VDD A Y VDD pmos_3p3 w=34 l=6
+X1 VDD A Y VDD pmos_3p3 w=34 l=6
+X2 VSS A Y VSS nmos_3p3 w=17 l=6
+X3 Y A VSS VSS nmos_3p3 w=17 l=6
+X4 Y A VSS VSS nmos_3p3 w=17 l=6
+X5 VDD A Y VDD pmos_3p3 w=34 l=6
+X6 Y A VSS VSS nmos_3p3 w=17 l=6
+X7 Y A VDD VDD pmos_3p3 w=34 l=6
+X8 Y A VDD VDD pmos_3p3 w=34 l=6
+X9 Y A VDD VDD pmos_3p3 w=34 l=6
+X10 Y A VSS VSS nmos_3p3 w=17 l=6
+X11 VSS A Y VSS nmos_3p3 w=17 l=6
+X12 Y A VDD VDD pmos_3p3 w=34 l=6
+X13 VSS A Y VSS nmos_3p3 w=17 l=6
+X14 VSS A Y VSS nmos_3p3 w=17 l=6
+X15 VDD A Y VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_clkinv_16 A Y
+X0 VDD A Y VDD pmos_3p3 w=34 l=6
+X1 VDD A Y VDD pmos_3p3 w=34 l=6
+X2 VDD A Y VDD pmos_3p3 w=34 l=6
+X3 Y A VSS VSS nmos_3p3 w=17 l=6
+X4 Y A VDD VDD pmos_3p3 w=34 l=6
+X5 Y A VSS VSS nmos_3p3 w=17 l=6
+X6 VSS A Y VSS nmos_3p3 w=17 l=6
+X7 Y A VDD VDD pmos_3p3 w=34 l=6
+X8 VSS A Y VSS nmos_3p3 w=17 l=6
+X9 VDD A Y VDD pmos_3p3 w=34 l=6
+X10 Y A VSS VSS nmos_3p3 w=17 l=6
+X11 Y A VSS VSS nmos_3p3 w=17 l=6
+X12 VDD A Y VDD pmos_3p3 w=34 l=6
+X13 Y A VSS VSS nmos_3p3 w=17 l=6
+X14 Y A VSS VSS nmos_3p3 w=17 l=6
+X15 Y A VDD VDD pmos_3p3 w=34 l=6
+X16 Y A VDD VDD pmos_3p3 w=34 l=6
+X17 VSS A Y VSS nmos_3p3 w=17 l=6
+X18 Y A VDD VDD pmos_3p3 w=34 l=6
+X19 Y A VDD VDD pmos_3p3 w=34 l=6
+X20 VSS A Y VSS nmos_3p3 w=17 l=6
+X21 VDD A Y VDD pmos_3p3 w=34 l=6
+X22 VDD A Y VDD pmos_3p3 w=34 l=6
+X23 Y A VSS VSS nmos_3p3 w=17 l=6
+X24 Y A VSS VSS nmos_3p3 w=17 l=6
+X25 VSS A Y VSS nmos_3p3 w=17 l=6
+X26 Y A VDD VDD pmos_3p3 w=34 l=6
+X27 Y A VDD VDD pmos_3p3 w=34 l=6
+X28 VSS A Y VSS nmos_3p3 w=17 l=6
+X29 VSS A Y VSS nmos_3p3 w=17 l=6
+X30 VSS A Y VSS nmos_3p3 w=17 l=6
+X31 VDD A Y VDD pmos_3p3 w=34 l=6
+C0 Y VDD 2.104120fF
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_dff_1 D Q QN CLK
+X0 a_42_70 D VDD VDD pmos_3p3 w=34 l=6
+X1 a_125_19 a_53_38 a_114_70 VDD pmos_3p3 w=34 l=6
+X2 a_86_70 a_53_38 a_19_14 VDD pmos_3p3 w=34 l=6
+X3 VDD a_161_42 a_148_70 VDD pmos_3p3 w=34 l=6
+X4 VSS a_9_19 a_86_19 VSS nmos_3p3 w=17 l=6
+X5 a_19_14 a_53_38 a_42_19 VSS nmos_3p3 w=17 l=6
+X6 VSS a_161_42 QN VSS nmos_3p3 w=17 l=6
+X7 VDD a_9_19 a_86_70 VDD pmos_3p3 w=34 l=6
+X8 a_19_14 CLK a_42_70 VDD pmos_3p3 w=34 l=6
+X9 VDD a_161_42 QN VDD pmos_3p3 w=34 l=6
+X10 VSS a_19_14 a_9_19 VSS nmos_3p3 w=17 l=6
+X11 a_53_38 CLK VSS VSS nmos_3p3 w=17 l=6
+X12 VDD a_19_14 a_9_19 VDD pmos_3p3 w=34 l=6
+X13 a_53_38 CLK VDD VDD pmos_3p3 w=34 l=6
+X14 a_148_19 a_53_38 a_125_19 VSS nmos_3p3 w=17 l=6
+X15 Q QN VSS VSS nmos_3p3 w=17 l=6
+X16 a_114_19 a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X17 a_161_42 a_125_19 VSS VSS nmos_3p3 w=17 l=6
+X18 a_148_70 CLK a_125_19 VDD pmos_3p3 w=34 l=6
+X19 Q QN VDD VDD pmos_3p3 w=34 l=6
+X20 a_114_70 a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X21 a_161_42 a_125_19 VDD VDD pmos_3p3 w=34 l=6
+X22 a_42_19 D VSS VSS nmos_3p3 w=17 l=6
+X23 a_125_19 CLK a_114_19 VSS nmos_3p3 w=17 l=6
+X24 a_86_19 CLK a_19_14 VSS nmos_3p3 w=17 l=6
+X25 VSS a_161_42 a_148_19 VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_dffn_1 D Q QN CLKN
+X0 a_42_70 D VDD VDD pmos_3p3 w=34 l=6
+X1 a_125_19 a_53_38 a_114_70 VDD pmos_3p3 w=34 l=6
+X2 a_86_70 a_53_38 a_19_14 VDD pmos_3p3 w=34 l=6
+X3 VDD a_161_42 a_148_70 VDD pmos_3p3 w=34 l=6
+X4 VSS a_9_19 a_86_19 VSS nmos_3p3 w=17 l=6
+X5 a_19_14 a_53_38 a_42_19 VSS nmos_3p3 w=17 l=6
+X6 VSS a_161_42 QN VSS nmos_3p3 w=17 l=6
+X7 VDD a_9_19 a_86_70 VDD pmos_3p3 w=34 l=6
+X8 a_19_14 CLKN a_42_70 VDD pmos_3p3 w=34 l=6
+X9 VDD a_161_42 QN VDD pmos_3p3 w=34 l=6
+X10 VSS a_19_14 a_9_19 VSS nmos_3p3 w=17 l=6
+X11 a_53_38 CLKN VSS VSS nmos_3p3 w=17 l=6
+X12 VDD a_19_14 a_9_19 VDD pmos_3p3 w=34 l=6
+X13 a_53_38 CLKN VDD VDD pmos_3p3 w=34 l=6
+X14 a_148_19 a_53_38 a_125_19 VSS nmos_3p3 w=17 l=6
+X15 Q QN VSS VSS nmos_3p3 w=17 l=6
+X16 a_114_19 a_9_19 VSS VSS nmos_3p3 w=17 l=6
+X17 a_161_42 a_125_19 VSS VSS nmos_3p3 w=17 l=6
+X18 a_148_70 CLKN a_125_19 VDD pmos_3p3 w=34 l=6
+X19 Q QN VDD VDD pmos_3p3 w=34 l=6
+X20 a_114_70 a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X21 a_161_42 a_125_19 VDD VDD pmos_3p3 w=34 l=6
+X22 a_42_19 D VSS VSS nmos_3p3 w=17 l=6
+X23 a_125_19 CLKN a_114_19 VSS nmos_3p3 w=17 l=6
+X24 a_86_19 CLKN a_19_14 VSS nmos_3p3 w=17 l=6
+X25 VSS a_161_42 a_148_19 VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_dffsr_1 D Q QN CLK RN SN
+X0 a_172_70 a_139_41 a_82_14 VDD pmos_3p3 w=34 l=6
+X1 a_247_47 a_25_19 a_291_70 VDD pmos_3p3 w=34 l=6
+X2 VSS a_41_70 a_172_19 VSS nmos_3p3 w=17 l=6
+X3 VDD a_41_70 a_172_70 VDD pmos_3p3 w=34 l=6
+X4 VSS a_247_47 a_234_19 VSS nmos_3p3 w=17 l=6
+X5 VDD a_247_47 a_234_70 VDD pmos_3p3 w=34 l=6
+X6 a_41_70 a_25_19 VSS VSS nmos_3p3 w=17 l=6
+X7 a_128_19 D VSS VSS nmos_3p3 w=17 l=6
+X8 VSS a_247_47 QN VSS nmos_3p3 w=17 l=6
+X9 a_310_19 a_211_19 VSS VSS nmos_3p3 w=17 l=6
+X10 a_25_19 RN VSS VSS nmos_3p3 w=17 l=6
+X11 a_128_70 D VDD VDD pmos_3p3 w=34 l=6
+X12 VDD a_247_47 QN VDD pmos_3p3 w=34 l=6
+X13 VDD SN a_57_70 VDD pmos_3p3 w=34 l=6
+X14 a_200_19 a_41_70 VSS VSS nmos_3p3 w=17 l=6
+X15 a_247_47 SN a_310_19 VSS nmos_3p3 w=17 l=6
+X16 a_25_19 RN VDD VDD pmos_3p3 w=34 l=6
+X17 a_57_70 a_25_19 a_41_70 VDD pmos_3p3 w=34 l=6
+X18 a_291_70 SN VDD VDD pmos_3p3 w=34 l=6
+X19 a_211_19 CLK a_200_19 VSS nmos_3p3 w=17 l=6
+X20 a_200_70 a_41_70 VDD VDD pmos_3p3 w=34 l=6
+X21 VDD a_211_19 a_291_70 VDD pmos_3p3 w=34 l=6
+X22 a_82_14 a_139_41 a_128_19 VSS nmos_3p3 w=17 l=6
+X23 a_139_41 CLK VSS VSS nmos_3p3 w=17 l=6
+X24 a_211_19 a_139_41 a_200_70 VDD pmos_3p3 w=34 l=6
+X25 a_82_14 CLK a_128_70 VDD pmos_3p3 w=34 l=6
+X26 a_139_41 CLK VDD VDD pmos_3p3 w=34 l=6
+X27 a_77_19 SN a_41_70 VSS nmos_3p3 w=17 l=6
+X28 Q QN VSS VSS nmos_3p3 w=17 l=6
+X29 a_234_19 a_139_41 a_211_19 VSS nmos_3p3 w=17 l=6
+X30 a_172_19 CLK a_82_14 VSS nmos_3p3 w=17 l=6
+X31 Q QN VDD VDD pmos_3p3 w=34 l=6
+X32 VSS a_82_14 a_77_19 VSS nmos_3p3 w=17 l=6
+X33 a_57_70 a_82_14 VDD VDD pmos_3p3 w=34 l=6
+X34 a_234_70 CLK a_211_19 VDD pmos_3p3 w=34 l=6
+X35 VSS a_25_19 a_247_47 VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_dlat_1 D Q CLK
+X0 VDD a_10_19 a_77_70 VDD pmos_3p3 w=34 l=6
+X1 a_52_58 CLK VSS VSS nmos_3p3 w=17 l=6
+X2 VDD a_20_14 a_10_19 VDD pmos_3p3 w=34 l=6
+X3 Q a_137_19 VDD VDD pmos_3p3 w=34 l=6
+X4 a_52_58 CLK VDD VDD pmos_3p3 w=34 l=6
+X5 a_46_19 D VSS VSS nmos_3p3 w=17 l=6
+X6 a_20_14 CLK a_46_19 VSS nmos_3p3 w=17 l=6
+X7 a_20_14 a_52_58 a_43_70 VDD pmos_3p3 w=34 l=6
+X8 VSS a_10_19 a_137_19 VSS nmos_3p3 w=17 l=6
+X9 VDD a_10_19 a_137_19 VDD pmos_3p3 w=34 l=6
+X10 a_77_19 a_52_58 a_20_14 VSS nmos_3p3 w=17 l=6
+X11 a_77_70 CLK a_20_14 VDD pmos_3p3 w=34 l=6
+X12 VSS a_20_14 a_10_19 VSS nmos_3p3 w=17 l=6
+X13 Q a_137_19 VSS VSS nmos_3p3 w=17 l=6
+X14 a_43_70 D VDD VDD pmos_3p3 w=34 l=6
+X15 VSS a_10_19 a_77_19 VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_dlatn_1 D Q CLKN
+X0 VDD a_10_19 a_77_70 VDD pmos_3p3 w=34 l=6
+X1 a_52_58 CLKN VSS VSS nmos_3p3 w=17 l=6
+X2 VDD a_20_14 a_10_19 VDD pmos_3p3 w=34 l=6
+X3 Q a_137_19 VDD VDD pmos_3p3 w=34 l=6
+X4 a_52_58 CLKN VDD VDD pmos_3p3 w=34 l=6
+X5 a_46_19 D VSS VSS nmos_3p3 w=17 l=6
+X6 a_20_14 CLKN a_46_19 VSS nmos_3p3 w=17 l=6
+X7 a_20_14 a_52_58 a_43_70 VDD pmos_3p3 w=34 l=6
+X8 VSS a_10_19 a_137_19 VSS nmos_3p3 w=17 l=6
+X9 VDD a_10_19 a_137_19 VDD pmos_3p3 w=34 l=6
+X10 a_77_19 a_52_58 a_20_14 VSS nmos_3p3 w=17 l=6
+X11 a_77_70 CLKN a_20_14 VDD pmos_3p3 w=34 l=6
+X12 VSS a_20_14 a_10_19 VSS nmos_3p3 w=17 l=6
+X13 Q a_137_19 VSS VSS nmos_3p3 w=17 l=6
+X14 a_43_70 D VDD VDD pmos_3p3 w=34 l=6
+X15 VSS a_10_19 a_77_19 VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_fill_1
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_fill_2
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_fill_4
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_fill_8
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_fill_16
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_inv_1 A Y
+X0 Y A VSS VSS nmos_3p3 w=17 l=6
+X1 Y A VDD VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_inv_2 A Y
+X0 VDD A Y VDD pmos_3p3 w=34 l=6
+X1 Y A VSS VSS nmos_3p3 w=17 l=6
+X2 Y A VDD VDD pmos_3p3 w=34 l=6
+X3 VSS A Y VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_inv_4 A Y
+X0 VDD A Y VDD pmos_3p3 w=34 l=6
+X1 Y A VSS VSS nmos_3p3 w=17 l=6
+X2 Y A VSS VSS nmos_3p3 w=17 l=6
+X3 Y A VDD VDD pmos_3p3 w=34 l=6
+X4 Y A VDD VDD pmos_3p3 w=34 l=6
+X5 VSS A Y VSS nmos_3p3 w=17 l=6
+X6 VSS A Y VSS nmos_3p3 w=17 l=6
+X7 VDD A Y VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_inv_8 A Y
+X0 VDD A Y VDD pmos_3p3 w=34 l=6
+X1 VDD A Y VDD pmos_3p3 w=34 l=6
+X2 VSS A Y VSS nmos_3p3 w=17 l=6
+X3 Y A VSS VSS nmos_3p3 w=17 l=6
+X4 Y A VSS VSS nmos_3p3 w=17 l=6
+X5 VDD A Y VDD pmos_3p3 w=34 l=6
+X6 Y A VSS VSS nmos_3p3 w=17 l=6
+X7 Y A VDD VDD pmos_3p3 w=34 l=6
+X8 Y A VDD VDD pmos_3p3 w=34 l=6
+X9 Y A VDD VDD pmos_3p3 w=34 l=6
+X10 Y A VSS VSS nmos_3p3 w=17 l=6
+X11 VSS A Y VSS nmos_3p3 w=17 l=6
+X12 Y A VDD VDD pmos_3p3 w=34 l=6
+X13 VSS A Y VSS nmos_3p3 w=17 l=6
+X14 VSS A Y VSS nmos_3p3 w=17 l=6
+X15 VDD A Y VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_inv_16 A Y
+X0 VDD A Y VDD pmos_3p3 w=34 l=6
+X1 VDD A Y VDD pmos_3p3 w=34 l=6
+X2 VDD A Y VDD pmos_3p3 w=34 l=6
+X3 Y A VSS VSS nmos_3p3 w=17 l=6
+X4 Y A VDD VDD pmos_3p3 w=34 l=6
+X5 Y A VSS VSS nmos_3p3 w=17 l=6
+X6 VSS A Y VSS nmos_3p3 w=17 l=6
+X7 Y A VDD VDD pmos_3p3 w=34 l=6
+X8 VSS A Y VSS nmos_3p3 w=17 l=6
+X9 VDD A Y VDD pmos_3p3 w=34 l=6
+X10 Y A VSS VSS nmos_3p3 w=17 l=6
+X11 Y A VSS VSS nmos_3p3 w=17 l=6
+X12 VDD A Y VDD pmos_3p3 w=34 l=6
+X13 Y A VSS VSS nmos_3p3 w=17 l=6
+X14 Y A VSS VSS nmos_3p3 w=17 l=6
+X15 Y A VDD VDD pmos_3p3 w=34 l=6
+X16 Y A VDD VDD pmos_3p3 w=34 l=6
+X17 VSS A Y VSS nmos_3p3 w=17 l=6
+X18 Y A VDD VDD pmos_3p3 w=34 l=6
+X19 Y A VDD VDD pmos_3p3 w=34 l=6
+X20 VSS A Y VSS nmos_3p3 w=17 l=6
+X21 VDD A Y VDD pmos_3p3 w=34 l=6
+X22 VDD A Y VDD pmos_3p3 w=34 l=6
+X23 Y A VSS VSS nmos_3p3 w=17 l=6
+X24 Y A VSS VSS nmos_3p3 w=17 l=6
+X25 VSS A Y VSS nmos_3p3 w=17 l=6
+X26 Y A VDD VDD pmos_3p3 w=34 l=6
+X27 Y A VDD VDD pmos_3p3 w=34 l=6
+X28 VSS A Y VSS nmos_3p3 w=17 l=6
+X29 VSS A Y VSS nmos_3p3 w=17 l=6
+X30 VSS A Y VSS nmos_3p3 w=17 l=6
+X31 VDD A Y VDD pmos_3p3 w=34 l=6
+C0 Y VDD 2.104120fF
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_mux2_1 Y Sel A B
+X0 Y a_25_19 A VSS nmos_3p3 w=17 l=6
+X1 a_25_19 Sel VSS VSS nmos_3p3 w=17 l=6
+X2 Y Sel A VDD pmos_3p3 w=34 l=6
+X3 a_25_19 Sel VDD VDD pmos_3p3 w=34 l=6
+X4 B Sel Y VSS nmos_3p3 w=17 l=6
+X5 B a_25_19 Y VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_nand2_1 A B Y
+X0 VDD B Y VDD pmos_3p3 w=34 l=6
+X1 Y A VDD VDD pmos_3p3 w=34 l=6
+X2 a_28_19 A Y VSS nmos_3p3 w=17 l=6
+X3 VSS B a_28_19 VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_nor2_1 A Y B
+X0 Y B a_25_70 VDD pmos_3p3 w=34 l=6
+X1 Y A VSS VSS nmos_3p3 w=17 l=6
+X2 a_25_70 A VDD VDD pmos_3p3 w=34 l=6
+X3 VSS B Y VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_oai21_1 Y A0 A1 B
+X0 a_27_70 A0 VDD VDD pmos_3p3 w=34 l=6
+X1 Y A1 a_27_70 VDD pmos_3p3 w=34 l=6
+X2 Y B a_8_19 VSS nmos_3p3 w=17 l=6
+X3 VSS A0 a_8_19 VSS nmos_3p3 w=17 l=6
+X4 VDD B Y VDD pmos_3p3 w=34 l=6
+X5 a_8_19 A1 VSS VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_or2_1 B A Y
+X0 VDD B a_25_70 VDD pmos_3p3 w=34 l=6
+X1 Y a_9_70 VSS VSS nmos_3p3 w=17 l=6
+X2 a_9_70 A VSS VSS nmos_3p3 w=17 l=6
+X3 a_25_70 A a_9_70 VDD pmos_3p3 w=34 l=6
+X4 Y a_9_70 VDD VDD pmos_3p3 w=34 l=6
+X5 VSS B a_9_70 VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_tiehi Y
+X0 a_19_14 a_19_14 VSS VSS nmos_3p3 w=17 l=6
+X1 Y a_19_14 VDD VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_tielo Y
+X0 Y a_19_14 VSS VSS nmos_3p3 w=17 l=6
+X1 a_19_14 a_19_14 VDD VDD pmos_3p3 w=34 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_xnor2_1 A Y B
+X0 a_42_70 a_9_19 VDD VDD pmos_3p3 w=34 l=6
+X1 Y a_49_14 a_42_70 VDD pmos_3p3 w=34 l=6
+X2 a_49_14 B VDD VDD pmos_3p3 w=34 l=6
+X3 VSS A a_9_19 VSS nmos_3p3 w=17 l=6
+X4 VDD A a_9_19 VDD pmos_3p3 w=34 l=6
+X5 a_78_19 a_9_19 Y VSS nmos_3p3 w=17 l=6
+X6 VSS B a_78_19 VSS nmos_3p3 w=17 l=6
+X7 a_78_70 A Y VDD pmos_3p3 w=34 l=6
+X8 a_42_19 A VSS VSS nmos_3p3 w=17 l=6
+X9 VDD B a_78_70 VDD pmos_3p3 w=34 l=6
+X10 Y a_49_14 a_42_19 VSS nmos_3p3 w=17 l=6
+X11 a_49_14 B VSS VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
+
+* Copyright 2022 Google LLC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+
+.option scale=0.05u
+
+.subckt gf180mcu_osu_sc_9T_xor2_1 A Y B
+X0 a_42_70 A VDD VDD pmos_3p3 w=34 l=6
+X1 VSS a_52_59 a_81_19 VSS nmos_3p3 w=17 l=6
+X2 VDD B a_81_70 VDD pmos_3p3 w=34 l=6
+X3 Y B a_42_19 VSS nmos_3p3 w=17 l=6
+X4 VSS A a_9_19 VSS nmos_3p3 w=17 l=6
+X5 Y a_52_59 a_42_70 VDD pmos_3p3 w=34 l=6
+X6 VDD A a_9_19 VDD pmos_3p3 w=34 l=6
+X7 a_81_19 a_9_19 Y VSS nmos_3p3 w=17 l=6
+X8 a_52_59 B VSS VSS nmos_3p3 w=17 l=6
+X9 a_81_70 a_9_19 Y VDD pmos_3p3 w=34 l=6
+X10 a_52_59 B VDD VDD pmos_3p3 w=34 l=6
+X11 a_42_19 A VSS VSS nmos_3p3 w=17 l=6
+.ends
+
+** hspice subcircuit dictionary
+
+
+******* EOF
