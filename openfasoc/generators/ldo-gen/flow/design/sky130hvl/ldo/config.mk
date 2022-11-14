@@ -18,7 +18,7 @@ export DIE_AREA   	 	= 0 0 340 340
 export CORE_AREA   		= 15 15 325 325
 
 
-export VREG_AREA                 = 60 55 290 80
+export VREG_AREA                 = 40 40 300 60
 
 # PDN
 export PDN_TCL 			= ../blocks/$(PLATFORM)/pdn.tcl

@@ -27,32 +27,33 @@ global_connect
 set_voltage_domain -name {CORE} -power {VDD} -ground {VSS}
 set_voltage_domain -region {LDO_VREG} -power {VDD} -ground {VSS} -secondary_power VREG
 ####################################
-# standard cell grid
+# CORE - VDD,VSS
 ####################################
 define_pdn_grid -name {grid} -pins {met5} -voltage_domains {CORE}
 
 add_pdn_stripe -grid {grid} -layer {met1} -width {0.65} -pitch {5.48} -offset {0} -followpins -extend_to_core_ring
 add_pdn_stripe -grid {grid} -layer {met4} -starts_with POWER -width {1.8} -pitch {56} -offset {15} -extend_to_core_ring
-add_pdn_stripe -grid {grid} -layer {met5} -starts_with POWER -width {2.0} -pitch {92} -offset {20} -extend_to_core_ring
+add_pdn_stripe -grid {grid} -layer {met5} -starts_with POWER -width {2.0} -pitch {85} -offset {10} -extend_to_core_ring
 
 add_pdn_ring -grid {grid} -layer {met4 met5} -widths 5.0 -spacings  2.0 -core_offset 2.0
 
 add_pdn_connect -grid {grid} -layers {met1 met4}
 add_pdn_connect -grid {grid} -layers {met4 met5}
 ####################################
+# LDO_VREG - VDD,VSS,VREG
+####################################
 define_pdn_grid -name stdcell_analog1 -voltage_domains LDO_VREG -pins {met4}
 
 add_pdn_stripe -grid stdcell_analog1 -layer {met1} -starts_with GROUND -width {0.65} -pitch {5.48} -offset {10} -followpins
 add_pdn_ring -grid stdcell_analog1 -layer {met4 met3} -widths {5.0 5.0} -spacings {2.0 2.0} -core_offsets {2.0 2.0}
-add_pdn_stripe -grid stdcell_analog1 -layer met4 -width 1.8 -pitch 220.0 -offset 4 -extend_to_core_ring -nets VDD -number_of_straps 2
-add_pdn_stripe -grid stdcell_analog1 -layer met4 -width 1.8 -pitch 205.0 -offset 10 -extend_to_core_ring -nets VSS -number_of_straps 2
-add_pdn_stripe -grid stdcell_analog1 -layer met4 -width 1.8 -pitch 20.0 -offset 16  -extend_to_core_ring -nets VREG -number_of_straps 11
+add_pdn_stripe -grid stdcell_analog1 -layer met4 -width 1.8 -pitch 250.0 -offset 4 -extend_to_core_ring -nets VDD -number_of_straps 2
+add_pdn_stripe -grid stdcell_analog1 -layer met4 -width 1.8 -pitch 225.0 -offset 14 -extend_to_core_ring -nets VSS -number_of_straps 2
+add_pdn_stripe -grid stdcell_analog1 -layer met4 -width 1.8 -pitch 20.0 -offset 24  -extend_to_core_ring -nets VREG -number_of_straps 11
 
 add_pdn_connect -grid {stdcell_analog1} -layers {met4 met3}
 add_pdn_connect -grid {stdcell_analog1} -layers {met1 met4}
 add_pdn_connect -grid {stdcell_analog1} -layers {met4 met5}
 
-####################################
 ####################################
 # macro grids
 ####################################
