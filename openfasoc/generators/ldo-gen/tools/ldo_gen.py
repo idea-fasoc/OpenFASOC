@@ -360,7 +360,7 @@ if match_found == 1:
 
 else:
     for i in range(arrSize):
-        with open(blocksDir + "/ldo_domain_insts.txt", "a") as f:
+        with open(blocksDir + "/ldo_custom_net.txt", "a") as f:
             f.write("{pt_array_unit\[" + str(i) + "\]}" + " VREG")
             f.write("\n")
 # clear elements from list
