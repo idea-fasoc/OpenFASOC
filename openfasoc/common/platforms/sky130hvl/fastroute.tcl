@@ -1,4 +1,5 @@
-set_global_routing_layer_adjustment $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) 0.5
+# reduces the routing resources of all routing layers by 30%
+set_global_routing_layer_adjustment * 0.3
 
 set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)
 
