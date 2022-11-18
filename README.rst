@@ -31,7 +31,7 @@ Install all the prerequisites using `dependencies.sh` script provided in the hom
 
   1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.339)
 
-  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.241)
+  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.242)
 
   3. `Klayout <https://github.com/KLayout/klayout>`_ (version:0.27.10-1)
 
