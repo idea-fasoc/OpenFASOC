@@ -16,7 +16,7 @@ module ldoInst(
    //input        VREF              // Reference Voltage
 );
 
-   parameter integer ARRSZ = 23;
+   parameter integer ARRSZ = 10;
 
    reg             ctrl_in, mode;
    reg [ARRSZ-1:0] pt_ctrl_word;

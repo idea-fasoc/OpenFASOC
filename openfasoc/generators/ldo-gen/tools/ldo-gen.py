@@ -154,11 +154,19 @@ if args.mode == "full" or args.mode == "sim":
     print("#----------------------------------------------------------------------")
     print("# Running Simulation")
     print("#----------------------------------------------------------------------")
-    configure_simulation(
+    specialized_run_dir = configure_simulation(
         directories,
         user_specs["designName"],
         "prePEX",
         arrSize,
         pdk_path,
+        user_specs["vin"],
         jsonConfig["simTool"],
+    )
+    sp.Popen(
+        ["ngspice", "-b", "-o", "out.txt", "ldoInst_ngspice.sp"],
+        cwd=specialized_run_dir,
+    ).wait()
+    plot_copy_csv(
+        specialized_run_dir, directories["genDir"] + "/work/", user_specs["vin"]
     )

@@ -4,6 +4,8 @@ import re
 import shutil
 import sys
 import subprocess as sp
+import csv
+import matplotlib.pyplot as plt
 
 
 def matchNetlistCell(cell_instantiation):
@@ -42,6 +44,7 @@ def configure_simulation(
     simType,
     arrSize,
     pdk_path,
+    vref,
     simTool="ngspice",
     model_corner="tt",
 ):
@@ -78,10 +81,14 @@ def configure_simulation(
         spice_prep.write(spice_out)
     # prepare spice control script
     template_sim_spice = "ldoInst_" + simTool + ".sp"
-    shutil.copy(directories["simDir"] + "/templates/.spiceinit", specialized_run_dir)
+    shutil.copy(
+        directories["simDir"] + "/templates/" + template_sim_spice, specialized_run_dir
+    )
     # copy spiceinit into run dir
     if simTool == "ngspice":
-        shutil.copy(directories["simDir"] + "/templates/", specialized_run_dir)
+        shutil.copy(
+            directories["simDir"] + "/templates/.spiceinit", specialized_run_dir
+        )
     # configure sim template
     with open(specialized_run_dir + "/" + template_sim_spice, "r") as sim_spice:
         sim_template = sim_spice.read()
@@ -90,5 +97,62 @@ def configure_simulation(
     )
     sim_template = sim_template.replace("@model_corner", model_corner)
     sim_template = sim_template.replace("@design_nickname", designName)
+    sim_template = sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
     with open(specialized_run_dir + "/" + template_sim_spice, "w") as sim_spice:
         sim_spice.write(sim_template)
+    return specialized_run_dir + "/"
+
+
+def rtr_sim_data(fname):
+    """Get Id from sim output file."""
+    with open(fname, "r") as result:
+        entire_result = result.readlines()
+    rtr_val = None
+    for line in entire_result:
+        if "id" in line[0:4]:
+            for num in line.split():
+                try:
+                    rtr_val = float(num)
+                except ValueError:
+                    pass
+        if rtr_val is not None:
+            break
+    return rtr_val
+
+
+def plot_copy_csv(specialized_run_dir, workDir, VREF):
+    """Copies a csv called VREG_I.csv from specialized_run_dir to work and plots associated data."""
+    # perform file copy
+    shutil.copy(specialized_run_dir + "VREG_I.csv", workDir)
+    # read csv
+    VREG_I = specialized_run_dir + "VREG_I.csv"
+    with open(VREG_I) as sim_data:
+        sim_data_lines = csv.reader(sim_data, delimiter=" ")
+        R1_value = 3600
+        time = []
+        VREF_value = []
+        VREG_value = []
+        output_current = []
+        for row in sim_data_lines:
+            # print(row)
+            try:
+                timeval = float(row[1])
+                VREG_val_current = float(row[3])
+                VREF_value.append(float(VREF))
+            except Exception as e:
+                break
+            time.append(timeval)
+            # handle VREG calculations
+            VREG_value.append(VREG_val_current)
+            output_current.append(VREG_val_current / R1_value)
+    # plt.plot(x, y, color = 'g', linestyle = 'dashed',marker = 'o',label = "Weather Data")
+    plt.plot(time, VREF_value, label="VREF")
+    plt.plot(time, VREG_value, label="VREG")
+    plt.xlabel("time (s)")
+    plt.ylabel("Voltage (V)")
+    plt.title("DLDO Transient Simulation", fontsize=20)
+    plt.grid()
+    plt.legend()
+    plt.show()
+    plt.savefig("VREG_voltage.png")
+    # TODO: add current plot
