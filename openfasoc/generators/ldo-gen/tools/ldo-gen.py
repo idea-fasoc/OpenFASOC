@@ -34,6 +34,9 @@ parser.add_argument(
     choices=["verilog", "macro", "full", "sim"],
     help="LDO Gen operation mode. Default mode: 'verilog'.",
 )
+parser.add_argument(
+    "--arr_size_in", required=False, help="Debug option to manually set power arr size."
+)
 parser.add_argument("--clean", action="store_true", help="Clean the workspace.")
 args = parser.parse_args()
 
@@ -76,9 +79,12 @@ print("# Generating Verilog")
 print("#----------------------------------------------------------------------")
 # find number of required PT unit cells to meet spec (based on model file)
 # arrSize = polynomial_output_at_point_from_coefficients(jsonModel["Iload,max"][str(user_specs["vin"])], 1.3*user_specs["imax"])
-arrSize = polynomial_output_at_point_from_coefficients(
-    jsonModel["Iload,max"]["1.3"], 1.3 * user_specs["imax"]
-)
+if args.arr_size_in is None:
+    arrSize = polynomial_output_at_point_from_coefficients(
+        jsonModel["Iload,max"]["1.3"], 1.3 * user_specs["imax"]
+    )
+else:
+    arrSize = int(args.arr_size_in)
 # convert from float to int and round up (to meet spec, at least arrSize PT cells are required)
 arrSize = int(math.ceil(arrSize))
 print("# LDO - Power Transistor array Size = " + str(arrSize))

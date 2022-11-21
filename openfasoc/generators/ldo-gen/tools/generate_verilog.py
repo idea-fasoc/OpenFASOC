@@ -33,6 +33,8 @@ def update_custom_nets(blocksDir, arrSize):
     with open(blocksDir + "/ldo_custom_net.txt", "w") as ldo_domain_insts:
         # Always write comparator and pmos connections
         ldo_domain_insts.write("r_VREG\ncmp1 VREG\npmos_1 VREG\npmos_2 VREG\n")
+        # capacitor connections
+        ldo_domain_insts.write("cap_3 pin0\ncap_4 pin0\ncap_5 pin0\n")
         # write arrSize pt cells
         for i in range(arrSize):
             ldo_domain_insts.write("{pt_array_unit\[" + str(i) + "\]} VREG\n")
