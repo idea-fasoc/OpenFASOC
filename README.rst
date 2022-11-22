@@ -29,7 +29,7 @@ Install all the prerequisites using `dependencies.sh` script provided in the hom
 
 (Or) Please install the following tools by building the tools manually from their code base with the recommended commit ids for a stable functioning of the flow:
 
-  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.339)
+  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.341)
 
   2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.242)
 
@@ -42,7 +42,7 @@ Install all the prerequisites using `dependencies.sh` script provided in the hom
 
   5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_5614)
 
-  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.356)
+  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.357)
 
    - open_pdks is required to run drc/lvs check and the simulations
    - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
