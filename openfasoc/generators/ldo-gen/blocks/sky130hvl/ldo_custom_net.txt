@@ -13,5 +13,3 @@ cap_5 pin0
 {pt_array_unit\[5\]} VREG
 {pt_array_unit\[6\]} VREG
 {pt_array_unit\[7\]} VREG
-{pt_array_unit\[8\]} VREG
-{pt_array_unit\[9\]} VREG

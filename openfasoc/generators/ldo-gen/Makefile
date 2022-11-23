@@ -19,6 +19,8 @@ help:banner
 	@@echo "    >> This will create the macro for the thermal sensor, creates the lef/def/gds files, performs lvs/drc checks and also runs simulations."
 	@@echo "4. make clean"
 	@@echo "    >> This will clean all files generated during the run inside the run/, flow/ and work/ directories"
+	@@echo "4. make clean_sims"
+	@@echo "    >> This will clean all simulations (allows for re-running simulations)"
 	@@echo "5. make help"
 	@@echo "    >> Displays this message"
 
@@ -36,6 +38,9 @@ clean:
 	-rm -rf work
 	-rm -rf tools/*.pyc tools/__pycache__/
 	-cd flow && make nuke
+
+clean_sims:
+	cd simulations && rm -rf run
 
 code_reset:
 	git checkout ./flow

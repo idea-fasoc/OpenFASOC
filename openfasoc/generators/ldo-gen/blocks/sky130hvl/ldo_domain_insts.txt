@@ -9,5 +9,3 @@ pmos_2
 {pt_array_unit\[5\]}
 {pt_array_unit\[6\]}
 {pt_array_unit\[7\]}
-{pt_array_unit\[8\]}
-{pt_array_unit\[9\]}
