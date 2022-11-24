@@ -1,7 +1,7 @@
 * VREG and load current Transient
 
 * include from .../sky130A/libs.tech/ngspice/sky130.lib.spice
-.lib '/usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice' tt
+.lib '@model_file' @model_corner
 * include the LDO spice netlist
 .include 'ldo_sim.spice'
 
