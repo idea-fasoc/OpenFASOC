@@ -1,0 +1,499 @@
+.INCLUDE '/home/labtob/Documents/workFasoc/temp/OpenFASOC/openfasoc/common/platforms/sky130hvl/cdl/sky130_fd_sc_hvl.spice'
+.SUBCKT ldoInst clk cmp_out ctrl_out[0] ctrl_out[1] ctrl_out[2] ctrl_out[3] ctrl_out[4] ctrl_out[5] ctrl_out[6] ctrl_out[7] ctrl_out[8] mode_sel[0] mode_sel[1] reset std_ctrl_in std_pt_in_cnt[0] std_pt_in_cnt[1] std_pt_in_cnt[2] std_pt_in_cnt[3] std_pt_in_cnt[4] std_pt_in_cnt[5] std_pt_in_cnt[6] std_pt_in_cnt[7] std_pt_in_cnt[8] trim1 trim10 trim2 trim3 trim4 trim5 trim6 trim7 trim8 trim9 VDD VSS VREF VREG
+X_158_ net2 net1 VSS VSS VDD VDD _121_ sky130_fd_sc_hvl__or2_1
+XPHY_9 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_8 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+X_161_ net8 net9 _121_ VSS VSS VDD VDD _124_ sky130_fd_sc_hvl__nor3_1
+XPHY_7 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+X_163_ net7 VSS VSS VDD VDD _126_ sky130_fd_sc_hvl__inv_1
+X_164_ net10 net11 VSS VSS VDD VDD _127_ sky130_fd_sc_hvl__nor2_1
+X_165_ net12 net13 VSS VSS VDD VDD _128_ sky130_fd_sc_hvl__nor2_1
+X_166_ _126_ _127_ _128_ VSS VSS VDD VDD _129_ sky130_fd_sc_hvl__nand3_1
+X_167_ net6 _129_ VSS VSS VDD VDD _130_ sky130_fd_sc_hvl__nor2_1
+X_168_ _124_ _130_ VSS VSS VDD VDD _131_ sky130_fd_sc_hvl__nand2_1
+XPHY_6 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_5 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+X_171_ net4 net24 net2 VSS VSS VDD VDD _134_ sky130_fd_sc_hvl__mux2_1
+XPHY_4 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_3 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_2 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+X_175_ ctrl1.ctrl_word\[1\] _121_ _134_ VSS VSS VDD VDD _138_ sky130_fd_sc_hvl__and3_1
+X_176_ net3 _138_ VSS VSS VDD VDD _139_ sky130_fd_sc_hvl__nor2_1
+X_177_ net5 _131_ _139_ VSS VSS VDD VDD _000_ sky130_fd_sc_hvl__o21ai_1
+XPHY_1 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+X_179_ ctrl1.ctrl_word\[0\] ctrl1.ctrl_word\[2\] _134_ VSS VSS VDD VDD _141_ sky130_fd_sc_hvl__mux2_1
+X_180_ _121_ _141_ net3 VSS VSS VDD VDD _142_ sky130_fd_sc_hvl__a21oi_1
+X_181_ _131_ _142_ VSS VSS VDD VDD _001_ sky130_fd_sc_hvl__nand2_1
+X_182_ ctrl1.ctrl_word\[1\] _134_ VSS VSS VDD VDD _143_ sky130_fd_sc_hvl__nor2_1
+X_183_ net4 VSS VSS VDD VDD _144_ sky130_fd_sc_hvl__inv_1
+X_184_ net2 _144_ VSS VSS VDD VDD _145_ sky130_fd_sc_hvl__nor2_1
+X_185_ net2 net24 _145_ VSS VSS VDD VDD _146_ sky130_fd_sc_hvl__a21oi_1
+X_186_ ctrl1.ctrl_word\[3\] _146_ _121_ VSS VSS VDD VDD _147_ sky130_fd_sc_hvl__o21ai_1
+X_187_ net5 net6 _129_ VSS VSS VDD VDD _148_ sky130_fd_sc_hvl__a21oi_1
+X_188_ _124_ _148_ net3 VSS VSS VDD VDD _149_ sky130_fd_sc_hvl__a21oi_1
+X_189_ _143_ _147_ _149_ VSS VSS VDD VDD _002_ sky130_fd_sc_hvl__o21ai_1
+X_190_ net8 VSS VSS VDD VDD _150_ sky130_fd_sc_hvl__inv_1
+X_191_ net9 _121_ VSS VSS VDD VDD _151_ sky130_fd_sc_hvl__nor2_1
+X_192_ _151_ _127_ _128_ VSS VSS VDD VDD _152_ sky130_fd_sc_hvl__nand3_1
+X_193_ _152_ VSS VSS VDD VDD _153_ sky130_fd_sc_hvl__inv_1
+X_194_ _150_ _153_ VSS VSS VDD VDD _154_ sky130_fd_sc_hvl__nand2_1
+X_195_ ctrl1.ctrl_word\[2\] ctrl1.ctrl_word\[4\] _134_ VSS VSS VDD VDD _155_ sky130_fd_sc_hvl__mux2_1
+X_196_ _121_ _155_ net3 VSS VSS VDD VDD _156_ sky130_fd_sc_hvl__a21oi_1
+X_197_ net7 _154_ _156_ VSS VSS VDD VDD _003_ sky130_fd_sc_hvl__o21ai_1
+X_198_ ctrl1.ctrl_word\[5\] _146_ VSS VSS VDD VDD _157_ sky130_fd_sc_hvl__nor2_1
+X_199_ ctrl1.ctrl_word\[3\] _134_ _121_ VSS VSS VDD VDD _022_ sky130_fd_sc_hvl__o21ai_1
+X_200_ net8 _152_ VSS VSS VDD VDD _023_ sky130_fd_sc_hvl__nor2_1
+X_201_ net5 net6 net7 VSS VSS VDD VDD _024_ sky130_fd_sc_hvl__o21ai_1
+X_202_ _023_ _024_ net3 VSS VSS VDD VDD _025_ sky130_fd_sc_hvl__a21oi_1
+X_203_ _157_ _022_ _025_ VSS VSS VDD VDD _004_ sky130_fd_sc_hvl__o21ai_1
+X_204_ ctrl1.ctrl_word\[4\] _134_ VSS VSS VDD VDD _026_ sky130_fd_sc_hvl__nor2_1
+X_205_ ctrl1.ctrl_word\[6\] _146_ _121_ VSS VSS VDD VDD _027_ sky130_fd_sc_hvl__o21ai_1
+X_206_ net6 net7 VSS VSS VDD VDD _028_ sky130_fd_sc_hvl__nand2_1
+X_207_ _023_ _028_ net3 VSS VSS VDD VDD _029_ sky130_fd_sc_hvl__a21oi_1
+X_208_ _026_ _027_ _029_ VSS VSS VDD VDD _005_ sky130_fd_sc_hvl__o21ai_1
+X_209_ net5 net6 net7 VSS VSS VDD VDD _030_ sky130_fd_sc_hvl__and3_1
+X_210_ ctrl1.ctrl_word\[5\] ctrl1.ctrl_word\[7\] _134_ VSS VSS VDD VDD _031_ sky130_fd_sc_hvl__mux2_1
+X_211_ _121_ _031_ net3 VSS VSS VDD VDD _032_ sky130_fd_sc_hvl__a21oi_1
+X_212_ _154_ _030_ _032_ VSS VSS VDD VDD _006_ sky130_fd_sc_hvl__o21ai_1
+X_213_ ctrl1.ctrl_word\[8\] _146_ VSS VSS VDD VDD _033_ sky130_fd_sc_hvl__nor2_1
+X_214_ ctrl1.ctrl_word\[6\] _134_ _121_ VSS VSS VDD VDD _034_ sky130_fd_sc_hvl__o21ai_1
+X_215_ net3 _023_ VSS VSS VDD VDD _035_ sky130_fd_sc_hvl__nor2_1
+X_216_ _033_ _034_ _035_ VSS VSS VDD VDD _007_ sky130_fd_sc_hvl__o21ai_1
+X_217_ net5 VSS VSS VDD VDD _036_ sky130_fd_sc_hvl__inv_1
+X_218_ _036_ _130_ _150_ VSS VSS VDD VDD _037_ sky130_fd_sc_hvl__a21oi_1
+X_219_ net8 _151_ _153_ VSS VSS VDD VDD _038_ sky130_fd_sc_hvl__a21oi_1
+X_220_ ctrl1.ctrl_word\[7\] ctrl1.ctrl_word\[9\] _134_ VSS VSS VDD VDD _039_ sky130_fd_sc_hvl__mux2_1
+X_221_ _121_ _039_ net3 VSS VSS VDD VDD _040_ sky130_fd_sc_hvl__a21oi_1
+X_222_ _037_ _038_ _040_ VSS VSS VDD VDD _008_ sky130_fd_sc_hvl__o21ai_1
+X_223_ _151_ _130_ VSS VSS VDD VDD _041_ sky130_fd_sc_hvl__nand2_1
+X_224_ ctrl1.ctrl_word\[8\] ctrl1.ctrl_word\[10\] _134_ VSS VSS VDD VDD _042_ sky130_fd_sc_hvl__mux2_1
+X_225_ _121_ _042_ VSS VSS VDD VDD _043_ sky130_fd_sc_hvl__nand2_1
+X_226_ _041_ _035_ _043_ VSS VSS VDD VDD _009_ sky130_fd_sc_hvl__nand3_1
+X_227_ _150_ _148_ VSS VSS VDD VDD _044_ sky130_fd_sc_hvl__nor2_1
+X_228_ ctrl1.ctrl_word\[9\] ctrl1.ctrl_word\[11\] _134_ VSS VSS VDD VDD _045_ sky130_fd_sc_hvl__mux2_1
+X_229_ _121_ _045_ net3 VSS VSS VDD VDD _046_ sky130_fd_sc_hvl__a21oi_1
+X_230_ _038_ _044_ _046_ VSS VSS VDD VDD _010_ sky130_fd_sc_hvl__o21ai_1
+X_231_ ctrl1.ctrl_word\[10\] ctrl1.ctrl_word\[12\] _134_ VSS VSS VDD VDD _047_ sky130_fd_sc_hvl__mux2_1
+X_232_ net7 _152_ _035_ VSS VSS VDD VDD _048_ sky130_fd_sc_hvl__o21ai_1
+X_233_ _121_ _047_ _048_ VSS VSS VDD VDD _011_ sky130_fd_sc_hvl__a21o_1
+X_234_ ctrl1.ctrl_word\[11\] _134_ _121_ VSS VSS VDD VDD _049_ sky130_fd_sc_hvl__o21ai_1
+X_235_ _153_ _024_ VSS VSS VDD VDD _050_ sky130_fd_sc_hvl__nand2_1
+X_236_ _035_ _049_ _050_ VSS VSS VDD VDD _012_ sky130_fd_sc_hvl__nand3_1
+X_237_ ctrl1.ctrl_word\[0\] _146_ _121_ VSS VSS VDD VDD _051_ sky130_fd_sc_hvl__o21ai_1
+X_238_ ctrl1.ctrl_word\[12\] _146_ _051_ VSS VSS VDD VDD _052_ sky130_fd_sc_hvl__a21o_1
+XPHY_0 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+X_240_ net2 net1 VSS VSS VDD VDD _054_ sky130_fd_sc_hvl__nor2_1
+X_241_ net25 _036_ _054_ VSS VSS VDD VDD _055_ sky130_fd_sc_hvl__mux2_1
+X_242_ net3 VSS VSS VDD VDD _056_ sky130_fd_sc_hvl__inv_1
+X_243_ net25 _052_ _056_ VSS VSS VDD VDD _057_ sky130_fd_sc_hvl__o21ai_1
+X_244_ _052_ _055_ _057_ VSS VSS VDD VDD _013_ sky130_fd_sc_hvl__a21oi_1
+X_245_ ctrl1.ctrl_word\[12\] _146_ _051_ VSS VSS VDD VDD _058_ sky130_fd_sc_hvl__a21oi_1
+X_246_ net6 _054_ _058_ VSS VSS VDD VDD _059_ sky130_fd_sc_hvl__a21oi_1
+X_247_ net26 _134_ VSS VSS VDD VDD _060_ sky130_fd_sc_hvl__xnor2_1
+X_248_ net25 _060_ VSS VSS VDD VDD _061_ sky130_fd_sc_hvl__xnor2_1
+X_249_ _121_ _061_ VSS VSS VDD VDD _062_ sky130_fd_sc_hvl__nand2_1
+X_250_ net26 _052_ _056_ VSS VSS VDD VDD _063_ sky130_fd_sc_hvl__o21ai_1
+X_251_ _059_ _062_ _063_ VSS VSS VDD VDD _014_ sky130_fd_sc_hvl__a21oi_1
+X_252_ net7 _054_ _058_ VSS VSS VDD VDD _064_ sky130_fd_sc_hvl__a21oi_1
+X_253_ net25 VSS VSS VDD VDD _065_ sky130_fd_sc_hvl__inv_1
+X_254_ net26 _134_ VSS VSS VDD VDD _066_ sky130_fd_sc_hvl__nand2_1
+X_255_ _065_ _060_ _066_ VSS VSS VDD VDD _067_ sky130_fd_sc_hvl__o21ai_1
+X_256_ net27 _134_ VSS VSS VDD VDD _068_ sky130_fd_sc_hvl__or2_1
+X_257_ net27 _134_ VSS VSS VDD VDD _069_ sky130_fd_sc_hvl__nand2_1
+X_258_ _068_ _069_ VSS VSS VDD VDD _070_ sky130_fd_sc_hvl__nand2_1
+X_259_ _067_ _070_ VSS VSS VDD VDD _071_ sky130_fd_sc_hvl__xnor2_1
+X_260_ _121_ _071_ VSS VSS VDD VDD _072_ sky130_fd_sc_hvl__nand2_1
+X_261_ net27 _052_ _056_ VSS VSS VDD VDD _073_ sky130_fd_sc_hvl__o21ai_1
+X_262_ _064_ _072_ _073_ VSS VSS VDD VDD _015_ sky130_fd_sc_hvl__a21oi_1
+X_263_ net27 _134_ VSS VSS VDD VDD _074_ sky130_fd_sc_hvl__and2_1
+X_264_ _067_ _068_ _074_ VSS VSS VDD VDD _075_ sky130_fd_sc_hvl__a21oi_1
+X_265_ net28 _134_ VSS VSS VDD VDD _076_ sky130_fd_sc_hvl__xnor2_1
+X_266_ _075_ _076_ VSS VSS VDD VDD _077_ sky130_fd_sc_hvl__xnor2_1
+X_267_ _150_ _077_ _121_ VSS VSS VDD VDD _078_ sky130_fd_sc_hvl__mux2_1
+X_268_ net28 _052_ _056_ VSS VSS VDD VDD _079_ sky130_fd_sc_hvl__o21ai_1
+X_269_ _052_ _078_ _079_ VSS VSS VDD VDD _016_ sky130_fd_sc_hvl__a21oi_1
+X_270_ net29 _134_ VSS VSS VDD VDD _080_ sky130_fd_sc_hvl__nor2_1
+X_271_ net29 _134_ VSS VSS VDD VDD _081_ sky130_fd_sc_hvl__and2_1
+X_272_ _080_ _081_ VSS VSS VDD VDD _082_ sky130_fd_sc_hvl__nor2_1
+X_273_ net28 _134_ VSS VSS VDD VDD _083_ sky130_fd_sc_hvl__nand2_1
+X_274_ net28 _134_ VSS VSS VDD VDD _084_ sky130_fd_sc_hvl__nor2_1
+X_275_ _075_ _083_ _084_ VSS VSS VDD VDD _085_ sky130_fd_sc_hvl__a21oi_1
+X_276_ _082_ _085_ VSS VSS VDD VDD _086_ sky130_fd_sc_hvl__xnor2_1
+X_277_ _121_ _086_ VSS VSS VDD VDD _087_ sky130_fd_sc_hvl__nand2_1
+X_278_ _151_ _058_ VSS VSS VDD VDD _088_ sky130_fd_sc_hvl__nor2_1
+X_279_ net29 _058_ _087_ _088_ VSS VSS VDD VDD _089_ sky130_fd_sc_hvl__a22oi_1
+X_280_ net3 _089_ VSS VSS VDD VDD _017_ sky130_fd_sc_hvl__nor2_1
+X_281_ _082_ _085_ _081_ VSS VSS VDD VDD _090_ sky130_fd_sc_hvl__a21o_1
+X_282_ net30 _134_ VSS VSS VDD VDD _091_ sky130_fd_sc_hvl__or2_1
+X_283_ net30 _134_ VSS VSS VDD VDD _092_ sky130_fd_sc_hvl__nand2_1
+X_284_ _091_ _092_ VSS VSS VDD VDD _093_ sky130_fd_sc_hvl__nand2_1
+X_285_ _090_ _093_ VSS VSS VDD VDD _094_ sky130_fd_sc_hvl__xor2_1
+X_286_ net10 _121_ _052_ VSS VSS VDD VDD _095_ sky130_fd_sc_hvl__o21ai_1
+X_287_ _121_ _094_ _095_ VSS VSS VDD VDD _096_ sky130_fd_sc_hvl__a21oi_1
+X_288_ net30 _058_ _096_ VSS VSS VDD VDD _097_ sky130_fd_sc_hvl__a21oi_1
+X_289_ net3 _097_ VSS VSS VDD VDD _018_ sky130_fd_sc_hvl__nor2_1
+X_290_ net31 _134_ VSS VSS VDD VDD _098_ sky130_fd_sc_hvl__nor2_1
+X_291_ net31 _134_ VSS VSS VDD VDD _099_ sky130_fd_sc_hvl__and2_1
+X_292_ _098_ _099_ VSS VSS VDD VDD _100_ sky130_fd_sc_hvl__nor2_1
+X_293_ _092_ VSS VSS VDD VDD _101_ sky130_fd_sc_hvl__inv_1
+X_294_ _091_ _090_ _101_ VSS VSS VDD VDD _102_ sky130_fd_sc_hvl__a21o_1
+X_295_ _100_ _102_ VSS VSS VDD VDD _103_ sky130_fd_sc_hvl__xnor2_1
+X_296_ net11 _121_ _052_ VSS VSS VDD VDD _104_ sky130_fd_sc_hvl__o21ai_1
+X_297_ _121_ _103_ _104_ VSS VSS VDD VDD _105_ sky130_fd_sc_hvl__a21oi_1
+X_298_ net31 _058_ _105_ VSS VSS VDD VDD _106_ sky130_fd_sc_hvl__a21oi_1
+X_299_ net3 _106_ VSS VSS VDD VDD _019_ sky130_fd_sc_hvl__nor2_1
+X_300_ _100_ _102_ _099_ VSS VSS VDD VDD _107_ sky130_fd_sc_hvl__a21oi_1
+X_301_ net32 _134_ VSS VSS VDD VDD _108_ sky130_fd_sc_hvl__xnor2_1
+X_302_ _107_ _108_ VSS VSS VDD VDD _109_ sky130_fd_sc_hvl__xnor2_1
+X_303_ net12 _121_ _052_ VSS VSS VDD VDD _110_ sky130_fd_sc_hvl__o21ai_1
+X_304_ _121_ _109_ _110_ VSS VSS VDD VDD _111_ sky130_fd_sc_hvl__a21oi_1
+X_305_ net32 _058_ _111_ VSS VSS VDD VDD _112_ sky130_fd_sc_hvl__a21oi_1
+X_306_ net3 _112_ VSS VSS VDD VDD _020_ sky130_fd_sc_hvl__nor2_1
+X_307_ net33 _058_ VSS VSS VDD VDD _113_ sky130_fd_sc_hvl__nand2_1
+X_308_ net32 _134_ VSS VSS VDD VDD _114_ sky130_fd_sc_hvl__nand2_1
+X_309_ net32 _134_ VSS VSS VDD VDD _115_ sky130_fd_sc_hvl__nor2_1
+X_310_ _107_ _114_ _115_ VSS VSS VDD VDD _116_ sky130_fd_sc_hvl__a21oi_1
+X_311_ net33 _134_ VSS VSS VDD VDD _117_ sky130_fd_sc_hvl__xnor2_1
+X_312_ _116_ _117_ VSS VSS VDD VDD _118_ sky130_fd_sc_hvl__xnor2_1
+X_313_ net13 _121_ _052_ VSS VSS VDD VDD _119_ sky130_fd_sc_hvl__o21a_1
+X_314_ _054_ _118_ _119_ VSS VSS VDD VDD _120_ sky130_fd_sc_hvl__o21ai_1
+X_315_ _113_ _120_ net3 VSS VSS VDD VDD _021_ sky130_fd_sc_hvl__a21oi_1
+X_316_ clknet_1_0__leaf_clk _000_ VSS VSS VDD VDD ctrl1.ctrl_word\[0\] sky130_fd_sc_hvl__dfxtp_1
+X_317_ clknet_1_0__leaf_clk _001_ VSS VSS VDD VDD ctrl1.ctrl_word\[1\] sky130_fd_sc_hvl__dfxtp_1
+X_318_ clknet_1_1__leaf_clk _002_ VSS VSS VDD VDD ctrl1.ctrl_word\[2\] sky130_fd_sc_hvl__dfxtp_1
+X_319_ clknet_1_0__leaf_clk _003_ VSS VSS VDD VDD ctrl1.ctrl_word\[3\] sky130_fd_sc_hvl__dfxtp_1
+X_320_ clknet_1_0__leaf_clk _004_ VSS VSS VDD VDD ctrl1.ctrl_word\[4\] sky130_fd_sc_hvl__dfxtp_1
+X_321_ clknet_1_0__leaf_clk _005_ VSS VSS VDD VDD ctrl1.ctrl_word\[5\] sky130_fd_sc_hvl__dfxtp_1
+X_322_ clknet_1_1__leaf_clk _006_ VSS VSS VDD VDD ctrl1.ctrl_word\[6\] sky130_fd_sc_hvl__dfxtp_1
+X_323_ clknet_1_1__leaf_clk _007_ VSS VSS VDD VDD ctrl1.ctrl_word\[7\] sky130_fd_sc_hvl__dfxtp_1
+X_324_ clknet_1_1__leaf_clk _008_ VSS VSS VDD VDD ctrl1.ctrl_word\[8\] sky130_fd_sc_hvl__dfxtp_1
+X_325_ clknet_1_0__leaf_clk _009_ VSS VSS VDD VDD ctrl1.ctrl_word\[9\] sky130_fd_sc_hvl__dfxtp_1
+X_326_ clknet_1_1__leaf_clk _010_ VSS VSS VDD VDD ctrl1.ctrl_word\[10\] sky130_fd_sc_hvl__dfxtp_1
+X_327_ clknet_1_1__leaf_clk _011_ VSS VSS VDD VDD ctrl1.ctrl_word\[11\] sky130_fd_sc_hvl__dfxtp_1
+X_328_ clknet_1_0__leaf_clk _012_ VSS VSS VDD VDD ctrl1.ctrl_word\[12\] sky130_fd_sc_hvl__dfxtp_1
+X_329_ clknet_1_0__leaf_clk _013_ VSS VSS VDD VDD net25 sky130_fd_sc_hvl__dfxtp_1
+X_330_ clknet_1_0__leaf_clk _014_ VSS VSS VDD VDD net26 sky130_fd_sc_hvl__dfxtp_1
+X_331_ clknet_1_1__leaf_clk _015_ VSS VSS VDD VDD net27 sky130_fd_sc_hvl__dfxtp_1
+X_332_ clknet_1_0__leaf_clk _016_ VSS VSS VDD VDD net28 sky130_fd_sc_hvl__dfxtp_1
+X_333_ clknet_1_1__leaf_clk _017_ VSS VSS VDD VDD net29 sky130_fd_sc_hvl__dfxtp_1
+X_334_ clknet_1_1__leaf_clk _018_ VSS VSS VDD VDD net30 sky130_fd_sc_hvl__dfxtp_1
+X_335_ clknet_1_1__leaf_clk _019_ VSS VSS VDD VDD net31 sky130_fd_sc_hvl__dfxtp_1
+X_336_ clknet_1_0__leaf_clk _020_ VSS VSS VDD VDD net32 sky130_fd_sc_hvl__dfxtp_1
+X_337_ clknet_1_0__leaf_clk _021_ VSS VSS VDD VDD net33 sky130_fd_sc_hvl__dfxtp_1
+Xcap_1 VDD VSS capacitor_test_nf
+Xcap_2 VDD VSS capacitor_test_nf
+Xcap_3 VREG VSS capacitor_test_nf
+Xcap_4 VREG VSS capacitor_test_nf
+Xcap_5 VREG VSS capacitor_test_nf
+Xcmp1 VSS VDD VREF VREG clknet_1_0__leaf_clk net24 VSS VDD LDO_COMPARATOR_LATCH
+Xpmos_1 VSS VDD VSS VREG net24 VDD PMOS
+Xpmos_2 VSS VDD VSS VREG net24 VDD PMOS
+Xpt_array_unit\[0\] ctrl1.ctrl_word\[0\] VREG VSS VDD VSS VDD PT_UNIT_CELL
+Xpt_array_unit\[10\] ctrl1.ctrl_word\[10\] VREG VSS VDD VSS VDD PT_UNIT_CELL
+Xpt_array_unit\[11\] ctrl1.ctrl_word\[11\] VREG VSS VDD VSS VDD PT_UNIT_CELL
+Xpt_array_unit\[12\] ctrl1.ctrl_word\[12\] VREG VSS VDD VSS VDD PT_UNIT_CELL
+Xpt_array_unit\[1\] ctrl1.ctrl_word\[1\] VREG VSS VDD VSS VDD PT_UNIT_CELL
+Xpt_array_unit\[2\] ctrl1.ctrl_word\[2\] VREG VSS VDD VSS VDD PT_UNIT_CELL
+Xpt_array_unit\[3\] ctrl1.ctrl_word\[3\] VREG VSS VDD VSS VDD PT_UNIT_CELL
+Xpt_array_unit\[4\] ctrl1.ctrl_word\[4\] VREG VSS VDD VSS VDD PT_UNIT_CELL
+Xpt_array_unit\[5\] ctrl1.ctrl_word\[5\] VREG VSS VDD VSS VDD PT_UNIT_CELL
+Xpt_array_unit\[6\] ctrl1.ctrl_word\[6\] VREG VSS VDD VSS VDD PT_UNIT_CELL
+Xpt_array_unit\[7\] ctrl1.ctrl_word\[7\] VREG VSS VDD VSS VDD PT_UNIT_CELL
+Xpt_array_unit\[8\] ctrl1.ctrl_word\[8\] VREG VSS VDD VSS VDD PT_UNIT_CELL
+Xpt_array_unit\[9\] ctrl1.ctrl_word\[9\] VREG VSS VDD VSS VDD PT_UNIT_CELL
+*Xvref_gen net23 net15 net22 net21 net20 net19 net18 net17 net16 net14 VDD VREF VSS vref_gen_nmos_with_trim
+XPHY_10 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_11 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_12 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_13 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_14 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_15 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_16 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_17 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_18 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_19 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_20 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_21 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_22 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_23 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_24 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_25 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_26 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_27 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_28 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_29 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_30 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_31 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_32 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_33 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_34 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_35 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_36 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_37 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_38 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_39 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_40 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_41 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_42 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_43 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_44 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_45 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_46 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_47 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_48 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_49 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_50 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_51 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_52 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_53 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_54 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_55 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_56 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_57 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_58 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_59 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_60 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_61 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_62 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_63 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_64 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_65 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_66 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_67 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_68 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_69 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_70 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_71 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_72 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_73 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_74 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_75 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_76 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_77 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_78 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_79 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_80 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_81 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_82 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_83 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_84 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_85 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_86 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_87 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_88 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_89 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_90 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_91 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_92 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_93 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_94 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_95 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_96 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_97 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_98 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_99 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_100 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_101 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_102 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_103 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_104 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_105 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_106 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_107 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_108 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_109 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_110 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_111 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_112 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_113 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_114 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_115 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_116 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_117 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_118 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_119 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_120 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_121 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_122 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_123 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_124 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_125 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_126 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_127 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_128 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_129 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_130 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_131 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_132 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_133 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_134 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_135 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_136 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_137 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_138 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_139 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_140 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_141 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_142 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_143 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_144 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_145 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_146 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_147 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_148 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_149 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_150 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_151 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_152 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_153 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_154 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_155 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_156 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_157 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_158 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_159 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_160 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_161 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_162 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_163 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_164 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_165 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_166 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_167 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_168 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_169 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_170 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_171 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_172 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_173 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_174 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_175 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_176 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_177 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_178 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_179 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_180 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_181 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_182 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_183 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_184 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_185 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_186 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_187 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_188 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_189 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_190 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_191 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_192 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_193 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_194 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_195 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_196 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_197 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_198 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_199 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_200 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_201 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_202 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_203 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_204 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_205 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_206 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_207 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_208 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_209 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_210 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_211 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_212 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_213 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_214 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_215 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_216 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_217 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_218 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_219 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_220 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_221 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_222 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_223 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_224 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_225 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_226 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_227 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_228 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_229 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_230 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_231 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_232 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_233 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_234 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_235 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_236 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_237 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_238 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_239 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_240 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_241 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_242 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_243 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_244 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_245 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_246 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_247 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_248 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_249 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_250 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_251 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_252 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_253 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_254 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_255 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_256 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_257 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_258 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_259 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_260 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_261 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_262 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_263 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_264 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_265 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_266 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+XPHY_267 VSS VSS VDD VDD sky130_fd_sc_hvl__decap_4
+Xinput1 mode_sel[0] VSS VSS VDD VDD net1 sky130_fd_sc_hvl__schmittbuf_1
+Xinput2 mode_sel[1] VSS VSS VDD VDD net2 sky130_fd_sc_hvl__buf_1
+Xinput3 reset VSS VSS VDD VDD net3 sky130_fd_sc_hvl__buf_4
+Xinput4 std_ctrl_in VSS VSS VDD VDD net4 sky130_fd_sc_hvl__schmittbuf_1
+Xinput5 std_pt_in_cnt[0] VSS VSS VDD VDD net5 sky130_fd_sc_hvl__buf_1
+Xinput6 std_pt_in_cnt[1] VSS VSS VDD VDD net6 sky130_fd_sc_hvl__buf_2
+Xinput7 std_pt_in_cnt[2] VSS VSS VDD VDD net7 sky130_fd_sc_hvl__buf_2
+Xinput8 std_pt_in_cnt[3] VSS VSS VDD VDD net8 sky130_fd_sc_hvl__buf_1
+Xinput9 std_pt_in_cnt[4] VSS VSS VDD VDD net9 sky130_fd_sc_hvl__schmittbuf_1
+Xinput10 std_pt_in_cnt[5] VSS VSS VDD VDD net10 sky130_fd_sc_hvl__buf_1
+Xinput11 std_pt_in_cnt[6] VSS VSS VDD VDD net11 sky130_fd_sc_hvl__buf_1
+Xinput12 std_pt_in_cnt[7] VSS VSS VDD VDD net12 sky130_fd_sc_hvl__buf_1
+Xinput13 std_pt_in_cnt[8] VSS VSS VDD VDD net13 sky130_fd_sc_hvl__schmittbuf_1
+Xinput14 trim1 VSS VSS VDD VDD net14 sky130_fd_sc_hvl__schmittbuf_1
+Xinput15 trim10 VSS VSS VDD VDD net15 sky130_fd_sc_hvl__schmittbuf_1
+Xinput16 trim2 VSS VSS VDD VDD net16 sky130_fd_sc_hvl__schmittbuf_1
+Xinput17 trim3 VSS VSS VDD VDD net17 sky130_fd_sc_hvl__schmittbuf_1
+Xinput18 trim4 VSS VSS VDD VDD net18 sky130_fd_sc_hvl__schmittbuf_1
+Xinput19 trim5 VSS VSS VDD VDD net19 sky130_fd_sc_hvl__schmittbuf_1
+Xinput20 trim6 VSS VSS VDD VDD net20 sky130_fd_sc_hvl__schmittbuf_1
+Xinput21 trim7 VSS VSS VDD VDD net21 sky130_fd_sc_hvl__schmittbuf_1
+Xinput22 trim8 VSS VSS VDD VDD net22 sky130_fd_sc_hvl__schmittbuf_1
+Xinput23 trim9 VSS VSS VDD VDD net23 sky130_fd_sc_hvl__schmittbuf_1
+Xoutput24 net24 VSS VSS VDD VDD cmp_out sky130_fd_sc_hvl__schmittbuf_1
+Xoutput25 net25 VSS VSS VDD VDD ctrl_out[0] sky130_fd_sc_hvl__schmittbuf_1
+Xoutput26 net26 VSS VSS VDD VDD ctrl_out[1] sky130_fd_sc_hvl__schmittbuf_1
+Xoutput27 net27 VSS VSS VDD VDD ctrl_out[2] sky130_fd_sc_hvl__schmittbuf_1
+Xoutput28 net28 VSS VSS VDD VDD ctrl_out[3] sky130_fd_sc_hvl__schmittbuf_1
+Xoutput29 net29 VSS VSS VDD VDD ctrl_out[4] sky130_fd_sc_hvl__schmittbuf_1
+Xoutput30 net30 VSS VSS VDD VDD ctrl_out[5] sky130_fd_sc_hvl__schmittbuf_1
+Xoutput31 net31 VSS VSS VDD VDD ctrl_out[6] sky130_fd_sc_hvl__schmittbuf_1
+Xoutput32 net32 VSS VSS VDD VDD ctrl_out[7] sky130_fd_sc_hvl__schmittbuf_1
+Xoutput33 net33 VSS VSS VDD VDD ctrl_out[8] sky130_fd_sc_hvl__schmittbuf_1
+Xclkbuf_0_clk clk VSS VSS VDD VDD clknet_0_clk sky130_fd_sc_hvl__buf_1
+Xclkbuf_1_0__f_clk clknet_0_clk VSS VSS VDD VDD clknet_1_0__leaf_clk sky130_fd_sc_hvl__buf_1
+Xclkbuf_1_1__f_clk clknet_0_clk VSS VSS VDD VDD clknet_1_1__leaf_clk sky130_fd_sc_hvl__buf_1
+.ENDS ldoInst

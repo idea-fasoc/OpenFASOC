@@ -162,16 +162,16 @@ if args.mode == "full" or args.mode == "sim":
         user_specs["vin"],
         jsonConfig["simTool"],
     )
-    # run max current solve
+    #run max current solve
     max_load = binary_search_current_at_acceptible_error(
         specialized_run_dir, user_specs["vin"]
     )
-    print("Max load current = " + str(max_load) + " Amps")
-    # run functional simulation
+    print("Max load current = " + str(max_load) + " Amps\n\n")
+    #run functional simulation
     sp.Popen(
         ["ngspice", "-b", "-o", "out.txt", "ldoInst_ngspice.sp"],
         cwd=specialized_run_dir,
     ).wait()
-    plot_copy_csv(
-        specialized_run_dir, directories["genDir"] + "/work/", user_specs["vin"]
-    )
+    save_sim_plot(specialized_run_dir,directories["genDir"]+"/work/")
+    
+    

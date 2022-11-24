@@ -1,0 +1,17 @@
+
+Note: Compatibility modes selected: hs a
+
+Warning: m=xx on .subckt line will override multiplier m hierarchy!
+
+
+Circuit: * include from .../sky130a/libs.tech/ngspice/sky130.lib.spice
+
+option SCALE: Scale is set to 1e-06 for instance and model parameters
+Doing analysis at TEMP = 25.000000 and TNOM = 27.000000
+
+Using transient initial conditions
+
+No. of Data Rows : 64
+vreg                =  1.799874e+00
+id                  =  1.311143e-03
+Note: No ".plot", ".print", or ".fourier" lines; no simulations run

@@ -6,7 +6,7 @@ import sys
 import subprocess as sp
 import csv
 import matplotlib.pyplot as plt
-
+from PIL import Image
 
 # ------------------------------------------------------------------------------
 # Prepare simulation directory and model spice
@@ -277,6 +277,14 @@ def binary_search_current_at_acceptible_error(specialized_run_dir, VREF):
 # ------------------------------------------------------------------------------
 
 
+def save_sim_plot(specialized_run_dir,workDir):
+	"""Copy postscript sim outputs and convert into PNG."""
+	pscurrent=Image.open(specialized_run_dir+"currentplot.ps")
+	pscurrent.save(workDir+"/currentplot.png")
+	psvreg=Image.open(specialized_run_dir+"vregplot.ps")
+	psvreg.save(workDir+"/vregplot.png")
+
+
 def plot_copy_csv(specialized_run_dir, workDir, VREF):
     """Copies a csv called VREG_I.csv from specialized_run_dir to work and plots associated data."""
     # perform file copy
@@ -313,3 +321,5 @@ def plot_copy_csv(specialized_run_dir, workDir, VREF):
     plt.show()
     plt.savefig("VREG_voltage.png")
     # TODO: add current plot
+
+

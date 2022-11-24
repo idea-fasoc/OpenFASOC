@@ -1,0 +1,14 @@
+******
+** ngspice-37 : Circuit level simulation program
+** The U. C. Berkeley CAD Group
+** Copyright 1985-1994, Regents of the University of California.
+** Copyright 2001-2022, The ngspice team.
+** Please get your ngspice manual from http://ngspice.sourceforge.net/docs.html
+** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html
+** Creation Date: Fri May 20 00:00:00 UTC 2022
+******
+
+Batch mode
+
+Comments and warnings go to log-file: load_result.txt
+

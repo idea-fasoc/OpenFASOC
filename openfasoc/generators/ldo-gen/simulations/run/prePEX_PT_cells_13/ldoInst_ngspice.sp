@@ -16,7 +16,7 @@ xi1 clk cmp_out ctrl_out[0] ctrl_out[1] ctrl_out[2] ctrl_out[3]
 *Controls
 V0 VSS 0 dc 0
 V1 VDD VSS pwl 0 0 2n 0 2.0001n 3.3
-V2 VREF VSS pwl 0 0 2n 0 2.0001n @VALUE_REF_VOLTAGE
+V2 VREF VSS pwl 0 0 2n 0 2.0001n 1.8
 V3 clk  VSS pulse 0 3.3 0 1p 1p 0.5u 1u
 V4 reset VSS pwl 0 3.3 5n 0
 V5 mode_sel[0] VSS 3.3
