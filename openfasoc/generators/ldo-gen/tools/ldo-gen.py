@@ -78,10 +78,9 @@ print("#----------------------------------------------------------------------")
 print("# Generating Verilog")
 print("#----------------------------------------------------------------------")
 # find number of required PT unit cells to meet spec (based on model file)
-# arrSize = polynomial_output_at_point_from_coefficients(jsonModel["Iload,max"][str(user_specs["vin"])], 1.3*user_specs["imax"])
 if args.arr_size_in is None:
     arrSize = polynomial_output_at_point_from_coefficients(
-        jsonModel["Iload,max"]["1.3"], 1.3 * user_specs["imax"]
+        jsonModel["Iload,max"][str(user_specs["vin"])], 1.3 * user_specs["imax"]
     )
 else:
     arrSize = int(args.arr_size_in)

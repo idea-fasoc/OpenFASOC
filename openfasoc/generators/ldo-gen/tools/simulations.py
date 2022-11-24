@@ -207,7 +207,7 @@ def rtr_sim_data(fname):
 
 def run_power_array_sim(specialized_run_dir, output_resistance, simTool="ngspice"):
     """Specializes sim template and solves for power array value."""
-    if simTool is not "ngspice":
+    if simTool != "ngspice":
         print(
             "\nFunction run_power_array_sim only support sim tool ngspice.\nExiting now.\n"
         )
