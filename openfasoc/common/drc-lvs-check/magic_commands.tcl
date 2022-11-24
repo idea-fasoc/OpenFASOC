@@ -8,6 +8,13 @@
 #   tech load $::env(TECH)
 # }
 
+# gds flatglob commands removes the drc errors caused by hierarchy that magic can't process.
+# gds faltglob *capacitor_test_nf* is specific to ldo-gen
+gds flatglob *$$*
+gds flatglob *VIA*
+gds flatglob *CDNS*
+gds flatglob *capacitor_test_nf*
+
 gds read $::env(RESULTS_DIR)/6_final.gds
 proc custom_drc_save_report {{cellname ""} {outfile ""}} {
 
