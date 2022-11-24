@@ -73,10 +73,10 @@ if args.mode != "verilog":
     print('Simulation Directory - "' + directories["simDir"] + '"')
 print('LDO Instance Name - "' + user_specs["designName"] + '"')
 
-
-print("#----------------------------------------------------------------------")
-print("# Generating Verilog")
-print("#----------------------------------------------------------------------")
+if args.mode != "sim":
+    print("#----------------------------------------------------------------------")
+    print("# Generating Verilog")
+    print("#----------------------------------------------------------------------")
 # find number of required PT unit cells to meet spec (based on model file)
 if args.arr_size_in is None:
     arrSize = polynomial_output_at_point_from_coefficients(
@@ -103,10 +103,11 @@ update_place_density(directories["flowDir"], arrSize)
 # Generate the Behavioral Verilog
 generate_LDO_verilog(directories, args.outputDir, user_specs["designName"], arrSize)
 generate_controller_verilog(directories, args.outputDir, arrSize)
-print("# LDO - Behavioural Verilog Generated")
-print("#----------------------------------------------------------------------")
-print("# Verilog Generated")
-print("#----------------------------------------------------------------------")
+if args.mode != "sim":
+    print("# LDO - Behavioural Verilog Generated")
+    print("#----------------------------------------------------------------------")
+    print("# Verilog Generated")
+    print("#----------------------------------------------------------------------")
 
 
 # ------------------------------------------------------------------------------
@@ -162,16 +163,14 @@ if args.mode == "full" or args.mode == "sim":
         user_specs["vin"],
         jsonConfig["simTool"],
     )
-    #run max current solve
+    # run max current solve
     max_load = binary_search_current_at_acceptible_error(
         specialized_run_dir, user_specs["vin"]
     )
     print("Max load current = " + str(max_load) + " Amps\n\n")
-    #run functional simulation
+    # run functional simulation
     sp.Popen(
         ["ngspice", "-b", "-o", "out.txt", "ldoInst_ngspice.sp"],
         cwd=specialized_run_dir,
     ).wait()
-    save_sim_plot(specialized_run_dir,directories["genDir"]+"/work/")
-    
-    
+    save_sim_plot(specialized_run_dir, directories["genDir"] + "/work/")
