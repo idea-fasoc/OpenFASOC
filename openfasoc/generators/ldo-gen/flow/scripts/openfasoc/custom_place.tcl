@@ -3,4 +3,4 @@ set block [ord::get_db_block]
 set inst [$block findInst cmp1]
 set instName [$inst getName]
 
-place_cell -inst_name $instName -orient MY -origin [list 170 40.700] -status PLACED
+place_cell -inst_name $instName -orient MY -origin [list 151.680 40.700] -status FIRM
