@@ -8,6 +8,9 @@ set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
+# Place cmp1 correctly
+source $::env(SCRIPTS_DIR)/openfasoc/custom_place.tcl
+
 detailed_placement
 
 if {[info exists ::env(ENABLE_DPO)] && $::env(ENABLE_DPO)} {
