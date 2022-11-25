@@ -6,6 +6,7 @@ import sys
 import subprocess as sp
 import csv
 import matplotlib.pyplot as plt
+from cairosvg import svg2png
 from PIL import Image
 
 # ------------------------------------------------------------------------------
