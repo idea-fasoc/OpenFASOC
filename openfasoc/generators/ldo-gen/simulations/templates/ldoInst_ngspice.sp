@@ -51,6 +51,7 @@ meas TRAN id find I(R1) AT=300u
 wrdata VREG_I.csv VREG
 set hcopydev
 set hcopydevtype=svg
+set hcopypscolor=1
 hardcopy vregPlot.ps v(VREG)
 hardcopy currentPlot.ps I(R1)
 .endc
