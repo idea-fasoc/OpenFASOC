@@ -277,12 +277,16 @@ def binary_search_current_at_acceptible_error(specialized_run_dir, VREF):
 # ------------------------------------------------------------------------------
 
 
-def save_sim_plot(specialized_run_dir,workDir):
-	"""Copy postscript sim outputs and convert into PNG."""
-	pscurrent=Image.open(specialized_run_dir+"currentplot.ps")
-	pscurrent.save(workDir+"/currentplot.png")
-	psvreg=Image.open(specialized_run_dir+"vregplot.ps")
-	psvreg.save(workDir+"/vregplot.png")
+def save_sim_plot(specialized_run_dir, workDir):
+    """Copy postscript sim outputs and convert into PNG."""
+    # 	pscurrent=Image.open(specialized_run_dir+"currentplot.ps")
+    # 	pscurrent.save(workDir+"/currentplot.png")
+    # 	psvreg=Image.open(specialized_run_dir+"vregplot.ps")
+    # 	psvreg.save(workDir+"/vregplot.png")
+    svg2png(
+        url=specialized_run_dir + "currentplot.ps", write_to=workDir + "currentplot.png"
+    )
+    svg2png(url=specialized_run_dir + "vregplot.ps", write_to=workDir + "vregplot.png")
 
 
 def plot_copy_csv(specialized_run_dir, workDir, VREF):
@@ -321,5 +325,3 @@ def plot_copy_csv(specialized_run_dir, workDir, VREF):
     plt.show()
     plt.savefig("VREG_voltage.png")
     # TODO: add current plot
-
-

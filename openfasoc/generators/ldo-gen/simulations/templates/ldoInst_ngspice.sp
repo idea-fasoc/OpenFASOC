@@ -49,6 +49,8 @@ meas TRAN id find I(R1) AT=300u
 * setting vec names prints names of columns
 * set wr_vecnames
 wrdata VREG_I.csv VREG
+set hcopydev
+set hcopydevtype=svg
 hardcopy vregPlot.ps v(VREG)
 hardcopy currentPlot.ps I(R1)
 .endc
