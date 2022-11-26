@@ -40,14 +40,6 @@ def check_args(args):
     except OSError:
         print("Unable to create the output directory")
         sys.exit(1)
-    # create verilog dir in flow (not neccessary...)
-
-
-# 	try:
-# 		os.mkdir(flowDir + "/src")
-# 	except OSError:
-# 		print('Unable to create the "src" directory in "flow" folder')
-# 		sys.exit(1)
 
 
 def process_supported_inputs(args, directories):
