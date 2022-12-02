@@ -2,14 +2,14 @@ module LDO_CONTROLLER(
    clk, reset, mode, ctrl_in,
    std_pt_in_cnt, ctrl_word, ctrl_word_cnt);
 
-   parameter integer ARRSZ = 23;
+   parameter integer ARRSZ = 13;
 
    input                        clk, reset, ctrl_in, mode;
    input      [8:0]             std_pt_in_cnt;
    output reg [8:0]             ctrl_word_cnt;
    output reg [ARRSZ-1:0]       ctrl_word;
 
-   wire [ARRSZ-1:0] ctrl_rst = 23'h7fffff;
+   wire [ARRSZ-1:0] ctrl_rst = 13'h1fff;
 
    always @(posedge clk) begin
       if (reset) begin
