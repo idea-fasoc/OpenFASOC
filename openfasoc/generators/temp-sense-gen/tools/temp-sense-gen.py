@@ -46,7 +46,7 @@ except ValueError as e:
 
 print("PDK_ROOT value: {}".format(os.getenv("PDK_ROOT")))
 
-# TODO: GHA/GCP/Whatever check
+
 pdk = None
 if os.getenv("PDK_ROOT") is not None:
     pdk = os.path.join(os.environ["PDK_ROOT"], "sky130A")
@@ -203,8 +203,14 @@ print("# LVS finished")
 print("#----------------------------------------------------------------------")
 
 if os.path.isdir(args.outputDir):
-    shutil.rmtree(genDir + args.outputDir)
-os.mkdir(genDir + args.outputDir)
+    #shutil.rmtree(genDir + args.outputDir)
+    pass
+if not args.outputDir.startswith("/"):
+    os.mkdir(genDir + args.outputDir)
+    outputDir=genDir + args.outputDir
+else:
+    os.mkdir(args.outputDir)
+    outputDir=args.outputDir
 
 #  print("genDir + args.outputDir: {}".format(genDir + args.outputDir))
 #  print("flowDir: {}".format(flowDir))
@@ -214,35 +220,35 @@ os.mkdir(genDir + args.outputDir)
 
 shutil.copyfile(
     flowDir + "results/" + args.platform + "/tempsense/6_final.gds",
-    genDir + args.outputDir + "/" + designName + ".gds",
+    outputDir + "/" + designName + ".gds",
 )
 shutil.copyfile(
     flowDir + "results/" + args.platform + "/tempsense/6_final.def",
-    genDir + args.outputDir + "/" + designName + ".def",
+    outputDir + "/" + designName + ".def",
 )
 shutil.copyfile(
     flowDir + "results/" + args.platform + "/tempsense/6_final.v",
-    genDir + args.outputDir + "/" + designName + ".v",
+    outputDir + "/" + designName + ".v",
 )
 shutil.copyfile(
     flowDir + "results/" + args.platform + "/tempsense/6_1_fill.sdc",
-    genDir + args.outputDir + "/" + designName + ".sdc",
+    outputDir + "/" + designName + ".sdc",
 )
 shutil.copyfile(
     objDir + "netgen_lvs/spice/" + designName + ".spice",
-    genDir + args.outputDir + "/" + designName + ".spice",
+    outputDir + "/" + designName + ".spice",
 )
 shutil.copyfile(
     objDir + "netgen_lvs/spice/" + designName + "_pex.spice",
-    genDir + args.outputDir + "/" + designName + "_pex.spice",
+    outputDir + "/" + designName + "_pex.spice",
 )
 shutil.copyfile(
     flowDir + "reports/" + args.platform + "/tempsense/6_final_drc.rpt",
-    genDir + args.outputDir + "/6_final_drc.rpt",
+    outputDir + "/6_final_drc.rpt",
 )
 shutil.copyfile(
     flowDir + "reports/" + args.platform + "/tempsense/6_final_lvs.rpt",
-    genDir + args.outputDir + "/6_final_lvs.rpt",
+    outputDir + "/6_final_lvs.rpt",
 )
 
 
@@ -250,15 +256,12 @@ print("#----------------------------------------------------------------------")
 print("# Macro Generated")
 print("#----------------------------------------------------------------------")
 print()
-if args.mode == "macro":
-    print("Exiting tool....")
-    # sys.exit(1)
-    exit()
+
 
 print("#----------------------------------------------------------------------")
-print("# Run Simulations")
+print("# Generating spice netlists for the macro")
 print("#----------------------------------------------------------------------")
-print()
+
 stage_var = [int(ninv) - 1]
 header_var = [int(nhead)]
 
@@ -273,7 +276,6 @@ for i in range(0, temp_points + 1):
 
 # run PEX and/or prePEX simulations based on the command line flags
 if args.prepex:
-    print("running pre PEX simulations")
     prepexDir = generate_runs(
         genDir,
         designName,
@@ -282,19 +284,21 @@ if args.prepex:
         temp_list,
         jsonConfig,
         args.platform,
+        args.mode,
         pdk,
         spiceDir=args.outputDir,
         prePEX=True,
     )
-    if os.path.isfile(prepexDir + "all_result"):
-        shutil.copyfile(
-            prepexDir + "all_result", genDir + args.outputDir + "/prePEX_sim_result"
-        )
-    else:
-        print(prepexDir + "prePEX all_result file is not generated successfully")
+    if args.mode == "full":
+        if os.path.isfile(prepexDir + "all_result"):
+            shutil.copyfile(
+                prepexDir + "all_result", genDir + args.outputDir + "/prePEX_sim_result"
+            )
+        else:
+            print(prepexDir + "prePEX all_result file is not generated successfully")
+            sys.exit(1)
 
 if args.pex:
-    print("running PEX simulations")
     pexDir = generate_runs(
         genDir,
         designName,
@@ -303,19 +307,27 @@ if args.pex:
         temp_list,
         jsonConfig,
         args.platform,
+        args.mode,
         pdk,
         spiceDir=args.outputDir,
         prePEX=False,
     )
-    if os.path.isfile(pexDir + "all_result"):
-        shutil.copyfile(
-            pexDir + "all_result", genDir + args.outputDir + "/PEX_sim_result"
-        )
-    else:
-        print(pexDir + "PEX all_result file is not generated successfully")
 
-print("#----------------------------------------------------------------------")
-print("# Simulation output Generated")
-print("#----------------------------------------------------------------------")
+    if args.mode == "full":
+        if os.path.isfile(pexDir + "all_result"):
+            shutil.copyfile(
+                pexDir + "all_result", genDir + args.outputDir + "/PEX_sim_result"
+            )
+        else:
+            print(pexDir + "PEX all_result file is not generated successfully")
+            sys.exit(1)
+
+
+if args.mode == "full":
+    print("#----------------------------------------------------------------------")
+    print("# Simulation output Generated")
+    print("#----------------------------------------------------------------------")
+
+
 print("Exiting tool....")
 exit()
