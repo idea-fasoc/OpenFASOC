@@ -4,7 +4,7 @@
 
 sim_pex=
 sim=
-inv= 
+inv=
 head=
 
 ifneq ("$(sim)","")
@@ -45,7 +45,7 @@ sky130hd_temp_verilog:
 	python3 tools/temp-sense-gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode verilog
 
 sky130hd_temp:
-	@python3 tools/temp-sense-gen.py --specfile test.json --outputDir ./work $(inv) $(ninv) $(head) $(nhead) --prepex $(sim_pex) --platform sky130hd --mode macro 
+	@python3 tools/temp-sense-gen.py --specfile test.json --outputDir ./work $(inv) $(ninv) $(head) $(nhead) --prepex $(sim_pex) --platform sky130hd --mode macro
 	@python3 tools/parse_rpt.py
 	@tools/verify_op.sh
 	@@echo "=================================================================================="
@@ -81,4 +81,3 @@ banner:
 	@@echo "  \___/|_|    |_____|_| \_|_| /_/   \_\|____/ \___/ \____|"
 	@@echo ""
 	@@echo "==============================================================="
-

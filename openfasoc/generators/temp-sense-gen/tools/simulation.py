@@ -120,18 +120,29 @@ def generate_runs(
             w_file.write(wfdata)
             w_file.close()
 
-
         # runs simulation only if mode is set to "full"
         if mode == "full":
-            print("#----------------------------------------------------------------------")
+            print(
+                "#----------------------------------------------------------------------"
+            )
             print("# Running {0} Simulations".format("prePEX" if prePEX else "PEX"))
-            print("#----------------------------------------------------------------------")
+            print(
+                "#----------------------------------------------------------------------"
+            )
 
             run_simulations(
-                runDir, designName, tempList, jsonConfig["simTool"], jsonConfig["simMode"]
+                runDir,
+                designName,
+                tempList,
+                jsonConfig["simTool"],
+                jsonConfig["simMode"],
             )
         else:
-            print("spice netlists created for different temperatures to run the {0} simulations".format("prePEX" if prePEX else "PEX"))
+            print(
+                "spice netlists created for different temperatures to run the {0} simulations".format(
+                    "prePEX" if prePEX else "PEX"
+                )
+            )
 
         return runDir
 

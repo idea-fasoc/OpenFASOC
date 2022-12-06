@@ -203,14 +203,14 @@ print("# LVS finished")
 print("#----------------------------------------------------------------------")
 
 if os.path.isdir(args.outputDir):
-    #shutil.rmtree(genDir + args.outputDir)
+    # shutil.rmtree(genDir + args.outputDir)
     pass
 if not args.outputDir.startswith("/"):
     os.mkdir(genDir + args.outputDir)
-    outputDir=genDir + args.outputDir
+    outputDir = genDir + args.outputDir
 else:
     os.mkdir(args.outputDir)
-    outputDir=args.outputDir
+    outputDir = args.outputDir
 
 #  print("genDir + args.outputDir: {}".format(genDir + args.outputDir))
 #  print("flowDir: {}".format(flowDir))
