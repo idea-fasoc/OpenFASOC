@@ -1,4 +1,4 @@
-name: sky130hd_temp-sense-generator
+name: sky130hvl_ldo-generator
 
 on:
   push:
@@ -8,15 +8,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  sky130hd_temp:
+  sky130hd_ldoGen:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Test sky130hd Temp sensor
+      - name: Test sky130hvl LDO
         env:
-                IMAGE_NAME: saicharan0112/openfasoc_ci:klayout_deb
+                IMAGE_NAME: msaligane/openfasoc:stable
         run: |
           cd $GITHUB_WORKSPACE
           touch file.log
@@ -26,7 +26,7 @@ jobs:
             $IMAGE_NAME\
             bash -c "\
               pip3 install -r requirements.txt &&\
-              cd ./openfasoc/generators/temp-sense-gen &&\
-              make sky130hd_temp\
+              cd ./openfasoc/generators/ldo-gen &&\
+              make sky130hvl_ldo\
             ">> file.log
             if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi

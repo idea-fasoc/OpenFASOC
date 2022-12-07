@@ -12,19 +12,29 @@ This project is led by a team of researchers at the University of Michigan is in
 
 
 * **Temperature sensor -**
-    .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/temp_sense_sky130hd.yml/badge.svg
-        :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/temp_sense_sky130hd.yml
+    .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/tempSense_sky130hd.yml/badge.svg
+        :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/tempSense_sky130hd.yml
 
-    .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ci.yml/badge.svg
-        :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ci.yml
+    .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/verify_latest_tools_versions.yml/badge.svg
+        :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/verify_latest_tools_versions.yml
 
     .. image:: https://colab.research.google.com/assets/colab-badge.svg
         :target: https://colab.research.google.com/github/idea-fasoc/OpenFASOC/blob/main/docs/source/notebooks/temp-sense-gen/temp_sense_genCollab.ipynb
 
+* **LDO -**
+    .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ldo_sky130hvl/badge.svg
+        :target: https://github.com/saicharan0112/OpenFASOC/actions/workflows/ldo_sky130hvl.yml
+
+    .. .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/verify_latest_tools_versions.yml/badge.svg
+    ..     :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/verify_latest_tools_versions.yml
+
+    .. image:: https://colab.research.google.com/assets/colab-badge.svg
+        :target: https://colab.research.google.com/github/alibillalhammoud/OpenFASOC/blob/main/docs/source/notebooks/ldo-gen/LDO_notebook.ipynb
+
 Prerequisites
 ****************
 
-Install all the prerequisites using `dependencies.sh` script provided in the home location of this project (where this readme.rst file is found). Supports CentOS7 and Ubuntu20.
+Install all the prerequisites using `dependencies.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7 and Ubuntu20.
 
 
 (Or) Please install the following tools by building the tools manually from their code base with the recommended commit ids for a stable functioning of the flow:

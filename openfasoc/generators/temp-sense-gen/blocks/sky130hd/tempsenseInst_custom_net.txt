@@ -1,4 +1,2 @@
 r_VIN
 temp_analog_1.a_header_0 VIN
-temp_analog_1.a_header_1 VIN
-temp_analog_1.a_header_2 VIN
