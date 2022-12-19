@@ -50,8 +50,8 @@ c0 lc_out 0 1f
 
 .TRAN 10n @sim_end
 
-.meas   tran period TRIG when v(lc_out)=1.0 td=10p rise=5
-+           TARG when v(lc_out)=1.0 td=10p rise=6
+.meas   tran period TRIG when v(lc_out)=1.0 td=10p rise=2
++           TARG when v(lc_out)=1.0 td=10p rise=3
 
 *.meas	tran d0 find v(xasync_counter_0/div_s<0>) when v(done)=0.6 rise=last
 *.meas	tran d1 find v(xasync_counter_0/div_s<1>) when v(done)=0.6 rise=last
