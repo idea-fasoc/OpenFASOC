@@ -118,7 +118,7 @@ def generate_runs(
             wfdata = re.sub("@temp", str(temp), simTestbench)
             wfdata = re.sub("@design_nickname", designName, wfdata)
             if jsonConfig["simTool"] == "xyce":
-                sim_end=round(math.pow(10,-3)*800/math.exp(0.04*temp),4)
+                sim_end = round(math.pow(10, -3) * 800 / math.exp(0.04 * temp), 4)
                 wfdata = re.sub("@sim_end", str(sim_end), wfdata)
             w_file.write(wfdata)
             w_file.close()
@@ -138,7 +138,7 @@ def generate_runs(
                 designName,
                 tempList,
                 jsonConfig["simTool"],
-                jsonConfig["simMode"]
+                jsonConfig["simMode"],
             )
         else:
             print(
@@ -346,7 +346,6 @@ def run_simulations(runDir, designName, temp_list, simTool, simMode) -> None:
 
         p = sp.Popen(["python", "result_error.py", "--mode", simMode], cwd=runDir)
         p.wait()
-
 
     elif simTool == "xyce":
         with open(runDir + "run_sim", "w") as wf:
