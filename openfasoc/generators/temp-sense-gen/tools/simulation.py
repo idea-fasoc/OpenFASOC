@@ -1,6 +1,6 @@
 import glob
 import os
-import re
+import re, math
 import shutil
 import subprocess as sp
 import sys
@@ -117,6 +117,9 @@ def generate_runs(
             w_file = open(runDir + "/%s_sim_%d.sp" % (designName, temp), "w")
             wfdata = re.sub("@temp", str(temp), simTestbench)
             wfdata = re.sub("@design_nickname", designName, wfdata)
+            if jsonConfig["simTool"] == "xyce":
+                sim_end = round(math.pow(10, -3) * 800 / math.exp(0.04 * temp), 4)
+                wfdata = re.sub("@sim_end", str(sim_end), wfdata)
             w_file.write(wfdata)
             w_file.close()
 
@@ -336,6 +339,63 @@ def run_simulations(runDir, designName, temp_list, simTool, simMode) -> None:
                     "ngspice",
                     "--inputFile",
                     "%s_sim_%d.log" % (designName, temp),
+                ],
+                cwd=runDir,
+            )
+            p.wait()
+
+        p = sp.Popen(["python", "result_error.py", "--mode", simMode], cwd=runDir)
+        p.wait()
+
+    elif simTool == "xyce":
+        with open(runDir + "run_sim", "w") as wf:
+            for temp in temp_list:
+                wf.write(
+                    "xyce -l %s_sim_%d.log -o %s_sim_%d %s_sim_%d.sp\n"
+                    % (designName, temp, designName, temp, designName, temp)
+                )
+
+        with open(runDir + "cal_result", "w") as wf:
+            for temp in temp_list:
+                wf.write(
+                    "python result.py --tool xyce --inputFile %s_sim_%d.mt0\n"
+                    % (designName, temp)
+                )
+            wf.write("python result_error.py --mode %s\n" % (simMode))
+
+        processes = []
+        for temp in temp_list:
+            p = sp.Popen(
+                [
+                    "Xyce",
+                    "-l",
+                    "%s_sim_%d.log" % (designName, temp),
+                    "-o",
+                    "%s_sim_%d" % (designName, temp),
+                    "%s_sim_%d.sp" % (designName, temp),
+                ],
+                cwd=runDir,
+            )
+            processes.append(p)
+
+        for p in processes:
+            p.wait()
+
+        for temp in temp_list:
+            if not os.path.isfile(runDir + "%s_sim_%d.mt0" % (designName, temp)):
+                print(
+                    "simulation output: %s_sim_%d.mt0 is not generated"
+                    % (designName, temp)
+                )
+                sys.exit(1)
+            p = sp.Popen(
+                [
+                    "python",
+                    "result.py",
+                    "--tool",
+                    "xyce",
+                    "--inputFile",
+                    "%s_sim_%d.mt0" % (designName, temp),
                 ],
                 cwd=runDir,
             )

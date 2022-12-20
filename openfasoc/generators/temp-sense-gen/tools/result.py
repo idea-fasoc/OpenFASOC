@@ -20,13 +20,13 @@ with open(file_name, "r") as rf:
     if temp_value_re:
         temp_value = temp_value_re.group(1)
 
-    period_pattern = "period\s*=\s*([0-9\.e-]+)"
+    period_pattern = "PERIOD\s*=\s*([0-9\.e-]+)"
     period_pattern_re = re.search(period_pattern, log_file_text)
     period_value = "failed"
     if period_pattern_re:
         period_value = period_pattern_re.group(1)
 
-    power_pattern = "power\s*=\s*([0-9\.e-]+)"
+    power_pattern = "POWER\s*=\s*([0-9\.e-]+)"
     power_pattern_re = re.search(power_pattern, log_file_text)
     power_value = "failed"
     if power_pattern_re:
