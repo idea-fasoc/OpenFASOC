@@ -15,8 +15,8 @@ extract all
 ext2spice lvs
 ext2spice -o ../spice/$2_lvsmag.spice
 gds read $1
-load $2  
-extract all 
+load $2
+extract all
 ext2spice lvs
 ext2spice rthresh 0
 ext2spice cthresh 0
