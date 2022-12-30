@@ -27,10 +27,10 @@ vtrim6 trim6 0 DC=0
 vtrim7 trim7 0 DC=0
 vtrim8 trim8 0 DC=0
 vtrim9 trim9 0 DC=0
-vtrim10 trim10 DC=0 
+vtrim10 trim10 DC=0
 
 *With ideal VRef block
-V3 clk  VSS pulse 0 3.3 0 1n 1n 0.5u 1u  ; change here if want to change clock frequency
+V3 clk  VSS pulse 0 3.3 0 1n 1n 5u 10u  ; change here if want to change clock frequency
 
 V4 reset 0 pwl 0 3.3 10n 3.3 10.1n 0
 
@@ -47,12 +47,12 @@ vstd6 std_pt_in_cnt[6] 0 dc 0
 vstd7 std_pt_in_cnt[7] 0 dc 0
 vstd8 std_pt_in_cnt[8] 0 dc 0
 
-R1 VREG VSS 3.6k 
+R1 VREG VSS 3.6k
 *Resistance 3600 --> 0.5 mA for 1.8 V reference voltage. R to be adjusted according to Iload and output voltage.
 
 *R0 VREG 0 R='TIME > 500u ? 720 : 3600' ;If want to do a transient simulation where I load is changing in the middle of a transient simulation. Example: Here it is changing from 720 ohm (2.5mA) to 3600 ohm (0.5 mA) at t = 1000us
 
-C1 VREG VSS 1n   
+C1 VREG VSS 0.2n
 
 *.options savecurrents
 .options rshunt=1e12
@@ -76,6 +76,6 @@ meas TRAN id find I(R1) AT=300u
 *hardcopy cmp_out_clk_plot.ps cmp_out clk
 
 write output.raw v(VREG) v(VREF) cmp_out clk (("ctrl_out[0]"+2*"ctrl_out[1]"+4*"ctrl_out[2]"+8*"ctrl_out[3]"+16*"ctrl_out[4]"+32*"ctrl_out[5]"+ 64*"ctrl_out[6]"+128*"ctrl_out[7]"+ 256*"ctrl_out[8]")/3.3) ;Last variable is for the counter indicating number of switches that are turning ON (ctrl_word_cnt)
- 
+
 .endc
 .end

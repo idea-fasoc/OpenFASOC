@@ -2759,7 +2759,7 @@ X6 vpwr CLK a_512_1261# vpb sky130_fd_pr__pfet_g5v0d10v5 w=5e+06u l=500000u nf=5
 X7 a_619_107# VREG a_512_1261# vnb sky130_fd_pr__nfet_g5v0d10v5 w=10e+06u l=500000u nf=10
 X8 OUT a_512_1261# vpwr vpb sky130_fd_pr__pfet_g5v0d10v5 w=1.5e+06u l=500000u
 X9 a_123_187# a_519_81# a_619_107# vnb sky130_fd_pr__nfet_g5v0d10v5 w=5e+06u l=500000u nf=5
-X10 a_3401_111# a_512_1261# vgnd vnb sky130_fd_pr__nfet_g5v0d10v5 w=750000u l=500000u 
+X10 a_3401_111# a_512_1261# vgnd vnb sky130_fd_pr__nfet_g5v0d10v5 w=750000u l=500000u
 X11 OUT a_3401_885# a_3401_111# vnb sky130_fd_pr__nfet_g5v0d10v5 w=750000u l=500000u
 X12 a_3401_1367# a_519_81# vgnd vnb sky130_fd_pr__nfet_g5v0d10v5 w=750000u l=500000u
 X13 a_3401_885# a_519_81# vpwr vpb sky130_fd_pr__pfet_g5v0d10v5 w=1.5e+06u l=500000u
