@@ -98,7 +98,7 @@ designArea = polynomial_output_at_point_from_coefficients(jsonModel["area"], arr
 print("# LDO - Design Area Estimate = " + str(designArea))
 
 # Update place density according to power transistor array size
-update_place_density(directories["flowDir"], arrSize)
+update_area_and_place_density(directories["flowDir"], arrSize)
 
 # Generate the Behavioral Verilog
 generate_LDO_verilog(directories, args.outputDir, user_specs["designName"], arrSize)
