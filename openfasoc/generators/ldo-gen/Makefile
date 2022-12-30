@@ -25,13 +25,13 @@ help:banner
 	@@echo "    >> Displays this message"
 
 sky130hvl_ldo_verilog:
-	python ./tools/ldo-gen.py --specfile test.json --output ./work --platform sky130hvl --mode verilog
+	python3 ./tools/ldo-gen.py --specfile test.json --output ./work --platform sky130hvl --mode verilog
 
 sky130hvl_ldo:
-	python ./tools/ldo-gen.py --specfile test.json --output ./work --platform sky130hvl --mode macro
+	python3 ./tools/ldo-gen.py --specfile test.json --output ./work --platform sky130hvl --mode macro
 
 sky130hvl_ldo_full:
-	python ./tools/ldo-gen.py --specfile test.json --output ./work --platform sky130hvl --mode full
+	python3 ./tools/ldo-gen.py --specfile test.json --output ./work --platform sky130hvl --mode full
 
 clean:
 	-rm -f error_within_x.csv golden_error_opt.csv search_result.csv
