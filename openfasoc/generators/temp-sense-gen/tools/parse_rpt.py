@@ -1,4 +1,3 @@
-
 drc_filename = "flow/reports/sky130hd/tempsense/6_final_drc.rpt"
 num_lines = sum(1 for line in open(drc_filename))
 
@@ -11,10 +10,9 @@ else:
 lvs_filename = "flow/reports/sky130hd/tempsense/6_final_lvs.rpt"
 
 with open(lvs_filename) as f:
-    f1=f.read()
+    f1 = f.read()
 
     if "failed" in f1:
         print("LVS failed!")
     else:
         print("LVS is clean!")
-
