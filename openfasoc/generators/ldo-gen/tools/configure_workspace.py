@@ -20,6 +20,7 @@ def get_directories():
     directories["blocksDir"] = genDir + "blocks/sky130hvl/"
     directories["commonDir"] = genDir + "../../common/"
     directories["supportedInputs"] = genDir + "tools/supported_inputs.json"
+    directories["objDir"] = genDir + "flow/objects/sky130hvl/ldo/base/"
     return directories
 
 
@@ -222,11 +223,11 @@ def get_setup_pdk(jsonConfig, commonDir):
         print("Cannot find libs.tech folder from open_pdks in " + pdk)
         sys.exit(1)
     # copy LVS/DRC setup files to common dir
-    sky130A_path = commonDir + "drc-lvs-check/sky130A/"
-    if not os.path.isdir(sky130A_path):
-        os.mkdir(sky130A_path)
-    shutil.copy2(os.path.join(pdk, "libs.tech/magic/sky130A.magicrc"), sky130A_path)
-    shutil.copy2(os.path.join(pdk, "libs.tech/netgen/sky130A_setup.tcl"), sky130A_path)
+     sky130A_path = commonDir + "drc-lvs-check/sky130A/"
+     if not os.path.isdir(sky130A_path):
+     os.mkdir(sky130A_path)
+     shutil.copy2(os.path.join(pdk, "libs.tech/magic/sky130A.magicrc"), sky130A_path)
+     shutil.copy2(os.path.join(pdk, "libs.tech/netgen/sky130A_setup.tcl"), sky130A_path)
     return pdk
 
 
