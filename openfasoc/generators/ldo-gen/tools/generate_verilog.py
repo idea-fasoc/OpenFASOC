@@ -88,10 +88,8 @@ def generate_controller_verilog(directories, outputDir, arrSize):
 
 def update_area_and_place_density(flowDir, arrSize):
     """Increases place density for designs with large power transistor arrays."""
-    with open(
-        flowDir + "design/sky130hvl/ldo/config_template.txt", "r"
-    ) as config_template:
-        config = config_template.read()
+    with open(flowDir + "design/sky130hvl/ldo/config.mk", "r") as config_read:
+        lines = config_read.readlines()
     # adjust config based on arrSize
     if arrSize in range(1, 51):
         lines[18] = "export DIE_AREA                 = 0 0 270 270\n"
@@ -163,10 +161,5 @@ def update_area_and_place_density(flowDir, arrSize):
             lines[25] = "export PLACE_DENSITY = 0.60\n"
         else:
             lines[25] = "export PLACE_DENSITY = 0.70\n"
-    # write changes to config
-    config = config.replace("@DIE_AREA", str(DIE_AREA))
-    config = config.replace("@CORE_AREA", str(CORE_AREA))
-    config = config.replace("@VREG_ARAE", str(VREG_AREA))
-    config = config.replace("@PLACE_DENSITY_PARAM", str(PLACE_DENSITY))
     with open(flowDir + "design/sky130hvl/ldo/config.mk", "w") as config_spec:
-        config_spec.write(config)
+        config_spec.writelines(lines)
