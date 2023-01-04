@@ -1,4 +1,4 @@
-LDO Generator (WIP)
+LDO Generator
 ===================
 
 Low-dropout regulator
@@ -47,7 +47,7 @@ The default circuit's physical design generation can be divided into three parts
 Verilog generation
 ^^^^^^^^^^^^^^^^^^
 
-Running ``make sky130hd_ldo`` (ldo for "digital ldo") executes the `ldo-gen.py <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/ldo-gen/tools/ldo-gen.py>`_ script from ldo-gen/tools/. This file takes the input specifications from `test.json <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/ldo-gen/test.json>`_ and outputs Verilog files containing the description of the circuit.
+Running ``make sky130hvl_ldo`` (ldo for "digital ldo") executes the `ldo-gen.py <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/ldo-gen/tools/ldo-gen.py>`_ script from ldo-gen/tools/. This file takes the input specifications from `test.json <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/ldo-gen/test.json>`_ and outputs Verilog files containing the description of the circuit.
 
 .. note::
   ldo-gen.py calls other modules from ldo-gen/tools/ during execution. For example, `configure_workspace.py <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/ldo-gen/tools/configure_workspace.py>`_ is in charge of reading test.json, checking for correct user input and choosing the correct circuit elements.
@@ -137,7 +137,7 @@ This ldo design implements two voltage domains: one for the VDD that powers most
     }
   }
 
-In the image, line #36 will create a voltage domain named TEMP_ANALOG with area coordinates as defined in config.mk.
+In the image, line #36 will create a voltage domain named LDO_VREG with area coordinates as defined in config.mk.
 
 Lines #38 to #40 will initialize the floorplan, as default in OpenROAD Flow, from the die area, core area and place site coordinates from config.mk.
 
@@ -193,12 +193,12 @@ This script sources two other files: `add_ndr_rules.tcl <https://github.com/idea
 
 At the end, OpenROAD Flow will output its logs under flow/reports/, and its results under flow/results/.
 
-Here's an overview of all changes made from OpenROAD Flow to OpenFASoC’s temp-sense-gen (the reference directory taken is `ldo-gen/flow/ <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/ldo-gen/flow>`_):
+Here's an overview of all changes made from OpenROAD Flow to OpenFASoC’s ldo-gen (the reference directory taken is `ldo-gen/flow/ <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/ldo-gen/flow>`_):
 
 .. list-table:: Design files (needed for configuring OpenROAD Flow Scripts)
   :align: center
 
-  * - `design/sky130hd/tempsense/config.mk <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/ldo-gen/flow/design/sky130hvl/ldo/config.mk>`_
+  * - `design/sky130hvl/ldo/config.mk <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/ldo-gen/flow/design/sky130hvl/ldo/config.mk>`_
     - OpenROAD Flow Scripts configuration
   * - `design/src/ldo/*.v <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/ldo-gen/flow/design/src/ldo>`_
     - Circuit Verilog description
@@ -263,7 +263,7 @@ In DRC, `Magic <https://github.com/RTimothyEdwards/magic>`_ takes the generated 
 
 In LVS, Magic takes the generated GDS file and extracts its netlist to compare with the original circuit netlist, in order to verify if the physical implementation was done correctly. Files generated from the layout extraction are created under ldo-gen/flow/objects/.
 
-`Netgen <https://github.com/NGSolve/netgen>`_ is then used to run the comparison, outputting a report under temp-sense-gen/flow/reports/.
+`Netgen <https://github.com/NGSolve/netgen>`_ is then used to run the comparison, outputting a report under ldo-gen/flow/reports/.
 
 .. code-block:: console
 
