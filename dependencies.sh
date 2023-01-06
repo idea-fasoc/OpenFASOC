@@ -110,7 +110,7 @@ elif cat /etc/os-release | grep -e "centos" >> /dev/null
 then
 	yum group install "Development Tools" -y
 	yum install qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev qt-x11 -y
-	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.27.10-0.x86_64.rpm
+	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.28.2-0.x86_64.rpm
 	rpm -i klayout-0.27.10-0.x86_64.rpm
 	yum install time -y
 elif cat /etc/os-release | grep -e "el7" -e "el8" >> /dev/null
