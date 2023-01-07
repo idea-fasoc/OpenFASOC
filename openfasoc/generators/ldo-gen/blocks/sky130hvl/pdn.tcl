@@ -13,7 +13,12 @@ add_global_connection -net {VSS} -pin_pattern {VGND} -ground
 add_global_connection -net {VSS} -pin_pattern {vgnd} -ground
 add_global_connection -net {VSS} -pin_pattern {VNB} -ground
 add_global_connection -net {VSS} -pin_pattern {vnb} -ground
+add_global_connection -net VDD -inst_pattern {cap_1} -pin_pattern {pin0} -power
+add_global_connection -net VDD -inst_pattern {cap_2} -pin_pattern {pin0} -power
 add_global_connection -net VREG -pin_pattern {VREG} -power
+add_global_connection -net VREG -inst_pattern {cap_3} -pin_pattern {pin0}
+add_global_connection -net VREG -inst_pattern {cap_4} -pin_pattern {pin0}
+add_global_connection -net VREG -inst_pattern {cap_5} -pin_pattern {pin0}
 
 global_connect
 ####################################
