@@ -22,7 +22,7 @@ RUN apt install python3-dev -y
 RUN apt install libz-dev -y
 RUN apt install build-essential -y
 
-RUN wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.28.2-1_amd64.deb 
+RUN wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.28.2-1_amd64.deb
 RUN dpkg -i klayout_0.28.2-1_amd64.deb
 RUN apt install time -y
 ENV PDK_ROOT=/usr/bin/miniconda3/share/pdk/
