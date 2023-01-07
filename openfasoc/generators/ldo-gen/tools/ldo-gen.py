@@ -98,7 +98,7 @@ designArea = polynomial_output_at_point_from_coefficients(jsonModel["area"], arr
 print("# LDO - Design Area Estimate = " + str(designArea))
 
 # Update place density according to power transistor array size
-update_area_and_place_density(directories["flowDir"], arrSize)
+update_place_density(directories["flowDir"], arrSize)
 
 # Generate the Behavioral Verilog
 generate_LDO_verilog(directories, args.outputDir, user_specs["designName"], arrSize)
@@ -147,43 +147,6 @@ if args.mode != "verilog" and args.mode != "sim":
     print("#----------------------------------------------------------------------")
 
 
-outputDir = directories["genDir"] + args.outputDir
-
-shutil.copyfile(
-    directories["flowDir"] + "results/" + args.platform + "/ldo/base/6_final.gds",
-    outputDir + "/" + user_specs["designName"] + ".gds",
-)
-shutil.copyfile(
-    directories["flowDir"] + "results/" + args.platform + "/ldo/base/6_final.def",
-    outputDir + "/" + user_specs["designName"] + ".def",
-)
-shutil.copyfile(
-    directories["flowDir"] + "results/" + args.platform + "/ldo/base/6_final.v",
-    outputDir + "/" + user_specs["designName"] + ".v",
-)
-shutil.copyfile(
-    directories["flowDir"] + "results/" + args.platform + "/ldo/base/6_1_fill.sdc",
-    outputDir + "/" + user_specs["designName"] + ".sdc",
-)
-shutil.copyfile(
-    directories["objDir"] + "netgen_lvs/spice/" + user_specs["designName"] + ".spice",
-    outputDir + "/" + user_specs["designName"] + ".spice",
-)
-shutil.copyfile(
-    directories["objDir"]
-    + "netgen_lvs/spice/"
-    + user_specs["designName"]
-    + "_pex.spice",
-    outputDir + "/" + user_specs["designName"] + "_pex.spice",
-)
-shutil.copyfile(
-    directories["flowDir"] + "reports/" + args.platform + "/ldo/base/6_final_drc.rpt",
-    outputDir + "/6_final_drc.rpt",
-)
-shutil.copyfile(
-    directories["flowDir"] + "reports/" + args.platform + "/ldo/base/6_final_lvs.rpt",
-    outputDir + "/6_final_lvs.rpt",
-)
 # ------------------------------------------------------------------------------
 # run simulations
 # ------------------------------------------------------------------------------

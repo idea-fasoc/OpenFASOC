@@ -3,25 +3,28 @@
 cd $OBJECTS_DIR/netgen_lvs/ext/
 
 # generate lvs netlist using magic
-cat > magic.script <<EOF
-gds flatglob *\$\$*
+magic -rcfile $COMMON_VERIF_DIR/sky130A/sky130A.magicrc -noconsole -dnull << EOF
 gds read $1
 load $2
-
-if {![string compare $2 "ldoInst"]} {
-  select top cell
-  flatten ldoInst_flat
-  load ldoInst_flat
-  cellname delete ldoInst
-  cellname rename ldoInst_flat ldoInst
-  select top cell
-} else {
-    select top cell
-}
+# gds flatglob $2
+# flatten $2_flat
+# load $2_flat
+# gds write ./FLATTEN_GDS/$2_flat.gds
+# EOF
+# magic -rcfile ./sky130A/sky130A.magicrc -noconsole -dnull << EOF
+# gds read ./FLATTEN_GDS/$2_flat.gds
+# load $2_flat
+# flatten $2
+# load $2
+# gds write ./FLATTEN_GDS/$2.gds
+# EOF
+# magic -rcfile ./sky130A/sky130A.magicrc -noconsole -dnull << EOF
+# gds read ./FLATTEN_GDS/$2.gds
+# load $2
 extract all
 ext2spice lvs
+# ext2spice merge aggressive
 ext2spice -o ../spice/$2_lvsmag.spice
-load $2
 extract all
 ext2spice lvs
 ext2spice rthresh 0
@@ -33,8 +36,6 @@ ext2spice cthresh 0
 ext2spice -o ../spice/$2_sim.spice
 exit
 EOF
-
-magic -rcfile $COMMON_VERIF_DIR/sky130A/sky130A.magicrc -noconsole -dnull < magic.script
 
 # Adapt the extracted spice file to account for errors in Magic
 # Importantly, this script is specific in what it looks for,
