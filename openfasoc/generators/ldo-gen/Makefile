@@ -14,9 +14,9 @@ help:banner
 	@@echo "1. make sky130hvl_ldo"
 	@@echo "    >> This will create the macro for the LDO, creates the lef/def/gds files and performs lvs/drc checks. It won't run simulations."
 	@@echo "2. make sky130hvl_ldo_verilog"
-	@@echo "    >> This will create the verilog file for the digital LDO IP. It doesn't create a macro, won't create lef/def/gds files and won't run simulations "
+	@@echo "    >> This will create the verilog file for the thermal sensor IP. It doesn't create a macro, won't create lef/def/gds files and won't run simulations "
 	@@echo "3. make sky130hvl_ldo_full"
-	@@echo "    >> This will create the macro for the digital LDO, creates the lef/def/gds files, performs lvs/drc checks and also runs simulations."
+	@@echo "    >> This will create the macro for the thermal sensor, creates the lef/def/gds files, performs lvs/drc checks and also runs simulations."
 	@@echo "4. make clean"
 	@@echo "    >> This will clean all files generated during the run inside the run/, flow/ and work/ directories"
 	@@echo "4. make clean_sims"
@@ -25,23 +25,13 @@ help:banner
 	@@echo "    >> Displays this message"
 
 sky130hvl_ldo_verilog:
-	python3 ./tools/ldo-gen.py --specfile test.json --output ./work --platform sky130hvl --mode verilog
+	python ./tools/ldo-gen.py --specfile test.json --output ./work --platform sky130hvl --mode verilog
 
 sky130hvl_ldo:
-	python3 ./tools/ldo-gen.py --specfile test.json --output ./work --platform sky130hvl --mode macro
-	@@echo "=================================================================================="
-	@@echo "Thank you for using OpenFASOC"
-	@@echo "For more info, please read the latest documentation on openfasoc.readthedocs.io"
-	@@echo "For any issues, please feel free to open an issue on GitHub repository"
-	@@echo "=================================================================================="
+	python ./tools/ldo-gen.py --specfile test.json --output ./work --platform sky130hvl --mode macro
 
 sky130hvl_ldo_full:
-	python3 ./tools/ldo-gen.py --specfile test.json --output ./work --platform sky130hvl --mode full
-	@@echo "=================================================================================="
-	@@echo "Thank you for using OpenFASOC"
-	@@echo "For more info, please read the latest documentation on openfasoc.readthedocs.io"
-	@@echo "For any issues, please feel free to open an issue on GitHub repository"
-	@@echo "=================================================================================="
+	python ./tools/ldo-gen.py --specfile test.json --output ./work --platform sky130hvl --mode full
 
 clean:
 	-rm -f error_within_x.csv golden_error_opt.csv search_result.csv

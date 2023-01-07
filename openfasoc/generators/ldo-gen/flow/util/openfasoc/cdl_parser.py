@@ -22,6 +22,7 @@ args = parser.parse_args()
 # The input Cdl netlist (inputz/6_final.cdl). read that entire file into "filedata" i.e. overwrite filedata
 with open(args.inputCdl, "r") as rf:
     filedata = rf.read()
+    filedata = filedata.replace(" VREG", "", 1)
     filedata = filedata.replace(" r_VREG", "", 1)
     filedata = filedata.replace(" r_VREG", " VREG")
 

@@ -54,11 +54,11 @@ module ldoInst(
    PMOS pmos_1 (.cmp_out(cmp_out));
    PMOS pmos_2 (.cmp_out(cmp_out));
 
-   capacitor_test_nf cap_1 (.pin0(VREF));
-   capacitor_test_nf cap_2 (.pin0(VREF));
-   capacitor_test_nf cap_3 (.pin0(VREF));
-   capacitor_test_nf cap_4 (.pin0(VREF));
-   capacitor_test_nf cap_5 (.pin0(VREF));
+   capacitor_test_nf cap_1 ();
+   capacitor_test_nf cap_2 ();
+   capacitor_test_nf cap_3 ();
+   capacitor_test_nf cap_4 ();
+   capacitor_test_nf cap_5 ();
 
    always @(*) begin
       mode = mode_sel[0] || mode_sel[1];
