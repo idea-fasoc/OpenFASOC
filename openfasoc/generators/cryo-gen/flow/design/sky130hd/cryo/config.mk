@@ -38,3 +38,5 @@ export RO_ARRAY_DIM = 12,12
 export RO_CELL_DIM = 0.46,2.72
 # this is the offset from lower left corner of core to the rirst RO placement, <W,H>, W and H values should be >=1 multiples of RO_CELL_DIM respectfullly
 export RO_OFFSET = 3.68,2.72
+# pin arguments (work in progress)
+export PLACE_PINS_ARGS = -random
