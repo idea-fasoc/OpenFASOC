@@ -95,11 +95,15 @@ def toplevel_process(netlist, toplevel_name, rpin_name, pin_name):
     # remove pin_name if present
     if args.generator == "temp-sense-gen":
         if pin_name:
-            correct_toplevel_pinout = correct_toplevel_pinout.replace(" " + pin_name, "")
+            correct_toplevel_pinout = correct_toplevel_pinout.replace(
+                " " + pin_name, ""
+            )
     # swap out for the new toplevel pinout
     netlist = netlist.replace(toplevel_pinout, correct_toplevel_pinout)
     if args.generator == "ldo-gen":
-        netlist = re.sub("r_VREG", "VREG", netlist)  # this replaces r_VREG which can be seen ldoInst_lvsmag to VREG
+        netlist = re.sub(
+            "r_VREG", "VREG", netlist
+        )  # this replaces r_VREG which can be seen ldoInst_lvsmag to VREG
     return netlist
 
 
