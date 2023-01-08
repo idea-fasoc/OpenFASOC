@@ -1,20 +1,29 @@
 #/bin/bash
 
-ma_ver=$(python -c"import sys; print(str(sys.version_info.major))")
-mi_ver=$(python -c"import sys; print(str(sys.version_info.minor))")
 
-if [[ "$ma_ver" -lt 3 ]]
+if which python3 >> /dev/null
+then
+	echo "Python3 exists. Continuing..."
+else
+	echo "Python3 could not be found. Please install python3 and try again. Exiting..."
+	exit
+fi
+
+ma_ver=$(python3 -c"import sys; print(str(sys.version_info.major))")
+mi_ver=$(python3 -c"import sys; print(str(sys.version_info.minor))")
+
+if [ "$ma_ver" -lt 3 ]
 then
     echo "[Warning] python version less than 3.* . Not compatible. You atleast need version above or equal to 3.7."
     sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
     echo "[Warning] Skipping installing the gdsfactory python package because of that error. Continuing installation..."
-elif [[ "$mi_ver" -lt 6 ]]
+elif [ "$mi_ver" -lt 6 ]
 then
     echo "[Warning] python version less than 3.6 . Not compatible. You atleast need version above or equal to 3.7."
     sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
     echo "[Warning] Skipping installing the gdsfactory python package because of that error. Continuing installation..."
 else
-    echo "Compatible python version exists: $ma_ver . $mi_ver"
+    echo "Compatible python version exists: $ma_ver.$mi_ver"
 fi
 
 
@@ -31,7 +40,7 @@ else
                 if [ $? == 0 ]
                 then
                        pip3 install -r requirements.txt
-                       apt install wget -y
+                       apt install wget git -y
                 else
                         echo "Pip3 installation failed.. exiting"
                         exit
@@ -44,7 +53,7 @@ else
                 if [ $? == 0 ]
                 then
                        pip3 install -r requirements.txt
-		       yum install wget -y
+		       yum install wget git -y
                 else
                         echo "Pip3 installation failed.. exiting"
                         exit
@@ -93,9 +102,26 @@ fi
 
 if [ $? == 0 ]
 then
- echo "Ngspice are installed. Checking pending. Continuing the installation...\n"
+ echo "Ngspice is installed. Checking pending. Continuing the installation...\n"
+ cd ../
 else
  echo "Failed to install Ngspice"
+ exit
+fi
+
+
+if cat /etc/os-release | grep "ubuntu" >> /dev/null
+then
+	export DEBIAN_FRONTEND=noninteractive
+	cd docker/conda/scripts
+	./xyce_install.sh
+fi
+
+if [ $? == 0 ]
+then
+ echo "Xyce is installed. Checking pending. Continuing the installation...\n"
+else
+ echo "Failed to install Xyce"
  exit
 fi
 
@@ -137,5 +163,13 @@ then
 else
  echo "PDK not installed"
 fi
+echo ""
+echo ""
+echo "To access the installed binaries, please run this command or add this to your .bashrc file - export PATH=/usr/bin/miniconda3/bin:\$PATH"
+echo "To access xyce binary, create an alias - xyce='/opt/xyce/xyce_serial/bin/Xyce'"
 
-echo "To access the installed binaries, please run this command - export PATH=/usr/bin/miniconda3/bin:\$PATH"
+echo "################################"
+echo "Installation completed"
+echo "Thanks for using OpenFASOC dependencies script. To submit feedback, feel free to open a github issue on OpenFASOC repo"
+echo "To know more about generators, go to openfasoc.readthedocs.io"
+echo "################################"
