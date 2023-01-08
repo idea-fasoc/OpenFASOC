@@ -1,5 +1,5 @@
 {
-  "simTool": "ngspice",
+  "simTool": "xyce",
   "simMode": "partial",
   "open_pdks_GCP": "/shared/OpenLane/pdks/sky130A",
   "open_pdks_GHA": "/home/runner/work/sky130A",
