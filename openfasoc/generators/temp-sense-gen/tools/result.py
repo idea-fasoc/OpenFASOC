@@ -23,9 +23,6 @@ with open(file_name, "r") as rf:
     else:
         temp_value = file_name.split("_")[-1].split(".")[0]
 
-    print(temp_value)
-    sys.exit(1)
-
     period_pattern = "PERIOD\s*=\s*([0-9\.e-]+)"
     period_pattern_re = re.search(period_pattern, log_file_text)
     period_value = "failed"
