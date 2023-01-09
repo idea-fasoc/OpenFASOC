@@ -1,5 +1,6 @@
 import argparse
 import re
+import sys
 
 parser = argparse.ArgumentParser(description="parse simulators' output file")
 parser.add_argument("--tool", "-t", required=True, help="simulator type")
@@ -19,6 +20,11 @@ with open(file_name, "r") as rf:
     temp_value = "failed"
     if temp_value_re:
         temp_value = temp_value_re.group(1)
+    else:
+        temp_value = file_name.split("_")[-1].split(".")[0]
+
+    print(temp_value)
+    sys.exit(1)
 
     period_pattern = "PERIOD\s*=\s*([0-9\.e-]+)"
     period_pattern_re = re.search(period_pattern, log_file_text)
