@@ -2,6 +2,8 @@
 # Uncomment or add the design to run
 # ==============================================================================
 default: finish
+.DEFAULT_GOAL := finish
+DESIGN_CONFIG ?= ./design/sky130hd/cryo/config.mk
 
 # ==============================================================================
 #  ____  _____ _____ _   _ ____
@@ -12,106 +14,221 @@ default: finish
 #
 # ==============================================================================
 
+#-------------------------------------------------------------------------------
+# Default target when invoking without specific target.
+.DEFAULT_GOAL := finish
+
+#-------------------------------------------------------------------------------
+# Proper way to initiate SHELL for make
+SHELL          = /bin/bash
+.SHELLFLAGS    = -o pipefail -c
+
+#-------------------------------------------------------------------------------
+# Setup variables to point to root / head of the OpenROAD directory
+# - the following settings allowed user to point OpenROAD binaries to different
+#   location
+# - default follows OpenFASOC's directory structure, with absolute path to flow/
+export FLOW_HOME ?= $(shell pwd)
+export COMMON_HOME ?= $(FLOW_HOME)/../../../common
+
+#-------------------------------------------------------------------------------
+# Setup variables to point to other location for the following sub directory
+# - designs - default is under current directory
+# - platforms - default is under current directory
+# - work home - default is current directory
+# - utils, scripts, test - default is under current directory
+export DESIGN_HOME   ?= $(FLOW_HOME)/design
+export PLATFORM_HOME ?= $(COMMON_HOME)/platforms
+export WORK_HOME     ?= $(shell pwd)
+
+export UTILS_DIR     ?= $(FLOW_HOME)/util
+export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
+export TEST_DIR      ?= $(FLOW_HOME)/test
+
+#-------------------------------------------------------------------------------
 # Include design and platform configuration
-PLATFORM_ARG = sky130hd
-DESIGN_CONFIG = ./design/$(PLATFORM_ARG)/cryo/config.mk
-#DESIGN_CONFIG = ./design/sky130hd/cryo/config.mk
-#DESIGN_CONFIG = ./design/sky130hs/cryo/config.mk
-#DESIGN_CONFIG = ./design/sky130hvl/cryo/config.mk
-#DESIGN_CONFIG = ./design/sky130osu12Ths/cryo/config.mk
-#DESIGN_CONFIG = ./design/sky130osu12Tms/cryo/config.mk
-#DESIGN_CONFIG = ./design/sky130osu12Tls/cryo/config.mk
-#DESIGN_CONFIG = ./design/sky130osu15Ths/cryo/config.mk
-#DESIGN_CONFIG = ./design/sky130osu15Tms/cryo/config.mk
-#DESIGN_CONFIG = ./design/sky130osu15Tls/cryo/config.mk
-#DESIGN_CONFIG = ./design/sky130osu18Ths/cryo/config.mk
-#DESIGN_CONFIG = ./design/sky130osu18Tms/cryo/config.mk
-#DESIGN_CONFIG = ./design/sky130osu18Tls/cryo/config.mk
-
-
 include $(DESIGN_CONFIG)
 
-PUBLIC=sky130hd sky130hs sky130hvl sky130osu12Ths sky130osu12Tms sky130osu12Tls sky130osu18Ths sky130osu18Tms sky130osu18Tls sky130osu15Ths sky130osu15Tms sky130osu15Tls
+PUBLIC=nangate45 sky130hd sky130hs asap7
 
-ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
-  export PLATFORM_DIR = ../../../common/platforms/$(PLATFORM)
+ifneq ($(wildcard $(PLATFORM_HOME)/$(PLATFORM)),)
+  export PLATFORM_DIR = $(PLATFORM_HOME)/$(PLATFORM)
+else ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
+  export PLATFORM_DIR = ./platforms/$(PLATFORM)
 else ifneq ($(wildcard ../../$(PLATFORM)),)
-  export PLATFORM_DIR = ../../../$(PLATFORM)
+  export PLATFORM_DIR = ../../$(PLATFORM)
 else
-  $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found)
+  $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found.)
 endif
 
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
 include $(PLATFORM_DIR)/config.mk
 
+export GALLERY_REPORT ?= 0
+# Enables hierarchical yosys
+export SYNTH_HIERARCHICAL ?= 0
+export SYNTH_STOP_MODULE_SCRIPT = $(OBJECTS_DIR)/mark_hier_stop_modules.tcl
+ifeq ($(SYNTH_HIERARCHICAL), 1)
+export HIER_REPORT_SCRIPT = $(SCRIPTS_DIR)/synth_hier_report.tcl
+export MAX_UNGROUP_SIZE ?= 0
+endif
+# Enables Re-synthesis for area reclaim
+export RESYNTH_AREA_RECOVER ?= 0
+export RESYNTH_TIMING_RECOVER ?= 0
+export ABC_AREA ?= 0
+
+# Global setting for Synthesis
+export SYNTH_ARGS ?= -flatten
+
+# Global setting for Floorplan
+export PLACE_PINS_ARGS
+
+#export FLOW_VARIANT ?= base
+
+export GPL_TIMING_DRIVEN ?= 1
+export GPL_ROUTABILITY_DRIVEN ?= 1
+
+export ENABLE_DPO ?= 1
+export DPO_MAX_DISPLACEMENT ?= 5 1
+
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
 
-export LOG_DIR     = ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)
-export OBJECTS_DIR = ./objects/$(PLATFORM)/$(DESIGN_NICKNAME)
-export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NICKNAME)
-export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)
+export DESIGN_DIR  = $(dir $(DESIGN_CONFIG))
+export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
-export SCRIPTS_DIR = ./scripts
-export UTILS_DIR   = ./util
-export TEST_DIR    = ./test
-export SIM_DIR     = $(PWD)/../simulation
+ifdef BLOCKS
+  $(info [INFO][FLOW] Invoked hierarchical flow.)
+  $(foreach block,$(BLOCKS),$(info Block ${block} needs to be hardened.))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_CONFIGS += ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(block)/config.mk))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_CDL += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.cdl))
+  export ADDITIONAL_LEFS += $(BLOCK_LEFS)
+  export ADDITIONAL_GDS += $(BLOCK_GDS)
+  export GDS_FILES += $(BLOCK_GDS)
+  ifdef CDL_FILES
+    export CDL_FILES += $(BLOCK_CDL)
+  endif
+endif
 
-# Patch an issue where $KLAYOUT_CMD is undefined
-export KLAYOUT_CMD = $(shell command -v klayout)
+export RTLMP_RPT_DIR ?= $(OBJECTS_DIR)/rtlmp
+export RTLMP_RPT_FILE ?= partition.txt
+export RTLMP_BLOCKAGE_FILE ?= $(OBJECTS_DIR)/rtlmp/partition.txt.blockage
 
-# export BASE        = /shared/OpenFASOC/generators/temp-sense-gen/flow
-# export LOG_DIR     = $(BASE)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)
-# export OBJECTS_DIR = $(BASE)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)
-# export REPORTS_DIR = $(BASE)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)
-# export RESULTS_DIR = $(BASE)/results/$(PLATFORM)/$(DESIGN_NICKNAME)
-#
-# export SCRIPTS_DIR = $(BASE)/scripts
-# export UTILS_DIR   = $(BASE)/util
-# export TEST_DIR    = $(BASE)/test
+#-------------------------------------------------------------------------------
+ifeq (, $(strip $(NPROC)))
+  # Linux (utility program)
+  NPROC := $(shell nproc 2>/dev/null)
 
-# Tool Options
-SHELL = /bin/bash -o pipefail
-TIME_CMD = /usr/bin/time -f "%Eelapsed %PCPU %MmemKB"
-export NUM_CORES = $(shell grep -c ^processor /proc/cpuinfo)
+  ifeq (, $(strip $(NPROC)))
+    # Linux (generic)
+    NPROC := $(shell grep -c ^processor /proc/cpuinfo 2>/dev/null)
+  endif
+  ifeq (, $(strip $(NPROC)))
+    # BSD (at least FreeBSD and Mac OSX)
+    NPROC := $(shell sysctl -n hw.ncpu 2>/dev/null)
+  endif
+  ifeq (, $(strip $(NPROC)))
+    # Fallback
+    NPROC := 1
+  endif
+endif
+export NUM_CORES := $(NPROC)
 
-OPENROAD_CMD = openroad -no_init -exit
+export LSORACLE_CMD ?= $(shell command -v lsoracle)
+ifeq ($(LSORACLE_CMD),)
+  LSORACLE_CMD = $(abspath $(FLOW_HOME)/../tools/install/LSOracle/bin/lsoracle)
+endif
 
-# OPENROAD_CMD = docker run --rm -v /shared/OpenLane:/openLANE_flow \
-                               -v /shared/OpenFASOC/generators/cryo-gen/:/shared/OpenFASOC/generators/cryo-gen/ \
-			       -e PDK_ROOT=/shared/OpenLane --user 1001:1002 efabless/openlane:2021.09.02_03.15.28 \
-			       openroad -no_init -exit
+LSORACLE_PLUGIN ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/share/yosys/plugin/oracle.so)
+export LSORACLE_KAHYPAR_CONFIG ?= $(abspath $(FLOW_HOME)/../tools/install/LSOracle/share/lsoracle/test.ini)
+ifneq ($(USE_LSORACLE),)
+  YOSYS_FLAGS ?= -m $(LSORACLE_PLUGIN)
+endif
 
+YOSYS_FLAGS += -v 3
+
+#-------------------------------------------------------------------------------
+# setup all commands used within this flow
+TIME_CMD = /usr/bin/time -f 'Elapsed time: %E[h:]min:sec. CPU time: user %U sys %S (%P). Peak memory: %MKB.'
+TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
+ifeq (, $(strip $(TIME_TEST)))
+  TIME_CMD = /usr/bin/time
+endif
+
+# The following determine the executable location for each tool used by this flow.
+# Priority is given to
+#       1 user include path to the executable prior to running make
+#       2 user explicit set with variable in Makefile or command line
+OPENROAD_EXE            ?= $(shell command -v openroad)
+ifeq ($(OPENROAD_EXE),)
+#   OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+  $(error OpenROAD not found in PATH)
+endif
+OPENROAD_ARGS            = -no_init $(OR_ARGS)
+OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
+OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
+OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
+
+YOSYS_CMD               ?= $(shell command -v yosys)
+ifeq ($(YOSYS_CMD),)
+#  YOSYS_CMD              = $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
+  $(error Yosys not found in PATH)
+endif
+
+KLAYOUT_CMD             ?= $(shell command -v klayout)
+
+KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
+
+#-------------------------------------------------------------------------------
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
 WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
-export WRAPPED_GDS  = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.gds))
 export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
 export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
 
-export DONT_USE_LIBS   = $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES)))
-export DONT_USE_SC_LIB = $(OBJECTS_DIR)/lib/$(notdir $(firstword $(LIB_FILES)))
+export DONT_USE_LIBS   = $(patsubst %.lib.gz, %.lib, $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES))))
+export DONT_USE_SC_LIB ?= $(firstword $(DONT_USE_LIBS))
+
+# Stream system used for final result (GDS is default): GDS, GSDII, GDS2, OASIS, or OAS
+STREAM_SYSTEM ?= GDS
+ifneq ($(findstring GDS,$(shell echo $(STREAM_SYSTEM) | tr '[:lower:]' '[:upper:]')),)
+	export STREAM_SYSTEM_EXT := gds
+	GDSOAS_FILES = $(GDS_FILES)
+	ADDITIONAL_GDSOAS = $(ADDITIONAL_GDS)
+	SEAL_GDSOAS = $(SEAL_GDS)
+else
+	export STREAM_SYSTEM_EXT := oas
+	GDSOAS_FILES = $(OAS_FILES)
+	ADDITIONAL_GDSOAS = $(ADDITIONAL_OAS)
+	SEAL_GDSOAS = $(SEAL_OAS)
+endif
+export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
+
+
+# Targets to harden Blocks in case of hierarchical flow is triggered
+build_macros: $(BLOCK_LEFS)
+
+$(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef: ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/${block}/config.mk))
+$(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds: ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
+
+$(BLOCK_LEFS):
+	$(MAKE) DESIGN_CONFIG=$< generate_abstract
 
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
+.PHONY: versions.txt
 versions.txt:
-	@yosys -V > $(abspath $@)
-	@echo openroad `openroad -version` >> $(abspath $@)
-	@klayout -zz -v >> $(abspath $@)
+	@$(YOSYS_CMD) -V > $@
+	@echo openroad `$(OPENROAD_EXE) -version` >> $@
+	@$(KLAYOUT_CMD) -zz -v >> $@
 
-# Pre-process Lefs
-# ==============================================================================
-
-# Modify lef files for TritonRoute
-$(OBJECTS_DIR)/merged_spacing.lef: $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
-	mkdir -p $(OBJECTS_DIR)
-	$(UTILS_DIR)/mergeLef.py --inputLef $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
-
-# Create special generic lef for TritonRoute if required.
-ifneq ($(GENERIC_TECH_LEF),)
-$(OBJECTS_DIR)/generic_merged_spacing.lef: $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
-	mkdir -p $(OBJECTS_DIR)
-	$(UTILS_DIR)/mergeLef.py --inputLef $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
-endif
+# LVS specific global var for this generator
+#-------------------------------------------------------------------------------
+export __open_generator_name__=temp-sense-gen
 
 # Pre-process libraries
 # ==============================================================================
@@ -119,20 +236,24 @@ endif
 # Create temporary Liberty files which have the proper dont_use properties set
 # For use with Yosys and ABC
 .SECONDEXPANSION:
-$(DONT_USE_LIBS): $$(filter %$$(@F),$(LIB_FILES))
+$(DONT_USE_LIBS): $$(filter %$$(@F) %$$(@F).gz,$(LIB_FILES))
 	@mkdir -p $(OBJECTS_DIR)/lib
 	$(UTILS_DIR)/markDontUse.py -p "$(DONT_USE_CELLS)" -i $^ -o $@
 
+$(OBJECTS_DIR)/lib/merged.lib:
+	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged $(DONT_USE_LIBS) > $@
+
 # Pre-process KLayout tech
 # ==============================================================================
- $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE)
-	mkdir -p $(OBJECTS_DIR)
-	sed '/OR_DEFAULT/d' $(TECH_LEF) > $(OBJECTS_DIR)/klayout_tech.lef
-	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
+$(OBJECTS_DIR)/klayout_tech.lef: $(TECH_LEF)
+	@mkdir -p $(OBJECTS_DIR)
+	sed '/OR_DEFAULT/d' $< > $@
 
-$(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE)
-	mkdir -p $(OBJECTS_DIR)
-	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
+ $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
+	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $< > $@
+
+$(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
+	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $< > $@
 # Create Macro wrappers (if necessary)
 # ==============================================================================
 WRAP_CFG = $(PLATFORM_DIR)/wrapper.cfg
