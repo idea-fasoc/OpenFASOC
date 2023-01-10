@@ -33,8 +33,6 @@ def update_custom_nets(blocksDir, arrSize):
     with open(blocksDir + "/ldo_custom_net.txt", "w") as ldo_domain_insts:
         # Always write comparator and pmos connections
         ldo_domain_insts.write("r_VREG\ncmp1 VREG\npmos_1 VREG\npmos_2 VREG\n")
-        # capacitor connections
-        ldo_domain_insts.write("cap_3 pin0\ncap_4 pin0\ncap_5 pin0\n")
         # write arrSize pt cells
         for i in range(arrSize):
             ldo_domain_insts.write("{pt_array_unit\[" + str(i) + "\]} VREG\n")
@@ -88,22 +86,80 @@ def generate_controller_verilog(directories, outputDir, arrSize):
         file.write(filedata)
 
 
-def update_place_density(flowDir, arrSize):
+def update_area_and_place_density(flowDir, arrSize):
     """Increases place density for designs with large power transistor arrays."""
-    with open(
-        flowDir + "design/sky130hvl/ldo/config_template.txt", "r"
-    ) as config_template:
-        config = config_template.read()
+    with open(flowDir + "design/sky130hvl/ldo/config.mk", "r") as config_read:
+        lines = config_read.readlines()
     # adjust config based on arrSize
     if arrSize in range(1, 51):
-        PLACE_DENSITY = 0.40
-    elif arrSize in range(51, 151):
-        PLACE_DENSITY = 0.50
+        lines[18] = "export DIE_AREA                 = 0 0 270 270\n"
+        lines[19] = "export CORE_AREA                = 15 15 255 255\n"
+        lines[20] = "export VREG_AREA                = 40 40 230 60\n"
+        if arrSize in range(1, 11):
+            lines[25] = "export PLACE_DENSITY = 0.30\n"
+        elif arrSize in range(11, 21):
+            lines[25] = "export PLACE_DENSITY = 0.40\n"
+        elif arrSize in range(21, 31):
+            lines[25] = "export PLACE_DENSITY = 0.50\n"
+        elif arrSize in range(31, 41):
+            lines[25] = "export PLACE_DENSITY = 0.60\n"
+        elif arrSize in range(41, 51):
+            lines[25] = "export PLACE_DENSITY = 0.70\n"
+    elif arrSize in range(51, 101):
+        lines[18] = "export DIE_AREA                 = 0 0 290 290\n"
+        lines[19] = "export CORE_AREA                = 15 15 275 275\n"
+        lines[20] = "export VREG_AREA                = 40 40 250 60\n"
+        if arrSize in range(51, 61):
+            lines[25] = "export PLACE_DENSITY = 0.30\n"
+        elif arrSize in range(61, 71):
+            lines[25] = "export PLACE_DENSITY = 0.40\n"
+        elif arrSize in range(71, 81):
+            lines[25] = "export PLACE_DENSITY = 0.50\n"
+        elif arrSize in range(81, 91):
+            lines[25] = "export PLACE_DENSITY = 0.60\n"
+        else:
+            lines[25] = "export PLACE_DENSITY = 0.70\n"
+    elif arrSize in range(101, 151):
+        lines[18] = "export DIE_AREA                 = 0 0 310 310\n"
+        lines[19] = "export CORE_AREA                = 15 15 295 295\n"
+        lines[20] = "export VREG_AREA                = 40 40 270 60\n"
+        if arrSize in range(101, 111):
+            lines[25] = "export PLACE_DENSITY = 0.30\n"
+        elif arrSize in range(111, 121):
+            lines[26] = "export PLACE_DENSITY = 0.40\n"
+        elif arrSize in range(121, 131):
+            lines[25] = "export PLACE_DENSITY = 0.50\n"
+        elif arrSize in range(131, 141):
+            lines[25] = "export PLACE_DENSITY = 0.60\n"
+        else:
+            lines[25] = "export PLACE_DENSITY = 0.70\n"
     elif arrSize in range(151, 201):
-        PLACE_DENSITY = 0.60
+        lines[18] = "export DIE_AREA                 = 0 0 330 330\n"
+        lines[19] = "export CORE_AREA                = 15 15 315 315\n"
+        lines[20] = "export VREG_AREA                = 40 40 290 60\n"
+        if arrSize in range(151, 161):
+            lines[25] = "export PLACE_DENSITY = 0.30\n"
+        elif arrSize in range(161, 171):
+            lines[25] = "export PLACE_DENSITY = 0.40\n"
+        elif arrSize in range(171, 181):
+            lines[25] = "export PLACE_DENSITY = 0.50\n"
+        elif arrSize in range(181, 191):
+            lines[25] = "export PLACE_DENSITY = 0.60\n"
+        else:
+            lines[25] = "export PLACE_DENSITY = 0.70\n"
     else:
-        PLACE_DENSITY = 0.70
-    # write changes to config
-    config = config.replace("@PLACE_DENSITY_PARAM", str(PLACE_DENSITY))
+        lines[18] = "export DIE_AREA                 = 0 0 345 345\n"
+        lines[19] = "export CORE_AREA                = 15 15 330 330\n"
+        lines[20] = "export VREG_AREA                = 40 40 305 60\n"
+        if arrSize in range(201, 211):
+            lines[25] = "export PLACE_DENSITY = 0.30\n"
+        elif arrSize in range(211, 221):
+            lines[25] = "export PLACE_DENSITY = 0.40\n"
+        elif arrSize in range(221, 231):
+            lines[25] = "export PLACE_DENSITY = 0.50\n"
+        elif arrSize in range(231, 241):
+            lines[25] = "export PLACE_DENSITY = 0.60\n"
+        else:
+            lines[25] = "export PLACE_DENSITY = 0.70\n"
     with open(flowDir + "design/sky130hvl/ldo/config.mk", "w") as config_spec:
-        config_spec.write(config)
+        config_spec.writelines(lines)
