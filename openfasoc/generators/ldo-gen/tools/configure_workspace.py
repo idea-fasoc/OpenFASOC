@@ -20,6 +20,7 @@ def get_directories():
     directories["blocksDir"] = genDir + "blocks/sky130hvl/"
     directories["commonDir"] = genDir + "../../common/"
     directories["supportedInputs"] = genDir + "tools/supported_inputs.json"
+    directories["objDir"] = genDir + "flow/objects/sky130hvl/ldo/base/"
     return directories
 
 
