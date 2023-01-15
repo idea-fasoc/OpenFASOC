@@ -43,14 +43,14 @@ Install all the prerequisites using `dependencies.sh` script provided in the hom
 
   2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.244)
 
-  3. `Klayout <https://github.com/KLayout/klayout>`_ (version:0.27.13-1)
+  3. `Klayout <https://github.com/KLayout/klayout>`_ (version:0.28.2-1)
 
       - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
   4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.23+3)
 
-  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_6332)
+  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_6407)
 
   6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.378)
 
