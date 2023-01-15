@@ -374,7 +374,7 @@ clean_floorplan:
 	rm -f $(RESULTS_DIR)/2_*floorplan*.odb $(RESULTS_DIR)/2_floorplan.sdc $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_*floorplan.def
 	rm -f $(REPORTS_DIR)/2_*
 	rm -f $(LOG_DIR)/2_*
-	
+
 
 # ==============================================================================
 #  ____  _        _    ____ _____
