@@ -243,3 +243,40 @@ def check_JSON(JSON_to_check):
         print("Error: ldoModel.json file has an invalid format. %s" % str(e))
         sys.exit(1)
     return jsonModel
+
+
+def copy_outputs(directories, relativeOutputDir, platform, designName):
+    """Copies all final files to the work directory."""
+    outputDir = directories["genDir"] + relativeOutputDir
+    shutil.copyfile(
+        directories["flowDir"] + "results/" + platform + "/ldo/base/6_final.gds",
+        outputDir + "/" + designName + ".gds",
+    )
+    shutil.copyfile(
+        directories["flowDir"] + "results/" + platform + "/ldo/base/6_final.def",
+        outputDir + "/" + designName + ".def",
+    )
+    shutil.copyfile(
+        directories["flowDir"] + "results/" + platform + "/ldo/base/6_final.v",
+        outputDir + "/" + designName + ".v",
+    )
+    shutil.copyfile(
+        directories["flowDir"] + "results/" + platform + "/ldo/base/6_1_fill.sdc",
+        outputDir + "/" + designName + ".sdc",
+    )
+    shutil.copyfile(
+        directories["objDir"] + "netgen_lvs/spice/" + designName + ".spice",
+        outputDir + "/" + designName + ".spice",
+    )
+    shutil.copyfile(
+        directories["objDir"] + "netgen_lvs/spice/" + designName + "_pex.spice",
+        outputDir + "/" + designName + "_pex.spice",
+    )
+    shutil.copyfile(
+        directories["flowDir"] + "reports/" + platform + "/ldo/base/6_final_drc.rpt",
+        outputDir + "/6_final_drc.rpt",
+    )
+    shutil.copyfile(
+        directories["flowDir"] + "reports/" + platform + "/ldo/base/6_final_lvs.rpt",
+        outputDir + "/6_final_lvs.rpt",
+    )

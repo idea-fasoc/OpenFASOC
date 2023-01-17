@@ -75,10 +75,52 @@ def complete_remove_from_spice(netlist):
     return netlist
 
 
+def prepare_post_pex(netlist):
+    """Prepare PEX netlist for simulations."""
+    netlist = netlist.replace(
+        "r_VREG clk cmp_out", "r_VREG capacitor_test_nf_4/pin0 clk cmp_out", 1
+    )
+    cells_array = netlist.split("\n")
+    i = 0
+    while i < len(cells_array):
+        if (
+            cells_array[i].startswith("C")
+            and "vref_gen_nmos_with_trim_0" in cells_array[i]
+        ):
+            cells_array[i] = "*" + cells_array[i]
+        # 		elif cells_array[i].startswith("C") and "sky130_fd_sc_hvl__or2_1_0" in cells_array[i]:
+        # 			cells_array[i] = "*"+cells_array[i]
+        # 		elif cells_array[i].startswith("C") and "sky130_fd_sc_hvl__buf_1_3" in cells_array[i]:
+        # 			cells_array[i] = "*"+cells_array[i]
+        # 		elif cells_array[i].startswith("C") and "a_84_81#" in cells_array[i]:
+        # 			cells_array[i] = "*"+cells_array[i]
+        elif "Xvref_gen_nmos_with_trim_0" in cells_array[i]:
+            cells_array[i] = "*" + cells_array[i]
+            i = i + 1
+            while cells_array[i][0] == "+":
+                cells_array[i] = "*" + cells_array[i]
+                i = i + 1
+        i = i + 1
+    netlist = "\n".join(cells_array)
+    return netlist
+
+
+prePEX_SPICE_HEADER_GLOBAL_V = """clk cmp_out ctrl_out[0] ctrl_out[1] ctrl_out[2] ctrl_out[3]
++ ctrl_out[4] ctrl_out[5] ctrl_out[6] ctrl_out[7] ctrl_out[8] mode_sel[0] mode_sel[1]
++ reset std_ctrl_in std_pt_in_cnt[0] std_pt_in_cnt[1] std_pt_in_cnt[2] std_pt_in_cnt[3]
++ std_pt_in_cnt[4] std_pt_in_cnt[5] std_pt_in_cnt[6] std_pt_in_cnt[7] std_pt_in_cnt[8]
++ trim1 trim10 trim2 trim3 trim4 trim5 trim6 trim7 trim8 trim9 VDD VSS VREF VREG"""
+
+postPEX_SPICE_HEADER_GLOBAL_V = """VREG VREF clk cmp_out ctrl_out[0] ctrl_out[1] ctrl_out[2] ctrl_out[3]
++ ctrl_out[4] ctrl_out[5] ctrl_out[6] ctrl_out[7] ctrl_out[8] mode_sel[0] mode_sel[1]
++ reset std_ctrl_in std_pt_in_cnt[0] std_pt_in_cnt[1] std_pt_in_cnt[2] std_pt_in_cnt[3]
++ std_pt_in_cnt[4] std_pt_in_cnt[5] std_pt_in_cnt[6] std_pt_in_cnt[7] std_pt_in_cnt[8]
++ trim1 trim10 trim2 trim3 trim4 trim5 trim6 trim7 trim8 trim9 VSS VDD"""
+
+
 def configure_simulations(
     directories,
     designName,
-    simType,
     arrSize,
     pdk_path,
     vref,
@@ -93,61 +135,71 @@ def configure_simulations(
         print("mkdir returned the following error:")
         print(error)
         print("Ignoring this error and continuing.")
-    specialized_run_name = simType + "_PT_cells_" + str(arrSize)
-    specialized_run_dir = directories["simDir"] + "/run/" + specialized_run_name
+    prePEX_specialized_run_name = "prePEX_PT_cells_" + str(arrSize)
+    prePEX_specialized_run_dir = (
+        directories["simDir"] + "/run/" + prePEX_specialized_run_name
+    )
+    postPEX_specialized_run_name = "postPEX_PT_cells_" + str(arrSize)
+    postPEX_specialized_run_dir = (
+        directories["simDir"] + "/run/" + postPEX_specialized_run_name
+    )
     try:
-        # throws if these simulations (i.e. dir) already exist
-        os.mkdir(specialized_run_dir)
+        os.mkdir(prePEX_specialized_run_dir)
+        os.mkdir(postPEX_specialized_run_dir)
     except OSError as error:
         print(error)
         print(
-            "Directory "
-            + specialized_run_dir
-            + ' already exists.\nRun "make clean_sims" to clear simulation runs.'
+            'Already ran simulations for this design\nRun "make clean_sims" to clear simulation runs'
         )
         exit(1)
     # copy spice file and template
     flow_spice_dir = (
         directories["flowDir"] + "/objects/sky130hvl/ldo/base/netgen_lvs/spice/"
     )
-    if simType == "prePEX":
-        target_spice = designName + ".spice"
-    elif simType == "postPEX":
-        print("Unsupported simtype. postPEX currently not supported.")
-        exit(1)
-        # target_spice = designName+"_lvsmag.spice"
-    else:
-        print("Invalid simtype, specify either prePEX or postPEX.")
-        exit(1)
+    prePEX_target_spice = designName + ".spice"
+    postPEX_target_spice = designName + "_pex.spice"
     # read spice files and prepare for sims
-    with open(flow_spice_dir + target_spice, "r") as spice_in:
+    with open(flow_spice_dir + postPEX_target_spice, "r") as spice_in:
+        PEXspiceout = spice_in.read()
+    with open(flow_spice_dir + prePEX_target_spice, "r") as spice_in:
         power_spice_out = spice_out = spice_in.read()
     # prepare functional sim spice file
     spice_out = partial_remove_from_spice(spice_out)
+    PEXspiceout = prepare_post_pex(PEXspiceout)
     # prepare power array sim spice file
     power_spice_out = complete_remove_from_spice(spice_out)
     # write outputs
-    with open(specialized_run_dir + "/ldo_sim.spice", "w") as spice_prep:
+    with open(postPEX_specialized_run_dir + "/ldo_sim.spice", "w") as spice_prep:
+        spice_prep.write(PEXspiceout)
+    with open(prePEX_specialized_run_dir + "/ldo_sim.spice", "w") as spice_prep:
         spice_prep.write(spice_out)
-    with open(specialized_run_dir + "/power_array.spice", "w") as spice_prep:
+    with open(prePEX_specialized_run_dir + "/power_array.spice", "w") as spice_prep:
         spice_prep.write(power_spice_out)
     # prepare spice control scripts
     template_sim_spice = "ldoInst_" + simTool + ".sp"
     template_pwr_array_spice = "power_array_template_" + simTool + ".sp"
     shutil.copy(
-        directories["simDir"] + "/templates/" + template_sim_spice, specialized_run_dir
+        directories["simDir"] + "/templates/" + template_sim_spice,
+        prePEX_specialized_run_dir,
+    )
+    shutil.copy(
+        directories["simDir"] + "/templates/" + template_sim_spice,
+        postPEX_specialized_run_dir,
     )
     shutil.copy(
         directories["simDir"] + "/templates/" + template_pwr_array_spice,
-        specialized_run_dir,
+        prePEX_specialized_run_dir,
     )
     # copy spiceinit into run dir
     if simTool == "ngspice":
         shutil.copy(
-            directories["simDir"] + "/templates/.spiceinit", specialized_run_dir
+            directories["simDir"] + "/templates/.spiceinit", prePEX_specialized_run_dir
+        )
+        shutil.copy(
+            directories["simDir"] + "/templates/.spiceinit", postPEX_specialized_run_dir
         )
     # configure sim template
-    with open(specialized_run_dir + "/" + template_sim_spice, "r") as sim_spice:
+    with open(prePEX_specialized_run_dir + "/" + template_sim_spice, "r") as sim_spice:
         sim_template = sim_spice.read()
     sim_template = sim_template.replace(
         "@model_file", pdk_path + "/libs.tech/" + simTool + "/sky130.lib.spice"
@@ -155,19 +207,32 @@ def configure_simulations(
     sim_template = sim_template.replace("@model_corner", model_corner)
     sim_template = sim_template.replace("@design_nickname", designName)
     sim_template = sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
-    with open(specialized_run_dir + "/" + template_sim_spice, "w") as sim_spice:
+    postPEX_sim_template = sim_template
+    sim_template = sim_template.replace(
+        "@proper_pin_ordering", prePEX_SPICE_HEADER_GLOBAL_V
+    )
+    postPEX_sim_template = postPEX_sim_template.replace(
+        "@proper_pin_ordering", postPEX_SPICE_HEADER_GLOBAL_V
+    )
+    with open(prePEX_specialized_run_dir + "/" + template_sim_spice, "w") as sim_spice:
         sim_spice.write(sim_template)
+    with open(postPEX_specialized_run_dir + "/" + template_sim_spice, "w") as sim_spice:
+        sim_spice.write(postPEX_sim_template)
     # configure power array sim_template
-    with open(specialized_run_dir + "/" + template_pwr_array_spice, "r") as sim_spice:
+    with open(
+        prePEX_specialized_run_dir + "/" + template_pwr_array_spice, "r"
+    ) as sim_spice:
         pwr_sim_template = sim_spice.read()
     pwr_sim_template = pwr_sim_template.replace("@model_corner", model_corner)
     pwr_sim_template = pwr_sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
     pwr_sim_template = pwr_sim_template.replace(
         "@model_file", pdk_path + "/libs.tech/" + simTool + "/sky130.lib.spice"
     )
-    with open(specialized_run_dir + "/" + template_pwr_array_spice, "w") as sim_spice:
+    with open(
+        prePEX_specialized_run_dir + "/" + template_pwr_array_spice, "w"
+    ) as sim_spice:
         sim_spice.write(pwr_sim_template)
-    return specialized_run_dir + "/"
+    return [prePEX_specialized_run_dir + "/", postPEX_specialized_run_dir + "/"]
 
 
 # ------------------------------------------------------------------------------
@@ -280,14 +345,11 @@ def binary_search_current_at_acceptible_error(specialized_run_dir, VREF):
 
 def save_sim_plot(specialized_run_dir, workDir):
     """Copy postscript sim outputs and convert into PNG."""
-    # 	pscurrent=Image.open(specialized_run_dir+"currentplot.ps")
-    # 	pscurrent.save(workDir+"/currentplot.png")
-    # 	psvreg=Image.open(specialized_run_dir+"vregplot.ps")
-    # 	psvreg.save(workDir+"/vregplot.png")
     svg2png(
-        url=specialized_run_dir + "currentplot.ps", write_to=workDir + "currentplot.png"
+        url=specialized_run_dir + "currentplot.svg",
+        write_to=workDir + "currentplot.png",
     )
-    svg2png(url=specialized_run_dir + "vregplot.ps", write_to=workDir + "vregplot.png")
+    svg2png(url=specialized_run_dir + "vregplot.svg", write_to=workDir + "vregplot.png")
 
 
 def plot_copy_csv(specialized_run_dir, workDir, VREF):
@@ -304,7 +366,6 @@ def plot_copy_csv(specialized_run_dir, workDir, VREF):
         VREG_value = []
         output_current = []
         for row in sim_data_lines:
-            # print(row)
             try:
                 timeval = float(row[1])
                 VREG_val_current = float(row[3])

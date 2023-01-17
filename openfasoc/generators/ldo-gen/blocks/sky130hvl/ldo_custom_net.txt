@@ -2,9 +2,6 @@ r_VREG
 cmp1 VREG
 pmos_1 VREG
 pmos_2 VREG
-cap_3 pin0
-cap_4 pin0
-cap_5 pin0
 {pt_array_unit\[0\]} VREG
 {pt_array_unit\[1\]} VREG
 {pt_array_unit\[2\]} VREG
