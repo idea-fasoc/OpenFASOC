@@ -27,7 +27,7 @@ vtrim10 trim10 0 DC=0
 
 *With ideal VRef block
 *change here if want to change clock frequency
-V3 clk VSS pulse 0 3.3 0 1n 1n 5u 10u
+V3 clk VSS pulse 0 3.3 0 1n 1n 0.5u 1u
 
 V4 reset 0 pwl 0 3.3 10n 3.3 10.1n 0
 
