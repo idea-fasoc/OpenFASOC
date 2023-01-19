@@ -50,7 +50,7 @@ Install all the prerequisites using `dependencies.sh` script provided in the hom
 
   4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.23+3)
 
-  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_6471)
+  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_6536)
 
   6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.378)
 
