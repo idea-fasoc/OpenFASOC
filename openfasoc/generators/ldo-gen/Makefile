@@ -48,6 +48,8 @@ clean:
 	-rm -rf work
 	-rm -rf tools/*.pyc tools/__pycache__/
 	-cd flow && make nuke
+	-rm -f blocks/sky130hvl/ldo_custom_net.txt blocks/sky130hvl/ldo_domain_insts.txt
+	-rm -rf ../../common/drc-lvs-check/sky130A
 
 clean_sims:
 	cd simulations && rm -rf run
