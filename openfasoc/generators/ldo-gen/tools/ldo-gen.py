@@ -185,39 +185,6 @@ if args.mode == "full" or args.mode == "sim":
         tuple((prePEX_specialized_run_dir, "power_array.spice", powerArrayNetlist))
     )
 
-    # prepare simulation scripts (return as strings)
-    if jsonConfig["simTool"] == "ngspice":
-        [prePEXscript, PEXscript, PWRARRscript] = prepare_scripts_ngspice(
-            directories["simDir"] + "/templates/",
-            pdk_path,
-            "tt",
-            user_specs["designName"],
-            user_specs["vin"],
-        )
-    # elif jsonConfig["simTool"] == "Xyce":
-    else:
-        print("simtool not supported")
-        exit(1)
-    filestocopy.append(
-        tuple((postPEX_specialized_run_dir, "ldoInst_sim.sp", PEXscript))
-    )
-    filestocopy.append(
-        tuple((prePEX_specialized_run_dir, "ldoInst_sim.sp", prePEXscript))
-    )
-    filestocopy.append(
-        tuple(
-            (
-                prePEX_specialized_run_dir,
-                "power_array_template_ngspice.sp",
-                PWRARRscript,
-            )
-        )
-    )
-
-    # write all the files to their respective locations
-    for filetocopy in filestocopy:
-        with open(filetocopy[0] + "/" + filetocopy[1], "w") as simfile:
-            simfile.write(filetocopy[2])
     shutil.copy(
         directories["simDir"] + "/templates/.spiceinit", prePEX_specialized_run_dir
     )
@@ -225,14 +192,62 @@ if args.mode == "full" or args.mode == "sim":
         directories["simDir"] + "/templates/.spiceinit", postPEX_specialized_run_dir
     )
 
+    # write all the files to their respective locations
+    for filetocopy in filestocopy:
+        with open(filetocopy[0] + "/" + filetocopy[1], "w") as simfile:
+            simfile.write(filetocopy[2])
+
+    # prepare simulation scripts and run simulations (return as strings)
+    if jsonConfig["simTool"] == "ngspice":
+        [prePEXscript, PEXscript, PWRARRscript] = prepare_scripts_and_run_ngspice(
+            directories["simDir"] + "/templates/",
+            prePEX_specialized_run_dir,
+            postPEX_specialized_run_dir,
+            pdk_path,
+            arrSize,
+            "tt",
+            user_specs["designName"],
+            user_specs["vin"],
+            prePEX=False,
+        )
+    # elif jsonConfig["simTool"] == "Xyce":
+    else:
+        print("simtool not supported")
+        exit(1)
+    # filestocopy.append(
+    # tuple((postPEX_specialized_run_dir, "ldoInst_sim.sp", PEXscript))
+    # )
+    # filestocopy.append(
+    # tuple((prePEX_specialized_run_dir, "ldoInst_sim.sp", prePEXscript))
+    # )
+    # filestocopy.append(
+    # tuple(
+    # (
+    # prePEX_specialized_run_dir,
+    # "power_array_template_ngspice.sp",
+    # PWRARRscript,
+    # )
+    # )
+    # )
+
     # run max current solve
     max_load = binary_search_current_at_acceptible_error(
         prePEX_specialized_run_dir, user_specs["vin"]
     )
     print("Max load current = " + str(max_load) + " Amps\n\n")
     # run functional simulation
-    sp.Popen(
-        ["ngspice", "-b", "-o", "out.txt", "ldoInst_sim.sp"],
-        cwd=postPEX_specialized_run_dir,
-    ).wait()
-    save_sim_plot(postPEX_specialized_run_dir, directories["genDir"] + "/work/")
+    # sp.Popen(
+    # ["ngspice", "-b", "-o", "out.txt", "ldoInst_sim.sp"],
+    # cwd=postPEX_specialized_run_dir,
+    # ).wait()
+    # save_sim_plot(postPEX_specialized_run_dir, directories["genDir"] + "/work/")
+    freq_list = ["0.1MHz", "1MHz", "10Mhz"]
+    for f in range(len(freq_list)):
+        shutil.copy(
+            directories["simDir"] + "/templates/post_processing.py",
+            postPEX_specialized_run_dir + freq_list[f] + "/",
+        )
+        sp.Popen(
+            ["python3", "post_processing.py"],
+            cwd=postPEX_specialized_run_dir + freq_list[f] + "/",
+        ).wait()
