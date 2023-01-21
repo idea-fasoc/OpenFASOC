@@ -27,7 +27,7 @@ vtrim10 trim10 0 DC=0
 
 *With ideal VRef block
 *change here if want to change clock frequency
-V3 clk VSS pulse 0 3.3 0 1n 1n 0.5u 1u
+V3 clk VSS pulse 0 3.3 0 1n 1n @duty_cycle @clk_period
 
 V4 reset 0 pwl 0 3.3 10n 3.3 10.1n 0
 
@@ -44,34 +44,36 @@ vstd6 std_pt_in_cnt[6] 0 dc 0
 vstd7 std_pt_in_cnt[7] 0 dc 0
 vstd8 std_pt_in_cnt[8] 0 dc 0
 
-R1 VREG VSS 3.6k
+R1 VREG VSS @Res_Value
 *Resistance 3600 --> 0.5 mA for 1.8 V reference voltage. R to be adjusted according to Iload and output voltage.
 
 *R0 VREG 0 R='TIME > 500u ? 720 : 3600' ;If want to do a transient simulation where I load is changing in the middle of a transient simulation. Example: Here it is changing from 720 ohm (2.5mA) to 3600 ohm (0.5 mA) at t = 1000us
 
-C1 VREG VSS 30n
+C1 VREG VSS @Cap_Value
 
 *.options savecurrents
+.option wnflag=1
 .options rshunt=1e11
 .ic v(VREG) = 0 v(clk)=0 v(reset)=3.3
 *Analysis
 .temp 25
-.tran 100n 300u
+.tran @sim_step @sim_time
 
 .probe V(VREG) v(VREF) v(cmp_out) v(clk) i(R1)
 .control
 run
 
-set hcopydevtype = svg
-set svg_intopts = ( 2560 1440 30 0 1 2 0 )
-setcs svg_stropts = ( white Arial Arial )
-set color1 = black
-set color2 = red
-hardcopy vregPlot.svg v(VREG) title 'LDO VREG startup transients with 1.8V VREF'
-hardcopy currentPlot.svg I(R1) title 'LDO load current startup transients with 1.8V VREF'
+*set hcopydevtype = svg
+*set svg_intopts = ( 2560 1440 30 0 1 2 0 )
+*setcs svg_stropts = ( white Arial Arial )
+*set color1 = black
+*set color2 = red
+*hardcopy vregPlot.svg v(VREG) title 'LDO VREG startup transients with 1.8V VREF'
+*hardcopy currentPlot.svg I(R1) title 'LDO load current startup transients with 1.8V VREF'
 *hardcopy cmp_out_clk_plot.ps cmp_out clk
 
-write output.raw v(VREG) v(VREF) v(cmp_out) v(clk) (("ctrl_out[0]"+2*"ctrl_out[1]"+4*"ctrl_out[2]"+8*"ctrl_out[3]"+16*"ctrl_out[4]"+32*"ctrl_out[5]"+ 64*"ctrl_out[6]"+128*"ctrl_out[7]"+ 256*"ctrl_out[8]")/3.3) ;Last variable is for the counter indicating number of switches that are turning ON (ctrl_word_cnt)
+set filetype=binary
+write @output_raw v(VREG) v(VREF) v(cmp_out) v(clk)
 
 .endc
 
