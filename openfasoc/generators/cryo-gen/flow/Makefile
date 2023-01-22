@@ -358,7 +358,6 @@ $(RESULTS_DIR)/2_4_floorplan_macro.odb: $(RESULTS_DIR)/2_3_floorplan_tdms.odb $(
 $(RESULTS_DIR)/2_5_floorplan_tapcell.odb: $(RESULTS_DIR)/2_4_floorplan_macro.odb $(TAPCELL_TCL)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/tapcell.tcl -metrics $(LOG_DIR)/2_5_tapcell.json) 2>&1 | tee $(LOG_DIR)/2_5_tapcell.log
 
-
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_6_floorplan_pdn.odb: $(RESULTS_DIR)/2_5_floorplan_tapcell.odb $(PDN_CFG) $(PDN_TCL)
@@ -369,12 +368,10 @@ $(RESULTS_DIR)/2_floorplan.odb: $(RESULTS_DIR)/2_6_floorplan_pdn.odb
 
 $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
-
 clean_floorplan:
 	rm -f $(RESULTS_DIR)/2_*floorplan*.odb $(RESULTS_DIR)/2_floorplan.sdc $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_*floorplan.def
 	rm -f $(REPORTS_DIR)/2_*
 	rm -f $(LOG_DIR)/2_*
-
 
 # ==============================================================================
 #  ____  _        _    ____ _____
@@ -385,25 +382,41 @@ clean_floorplan:
 #
 place: $(RESULTS_DIR)/3_place.odb \
        $(RESULTS_DIR)/3_place.sdc
+
+# STEP 0.0: Temporarily convert back to .DEF to run the RO placement, then revert
+
+$(RESULTS_DIR)/2_floorplan.def: $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/odb_to_def.tcl -metrics $(LOG_DIR)/3_0_conversion.json) 2>&1 | tee $(LOG_DIR)/3_0_conversion.log
+
+# STEP 0.3: Place RO to fixed coordinates. Variables are defined inside of config.mk in flow
+
+$(RESULTS_DIR)/2_floorplan_ro.def: $(RESULTS_DIR)/2_floorplan.def
+	python3 util/place_ro.py --inputDef $(RESULTS_DIR)/2_floorplan.def --outputDef $(RESULTS_DIR)/2_floorplan_ro.def --coreDim $(RO_CORE_DIM) --arrayDim $(RO_ARRAY_DIM) --cellDim $(RO_CELL_DIM) --targetInst cryo_ro_1 --coreDieOffset $(RO_OFFSET)
+
+# STEP 0.6: Revert .DEF back to .ODB to finish p&r
+
+$(RESULTS_DIR)/2_floorplan_ro.odb: $(RESULTS_DIR)/2_floorplan_ro.def
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/def_to_odb.tcl -metrics $(LOG_DIR)/3_1_conversion.json) 2>&1 | tee $(LOG_DIR)/3_1_conversion.log
+
 # ==============================================================================
 # STEP 1: Global placement without placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_1_place_gp_skip_io.odb: $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place_skip_io.tcl -metrics $(LOG_DIR)/3_1_place_gp_skip_io.json) 2>&1 | tee $(LOG_DIR)/3_1_place_gp_skip_io.log
+$(RESULTS_DIR)/3_1_place_gp.odb: $(RESULTS_DIR)/2_floorplan_ro.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl -metrics $(LOG_DIR)/3_1_place_gp.json) 2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
 
 # STEP 2: IO placement (non-random)
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_2_place_iop.odb: $(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS)
-ifndef IS_CHIP
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_2_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_2_place_iop.log
-else
-	cp $< $@
-endif
+#$(RESULTS_DIR)/3_2_place_iop.odb: $(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS)
+#ifndef IS_CHIP
+#	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_2_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_2_place_iop.log
+#else
+#	cp $< $@
+#endif
 
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_3_place_gp.odb: $(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl -metrics $(LOG_DIR)/3_3_place_gp.json) 2>&1 | tee $(LOG_DIR)/3_3_place_gp.log
+#$(RESULTS_DIR)/3_3_place_gp.odb: $(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
+#	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl -metrics $(LOG_DIR)/3_3_place_gp.json) 2>&1 | tee $(LOG_DIR)/3_3_place_gp.log
 
 # # STEP 4: Resizing & Buffering (not needed for the tempsense)
 # #-------------------------------------------------------------------------------
@@ -412,12 +425,13 @@ $(RESULTS_DIR)/3_3_place_gp.odb: $(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)
 #
 # clean_resize:
 # 	rm -f $(RESULTS_DIR)/3_4_place_resized.odb
-$(RESULTS_DIR)/3_4_place_resized.odb: $(RESULTS_DIR)/3_3_place_gp.odb # just copy file to not break dependencies
-	cp $< $@
+
+#$(RESULTS_DIR)/3_4_place_resized.odb: $(RESULTS_DIR)/3_2_place_iop.odb # just copy file to not break dependencies
+#	cp $< $@
 
 # STEP 5: Detail placement
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_5_place_dp.odb: $(RESULTS_DIR)/3_4_place_resized.odb
+$(RESULTS_DIR)/3_5_place_dp.odb: $(RESULTS_DIR)/3_1_place_gp.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_place.tcl -metrics $(LOG_DIR)/3_5_opendp.json) 2>&1 | tee $(LOG_DIR)/3_5_opendp.log
 
 $(RESULTS_DIR)/3_place.odb: $(RESULTS_DIR)/3_5_place_dp.odb
@@ -434,16 +448,6 @@ clean_place:
 	rm -f $(RESULTS_DIR)/3_place.sdc
 	rm -f $(REPORTS_DIR)/3_*
 	rm -f $(LOG_DIR)/3_*
-
-
-# Clean Targets
-#-------------------------------------------------------------------------------
-clean_place:
-	rm -f $(RESULTS_DIR)/3_*place*.def
-	rm -f $(RESULTS_DIR)/3_place.sdc
-	rm -f $(REPORTS_DIR)/3_*
-	rm -f $(LOG_DIR)/3_*
-
 
 # ==============================================================================
 #   ____ _____ ____

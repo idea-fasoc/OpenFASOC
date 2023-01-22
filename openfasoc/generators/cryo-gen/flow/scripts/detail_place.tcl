@@ -1,6 +1,6 @@
 utl::set_metrics_stage "detailedplace__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 3_4_place_resized.odb 2_floorplan.sdc "Starting detailed placement"
+load_design 3_1_place_gp.odb 2_floorplan.sdc "Starting detailed placement"
 
 source $::env(PLATFORM_DIR)/setRC.tcl
 

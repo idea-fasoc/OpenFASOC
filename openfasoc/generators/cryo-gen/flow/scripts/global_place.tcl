@@ -1,6 +1,6 @@
 utl::set_metrics_stage "globalplace__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 3_2_place_iop.odb 2_floorplan.sdc "Starting global placement"
+load_design 2_floorplan_ro.odb 2_floorplan.sdc "Starting global placement"
 
 set_dont_use $::env(DONT_USE_CELLS)
 
@@ -49,5 +49,5 @@ source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "global place" false
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_db $::env(RESULTS_DIR)/3_3_place_gp.odb
+  write_db $::env(RESULTS_DIR)/3_1_place_gp.odb
 }
