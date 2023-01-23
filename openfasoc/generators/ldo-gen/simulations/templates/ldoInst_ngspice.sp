@@ -73,7 +73,7 @@ run
 *hardcopy cmp_out_clk_plot.ps cmp_out clk
 
 set filetype=binary
-write @output_raw v(VREG) v(VREF) v(cmp_out) v(clk)
+write @output_raw v(VREG) v(VREF) v(cmp_out) v(clk) v("ctrl_out[0]") v("ctrl_out[1]") v("ctrl_out[2]") v("ctrl_out[3]") v("ctrl_out[4]") v("ctrl_out[5]") v("ctrl_out[6]") v("ctrl_out[7]") v("ctrl_out[8]")
 
 .endc
 

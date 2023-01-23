@@ -11,7 +11,7 @@ fig2, axes2 = plt.subplots(len(cap_list))
 fig3, axes3 = plt.subplots(len(cap_list))
 fig4, axes4 = plt.subplots(len(cap_list))
 fig5, axes5 = plt.subplots(len(cap_list))
-# fig6 , axes6 = plt.subplots(3)
+fig6, axes6 = plt.subplots(3)
 for i in range(cap_len):
     l = ltspice.Ltspice(cap_list[i] + "_" + "cap_output.raw")
     l.parse()
@@ -20,15 +20,15 @@ for i in range(cap_len):
     VREF = l.get_data("v(vref)")
     cmp_out = l.get_data("v(cmp_out)")
     clk = l.get_data("v(clk)")
-    # ctrl0    = l.get_data('v(ctrl_out[0])')
-    # ctrl1    = l.get_data('v(ctrl_out[1])')
-    # ctrl2    = l.get_data('v(ctrl_out[2])')
-    # ctrl3    = l.get_data('v(ctrl_out[3])')
-    # ctrl4    = l.get_data('v(ctrl_out[4])')
-    # ctrl5    = l.get_data('v(ctrl_out[5])')
-    # ctrl6    = l.get_data('v(ctrl_out[6])')
-    # ctrl7    = l.get_data('v(ctrl_out[7])')
-    # ctrl8    = l.get_data('v(ctrl_out[8])')
+    ctrl0 = l.get_data("v(ctrl_out[0])")
+    ctrl1 = l.get_data("v(ctrl_out[1])")
+    ctrl2 = l.get_data("v(ctrl_out[2])")
+    ctrl3 = l.get_data("v(ctrl_out[3])")
+    ctrl4 = l.get_data("v(ctrl_out[4])")
+    ctrl5 = l.get_data("v(ctrl_out[5])")
+    ctrl6 = l.get_data("v(ctrl_out[6])")
+    ctrl7 = l.get_data("v(ctrl_out[7])")
+    ctrl8 = l.get_data("v(ctrl_out[8])")
     time = l.get_time()
 
     VREG_list = VREG.tolist()  # converts numpy array to list
@@ -50,14 +50,24 @@ for i in range(cap_len):
     fig1.text(0.5, 0.04, "Time [us]", ha="center")
     fig1.text(0.04, 0.5, "Vreg and Vref [V]", va="center", rotation="vertical")
 
-    # num_of_switches = ((ctrl0+2*ctrl1+4*ctrl2+8*ctrl3+16*ctrl4+32*ctrl5+64*ctrl6+128*ctrl7+256*ctrl8)/3.3)
-    # num_of_switches_plot = num_of_switches[50:]
-    # axes2[i].set_title('Number of Switches vs Time'+' '+str(cap_list[i]))
-    # axes2[i].ticklabel_format(style='sci', axis='x',scilimits=(-6,-6))
-    # axes2[i].plot(time_list[50:],num_of_switches_plot,label='VREG')
-    # axes2[i].legend(loc='lower right')
-    # fig2.text(0.5, 0.04, 'Time [us]', ha='center')
-    # fig2.text(0.04, 0.5, 'Number of Switches ', va='center', rotation='vertical')
+    num_of_switches = (
+        ctrl0
+        + 2 * ctrl1
+        + 4 * ctrl2
+        + 8 * ctrl3
+        + 16 * ctrl4
+        + 32 * ctrl5
+        + 64 * ctrl6
+        + 128 * ctrl7
+        + 256 * ctrl8
+    ) / 3.3
+    num_of_switches_plot = num_of_switches[50:]
+    axes6[i].set_title("Number of Switches vs Time" + " " + str(cap_list[i]))
+    axes6[i].ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
+    axes6[i].plot(time_list[50:], num_of_switches_plot, label="VREG")
+    axes6[i].legend(loc="lower right")
+    fig6.text(0.5, 0.04, "Time [us]", ha="center")
+    fig6.text(0.04, 0.5, "Number of Switches ", va="center", rotation="vertical")
 
     axes2[i].set_title("V_difference vs Time" + " " + str(cap_list[i]))
     axes2[i].ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
@@ -137,4 +147,4 @@ fig2.savefig("VREG-VREF")
 fig3.savefig("VREG ripple")
 fig4.savefig("Cmp_out")
 fig5.savefig("VREG oscillation")
-# plt.show()
+fig6.savefig("Number of Switches")
