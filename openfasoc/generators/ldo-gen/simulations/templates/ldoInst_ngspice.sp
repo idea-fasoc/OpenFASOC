@@ -59,7 +59,7 @@ C1 VREG VSS @Cap_Value
 .temp 25
 .tran @sim_step @sim_time
 
-.probe V(VREG) v(VREF) v(cmp_out) v(clk) i(R1)
+*.probe V(VREG) v(VREF) v(cmp_out) v(clk) i(R1)
 .control
 run
 
