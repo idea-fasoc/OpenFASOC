@@ -241,7 +241,7 @@ if args.mode == "full" or args.mode == "sim":
     # cwd=postPEX_specialized_run_dir,
     # ).wait()
     # save_sim_plot(postPEX_specialized_run_dir, directories["genDir"] + "/work/")
-    freq_list = ["0.1MHz", "1MHz", "10Mhz"]
+    freq_list = ["0.1MHz", "1MHz", "10MHz"]
     for f in range(len(freq_list)):
         shutil.copy(
             directories["simDir"] + "/templates/post_processing.py",
