@@ -87,7 +87,7 @@ def prepare_pre_pex_netlist(rawSynthNetlistPath):
             cell_commented = "*" + cell
         netlist = netlist.replace(cell, cell_commented)
     # prepare toplevel subckt def (assumes VDD VSS last two in pin out)
-    netlist = netlist.replace("VDD VSS", "VDD VSS VREF VREG", 1)
+    netlist = netlist.replace("VDD VSS", "VDD VSS VREF", 1)
     return netlist
 
 
