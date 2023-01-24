@@ -214,32 +214,13 @@ if args.mode == "full" or args.mode == "sim":
     else:
         print("simtool not supported")
         exit(1)
-    # filestocopy.append(
-    # tuple((postPEX_specialized_run_dir, "ldoInst_sim.sp", PEXscript))
-    # )
-    # filestocopy.append(
-    # tuple((prePEX_specialized_run_dir, "ldoInst_sim.sp", prePEXscript))
-    # )
-    # filestocopy.append(
-    # tuple(
-    # (
-    # prePEX_specialized_run_dir,
-    # "power_array_template_ngspice.sp",
-    # PWRARRscript,
-    # )
-    # )
-    # )
 
     # run max current solve
     max_load = binary_search_current_at_acceptible_error(
         prePEX_specialized_run_dir, user_specs["vin"]
     )
     print("Max load current = " + str(max_load) + " Amps\n\n")
-    # run functional simulation
-    # sp.Popen(
-    # ["ngspice", "-b", "-o", "out.txt", "ldoInst_sim.sp"],
-    # cwd=postPEX_specialized_run_dir,
-    # ).wait()
+
     # save_sim_plot(postPEX_specialized_run_dir, directories["genDir"] + "/work/")
     freq_list = ["0.1MHz", "1MHz", "10MHz"]
     for f in range(len(freq_list)):
