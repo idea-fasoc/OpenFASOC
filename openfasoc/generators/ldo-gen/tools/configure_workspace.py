@@ -7,6 +7,24 @@ import os
 import re
 import shutil
 import sys
+import time
+
+DEFAULT_JSON_SPEC = "spec.json"
+
+
+def check_JSON(JSON_to_check):
+    """Checks opening a JSON and that the JSON is valid format.
+    Return a dictionary object with the JSON data."""
+    if not os.path.isfile(JSON_to_check):
+        print(str(JSON_to_check) + " is not a valid json file, exiting the flow.")
+        sys.exit(1)
+    try:
+        with open(JSON_to_check, "r") as file:
+            jsonModel = json.load(file)
+    except ValueError as e:
+        print("Error: json file has an invalid format. %s" % str(e))
+        sys.exit(1)
+    return jsonModel
 
 
 def get_directories():
@@ -25,11 +43,22 @@ def get_directories():
 
 
 def check_args(args):
-    """Provides command line valid input checking. No return - exits on fail"""
-    if not os.path.isfile(args.specfile):
-        print("Error: specfile does not exist")
-        print("File Path: " + args.specfile)
-        sys.exit(1)
+    """Provides command line valid input checking. returns spec file when appropriate - exits on fail"""
+    JSON_spec = dict()
+    if args.specfile is not None:
+        JSON_spec = check_JSON(args.specfile)
+    else:
+        if not (args.name) or not (args.imax) or not (args.vref):
+            if not check_JSON(DEFAULT_JSON_SPEC):
+                print(
+                    "Error: no spec file and no default spec file and one or more command line spec args are not properly set."
+                )
+                print(
+                    'The generator looks for a default spec file called "'
+                    + str(DEFAULT_JSON_SPEC)
+                    + '" in the ldo-gen directory'
+                )
+                sys.exit(1)
     if args.platform != "sky130hvl":
         print("Error: Only supports sky130 tech as of now")
         sys.exit(1)
@@ -41,11 +70,13 @@ def check_args(args):
     except OSError:
         print("Unable to create the output directory")
         sys.exit(1)
+    return JSON_spec
 
 
 def process_supported_inputs(args, directories):
     """Returns a hash table containing all neccessary information on generator supported specs."""
     supportedInputs = directories["supportedInputs"]
+    jsonSupportedInputs = check_JSON(directories["supportedInputs"])
     spec_ranges = dict()
     # Load json supported inputs file and conduct error checking
     print("Loading supportedInputsFile...")
@@ -99,46 +130,45 @@ def process_supported_inputs(args, directories):
     return spec_ranges
 
 
-def get_spec(specfile, valid_spec_ranges):
+def fill_in_the_blank_specs(user_specs):
+    """Checks if missing specs then uses specification.json in ldo-gen directory to fill in missing specs."""
+    if (
+        not "designName" in user_specs
+        or not "vin" in user_specs
+        or not "imax" in user_specs
+    ):
+        print("One or more required specs are missing")
+        print("Attempting to fill in missing entries using backup specfile")
+        jsonSpec = check_JSON(DEFAULT_JSON_SPEC)
+        if not "designName" in user_specs:
+            user_specs["designName"] = str(jsonSpec["module_name"])
+        if not "vin" in user_specs:
+            user_specs["vin"] = float(jsonSpec["specifications"]["vin"])
+        if not "imax" in user_specs:
+            user_specs["imax"] = float(jsonSpec["specifications"]["imax"])
+    return user_specs
+
+
+def get_spec(args, jsonSpec, valid_spec_ranges):
     """Returns a hash table containing user specs."""
     user_specs = dict()
-    # Load json input spec file
-    print("Loading specfile...")
-    try:
-        with open(specfile) as file:
-            jsonSpec = json.load(file)
-    except ValueError as e:
-        print("Error: Input Spec json file has an invalid format. %s" % str(e))
-        sys.exit(1)
-    # ensure generator is ldo-gen
-    try:
-        generator = jsonSpec["generator"]
-    except KeyError as e:
-        print("Error: Bad Input Specfile. 'generator' variable is missing.")
-        sys.exit(1)
-    if jsonSpec["generator"] != "ldo-gen":
-        print('Error: Generator specification must be "ldo-gen".')
-        sys.exit(1)
     # enter design spec and parameters into hash table
-    try:
-        user_specs["designName"] = jsonSpec["module_name"]
-    except KeyError as e:
-        print("Error: Bad Input Specfile. 'module_name' variable is missing.")
-        sys.exit(1)
-    try:
-        user_specs["vin"] = float(jsonSpec["specifications"]["vin"])
-    except KeyError as e:
-        print(
-            "Error: Bad Input Specfile. 'vin' value is missing under "
-            + "'specifications'."
-        )
-        sys.exit(1)
-    except ValueError as e:
-        print(
-            "Error: Bad Input Specfile. Please use a float value for 'vin' "
-            + "under 'specifications'."
-        )
-        sys.exit(1)
+    if jsonSpec:
+        try:
+            user_specs["designName"] = jsonSpec["module_name"]
+            user_specs["vin"] = float(jsonSpec["specifications"]["vin"])
+            user_specs["imax"] = float(jsonSpec["specifications"]["imax"])
+        except KeyError as e:
+            user_specs = fill_in_the_blank_specs(user_specs)
+    else:
+        if args.name:
+            user_specs["designName"] = str(args.name)
+        if args.vref:
+            user_specs["vin"] = float(args.vref)
+        if args.imax:
+            user_specs["imax"] = float(args.imax)
+        user_specs = fill_in_the_blank_specs(user_specs)
+
     # ensure vin falls within valid range
     if (
         user_specs["vin"] > valid_spec_ranges["vin_max"]
@@ -152,19 +182,6 @@ def get_spec(specfile, valid_spec_ranges):
             + " with increments of 0.1V now"
         )
         sys.exit(1)
-    try:
-        user_specs["imax"] = float(jsonSpec["specifications"]["imax"])
-    except KeyError as e:
-        print(
-            "Error: Bad Input Specfile. 'imax' value is missing under "
-            + "'specifications'."
-        )
-        sys.exit(1)
-    except ValueError as e:
-        print(
-            "Error: Bad Input Specfile. Please use a float value for 'imax' "
-            + "under 'specifications'."
-        )
     if (
         user_specs["imax"] > valid_spec_ranges["maxLoad_max"]
         or user_specs["imax"] < valid_spec_ranges["maxLoad_min"]
@@ -179,6 +196,21 @@ def get_spec(specfile, valid_spec_ranges):
         sys.exit(1)
     # return populated hash table
     return user_specs
+
+
+def dump_JSON_specs(user_specs):
+    """Dumps user specs to a JSON file and returns the file path."""
+    JSON_dumpfile_data = dict()
+    JSON_dumpfile_data["module_name"] = str(user_specs["designName"])
+    JSON_dumpfile_data["generator"] = "ldo-gen"
+    JSON_dumpfile_data["specifications"] = dict()
+    JSON_dumpfile_data["specifications"]["vin"] = float(user_specs["vin"])
+    JSON_dumpfile_data["specifications"]["imax"] = float(user_specs["imax"])
+    JSON_dumpfile_name = time.strftime("%b_%d_%H_%M_%S", time.localtime()) + "dump.json"
+    with open(JSON_dumpfile_name, "w") as JSON_dumpfile_handle:
+        json.dump(JSON_dumpfile_data, JSON_dumpfile_handle, indent=4)
+        JSON_dumpfile_path = os.path.abspath(JSON_dumpfile_name)
+    return JSON_dumpfile_path
 
 
 def get_config(genmode, genDir):
@@ -229,20 +261,6 @@ def get_setup_pdk(jsonConfig, commonDir):
     shutil.copy2(os.path.join(pdk, "libs.tech/magic/sky130A.magicrc"), sky130A_path)
     shutil.copy2(os.path.join(pdk, "libs.tech/netgen/sky130A_setup.tcl"), sky130A_path)
     return pdk
-
-
-def check_JSON(JSON_to_check):
-    """Checks opening a JSON and that the JSON is valid format."""
-    if not os.path.isfile(JSON_to_check):
-        print(str(JSON_to_check) + "is not a valid file, exit the flow.")
-        sys.exit(1)
-    try:
-        with open(JSON_to_check, "r") as file:
-            jsonModel = json.load(file)
-    except ValueError as e:
-        print("Error: ldoModel.json file has an invalid format. %s" % str(e))
-        sys.exit(1)
-    return jsonModel
 
 
 def copy_outputs(directories, relativeOutputDir, platform, designName):

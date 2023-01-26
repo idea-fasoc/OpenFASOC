@@ -16,11 +16,15 @@ print("# Parsing command line arguments...")
 print("#---------------------------------------------------------------------")
 print(sys.argv)
 parser = argparse.ArgumentParser(description="Digital LDO design generator")
+# If no spec file is provided, try to read the spec command line arguments
+# If some/all are missing command line arguments, fill in the blanks by reading specifications.json
 parser.add_argument(
     "--specfile",
-    required=True,
-    help="File containing the specification for the generator",
+    help="File containing the specifications for the generator",
 )
+parser.add_argument("--name", help="Module name if no spec file.")
+parser.add_argument("--imax", help="imax if no spec file.")
+parser.add_argument("--vref", help="vref if no spec file.")
 parser.add_argument(
     "--outputDir", required=True, help="Output directory for generator results"
 )
@@ -31,11 +35,11 @@ parser.add_argument(
 parser.add_argument(
     "--mode",
     default="verilog",
-    choices=["verilog", "macro", "full", "sim"],
+    choices=["verilog", "macro", "full", "sim", "dump"],
     help="LDO Gen operation mode. Default mode: 'verilog'.",
 )
 parser.add_argument(
-    "--arr_size_in", required=False, help="Debug option to manually set power arr size."
+    "--arr_size_in", help="Debug option to manually set power arr size."
 )
 parser.add_argument("--clean", action="store_true", help="Clean the workspace.")
 args = parser.parse_args()
@@ -48,14 +52,16 @@ print("#---------------------------------------------------------------------")
 # genDir, flowDir, simDir, verilogDir, blocksDir, commonDir, supportedInputs
 directories = get_directories()
 if args.mode != "sim":
-    # make clean target cleans flow, work, sim dirs
     sp.Popen(["make", "clean"], cwd=directories["genDir"]).wait()
 # misc command line error checks
-check_args(args)
+JSON_spec = check_args(args)
 # user_specs is a hash table containing user defined specs
 # designName, vin, imax
 valid_spec_ranges = process_supported_inputs(args, directories)
-user_specs = get_spec(args.specfile, valid_spec_ranges)
+user_specs = get_spec(args, JSON_spec, valid_spec_ranges)
+if args.mode == "dump":
+    print("JSON specs dumped to " + str(dump_JSON_specs(user_specs)))
+    sys.exit()
 # jsonConfig contains simTool, simMode, open_pdks..., and platforms info
 jsonConfig = get_config(args.mode, directories["genDir"])
 # copies LVS/DRC files to common dir from pdk and performs error checking on pdk path provided
