@@ -16,14 +16,14 @@ export SDC_FILE    		= ./design/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 
 
-export DIE_AREA                 = 0 0 270 270
-export CORE_AREA                = 15 15 255 255
-export VREG_AREA                = 40 40 230 60
+export DIE_AREA                 = 0 0 @PARAM_DIE_WIDTH @PARAM_DIE_LENGTH
+export CORE_AREA                = 15 15 @PARAM_CORE_WIDTH @PARAM_CORE_LENGTH
+export VREG_AREA                = 40 40 @PARAM_VREG_WIDTH 60
 
 export PDN_TCL 			= ../blocks/$(PLATFORM)/pdn.tcl
 
 #Placement options
-export PLACE_DENSITY = 0.6
+export PLACE_DENSITY = @PARAM_PLACE_DENSITY
 
 # Macro options
 export MACRO_PLACE_HALO         = 1 1

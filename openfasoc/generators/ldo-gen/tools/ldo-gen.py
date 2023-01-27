@@ -90,7 +90,7 @@ if args.arr_size_in is None:
     )
 else:
     arrSize = int(args.arr_size_in)
-# convert from float to int and round up (to meet spec, at least arrSize PT cells are required)
+# convert from float to int and round up (to meet spec, at least arrSize PMOS are required)
 arrSize = int(math.ceil(arrSize))
 print("# LDO - Power Transistor array Size = " + str(arrSize))
 
@@ -163,9 +163,7 @@ if args.mode == "full" or args.mode == "sim":
     print("# Running Simulation")
     print("#----------------------------------------------------------------------")
     # prepare sim directories and copy files
-    [prePEX_specialized_run_dir, postPEX_specialized_run_dir] = create_sim_dirs(
-        arrSize, directories["simDir"]
-    )
+    [prePEX_sim_dir, postPEX_sim_dir] = create_sim_dirs(arrSize, directories["simDir"])
 
     filestocopy = list()  # list of tuples (wheretocopy, filename, stringdata)
     # create sim netlists (return as strings)
@@ -181,22 +179,12 @@ if args.mode == "full" or args.mode == "sim":
     powerArrayNetlist = prepare_power_array_netlist(
         rawNetlistDir + user_specs["designName"] + ".spice"
     )
-    filestocopy.append(
-        tuple((postPEX_specialized_run_dir, "ldo_sim.spice", processedPEXnetlist))
-    )
-    filestocopy.append(
-        tuple((prePEX_specialized_run_dir, "ldo_sim.spice", processedSynthNetlist))
-    )
-    filestocopy.append(
-        tuple((prePEX_specialized_run_dir, "power_array.spice", powerArrayNetlist))
-    )
+    filestocopy.append(tuple((postPEX_sim_dir, "ldo_sim.spice", processedPEXnetlist)))
+    filestocopy.append(tuple((prePEX_sim_dir, "ldo_sim.spice", processedSynthNetlist)))
+    filestocopy.append(tuple((prePEX_sim_dir, "power_array.spice", powerArrayNetlist)))
 
-    shutil.copy(
-        directories["simDir"] + "/templates/.spiceinit", prePEX_specialized_run_dir
-    )
-    shutil.copy(
-        directories["simDir"] + "/templates/.spiceinit", postPEX_specialized_run_dir
-    )
+    shutil.copy(directories["simDir"] + "/templates/.spiceinit", prePEX_sim_dir)
+    shutil.copy(directories["simDir"] + "/templates/.spiceinit", postPEX_sim_dir)
 
     # write all the files to their respective locations
     for filetocopy in filestocopy:
@@ -207,8 +195,8 @@ if args.mode == "full" or args.mode == "sim":
     if jsonConfig["simTool"] == "ngspice":
         [prePEXscript, PEXscript, PWRARRscript] = prepare_scripts_and_run_ngspice(
             directories["simDir"] + "/templates/",
-            prePEX_specialized_run_dir,
-            postPEX_specialized_run_dir,
+            prePEX_sim_dir,
+            postPEX_sim_dir,
             pdk_path,
             arrSize,
             "tt",
@@ -223,18 +211,18 @@ if args.mode == "full" or args.mode == "sim":
 
     # run max current solve
     max_load = binary_search_current_at_acceptible_error(
-        prePEX_specialized_run_dir, user_specs["vin"]
+        prePEX_sim_dir, user_specs["vin"]
     )
     print("Max load current = " + str(max_load) + " Amps\n\n")
 
-    # save_sim_plot(postPEX_specialized_run_dir, directories["genDir"] + "/work/")
+    # save_sim_plot(postPEX_sim_dir, directories["genDir"] + "/work/")
     freq_list = ["0.1MHz", "1MHz", "10MHz"]
     for f in range(len(freq_list)):
         shutil.copy(
             directories["simDir"] + "/templates/post_processing.py",
-            postPEX_specialized_run_dir + freq_list[f] + "/",
+            postPEX_sim_dir + freq_list[f] + "/",
         )
         sp.Popen(
             ["python3", "post_processing.py"],
-            cwd=postPEX_specialized_run_dir + freq_list[f] + "/",
+            cwd=postPEX_sim_dir + freq_list[f] + "/",
         ).wait()
