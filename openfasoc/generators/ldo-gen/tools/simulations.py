@@ -395,10 +395,10 @@ def binary_search_current_at_acceptible_error(specialized_run_dir, VREF):
 # ------------------------------------------------------------------------------
 # Process simulation results
 # ------------------------------------------------------------------------------
-# def save_sim_plot(specialized_run_dir, workDir):
-# """Copy postscript sim outputs and convert into PNG."""
-# svg2png(
-# url=specialized_run_dir + "currentplot.svg",
-# write_to=workDir + "currentplot.png",
-# )
-# svg2png(url=specialized_run_dir + "vregplot.svg", write_to=workDir + "vregplot.png")
+def save_sim_plot(specialized_run_dir, workDir):
+    """Copy postscript sim outputs and convert into PNG."""
+    svg2png(
+        url=specialized_run_dir + "currentplot.svg",
+        write_to=workDir + "currentplot.png",
+    )
+    svg2png(url=specialized_run_dir + "vregplot.svg", write_to=workDir + "vregplot.png")

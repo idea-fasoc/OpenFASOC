@@ -23,7 +23,7 @@ export VREG_AREA                = 40 40 230 60
 export PDN_TCL 			= ../blocks/$(PLATFORM)/pdn.tcl
 
 #Placement options
-export PLACE_DENSITY = 0.40
+export PLACE_DENSITY = 0.6
 
 # Macro options
 export MACRO_PLACE_HALO         = 1 1

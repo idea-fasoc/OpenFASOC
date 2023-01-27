@@ -90,76 +90,26 @@ def update_area_and_place_density(flowDir, arrSize):
     """Increases place density for designs with large power transistor arrays."""
     with open(flowDir + "design/sky130hvl/ldo/config.mk", "r") as config_read:
         lines = config_read.readlines()
-    # adjust config based on arrSize
-    if arrSize in range(1, 51):
-        lines[18] = "export DIE_AREA                 = 0 0 270 270\n"
-        lines[19] = "export CORE_AREA                = 15 15 255 255\n"
-        lines[20] = "export VREG_AREA                = 40 40 230 60\n"
-        if arrSize in range(1, 11):
-            lines[25] = "export PLACE_DENSITY = 0.30\n"
-        elif arrSize in range(11, 21):
-            lines[25] = "export PLACE_DENSITY = 0.40\n"
-        elif arrSize in range(21, 31):
-            lines[25] = "export PLACE_DENSITY = 0.50\n"
-        elif arrSize in range(31, 41):
-            lines[25] = "export PLACE_DENSITY = 0.60\n"
-        elif arrSize in range(41, 51):
-            lines[25] = "export PLACE_DENSITY = 0.70\n"
-    elif arrSize in range(51, 101):
-        lines[18] = "export DIE_AREA                 = 0 0 290 290\n"
-        lines[19] = "export CORE_AREA                = 15 15 275 275\n"
-        lines[20] = "export VREG_AREA                = 40 40 250 60\n"
-        if arrSize in range(51, 61):
-            lines[25] = "export PLACE_DENSITY = 0.30\n"
-        elif arrSize in range(61, 71):
-            lines[25] = "export PLACE_DENSITY = 0.40\n"
-        elif arrSize in range(71, 81):
-            lines[25] = "export PLACE_DENSITY = 0.50\n"
-        elif arrSize in range(81, 91):
-            lines[25] = "export PLACE_DENSITY = 0.60\n"
-        else:
-            lines[25] = "export PLACE_DENSITY = 0.70\n"
-    elif arrSize in range(101, 151):
-        lines[18] = "export DIE_AREA                 = 0 0 310 310\n"
-        lines[19] = "export CORE_AREA                = 15 15 295 295\n"
-        lines[20] = "export VREG_AREA                = 40 40 270 60\n"
-        if arrSize in range(101, 111):
-            lines[25] = "export PLACE_DENSITY = 0.30\n"
-        elif arrSize in range(111, 121):
-            lines[26] = "export PLACE_DENSITY = 0.40\n"
-        elif arrSize in range(121, 131):
-            lines[25] = "export PLACE_DENSITY = 0.50\n"
-        elif arrSize in range(131, 141):
-            lines[25] = "export PLACE_DENSITY = 0.60\n"
-        else:
-            lines[25] = "export PLACE_DENSITY = 0.70\n"
-    elif arrSize in range(151, 201):
-        lines[18] = "export DIE_AREA                 = 0 0 330 330\n"
-        lines[19] = "export CORE_AREA                = 15 15 315 315\n"
-        lines[20] = "export VREG_AREA                = 40 40 290 60\n"
-        if arrSize in range(151, 161):
-            lines[25] = "export PLACE_DENSITY = 0.30\n"
-        elif arrSize in range(161, 171):
-            lines[25] = "export PLACE_DENSITY = 0.40\n"
-        elif arrSize in range(171, 181):
-            lines[25] = "export PLACE_DENSITY = 0.50\n"
-        elif arrSize in range(181, 191):
-            lines[25] = "export PLACE_DENSITY = 0.60\n"
-        else:
-            lines[25] = "export PLACE_DENSITY = 0.70\n"
-    else:
-        lines[18] = "export DIE_AREA                 = 0 0 345 345\n"
-        lines[19] = "export CORE_AREA                = 15 15 330 330\n"
-        lines[20] = "export VREG_AREA                = 40 40 305 60\n"
-        if arrSize in range(201, 211):
-            lines[25] = "export PLACE_DENSITY = 0.30\n"
-        elif arrSize in range(211, 221):
-            lines[25] = "export PLACE_DENSITY = 0.40\n"
-        elif arrSize in range(221, 231):
-            lines[25] = "export PLACE_DENSITY = 0.50\n"
-        elif arrSize in range(231, 241):
-            lines[25] = "export PLACE_DENSITY = 0.60\n"
-        else:
-            lines[25] = "export PLACE_DENSITY = 0.70\n"
+    die_length = die_width = 270 + 20 * int(arrSize / 50)
+    core_length = core_width = 255 + 20 * int(arrSize / 50)
+    vreg_width = die_width - 40
+    # place_density = round(0.3 + 0.1 * math.ceil((arrSize%50)/10),1)
+    place_density = 0.6
+    lines[18] = (
+        "export DIE_AREA                 = 0 0 "
+        + str(die_width)
+        + " "
+        + str(die_length)
+        + "\n"
+    )
+    lines[19] = (
+        "export CORE_AREA                = 15 15 "
+        + str(core_width)
+        + " "
+        + str(core_length)
+        + "\n"
+    )
+    lines[20] = "export VREG_AREA                = 40 40 " + str(vreg_width) + " 60\n"
+    lines[25] = "export PLACE_DENSITY = " + str(place_density) + "\n"
     with open(flowDir + "design/sky130hvl/ldo/config.mk", "w") as config_spec:
         config_spec.writelines(lines)
