@@ -103,35 +103,22 @@ for i in range(cap_len):
     VREG_sample_dev_min = min(VREG_sample_dev)
     VREG_dev = VREG_sample_dev_max - VREG_sample_dev_min
     print(
-        "Time to reach stable VREG for"
-        + " "
+        "Time to reach stable VREG for "
         + str(cap_list[i])
-        + " is"
-        + " "
+        + " is "
         + str(time_sample_dev[0])
     )
+    print("VREG oscillation at output for " + str(cap_list[i]) + " is " + str(VREG_dev))
     print(
-        "VREG oscillation at output for"
-        + " "
+        "VREG max oscillation at output for "
         + str(cap_list[i])
-        + " is"
-        + " "
-        + str(VREG_dev)
-    )
-    print(
-        "VREG max oscillation at output for"
-        + " "
-        + str(cap_list[i])
-        + " is"
-        + " "
+        + " is "
         + str(VREG_sample_dev_max)
     )
     print(
-        "VREG min oscillation at output for"
-        + " "
+        "VREG min oscillation at output for "
         + str(cap_list[i])
-        + " is"
-        + " "
+        + " is "
         + str(VREG_sample_dev_min)
     )
     axes5[i].set_title("VREG_dev_test vs Time" + " " + str(cap_list[i]))

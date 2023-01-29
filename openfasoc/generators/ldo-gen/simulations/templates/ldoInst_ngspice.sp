@@ -3,7 +3,7 @@
 * include from .../sky130A/libs.tech/ngspice/sky130.lib.spice
 .lib '@model_file' @model_corner
 * include the LDO spice netlist
-.include 'ldo_sim.spice'
+.include '../ldo_sim.spice'
 
 
 xi1 @proper_pin_ordering ldoInst

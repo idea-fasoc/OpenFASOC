@@ -13,34 +13,27 @@ from pathlib import Path
 # ------------------------------------------------------------------------------
 # Create Sim Directories
 # ------------------------------------------------------------------------------
-def create_sim_dirs(arrSize, simDir):
+def create_sim_dirs(arrSize, simDir, freq_list):
     """Creates and performs error checking on pre/post PEX sim directories"""
-    freq_list = ["0.1MHz", "1MHz", "10MHz"]
+    os.makedirs(simDir + "/run", exist_ok=True)
+    prePEX_sim_dir = simDir + "run/" + "prePEX_PT_cells_" + str(arrSize)
+    postPEX_sim_dir = simDir + "run/" + "postPEX_PT_cells_" + str(arrSize)
+    sim_dir_structure = dict()
+    for freq in freq_list:
+        sim_dir_structure[str(freq) + "Hz"] = freq
     try:
-        os.mkdir(simDir + "/run")
-    except OSError as error:
-        print("mkdir returned the following error:")
-        print(error)
-        print("Ignoring this error and continuing.")
-    prePEX_specialized_run_name = "prePEX_PT_cells_" + str(arrSize)
-    prePEX_specialized_run_dir = simDir + "run/" + prePEX_specialized_run_name
-    postPEX_specialized_run_name = "postPEX_PT_cells_" + str(arrSize)
-    postPEX_specialized_run_dir = simDir + "run/" + postPEX_specialized_run_name
-    try:
-        os.mkdir(prePEX_specialized_run_dir)
-        os.mkdir(postPEX_specialized_run_dir)
-        for f in range(len(freq_list)):
-            freq_folder_pex = postPEX_specialized_run_dir + "/" + freq_list[f]
-            os.mkdir(freq_folder_pex)
-            freq_folder_pre_pex = prePEX_specialized_run_dir + "/" + freq_list[f]
-            os.mkdir(freq_folder_pre_pex)
+        os.mkdir(prePEX_sim_dir)
+        os.mkdir(postPEX_sim_dir)
+        for dir_name in sim_dir_structure:
+            os.mkdir(postPEX_sim_dir + "/" + dir_name)
+            os.mkdir(prePEX_sim_dir + "/" + dir_name)
     except OSError as error:
         print(error)
         print(
             'Already ran simulations for this design\nRun "make clean_sims" to clear ALL simulation runs OR manually delete run directories.\n'
         )
         exit(1)
-    return [prePEX_specialized_run_dir + "/", postPEX_specialized_run_dir + "/"]
+    return [prePEX_sim_dir + "/", postPEX_sim_dir + "/", sim_dir_structure]
 
 
 # ------------------------------------------------------------------------------
@@ -72,7 +65,7 @@ def matchNetlistCell(cell_instantiation, IfFound, remove_mode=True):
         return not found_status
 
 
-def prepare_pre_pex_netlist(rawSynthNetlistPath):
+def process_prePEX_netlist(rawSynthNetlistPath):
     """Comments out identified cells in matchNetlistCell and adds VREF/VREG to toplevel subckt def.
     Return string containing the netlist."""
     with open(rawSynthNetlistPath, "r") as spice_in:
@@ -91,7 +84,7 @@ def prepare_pre_pex_netlist(rawSynthNetlistPath):
     return netlist
 
 
-def prepare_power_array_netlist(rawSynthNetlistPath):
+def process_power_array_netlist(rawSynthNetlistPath):
     """Comments out everything except the power array and adjusts inputs to direct control power array.
     Return string containing the netlist."""
     with open(rawSynthNetlistPath, "r") as spice_in:
@@ -117,7 +110,7 @@ def prepare_power_array_netlist(rawSynthNetlistPath):
     return power_spice_netlist
 
 
-def prepare_post_pex_netlist(rawExtractedNetlistPath):
+def process_PEX_netlist(rawExtractedNetlistPath):
     """Prepare PEX netlist for simulations. Return string containing the netlist."""
     with open(rawExtractedNetlistPath, "r") as spice_in:
         netlist = spice_in.read()
@@ -158,141 +151,90 @@ postPEX_SPICE_HEADER_GLOBAL_V = """VREG VREF clk cmp_out ctrl_out[0] ctrl_out[1]
 + trim1 trim10 trim2 trim3 trim4 trim5 trim6 trim7 trim8 trim9 VSS VDD"""
 
 
-def prepare_scripts_and_run_ngspice(
+def ngspice_prepare_scripts(
+    cap_list,
     templateScriptDir,
-    prePEX_dir,
-    postPEX_dir,
-    pdk_path,
+    sim_dir,
+    sim_dir_structure,
+    user_specs,
     arrSize,
+    pdk_path,
     model_corner,
-    designName,
-    vref,
-    prePEX=False,
+    pex=True,
 ):
-    """Specializes ngspice simulations and returns string containing script."""
-    cap_list = ["1p", "5p"]
-    freq_list = ["0.1MHz", "1MHz", "10MHz"]
-    current_value = arrSize / 10
-    res_value = 1.8 / current_value
-    res_value_round = round(res_value, 2)
-    clk_period_i = 10
-    duty_cycle_i = 5
-    for f in range(len(freq_list)):
-        for c in range(len(cap_list)):
-            with open(templateScriptDir + "ldoInst_ngspice.sp", "r") as sim_spice:
-                sim_template = sim_spice.read()
-                sim_template = sim_template.replace(
-                    "@model_file", pdk_path + "/libs.tech/ngspice/sky130.lib.spice"
+    """Specializes ngspice simulations and returns (string) bash to run all sims."""
+    designName = user_specs["designName"]
+    vref = user_specs["vin"]
+    max_load = user_specs["imax"]
+    model_file = pdk_path + "/libs.tech/ngspice/sky130.lib.spice"
+    with open(templateScriptDir + "ldoInst_ngspice.sp", "r") as sim_spice:
+        sim_template = sim_spice.read()
+    sim_template = sim_template.replace("@model_file", model_file)
+    sim_template = sim_template.replace("@model_corner", model_corner)
+    sim_template = sim_template.replace("@design_nickname", designName)
+    sim_template = sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
+    sim_template = sim_template.replace("@Res_Value", str(1.2 * vref / max_load))
+    if pex:
+        sim_template = sim_template.replace(
+            "@proper_pin_ordering", postPEX_SPICE_HEADER_GLOBAL_V
+        )
+    else:
+        sim_template = sim_template.replace(
+            "@proper_pin_ordering", prePEX_SPICE_HEADER_GLOBAL_V
+        )
+    # create list of scripts to run (wheretocopy, filename, stringdata, ngspicecommand)
+    scripts_to_run = list()
+    for freq_dir in sim_dir_structure:
+        freq = sim_dir_structure[freq_dir]
+        sim_script = sim_template
+        sim_script = sim_script.replace("@clk_period", str(1 / freq))
+        sim_script = sim_script.replace("@duty_cycle", str(0.5 / freq))
+        sim_time = 1.2 * arrSize / freq
+        sim_script = sim_script.replace("@sim_time", str(sim_time))
+        sim_script = sim_script.replace("@sim_step", str(sim_time / 3000))
+        for cap in cap_list:
+            sim_script_f = sim_script.replace("@Cap_Value", str(cap))
+            output_raw = str(cap) + "_" + "cap_output.raw"
+            sim_script = sim_script.replace("@output_raw", str(output_raw))
+            sim_name = "ldoInst_" + str(cap) + ".sp"
+            scripts_to_run.append(
+                tuple(
+                    (
+                        sim_dir + freq_dir,
+                        sim_name,
+                        sim_script_f,
+                        "ngspice -b -o " + str(cap) + "_out.txt -i " + sim_name,
+                    )
                 )
-                sim_template = sim_template.replace("@model_corner", model_corner)
-                sim_template = sim_template.replace("@design_nickname", designName)
-                sim_template = sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
-                sim_template = sim_template.replace("@Cap_Value", cap_list[c])
-                Res_Value = str(res_value_round) + "k"
-                sim_template = sim_template.replace("@Res_Value", str(Res_Value))
-                clk_period = clk_period_i
-                clk_period = str(clk_period) + "u"
-                duty_cycle = duty_cycle_i
-                duty_cycle = str(duty_cycle) + "u"
-                sim_template = sim_template.replace("@clk_period", str(clk_period))
-                sim_template = sim_template.replace("@duty_cycle", str(duty_cycle))
-                output_raw = cap_list[c] + "_" + "cap_output.raw"
-                sim_template = sim_template.replace("@output_raw", str(output_raw))
-                if clk_period_i == 10:
-                    sim_template = sim_template.replace("@sim_step", "100n")
-                    sim_time = str(arrSize * clk_period_i + 50) + "u"
-                    sim_template = sim_template.replace("@sim_time", str(sim_time))
-                elif clk_period_i == 1:
-                    sim_template = sim_template.replace("@sim_step", "100n")
-                    sim_time = str(arrSize * clk_period_i + 20) + "u"
-                    sim_template = sim_template.replace("@sim_time", str(sim_time))
-                else:
-                    sim_template = sim_template.replace("@sim_step", "1n")
-                    sim_time = str(arrSize * clk_period_i + 2) + "u"
-                    sim_template = sim_template.replace("@sim_time", str(sim_time))
-                postPEX_sim_template = sim_template
-                sim_template = sim_template.replace(
-                    "@proper_pin_ordering", prePEX_SPICE_HEADER_GLOBAL_V
-                )
-                postPEX_sim_template = postPEX_sim_template.replace(
-                    "@proper_pin_ordering", postPEX_SPICE_HEADER_GLOBAL_V
-                )
-                with open(prePEX_dir + "ldoInst_sim.sp", "w") as sim_spice:
-                    sim_spice.write(sim_template)
-                with open(postPEX_dir + "ldoInst_sim.sp", "w") as sim_spice:
-                    sim_spice.write(postPEX_sim_template)
-                if prePEX:
-                    sp.Popen(
-                        [
-                            "ngspice",
-                            "-b",
-                            "-o",
-                            cap_list[c] + "_" + "out.txt",
-                            "-i",
-                            "ldoInst_sim.sp",
-                        ],
-                        cwd=prePEX_dir,
-                    ).wait()
-                    shutil.move(
-                        prePEX_dir + cap_list[c] + "_" + "out.txt",
-                        prePEX_dir + freq_list[f] + "/" + cap_list[c] + "_" + "out.txt",
-                    )
-                    shutil.move(
-                        prePEX_dir + cap_list[c] + "_" + "cap_output.raw",
-                        prePEX_dir
-                        + freq_list[f]
-                        + "/"
-                        + cap_list[c]
-                        + "_"
-                        + "cap_output.raw",
-                    )
-                else:
-                    sp.Popen(
-                        [
-                            "ngspice",
-                            "-b",
-                            "-o",
-                            cap_list[c] + "_" + "out.txt",
-                            "-i",
-                            "ldoInst_sim.sp",
-                        ],
-                        cwd=postPEX_dir,
-                    ).wait()
-                    shutil.move(
-                        postPEX_dir + cap_list[c] + "_" + "out.txt",
-                        postPEX_dir
-                        + freq_list[f]
-                        + "/"
-                        + cap_list[c]
-                        + "_"
-                        + "out.txt",
-                    )
-                    shutil.move(
-                        postPEX_dir + cap_list[c] + "_" + "cap_output.raw",
-                        postPEX_dir
-                        + freq_list[f]
-                        + "/"
-                        + cap_list[c]
-                        + "_"
-                        + "cap_output.raw",
-                    )
-        clk_period_i = int(clk_period_i) / 10
-        duty_cycle_i = int(duty_cycle_i) / 10
-    # create power array script
-    with open(templateScriptDir + "/power_array_template_ngspice.sp", "r") as sim_spice:
+            )
+    # add power array script to the list
+    with open(templateScriptDir + "/pwrarr_sweep_ngspice.sp", "r") as sim_spice:
         pwr_sim_template = sim_spice.read()
     pwr_sim_template = pwr_sim_template.replace("@model_corner", model_corner)
     pwr_sim_template = pwr_sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
-    pwr_sim_template = pwr_sim_template.replace(
-        "@model_file", pdk_path + "/libs.tech/ngspice/sky130.lib.spice"
+    pwr_sim_template = pwr_sim_template.replace("@model_file", model_file)
+    scripts_to_run.append(
+        tuple(
+            (
+                sim_dir,
+                "pwrarr.sp",
+                pwr_sim_template,
+                "ngspice -b -o pwrout.txt -i pwrarr.sp",
+            )
+        )
     )
-    with open(prePEX_dir + "power_array_template_ngspice.sp", "w") as sim_spice:
-        sim_spice.write(pwr_sim_template)
-    return [sim_template, postPEX_sim_template, pwr_sim_template]
+    # write scripts to their respective locations and create simulation bash script
+    run_scripts_bash = "#!/usr/bin/env bash\n"
+    for script in scripts_to_run:
+        with open(script[0] + "/" + script[1], "w") as scriptfile:
+            scriptfile.write(script[2])
+        run_scripts_bash = run_scripts_bash + "cd " + os.path.abspath(script[0]) + "\n"
+        run_scripts_bash = run_scripts_bash + script[3] + "\n"
+    return run_scripts_bash
 
 
 # ------------------------------------------------------------------------------
-# Run max current simulations
+# max current binary search (deprecated, instead use dc linear sweep)
 # ------------------------------------------------------------------------------
 def rtr_sim_data(fname):
     """Read Id and VREG from sim output file."""
@@ -319,47 +261,43 @@ def rtr_sim_data(fname):
             break
     # final error check
     if rtr_I is None or rtr_VREG is None:
-        raise ValueError(
-            "Function rtr_sim_data did not find VREG and/or id in sim output file."
-        )
+        raise ValueError("rtr_sim_data did not find VREG or id in sim output.")
     return rtr_VREG, rtr_I
 
 
-def run_power_array_sim(specialized_run_dir, output_resistance, simTool="ngspice"):
+def run_power_array_sim(run_dir, output_resistance, simTool="ngspice"):
     """Specializes sim template and solves for power array value."""
     if simTool != "ngspice":
-        print(
-            "\nFunction run_power_array_sim only support sim tool ngspice.\nExiting now.\n"
-        )
+        print("run_power_array_sim only supports ngspice. Exiting now.")
         exit(1)
     with open(
-        specialized_run_dir + "power_array_template_" + simTool + ".sp", "r"
+        run_dir + "power_array_template_" + simTool + ".sp", "r"
     ) as pwr_array_sim_template:
         specialized_pwr_array_sim = pwr_array_sim_template.read()
     specialized_pwr_array_sim = specialized_pwr_array_sim.replace(
         "@OUTPUT_RESISTANCE", str(output_resistance)
     )
-    with open(specialized_run_dir + "power_array.sp", "w") as pwr_array_sim:
+    with open(run_dir + "power_array.sp", "w") as pwr_array_sim:
         pwr_array_sim.write(specialized_pwr_array_sim)
-    with open(specialized_run_dir + "discard_banner.txt", "w") as discard_banner:
+    with open(run_dir + "discard_banner.txt", "w") as discard_banner:
         sp.Popen(
             ["ngspice", "-b", "-o", "load_result.txt", "power_array.sp"],
-            cwd=specialized_run_dir,
+            cwd=run_dir,
             stdout=discard_banner,
         ).wait()
-    return rtr_sim_data(specialized_run_dir + "load_result.txt")
+    return rtr_sim_data(run_dir + "load_result.txt")
 
 
 # 												  -> stop solving <-
 # R=very small----{R is s.t. VREG=VREF-2*max_error}----------------{R is s.t. VREG=VREF-max_error}---{R is s.t. VREG=VREF}----R=very big
-def binary_search_current_at_acceptible_error(specialized_run_dir, VREF):
-    """Starts with estimated output resistance range 1-4000 Ohms,
+def binary_search_max_load(run_dir, VREF):
+    """Starts with estimated output resistance range 1-100000 Ohms,
     then performs binary search to find the max load current supported
     with VREG maintained within max_error bounds.
     Smaller max_error results in increase in run time,
     you can configure this within the function
     This functions return a float (result)"""
-    max_error = 0.0001  # Volts
+    max_error = 0.001  # Volts
     range_min = float(1)
     range_max = float(100000)
     # TODO: add min and max range checking
@@ -371,9 +309,7 @@ def binary_search_current_at_acceptible_error(specialized_run_dir, VREF):
     for i in range(1, 1000):
         r_mid_value = (range_max + range_min) / 2
         print("Run load simulation, Rout = " + str(r_mid_value) + " Ohms.")
-        VREG_result, i_load_result = run_power_array_sim(
-            specialized_run_dir, r_mid_value
-        )
+        VREG_result, i_load_result = run_power_array_sim(run_dir, r_mid_value)
         if target_min < VREG_result and target_max > VREG_result:
             return i_load_result
         elif VREG_result > target_max:
@@ -395,10 +331,10 @@ def binary_search_current_at_acceptible_error(specialized_run_dir, VREF):
 # ------------------------------------------------------------------------------
 # Process simulation results
 # ------------------------------------------------------------------------------
-def save_sim_plot(specialized_run_dir, workDir):
+def save_sim_plot(run_dir, workDir):
     """Copy postscript sim outputs and convert into PNG."""
     svg2png(
-        url=specialized_run_dir + "currentplot.svg",
+        url=run_dir + "currentplot.svg",
         write_to=workDir + "currentplot.png",
     )
-    svg2png(url=specialized_run_dir + "vregplot.svg", write_to=workDir + "vregplot.png")
+    svg2png(url=run_dir + "vregplot.svg", write_to=workDir + "vregplot.png")

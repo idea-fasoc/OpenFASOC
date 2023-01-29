@@ -160,69 +160,67 @@ if args.mode != "verilog" and args.mode != "sim":
 # ------------------------------------------------------------------------------
 if args.mode == "full" or args.mode == "sim":
     print("#----------------------------------------------------------------------")
-    print("# Running Simulation")
+    print("# Running Simulations")
     print("#----------------------------------------------------------------------")
+    # simulations are ran for the following configurations:
+    cap_list = [1 * 10**-12, 5 * 10**-12]  # additional capacitance at node VREG
+    freq_list = [0.1 * 10**6, 1 * 10**6, 10 * 10**6]  # clock frequency
+
     # prepare sim directories and copy files
-    [prePEX_sim_dir, postPEX_sim_dir] = create_sim_dirs(arrSize, directories["simDir"])
-
-    filestocopy = list()  # list of tuples (wheretocopy, filename, stringdata)
+    # sim_dir_structure is a dictionary containing the tree file path structure of both prepex/pex directories
+    [prePEX_sim_dir, postPEX_sim_dir, sim_dir_structure] = create_sim_dirs(
+        arrSize, directories["simDir"], freq_list
+    )
     # create sim netlists (return as strings)
-    rawNetlistDir = (
-        directories["flowDir"] + "/objects/sky130hvl/ldo/base/netgen_lvs/spice/"
-    )
-    processedPEXnetlist = prepare_post_pex_netlist(
-        rawNetlistDir + user_specs["designName"] + "_pex.spice"
-    )
-    processedSynthNetlist = prepare_pre_pex_netlist(
-        rawNetlistDir + user_specs["designName"] + ".spice"
-    )
-    powerArrayNetlist = prepare_power_array_netlist(
-        rawNetlistDir + user_specs["designName"] + ".spice"
-    )
-    filestocopy.append(tuple((postPEX_sim_dir, "ldo_sim.spice", processedPEXnetlist)))
-    filestocopy.append(tuple((prePEX_sim_dir, "ldo_sim.spice", processedSynthNetlist)))
-    filestocopy.append(tuple((prePEX_sim_dir, "power_array.spice", powerArrayNetlist)))
+    spice_dir = directories["flowDir"] + "/objects/sky130hvl/ldo/base/netgen_lvs/spice/"
+    rawPEXPath = spice_dir + user_specs["designName"] + "_pex.spice"
+    rawSynthPath = spice_dir + user_specs["designName"] + ".spice"
+    processedPEXnetlist = process_PEX_netlist(rawPEXPath)
+    processedSynthNetlist = process_prePEX_netlist(rawSynthPath)
+    powerArrayNetlist = process_power_array_netlist(rawSynthPath)
+    # create list of netlists (wheretocopy, filename, stringdata) then write to their respective locations
+    netlists = list()
+    netlists.append(tuple((postPEX_sim_dir, "ldo_sim.spice", processedPEXnetlist)))
+    netlists.append(tuple((prePEX_sim_dir, "ldo_sim.spice", processedSynthNetlist)))
+    netlists.append(tuple((prePEX_sim_dir, "power_array.spice", powerArrayNetlist)))
+    netlists.append(tuple((postPEX_sim_dir, "power_array.spice", powerArrayNetlist)))
+    for netlist in netlists:
+        with open(netlist[0] + "/" + netlist[1], "w") as simfile:
+            simfile.write(netlist[2])
 
-    shutil.copy(directories["simDir"] + "/templates/.spiceinit", prePEX_sim_dir)
-    shutil.copy(directories["simDir"] + "/templates/.spiceinit", postPEX_sim_dir)
-
-    # write all the files to their respective locations
-    for filetocopy in filestocopy:
-        with open(filetocopy[0] + "/" + filetocopy[1], "w") as simfile:
-            simfile.write(filetocopy[2])
-
-    # prepare simulation scripts and run simulations (return as strings)
+    # prepare simulation scripts, passing prePEX_sim_dir and pex=false to function *_prepare_scripts() runs preprex sims
     if jsonConfig["simTool"] == "ngspice":
-        [prePEXscript, PEXscript, PWRARRscript] = prepare_scripts_and_run_ngspice(
+        os.environ["SPICE_USERINIT_DIR"] = directories["simDir"] + "/templates/"
+        run_sims_bash = ngspice_prepare_scripts(
+            cap_list,
             directories["simDir"] + "/templates/",
-            prePEX_sim_dir,
             postPEX_sim_dir,
-            pdk_path,
+            sim_dir_structure,
+            user_specs,
             arrSize,
+            pdk_path,
             "tt",
-            user_specs["designName"],
-            user_specs["vin"],
-            prePEX=False,
         )
     # elif jsonConfig["simTool"] == "Xyce":
     else:
         print("simtool not supported")
         exit(1)
 
+    with open(postPEX_sim_dir + "run_all_sims.bash", "w") as simsbash:
+        simsbash.write(run_sims_bash)
+    sp.run(["bash", postPEX_sim_dir + "run_all_sims.bash"]).wait()
     # run max current solve
-    max_load = binary_search_current_at_acceptible_error(
-        prePEX_sim_dir, user_specs["vin"]
-    )
-    print("Max load current = " + str(max_load) + " Amps\n\n")
+    # max_load = binary_search_max_load(prePEX_sim_dir, user_specs["vin"])
+    # print("Max load current = " + str(max_load) + " Amps\n\n")
 
     # save_sim_plot(postPEX_sim_dir, directories["genDir"] + "/work/")
-    freq_list = ["0.1MHz", "1MHz", "10MHz"]
-    for f in range(len(freq_list)):
+    for freq in freq_list:
+        freq = str(freq)
         shutil.copy(
             directories["simDir"] + "/templates/post_processing.py",
-            postPEX_sim_dir + freq_list[f] + "/",
+            postPEX_sim_dir + freq + "/",
         )
         sp.Popen(
             ["python3", "post_processing.py"],
-            cwd=postPEX_sim_dir + freq_list[f] + "/",
+            cwd=postPEX_sim_dir + freq + "/",
         ).wait()
