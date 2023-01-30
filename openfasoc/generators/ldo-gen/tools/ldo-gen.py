@@ -189,9 +189,10 @@ if args.mode == "full" or args.mode == "sim":
             simfile.write(netlist[2])
 
     # prepare simulation scripts, passing prePEX_sim_dir and pex=false to function *_prepare_scripts() runs preprex sims
+    # there should be one output file name specified for each cap value. outputs sent to sim_dir_structure directories
     if jsonConfig["simTool"] == "ngspice":
-        os.environ["SPICE_USERINIT_DIR"] = directories["simDir"] + "/templates/"
-        run_sims_bash = ngspice_prepare_scripts(
+        # os.environ["SPICE_USERINIT_DIR"] = os.path.abspath(directories["simDir"]) + "/templates/"
+        [run_sims_bash, output_file_names] = ngspice_prepare_scripts(
             cap_list,
             directories["simDir"] + "/templates/",
             postPEX_sim_dir,
@@ -206,21 +207,28 @@ if args.mode == "full" or args.mode == "sim":
         print("simtool not supported")
         exit(1)
 
+    # run sims
+    assert len(output_file_names) == len(cap_list)
     with open(postPEX_sim_dir + "run_all_sims.bash", "w") as simsbash:
         simsbash.write(run_sims_bash)
-    sp.run(["bash", postPEX_sim_dir + "run_all_sims.bash"]).wait()
-    # run max current solve
-    # max_load = binary_search_max_load(prePEX_sim_dir, user_specs["vin"])
-    # print("Max load current = " + str(max_load) + " Amps\n\n")
+    sp.run(["bash", "run_all_sims.bash"], cwd=postPEX_sim_dir)
 
-    # save_sim_plot(postPEX_sim_dir, directories["genDir"] + "/work/")
-    for freq in freq_list:
-        freq = str(freq)
-        shutil.copy(
-            directories["simDir"] + "/templates/post_processing.py",
-            postPEX_sim_dir + freq + "/",
-        )
-        sp.Popen(
-            ["python3", "post_processing.py"],
-            cwd=postPEX_sim_dir + freq + "/",
-        ).wait()
+    # perform post processing on simulation results and save figures to work dir
+    for freq_dir in sim_dir_structure:
+        raw_files = [
+            (postPEX_sim_dir + freq_dir + "/" + ofile) for ofile in output_file_names
+        ]
+        figures = list()
+        figure_names = list()
+        figure_names.extend(["VREG_output", "VDIF", "VREG_ripple", "VREG_oscillation"])
+        figures.extend(fig_VREG_results(raw_files, freq_dir))
+        figure_names.append("cmp_out")
+        figures.append(fig_comparator_results(raw_files, freq_dir))
+        figure_names.append("active_switches")
+        figures.append(fig_controller_results(raw_files, freq_dir))
+        # save results to png files
+        current_freq_results = args.outputDir + "/" + freq_dir
+        os.mkdir(current_freq_results)
+        assert len(figures) == len(figure_names)
+        for i, figure in enumerate(figures):
+            figure.savefig(current_freq_results + "/" + figure_names[i] + ".png")

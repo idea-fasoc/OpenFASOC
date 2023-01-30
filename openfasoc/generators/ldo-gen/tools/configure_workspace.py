@@ -31,14 +31,18 @@ def get_directories():
     """Returns a hash table containing all neccessary dirs used in ldo-gen"""
     genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)), "../")
     directories = dict()
-    directories["genDir"] = genDir
-    directories["flowDir"] = genDir + "flow/"
-    directories["simDir"] = genDir + "simulations/"
-    directories["verilogDir"] = genDir + "src/"
-    directories["blocksDir"] = genDir + "blocks/sky130hvl/"
-    directories["commonDir"] = genDir + "../../common/"
-    directories["supportedInputs"] = genDir + "tools/supported_inputs.json"
-    directories["objDir"] = genDir + "flow/objects/sky130hvl/ldo/base/"
+    directories["genDir"] = genDir + "/"
+    directories["flowDir"] = os.path.abspath(genDir + "flow/") + "/"
+    directories["simDir"] = os.path.abspath(genDir + "simulations/") + "/"
+    directories["verilogDir"] = os.path.abspath(genDir + "src/") + "/"
+    directories["blocksDir"] = os.path.abspath(genDir + "blocks/sky130hvl/") + "/"
+    directories["commonDir"] = os.path.abspath(genDir + "../../common/") + "/"
+    directories["supportedInputs"] = os.path.abspath(
+        genDir + "tools/supported_inputs.json"
+    )
+    directories["objDir"] = (
+        os.path.abspath(genDir + "flow/objects/sky130hvl/ldo/base/") + "/"
+    )
     return directories
 
 
