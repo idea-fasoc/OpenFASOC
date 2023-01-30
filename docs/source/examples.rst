@@ -9,3 +9,4 @@ Prefer to learn by example? These notebooks give a practical overview on how to 
     :maxdepth: 1
 
     notebooks/temp-sense-gen/temp_sense_genCollab.ipynb
+    notebooks/ldo-gen/LDO_notebook.ipynb
