@@ -8,12 +8,14 @@ import csv
 import matplotlib.pyplot as plt
 from cairosvg import svg2png
 from PIL import Image
+from pathlib import Path
 
 # ------------------------------------------------------------------------------
 # Create Sim Directories
 # ------------------------------------------------------------------------------
 def create_sim_dirs(arrSize, simDir):
     """Creates and performs error checking on pre/post PEX sim directories"""
+    freq_list = ["0.1MHz", "1MHz", "10MHz"]
     try:
         os.mkdir(simDir + "/run")
     except OSError as error:
@@ -21,12 +23,17 @@ def create_sim_dirs(arrSize, simDir):
         print(error)
         print("Ignoring this error and continuing.")
     prePEX_specialized_run_name = "prePEX_PT_cells_" + str(arrSize)
-    prePEX_specialized_run_dir = simDir + "/run/" + prePEX_specialized_run_name
+    prePEX_specialized_run_dir = simDir + "run/" + prePEX_specialized_run_name
     postPEX_specialized_run_name = "postPEX_PT_cells_" + str(arrSize)
-    postPEX_specialized_run_dir = simDir + "/run/" + postPEX_specialized_run_name
+    postPEX_specialized_run_dir = simDir + "run/" + postPEX_specialized_run_name
     try:
         os.mkdir(prePEX_specialized_run_dir)
         os.mkdir(postPEX_specialized_run_dir)
+        for f in range(len(freq_list)):
+            freq_folder_pex = postPEX_specialized_run_dir + "/" + freq_list[f]
+            os.mkdir(freq_folder_pex)
+            freq_folder_pre_pex = prePEX_specialized_run_dir + "/" + freq_list[f]
+            os.mkdir(freq_folder_pre_pex)
     except OSError as error:
         print(error)
         print(
@@ -80,7 +87,7 @@ def prepare_pre_pex_netlist(rawSynthNetlistPath):
             cell_commented = "*" + cell
         netlist = netlist.replace(cell, cell_commented)
     # prepare toplevel subckt def (assumes VDD VSS last two in pin out)
-    netlist = netlist.replace("VDD VSS", "VDD VSS VREF VREG", 1)
+    netlist = netlist.replace("VDD VSS", "VDD VSS VREF", 1)
     return netlist
 
 
@@ -151,25 +158,126 @@ postPEX_SPICE_HEADER_GLOBAL_V = """VREG VREF clk cmp_out ctrl_out[0] ctrl_out[1]
 + trim1 trim10 trim2 trim3 trim4 trim5 trim6 trim7 trim8 trim9 VSS VDD"""
 
 
-def prepare_scripts_ngspice(
-    templateScriptDir, pdk_path, model_corner, designName, vref
+def prepare_scripts_and_run_ngspice(
+    templateScriptDir,
+    prePEX_dir,
+    postPEX_dir,
+    pdk_path,
+    arrSize,
+    model_corner,
+    designName,
+    vref,
+    prePEX=False,
 ):
     """Specializes ngspice simulations and returns string containing script."""
-    with open(templateScriptDir + "ldoInst_ngspice.sp", "r") as sim_spice:
-        sim_template = sim_spice.read()
-    sim_template = sim_template.replace(
-        "@model_file", pdk_path + "/libs.tech/ngspice/sky130.lib.spice"
-    )
-    sim_template = sim_template.replace("@model_corner", model_corner)
-    sim_template = sim_template.replace("@design_nickname", designName)
-    sim_template = sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
-    postPEX_sim_template = sim_template
-    sim_template = sim_template.replace(
-        "@proper_pin_ordering", prePEX_SPICE_HEADER_GLOBAL_V
-    )
-    postPEX_sim_template = postPEX_sim_template.replace(
-        "@proper_pin_ordering", postPEX_SPICE_HEADER_GLOBAL_V
-    )
+    cap_list = ["1p", "5p"]
+    freq_list = ["0.1MHz", "1MHz", "10MHz"]
+    current_value = arrSize / 10
+    res_value = 1.8 / current_value
+    res_value_round = round(res_value, 2)
+    clk_period_i = 10
+    duty_cycle_i = 5
+    for f in range(len(freq_list)):
+        for c in range(len(cap_list)):
+            with open(templateScriptDir + "ldoInst_ngspice.sp", "r") as sim_spice:
+                sim_template = sim_spice.read()
+                sim_template = sim_template.replace(
+                    "@model_file", pdk_path + "/libs.tech/ngspice/sky130.lib.spice"
+                )
+                sim_template = sim_template.replace("@model_corner", model_corner)
+                sim_template = sim_template.replace("@design_nickname", designName)
+                sim_template = sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
+                sim_template = sim_template.replace("@Cap_Value", cap_list[c])
+                Res_Value = str(res_value_round) + "k"
+                sim_template = sim_template.replace("@Res_Value", str(Res_Value))
+                clk_period = clk_period_i
+                clk_period = str(clk_period) + "u"
+                duty_cycle = duty_cycle_i
+                duty_cycle = str(duty_cycle) + "u"
+                sim_template = sim_template.replace("@clk_period", str(clk_period))
+                sim_template = sim_template.replace("@duty_cycle", str(duty_cycle))
+                output_raw = cap_list[c] + "_" + "cap_output.raw"
+                sim_template = sim_template.replace("@output_raw", str(output_raw))
+                if clk_period_i == 10:
+                    sim_template = sim_template.replace("@sim_step", "100n")
+                    sim_time = str(arrSize * clk_period_i + 50) + "u"
+                    sim_template = sim_template.replace("@sim_time", str(sim_time))
+                elif clk_period_i == 1:
+                    sim_template = sim_template.replace("@sim_step", "100n")
+                    sim_time = str(arrSize * clk_period_i + 20) + "u"
+                    sim_template = sim_template.replace("@sim_time", str(sim_time))
+                else:
+                    sim_template = sim_template.replace("@sim_step", "1n")
+                    sim_time = str(arrSize * clk_period_i + 2) + "u"
+                    sim_template = sim_template.replace("@sim_time", str(sim_time))
+                postPEX_sim_template = sim_template
+                sim_template = sim_template.replace(
+                    "@proper_pin_ordering", prePEX_SPICE_HEADER_GLOBAL_V
+                )
+                postPEX_sim_template = postPEX_sim_template.replace(
+                    "@proper_pin_ordering", postPEX_SPICE_HEADER_GLOBAL_V
+                )
+                with open(prePEX_dir + "ldoInst_sim.sp", "w") as sim_spice:
+                    sim_spice.write(sim_template)
+                with open(postPEX_dir + "ldoInst_sim.sp", "w") as sim_spice:
+                    sim_spice.write(postPEX_sim_template)
+                if prePEX:
+                    sp.Popen(
+                        [
+                            "ngspice",
+                            "-b",
+                            "-o",
+                            cap_list[c] + "_" + "out.txt",
+                            "-i",
+                            "ldoInst_sim.sp",
+                        ],
+                        cwd=prePEX_dir,
+                    ).wait()
+                    shutil.move(
+                        prePEX_dir + cap_list[c] + "_" + "out.txt",
+                        prePEX_dir + freq_list[f] + "/" + cap_list[c] + "_" + "out.txt",
+                    )
+                    shutil.move(
+                        prePEX_dir + cap_list[c] + "_" + "cap_output.raw",
+                        prePEX_dir
+                        + freq_list[f]
+                        + "/"
+                        + cap_list[c]
+                        + "_"
+                        + "cap_output.raw",
+                    )
+                else:
+                    sp.Popen(
+                        [
+                            "ngspice",
+                            "-b",
+                            "-o",
+                            cap_list[c] + "_" + "out.txt",
+                            "-i",
+                            "ldoInst_sim.sp",
+                        ],
+                        cwd=postPEX_dir,
+                    ).wait()
+                    shutil.move(
+                        postPEX_dir + cap_list[c] + "_" + "out.txt",
+                        postPEX_dir
+                        + freq_list[f]
+                        + "/"
+                        + cap_list[c]
+                        + "_"
+                        + "out.txt",
+                    )
+                    shutil.move(
+                        postPEX_dir + cap_list[c] + "_" + "cap_output.raw",
+                        postPEX_dir
+                        + freq_list[f]
+                        + "/"
+                        + cap_list[c]
+                        + "_"
+                        + "cap_output.raw",
+                    )
+        clk_period_i = int(clk_period_i) / 10
+        duty_cycle_i = int(duty_cycle_i) / 10
     # create power array script
     with open(templateScriptDir + "/power_array_template_ngspice.sp", "r") as sim_spice:
         pwr_sim_template = sim_spice.read()
@@ -178,6 +286,8 @@ def prepare_scripts_ngspice(
     pwr_sim_template = pwr_sim_template.replace(
         "@model_file", pdk_path + "/libs.tech/ngspice/sky130.lib.spice"
     )
+    with open(prePEX_dir + "power_array_template_ngspice.sp", "w") as sim_spice:
+        sim_spice.write(pwr_sim_template)
     return [sim_template, postPEX_sim_template, pwr_sim_template]
 
 
@@ -285,10 +395,10 @@ def binary_search_current_at_acceptible_error(specialized_run_dir, VREF):
 # ------------------------------------------------------------------------------
 # Process simulation results
 # ------------------------------------------------------------------------------
-def save_sim_plot(specialized_run_dir, workDir):
-    """Copy postscript sim outputs and convert into PNG."""
-    svg2png(
-        url=specialized_run_dir + "currentplot.svg",
-        write_to=workDir + "currentplot.png",
-    )
-    svg2png(url=specialized_run_dir + "vregplot.svg", write_to=workDir + "vregplot.png")
+# def save_sim_plot(specialized_run_dir, workDir):
+# """Copy postscript sim outputs and convert into PNG."""
+# svg2png(
+# url=specialized_run_dir + "currentplot.svg",
+# write_to=workDir + "currentplot.png",
+# )
+# svg2png(url=specialized_run_dir + "vregplot.svg", write_to=workDir + "vregplot.png")
