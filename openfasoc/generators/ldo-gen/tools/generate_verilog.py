@@ -101,8 +101,8 @@ def update_area_and_place_density(flowDir, arrSize):
     """Increases place density for designs with large power transistor arrays."""
     with open(flowDir + "design/sky130hvl/ldo/config_template.mk", "r") as config:
         config_template = config.read()
-    die_length = die_width = 270 + 20 * int(arrSize / 50)
-    core_length = core_width = 255 + 20 * int(arrSize / 50)
+    die_length = die_width = 275 + 20 * int(arrSize / 50)
+    core_length = core_width = 260 + 20 * int(arrSize / 50)
     vreg_width = die_width - 40
     # place_density = round(0.3 + 0.1 * math.ceil((arrSize%50)/10),1)
     place_density = 0.6
