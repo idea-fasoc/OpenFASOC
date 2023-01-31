@@ -110,7 +110,7 @@ update_area_and_place_density(directories["flowDir"], arrSize)
 # Generate the Behavioral Verilog
 generate_LDO_verilog(directories, args.outputDir, user_specs["designName"], arrSize)
 generate_controller_verilog(directories, args.outputDir, arrSize)
-if args.mode != "sim":
+if clean_work_dir:
     print("# LDO - Behavioural Verilog Generated")
     print("#----------------------------------------------------------------------")
     print("# Verilog Generated")
@@ -120,7 +120,7 @@ if args.mode != "sim":
 # ------------------------------------------------------------------------------
 # if args mode is macro or full then run flow
 # ------------------------------------------------------------------------------
-if args.mode != "verilog" and args.mode != "sim":
+if args.mode != "verilog" and clean_work_dir:
     print("#----------------------------------------------------------------------")
     print("# Run Synthesis and APR")
     print("#----------------------------------------------------------------------")
@@ -229,7 +229,13 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
         figures.append(fig_controller_results(raw_files, freq_dir))
         # save results to png files
         current_freq_results = args.outputDir + "/" + freq_dir
-        os.mkdir(current_freq_results)
+        try:
+            os.mkdir(current_freq_results)
+        except OSError as error:
+            if args.mode != "post":
+                print(error)
+                exit(1)
         assert len(figures) == len(figure_names)
         for i, figure in enumerate(figures):
             figure.savefig(current_freq_results + "/" + figure_names[i] + ".png")
+    fig_dc_results(postPEX_sim_dir + "/isweep.raw").savefig(args.outputDir + "/dc.png")

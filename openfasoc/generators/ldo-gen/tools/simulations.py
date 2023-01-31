@@ -33,11 +33,12 @@ def create_sim_dirs(arrSize, simDir, freq_list, mode):
     except OSError as error:
         print(error)
         print(
-            'Already ran simulations for this design\nRun "make clean_sims" to clear ALL simulation runs OR manually delete run directories.\n'
+            'Already ran simulations for this design\nRun "make clean_sims" to clear ALL simulation runs OR manually delete run directories.'
         )
         if mode != "post":
-            print("Post proessing: ignore and continue.")
             exit(1)
+        else:
+            print("Post proessing: ignore and continue.")
     return [prePEX_sim_dir + "/", postPEX_sim_dir + "/", sim_dir_structure]
 
 
@@ -433,10 +434,33 @@ def fig_controller_results(raw_files, freq_id):
                 data.get_data("v(ctrl_out[" + str(regI) + "])") * 2**regI
             )
         active_switches = (np.rint(active_switches / 3.3)).astype(int)[100:]
-        num_smooth_pts = np.linspace(time.min(), time.max(), 1000)
+        num_smooth_pts = np.linspace(time.min(), time.max(), 250)
         active_switches = make_interp_spline(time, active_switches)(num_smooth_pts)
         axes[i].set_title("Active Switches vs Time " + current_cap_sim + freq_id)
         axes[i].ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
         axes[i].plot(num_smooth_pts, active_switches, label="active switches")
-        axes[i].legend(loc="upper right")
+        axes[i].legend(loc="lower right")
+    return figure
+
+
+def fig_dc_results(raw_file):
+    figure, axes = plt.subplots(1, sharex=True, sharey=True)
+    figure.text(0.5, 0.04, "iload [mA]", ha="center")
+    figure.text(
+        0.04,
+        0.5,
+        "Max VREG (All Active Switches) [V]",
+        va="center",
+        rotation="vertical",
+    )
+    data = ltspice.Ltspice(raw_file)
+    data.parse()
+    current_load = data.get_data("i(r1)")
+    VREF = data.get_data("v(vref)")
+    VREG = data.get_data("v(vreg)")
+    axes.set_title("Completely Active Array (DC)")
+    axes.ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
+    axes.plot(current_load, VREG, label="active switches")
+    axes.plot(current_load, VREF, label="active switches")
+    axes.legend(loc="lower left")
     return figure

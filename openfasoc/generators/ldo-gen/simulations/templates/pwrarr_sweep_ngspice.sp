@@ -25,12 +25,15 @@ C1 VREG VSS 1n
 .probe I(R1) V(VREG) v(vref)
 .control
 run
-set hcopydevtype = svg
-set svg_intopts = ( 2560 1440 30 0 1 2 0 )
-setcs svg_stropts = ( white Arial Arial )
-set color1 = black
-set color2 = red
-hardcopy PowerLoadSweep.svg vreg vs r1#branch VREF vs r1#branch title 'VREG load sweep'
+*set hcopydevtype = svg
+*set svg_intopts = ( 2560 1440 30 0 1 2 0 )
+*setcs svg_stropts = ( white Arial Arial )
+*set color1 = black
+*set color2 = red
+*hardcopy PowerLoadSweep.svg vreg vs r1#branch VREF vs r1#branch title 'VREG load sweep'
+set filetype=binary
+write isweep.raw v(VREG) r1#branch v(vref)
+
 .endc
 
 .GLOBAL VDD
