@@ -14,7 +14,7 @@ import ltspice
 # ------------------------------------------------------------------------------
 # Create Sim Directories
 # ------------------------------------------------------------------------------
-def create_sim_dirs(arrSize, simDir, freq_list):
+def create_sim_dirs(arrSize, simDir, freq_list, mode):
     """Creates and performs error checking on pre/post PEX sim directories"""
     os.makedirs(simDir + "/run", exist_ok=True)
     prePEX_sim_dir = simDir + "run/" + "prePEX_PT_cells_" + str(arrSize)
@@ -35,7 +35,9 @@ def create_sim_dirs(arrSize, simDir, freq_list):
         print(
             'Already ran simulations for this design\nRun "make clean_sims" to clear ALL simulation runs OR manually delete run directories.\n'
         )
-        exit(1)
+        if mode != "post":
+            print("Post proessing: ignore and continue.")
+            exit(1)
     return [prePEX_sim_dir + "/", postPEX_sim_dir + "/", sim_dir_structure]
 
 

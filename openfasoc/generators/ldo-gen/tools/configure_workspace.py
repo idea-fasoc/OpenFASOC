@@ -46,7 +46,7 @@ def get_directories():
     return directories
 
 
-def check_args(args):
+def check_args(args, clean_work_dir):
     """Provides command line valid input checking. returns spec file when appropriate - exits on fail"""
     JSON_spec = dict()
     if args.specfile is not None:
@@ -67,13 +67,13 @@ def check_args(args):
         print("Error: Only supports sky130 tech as of now")
         sys.exit(1)
     # create output dir
-    if os.path.isdir(args.outputDir):
+    if clean_work_dir:
         shutil.rmtree(args.outputDir, ignore_errors=True)
-    try:
-        os.mkdir(args.outputDir)
-    except OSError:
-        print("Unable to create the output directory")
-        sys.exit(1)
+        try:
+            os.mkdir(args.outputDir)
+        except OSError:
+            print("Unable to create the output directory")
+            sys.exit(1)
     return JSON_spec
 
 

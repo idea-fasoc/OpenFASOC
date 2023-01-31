@@ -35,7 +35,7 @@ parser.add_argument(
 parser.add_argument(
     "--mode",
     default="verilog",
-    choices=["verilog", "macro", "full", "sim", "dump"],
+    choices=["verilog", "macro", "full", "sim", "dump", "post"],
     help="LDO Gen operation mode. Default mode: 'verilog'.",
 )
 parser.add_argument(
@@ -51,10 +51,11 @@ print("#---------------------------------------------------------------------")
 # directories is a hash table containing all neccessary dirs
 # genDir, flowDir, simDir, verilogDir, blocksDir, commonDir, supportedInputs
 directories = get_directories()
-if args.mode != "sim":
+clean_work_dir = args.mode != "sim" and args.mode != "dump" and args.mode != "post"
+if clean_work_dir:
     sp.Popen(["make", "clean"], cwd=directories["genDir"]).wait()
 # misc command line error checks
-JSON_spec = check_args(args)
+JSON_spec = check_args(args, clean_work_dir)
 # user_specs is a hash table containing user defined specs
 # designName, vin, imax
 valid_spec_ranges = process_supported_inputs(args, directories)
@@ -158,7 +159,7 @@ if args.mode != "verilog" and args.mode != "sim":
 # ------------------------------------------------------------------------------
 # run simulations
 # ------------------------------------------------------------------------------
-if args.mode == "full" or args.mode == "sim":
+if args.mode == "full" or args.mode == "sim" or args.mode == "post":
     print("#----------------------------------------------------------------------")
     print("# Running Simulations")
     print("#----------------------------------------------------------------------")
@@ -169,7 +170,7 @@ if args.mode == "full" or args.mode == "sim":
     # prepare sim directories and copy files
     # sim_dir_structure is a dictionary containing the tree file path structure of both prepex/pex directories
     [prePEX_sim_dir, postPEX_sim_dir, sim_dir_structure] = create_sim_dirs(
-        arrSize, directories["simDir"], freq_list
+        arrSize, directories["simDir"], freq_list, args.mode
     )
     # create sim netlists (return as strings)
     spice_dir = directories["flowDir"] + "/objects/sky130hvl/ldo/base/netgen_lvs/spice/"
@@ -191,7 +192,6 @@ if args.mode == "full" or args.mode == "sim":
     # prepare simulation scripts, passing prePEX_sim_dir and pex=false to function *_prepare_scripts() runs preprex sims
     # there should be one output file name specified for each cap value. outputs sent to sim_dir_structure directories
     if jsonConfig["simTool"] == "ngspice":
-        # os.environ["SPICE_USERINIT_DIR"] = os.path.abspath(directories["simDir"]) + "/templates/"
         [run_sims_bash, output_file_names] = ngspice_prepare_scripts(
             cap_list,
             directories["simDir"] + "/templates/",
@@ -209,9 +209,10 @@ if args.mode == "full" or args.mode == "sim":
 
     # run sims
     assert len(output_file_names) == len(cap_list)
-    with open(postPEX_sim_dir + "run_all_sims.bash", "w") as simsbash:
-        simsbash.write(run_sims_bash)
-    sp.run(["bash", "run_all_sims.bash"], cwd=postPEX_sim_dir)
+    if args.mode != "post":
+        with open(postPEX_sim_dir + "run_all_sims.bash", "w") as simsbash:
+            simsbash.write(run_sims_bash)
+        sp.run(["bash", "run_all_sims.bash"], cwd=postPEX_sim_dir)
 
     # perform post processing on simulation results and save figures to work dir
     for freq_dir in sim_dir_structure:
