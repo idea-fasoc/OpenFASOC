@@ -102,7 +102,7 @@ update_custom_nets(directories["blocksDir"], arrSize)
 
 # Get the estimate of the area based on power transistor array size
 designArea = polynomial_output_at_point_from_coefficients(jsonModel["area"], arrSize)
-print("# LDO - Design Area Estimate = " + str(designArea))
+print("# LDO - Design Area = " + str(designArea) + "um^2")
 
 # Update place density according to power transistor array size
 update_area_and_place_density(directories["flowDir"], arrSize)

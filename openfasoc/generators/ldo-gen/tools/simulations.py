@@ -421,7 +421,7 @@ def fig_controller_results(raw_files, freq_id):
     figure, axes = plt.subplots(len(raw_files), sharex=True, sharey=True)
     len(axes)  # checks that axes can be indexed
     figure.text(0.5, 0.04, "Time [us]", ha="center")
-    figure.text(0.04, 0.5, "Cmp_out [V]", va="center", rotation="vertical")
+    figure.text(0.04, 0.5, "Active Switches", va="center", rotation="vertical")
     for i, raw_file in enumerate(raw_files):
         data = ltspice.Ltspice(raw_file)
         data.parse()
@@ -457,9 +457,14 @@ def fig_dc_results(raw_file):
     current_load = data.get_data("i(r1)")
     VREF = data.get_data("v(vref)")
     VREG = data.get_data("v(vreg)")
-    axes.set_title("Completely Active Array (DC)")
+    intersect = np.argwhere(np.diff(np.sign(VREG - VREF))).flatten()
+    intersect = intersect[0] if isinstance(intersect, (np.ndarray, list)) else intersect
+    axes.set_title(
+        "Completely Active Array, DC imax=" + str(current_load[intersect] * 1000) + "mA"
+    )
     axes.ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
-    axes.plot(current_load, VREG, label="active switches")
-    axes.plot(current_load, VREF, label="active switches")
+    axes.plot(current_load, VREG, label="VREG")
+    axes.plot(current_load, VREF, label="VREF")
+    plt.plot(current_load[imax] * 1000, VREG[imax], "ro")
     axes.legend(loc="lower left")
     return figure
