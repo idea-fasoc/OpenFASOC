@@ -120,8 +120,7 @@ def process_PEX_netlist(rawExtractedNetlistPath):
     """Prepare PEX netlist for simulations. Return string containing the netlist."""
     with open(rawExtractedNetlistPath, "r") as spice_in:
         netlist = spice_in.read()
-    cap_num_connected = int(re.findall(r"\bcapacitor_test_nf_\S*", netlist)[0][18])
-    vref_node_to = "capacitor_test_nf_" + str(cap_num_connected) + "/pin0"
+    vref_node_to = re.findall(r"\bcapacitor_test_nf_\S*", netlist)[0]
     netlist = netlist.replace(
         "r_VREG clk cmp_out", "r_VREG " + vref_node_to + " clk cmp_out", 1
     )
