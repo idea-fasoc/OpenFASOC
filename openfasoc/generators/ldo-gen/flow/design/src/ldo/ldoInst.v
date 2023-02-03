@@ -16,7 +16,7 @@ module ldoInst(
    //input        VREF              // Reference Voltage
 );
 
-   parameter integer ARRSZ = 12;
+   parameter integer ARRSZ = 411;
 
    reg             ctrl_in, mode;
    reg [ARRSZ-1:0] pt_ctrl_word;
@@ -52,7 +52,7 @@ module ldoInst(
                            );
 
    PMOS pmos_1 (.cmp_out(cmp_out));
-   //COMMENTPMOS2 PMOS pmos_2 (.cmp_out(cmp_out));
+   PMOS pmos_2 (.cmp_out(cmp_out));
 
    capacitor_test_nf cap_1 (.pin0(VREF));
    capacitor_test_nf cap_2 (.pin0(VREF));
