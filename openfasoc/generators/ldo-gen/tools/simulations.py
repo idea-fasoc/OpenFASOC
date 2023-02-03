@@ -116,14 +116,14 @@ def process_power_array_netlist(rawSynthNetlistPath):
     return power_spice_netlist
 
 
-def process_PEX_netlist(rawExtractedNetlistPath):
+def process_PEX_netlist(rawExtractedNetlistPath, designName):
     """Prepare PEX netlist for simulations. Return string containing the netlist."""
     with open(rawExtractedNetlistPath, "r") as spice_in:
         netlist = spice_in.read()
     vref_node_to = re.findall(r"\bcapacitor_test_nf_\S*", netlist)[0]
-    netlist = netlist.replace(
-        "r_VREG clk cmp_out", "r_VREG " + vref_node_to + " clk cmp_out", 1
-    )
+    head = re.search(r"\.subckt " + designName + r" .*\n(\+.*\n)*", netlist, re.I)[0]
+    newhead = " ".join(head.split(" ") + ["\n+ " + vref_node_to + "\n"])
+    netlist = netlist.replace(head, newhead)
     cells_array = netlist.split("\n")
     i = 0
     while i < len(cells_array):
@@ -140,7 +140,13 @@ def process_PEX_netlist(rawExtractedNetlistPath):
                 i = i + 1
         i = i + 1
     netlist = "\n".join(cells_array)
-    return netlist
+    return [
+        netlist,
+        newhead.replace(vref_node_to, "VREF")
+        .replace(designName, "", 1)
+        .replace(".subckt", "", 1)
+        .replace("r_VREG", "VREG", 1),
+    ]
 
 
 # ------------------------------------------------------------------------------
@@ -151,14 +157,10 @@ prePEX_SPICE_HEADER_GLOBAL_V = """clk cmp_out ctrl_out[0] ctrl_out[1] ctrl_out[2
 + reset std_ctrl_in std_pt_in_cnt[0] std_pt_in_cnt[1] std_pt_in_cnt[2] std_pt_in_cnt[3]
 + std_pt_in_cnt[4] std_pt_in_cnt[5] std_pt_in_cnt[6] std_pt_in_cnt[7] std_pt_in_cnt[8]
 + trim1 trim10 trim2 trim3 trim4 trim5 trim6 trim7 trim8 trim9 VDD VSS VREF VREG"""
-postPEX_SPICE_HEADER_GLOBAL_V = """VREG VREF clk cmp_out ctrl_out[0] ctrl_out[1] ctrl_out[2] ctrl_out[3]
-+ ctrl_out[4] ctrl_out[5] ctrl_out[6] ctrl_out[7] ctrl_out[8] mode_sel[0] mode_sel[1]
-+ reset std_ctrl_in std_pt_in_cnt[0] std_pt_in_cnt[1] std_pt_in_cnt[2] std_pt_in_cnt[3]
-+ std_pt_in_cnt[4] std_pt_in_cnt[5] std_pt_in_cnt[6] std_pt_in_cnt[7] std_pt_in_cnt[8]
-+ trim1 trim10 trim2 trim3 trim4 trim5 trim6 trim7 trim8 trim9 VSS VDD"""
 
 
 def ngspice_prepare_scripts(
+    head,
     cap_list,
     templateScriptDir,
     sim_dir,
@@ -182,9 +184,7 @@ def ngspice_prepare_scripts(
     sim_template = sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
     sim_template = sim_template.replace("@Res_Value", str(1.2 * vref / max_load))
     if pex:
-        sim_template = sim_template.replace(
-            "@proper_pin_ordering", postPEX_SPICE_HEADER_GLOBAL_V
-        )
+        sim_template = sim_template.replace("@proper_pin_ordering", head)
     else:
         sim_template = sim_template.replace(
             "@proper_pin_ordering", prePEX_SPICE_HEADER_GLOBAL_V
@@ -354,7 +354,7 @@ def save_sim_plot(run_dir, workDir):
     svg2png(url=run_dir + "vregplot.svg", write_to=workDir + "vregplot.png")
 
 
-def fig_VREG_results(raw_files, freq_id):
+def fig_VREG_results(raw_files, freq_id, vrefspec):
     """Create VREG output plots for all caps at particular freq simulations"""
     figureVREG, axesVREG = plt.subplots(len(raw_files), sharex=True, sharey=True)
     figureVDIF, axesVDIF = plt.subplots(len(raw_files), sharex=True, sharey=True)
@@ -388,8 +388,8 @@ def fig_VREG_results(raw_files, freq_id):
         axesRIPL[i].ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
         axesRIPL[i].plot(time[-10:], VREG[-10:], label="VREF-VREG")
         axesRIPL[i].legend(loc="upper right")
-        VREG_sample_dev = VREG[100 + np.where(VREG[100:] >= 1.8)[0][0] :]
-        time_sample_dev = time[100 + np.where(VREG[100:] >= 1.8)[0][0] :]
+        VREG_sample_dev = VREG[100 + np.where(VREG[100:] >= vrefspec)[0][0] :]
+        time_sample_dev = time[100 + np.where(VREG[100:] >= vrefspec)[0][0] :]
         axesOSCL[i].set_title("VREG Oscillation vs Time " + current_cap_sim + freq_id)
         axesOSCL[i].ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
         axesOSCL[i].plot(time_sample_dev, VREG_sample_dev, label="VREG_dev")
@@ -444,7 +444,7 @@ def fig_controller_results(raw_files, freq_id):
 
 def fig_dc_results(raw_file):
     figure, axes = plt.subplots(1, sharex=True, sharey=True)
-    figure.text(0.5, 0.04, "iload [mA]", ha="center")
+    figure.text(0.5, 0.04, "iload [A]", ha="center")
     figure.text(
         0.04,
         0.5,
@@ -460,11 +460,13 @@ def fig_dc_results(raw_file):
     intersect = np.argwhere(np.diff(np.sign(VREG - VREF))).flatten()
     intersect = intersect[0] if isinstance(intersect, (np.ndarray, list)) else intersect
     axes.set_title(
-        "Completely Active Array, DC imax=" + str(current_load[intersect] * 1000) + "mA"
+        "Completely Active Array, DC imax="
+        + str(round(current_load[intersect] * 1000, 3))
+        + "mA"
     )
     axes.ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
     axes.plot(current_load, VREG, label="VREG")
     axes.plot(current_load, VREF, label="VREF")
-    plt.plot(current_load[imax] * 1000, VREG[imax], "ro")
+    plt.plot(current_load[intersect], VREG[intersect], "ro")
     axes.legend(loc="lower left")
     return figure

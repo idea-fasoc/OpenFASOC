@@ -6,7 +6,8 @@
 .include '../ldo_sim.spice'
 
 
-xi1 @proper_pin_ordering ldoInst
+xi1 @proper_pin_ordering
++ ldoInst
 
 *Controls
 V0 VSS 0 DC=0

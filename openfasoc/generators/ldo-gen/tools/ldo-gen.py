@@ -102,7 +102,7 @@ update_custom_nets(directories["blocksDir"], arrSize)
 
 # Get the estimate of the area based on power transistor array size
 designArea = polynomial_output_at_point_from_coefficients(jsonModel["area"], arrSize)
-print("# LDO - Design Area = " + str(designArea) + "um^2")
+print("# LDO - Design Area = " + str(designArea) + " um^2")
 
 # Update place density according to power transistor array size
 update_area_and_place_density(directories["flowDir"], arrSize)
@@ -176,7 +176,9 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
     spice_dir = directories["flowDir"] + "/objects/sky130hvl/ldo/base/netgen_lvs/spice/"
     rawPEXPath = spice_dir + user_specs["designName"] + "_pex.spice"
     rawSynthPath = spice_dir + user_specs["designName"] + ".spice"
-    processedPEXnetlist = process_PEX_netlist(rawPEXPath)
+    [processedPEXnetlist, head] = process_PEX_netlist(
+        rawPEXPath, user_specs["designName"]
+    )
     processedSynthNetlist = process_prePEX_netlist(rawSynthPath)
     powerArrayNetlist = process_power_array_netlist(rawSynthPath)
     # create list of netlists (wheretocopy, filename, stringdata) then write to their respective locations
@@ -193,6 +195,7 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
     # there should be one output file name specified for each cap value. outputs sent to sim_dir_structure directories
     if jsonConfig["simTool"] == "ngspice":
         [run_sims_bash, output_file_names] = ngspice_prepare_scripts(
+            head,
             cap_list,
             directories["simDir"] + "/templates/",
             postPEX_sim_dir,
@@ -222,7 +225,7 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
         figures = list()
         figure_names = list()
         figure_names.extend(["VREG_output", "VDIF", "VREG_ripple", "VREG_oscillation"])
-        figures.extend(fig_VREG_results(raw_files, freq_dir))
+        figures.extend(fig_VREG_results(raw_files, freq_dir, user_specs["vin"]))
         figure_names.append("cmp_out")
         figures.append(fig_comparator_results(raw_files, freq_dir))
         figure_names.append("active_switches")
