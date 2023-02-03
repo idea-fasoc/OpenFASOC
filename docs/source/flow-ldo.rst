@@ -317,7 +317,6 @@ In LVS, Magic takes the generated GDS file and extracts its netlist to compare w
 
 If no mismatch is reported, LVS is successful and the generator ends its job by copying the resulting circuit design files into ldo-gen/work/.
 
-If an error is found, the generator may not be working properly. You can `file an issue <https://github.com/idea-fasoc/OpenFASOC/issues/new>`_ in the GitHub repo to ask for help.
 
 
 Simulation
@@ -327,11 +326,14 @@ The verify the functionality of the design automated simulations are ran using p
 
 The spice template file `ldoInst_sim.sp <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/ldo-gen/simulations/templates/ldoInst_sim.sp>`_  is updated as per the various simulation conditions. Currently the simulations are performed for three different clock frequencies which 0.1MHz, 1MHz and 10MHz. Additionaly , it runs on different output capacitances at VREG.The simulation time is adjusted based upon the clock frequncy and array size. The simulation generates all imporatant variables in raw file which are saved after the simulation is complete.
 
-.. note::
-   Currently we support ngspice tool for simulations.
-   
+
 To better visualize and analyze the simulation results `simulations.py <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/ldo-gen/tools/simulations.py>`_ incorporates post processing functions which works on raw data that has been generated.Neat and labelled plots are generated for output voltage VREG , VREG ripple , number of switches turned on ,etc. All the plots are saved to ldo-gen/work/ at the end.
 
+
+.. note::
+   Currently we support ngspice tool for simulations.
+
+If an error is found, the generator may not be working properly. You can `file an issue <https://github.com/idea-fasoc/OpenFASOC/issues/new>`_ in the GitHub repo to ask for help.
 
 Reference Article
 -----------------
