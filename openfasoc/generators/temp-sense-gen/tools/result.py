@@ -1,5 +1,6 @@
 import argparse
 import re
+import sys
 
 parser = argparse.ArgumentParser(description="parse simulators' output file")
 parser.add_argument("--tool", "-t", required=True, help="simulator type")

@@ -3,6 +3,7 @@
 # __open_generator_name__ must be set for this script to run edits
 # To use this script with a new generator, see bottom if/elif block
 # Also, refer to this PR: https://github.com/idea-fasoc/OpenFASOC/pull/121
+# To make unique edits, set vars=None and implement in the blocks below (see below)
 import sys
 import re
 import argparse
@@ -30,6 +31,8 @@ def get_all_instantiations(cell_name, netlist):
 
 def voltage_cell_process(netlist, voltage_cell_name, pins_to_remove):
     """remove proxy pins in the cell which produces the different voltage (if they are present) and correct every instance of such cell, takes and returns a string"""
+    if voltage_cell_name == None or pins_to_remove == None:
+        return netlist
     # return a match to only the pinout of the voltage cell definition, only non case sensitive on .subckt
     voltage_cell_pinout_m = re.search(
         "(?i)\.SUBCKT (?-i:" + voltage_cell_name + ".*\n(\+.*\n)*)", netlist
@@ -78,6 +81,8 @@ def voltage_cell_process(netlist, voltage_cell_name, pins_to_remove):
 
 def toplevel_process(netlist, toplevel_name, rpin_name, pin_name):
     """remove r_VIN and VIN pins in the toplevel cell def (if they are present), takes 2 and returns 1 string"""
+    if rpin_name == None and pin_name == None:
+        return netlist
     # construct a regular expression to ONLY match the subckt with the inputted name toplevel
     reg_ex = "(?i)\.SUBCKT (?-i:" + toplevel_name  # only non case sensitive on .subckt
     reg_ex = reg_ex + ".*\n(\+.*\n)*)"
@@ -146,10 +151,13 @@ if args.generator:
         rpin_name = "r_VIN"
         pin_name = "VIN"
     elif args.generator == "ldo-gen":
-        voltage_cell_name = "LDO_COMPARATOR_LATCH"
-        pins_to_remove = ["a_512_1261#"]
-        rpin_name = "r_VREG"
-        pin_name = "VREG"
+        # setting following vars to None to do some custom edits and return
+        voltage_cell_name = None
+        pins_to_remove = None
+        rpin_name = None
+        pin_name = None
+        # the LDO requires a custom replacment of the VREG pin name
+        extracted_spice = re.sub("r_VREG", "VREG", extracted_spice)
 
     # end edits
 
