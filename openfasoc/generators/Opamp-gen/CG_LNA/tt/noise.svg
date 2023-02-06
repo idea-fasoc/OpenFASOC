@@ -1,0 +1,90 @@
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+  width="100%" height="100%" viewBox="0 0 1024 768"
+  style="fill: none; font-family: Arial;
+ font: Arial;
+">
+
+<!-- Creator: NGspice -->
+
+<rect x="0" y="0" width="1024" height="768" fill="white" stroke="none"/>
+<text stroke="none" fill="black" font-size="16" x="358" y="752">
+frequency
+</text>
+<text stroke="none" fill="black" font-size="16" x="10" y="16">
+noise1: ** sch_path: /home/lmadhu/openmpw/pdk_1/project_gf180_tp/xschem/amplifiers/cg_lna_wo_cmfb.sch
+</text>
+<path stroke="black" d="M60 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="40" y="728">
+10^4
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M113 720l0 -672M150 720l0 -672M179 720l0 -672M203 720l0 -672M223 720l0 -672M241 720l0 -672M256 720l0 -672M270 720l0 -672M282 720l0 -672M294 720l0 -672M304 720l0 -672M314 720l0 -672M323 720l0 -672"/>
+<path stroke="black" stroke-dasharray="1,2" d="M331 720l0 -672M339 720l0 -672M347 720l0 -672M354 720l0 -672"/>
+<path stroke="black" d="M361 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="341" y="728">
+10^5
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M414 720l0 -672M451 720l0 -672M480 720l0 -672M504 720l0 -672M524 720l0 -672M542 720l0 -672M557 720l0 -672M571 720l0 -672M583 720l0 -672M595 720l0 -672M605 720l0 -672M615 720l0 -672M624 720l0 -672"/>
+<path stroke="black" stroke-dasharray="1,2" d="M632 720l0 -672M640 720l0 -672M648 720l0 -672M655 720l0 -672"/>
+<path stroke="black" d="M662 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="642" y="728">
+10^6
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M715 720l0 -672M752 720l0 -672M781 720l0 -672M805 720l0 -672M825 720l0 -672M843 720l0 -672M858 720l0 -672M872 720l0 -672M884 720l0 -672M896 720l0 -672M906 720l0 -672M916 720l0 -672M925 720l0 -672"/>
+<path stroke="black" stroke-dasharray="1,2" d="M933 720l0 -672M941 720l0 -672M949 720l0 -672M956 720l0 -672"/>
+<path stroke="black" d="M963 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="943" y="728">
+10^7
+</text>
+<text stroke="none" fill="black" font-size="16" x="614" y="752">
+Hz
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M60 720l903 0"/>
+<text stroke="none" fill="black" font-size="16" x="28" y="728">
+3.0
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M60 636l903 0"/>
+<text stroke="none" fill="black" font-size="16" x="28" y="644">
+4.0
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M60 552l903 0"/>
+<text stroke="none" fill="black" font-size="16" x="28" y="560">
+5.0
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M60 468l903 0"/>
+<text stroke="none" fill="black" font-size="16" x="28" y="476">
+6.0
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M60 384l903 0"/>
+<text stroke="none" fill="black" font-size="16" x="28" y="392">
+7.0
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M60 300l903 0"/>
+<text stroke="none" fill="black" font-size="16" x="28" y="308">
+8.0
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M60 216l903 0"/>
+<text stroke="none" fill="black" font-size="16" x="28" y="224">
+9.0
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M60 132l903 0"/>
+<text stroke="none" fill="black" font-size="16" x="18" y="140">
+10.0
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M60 48l903 0"/>
+<text stroke="none" fill="black" font-size="16" x="18" y="56">
+11.0
+</text>
+<text stroke="none" fill="black" font-size="16" x="10" y="32">
+nV/sqrt(Hz)
+</text>
+<path stroke="red" d="M451 23l45 0"/>
+<text stroke="none" fill="black" font-size="16" x="506" y="32">
+inoise_spectrum
+</text>
+<path stroke="red" d="M60 79l3 9 3 8 3 9 3 8 3 9 21 56 3 7 3 8 6 14 3 8 9 21 3 6 6 14 3 6 3 7 3 6 3 7 21 42 3 5 3 6 3 5 3 6 6 10 3 6 18 30 3 4 6 10 4 4 3 5 6 8 3 5 27 36 3 3 6 8 3 3 3 4 6 6 3 4 9 9 3 4 15 15 3 2 9 9 3 2 6 6 3 2 3 3 6 4 3 3 6 4"/>
+<path stroke="red" d="M346 555l3 3 12 8 3 3 12 8 3 1 12 8 3 1 9 6 3 1 3 2 3 1 3 2 3 1 3 2 3 1 3 2 3 1 3 2 6 2 3 2 9 3 3 2 24 8 3 2 6 2 3 0 21 7 4 1 3 0 9 3 3 0 9 3 3 0 6 2 3 0 6 2 3 0 3 1 3 0 3 1 3 0 6 2 3 0 3 1 3 0 3 1 3 0 3 1 3 0 3 1 6 0 3 1"/>
+<path stroke="red" d="M611 656l3 0 3 1 6 0 3 1 3 0 3 1 6 0 3 1 6 0 3 1 6 0 3 1 6 0 3 1 9 0 3 1 9 0 3 1 9 0 3 1 12 0 3 1 12 0 3 1 15 0 3 1 18 0 3 1 21 0 3 1 25 0 3 1 33 0 3 1 48 0 3 1 51 0"/>
+</svg>
