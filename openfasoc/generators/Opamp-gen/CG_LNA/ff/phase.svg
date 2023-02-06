@@ -1,0 +1,117 @@
+<?xml version="1.0" standalone="yes"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+  width="100%" height="100%" viewBox="0 0 1024 768"
+  style="fill: none; font-family: Arial;
+ font: Arial;
+">
+
+<!-- Creator: NGspice -->
+
+<rect x="0" y="0" width="1024" height="768" fill="white" stroke="none"/>
+<text stroke="none" fill="black" font-size="16" x="358" y="752">
+frequency
+</text>
+<text stroke="none" fill="black" font-size="16" x="10" y="16">
+ac1: ** sch_path: /home/lmadhu/openmpw/pdk_1/project_gf180_tp/xschem/amplifiers/cg_lna_wo_cmfb.sch
+</text>
+<path stroke="black" d="M70 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="65" y="728">
+1
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M122 720l0 -672M138 720l0 -672M149 720l0 -672"/>
+<path stroke="black" d="M158 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="148" y="728">
+10
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M210 720l0 -672M226 720l0 -672M237 720l0 -672"/>
+<path stroke="black" d="M246 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="231" y="728">
+100
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M298 720l0 -672M314 720l0 -672M325 720l0 -672"/>
+<path stroke="black" d="M334 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="314" y="728">
+10^3
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M386 720l0 -672M402 720l0 -672M413 720l0 -672"/>
+<path stroke="black" d="M422 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="402" y="728">
+10^4
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M474 720l0 -672M490 720l0 -672M501 720l0 -672"/>
+<path stroke="black" d="M510 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="490" y="728">
+10^5
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M562 720l0 -672M578 720l0 -672M589 720l0 -672"/>
+<path stroke="black" d="M598 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="578" y="728">
+10^6
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M650 720l0 -672M666 720l0 -672M677 720l0 -672"/>
+<path stroke="black" d="M686 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="666" y="728">
+10^7
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M738 720l0 -672M754 720l0 -672M765 720l0 -672"/>
+<path stroke="black" d="M774 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="754" y="728">
+10^8
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M826 720l0 -672M842 720l0 -672M853 720l0 -672"/>
+<path stroke="black" d="M862 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="842" y="728">
+10^9
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M914 720l0 -672M930 720l0 -672M941 720l0 -672"/>
+<path stroke="black" d="M950 720l0 -672"/>
+<text stroke="none" fill="black" font-size="16" x="925" y="728">
+10^10
+</text>
+<text stroke="none" fill="black" font-size="16" x="614" y="752">
+Hz
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M70 720l880 0"/>
+<text stroke="none" fill="black" font-size="16" x="8" y="728">
+-140.0
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M70 624l880 0"/>
+<text stroke="none" fill="black" font-size="16" x="8" y="632">
+-120.0
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M70 528l880 0"/>
+<text stroke="none" fill="black" font-size="16" x="8" y="536">
+-100.0
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M70 432l880 0"/>
+<text stroke="none" fill="black" font-size="16" x="18" y="440">
+-80.0
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M70 336l880 0"/>
+<text stroke="none" fill="black" font-size="16" x="18" y="344">
+-60.0
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M70 240l880 0"/>
+<text stroke="none" fill="black" font-size="16" x="18" y="248">
+-40.0
+</text>
+<path stroke="black" stroke-dasharray="1,2" d="M70 144l880 0"/>
+<text stroke="none" fill="black" font-size="16" x="18" y="152">
+-20.0
+</text>
+<path stroke="black" d="M70 48l880 0"/>
+<text stroke="none" fill="black" font-size="16" x="38" y="56">
+0.0
+</text>
+<text stroke="none" fill="black" font-size="16" x="10" y="32">
+     
+</text>
+<path stroke="red" d="M440 23l44 0"/>
+<text stroke="none" fill="black" font-size="16" x="494" y="32">
+57.29*vp(vout)-180
+</text>
+<path stroke="red" d="M70 48l264 0 9 1 44 0 9 1 8 0 9 1 9 0 18 2 8 2 9 1 9 3 9 2 9 4 8 4 9 5 9 7 9 8 9 11 8 13 9 15 9 20 9 22 9 27 8 29 9 31 9 32 9 30 9 28 8 24 9 21 9 18 9 14 9 12 8 9 9 8 9 6 18 10 8 4 27 9 9 4 8 3 9 4 9 5 9 6 9 7 8 8 9 11 9 13"/>
+<path stroke="red" d="M818 543l9 17 9 20 8 25 9 31 9 37"/>
+</svg>
