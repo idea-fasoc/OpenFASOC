@@ -1,0 +1,101 @@
+*********************************************************************************
+
+** sch_path: /home/lmadhu/openmpw/pdk_1/Project_gf180_tp/xschem/Amplifiers/OTA_2stage.sch
+
+**.subckt OTA_2stage vout vin1 vin2 vdd vss vp
+
+*.opin vout
+
+*.ipin vin1
+
+*.ipin vin2
+
+*.iopin vdd
+
+*.iopin vss
+
+*.ipin vp
+
+********************************************************************************
+
+****Differential NMOS Input pairs 
+****(multiplicity doesnot work in the model. Multiple NMOS cells (for m=18 and W/L= 100u/1u) should be written manually)
+
+XM1 vx vin1 vtail vss nfet_03v3 L=1u W=100u nf=500 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'
+
++ pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W'
+
++ sa=0 sb=0 sd=0 m=18
+
+XM2 net1 vin2 vtail vss nfet_03v3 L=1u W=100u nf=500 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'
+
++ pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W'
+
++ sa=0 sb=0 sd=0 m=18
+
+*****PMOS active load pairs
+
+XM3 vx vx vdd vdd pfet_03v3 L=2u W=50u nf=50 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'
+
++ pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W'
+
++ sa=0 sb=0 sd=0 m=1
+
+XM4 net1 vx vdd vdd pfet_03v3 L=2u W=50u nf=50 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'
+
++ pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W'
+
++ sa=0 sb=0 sd=0 m=1
+
+
+*****Tail current NMOS 
+
+XM5 vtail vbias_tail vss vss nfet_03v3 L=1u W=60u nf=60 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'
+
++ pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W'
+
++ sa=0 sb=0 sd=0 m=1
+
+*****Current Mirror NMOS 
+
+XM6 vbias_tail vbias_tail vss vss nfet_03v3 L=1u W=20u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'
+
++ pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W'
+
++ sa=0 sb=0 sd=0 m=1
+
+*****Current Reference PMOS
+
+XM7 vbias_tail vp vdd vdd pfet_03v3 L=2u W=10u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'
+
++ pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W'
+
++ sa=0 sb=0 sd=0 m=1
+
+
+*****Second stage Amplifier 
+
+****(multiplicity doesnot work in the model. Multiple NMOS cells (for m=7 and W/L= 100u/1u) should be written manually)
+
+XM8 vout vbias_tail vss vss nfet_03v3 L=1u W=100u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'
+
++ pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W'
+
++ sa=0 sb=0 sd=0 m=7
+
+****(multiplicity doesnot work in the model. Multiple PMOS cells (for m=4 and W/L= 100u/0.7u) should be written manually)
+
+XM10 vout net1 vdd vdd pfet_03v3 L=0.7u W=100u nf=5 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u'
+
++ pd='2*int((nf+1)/2) * (W/nf + 0.18u)' ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W'
+
++ sa=0 sb=0 sd=0 m=4
+
+*****Load Cap
+C1 vout GND 1p m=1
+
+*****Miller Compensation cap
+C2 net2 vout 3p m=1
+
+R1 net1 net2 200 m=1
+
