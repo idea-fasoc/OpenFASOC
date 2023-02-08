@@ -20,7 +20,7 @@ C1 VREG VSS 1n
 .options rshunt=1e11
 
 *Analysis
-.dc R1 100 50k 10
+.dc R1 10 50k 10
 
 .probe I(R1) V(VREG) v(vref)
 .control
