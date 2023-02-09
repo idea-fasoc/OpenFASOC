@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 
 if which python3 >> /dev/null
