@@ -27,6 +27,8 @@ repos:
     #   rev: "21d3c70d676007470908d39b73f0521d39b3b997"
     #   hooks:
     #       - id: flake8
+# some comment
+
 
     - repo: https://github.com/kynan/nbstripout
       rev: 8cafdcc393232045208137698dbeb42d6e0dd9e8
