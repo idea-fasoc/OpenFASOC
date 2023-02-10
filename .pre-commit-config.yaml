@@ -28,6 +28,12 @@ repos:
     #   hooks:
     #       - id: flake8
 
+    - repo: https://github.com/kynan/nbstripout
+      rev: 8cafdcc393232045208137698dbeb42d6e0dd9e8
+      hooks:
+          - id: nbstripout
+            files: ".xxx"
+
     # - repo: https://github.com/pre-commit/mirrors-mypy
     #   rev: ""
     #   hooks:
