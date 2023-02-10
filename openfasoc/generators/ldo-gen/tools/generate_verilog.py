@@ -3,6 +3,9 @@ import math
 import re
 
 
+INCLUDE_2_PMOS_ARRSIZE = int(40)
+
+
 # model file contains polynomial coeficients
 # for a polynomial which represents max current "x" vs number of transistors in array "f(x)"
 def polynomial_output_at_point_from_coefficients(model_coefficients, polynomial_input):
@@ -22,7 +25,10 @@ def update_ldo_domain_insts(blocksDir, arrSize):
     """Writes arrSize pt unit cell instances to ldo_domain_insts.txt."""
     with open(blocksDir + "/ldo_domain_insts.txt", "w") as ldo_domain_insts:
         # Always write comparator and pmos instances
-        ldo_domain_insts.write("cmp1\npmos_1\npmos_2\n")
+        if arrSize > INCLUDE_2_PMOS_ARRSIZE:
+            ldo_domain_insts.write("cmp1\npmos_1\npmos_2\n")
+        else:
+            ldo_domain_insts.write("cmp1\npmos_1\n")
         # write arrSize pt cells
         for i in range(arrSize):
             ldo_domain_insts.write("{pt_array_unit\[" + str(i) + "\]}\n")
@@ -32,7 +38,10 @@ def update_custom_nets(blocksDir, arrSize):
     """Creates custom routes in ldo_custom_net.txt."""
     with open(blocksDir + "/ldo_custom_net.txt", "w") as ldo_domain_insts:
         # Always write comparator and pmos connections
-        ldo_domain_insts.write("r_VREG\ncmp1 VREG\npmos_1 VREG\npmos_2 VREG\n")
+        if arrSize > INCLUDE_2_PMOS_ARRSIZE:
+            ldo_domain_insts.write("r_VREG\ncmp1 VREG\npmos_1 VREG\npmos_2 VREG\n")
+        else:
+            ldo_domain_insts.write("r_VREG\ncmp1 VREG\npmos_1 VREG\n")
         # write arrSize pt cells
         for i in range(arrSize):
             ldo_domain_insts.write("{pt_array_unit\[" + str(i) + "\]} VREG\n")
@@ -48,6 +57,8 @@ def generate_LDO_verilog(directories, outputDir, designName, arrSize):
         filedata,
     )
     filedata = re.sub(r"module \S+", r"module " + designName + "(", filedata)
+    if arrSize > INCLUDE_2_PMOS_ARRSIZE:
+        filedata = filedata.replace("//COMMENTPMOS2 ", "", 1)
     # write verilog src files to output dir and flow dir
     with open(outputDir + "/" + designName + ".v", "w") as verilog_template:
         verilog_template.write(filedata)
@@ -88,78 +99,20 @@ def generate_controller_verilog(directories, outputDir, arrSize):
 
 def update_area_and_place_density(flowDir, arrSize):
     """Increases place density for designs with large power transistor arrays."""
-    with open(flowDir + "design/sky130hvl/ldo/config.mk", "r") as config_read:
-        lines = config_read.readlines()
-    # adjust config based on arrSize
-    if arrSize in range(1, 51):
-        lines[18] = "export DIE_AREA                 = 0 0 270 270\n"
-        lines[19] = "export CORE_AREA                = 15 15 255 255\n"
-        lines[20] = "export VREG_AREA                = 40 40 230 60\n"
-        if arrSize in range(1, 11):
-            lines[25] = "export PLACE_DENSITY = 0.30\n"
-        elif arrSize in range(11, 21):
-            lines[25] = "export PLACE_DENSITY = 0.40\n"
-        elif arrSize in range(21, 31):
-            lines[25] = "export PLACE_DENSITY = 0.50\n"
-        elif arrSize in range(31, 41):
-            lines[25] = "export PLACE_DENSITY = 0.60\n"
-        elif arrSize in range(41, 51):
-            lines[25] = "export PLACE_DENSITY = 0.70\n"
-    elif arrSize in range(51, 101):
-        lines[18] = "export DIE_AREA                 = 0 0 290 290\n"
-        lines[19] = "export CORE_AREA                = 15 15 275 275\n"
-        lines[20] = "export VREG_AREA                = 40 40 250 60\n"
-        if arrSize in range(51, 61):
-            lines[25] = "export PLACE_DENSITY = 0.30\n"
-        elif arrSize in range(61, 71):
-            lines[25] = "export PLACE_DENSITY = 0.40\n"
-        elif arrSize in range(71, 81):
-            lines[25] = "export PLACE_DENSITY = 0.50\n"
-        elif arrSize in range(81, 91):
-            lines[25] = "export PLACE_DENSITY = 0.60\n"
-        else:
-            lines[25] = "export PLACE_DENSITY = 0.70\n"
-    elif arrSize in range(101, 151):
-        lines[18] = "export DIE_AREA                 = 0 0 310 310\n"
-        lines[19] = "export CORE_AREA                = 15 15 295 295\n"
-        lines[20] = "export VREG_AREA                = 40 40 270 60\n"
-        if arrSize in range(101, 111):
-            lines[25] = "export PLACE_DENSITY = 0.30\n"
-        elif arrSize in range(111, 121):
-            lines[26] = "export PLACE_DENSITY = 0.40\n"
-        elif arrSize in range(121, 131):
-            lines[25] = "export PLACE_DENSITY = 0.50\n"
-        elif arrSize in range(131, 141):
-            lines[25] = "export PLACE_DENSITY = 0.60\n"
-        else:
-            lines[25] = "export PLACE_DENSITY = 0.70\n"
-    elif arrSize in range(151, 201):
-        lines[18] = "export DIE_AREA                 = 0 0 330 330\n"
-        lines[19] = "export CORE_AREA                = 15 15 315 315\n"
-        lines[20] = "export VREG_AREA                = 40 40 290 60\n"
-        if arrSize in range(151, 161):
-            lines[25] = "export PLACE_DENSITY = 0.30\n"
-        elif arrSize in range(161, 171):
-            lines[25] = "export PLACE_DENSITY = 0.40\n"
-        elif arrSize in range(171, 181):
-            lines[25] = "export PLACE_DENSITY = 0.50\n"
-        elif arrSize in range(181, 191):
-            lines[25] = "export PLACE_DENSITY = 0.60\n"
-        else:
-            lines[25] = "export PLACE_DENSITY = 0.70\n"
-    else:
-        lines[18] = "export DIE_AREA                 = 0 0 345 345\n"
-        lines[19] = "export CORE_AREA                = 15 15 330 330\n"
-        lines[20] = "export VREG_AREA                = 40 40 305 60\n"
-        if arrSize in range(201, 211):
-            lines[25] = "export PLACE_DENSITY = 0.30\n"
-        elif arrSize in range(211, 221):
-            lines[25] = "export PLACE_DENSITY = 0.40\n"
-        elif arrSize in range(221, 231):
-            lines[25] = "export PLACE_DENSITY = 0.50\n"
-        elif arrSize in range(231, 241):
-            lines[25] = "export PLACE_DENSITY = 0.60\n"
-        else:
-            lines[25] = "export PLACE_DENSITY = 0.70\n"
-    with open(flowDir + "design/sky130hvl/ldo/config.mk", "w") as config_spec:
-        config_spec.writelines(lines)
+    with open(flowDir + "design/sky130hvl/ldo/config_template.mk", "r") as config:
+        config_template = config.read()
+    die_length = die_width = 275 + 20 * int(arrSize / 50)
+    core_length = core_width = 260 + 20 * int(arrSize / 50)
+    vreg_width = die_width - 40
+    # place_density = round(0.3 + 0.1 * math.ceil((arrSize%50)/10),1)
+    place_density = 0.7
+    config_template = config_template.replace("@PARAM_DIE_WIDTH", str(die_width), 1)
+    config_template = config_template.replace("@PARAM_DIE_LENGTH", str(die_length), 1)
+    config_template = config_template.replace("@PARAM_CORE_WIDTH", str(core_width), 1)
+    config_template = config_template.replace("@PARAM_CORE_LENGTH", str(core_length), 1)
+    config_template = config_template.replace("@PARAM_VREG_WIDTH", str(vreg_width), 1)
+    config_template = config_template.replace(
+        "@PARAM_PLACE_DENSITY", str(place_density), 1
+    )
+    with open(flowDir + "design/sky130hvl/ldo/config.mk", "w") as config:
+        config.write(config_template)

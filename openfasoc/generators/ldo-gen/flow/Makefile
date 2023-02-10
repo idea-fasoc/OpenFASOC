@@ -686,6 +686,7 @@ nuke: clean_test clean_issues
 	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def dummy.guide
 	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
 	rm -rf versions.txt
+	rm -f design/sky130hvl/ldo/config.mk
 
 
 # DEF/GDS/OAS viewer shortcuts

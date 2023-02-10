@@ -1,0 +1,9 @@
+
+{
+  "module_name": "ldoInst",
+  "generator": "ldo-gen",
+  "specifications": {
+    "vin": 1.8,
+    "imax": "1e-03"
+  }
+}
