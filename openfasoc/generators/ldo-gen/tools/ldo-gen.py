@@ -145,45 +145,10 @@ if args.mode != "verilog" and args.mode != "sim":
     print("#----------------------------------------------------------------------")
     print("# LVS and DRC finished successfully")
     print("#----------------------------------------------------------------------")
+    # function defined in configure_workspace.py
+    copy_outputs(directories, args.outputDir, args.platform, user_specs["designName"])
 
 
-outputDir = directories["genDir"] + args.outputDir
-
-shutil.copyfile(
-    directories["flowDir"] + "results/" + args.platform + "/ldo/base/6_final.gds",
-    outputDir + "/" + user_specs["designName"] + ".gds",
-)
-shutil.copyfile(
-    directories["flowDir"] + "results/" + args.platform + "/ldo/base/6_final.def",
-    outputDir + "/" + user_specs["designName"] + ".def",
-)
-shutil.copyfile(
-    directories["flowDir"] + "results/" + args.platform + "/ldo/base/6_final.v",
-    outputDir + "/" + user_specs["designName"] + ".v",
-)
-shutil.copyfile(
-    directories["flowDir"] + "results/" + args.platform + "/ldo/base/6_1_fill.sdc",
-    outputDir + "/" + user_specs["designName"] + ".sdc",
-)
-shutil.copyfile(
-    directories["objDir"] + "netgen_lvs/spice/" + user_specs["designName"] + ".spice",
-    outputDir + "/" + user_specs["designName"] + ".spice",
-)
-shutil.copyfile(
-    directories["objDir"]
-    + "netgen_lvs/spice/"
-    + user_specs["designName"]
-    + "_pex.spice",
-    outputDir + "/" + user_specs["designName"] + "_pex.spice",
-)
-shutil.copyfile(
-    directories["flowDir"] + "reports/" + args.platform + "/ldo/base/6_final_drc.rpt",
-    outputDir + "/6_final_drc.rpt",
-)
-shutil.copyfile(
-    directories["flowDir"] + "reports/" + args.platform + "/ldo/base/6_final_lvs.rpt",
-    outputDir + "/6_final_lvs.rpt",
-)
 # ------------------------------------------------------------------------------
 # run simulations
 # ------------------------------------------------------------------------------
@@ -191,23 +156,79 @@ if args.mode == "full" or args.mode == "sim":
     print("#----------------------------------------------------------------------")
     print("# Running Simulation")
     print("#----------------------------------------------------------------------")
-    specialized_run_dir = configure_simulations(
-        directories,
-        user_specs["designName"],
-        "prePEX",
-        arrSize,
-        pdk_path,
-        user_specs["vin"],
-        jsonConfig["simTool"],
+    # prepare sim directories and copy files
+    [prePEX_specialized_run_dir, postPEX_specialized_run_dir] = create_sim_dirs(
+        arrSize, directories["simDir"]
     )
+
+    filestocopy = list()  # list of tuples (wheretocopy, filename, stringdata)
+    # create sim netlists (return as strings)
+    rawNetlistDir = (
+        directories["flowDir"] + "/objects/sky130hvl/ldo/base/netgen_lvs/spice/"
+    )
+    processedPEXnetlist = prepare_post_pex_netlist(
+        rawNetlistDir + user_specs["designName"] + "_pex.spice"
+    )
+    processedSynthNetlist = prepare_pre_pex_netlist(
+        rawNetlistDir + user_specs["designName"] + ".spice"
+    )
+    powerArrayNetlist = prepare_power_array_netlist(
+        rawNetlistDir + user_specs["designName"] + ".spice"
+    )
+    filestocopy.append(
+        tuple((postPEX_specialized_run_dir, "ldo_sim.spice", processedPEXnetlist))
+    )
+    filestocopy.append(
+        tuple((prePEX_specialized_run_dir, "ldo_sim.spice", processedSynthNetlist))
+    )
+    filestocopy.append(
+        tuple((prePEX_specialized_run_dir, "power_array.spice", powerArrayNetlist))
+    )
+
+    shutil.copy(
+        directories["simDir"] + "/templates/.spiceinit", prePEX_specialized_run_dir
+    )
+    shutil.copy(
+        directories["simDir"] + "/templates/.spiceinit", postPEX_specialized_run_dir
+    )
+
+    # write all the files to their respective locations
+    for filetocopy in filestocopy:
+        with open(filetocopy[0] + "/" + filetocopy[1], "w") as simfile:
+            simfile.write(filetocopy[2])
+
+    # prepare simulation scripts and run simulations (return as strings)
+    if jsonConfig["simTool"] == "ngspice":
+        [prePEXscript, PEXscript, PWRARRscript] = prepare_scripts_and_run_ngspice(
+            directories["simDir"] + "/templates/",
+            prePEX_specialized_run_dir,
+            postPEX_specialized_run_dir,
+            pdk_path,
+            arrSize,
+            "tt",
+            user_specs["designName"],
+            user_specs["vin"],
+            prePEX=False,
+        )
+    # elif jsonConfig["simTool"] == "Xyce":
+    else:
+        print("simtool not supported")
+        exit(1)
+
     # run max current solve
     max_load = binary_search_current_at_acceptible_error(
-        specialized_run_dir, user_specs["vin"]
+        prePEX_specialized_run_dir, user_specs["vin"]
     )
     print("Max load current = " + str(max_load) + " Amps\n\n")
-    # run functional simulation
-    sp.Popen(
-        ["ngspice", "-b", "-o", "out.txt", "ldoInst_ngspice.sp"],
-        cwd=specialized_run_dir,
-    ).wait()
-    save_sim_plot(specialized_run_dir, directories["genDir"] + "/work/")
+
+    # save_sim_plot(postPEX_specialized_run_dir, directories["genDir"] + "/work/")
+    freq_list = ["0.1MHz", "1MHz", "10MHz"]
+    for f in range(len(freq_list)):
+        shutil.copy(
+            directories["simDir"] + "/templates/post_processing.py",
+            postPEX_specialized_run_dir + freq_list[f] + "/",
+        )
+        sp.Popen(
+            ["python3", "post_processing.py"],
+            cwd=postPEX_specialized_run_dir + freq_list[f] + "/",
+        ).wait()
