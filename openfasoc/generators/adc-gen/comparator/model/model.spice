@@ -1,0 +1,6 @@
+.include /home/stanleylin/openmpw/pdk_1/gf180mcuC/libs.tech/ngspice/design.ngspice
+.lib /home/stanleylin/openmpw/pdk_1/gf180mcuC/libs.tech/ngspice/sm141064.ngspice typical
+.lib /home/stanleylin/openmpw/pdk_1/gf180mcuC/libs.tech/ngspice/sm141064.ngspice res_typical
+.lib /home/stanleylin/openmpw/pdk_1/gf180mcuC/libs.tech/ngspice/sm141064.ngspice moscap_typical
+.lib /home/stanleylin/openmpw/pdk_1/gf180mcuC/libs.tech/ngspice/sm141064.ngspice bjt_typical
+.lib /home/stanleylin/openmpw/pdk_1/gf180mcuC/libs.tech/ngspice/sm141064.ngspice res_statistical
