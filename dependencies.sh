@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 ma_ver=$(python -c"import sys; print(str(sys.version_info.major))")
 mi_ver=$(python -c"import sys; print(str(sys.version_info.minor))")
