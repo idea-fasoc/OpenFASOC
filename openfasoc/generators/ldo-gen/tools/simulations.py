@@ -483,8 +483,9 @@ def raw_to_csv(raw_files, vrefspec, outputDir):
         VREG = data.get_data("v(vreg)")
         cmp_out = data.get_data("v(cmp_out)")
         time = data.get_time()
-        test_conditions_split = str(raw_file).split("/")[-1]
-        test_conditions = test_conditions_split.strip("cap_output.raw") + "p"
+        test_conditions = str(raw_file).split("/")[-1].strip("cap_output.raw") + "p"
+        print(test_conditions)
+        print(type(test_conditions))
         VREG_sample_dev = VREG[100 + np.where(VREG[100:] >= vrefspec)[0][0] :]
         VREG_min = min(VREG_sample_dev)
         VREG_max = max(VREG_sample_dev)
