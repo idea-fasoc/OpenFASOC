@@ -10,26 +10,21 @@ from cairosvg import svg2png
 from PIL import Image
 from scipy.interpolate import make_interp_spline
 import ltspice
+import pandas as pd
 
 # ------------------------------------------------------------------------------
 # Create Sim Directories
 # ------------------------------------------------------------------------------
-def create_sim_dirs(arrSize, simDir, freq_list, mode):
+def create_sim_dirs(arrSize, simDir, mode):
     """Creates and performs error checking on pre/post PEX sim directories"""
     os.makedirs(simDir + "/run", exist_ok=True)
     prePEX_sim_dir = simDir + "run/" + "prePEX_PT_cells_" + str(arrSize)
     postPEX_sim_dir = simDir + "run/" + "postPEX_PT_cells_" + str(arrSize)
     prePEX_sim_dir = os.path.abspath(prePEX_sim_dir)
     postPEX_sim_dir = os.path.abspath(postPEX_sim_dir)
-    sim_dir_structure = dict()
-    for freq in freq_list:
-        sim_dir_structure[str(round(freq)) + "Hz"] = freq
     try:
         os.mkdir(prePEX_sim_dir)
         os.mkdir(postPEX_sim_dir)
-        for dir_name in sim_dir_structure:
-            os.mkdir(postPEX_sim_dir + "/" + dir_name)
-            os.mkdir(prePEX_sim_dir + "/" + dir_name)
     except OSError as error:
         print(error)
         print(
@@ -39,7 +34,7 @@ def create_sim_dirs(arrSize, simDir, freq_list, mode):
             exit(1)
         else:
             print("Post proessing: ignore and continue.")
-    return [prePEX_sim_dir + "/", postPEX_sim_dir + "/", sim_dir_structure]
+    return [prePEX_sim_dir + "/", postPEX_sim_dir + "/" ]
 
 
 # ------------------------------------------------------------------------------
@@ -164,10 +159,10 @@ def ngspice_prepare_scripts(
     cap_list,
     templateScriptDir,
     sim_dir,
-    sim_dir_structure,
     user_specs,
     arrSize,
     pdk_path,
+    freq_list,
     model_corner,
     pex=True,
 ):
@@ -191,26 +186,32 @@ def ngspice_prepare_scripts(
         )
     # create list of scripts to run (wheretocopy, filename, stringdata, ngspicecommand)
     scripts_to_run = list()
-    for freq_dir in sim_dir_structure:
-        freq = sim_dir_structure[freq_dir]
+    for freq in freq_list:
         sim_script = sim_template
         sim_script = sim_script.replace("@clk_period", str(1 / freq))
         sim_script = sim_script.replace("@duty_cycle", str(0.5 / freq))
         sim_time = 1.2 * arrSize / freq
         sim_script = sim_script.replace("@sim_time", str(sim_time))
         sim_script = sim_script.replace("@sim_step", str(sim_time / 2000))
+        if freq == 100000:
+           freq_name = "0.1MHz"
+        elif freq == 1000000:
+             freq_name = "1MHz"
+        else:
+             freq_name = "10MHz"
+        load = max_load*1000
         for cap in cap_list:
             sim_script_f = sim_script.replace("@Cap_Value", str(cap))
-            output_raw = str(cap) + "_cap_output.raw"
+            output_raw = str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw"
             sim_script_f = sim_script_f.replace("@output_raw", str(output_raw))
-            sim_name = "ldoInst_" + str(cap) + ".sp"
+            sim_name = "ldo_tran_" + str(load) + "mA_" + freq_name + "_" + str(cap) + ".sp"
             scripts_to_run.append(
                 tuple(
                     (
-                        sim_dir + freq_dir,
+                        sim_dir,
                         sim_name,
                         sim_script_f,
-                        "ngspice -b -o " + str(cap) + "_out.txt -i " + sim_name,
+                        "ngspice -b -o " "ldo_" + freq_name +"_" + str(cap) + "_out.txt -i " + sim_name,
                     )
                 )
             )
@@ -232,6 +233,7 @@ def ngspice_prepare_scripts(
     )
     # write scripts to their respective locations and create simulation bash script
     run_scripts_bash = "#!/usr/bin/env bash\n"
+    raw_data = []
     for script in scripts_to_run:
         with open(script[0] + "/" + script[1], "w") as scriptfile:
             scriptfile.write(script[2])
@@ -244,7 +246,16 @@ def ngspice_prepare_scripts(
         )
         run_scripts_bash += "cd " + os.path.abspath(script[0]) + "\n"
         run_scripts_bash += script[3] + "\n"
-    return [run_scripts_bash, [(str(cap) + "_cap_output.raw") for cap in cap_list]]
+    for freq in freq_list:
+        if freq == 100000:
+           freq_name = "0.1MHz"
+        elif freq == 1000000:
+             freq_name = "1MHz"
+        else:
+             freq_name = "10MHz"
+        for cap in cap_list:
+            raw_data.append(str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw")  
+    return [run_scripts_bash, raw_data]
 
 
 # ------------------------------------------------------------------------------
@@ -354,78 +365,70 @@ def save_sim_plot(run_dir, workDir):
     svg2png(url=run_dir + "vregplot.svg", write_to=workDir + "vregplot.png")
 
 
-def fig_VREG_results(raw_files, freq_id, vrefspec):
+def fig_VREG_results(raw_files, vrefspec):
     """Create VREG output plots for all caps at particular freq simulations"""
-    figureVREG, axesVREG = plt.subplots(len(raw_files), sharex=True, sharey=True)
-    figureVDIF, axesVDIF = plt.subplots(len(raw_files), sharex=True, sharey=True)
-    figureRIPL, axesRIPL = plt.subplots(len(raw_files), sharex=True, sharey=True)
-    figureOSCL, axesOSCL = plt.subplots(len(raw_files), sharex=True, sharey=True)
-    len(axesVREG)  # checks that axes can be indexed
-    figureVREG.text(0.5, 0.04, "Time [us]", ha="center")
-    figureVREG.text(0.04, 0.5, "Vreg and Vref [V]", va="center", rotation="vertical")
-    figureVDIF.text(0.5, 0.04, "Time [us]", ha="center")
-    figureVDIF.text(0.04, 0.5, "Vref-Vreg [V]", va="center", rotation="vertical")
-    figureRIPL.text(0.5, 0.04, "Time [us]", ha="center")
-    figureRIPL.text(0.04, 0.5, "Vref-Vreg [V]", va="center", rotation="vertical")
-    figureOSCL.text(0.5, 0.04, "Time [us]", ha="center")
-    figureOSCL.text(0.04, 0.5, "VREG_dev_test [V]", va="center", rotation="vertical")
+    figureVREG, axesVREG = plt.subplots(len(raw_files),figsize=(30, 15))
+    figureVDIF, axesVDIF = plt.subplots(len(raw_files),figsize=(30, 15))
+    figureRIPL, axesRIPL = plt.subplots(len(raw_files),figsize=(30, 15))
+    #len(axesVREG)  # checks that axes can be indexed
+    figureVREG.text(0.5, 0.04, "Time [us]", ha="center",fontsize ='large')
+    figureVREG.text(0.04, 0.5, "Vreg and Vref [V]", va="center", rotation="vertical",fontsize ='large')
+    figureVDIF.text(0.5, 0.04, "Time [us]", ha="center",fontsize ='large')
+    figureVDIF.text(0.04, 0.5, "Vref-Vreg [V]", va="center", rotation="vertical",fontsize ='large')
+    figureRIPL.text(0.5, 0.04, "Time [us]", ha="center",fontsize ='large')
+    figureRIPL.text(0.04, 0.5, "V_ripple [V]", va="center", rotation="vertical",fontsize ='large')
     for i, raw_file in enumerate(raw_files):
-        current_cap_sim = str(raw_file).split("/")[-1].split("_")[0] + " "
+        cap_id = str(raw_file).split("/")[-1].split("_")[2] + " "
+        freq_id = str(raw_file).split("/")[-1].split("_")[1] + " "
         data = ltspice.Ltspice(raw_file)
         data.parse()
         time = data.get_time()
         [VREG, VREF] = [data.get_data("v(vreg)"), data.get_data("v(vref)")]
-        axesVREG[i].set_title("VREG vs Time " + current_cap_sim + freq_id)
+        axesVREG[i].set_title("VREG vs Time " + cap_id + freq_id, fontsize=15)
         axesVREG[i].ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
-        axesVREG[i].plot(time, VREG, label="VREG")
-        axesVREG[i].plot(time, VREF, label="VREF")
-        axesVREG[i].legend(loc="lower right")
-        axesVDIF[i].set_title("V_difference vs Time " + current_cap_sim + freq_id)
+        axesVREG[i].plot(time, VREG)
+        axesVREG[i].plot(time, VREF)
+        axesVDIF[i].set_title("V_difference vs Time " + cap_id + freq_id,fontsize=15)
         axesVDIF[i].ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
-        axesVDIF[i].plot(time, VREF - VREG, label="VREF-VREG")
-        axesVDIF[i].legend(loc="upper right")
-        axesRIPL[i].set_title("V_Ripple vs Time " + current_cap_sim + freq_id)
-        axesRIPL[i].ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
-        axesRIPL[i].plot(time[-10:], VREG[-10:], label="VREF-VREG")
-        axesRIPL[i].legend(loc="upper right")
+        axesVDIF[i].plot(time, VREF - VREG)
         VREG_sample_dev = VREG[100 + np.where(VREG[100:] >= vrefspec)[0][0] :]
         time_sample_dev = time[100 + np.where(VREG[100:] >= vrefspec)[0][0] :]
-        axesOSCL[i].set_title("VREG Oscillation vs Time " + current_cap_sim + freq_id)
-        axesOSCL[i].ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
-        axesOSCL[i].plot(time_sample_dev, VREG_sample_dev, label="VREG_dev")
-        axesOSCL[i].legend(loc="upper right")
-    return [figureVREG, figureVDIF, figureRIPL, figureOSCL]
+        axesRIPL[i].set_title("V_ripple vs Time " + cap_id + freq_id,fontsize=15)
+        axesRIPL[i].ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
+        axesRIPL[i].plot(time_sample_dev, VREG_sample_dev)
+    return [figureVREG, figureVDIF, figureRIPL]
 
 
-def fig_comparator_results(raw_files, freq_id):
+def fig_comparator_results(raw_files):
     """Create cmp_out output plots for all caps at particular freq simulations"""
-    figure, axes = plt.subplots(len(raw_files), sharex=True, sharey=True)
+    figure, axes = plt.subplots(len(raw_files),figsize=(30, 15))
     len(axes)  # checks that axes can be indexed
-    figure.text(0.5, 0.04, "Time [us]", ha="center")
-    figure.text(0.04, 0.5, "Cmp_out [V]", va="center", rotation="vertical")
+    figure.text(0.5, 0.04, "Time [us]", ha="center",fontsize ='large')
+    figure.text(0.04, 0.5, "Cmp_out [V]", va="center", rotation="vertical",fontsize ='large')
     for i, raw_file in enumerate(raw_files):
         data = ltspice.Ltspice(raw_file)
         data.parse()
-        current_cap_sim = str(raw_file).split("/")[-1].split("_")[0] + " "
+        cap_id = str(raw_file).split("/")[-1].split("_")[2] + " "
+        freq_id = str(raw_file).split("/")[-1].split("_")[1] + " "
         time = data.get_time()
         cmp_out = data.get_data("v(cmp_out)")
-        axes[i].set_title("Comp_out vs Time " + current_cap_sim + freq_id)
+        axes[i].set_title("Comp_out vs Time " + cap_id + freq_id,fontsize=15)
         axes[i].ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
-        axes[i].plot(time, cmp_out, label="cmp_out")
-        axes[i].legend(loc="upper left")
+        axes[i].plot(time, cmp_out)
     return figure
 
 
-def fig_controller_results(raw_files, freq_id):
+def fig_controller_results(raw_files):
     """Create controller output plots for all caps at particular freq simulations"""
-    figure, axes = plt.subplots(len(raw_files), sharex=True, sharey=True)
+    figure, axes = plt.subplots(len(raw_files),figsize=(30, 15))
     len(axes)  # checks that axes can be indexed
-    figure.text(0.5, 0.04, "Time [us]", ha="center")
-    figure.text(0.04, 0.5, "Active Switches", va="center", rotation="vertical")
+    figure.text(0.5, 0.04, "Time [us]", ha="center",fontsize ='large')
+    figure.text(0.04, 0.5, "Active Switches", va="center", rotation="vertical",fontsize ='large')
     for i, raw_file in enumerate(raw_files):
         data = ltspice.Ltspice(raw_file)
         data.parse()
-        current_cap_sim = str(raw_file).split("/")[-1].split("_")[0] + " "
+        cap_id = str(raw_file).split("/")[-1].split("_")[2] + " "
+        freq_id = str(raw_file).split("/")[-1].split("_")[1] + " "
         time = data.get_time()[100:]
         active_switches = np.copy(data.get_data("v(ctrl_out[0])"))
         for regI in range(1, 9):
@@ -435,10 +438,9 @@ def fig_controller_results(raw_files, freq_id):
         active_switches = (np.rint(active_switches / 3.3)).astype(int)[100:]
         num_smooth_pts = np.linspace(time.min(), time.max(), 250)
         active_switches = make_interp_spline(time, active_switches)(num_smooth_pts)
-        axes[i].set_title("Active Switches vs Time " + current_cap_sim + freq_id)
+        axes[i].set_title("Active Switches vs Time " + cap_id + freq_id,fontsize=15)
         axes[i].ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
-        axes[i].plot(num_smooth_pts, active_switches, label="active switches")
-        axes[i].legend(loc="lower right")
+        axes[i].plot(num_smooth_pts, active_switches)
     return figure
 
 
@@ -470,3 +472,29 @@ def fig_dc_results(raw_file):
     plt.plot(current_load[intersect], VREG[intersect], "ro")
     axes.legend(loc="lower left")
     return figure
+def raw_to_csv(raw_files, vrefspec, outputDir):
+    time_settle = []
+    ripple = []
+    csv1 = outputDir + "/" + "csv_data"
+    os.mkdir(csv1)
+    for i,raw_file in enumerate(raw_files):
+        data = ltspice.Ltspice(raw_file)
+        data.parse()
+        VREG = data.get_data("v(vreg)")
+        cmp_out = data.get_data("v(cmp_out)")
+        time = data.get_time()
+        test_conditions_split = str(raw_file).split("/")[-1]
+        test_conditions = test_conditions_split("cap_output.raw") + "p"
+        VREG_sample_dev = VREG[100 + np.where(VREG[100:] >= vrefspec)[0][0] :]
+        VREG_min = min(VREG_sample_dev)
+        VREG_max = max(VREG_sample_dev)
+        VREG_fin = VREG_max-VREG_min
+        ripple.append(VREG_fin)
+        time_sample_dev = time[100 + np.where(VREG[100:] >= vrefspec)[0][0] :]
+        time_settle.append(time_sample_dev[0])
+        df = pd.DataFrame({"Time" : time , "VREG" : VREG, "cmp_out" : cmp_out})
+        df.to_csv(csv1 + "/" + test_conditions +"_.csv",index=False)
+    df2 = pd.DataFrame({"Test_Conditions" :test_conditions, "V_Ripple" : ripple})
+    df2.to_csv(csv1 + "/" + "ripple.csv" , index=False)
+    df3 = pd.DataFrame({"Test_Conditions" :test_conditions, "Settling Time" : time_settle})
+    df3.to_csv(csv1 + "/" + "settle_time.csv" , index=False)
