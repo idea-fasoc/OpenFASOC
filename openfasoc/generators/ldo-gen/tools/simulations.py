@@ -244,6 +244,12 @@ def ngspice_prepare_scripts(
     output_raw = str(load) + "mA_output_load_change.raw"
     load_sim_template = load_sim_template.replace("@output_raw", str(output_raw))
     sim_name = "ldo_load_change.sp"
+    if pex:
+        load_sim_template = load_sim_template.replace("@proper_pin_ordering", head)
+    else:
+        load_sim_template = load_sim_template.replace(
+            "@proper_pin_ordering", prePEX_SPICE_HEADER_GLOBAL_V
+        )
     scripts_to_run.append(
         tuple(
             (
@@ -370,6 +376,12 @@ def xyce_prepare_scripts(
     output_raw = str(load) + "mA_output_load_change.raw"
     load_sim_template = load_sim_template.replace("@output_raw", str(output_raw))
     sim_name = "ldo_load_change.sp"
+    if pex:
+        load_sim_template = load_sim_template.replace("@proper_pin_ordering", head)
+    else:
+        load_sim_template = load_sim_template.replace(
+            "@proper_pin_ordering", prePEX_SPICE_HEADER_GLOBAL_V
+        )
     scripts_to_run.append(
         tuple(
             (
@@ -519,11 +531,11 @@ def fig_VREG_results(raw_files, vrefspec):
     figureRIPL, axesRIPL = plt.subplots(len(raw_files),figsize=(30, 15))
     #len(axesVREG)  # checks that axes can be indexed
     figureVREG.text(0.5, 0.04, "Time [us]", ha="center",fontsize ='large')
-    figureVREG.text(0.04, 0.5, "Vreg and Vref [V]", va="center", rotation="vertical",fontsize ='large')
+    figureVREG.text(0.04, 0.5, "Vreg and Vref [V]", va="center", rotation="vertical",fontsize =15)
     figureVDIF.text(0.5, 0.04, "Time [us]", ha="center",fontsize ='large')
-    figureVDIF.text(0.04, 0.5, "Vref-Vreg [V]", va="center", rotation="vertical",fontsize ='large')
+    figureVDIF.text(0.04, 0.5, "Vref-Vreg [V]", va="center", rotation="vertical",fontsize =15)
     figureRIPL.text(0.5, 0.04, "Time [us]", ha="center",fontsize ='large')
-    figureRIPL.text(0.04, 0.5, "V_ripple [V]", va="center", rotation="vertical",fontsize ='large')
+    figureRIPL.text(0.04, 0.5, "V_ripple [V]", va="center", rotation="vertical",fontsize =15)
     for i, raw_file in enumerate(raw_files):
         cap_id = str(raw_file).split("/")[-1].split("_")[2] + " "
         freq_id = str(raw_file).split("/")[-1].split("_")[1] + " "
@@ -551,7 +563,7 @@ def fig_comparator_results(raw_files):
     figure, axes = plt.subplots(len(raw_files),figsize=(30, 15))
     len(axes)  # checks that axes can be indexed
     figure.text(0.5, 0.04, "Time [us]", ha="center",fontsize ='large')
-    figure.text(0.04, 0.5, "Cmp_out [V]", va="center", rotation="vertical",fontsize ='large')
+    figure.text(0.04, 0.5, "Cmp_out [V]", va="center", rotation="vertical",fontsize =15)
     for i, raw_file in enumerate(raw_files):
         data = ltspice.Ltspice(raw_file)
         data.parse()
@@ -570,7 +582,7 @@ def fig_controller_results(raw_files):
     figure, axes = plt.subplots(len(raw_files),figsize=(30, 15))
     len(axes)  # checks that axes can be indexed
     figure.text(0.5, 0.04, "Time [us]", ha="center",fontsize ='large')
-    figure.text(0.04, 0.5, "Active Switches", va="center", rotation="vertical",fontsize ='large')
+    figure.text(0.04, 0.5, "Active Switches", va="center", rotation="vertical",fontsize =15)
     for i, raw_file in enumerate(raw_files):
         data = ltspice.Ltspice(raw_file)
         data.parse()
@@ -650,8 +662,6 @@ def raw_to_csv(raw_files, vrefspec, outputDir):
         cmp_out = data.get_data("v(cmp_out)")
         time = data.get_time()
         test_conditions = str(raw_file).split("/")[-1].strip("cap_output.raw") + "p"
-        print(test_conditions)
-        print(type(test_conditions))
         VREG_sample_dev = VREG[100 + np.where(VREG[100:] >= vrefspec)[0][0] :]
         VREG_min = min(VREG_sample_dev)
         VREG_max = max(VREG_sample_dev)
