@@ -48,8 +48,6 @@ vstd8 std_pt_in_cnt[8] 0 dc 0
 R1 VREG VSS @Res_Value
 *Resistance 3600 --> 0.5 mA for 1.8 V reference voltage. R to be adjusted according to Iload and output voltage.
 
-*R0 VREG 0 R='TIME > 500u ? 720 : 3600' ;If want to do a transient simulation where I load is changing in the middle of a transient simulation. Example: Here it is changing from 720 ohm (2.5mA) to 3600 ohm (0.5 mA) at t = 1000us
-
 C1 VREG VSS @Cap_Value
 
 *.options savecurrents
@@ -60,18 +58,8 @@ C1 VREG VSS @Cap_Value
 .temp 25
 .tran @sim_step @sim_time
 
-*.probe V(VREG) v(VREF) v(cmp_out) v(clk) i(R1)
 .control
 run
-
-*set hcopydevtype = svg
-*set svg_intopts = ( 2560 1440 30 0 1 2 0 )
-*setcs svg_stropts = ( white Arial Arial )
-*set color1 = black
-*set color2 = red
-*hardcopy vregPlot.svg v(VREG) title 'LDO VREG startup transients with 1.8V VREF'
-*hardcopy currentPlot.svg I(R1) title 'LDO load current startup transients with 1.8V VREF'
-*hardcopy cmp_out_clk_plot.ps cmp_out clk
 
 set filetype=binary
 write @output_raw v(VREG) v(VREF) v(cmp_out) v(clk) v("ctrl_out[0]") v("ctrl_out[1]") v("ctrl_out[2]") v("ctrl_out[3]") v("ctrl_out[4]") v("ctrl_out[5]") v("ctrl_out[6]") v("ctrl_out[7]") v("ctrl_out[8]")

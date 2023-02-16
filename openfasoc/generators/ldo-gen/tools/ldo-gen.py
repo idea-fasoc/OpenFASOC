@@ -205,7 +205,18 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
             freq_list,
             "tt",
         )
-    # elif jsonConfig["simTool"] == "Xyce":
+    elif jsonConfig["simTool"] == "Xyce":
+          [run_sims_bash, output_file_names] = xyce_prepare_scripts(
+            head,
+            cap_list,
+            directories["simDir"] + "/templates/",
+            postPEX_sim_dir,
+            user_specs,
+            arrSize,
+            pdk_path,
+            freq_list,
+            "tt",
+        )
     else:
         print("simtool not supported")
         exit(1)
@@ -229,7 +240,7 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
     figure_names.append("active_switches")
     figures.append(fig_controller_results(raw_files))
     # save results to png files
-    current_freq_results = args.outputDir + "/" + "output_plots"
+    current_freq_results = args.outputDir
     try:
         os.mkdir(current_freq_results)
     except OSError as error:
@@ -240,3 +251,6 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
     for i, figure in enumerate(figures):
         figure.savefig(current_freq_results + "/" + figure_names[i] + ".png")
     fig_dc_results(postPEX_sim_dir + "/isweep.raw").savefig(args.outputDir + "/dc.png")
+    max_load = user_specs["imax"]
+    load = max_load*1000
+    fig_load_change_results(postPEX_sim_dir + "/" + str(load) + "mA_output_load_change.raw",load).savefig(args.outputDir + "/load_change.png")

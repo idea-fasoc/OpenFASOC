@@ -171,8 +171,8 @@ def ngspice_prepare_scripts(
     vref = user_specs["vin"]
     max_load = user_specs["imax"]
     model_file = pdk_path + "/libs.tech/ngspice/sky130.lib.spice"
-    with open(templateScriptDir + "ldoInst_ngspice.sp", "r") as sim_spice:
-        sim_template = sim_spice.read()
+    with open(templateScriptDir + "ldo_tran_ngspice.sp", "r") as sim_spice:
+         sim_template = sim_spice.read()
     sim_template = sim_template.replace("@model_file", model_file)
     sim_template = sim_template.replace("@model_corner", model_corner)
     sim_template = sim_template.replace("@design_nickname", designName)
@@ -231,6 +231,29 @@ def ngspice_prepare_scripts(
             )
         )
     )
+    # add load chnage script to list
+    with open(templateScriptDir + "/ldo_load_change_ngspice.sp", "r") as sim_spice:
+        load_sim_template = sim_spice.read()
+    load_sim_template = load_sim_template.replace("@model_corner", model_corner)
+    load_sim_template = load_sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
+    load_sim_template = load_sim_template.replace("@model_file", model_file)
+    load_sim_template = load_sim_template.replace("@Res_Value", str(1.2 * vref / max_load))
+    sim_time = 1.2 * arrSize
+    load_sim_template = load_sim_template.replace("@sim_time", str(sim_time))
+    load_sim_template = load_sim_template.replace("@sim_step", str(sim_time / 2000))
+    output_raw = str(load) + "mA_output_load_change.raw"
+    load_sim_template = load_sim_template.replace("@output_raw", str(output_raw))
+    sim_name = "ldo_load_change.sp"
+    scripts_to_run.append(
+        tuple(
+            (
+                sim_dir,
+                sim_name,
+                load_sim_template,
+                "ngspice -b -o ldo_load_change.txt -i " + sim_name,
+            )
+        )
+    )
     # write scripts to their respective locations and create simulation bash script
     run_scripts_bash = "#!/usr/bin/env bash\n"
     raw_data = []
@@ -257,7 +280,131 @@ def ngspice_prepare_scripts(
             raw_data.append(str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw")  
     return [run_scripts_bash, raw_data]
 
-
+def xyce_prepare_scripts(
+    head,
+    cap_list,
+    templateScriptDir,
+    sim_dir,
+    user_specs,
+    arrSize,
+    pdk_path,
+    freq_list,
+    model_corner,
+    pex=True,
+):
+    """Specializes xyce simulations and returns (string) bash to run all sims."""
+    designName = user_specs["designName"]
+    vref = user_specs["vin"]
+    max_load = user_specs["imax"]
+    model_file = pdk_path + "/libs.tech/ngspice/sky130.lib.spice"
+    with open(templateScriptDir + "ldo_tran_xyce.sp", "r") as sim_spice:
+         sim_template = sim_spice.read()
+    sim_template = sim_template.replace("@model_file", model_file)
+    sim_template = sim_template.replace("@model_corner", model_corner)
+    sim_template = sim_template.replace("@design_nickname", designName)
+    sim_template = sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
+    sim_template = sim_template.replace("@Res_Value", str(1.2 * vref / max_load))
+    if pex:
+        sim_template = sim_template.replace("@proper_pin_ordering", head)
+    else:
+        sim_template = sim_template.replace(
+            "@proper_pin_ordering", prePEX_SPICE_HEADER_GLOBAL_V
+        )
+    # create list of scripts to run (wheretocopy, filename, stringdata, ngspicecommand)
+    scripts_to_run = list()
+    for freq in freq_list:
+        sim_script = sim_template
+        sim_script = sim_script.replace("@clk_period", str(1 / freq))
+        sim_script = sim_script.replace("@duty_cycle", str(0.5 / freq))
+        sim_time = 1.2 * arrSize / freq
+        sim_script = sim_script.replace("@sim_time", str(sim_time))
+        sim_script = sim_script.replace("@sim_step", str(sim_time / 2000))
+        if freq == 100000:
+           freq_name = "0.1MHz"
+        elif freq == 1000000:
+             freq_name = "1MHz"
+        else:
+             freq_name = "10MHz"
+        load = max_load*1000
+        for cap in cap_list:
+            sim_script_f = sim_script.replace("@Cap_Value", str(cap))
+            output_raw = str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw"
+            sim_script_f = sim_script_f.replace("@output_raw", str(output_raw))
+            sim_name = "ldo_tran_" + str(load) + "mA_" + freq_name + "_" + str(cap) + ".sp"
+            scripts_to_run.append(
+                tuple(
+                    (
+                        sim_dir,
+                        sim_name,
+                        sim_script_f,
+                        "Xyce -o " "ldo_" + freq_name +"_" + str(cap) + "_out.log -hspice-ext all " + sim_name,
+                    )
+                )
+            )
+    # add power array script to the list
+    with open(templateScriptDir + "/pwrarr_sweep_xyce.sp", "r") as sim_spice:
+        pwr_sim_template = sim_spice.read()
+    pwr_sim_template = pwr_sim_template.replace("@model_corner", model_corner)
+    pwr_sim_template = pwr_sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
+    pwr_sim_template = pwr_sim_template.replace("@model_file", model_file)
+    scripts_to_run.append(
+        tuple(
+            (
+                sim_dir,
+                "pwrarr.sp",
+                pwr_sim_template,
+                "Xyce -o pwrout.log -hspice-ext all pwrarr.sp",
+            )
+        )
+    )
+    # add load chnage script to list
+    with open(templateScriptDir + "/ldo_load_change_xyce.sp", "r") as sim_spice:
+        load_sim_template = sim_spice.read()
+    load_sim_template = load_sim_template.replace("@model_corner", model_corner)
+    load_sim_template = load_sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
+    load_sim_template = load_sim_template.replace("@model_file", model_file)
+    load_sim_template = load_sim_template.replace("@Res_Value", str(1.2 * vref / max_load))
+    sim_time = 1.2 * arrSize
+    load_sim_template = load_sim_template.replace("@sim_time", str(sim_time))
+    load_sim_template = load_sim_template.replace("@sim_step", str(sim_time / 2000))
+    output_raw = str(load) + "mA_output_load_change.raw"
+    load_sim_template = load_sim_template.replace("@output_raw", str(output_raw))
+    sim_name = "ldo_load_change.sp"
+    scripts_to_run.append(
+        tuple(
+            (
+                sim_dir,
+                sim_name,
+                load_sim_template,
+                "Xyce -o ldo_load_change.log -hspice-ext all " + sim_name,
+            )
+        )
+    )
+    # write scripts to their respective locations and create simulation bash script
+    run_scripts_bash = "#!/usr/bin/env bash\n"
+    raw_data = []
+    for script in scripts_to_run:
+        with open(script[0] + "/" + script[1], "w") as scriptfile:
+            scriptfile.write(script[2])
+        run_scripts_bash += (
+            "cp "
+            + os.path.abspath(templateScriptDir)
+            + "/.spiceinit "
+            + os.path.abspath(script[0])
+            + "\n"
+        )
+        run_scripts_bash += "cd " + os.path.abspath(script[0]) + "\n"
+        run_scripts_bash += script[3] + "\n"
+    for freq in freq_list:
+        if freq == 100000:
+           freq_name = "0.1MHz"
+        elif freq == 1000000:
+             freq_name = "1MHz"
+        else:
+             freq_name = "10MHz"
+        for cap in cap_list:
+            raw_data.append(str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw")  
+    return [run_scripts_bash, raw_data]
 # ------------------------------------------------------------------------------
 # max current binary search (deprecated, instead use dc linear sweep)
 # ------------------------------------------------------------------------------
@@ -472,9 +619,28 @@ def fig_dc_results(raw_file):
     plt.plot(current_load[intersect], VREG[intersect], "ro")
     axes.legend(loc="lower left")
     return figure
+
+def fig_load_change_results(raw_file,load):
+    figure, axes = plt.subplots(1, sharex=True, sharey=True)
+    figure.text(0.5, 0.04, "Time [us]", ha="center")
+    figure.text(
+        0.04,
+        0.5,
+        "VREG [V]",
+        va="center",
+        rotation="vertical",
+    )
+    data = ltspice.Ltspice(raw_file)
+    data.parse()
+    VREG = data.get_data("v(vreg)")
+    Time = data.get_time()
+    axes.set_title("Load change sim from 1mA to "+ str(load)+ "mA")
+    axes.ticklabel_format(style="sci", axis="x", scilimits=(-6, -6))
+    axes.plot(Time, VREG)
+    return figure
 def raw_to_csv(raw_files, vrefspec, outputDir):
-    time_settle = []
-    ripple = []
+    #time_settle = []
+    #ripple = []
     csv1 = outputDir + "/" + "csv_data"
     os.mkdir(csv1)
     for i,raw_file in enumerate(raw_files):
@@ -489,13 +655,12 @@ def raw_to_csv(raw_files, vrefspec, outputDir):
         VREG_sample_dev = VREG[100 + np.where(VREG[100:] >= vrefspec)[0][0] :]
         VREG_min = min(VREG_sample_dev)
         VREG_max = max(VREG_sample_dev)
-        VREG_fin = VREG_max-VREG_min
-        ripple.append(VREG_fin)
+        ripple = VREG_max-VREG_min
         time_sample_dev = time[100 + np.where(VREG[100:] >= vrefspec)[0][0] :]
-        time_settle.append(time_sample_dev[0])
+        time_settle = (time_sample_dev[0])
         df = pd.DataFrame({"Time" : time , "VREG" : VREG, "cmp_out" : cmp_out})
         df.to_csv(csv1 + "/" + test_conditions +"_.csv",index=False)
-    df2 = pd.DataFrame({"Test_Conditions" :test_conditions, "V_Ripple" : ripple})
-    df2.to_csv(csv1 + "/" + "ripple.csv" , index=False)
-    df3 = pd.DataFrame({"Test_Conditions" :test_conditions, "Settling Time" : time_settle})
-    df3.to_csv(csv1 + "/" + "settle_time.csv" , index=False)
+        df2 = pd.DataFrame({"Test_Conditions" :test_conditions, "V_Ripple" : ripple},index=[0])
+        df2.to_csv(csv1 + "/" + "ripple.csv" , index=False)
+        df3 = pd.DataFrame({"Test_Conditions" :test_conditions, "Settling Time" : time_settle},index=[0])
+        df3.to_csv(csv1 + "/" + "settle_time.csv" , index=False)
