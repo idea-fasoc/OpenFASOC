@@ -238,7 +238,7 @@ def ngspice_prepare_scripts(
     load_sim_template = load_sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
     load_sim_template = load_sim_template.replace("@model_file", model_file)
     load_sim_template = load_sim_template.replace("@Res_Value", str(1.2 * vref / max_load))
-    sim_time = 1.2 * arrSize
+    sim_time = 1.2 * arrSize/1000000
     load_sim_template = load_sim_template.replace("@sim_time", str(sim_time))
     load_sim_template = load_sim_template.replace("@sim_step", str(sim_time / 2000))
     output_raw = str(load) + "mA_output_load_change.raw"
@@ -370,7 +370,7 @@ def xyce_prepare_scripts(
     load_sim_template = load_sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
     load_sim_template = load_sim_template.replace("@model_file", model_file)
     load_sim_template = load_sim_template.replace("@Res_Value", str(1.2 * vref / max_load))
-    sim_time = 1.2 * arrSize
+    sim_time = 1.2 * arrSize/1000000
     load_sim_template = load_sim_template.replace("@sim_time", str(sim_time))
     load_sim_template = load_sim_template.replace("@sim_step", str(sim_time / 2000))
     output_raw = str(load) + "mA_output_load_change.raw"
