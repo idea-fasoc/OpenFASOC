@@ -240,7 +240,7 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
     figure_names.append("active_switches")
     figures.append(fig_controller_results(raw_files))
     # save results to png files
-    current_freq_results = args.outputDir
+    current_freq_results = args.outputDir + "/" + "output_plots"
     try:
         os.mkdir(current_freq_results)
     except OSError as error:

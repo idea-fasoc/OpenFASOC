@@ -46,7 +46,7 @@ vstd7 std_pt_in_cnt[7] 0 dc 0
 vstd8 std_pt_in_cnt[8] 0 dc 0
 
 *Load change
-V10 VR pwl 0 1.8k 20u 1.8k 20.01u @Res_Value
+V10 VR 0 pwl 0 1800 20u 1800 20.01u @Res_Value
 R1 VREG 0 R=V(VR)
 C1 VREG VSS 5p
 
