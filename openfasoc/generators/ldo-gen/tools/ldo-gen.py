@@ -177,7 +177,7 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
     rawPEXPath = spice_dir + user_specs["designName"] + "_pex.spice"
     rawSynthPath = spice_dir + user_specs["designName"] + ".spice"
     [processedPEXnetlist, head] = process_PEX_netlist(
-        rawPEXPath, user_specs["designName"]
+        rawPEXPath, jsonConfig["simTool"],user_specs["designName"]
     )
     processedSynthNetlist = process_prePEX_netlist(rawSynthPath)
     powerArrayNetlist = process_power_array_netlist(rawSynthPath)

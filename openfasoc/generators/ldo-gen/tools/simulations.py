@@ -111,7 +111,7 @@ def process_power_array_netlist(rawSynthNetlistPath):
     return power_spice_netlist
 
 
-def process_PEX_netlist(rawExtractedNetlistPath, designName):
+def process_PEX_netlist(rawExtractedNetlistPath, simtool, designName):
     """Prepare PEX netlist for simulations. Return string containing the netlist."""
     with open(rawExtractedNetlistPath, "r") as spice_in:
         netlist = spice_in.read()
@@ -135,6 +135,8 @@ def process_PEX_netlist(rawExtractedNetlistPath, designName):
                 i = i + 1
         i = i + 1
     netlist = "\n".join(cells_array)
+    if simtool == "Xyce":
+       netlist = netlist.replace("$",";")
     return [
         netlist,
         newhead.replace(vref_node_to, "VREF")
