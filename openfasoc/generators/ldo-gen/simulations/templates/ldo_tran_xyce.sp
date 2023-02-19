@@ -51,7 +51,7 @@ R1 VREG VSS @Res_Value
 C1 VREG VSS @Cap_Value
 
 .ic v(VREG) = 0 v(clk)=0 v(reset)=3.3
-
+.options LINSOL type=klu
 .PREPROCESS ADDRESISTORS ONETERMINAL 1G
 *Analysis
 

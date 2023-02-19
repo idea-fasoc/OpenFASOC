@@ -15,7 +15,7 @@ V2 VREF VSS @VALUE_REF_VOLTAGE
 R1 VREG VSS 1000
 C1 VREG VSS 1n
 
-
+.options LINSOL type=klu
 *Analysis
 .dc R1 10 50k 10
 
