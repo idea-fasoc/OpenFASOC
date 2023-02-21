@@ -198,9 +198,9 @@ def ngspice_prepare_scripts(
         if freq == 100000:
            freq_name = "0.1MHz"
         elif freq == 1000000:
-             freq_name = "1MHz"
+             freq_name = "1.0MHz"
         else:
-             freq_name = "10MHz"
+             freq_name = "10.0MHz"
         load = max_load*1000
         for cap in cap_list:
             sim_script_f = sim_script.replace("@Cap_Value", str(cap))
@@ -281,9 +281,9 @@ def ngspice_prepare_scripts(
         if freq == 100000:
            freq_name = "0.1MHz"
         elif freq == 1000000:
-             freq_name = "1MHz"
+             freq_name = "1.0MHz"
         else:
-             freq_name = "10MHz"
+             freq_name = "10.0MHz"
         for cap in cap_list:
             raw_data.append(str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw")  
     return [run_scripts_bash, raw_data]
@@ -330,9 +330,9 @@ def xyce_prepare_scripts(
         if freq == 100000:
            freq_name = "0.1MHz"
         elif freq == 1000000:
-             freq_name = "1MHz"
+             freq_name = "1.0MHz"
         else:
-             freq_name = "10MHz"
+             freq_name = "10.0MHz"
         load = max_load*1000
         for cap in cap_list:
             sim_script_f = sim_script.replace("@Cap_Value", str(cap))
@@ -413,9 +413,9 @@ def xyce_prepare_scripts(
         if freq == 100000:
            freq_name = "0.1MHz"
         elif freq == 1000000:
-             freq_name = "1MHz"
+             freq_name = "1.0MHz"
         else:
-             freq_name = "10MHz"
+             freq_name = "10.0MHz"
         for cap in cap_list:
             raw_data.append(str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw")  
     return [run_scripts_bash, raw_data]
@@ -653,26 +653,36 @@ def fig_load_change_results(raw_file,load):
     axes.plot(Time, VREG)
     return figure
 def raw_to_csv(raw_files, vrefspec, outputDir):
-    #time_settle = []
-    #ripple = []
+    time_settle = []
+    vripple = []
+    freq = []
+    cap = []
+    load = []
     csv1 = outputDir + "/" + "csv_data"
     os.mkdir(csv1)
     for i,raw_file in enumerate(raw_files):
         data = ltspice.Ltspice(raw_file)
         data.parse()
         VREG = data.get_data("v(vreg)")
+        VREF = data.get_data("v(vref)")
         cmp_out = data.get_data("v(cmp_out)")
         time = data.get_time()
         test_conditions = str(raw_file).split("/")[-1].strip("cap_output.raw") + "p"
+        iload = test_conditions[0:5]
+        load.append(iload)
+        frequency = test_conditions[6:12]
+        freq.append(frequency)
+        cap_value = test_conditions[13:]
+        cap.append(cap_value)
         VREG_sample_dev = VREG[100 + np.where(VREG[100:] >= vrefspec)[0][0] :]
         VREG_min = min(VREG_sample_dev)
         VREG_max = max(VREG_sample_dev)
-        ripple = VREG_max-VREG_min
+        vripple.append(VREG_max-VREG_min)
         time_sample_dev = time[100 + np.where(VREG[100:] >= vrefspec)[0][0] :]
-        time_settle = (time_sample_dev[0])
-        df = pd.DataFrame({"Time" : time , "VREG" : VREG, "cmp_out" : cmp_out})
+        time_settle.append((time_sample_dev[0]))
+        df = pd.DataFrame({"Time" : time , "VREG" : VREG,"VREF" :VREF, "cmp_out" : cmp_out})
         df.to_csv(csv1 + "/" + test_conditions +"_.csv",index=False)
-        df2 = pd.DataFrame({"Test_Conditions" :test_conditions, "V_Ripple" : ripple},index=[0])
-        df2.to_csv(csv1 + "/" + "ripple.csv" , index=False)
-        df3 = pd.DataFrame({"Test_Conditions" :test_conditions, "Settling Time" : time_settle},index=[0])
-        df3.to_csv(csv1 + "/" + "settle_time.csv" , index=False)
+    df2 = pd.DataFrame({"Iload":load,"Frequency":freq,"Cap_Value":cap, "V_Ripple" : vripple})
+    df2.to_csv(csv1 + "/" + "ripple.csv" , index=False)
+    df3 = pd.DataFrame({"Iload":load,"Frequency":freq,"Cap_Value":cap, "Settling Time" : time_settle})
+    df3.to_csv(csv1 + "/" + "settle_time.csv" , index=False)
