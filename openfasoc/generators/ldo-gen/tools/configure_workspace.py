@@ -228,9 +228,9 @@ def get_config(genmode, genDir):
         sys.exit(1)
     # check that simTool is supported
     if genmode != "verilog":
-        if jsonConfig["simTool"] != "ngspice":
-            print("Error: Only support simulator 'ngspice' as of now")
-            sys.exit(1)
+        if jsonConfig["simTool"] != "ngspice" and jsonConfig["simTool"] != "Xyce" :
+            print("Error: Only support simulator 'ngspice' and 'Xyce' as of now")
+            #sys.exit(1)
     return jsonConfig
 
 
