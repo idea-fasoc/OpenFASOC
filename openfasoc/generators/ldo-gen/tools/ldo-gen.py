@@ -152,17 +152,10 @@ if args.mode != "verilog" and clean_work_dir:
     print("#----------------------------------------------------------------------")
     print("# LVS and DRC finished successfully")
     print("#----------------------------------------------------------------------")
+    
     # function defined in configure_workspace.py
     copy_outputs(directories, args.outputDir, args.platform, user_specs["designName"])
 
-
-# ------------------------------------------------------------------------------
-# run simulations
-# ------------------------------------------------------------------------------
-if args.mode == "full" or args.mode == "sim" or args.mode == "post":
-    print("#----------------------------------------------------------------------")
-    print("# Running Simulations")
-    print("#----------------------------------------------------------------------")
     # simulations are ran for the following configurations:
     cap_list = ["1p", "5p"]  # additional capacitance at node VREG
     freq_list = [0.1 * 10**6, 1 * 10**6, 10 * 10**6]  # clock frequency
@@ -220,7 +213,18 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
     else:
         print("simtool not supported")
         exit(1)
+    
+    print("#----------------------------------------------------------------------")
+    print("# Spice netlists created successfully")
+    print("#----------------------------------------------------------------------")    
 
+# ------------------------------------------------------------------------------
+# run simulations
+# ------------------------------------------------------------------------------
+if args.mode == "full" or args.mode == "sim" or args.mode == "post":
+    print("#----------------------------------------------------------------------")
+    print("# Running Simulations")
+    print("#----------------------------------------------------------------------")
     # run sims
     #assert len(output_file_names) == len(cap_list)*len(freq_list)
     if args.mode != "post":

@@ -28,7 +28,7 @@ def create_sim_dirs(arrSize, simDir, mode):
     except OSError as error:
         print(error)
         print(
-            'Already ran simulations for this design\nRun "make clean_sims" to clear ALL simulation runs OR manually delete run directories.'
+            'Already ran simulations or netlists were already created for this design\nRun "make clean_sims" to clear ALL simulation runs OR manually delete run directories.'
         )
         if mode != "post":
             exit(1)

@@ -27,7 +27,7 @@ help:banner
 	@@echo "Targets supported:"
 	@@echo  ""
 	@@echo "1. make sky130hvl_ldo [VoltsOut=insert_voltage_here] [AmpsMax=insert_current_here] [ModuleName=insert_name_here] [specfile=insert_spec_file]"
-	@@echo "    >> This will create the macro for the LDO, creates the lef/def/gds files and performs lvs/drc checks. It won't run simulations."
+	@@echo "    >> This will create the macro for the LDO, creates the lef/def/gds files , performs lvs/drc checks and creates spice netlists.It won't run simulations."
 	@@echo  ""
 	@@echo "2. make sky130hvl_ldo_verilog [VoltsOut=insert_voltage_here] [AmpsMax=insert_current_here] [ModuleName=insert_name_here] [specfile=insert_spec_file]"
 	@@echo "    >> This will create the verilog file for the digital LDO IP. It doesn't create a macro, won't create lef/def/gds files and won't run simulations"
