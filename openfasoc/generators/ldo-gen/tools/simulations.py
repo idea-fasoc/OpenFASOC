@@ -525,9 +525,9 @@ def save_sim_plot(run_dir, workDir):
     )
     svg2png(url=run_dir + "vregplot.svg", write_to=workDir + "vregplot.png")
 
-
+"""
 def fig_VREG_results(raw_files, vrefspec):
-    """Create VREG output plots for all caps at particular freq simulations"""
+    ""Create VREG output plots for all caps at particular freq simulations""
     figureVREG, axesVREG = plt.subplots(len(raw_files),figsize=(30, 15))
     figureVDIF, axesVDIF = plt.subplots(len(raw_files),figsize=(30, 15))
     figureRIPL, axesRIPL = plt.subplots(len(raw_files),figsize=(30, 15))
@@ -561,7 +561,7 @@ def fig_VREG_results(raw_files, vrefspec):
 
 
 def fig_comparator_results(raw_files):
-    """Create cmp_out output plots for all caps at particular freq simulations"""
+    ""Create cmp_out output plots for all caps at particular freq simulations""
     figure, axes = plt.subplots(len(raw_files),figsize=(30, 15))
     len(axes)  # checks that axes can be indexed
     figure.text(0.5, 0.04, "Time [us]", ha="center",fontsize ='large')
@@ -580,7 +580,7 @@ def fig_comparator_results(raw_files):
 
 
 def fig_controller_results(raw_files):
-    """Create controller output plots for all caps at particular freq simulations"""
+    ""Create controller output plots for all caps at particular freq simulations""
     figure, axes = plt.subplots(len(raw_files),figsize=(30, 15))
     len(axes)  # checks that axes can be indexed
     figure.text(0.5, 0.04, "Time [us]", ha="center",fontsize ='large')
@@ -684,3 +684,4 @@ def raw_to_csv(raw_files, vrefspec, outputDir):
         df.to_csv(csv1 + "/" + test_conditions +"_.csv",index=False)
     df2 = pd.DataFrame({"Iload":load,"Frequency":freq,"Cap_Value":cap, "VREG_Ripple" : vripple,"Settling Time" : time_settle})
     df2.to_csv(csv1 + "/" + "parameters.csv" , index=False)
+"""

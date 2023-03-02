@@ -10,6 +10,7 @@ import subprocess as sp
 from configure_workspace import *
 from generate_verilog import *
 from simulations import *
+from processing import *
 
 print("#---------------------------------------------------------------------")
 print("# Parsing command line arguments...")
