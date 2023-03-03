@@ -11,8 +11,8 @@ export SDC_FILE    		= ./design/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 export DIE_AREA   	 	= 0 0 100 40
 export CORE_AREA   		= 2.32 2.32 97.68 37.68
 
-export PDN_CFG 			= ../blocks/$(PLATFORM)/pdn.cfg
-
+#export PDN_CFG 			= ../blocks/$(PLATFORM)/pdn.cfg
+export PDN_TCL                  = ../blocks/$(PLATFORM)/pdn.tcl
 # export ADDITIONAL_LEFS  	= ../blocks/$(PLATFORM)/lef/HEADER.lef \
 #                         	  ../blocks/$(PLATFORM)/lef/SLC.lef
 

@@ -12,7 +12,6 @@ if {[info exist env(FASTROUTE_TCL)]} {
   set_routing_layers -signal $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER)
   set_macro_extension 2
 }
-
 # check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists
 if {[info exist ::env(PLACE_DENSITY_LB_ADDON)]} {
   set place_density_lb [gpl::get_global_placement_uniform_density \
@@ -43,6 +42,35 @@ global_placement -density $place_density \
     {*}$global_placement_args
 }
 
+# force divider to be placed on the right side
+set db [::ord::get_db]
+set block [[$db getChip] getBlock]
+set tech [$db getTech]
+
+set core [$block getCoreArea]
+set core_xl [$core xMin]
+set core_yl [$core yMin]
+set core_xh [$core xMax]
+set core_yh [$core yMax]
+
+set div_cen_x [expr double(($core_xl + $core_xh) * 3 / 4 / 1000)]
+set div_cen_y [expr double(($core_yl + $core_yh) / 2 / 1000)]
+
+set div_cen [concat $div_cen_x $div_cen_y]
+
+set allInsts [$block getInsts]
+
+foreach inst $allInsts {
+	set master [$inst getMaster]
+	set name [$inst getName]
+	if {[string match "_*_" $name]} {
+		place_cell -inst $name \
+		       	   -origin $div_cen \
+		       	   -orient R0
+	}
+}
+		      
+		       			  
 estimate_parasitics -placement
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl

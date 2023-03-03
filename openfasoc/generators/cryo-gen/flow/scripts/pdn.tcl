@@ -1,14 +1,13 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 2_5_floorplan_tapcell.odb 1_synth.sdc "Starting PDN generation"
 
-#if {[info exist ::env(PDN_TCL)]} {
-#  source $::env(PDN_TCL)
-#  pdngen
-#} elseif {[info exist ::env(PDN_CFG)]} {
-#  pdngen $::env(PDN_CFG)
-#}
-#convert_pdn_config $::env(PDN_CFG)
-pdngen
+if {[info exist ::env(PDN_TCL)]} {
+  source $::env(PDN_TCL)
+  pdngen
+} elseif {[info exist ::env(PDN_CFG)]} {
+  convert_pdn_config $::env(PDN_CFG)
+  pdngen
+}
 
 if { [info exists ::env(POST_PDN_TCL)] && [file exists $::env(POST_PDN_TCL)] } {
   source $::env(POST_PDN_TCL)

@@ -263,16 +263,16 @@ shutil.copyfile(
     genDir + args.outputDir + "/" + args.platform + "/" + designName + ".cdl",
 )
 shutil.copyfile(
+    flowDir + "objects/" + args.platform + "/cryo/netgen_lvs/spice/" + designName + ".spice",
     flowDir + designName + ".spice",
-    genDir + args.outputDir + "/" + args.platform + "/" + designName + ".spice",
 )
 shutil.copyfile(
+    flowDir + "objects/" + args.platform + "/cryo/netgen_lvs/spice/" + designName + "_pex.spice",
     flowDir + designName + "_pex.spice",
-    genDir + args.outputDir + "/" + args.platform + "/" + designName + "_pex.spice",
 )
 shutil.copyfile(
+    flowDir + "objects/" + args.platform + "/cryo/netgen_lvs/spice/" + designName + "_sim.spice",
     flowDir + designName + "_sim.spice",
-    genDir + args.outputDir + "/" + args.platform + "/" + designName + "_sim.spice",
 )
 shutil.copyfile(
     flowDir + "reports/" + args.platform + "/cryo/6_final_drc.rpt",
@@ -294,17 +294,17 @@ if args.mode == "macro":
     print("Exiting tool....")
     exit()
 
-p = sp.Popen(["yum", "install", "-y", "libXaw-devel"])
-p.wait()
-p = sp.Popen(["yum", "install", "-y", "libXaw"])
-p.wait()
+#p = sp.Popen(["yum", "install", "-y", "libXaw-devel"])
+#p.wait()
+#p = sp.Popen(["yum", "install", "-y", "libXaw"])
+#p.wait()
 
-pdks_path = "/shared/OpenLane/pdks/"
+pdks_path = "/usr/bin/miniconda3/share/pdk/"
 
 simulation.run_cryo_sim(
     simDir,
     pdks_path + "sky130A/libs.tech/ngspice/sky130.lib.spice",
-    "./../work/" + args.platform + "/" + designName + "_sim.spice",
+    "./../" + flowDir + designName + "_sim.spice",
     "./../" + platformDir + "cdl/" + pdk_lib_name + ".spice",
 )
 

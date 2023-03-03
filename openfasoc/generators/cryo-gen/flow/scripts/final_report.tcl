@@ -20,18 +20,14 @@ if {[info exist ::env(RCX_RULES)]} {
   if {[info exist ::env(RCX_RC_CORNER)]} {
     set rc_corner $::env(RCX_RC_CORNER)
   }
-
   # RCX section
   define_process_corner -ext_model_index 0 X
   extract_parasitics -ext_model_file $::env(RCX_RULES)
-
   # Write Spef
   write_spef $::env(RESULTS_DIR)/6_final.spef
   file delete $::env(DESIGN_NAME).totCap
-
   # Read Spef for OpenSTA
   read_spef $::env(RESULTS_DIR)/6_final.spef
-
   # Static IR drop analysis
   if {[info exist ::env(PWR_NETS_VOLTAGES)]} {
     dict for {pwrNetName pwrNetVoltage}  {*}$::env(PWR_NETS_VOLTAGES) {

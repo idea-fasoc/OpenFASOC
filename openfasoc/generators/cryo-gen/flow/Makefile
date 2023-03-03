@@ -3,7 +3,7 @@
 # ==============================================================================
 default: finish
 .DEFAULT_GOAL := finish
-DESIGN_CONFIG ?= ./design/sky130hd/cryo/config.mk
+DESIGN_CONFIG ?= ./design/sky130hvl/cryo/config.mk
 
 # ==============================================================================
 #  ____  _____ _____ _   _ ____
@@ -262,7 +262,7 @@ WRAP_CFG = $(PLATFORM_DIR)/wrapper.cfg
 export TCLLIBPATH := util/cell-veneer $(TCLLIBPATH)
 $(WRAPPED_LEFS):
 	mkdir -p $(OBJECTS_DIR)/lef $(OBJECTS_DIR)/def
-	util/cell-veneer/wrap.tcl -cfg $(WRAP_CFG) -macro $(filter %$(notdir $(@:_mod.lef=.lef)),$(WRAP_LEFS))
+	util/cell-veneer/wrap.tcl -cfg $dWRAP_CFG) -macro $(filter %$(notdir $(@:_mod.lef=.lef)),$(WRAP_LEFS))
 	mv $(notdir $@) $@
 	mv $(notdir $(@:lef=def)) $(dir $@)../def/$(notdir $(@:lef=def))
 
@@ -553,7 +553,7 @@ GDS_FINAL_FILE = $(RESULTS_DIR)/6_final.$(STREAM_SYSTEM_EXT)
 finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.sdc \
-        $(GDS_FINAL_FILE)
+        $(GDS_FINAL_FILE) 
 # ==============================================================================
 
 ifneq ($(USE_FILL),)
@@ -635,12 +635,12 @@ $(OBJECTS_DIR)/6_final_concat.cdl: $(RESULTS_DIR)/6_final.cdl $(CDL_FILE)
 lvs: $(RESULTS_DIR)/6_lvs.lvsdb
 
 $(RESULTS_DIR)/6_lvs.lvsdb: $(GDS_FINAL_FILE) $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl
-ifneq ($(KLAYOUT_LVS_FILE),)
-	$(call KLAYOUT_FOUND)
+ifneq ($(KLAYOUT_LVS_FILE),$(GDS_FINAL_FILE))
+	echo $(call KLAYOUT_FOUND)
 	($(TIME_CMD) $(KLAYOUT_CMD) -b -rd in_gds="$<" \
 	        -rd cdl_file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
 	        -rd report_file=$(abspath $@) \
-	        -r $(KLAYOUT_LVS_FILE)) 2>&1 | tee $(LOG_DIR)/6_lvs.log
+	        -r $(KLAYOUT_LVS_FILE) 2>&1 | tee $(LOG_DIR)/6_lvs.log
 else
 	echo "LVS not supported on this platform" > $@
 endif
@@ -653,7 +653,7 @@ ifeq ($(shell command -v magic),)
 	$(error Magic not found in PATH)
 endif
 	$(COMMON_VERIF_DIR)/run_drc.sh
-	# magic -rcfile $(COMMON_VERIF_DIR)/sky130A/sky130A.magicrc -noconsole -dnull $(COMMON_VERIF_DIR)/magic_commands.tcl < /dev/null
+	 magic -rcfile $(COMMON_VERIF_DIR)/sky130A/sky130A.magicrc -noconsole -dnull $(COMMON_VERIF_DIR)/magic_commands.tcl < /dev/null
 
 netgen_lvs: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.cdl
 ifeq ($(shell command -v netgen),)
@@ -663,7 +663,7 @@ ifeq ($(shell command -v magic),)
 	$(error Magic not found in PATH)
 endif
 	mkdir -p $(OBJECTS_DIR)/netgen_lvs/spice $(OBJECTS_DIR)/netgen_lvs/ext
-	python $(UTILS_DIR)/openfasoc/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(PLATFORM_DIR)/cdl/sky130_fd_sc_hd.spice -o $(OBJECTS_DIR)/netgen_lvs/spice/$(DESIGN_NAME).spice
+	python $(UTILS_DIR)/openfasoc/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(PLATFORM_DIR)/cdl/sky130_fd_sc_hvl.spice -o $(OBJECTS_DIR)/netgen_lvs/spice/$(DESIGN_NAME).spice
 	$(COMMON_VERIF_DIR)/run_lvspex.sh $(RESULTS_DIR)/6_final.gds $(DESIGN_NAME) $(REPORTS_DIR)/6_final_lvs.rpt
 
 clean_finish:
