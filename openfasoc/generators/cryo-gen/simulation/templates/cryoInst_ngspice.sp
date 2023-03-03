@@ -5,7 +5,7 @@
 
 .param vvdd = 1.8
 
-xi1 EBL OUT VDD VSS cryoInst
+xi1 EBL OUT cryoInst
 
 vEBL EBL 0 pwl 0 0 10n 0 '10n+1f' 'vvdd'
 vVDD VDD 0 dc 'vvdd'
