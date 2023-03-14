@@ -100,11 +100,9 @@ for i in range(res_sets):
 Cviachain = gf.Component("via_chain")
 
 # cross section of wires and segments
-Xwire = gf.CrossSection()
-Xwire.add(width=width, offset=0, layer=(wire_layer, 20))
+Xwire = gf.CrossSection(width=width, offset=0, layer=(wire_layer, 20))
 
-Xseg = gf.CrossSection()
-Xseg.add(width=seg_width, offset=0, layer=(wire_layer - 1, 20))
+Xseg = gf.CrossSection(width=seg_width, offset=0, layer=(wire_layer - 1, 20))
 
 # create wire and via segments from points
 
@@ -185,8 +183,7 @@ Rtop = Cstructure << Ctop
 Rtop.move([50, 90])
 
 # connect current ports of top to pads
-Xwire_i = gf.CrossSection()
-Xwire_i.add(width=3 * width, offset=0, layer=(wire_layer, 20))
+Xwire_i = gf.CrossSection(width=3 * width, offset=0, layer=(wire_layer, 20))
 Ctail1 = gf.path.extrude(gf.Path([(70, 130), (70, 200), (40, 200)]), Xwire_i)
 Ctail2 = gf.path.extrude(gf.Path([(70, 90), (70, 20), (40, 20)]), Xwire_i)
 
