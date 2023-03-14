@@ -36,7 +36,8 @@ while i <= 36 - Cstructure_in.xsize:
 
 # place cells
 for pos in position_list:
-    Cstructure = Cstructure_in.copy(suffix="_" + str(pos[0]) + "_" + str(pos[1]))
+    Cstructure = Cstructure_in.copy()
+    Cstructure.name = Cstructure.name + "_" + str(pos[0]) + "_" + str(pos[1])
     Rstructure = Carray << Cstructure
     Rstructure.move(origin=Rstructure.center, destination=pos)
 
@@ -51,8 +52,7 @@ else:
     length = 36 // pitch * pitch
 
 # cross section of wires and segments
-Xmesh = gf.CrossSection()
-Xmesh.add(width=top_width, offset=0, layer=(top_layer, 20))
+Xmesh = gf.CrossSection(width=top_width, offset=0, layer=(top_layer, 20))
 
 while i <= length:
     pt1 = (i - Cstructure_in.xsize / 2 + top_width / 2, 0 - Cstructure_in.ysize / 2)
@@ -94,8 +94,7 @@ i = 0
 j = 0
 
 # cross section of wires and segments
-Xmesh = gf.CrossSection()
-Xmesh.add(width=bot_width, offset=0, layer=(top_layer - 1, 20))
+Xmesh = gf.CrossSection(width=bot_width, offset=0, layer=(top_layer - 1, 20))
 
 while i <= length:
     pt1 = (i + Cstructure_in.xsize / 2 - bot_width / 2, 0 - Cstructure_in.ysize / 2)
@@ -185,8 +184,7 @@ connector_pts = [
     (left_edge, bot_edge - 5),
 ]
 
-Xmesh = gf.CrossSection()
-Xmesh.add(width=connector_width, offset=0, layer=(top_layer, 20))
+Xmesh = gf.CrossSection(width=connector_width, offset=0, layer=(top_layer, 20))
 
 Ctail = gf.path.extrude(gf.Path(connector_pts), Xmesh)
 
