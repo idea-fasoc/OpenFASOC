@@ -54,8 +54,7 @@ for i in range(res_sets):
 Pwire = gf.Path(pt_list)
 
 # cross section of winded wires
-Xwire = gf.CrossSection()
-Xwire.add(width=width, offset=0, layer=(wire_layer, 20))
+Xwire = gf.CrossSection(width=width, offset=0, layer=(wire_layer, 20))
 
 # create component for the winded wires
 Cwire = gf.path.extrude(Pwire, Xwire)
@@ -96,11 +95,10 @@ Rtop = Cstructure << Ctop
 Rtop.move([50, 90])
 
 # connect current ports of top to pads
-Xwire_i = gf.CrossSection()
 if gen_mode == 0:
-    Xwire_i.add(width=3 * width, offset=0, layer=(wire_layer, 20))
+    Xwire_i = gf.CrossSection(width=3 * width, offset=0, layer=(wire_layer, 20))
 else:
-    Xwire_i.add(width=width, offset=0, layer=(wire_layer, 20))
+    Xwire_i = gf.CrossSection(width=width, offset=0, layer=(wire_layer, 20))
 Ctail1 = gf.path.extrude(gf.Path([(70, 130), (70, 200), (40, 200)]), Xwire_i)
 Ctail2 = gf.path.extrude(gf.Path([(70, 90), (70, 20), (40, 20)]), Xwire_i)
 
