@@ -262,21 +262,14 @@ def ngspice_prepare_scripts(
             )
         )
     )
-    # write scripts to their respective locations and create simulation bash script
-    run_scripts_bash = "#!/usr/bin/env bash\n"
+    # write scripts to their respective locations and create sim_list for simulations
     raw_data = []
+    sim_list = []
     for script in scripts_to_run:
         with open(script[0] + "/" + script[1], "w") as scriptfile:
             scriptfile.write(script[2])
-        run_scripts_bash += (
-            "cp "
-            + os.path.abspath(templateScriptDir)
-            + "/.spiceinit "
-            + os.path.abspath(script[0])
-            + "\n"
-        )
-        run_scripts_bash += "cd " + os.path.abspath(script[0]) + "\n"
-        run_scripts_bash += script[3] + "\n"
+            shutil.copy2(os.path.abspath(templateScriptDir) + "/.spiceinit",os.path.abspath(script[0]))
+        sim_list.append(script[3])
     for freq in freq_list:
         if freq == 100000:
            freq_name = "0.1MHz"
@@ -286,7 +279,7 @@ def ngspice_prepare_scripts(
              freq_name = "10.0MHz"
         for cap in cap_list:
             raw_data.append(str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw")  
-    return [run_scripts_bash, raw_data]
+    return [sim_list, raw_data]
 
 def xyce_prepare_scripts(
     head,
@@ -394,21 +387,14 @@ def xyce_prepare_scripts(
             )
         )
     )
-    # write scripts to their respective locations and create simulation bash script
-    run_scripts_bash = "#!/usr/bin/env bash\n"
+    # write scripts to their respective locations and prepare sim list for simulations
     raw_data = []
+    sim_list = []
     for script in scripts_to_run:
         with open(script[0] + "/" + script[1], "w") as scriptfile:
             scriptfile.write(script[2])
-        run_scripts_bash += (
-            "cp "
-            + os.path.abspath(templateScriptDir)
-            + "/.spiceinit "
-            + os.path.abspath(script[0])
-            + "\n"
-        )
-        run_scripts_bash += "cd " + os.path.abspath(script[0]) + "\n"
-        run_scripts_bash += script[3] + "\n"
+            shutil.copy2(os.path.abspath(templateScriptDir) + "/.spiceinit",os.path.abspath(script[0]))
+        sim_list.append(script[3])
     for freq in freq_list:
         if freq == 100000:
            freq_name = "0.1MHz"
@@ -418,7 +404,7 @@ def xyce_prepare_scripts(
              freq_name = "10.0MHz"
         for cap in cap_list:
             raw_data.append(str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw")  
-    return [run_scripts_bash, raw_data]
+    return [sim_list, raw_data]
 # ------------------------------------------------------------------------------
 # max current binary search (deprecated, instead use dc linear sweep)
 # ------------------------------------------------------------------------------

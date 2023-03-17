@@ -188,7 +188,7 @@ if args.mode != "verilog" and clean_work_dir:
     # prepare simulation scripts, passing prePEX_sim_dir and pex=false to function *_prepare_scripts() runs preprex sims
     # there should be one output file name specified for each cap value. outputs sent to sim_dir_structure directories
     if jsonConfig["simTool"] == "ngspice":
-        [run_sims_bash, output_file_names] = ngspice_prepare_scripts(
+        [sim, output_file_names] = ngspice_prepare_scripts(
             head,
             cap_list,
             directories["simDir"] + "/templates/",
@@ -200,7 +200,7 @@ if args.mode != "verilog" and clean_work_dir:
             "tt",
         )
     elif jsonConfig["simTool"] == "Xyce":
-          [run_sims_bash, output_file_names] = xyce_prepare_scripts(
+          [sim, output_file_names] = xyce_prepare_scripts(
             head,
             cap_list,
             directories["simDir"] + "/templates/",
@@ -227,12 +227,15 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
     print("# Running Simulations")
     print("#----------------------------------------------------------------------")
     # run sims
+    processes = []
     #assert len(output_file_names) == len(cap_list)*len(freq_list)
     if args.mode != "post":
-        with open(postPEX_sim_dir + "run_all_sims.bash", "w") as simsbash:
-            simsbash.write(run_sims_bash)
-        sp.run(["bash", "run_all_sims.bash"], cwd=postPEX_sim_dir)
-
+        for s in range (len(sim)):
+            p = sp.Popen(sim[s],cwd=postPEX_sim_dir,shell=True)
+            processes.append(p)
+            
+        for p in processes:
+            p.wait()   
     # perform post processing on simulation results and save figures to work dir
     raw_files = [(postPEX_sim_dir + ofile) for ofile in output_file_names]
     raw_to_csv(raw_files,user_specs["vin"],args.outputDir)
