@@ -73,7 +73,7 @@ if {[info exists ::env(ENABLE_DPO)] && $::env(ENABLE_DPO)} {
 }
 optimize_mirroring
 
-utl::info FLW 12 "Placement violations [check_placement -verbose]."
+#utl::info FLW 12 "Placement violations [check_placement -verbose]."
 
 estimate_parasitics -placement
 
