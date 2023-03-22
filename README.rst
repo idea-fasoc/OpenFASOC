@@ -25,11 +25,8 @@ This project is led by a team of researchers at the University of Michigan is in
     .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ldo_sky130hvl.yml/badge.svg
         :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ldo_sky130hvl.yml
 
-    .. .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/verify_latest_tools_versions.yml/badge.svg
-    ..     :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/verify_latest_tools_versions.yml
-
     .. image:: https://colab.research.google.com/assets/colab-badge.svg
-        :target: https://colab.research.google.com/github/alibillalhammoud/OpenFASOC/blob/main/docs/source/notebooks/ldo-gen/LDO_notebook.ipynb
+        :target: https://colab.research.google.com/github/idea-fasoc/OpenFASOC/blob/main/docs/source/notebooks/ldo-gen/LDO_notebook.ipynb
 
 Prerequisites
 ****************
