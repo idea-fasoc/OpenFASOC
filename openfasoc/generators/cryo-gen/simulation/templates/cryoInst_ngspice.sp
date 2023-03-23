@@ -5,7 +5,7 @@
 
 .param vvdd = 1.8
 
-xi1 EBL OUT cryoInst
+xi1 EBL OUT VDD VSS cryoInst
 
 vEBL EBL 0 pwl 0 0 10n 0 '10n+1f' 'vvdd'
 vVDD VDD 0 dc 'vvdd'
@@ -13,7 +13,8 @@ vVSS VSS 0 dc 0
 
 c0 OUT 0 1f
 
-.TRAN 50p 100n
+*change step size and transient analysis time 
+.TRAN 0.4n 24u
 
 .control
 run
