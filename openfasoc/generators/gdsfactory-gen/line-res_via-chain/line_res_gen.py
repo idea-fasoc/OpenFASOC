@@ -2,6 +2,9 @@ import gdsfactory as gf
 import sys
 import argparse
 
+from gdsfactory.cell import Settings, cell
+from gdsfactory.component import Component
+
 # dim = 40        # dimension of floorplan
 # spacing = 2.3     # spacing of wire
 # width = 0.5     # width of wire
@@ -58,65 +61,83 @@ Xwire = gf.CrossSection(width=width, offset=0, layer=(wire_layer, 20))
 
 # create component for the winded wires
 Cwire = gf.path.extrude(Pwire, Xwire)
-
-# TOP
-# create top level component
-Ctop = gf.Component("top")
-
-# create a reference in top
-Rwire = Ctop << Cwire
-
-# move the wire component reference
 translation = (dim / 2 - Cwire.center[0], dim / 2 - Cwire.center[1])
-Rwire.move(translation)
 
-# create and reference tails
-Ctail1 = gf.path.extrude(gf.Path([(dim / 2, 0), (dim / 2, res_tail)]), Xwire)
-Ctail2 = gf.path.extrude(gf.Path([(dim / 2, dim), (dim / 2, dim - res_tail)]), Xwire)
+@cell
+def create_Ctop(
+        comp_name
+) -> Component:
 
-Ctop << Ctail1
-Ctop << Ctail2
+    # TOP
+    # create top level component
+    Ctop = gf.Component(comp_name)
 
-# STRUCTURE
-# create top gds with pads
-if gen_mode == 0:
-    Cstructure = gf.Component(str(wire_layer) + "_line_res")
-else:
-    Cstructure = gf.Component(str(wire_layer) + "_thick_line_res")
+    # create a reference in top
+    Rwire = Ctop << Cwire
 
-# import and place pads
-Cpad = gf.import_gds("./pad_forty_met1_met5.GDS")
-for i in range(4):
-    Rpad = Cstructure << Cpad
-    Rpad.move([0, i * 60])
+    # move the wire component reference    
+    Rwire.move(translation)
 
-# move top to a proper location
-Rtop = Cstructure << Ctop
-Rtop.move([50, 90])
+    # create and reference tails
+    Ctail1 = gf.path.extrude(gf.Path([(dim / 2, 0), (dim / 2, res_tail)]), Xwire)
+    Ctail2 = gf.path.extrude(gf.Path([(dim / 2, dim), (dim / 2, dim - res_tail)]), Xwire)
 
-# connect current ports of top to pads
-if gen_mode == 0:
-    Xwire_i = gf.CrossSection(width=3 * width, offset=0, layer=(wire_layer, 20))
-else:
-    Xwire_i = gf.CrossSection(width=width, offset=0, layer=(wire_layer, 20))
-Ctail1 = gf.path.extrude(gf.Path([(70, 130), (70, 200), (40, 200)]), Xwire_i)
-Ctail2 = gf.path.extrude(gf.Path([(70, 90), (70, 20), (40, 20)]), Xwire_i)
+    Ctop << Ctail1
+    Ctop << Ctail2
 
-Cstructure << Ctail1
-Cstructure << Ctail2
+    return Ctop
 
-# connect voltage ports of top to pads
-v_pt_a_y = pt_list[0][1] + 90 + translation[1]
-v_pt_b_y = pt_list[-1][1] + 90 + translation[1]
+@cell
+def create_Cstructure(
+        comp_name
+    ) -> Component:
 
-Ctail1 = gf.path.extrude(gf.Path([(40, v_pt_a_y), (50, v_pt_a_y)]), Xwire)
-Ctail2 = gf.path.extrude(gf.Path([(40, v_pt_b_y), (50, v_pt_b_y)]), Xwire)
+    # STRUCTURE
+    # create top gds with pads
+    if gen_mode == 0:
+        Cstructure = gf.Component(str(wire_layer) + "_line_res")
+    else:
+        Cstructure = gf.Component(str(wire_layer) + "_thick_line_res")
 
-Cstructure << Ctail1
-Cstructure << Ctail2
+    # import and place pads
+    Cpad = gf.import_gds("./pad_forty_met1_met5.GDS")
+    for i in range(4):
+        Rpad = Cstructure << Cpad
+        Rpad.move([0, i * 60])
+    
+    Ctop = create_Ctop("top")
+    # move top to a proper location
+    Rtop = Cstructure << Ctop
+    Rtop.move([50, 90])
+
+    # connect current ports of top to pads
+    if gen_mode == 0:
+        Xwire_i = gf.CrossSection(width=3 * width, offset=0, layer=(wire_layer, 20))
+    else:
+        Xwire_i = gf.CrossSection(width=width, offset=0, layer=(wire_layer, 20))
+    Ctail1 = gf.path.extrude(gf.Path([(70, 130), (70, 200), (40, 200)]), Xwire_i)
+    Ctail2 = gf.path.extrude(gf.Path([(70, 90), (70, 20), (40, 20)]), Xwire_i)
+
+    Cstructure << Ctail1
+    Cstructure << Ctail2
+
+    # connect voltage ports of top to pads
+    v_pt_a_y = pt_list[0][1] + 90 + translation[1]
+    v_pt_b_y = pt_list[-1][1] + 90 + translation[1]
+
+    Ctail1 = gf.path.extrude(gf.Path([(40, v_pt_a_y), (50, v_pt_a_y)]), Xwire)
+    Ctail2 = gf.path.extrude(gf.Path([(40, v_pt_b_y), (50, v_pt_b_y)]), Xwire)
+    
+    Cstructure << Ctail1
+    Cstructure << Ctail2
+
+    return Cstructure
 
 # OUTPUT
 if gen_mode == 0:
-    Cstructure.write_gds(str(wire_layer) + "_line_res.gds")
+    Cstructure_name = str(wire_layer) + "_line_res.gds"
 else:
-    Cstructure.write_gds(str(wire_layer) + "_thick_line_res.gds")
+    Cstructure_name = str(wire_layer) + "_thick_line_res.gds"
+
+Cstructure = create_Cstructure(Cstructure_name)
+Cstructure.write_gds(Cstructure_name)
