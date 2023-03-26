@@ -3,6 +3,9 @@ import sys
 import os
 import argparse
 
+from gdsfactory.cell import Settings, cell
+from gdsfactory.component import Component
+
 parser = argparse.ArgumentParser(description="Via-chain Generator")
 parser.add_argument("--input_file", required=True)
 parser.add_argument("--pitch", required=True)
@@ -16,193 +19,237 @@ top_width = float(args.wtop)
 bot_width = float(args.wbot)
 top_layer = int(args.lyrtop)
 
-# ARRAY
-Carray = gf.Component("single_mimcap_array")
+@cell
+def create_Carray(
+    comp_name
+) -> Component:
+    # ARRAY
+    Carray = gf.Component(comp_name)
 
-file = args.input_file
-Cstructure_in = gf.import_gds(file, name=str(file), flatten=True)
+    file = args.input_file
+    Cstructure_in = gf.import_gds(file, name=str(file), flatten=True)
 
-# position generation
-i = 0
-j = 0
-position_list = []
-
-while i <= 36 - Cstructure_in.xsize:
+    # position generation
+    i = 0
     j = 0
-    while j <= 36 - Cstructure_in.ysize:
-        position_list.append((i, j))
+    position_list = []
+
+    while i <= 36 - Cstructure_in.xsize:
+        j = 0
+        while j <= 36 - Cstructure_in.ysize:
+            position_list.append((i, j))
+            j += pitch
+        i += pitch
+
+    # place cells
+    for pos in position_list:
+        Cstructure = Cstructure_in.copy()
+        Cstructure.name = "_" + str(pos[0]) + "_" + str(pos[1])
+        Rstructure = Carray << Cstructure
+        Rstructure.move(origin=Rstructure.center, destination=pos)
+
+    # generate connecting mesh
+    i = 0
+    j = 0
+
+    # length
+    if 36 % pitch == 0:
+        length = 36 - pitch
+    else:
+        length = 36 // pitch * pitch
+
+    # cross section of wires and segments
+    Xmesh = gf.CrossSection(width=top_width, offset=0, layer=(top_layer, 20))
+
+    while i <= length:
+        pt1 = (i - Cstructure_in.xsize / 2 + top_width / 2, 0 - Cstructure_in.ysize / 2)
+        pt2 = (
+            i - Cstructure_in.xsize / 2 + top_width / 2,
+            length + Cstructure_in.xsize / 2,
+        )
+
+        # create a path
+        Pmesh = gf.Path([pt1, pt2])
+
+        # extrude onto two metal layers
+        Cmesh = gf.path.extrude(Pmesh, Xmesh)
+
+        # reference the path extrusion to component
+        Carray << Cmesh
+
+        i += pitch
+
+    while j <= length:
+        pt1 = (0 - Cstructure_in.xsize / 2, j + Cstructure_in.xsize / 2 - top_width / 2)
+        pt2 = (
+            length + Cstructure_in.xsize / 2,
+            j + Cstructure_in.xsize / 2 - top_width / 2,
+        )
+
+        # create a path
+        Pmesh = gf.Path([pt1, pt2])
+
+        # extrude onto two metal layers
+        Cmesh = gf.path.extrude(Pmesh, Xmesh)
+
+        # reference the path extrusion to component
+        Carray << Cmesh
+
         j += pitch
-    i += pitch
 
-# place cells
-for pos in position_list:
-    Cstructure = Cstructure_in.copy()
-    Cstructure.name = Cstructure.name + "_" + str(pos[0]) + "_" + str(pos[1])
-    Rstructure = Carray << Cstructure
-    Rstructure.move(origin=Rstructure.center, destination=pos)
+    i = 0
+    j = 0
 
-# generate connecting mesh
-i = 0
-j = 0
+    # cross section of wires and segments
+    Xmesh = gf.CrossSection(width=bot_width, offset=0, layer=(top_layer - 1, 20))
 
-# length
-if 36 % pitch == 0:
-    length = 36 - pitch
-else:
-    length = 36 // pitch * pitch
+    while i <= length:
+        pt1 = (i + Cstructure_in.xsize / 2 - bot_width / 2, 0 - Cstructure_in.ysize / 2)
+        pt2 = (
+            i + Cstructure_in.xsize / 2 - bot_width / 2,
+            length + Cstructure_in.xsize / 2,
+        )
 
-# cross section of wires and segments
-Xmesh = gf.CrossSection(width=top_width, offset=0, layer=(top_layer, 20))
+        # create a path
+        Pmesh = gf.Path([pt1, pt2])
 
-while i <= length:
-    pt1 = (i - Cstructure_in.xsize / 2 + top_width / 2, 0 - Cstructure_in.ysize / 2)
-    pt2 = (
-        i - Cstructure_in.xsize / 2 + top_width / 2,
-        length + Cstructure_in.xsize / 2,
-    )
+        # extrude onto two metal layers
+        Cmesh = gf.path.extrude(Pmesh, Xmesh)
 
-    # create a path
-    Pmesh = gf.Path([pt1, pt2])
+        # reference the path extrusion to component
+        Carray << Cmesh
 
-    # extrude onto two metal layers
-    Cmesh = gf.path.extrude(Pmesh, Xmesh)
+        i += pitch
 
-    # reference the path extrusion to component
-    Carray << Cmesh
+    while j <= length:
+        pt1 = (0 - Cstructure_in.xsize / 2, j - Cstructure_in.xsize / 2 + bot_width / 2)
+        pt2 = (
+            length + Cstructure_in.ysize / 2,
+            j - Cstructure_in.xsize / 2 + bot_width / 2,
+        )
 
-    i += pitch
+        # create a path
+        Pmesh = gf.Path([pt1, pt2])
 
-while j <= length:
-    pt1 = (0 - Cstructure_in.xsize / 2, j + Cstructure_in.xsize / 2 - top_width / 2)
-    pt2 = (
-        length + Cstructure_in.xsize / 2,
-        j + Cstructure_in.xsize / 2 - top_width / 2,
-    )
+        # extrude onto two metal layers
+        Cmesh = gf.path.extrude(Pmesh, Xmesh)
 
-    # create a path
-    Pmesh = gf.Path([pt1, pt2])
+        # reference the path extrusion to component
+        Carray << Cmesh
 
-    # extrude onto two metal layers
-    Cmesh = gf.path.extrude(Pmesh, Xmesh)
+        j += pitch
+    
+    return Carray
 
-    # reference the path extrusion to component
-    Carray << Cmesh
+@cell
+def create_Carray20(
+    comp_name
+) -> Component:
+    
+    Carray20 = gf.Component(comp_name)
+    Carray = create_Carray("single_mimcap_array")
+    i = 0
+    for i in range(20):
+        #Rpad = Cstructure << Cpad
+        #Rpad.move([i * 60, 0])
+        Rarray = Carray20 << Carray
+        Rarray.move(origin=Rarray.center, destination=[i * 60 + 20, 60])
+        #Rpad = Cstructure << Cpad
+        #Rpad.move([i * 60, 80])
+    
+    return Carray20
 
-    j += pitch
+@cell
+def create_Crail(
+    comp_name,
+    top_rail_pts,
+    bot_rail_pts
+) -> Component:
+    Crail = gf.Component(comp_name)
+    Crail.add_polygon(top_rail_pts, layer=(top_layer, 20))
+    Crail.add_polygon(bot_rail_pts, layer=(top_layer - 1, 20))
 
-i = 0
-j = 0
+    return Crail
 
-# cross section of wires and segments
-Xmesh = gf.CrossSection(width=bot_width, offset=0, layer=(top_layer - 1, 20))
+@cell
+def create_Cstructure(
+    comp_name
+) -> Component :
+    Cstructure = gf.Component(comp_name)
 
-while i <= length:
-    pt1 = (i + Cstructure_in.xsize / 2 - bot_width / 2, 0 - Cstructure_in.ysize / 2)
-    pt2 = (
-        i + Cstructure_in.xsize / 2 - bot_width / 2,
-        length + Cstructure_in.xsize / 2,
-    )
+    # create pad ring    
+    Carray20 = create_Carray20(str(top_layer - 1) + "_" + str(top_layer) + "_mimcap_array20")
 
-    # create a path
-    Pmesh = gf.Path([pt1, pt2])
+    # import and place pads and arrays
+    Cpad = gf.import_gds("./pad_forty_met1_met5.GDS")
 
-    # extrude onto two metal layers
-    Cmesh = gf.path.extrude(Pmesh, Xmesh)
+    i = 0
+    for i in range(20):
+        Rpad = Cstructure << Cpad
+        Rpad.move([i * 60, 0])
+        #Rarray = Carray20 << Carray
+        #Rarray.move(origin=Rarray.center, destination=[i * 60 + 20, 60])
+        Rpad = Cstructure << Cpad
+        Rpad.move([i * 60, 80])
 
-    # reference the path extrusion to component
-    Carray << Cmesh
+    # top and bottom rails
+    # use bbox of Carray20 to aid the rail generation
 
-    i += pitch
+    top_edge = Carray20.ymax
+    bot_edge = Carray20.ymin
+    left_edge = Carray20.xmin
+    right_edge = Carray20.xmax
 
-while j <= length:
-    pt1 = (0 - Cstructure_in.xsize / 2, j - Cstructure_in.xsize / 2 + bot_width / 2)
-    pt2 = (
-        length + Cstructure_in.ysize / 2,
-        j - Cstructure_in.xsize / 2 + bot_width / 2,
-    )
+    allowed_space = (40 - (top_edge - bot_edge)) / 2
 
-    # create a path
-    Pmesh = gf.Path([pt1, pt2])
+    top_rail_pts = [
+        (left_edge, top_edge - top_width),
+        (right_edge, top_edge - top_width),
+        (right_edge, top_edge + allowed_space - top_width),
+        (left_edge, top_edge + allowed_space - top_width),
+    ]
+    bot_rail_pts = [
+        (left_edge, bot_edge + bot_width),
+        (right_edge, bot_edge + bot_width),
+        (right_edge, bot_edge - allowed_space + bot_width),
+        (left_edge, bot_edge - allowed_space + bot_width),
+    ]
 
-    # extrude onto two metal layers
-    Cmesh = gf.path.extrude(Pmesh, Xmesh)
 
-    # reference the path extrusion to component
-    Carray << Cmesh
+    Crail = create_Crail("rails", top_rail_pts, bot_rail_pts)
 
-    j += pitch
+    # add top rail connector
+    connector_width = top_rail_pts[-1][1] - top_rail_pts[1][1]
+    connector_pts = [
+        (left_edge, top_edge - top_width + 1 / 2 * connector_width),
+        (left_edge - 6, top_edge - top_width + 1 / 2 * connector_width),
+        (left_edge - 6, bot_edge - 5),
+        (left_edge, bot_edge - 5),
+    ]
 
-# create pad ring
-Cstructure = gf.Component(str(top_layer - 1) + "_" + str(top_layer) + "_mimcap")
-Carray20 = gf.Component(str(top_layer - 1) + "_" + str(top_layer) + "_mimcap_array20")
-Crail = gf.Component("rails")
+    Xmesh = gf.CrossSection(width=connector_width, offset=0, layer=(top_layer, 20))
 
-# import and place pads and arrays
-Cpad = gf.import_gds("./pad_forty_met1_met5.GDS")
+    Ctail = gf.path.extrude(gf.Path(connector_pts), Xmesh)
 
-i = 0
-for i in range(20):
-    Rpad = Cstructure << Cpad
-    Rpad.move([i * 60, 0])
-    Rarray = Carray20 << Carray
-    Rarray.move(origin=Rarray.center, destination=[i * 60 + 20, 60])
-    Rpad = Cstructure << Cpad
-    Rpad.move([i * 60, 80])
+    # move Instances into center of Cstructure
 
-# top and bottom rails
-# use bbox of Carray20 to aid the rail generation
+    center_pt = Cstructure.center
 
-top_edge = Carray20.ymax
-bot_edge = Carray20.ymin
-left_edge = Carray20.xmin
-right_edge = Carray20.xmax
+    Rarray20 = Cstructure << Carray20
+    Rtail = Cstructure << Ctail
+    Rrail = Cstructure << Crail
+    translation = (center_pt[0] - Rarray20.center[0], center_pt[1] - Rarray20.center[1])
+    Rarray20.move(translation)
+    Rtail.move(translation)
+    Rrail.move(translation)
 
-allowed_space = (40 - (top_edge - bot_edge)) / 2
+    # add bot rail connector
+    bot_rail_cn_pts = [(60, 40), (100, 40), (100, 40 + bot_width), (60, 40 + bot_width)]
+    Cstructure.add_polygon(bot_rail_cn_pts, layer=(top_layer - 1, 20))
 
-top_rail_pts = [
-    (left_edge, top_edge - top_width),
-    (right_edge, top_edge - top_width),
-    (right_edge, top_edge + allowed_space - top_width),
-    (left_edge, top_edge + allowed_space - top_width),
-]
-bot_rail_pts = [
-    (left_edge, bot_edge + bot_width),
-    (right_edge, bot_edge + bot_width),
-    (right_edge, bot_edge - allowed_space + bot_width),
-    (left_edge, bot_edge - allowed_space + bot_width),
-]
+    return Cstructure
 
-Crail.add_polygon(top_rail_pts, layer=(top_layer, 20))
-Crail.add_polygon(bot_rail_pts, layer=(top_layer - 1, 20))
-
-# add top rail connector
-connector_width = top_rail_pts[-1][1] - top_rail_pts[1][1]
-connector_pts = [
-    (left_edge, top_edge - top_width + 1 / 2 * connector_width),
-    (left_edge - 6, top_edge - top_width + 1 / 2 * connector_width),
-    (left_edge - 6, bot_edge - 5),
-    (left_edge, bot_edge - 5),
-]
-
-Xmesh = gf.CrossSection(width=connector_width, offset=0, layer=(top_layer, 20))
-
-Ctail = gf.path.extrude(gf.Path(connector_pts), Xmesh)
-
-# move Instances into center of Cstructure
-
-center_pt = Cstructure.center
-
-Rarray20 = Cstructure << Carray20
-Rtail = Cstructure << Ctail
-Rrail = Cstructure << Crail
-translation = (center_pt[0] - Rarray20.center[0], center_pt[1] - Rarray20.center[1])
-Rarray20.move(translation)
-Rtail.move(translation)
-Rrail.move(translation)
-
-# add bot rail connector
-bot_rail_cn_pts = [(60, 40), (100, 40), (100, 40 + bot_width), (60, 40 + bot_width)]
-Cstructure.add_polygon(bot_rail_cn_pts, layer=(top_layer - 1, 20))
+Cstructure = create_Cstructure(str(top_layer - 1) + "_" + str(top_layer) + "_mimcap")
 
 # OUTPUT
 Cstructure.write_gds(
