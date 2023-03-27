@@ -64,13 +64,10 @@ Cwire = gf.path.extrude(Pwire, Xwire)
 translation = (dim / 2 - Cwire.center[0], dim / 2 - Cwire.center[1])
 
 @cell
-def create_Ctop(
-        comp_name
-) -> Component:
-
+def create_Ctop() -> Component:
     # TOP
     # create top level component
-    Ctop = gf.Component(comp_name)
+    Ctop = gf.Component()
 
     # create a reference in top
     Rwire = Ctop << Cwire
@@ -88,16 +85,13 @@ def create_Ctop(
     return Ctop
 
 @cell
-def create_Cstructure(
-        comp_name
-    ) -> Component:
-
+def create_Cstructure() -> Component:
     # STRUCTURE
     # create top gds with pads
     if gen_mode == 0:
-        Cstructure = gf.Component(str(wire_layer) + "_line_res")
+        Cstructure = gf.Component()
     else:
-        Cstructure = gf.Component(str(wire_layer) + "_thick_line_res")
+        Cstructure = gf.Component()
 
     # import and place pads
     Cpad = gf.import_gds("./pad_forty_met1_met5.GDS")
@@ -105,7 +99,7 @@ def create_Cstructure(
         Rpad = Cstructure << Cpad
         Rpad.move([0, i * 60])
     
-    Ctop = create_Ctop("top")
+    Ctop = create_Ctop()
     # move top to a proper location
     Rtop = Cstructure << Ctop
     Rtop.move([50, 90])
@@ -139,5 +133,5 @@ if gen_mode == 0:
 else:
     Cstructure_name = str(wire_layer) + "_thick_line_res.gds"
 
-Cstructure = create_Cstructure(Cstructure_name)
+Cstructure = create_Cstructure()
 Cstructure.write_gds(Cstructure_name)
