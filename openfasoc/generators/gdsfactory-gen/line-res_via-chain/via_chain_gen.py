@@ -102,13 +102,10 @@ for i in range(res_sets):
 ## Definitions to create components
 
 @cell
-def create_Cvia(
-    comp_name
-) -> Component:
-    """Returns component with the name specified
-    """
+def create_Cvia() -> Component:
     # create a "via component"
-    Cvia = gf.Component(comp_name)
+    Cvia = gf.Component()
+
     r = Cvia << gf.components.rectangle(
         size=[seg_width, seg_width], layer=(wire_layer - 1, 20)
     )
@@ -120,19 +117,14 @@ def create_Cvia(
 
     return Cvia
 
+# cross section of wires and segments
 Xwire = gf.CrossSection(width=width, offset=0, layer=(wire_layer, 20))
-
 Xseg = gf.CrossSection(width=seg_width, offset=0, layer=(wire_layer - 1, 20))
 
 @cell
-def create_Cviachain(
-    comp_name
-) -> Component:
-    """Returns component with the name specified
-    """
-    cviachain = Component(comp_name)
-    # cross section of wires and segments
-    
+def create_Cviachain() -> Component:
+    # create a via chain
+    cviachain = Component()    
     
     # create wire and via segments from points
 
@@ -166,7 +158,7 @@ def create_Cviachain(
 
     # place the vias at locations
     for coord in via_place_set:
-        Cvia = create_Cvia("c_via")
+        Cvia = create_Cvia()
         v = cviachain << Cvia
         v.move(list(coord))
 
@@ -175,18 +167,13 @@ def create_Cviachain(
 
 
 @cell
-def create_Ctop(
-    comp_name
-) -> Component:
-    """
-    Returns component with the comp_name passed
-    """
+def create_Ctop() -> Component:
     # create a wire + vias component
-    Cviachain = create_Cviachain("via_chain")
+    Cviachain = create_Cviachain()
 
     # TOP
     # create top level component
-    Ctop = gf.Component(comp_name) 
+    Ctop = gf.Component() 
     # create a reference in top
     Rviachain = Ctop << Cviachain
 
@@ -204,19 +191,13 @@ def create_Ctop(
     return Ctop
 
 
-
-
 @cell
-def create_Cstructure(
-    comp_name
-) -> Component:
-    """
-    Returns component with the comp_name passed
-    """
+def create_Cstructure() -> Component:
     # STRUCTURE
     # create top gds with pads
-    Cstructure = gf.Component(comp_name)
-    Ctop = create_Ctop("top")
+    Cstructure = gf.Component()
+
+    Ctop = create_Ctop()
 
     # import and place pads
     Cpad = gf.import_gds("./pad_forty_met1_met5.GDS")
@@ -250,7 +231,7 @@ def create_Cstructure(
 
     return Cstructure
 
-Cstructure = create_Cstructure(str(wire_layer) + "_via_chain")
+Cstructure = create_Cstructure()
 
 # OUTPUT
 Cstructure.write_gds(str(wire_layer) + "_via_chain.gds")
