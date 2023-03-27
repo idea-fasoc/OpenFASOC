@@ -51,7 +51,7 @@ sky130hvl_ldo_verilog:
 	python3 ./tools/ldo-gen.py --output ./work --platform sky130hvl --mode verilog $(UserSpec)
 
 sky130hvl_ldo:
-	python3 ./tools/ldo-gen.py --output ./work --platform sky130hvl --mode macro $(UserSpec)
+	python3 ./tools/ldo-gen.py --output ./work --platform sky130hvl --mode macro $(UserSpec) --simtype prePEX
 	@@echo "=================================================================================="
 	@@echo "Thank you for using OpenFASOC"
 	@@echo "For more info, please read the latest documentation on openfasoc.readthedocs.io"
@@ -59,7 +59,7 @@ sky130hvl_ldo:
 	@@echo "=================================================================================="
 
 sky130hvl_ldo_full:
-	python3 ./tools/ldo-gen.py --output ./work --platform sky130hvl --mode full $(UserSpec)
+	python3 ./tools/ldo-gen.py --output ./work --platform sky130hvl --mode full $(UserSpec) --simtype prePEX
 	@@echo "=================================================================================="
 	@@echo "Thank you for using OpenFASOC"
 	@@echo "For more info, please read the latest documentation on openfasoc.readthedocs.io"

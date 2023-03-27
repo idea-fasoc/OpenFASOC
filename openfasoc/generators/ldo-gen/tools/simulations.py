@@ -166,7 +166,7 @@ def ngspice_prepare_scripts(
     pdk_path,
     freq_list,
     model_corner,
-    pex=True,
+    pex
 ):
     """Specializes ngspice simulations and returns (string) bash to run all sims."""
     designName = user_specs["designName"]
@@ -291,7 +291,7 @@ def xyce_prepare_scripts(
     pdk_path,
     freq_list,
     model_corner,
-    pex=True,
+    pex
 ):
     """Specializes xyce simulations and returns (string) bash to run all sims."""
     designName = user_specs["designName"]
