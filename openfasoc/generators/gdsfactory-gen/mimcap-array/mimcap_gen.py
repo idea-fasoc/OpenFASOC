@@ -20,11 +20,9 @@ bot_width = float(args.wbot)
 top_layer = int(args.lyrtop)
 
 @cell
-def create_Carray(
-    comp_name
-) -> Component:
+def create_Carray() -> Component:
     # ARRAY
-    Carray = gf.Component(comp_name)
+    Carray = gf.Component()
 
     file = args.input_file
     Cstructure_in = gf.import_gds(file, name=str(file), flatten=True)
@@ -142,12 +140,10 @@ def create_Carray(
     return Carray
 
 @cell
-def create_Carray20(
-    comp_name
-) -> Component:
+def create_Carray20() -> Component:
     
-    Carray20 = gf.Component(comp_name)
-    Carray = create_Carray("single_mimcap_array")
+    Carray20 = gf.Component()
+    Carray = create_Carray()
     i = 0
     for i in range(20):
         #Rpad = Cstructure << Cpad
@@ -161,24 +157,21 @@ def create_Carray20(
 
 @cell
 def create_Crail(
-    comp_name,
     top_rail_pts,
     bot_rail_pts
 ) -> Component:
-    Crail = gf.Component(comp_name)
+    Crail = gf.Component()
     Crail.add_polygon(top_rail_pts, layer=(top_layer, 20))
     Crail.add_polygon(bot_rail_pts, layer=(top_layer - 1, 20))
 
     return Crail
 
 @cell
-def create_Cstructure(
-    comp_name
-) -> Component :
-    Cstructure = gf.Component(comp_name)
+def create_Cstructure() -> Component :
+    Cstructure = gf.Component()
 
     # create pad ring    
-    Carray20 = create_Carray20(str(top_layer - 1) + "_" + str(top_layer) + "_mimcap_array20")
+    Carray20 = create_Carray20()
 
     # import and place pads and arrays
     Cpad = gf.import_gds("./pad_forty_met1_met5.GDS")
@@ -216,7 +209,7 @@ def create_Cstructure(
     ]
 
 
-    Crail = create_Crail("rails", top_rail_pts, bot_rail_pts)
+    Crail = create_Crail(top_rail_pts, bot_rail_pts)
 
     # add top rail connector
     connector_width = top_rail_pts[-1][1] - top_rail_pts[1][1]
@@ -249,7 +242,7 @@ def create_Cstructure(
 
     return Cstructure
 
-Cstructure = create_Cstructure(str(top_layer - 1) + "_" + str(top_layer) + "_mimcap")
+Cstructure = create_Cstructure()
 
 # OUTPUT
 Cstructure.write_gds(
