@@ -20,7 +20,7 @@ set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hd__tapvpwrvgnd_1
 set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hs__decap_4
 set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__inv_1
 set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__nand2_1
-set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__tap_1
+set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__tapvpwrvgnd_1
 
 set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hvl__inv_1
 set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hvl__decap_4
@@ -73,7 +73,7 @@ if {[info exists ::env(ENABLE_DPO)] && $::env(ENABLE_DPO)} {
 }
 optimize_mirroring
 
-#utl::info FLW 12 "Placement violations [check_placement -verbose]."
+utl::info FLW 12 "Placement violations [check_placement -verbose]."
 
 estimate_parasitics -placement
 

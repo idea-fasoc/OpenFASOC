@@ -18,8 +18,6 @@ set block [ord::get_db_block]
 foreach net [$block getNets] {
     set type [$net getSigType]
     if {$type == "POWER" || $type == "GROUND"} {
-	    puts $type
-	    puts [$net getName]
 	    #puts [[$net getBTerms] getName]
 	    #puts [[[$net getBTerms] getBPins] getName]
 # Temporarily disable due to CI issues

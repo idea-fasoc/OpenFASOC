@@ -1,6 +1,14 @@
 # ==============================================================================
 # Run temp sensor design
 # ==============================================================================
+sim_pex= --pex
+sim=
+inv=
+head=
+
+ifneq ("$(sim)","")
+	sim_pex = --pex
+endif
 
 # sky130hd
 
@@ -8,10 +16,10 @@ sky130hd_cryo_verilog:
 	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode verilog --ninv 144
 
 sky130hd_cryo:
-	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode macro --ninv 144
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode macro --ninv 144 --prepex $(sim_pex)
 
 sky130hd_cryo_full:
-	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode full --ninv 144
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode full --ninv 144 --prepex $(sim_pex)
 
 # sky130hvl
 
@@ -19,10 +27,10 @@ sky130hvl_cryo_verilog:
 	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hvl --mode verilog --ninv 144
 
 sky130hvl_cryo:
-	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hvl --mode macro --ninv 144
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hvl --mode macro --ninv 144 --prepex $(sim_pex)
 
 sky130hvl_cryo_full:
-	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hvl --mode full --ninv 144
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hvl --mode full --ninv 144 --prepex $(sim_pex)
 
 # sky130hs
 
@@ -30,10 +38,10 @@ sky130hs_cryo_verilog:
 	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hs --mode verilog --ninv 144
 
 sky130hs_cryo:
-	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hs --mode macro --ninv 144
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hs --mode macro --ninv 144 --prepex $(sim_pex)
 
 sky130hs_cryo_full:
-	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hs --mode full --ninv 144
+	python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hs --mode full --ninv 144 --prepex $(sim_pex)
 
 # sky130osu12Ths
 
@@ -112,4 +120,4 @@ clean:
 	rm -rf work
 	rm -rf tools/*.pyc tools/__pycache__/
 	cd flow && make nuke
-	cd simulation && rm -f *.log *.sp *.out
+	cd simulation && rm -f *.log *.sp *.out *.ps

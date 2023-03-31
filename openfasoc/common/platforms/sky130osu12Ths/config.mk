@@ -108,4 +108,4 @@ export FILL_CELLS = $(cell_prefix)__fill_1 $(cell_prefix)__fill_2 $(cell_prefix)
 # resizer repair_long_wires -max_length
 export MAX_WIRE_LENGTH = 21000
 
-#export CDL_FILE = ../../../common/platforms/$(PLATFORM)
+export CDL_FILE = ../../../common/platforms/$(PLATFORM)/cdl/sky130_osu_sc_12T_hs.spice
