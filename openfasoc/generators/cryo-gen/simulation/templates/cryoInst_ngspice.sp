@@ -11,7 +11,8 @@ vEBL EBL 0 pwl 0 0 10n 0 '10n+1f' 'vvdd'
 vVDD VDD 0 dc 'vvdd'
 vVSS VSS 0 dc 0
 
-c0 OUT 0 1f
+*change c0 to avoid "timestep is too small" error
+c0 OUT 0 25f
 
 *change step size and transient analysis time 
 .TRAN 0.4n 24u
@@ -19,6 +20,7 @@ c0 OUT 0 1f
 .control
 run
 set filetype=ascii
+hardcopy @@PATH_TO_RES OUT
 exit
 
 .endc

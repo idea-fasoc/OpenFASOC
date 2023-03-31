@@ -294,19 +294,30 @@ if args.mode == "macro":
     print("Exiting tool....")
     exit()
 
-#p = sp.Popen(["yum", "install", "-y", "libXaw-devel"])
-#p.wait()
-#p = sp.Popen(["yum", "install", "-y", "libXaw"])
-#p.wait()
+p = sp.Popen(["yum", "install", "-y", "libXaw-devel"])
+p.wait()
+p = sp.Popen(["yum", "install", "-y", "libXaw"])
+p.wait()
 
 pdks_path = "/usr/bin/miniconda3/share/pdk/"
 
-simulation.run_cryo_sim(
-    simDir,
-    pdks_path + "sky130A/libs.tech/ngspice/sky130.lib.spice",
-    "./../" + flowDir + designName + "_sim.spice",
-    "./../" + platformDir + "cdl/" + pdk_lib_name + ".spice",
-)
+if args.prepex :
+  simulation.run_cryo_sim(
+      simDir,
+      pdks_path + "sky130A/libs.tech/ngspice/sky130.lib.spice",
+      "./../" + flowDir + designName + "_sim.spice",
+      "./../" + platformDir + "cdl/" + pdk_lib_name + ".spice",
+      prepex = True
+  )
+
+if args.pex :
+  simulation.run_cryo_sim(
+      simDir,
+      pdks_path + "sky130A/libs.tech/ngspice/sky130.lib.spice",
+      "./../" + flowDir + designName + "_pex.spice",
+      "./../" + platformDir + "cdl/" + pdk_lib_name + ".spice",
+      prepex = False
+  )
 
 print("#----------------------------------------------------------------------")
 print("# Simulation output Generated")

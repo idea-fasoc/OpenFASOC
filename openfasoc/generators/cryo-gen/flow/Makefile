@@ -3,7 +3,7 @@
 # ==============================================================================
 default: finish
 .DEFAULT_GOAL := finish
-DESIGN_CONFIG ?= ./design/sky130hvl/cryo/config.mk
+DESIGN_CONFIG ?= ./design/sky130hd/cryo/config.mk
 
 # ==============================================================================
 #  ____  _____ _____ _   _ ____
@@ -597,7 +597,7 @@ $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 GDS_MERGED_FILE = $(RESULTS_DIR)/6_1_merged.$(STREAM_SYSTEM_EXT)
 $(GDS_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSOAS_FILES) $(WRAPPED_GDSOAS) $(SEAL_GDSOAS)
 	$(call KLAYOUT_FOUND)
-	($(TIME_CMD) stdbuf -o L $(KLAYOUT_CMD) -zz -rd design_name=$(DESIGN_NAME) \
+	($(TIME_CMD) $(KLAYOUT_CMD) -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_def=$< \
 	        -rd in_files="$(GDSOAS_FILES) $(WRAPPED_GDSOAS)" \
 	        -rd config_file=$(FILL_CONFIG) \
@@ -640,7 +640,7 @@ ifneq ($(KLAYOUT_LVS_FILE),$(GDS_FINAL_FILE))
 	($(TIME_CMD) $(KLAYOUT_CMD) -b -rd in_gds="$<" \
 	        -rd cdl_file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
 	        -rd report_file=$(abspath $@) \
-	        -r $(KLAYOUT_LVS_FILE) 2>&1 | tee $(LOG_DIR)/6_lvs.log
+	        -r $(KLAYOUT_LVS_FILE)) 2>&1 | tee $(LOG_DIR)/6_lvs.log
 else
 	echo "LVS not supported on this platform" > $@
 endif
@@ -663,7 +663,7 @@ ifeq ($(shell command -v magic),)
 	$(error Magic not found in PATH)
 endif
 	mkdir -p $(OBJECTS_DIR)/netgen_lvs/spice $(OBJECTS_DIR)/netgen_lvs/ext
-	python $(UTILS_DIR)/openfasoc/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(PLATFORM_DIR)/cdl/sky130_fd_sc_hvl.spice -o $(OBJECTS_DIR)/netgen_lvs/spice/$(DESIGN_NAME).spice
+	python $(UTILS_DIR)/openfasoc/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(PLATFORM_DIR)/cdl/sky130_fd_sc_hd.spice -o $(OBJECTS_DIR)/netgen_lvs/spice/$(DESIGN_NAME).spice
 	$(COMMON_VERIF_DIR)/run_lvspex.sh $(RESULTS_DIR)/6_final.gds $(DESIGN_NAME) $(REPORTS_DIR)/6_final_lvs.rpt
 
 clean_finish:
