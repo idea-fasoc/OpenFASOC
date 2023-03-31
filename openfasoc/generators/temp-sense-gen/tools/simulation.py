@@ -367,7 +367,7 @@ def run_simulations(runDir, designName, temp_list, simTool, simMode) -> None:
         for temp in temp_list:
             p = sp.Popen(
                 [
-                    "Xyce",
+                    "/opt/xyce/xyce_serial/bin/Xyce",
                     "-l",
                     "%s_sim_%d.log" % (designName, temp),
                     "-o",
