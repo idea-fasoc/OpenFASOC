@@ -25,7 +25,7 @@ def run_cryo_sim(simDir, lib_path, dut_path, sc_path, prepex) -> None:
 
     p = sp.Popen(
         [
-            "/share/bin/ngspice",
+            "/shared/bin/ngspice",
             "-b",
             "-n",
             "-a",
