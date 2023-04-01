@@ -3,8 +3,9 @@
 # ==============================================================================
 default: finish
 .DEFAULT_GOAL := finish
-SPICE_FILE ?= sky130_fd_sc_hs.spice
-DESIGN_CONFIG ?= ./design/sky130hs/cryo/config.mk
+PLATFORM_ARG  ?= sky130hd
+DESIGN_CONFIG = ./design/$(PLATFORM_ARG)/cryo/config.mk
+SPICE_FILE    ?= sky130_fd_sc_hd.spice
 
 # ==============================================================================
 #  ____  _____ _____ _   _ ____

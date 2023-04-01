@@ -8,7 +8,7 @@ def run_cryo_sim(simDir, lib_path, dut_path, sc_path, prepex) -> None:
         filedata = file.read()
         filedata = re.sub(r"@@PATH_TO_LIB", lib_path, filedata)
         filedata = re.sub(r"@@PATH_TO_DUT_SP", dut_path, filedata)
-        filedata = re.sub(r"@@PATH_TO_SC_SP", sc_path, filedata)
+        #filedata = re.sub(r"@@PATH_TO_SC_SP", sc_path, filedata)
         if prepex:
           filedata = re.sub(r"@@PATH_TO_RES", "cryoInst_prepex_res.ps", filedata)
         else:
