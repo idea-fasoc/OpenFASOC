@@ -1,7 +1,29 @@
-#!/bin/bash
-# CHANGES: 
-# 1) User-friendly comments added to beginning of script. 
-# 2) Potential architecture compatibility issues made known.  
+#!/bin/bash 
+
+printf "Function: \nIf this script runs smoothly, all necessary dependencies for 
+OpenFASoC will be downloaded at once.\n
+Basic Requirements (not exhaustive): 
+(1) Python 3.7 or higher is required.
+(2) Intel x86 architecture is required, as this script will use Conda to download several
+Python packages for which versions compatible with ARM architecture currently do not
+exist for installation in Conda's package repository. If your machine does not run 
+on Intel x86 architecture, this script will likely not work.
+(3) CentOS and Ubuntu are the only operating systems this script has been verified to work on.
+Other Linux distributions will probably work. We cannot guarantee successful compilation on
+Windows and on MacOS.\n\n"
+
+proceed_confirmed=false
+while ! $proceed_confirmed
+do
+        read -p "Do you wish to proceed with the installation? [y\n]: " selection
+        if [ "$selection" == "y" ] || [ "$selection" == "Y" ]; then 
+        echo "Beginning installation..."; proceed_confirmed=true
+        elif [ "$selection" == "n" ] || [ "$selection" == "N" ]; then
+        echo "Quitting script."; exit
+        else
+        echo "Invalid selection. Choose y or n."
+        fi
+done
 
 if which python3 >> /dev/null
 then
