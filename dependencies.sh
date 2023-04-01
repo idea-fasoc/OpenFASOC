@@ -1,5 +1,7 @@
 #!/bin/bash
-
+# CHANGES: 
+# 1) User-friendly comments added to beginning of script. 
+# 2) Potential architecture compatibility issues made known.  
 
 if which python3 >> /dev/null
 then
