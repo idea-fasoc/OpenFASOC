@@ -19,18 +19,18 @@ def run_cryo_sim(simDir, lib_path, dut_path, sc_path, prepex) -> None:
         file.write(filedata)
 
     if prepex:
+      simType = "prepex"
       print("Starting Prepex simulation")
     else:
+      simType = "pex"
       print("Starting Pex simulation")
 
     p = sp.Popen(
         [
-            "/shared/bin/ngspice",
+            "ngspice",
             "-b",
-            "-n",
-            "-a",
-            "-r",
-            "cryoInst.out",
+            "-o",
+            "cryoInst_%s_sim.log" % (simType),
             "cryoInst_ngspice.sp",
         ],
         cwd=simDir,
