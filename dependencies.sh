@@ -58,7 +58,7 @@ Python 3.7, this script will nonetheless run and attempt to install every compat
         # ngspice_updated=false
         # echo "Updating ngspice..."
         # cd ngspice
-        # git pull --rebase
+        # git pull
         # ./compile_linux.sh 
         # if [ $? == 0 ]; then
         # ngspice_updated=true
@@ -66,7 +66,9 @@ Python 3.7, this script will nonetheless run and attempt to install every compat
         # else 
         # echo "nspice could not be updated."
         # fi
-
+        # cd ..
+        
+        # cd ./docker/conda/scripts/Xyce
         # echo "Updating xyce..."
         # SRCDIR=$PWD/Trilinos-trilinos-release-12-12-1
         # LIBDIR=/opt/xyce/xyce_lib
@@ -78,8 +80,7 @@ Python 3.7, this script will nonetheless run and attempt to install every compat
         #         yum install -y devtoolset-7
         #         scl enable devtoolset-7 bash
         # fi
-        # cd ./docker/conda/scripts/Xyce
-        # git pull --rebase
+        # git pull
         # ./bootstrap
         # ./configure CXXFLAGS="-O3 -std=c++11" ARCHDIR=$LIBDIR --prefix=$INSTALLDIR CPPFLAGS="-I/usr/include/suitesparse"
         # make
