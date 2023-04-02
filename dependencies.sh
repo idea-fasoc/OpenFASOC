@@ -54,15 +54,14 @@ Python 3.7, this script will nonetheless run and attempt to install every compat
         conda install -c litex-hub openroad -y; if [ $? != 0 ]; then update_successful=false; echo "openroad could not be updated"; fi
         conda install -c litex-hub yosys -y; if [ $? != 0 ]; then update_successful=false; echo "yosys could not be updated"; fi
         fi
-        if [ $update_successful ]; then
-        echo "Magic, netgen, open_pdks, openroad, and yosys updated successfully to latest versions possible given user's Python (completely latest versions if >=3.8)."
-        fi
 
+        ngspice_updated=false
         echo "Updating ngspice..."
         cd ngspice
         git pull --rebase
         ./compile_linux.sh 
         if [ $? == 0 ]; then
+        ngspice_updated=true
         echo "ngspice updated successfully."
         else 
         echo "nspice could not be updated."
@@ -91,7 +90,13 @@ Python 3.7, this script will nonetheless run and attempt to install every compat
         echo "xyce could not be updated."
         fi
 
-        echo "All dependencies except Klayout have been updated. To update Klayout, visit https://www.klayout.de/build.html and follow the instructions."
+        if [ $ngspice_updated ]; then
+        echo "nspice was successfully updated."
+        fi
+        if [ $update_successful ]; then
+        echo "Magic, netgen, open_pdks, openroad, and yosys updated successfully to latest versions possible given user's Python (completely latest versions if >=3.8)."
+        fi
+        echo "To update Klayout, visit https://www.klayout.de/build.html and follow the instructions."
 
 fi
 
