@@ -1,7 +1,8 @@
 #!/bin/bash 
 
-printf "Function: \nIf this script runs smoothly, all necessary dependencies for 
-OpenFASoC will be downloaded at once.\n
+printf "Function: \nIf this script runs smoothly, all necessary dependencies for OpenFASoC will be 
+downloaded at once. If you've already downloaded all dependencies with this script, 
+you can run this script again to update the installed dependencies.\n
 Basic Requirements (not exhaustive): 
 (1) Python 3.7 or higher is required.
 (2) Intel x86 architecture is required, as this script will use Conda to download several
@@ -9,21 +10,92 @@ Python packages for which versions compatible with ARM architecture currently do
 exist for installation in Conda's package repository. If your machine does not run 
 on Intel x86 architecture, this script will likely not work.
 (3) CentOS and Ubuntu are the only operating systems this script has been verified to work on.
-Other Linux distributions will probably work. We cannot guarantee successful compilation on
-Windows and on MacOS.\n\n"
+We cannot guarantee successful compilation on other systems.\n\n"
 
 proceed_confirmed=false
+update_confirmed=false
 while ! $proceed_confirmed
 do
-        read -p "Do you wish to proceed with the installation? [y\n]: " selection
+        echo "Do you wish to proceed with the installation? 
+[y] Yes. Install for the first time.
+[u] Yes. Update already-installed dependencies.
+[n] No. Exit this script." 
+        read -p "Select the desired option: " selection
         if [ "$selection" == "y" ] || [ "$selection" == "Y" ]; then 
         echo "Beginning installation..."; proceed_confirmed=true
         elif [ "$selection" == "n" ] || [ "$selection" == "N" ]; then
         echo "Quitting script."; exit
+        elif [ "$selection" == "u" ] || [ "$selection" == "U" ]; then
+        update_confirmed=true
+        proceed_confirmed=true
         else
         echo "Invalid selection. Choose y or n."
         fi
 done
+
+if $update_confirmed; then
+        if ! [ -x /usr/bin/miniconda3 ]; then
+                echo "Conda could not be found. If you have not yet successfully installed the dependencies, you cannot update the dependencies."
+                exit
+        fi
+        echo "Note: Because the latest version of Conda requires Python 3.8 or higher, your device
+must be equipped with Python 3.8 or above for this script to fully update everything. If you have
+Python 3.7, this script will nonetheless run and attempt to install every compatible update."
+        export PATH=/usr/bin/miniconda3/bin:$PATH
+        conda update conda -y
+        if [ $? != 0 ]; then conda install -c anaconda conda -y; if [ $? != 0 ]; then echo "Failed to update conda" ; exit ; fi ; fi
+        update_successful=true
+        conda update --all -y
+        if [ $? != 0 ]; then 
+        echo "Attempting to install core packages individually..."
+        conda install -c litex-hub magic -y; if [ $? != 0 ]; then update_successful=false; echo "magic could not be updated"; fi
+        conda install -c litex-hub netgen -y; if [ $? != 0 ]; then update_successful=false; echo "netgen could not be updated"; fi
+        conda install -c litex-hub open_pdks.sky130a -y; if [ $? != 0 ]; then update_successful=false; echo "open_pdks could not be updated"; fi
+        conda install -c litex-hub openroad -y; if [ $? != 0 ]; then update_successful=false; echo "openroad could not be updated"; fi
+        conda install -c litex-hub yosys -y; if [ $? != 0 ]; then update_successful=false; echo "yosys could not be updated"; fi
+        fi
+        if [ $update_successful ]; then
+        echo "Magic, netgen, open_pdks, openroad, and yosys updated successfully to latest versions possible given user's Python (completely latest versions if >=3.8)."
+        fi
+
+        echo "Updating ngspice..."
+        cd ngspice
+        git pull --rebase
+        ./compile_linux.sh 
+        if [ $? == 0 ]; then
+        echo "ngspice updated successfully."
+        else 
+        echo "nspice could not be updated."
+        fi
+
+        echo "Updating xyce..."
+        SRCDIR=$PWD/Trilinos-trilinos-release-12-12-1
+        LIBDIR=/opt/xyce/xyce_lib
+        INSTALLDIR=/opt/xyce/xyce_serial
+        FLAGS="-O3 -fPIC"
+        if cat /etc/os-release | grep "centos" >> /dev/null
+        then
+                yum install -y centos-release-scl
+                yum install -y devtoolset-7
+                scl enable devtoolset-7 bash
+        fi
+        cd ./docker/conda/scripts/Xyce
+        git pull --rebase
+        ./bootstrap
+        ./configure CXXFLAGS="-O3 -std=c++11" ARCHDIR=$LIBDIR --prefix=$INSTALLDIR CPPFLAGS="-I/usr/include/suitesparse"
+        make
+        make install
+                if [ $? == 0 ]; then
+        echo "xyce updated successfully."
+        else 
+        echo "xyce could not be updated."
+        fi
+
+        echo "All dependencies except Klayout have been updated. To update Klayout, visit https://www.klayout.de/build.html and follow the instructions."
+
+fi
+
+
 
 if which python3 >> /dev/null
 then
@@ -122,6 +194,12 @@ then
 	apt install bison flex libx11-dev libx11-6 libxaw7-dev libreadline6-dev autoconf libtool automake -y
 	git clone http://git.code.sf.net/p/ngspice/ngspice
 	cd ngspice && ./compile_linux.sh
+
+elif cat /etc/os-release | grep "centos" >> /dev/null
+then
+	sudo yum install bison flex libX11-devel libX11 libXaw-devel readline-devel autoconf libtool automake -y
+	git clone http://git.code.sf.net/p/ngspice/ngspice
+	cd ngspice && ./compile_linux.sh
 fi
 
 if [ $? == 0 ]
@@ -139,6 +217,11 @@ then
 	export DEBIAN_FRONTEND=noninteractive
 	cd docker/conda/scripts
 	./xyce_install.sh
+elif cat /etc/os-release | grep "centos" >> /dev/null
+then
+	export DEBIAN_FRONTEND=noninteractive
+	cd docker/conda/scripts
+	./xyce_install_rhel.sh
 fi
 
 if [ $? == 0 ]
@@ -158,14 +241,11 @@ then
 	strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5 #https://stackoverflow.com/questions/63627955/cant-load-shared-library-libqt5core-so-5
 elif cat /etc/os-release | grep -e "centos" >> /dev/null
 then
-	yum group install "Development Tools" -y
-	yum install qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev qt-x11 -y
+	yum install qt5-qtbase-devel qt5-qttools-devel qt5-qtxmlpatterns-devel qt5-qtmultimedia-devel qt5-qtmultimedia-widgets-devel qt5-qtsvg-devel ruby ruby-devel python3-devel zlib-devel time -y
 	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.28.2-0.x86_64.rpm
-	rpm -i klayout-0.27.10-0.x86_64.rpm
+	rpm -i klayout-0.28.2-0.x86_64.rpm
 	yum install time -y
-elif cat /etc/os-release | grep -e "el7" -e "el8" >> /dev/null
-then
-	echo "Please install Klayout manually if not installed already. This script can't support KLayout installations on RHEL distribution yet"
+        strip --remove-section=.note.ABI-tag /usr/lib64/libQt5Core.so.5
 else
 	echo "Cannot install klayout for other linux distrbutions via this script"
 fi
