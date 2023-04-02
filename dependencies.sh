@@ -38,16 +38,33 @@ if $update_confirmed; then
                 echo "Conda could not be found. If you have not yet successfully installed the dependencies, you cannot update the dependencies."
                 exit
         fi
-        echo "Note: Because the latest version of Conda requires Python 3.8 or higher, your device
+        printf "\nNote: Because the latest version of Conda requires Python 3.8 or higher, your device
 must be equipped with Python 3.8 or above for this script to fully update everything. If you have
-Python 3.7, this script will nonetheless run and attempt to install every compatible update."
+Python 3.7, this script will nonetheless run and attempt to install every compatible update. \n"
         export PATH=/usr/bin/miniconda3/bin:$PATH
+
+        printf "\nAttempting to update Conda using: conda update conda -y \n\n"
         conda update conda -y
-        if [ $? != 0 ]; then conda install -c anaconda conda -y; if [ $? != 0 ]; then echo "Failed to update conda" ; exit ; fi ; fi
+        if [ $? == 0 ]
+        then
+        printf "\n\nConda updated successfully with: conda update conda -y."
+        else 
+        printf "\n\nFailed to update Conda using: conda update conda -y."
+        printf "Attempting instead to update Conda using: install -c anaconda conda -y"
+        conda install -c anaconda conda -y; if [ $? == 0 ]; then 
+        printf "\n\nConda updated successfully with: install -c anaconda conda -y"
+        else
+        printf "\n\nConda could not be updated."; fi
+        fi
+
         update_successful=true
+        printf "\n\nAttempting to update packages using: conda update --all -y \n"
         conda update --all -y
-        if [ $? != 0 ]; then 
-        echo "Attempting to install core packages individually..."
+        if [ $? == 0 ]; then 
+        printf "Packages updated successfully with: conda update --all -y"
+        else 
+        printf "\n\nFailed to update packages using: conda update --all -y."
+        printf "Attempting instead to install core packages individually..."
         conda install -c litex-hub magic -y; if [ $? != 0 ]; then update_successful=false; echo "magic could not be updated"; fi
         conda install -c litex-hub netgen -y; if [ $? != 0 ]; then update_successful=false; echo "netgen could not be updated"; fi
         conda install -c litex-hub open_pdks.sky130a -y; if [ $? != 0 ]; then update_successful=false; echo "open_pdks could not be updated"; fi
@@ -95,10 +112,9 @@ Python 3.7, this script will nonetheless run and attempt to install every compat
         # echo "nspice was successfully updated."
         # fi
         if [ $update_successful ]; then
-        echo "Magic, netgen, open_pdks, openroad, and yosys updated successfully to latest versions possible given user's Python (completely latest versions if >=3.8)."
+        printf "\n\nMagic, netgen, open_pdks, openroad, and yosys updated successfully to latest releases possible given user's Python version (most recent releases if version >=3.8).\n"
         fi
-        echo "To update Klayout, visit https://www.klayout.de/build.html and follow the instructions."
-
+        exit
 fi
 
 
