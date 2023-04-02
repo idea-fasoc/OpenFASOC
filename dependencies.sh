@@ -55,44 +55,44 @@ Python 3.7, this script will nonetheless run and attempt to install every compat
         conda install -c litex-hub yosys -y; if [ $? != 0 ]; then update_successful=false; echo "yosys could not be updated"; fi
         fi
 
-        ngspice_updated=false
-        echo "Updating ngspice..."
-        cd ngspice
-        git pull --rebase
-        ./compile_linux.sh 
-        if [ $? == 0 ]; then
-        ngspice_updated=true
-        echo "ngspice updated successfully."
-        else 
-        echo "nspice could not be updated."
-        fi
+        # ngspice_updated=false
+        # echo "Updating ngspice..."
+        # cd ngspice
+        # git pull --rebase
+        # ./compile_linux.sh 
+        # if [ $? == 0 ]; then
+        # ngspice_updated=true
+        # echo "ngspice updated successfully."
+        # else 
+        # echo "nspice could not be updated."
+        # fi
 
-        echo "Updating xyce..."
-        SRCDIR=$PWD/Trilinos-trilinos-release-12-12-1
-        LIBDIR=/opt/xyce/xyce_lib
-        INSTALLDIR=/opt/xyce/xyce_serial
-        FLAGS="-O3 -fPIC"
-        if cat /etc/os-release | grep "centos" >> /dev/null
-        then
-                yum install -y centos-release-scl
-                yum install -y devtoolset-7
-                scl enable devtoolset-7 bash
-        fi
-        cd ./docker/conda/scripts/Xyce
-        git pull --rebase
-        ./bootstrap
-        ./configure CXXFLAGS="-O3 -std=c++11" ARCHDIR=$LIBDIR --prefix=$INSTALLDIR CPPFLAGS="-I/usr/include/suitesparse"
-        make
-        make install
-                if [ $? == 0 ]; then
-        echo "xyce updated successfully."
-        else 
-        echo "xyce could not be updated."
-        fi
+        # echo "Updating xyce..."
+        # SRCDIR=$PWD/Trilinos-trilinos-release-12-12-1
+        # LIBDIR=/opt/xyce/xyce_lib
+        # INSTALLDIR=/opt/xyce/xyce_serial
+        # FLAGS="-O3 -fPIC"
+        # if cat /etc/os-release | grep "centos" >> /dev/null
+        # then
+        #         yum install -y centos-release-scl
+        #         yum install -y devtoolset-7
+        #         scl enable devtoolset-7 bash
+        # fi
+        # cd ./docker/conda/scripts/Xyce
+        # git pull --rebase
+        # ./bootstrap
+        # ./configure CXXFLAGS="-O3 -std=c++11" ARCHDIR=$LIBDIR --prefix=$INSTALLDIR CPPFLAGS="-I/usr/include/suitesparse"
+        # make
+        # make install
+        #         if [ $? == 0 ]; then
+        # echo "xyce updated successfully."
+        # else 
+        # echo "xyce could not be updated."
+        # fi
 
-        if [ $ngspice_updated ]; then
-        echo "nspice was successfully updated."
-        fi
+        # if [ $ngspice_updated ]; then
+        # echo "nspice was successfully updated."
+        # fi
         if [ $update_successful ]; then
         echo "Magic, netgen, open_pdks, openroad, and yosys updated successfully to latest versions possible given user's Python (completely latest versions if >=3.8)."
         fi
