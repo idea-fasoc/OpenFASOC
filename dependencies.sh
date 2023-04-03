@@ -243,7 +243,7 @@ elif cat /etc/os-release | grep "centos" >> /dev/null
 then
 	export DEBIAN_FRONTEND=noninteractive
 	cd docker/conda/scripts
-	./xyce_install_rhel.sh
+	./xyce_install_centos.sh
 fi
 
 if [ $? == 0 ]
