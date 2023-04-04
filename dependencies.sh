@@ -145,10 +145,43 @@ else
 fi
 
 
+
+# install miniconda3
+if ! [ -x /usr/bin/miniconda3 ]
+then
+      wget https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64.sh \
+    && bash Miniconda3-py37_4.12.0-Linux-x86_64.sh -b -p /usr/bin/miniconda3/ \
+    && rm -f Miniconda3-py37_4.12.0-Linux-x86_64.sh
+else
+    echo "Found miniconda3. Continuing the installation...\n"
+fi
+
+if [ $? == 0 ] && [ -x /usr/bin/miniconda3 ]
+then
+        echo "miniconda3 installed successfully. Continuing the installation...\n"
+        if ! grep -q "/usr/bin/miniconda3/bin" ~/.bashrc || ! echo "$PATH" | grep -q "/usr/bin/miniconda3/bin"; then
+                echo "" >> ~/.bashrc
+                echo 'export PATH="/usr/bin/miniconda3/bin:$PATH"' >> ~/.bashrc
+        fi
+	export PATH=/usr/bin/miniconda3/bin:$PATH
+	conda update -y conda
+        if [ $? == 0 ];then conda install -c litex-hub --file conda_versions.txt -y ; else echo "Failed to update conda" ; exit ; fi
+        if [ $? == 0 ];then echo "Installed OpenROAD, Yosys, Skywater PDK, Magic and Netgen successfully" ; else echo "Failed to install conda packages" ; exit ; fi
+else
+	echo "Failed to install miniconda. Check above for error messages."
+	exit
+fi
+
+# install pip and/or download packages
 if which pip3 >> /dev/null
 then
         echo "Pip3 exists"
         pip3 install -r requirements.txt
+        if [ $? == 0 ]; then 
+        echo "Python packages installed successfully."
+        else
+        echo "Python packages could not be installed."
+        fi
 
 else
         if cat /etc/os-release | grep "ubuntu" >> /dev/null
@@ -158,6 +191,11 @@ else
                 if [ $? == 0 ]
                 then
                        pip3 install -r requirements.txt
+                       if [ $? == 0 ]; then 
+                       echo "Python packages installed successfully."
+                       else
+                       echo "Python packages could not be installed."; exit
+                       fi
                        apt install wget git -y
                 else
                         echo "Pip3 installation failed.. exiting"
@@ -171,7 +209,12 @@ else
                 if [ $? == 0 ]
                 then
                        pip3 install -r requirements.txt
-		       yum install wget git -y
+                       if [ $? == 0 ]; then 
+                       echo "Python packages installed successfully."
+                       else
+                       echo "Python packages could not be installed."; exit
+                       fi
+                       yum install wget git -y
                 else
                         echo "Pip3 installation failed.. exiting"
                         exit
@@ -180,35 +223,6 @@ else
                 echo "This script is not compatabile with your Linux Distribution"
 		exit
         fi
-fi
-
-if [ $? == 0 ]
-then
- echo "Python packages installed successfully. Continuing the installation...\n"
-if ! [ -x /usr/bin/miniconda3 ]
-then
-      wget https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64.sh \
-    && bash Miniconda3-py37_4.12.0-Linux-x86_64.sh -b -p /usr/bin/miniconda3/ \
-    && rm -f Miniconda3-py37_4.12.0-Linux-x86_64.sh
-else
-    echo "Found miniconda3. Continuing the installation...\n"
-fi
-else
-	echo "Failed to install python packages. Check above for error messages."
-	exit
-fi
-
-
-if [ $? == 0 ] && [ -x /usr/bin/miniconda3 ]
-then
-        echo "miniconda3 installed successfully. Continuing the installation...\n"
-	export PATH=/usr/bin/miniconda3/bin:$PATH
-	conda update -y conda
-        if [ $? == 0 ];then conda install -c litex-hub --file conda_versions.txt -y ; else echo "Failed to update conda" ; exit ; fi
-        if [ $? == 0 ];then echo "Installed OpenROAD, Yosys, Skywater PDK, Magic and Netgen successfully" ; else echo "Failed to install conda packages" ; exit ; fi
-else
-	echo "Failed to install miniconda. Check above for error messages."
-	exit
 fi
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null
@@ -257,15 +271,15 @@ fi
 if cat /etc/os-release | grep "ubuntu" >> /dev/null
 then
 	apt install qt5-default qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y
-	wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.27.10-1_amd64.deb
-	dpkg -i klayout_0.27.10-1_amd64.deb
+	wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.28.6-1_amd64.deb
+	dpkg -i klayout_0.28.6-1_amd64.deb
 	apt install time -y
 	strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5 #https://stackoverflow.com/questions/63627955/cant-load-shared-library-libqt5core-so-5
 elif cat /etc/os-release | grep -e "centos" >> /dev/null
 then
 	yum install qt5-qtbase-devel qt5-qttools-devel qt5-qtxmlpatterns-devel qt5-qtmultimedia-devel qt5-qtmultimedia-widgets-devel qt5-qtsvg-devel ruby ruby-devel python3-devel zlib-devel time -y
-	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.28.2-0.x86_64.rpm
-	rpm -i klayout-0.28.2-0.x86_64.rpm
+	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.28.6-0.x86_64.rpm
+	rpm -i klayout-0.28.6-0.x86_64.rpm
 	yum install time -y
         strip --remove-section=.note.ABI-tag /usr/lib64/libQt5Core.so.5
 else
@@ -284,10 +298,14 @@ export PATH=/usr/bin/miniconda3/bin:$PATH
 
 if [ -x /usr/bin/miniconda3/share/pdk/ ]
 then
- export PDK_ROOT=/usr/bin/miniconda3/share/pdk/
- echo "PDK_ROOT is set to /usr/bin/miniconda3/share/pdk/. If this variable is empty, try setting PDK_ROOT variable to /usr/bin/miniconda3/share/pdk/"
+        if ! grep -q "PDK_ROOT=/usr/bin/miniconda3/share/pdk/" ~/.bashrc; then
+                echo "" >> ~/.bashrc
+                echo 'export PDK_ROOT=/usr/bin/miniconda3/share/pdk/' >> ~/.bashrc
+        fi
+        export PDK_ROOT=/usr/bin/miniconda3/share/pdk/
+        echo "PDK_ROOT is set to /usr/bin/miniconda3/share/pdk/. If this variable is empty, try setting PDK_ROOT variable to /usr/bin/miniconda3/share/pdk/"
 else
- echo "PDK not installed"
+        echo "PDK not installed"
 fi
 echo ""
 echo ""
