@@ -1,1 +1,1 @@
-
+The python scripts generate pcells for gf180 pdk in gdsfactory. The pcells are generated adhering to the design rules of gf180 pdk and can be used and visualized live in klayout platform. As of now, it inculdes the following cells - nfet, pfet,nwell contact, substrate contact, inverter cell. Other cells will be added in the future.
