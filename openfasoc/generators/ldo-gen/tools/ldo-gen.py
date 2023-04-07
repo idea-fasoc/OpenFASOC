@@ -99,6 +99,8 @@ print("# LDO - Power Transistor array Size = " + str(arrSize))
 
 # Update the ldo_domain_insts.txt as per power transistor array size
 update_ldo_domain_insts(directories["blocksDir"], arrSize)
+#Update the ldo_place.txt as per power transistor array size
+update_ldo_place_insts(directories["blocksDir"], arrSize)
 # Update connections to VREG
 update_custom_nets(directories["blocksDir"], arrSize)
 

@@ -41,7 +41,7 @@ define_pdn_grid -name stdcell_analog1 -voltage_domains LDO_VREG -pins {met4}
 
 add_pdn_stripe -grid stdcell_analog1 -layer {met1} -starts_with GROUND -width {0.65} -pitch {5.48} -offset {10} -followpins
 add_pdn_ring -grid stdcell_analog1 -layer {met4 met3} -widths {5.0 5.0} -spacings {2.0 2.0} -core_offsets {2.0 2.0}
-add_pdn_stripe -grid stdcell_analog1 -layer met4 -width 1.8 -pitch 250.0 -offset 4 -extend_to_core_ring -nets VDD -number_of_straps 2
+add_pdn_stripe -grid stdcell_analog1 -layer met4 -width 1.8 -pitch 250.0 -offset 2 -extend_to_core_ring -nets VDD -number_of_straps 2
 add_pdn_stripe -grid stdcell_analog1 -layer met4 -width 1.8 -pitch 225.0 -offset 14 -extend_to_core_ring -nets VSS -number_of_straps 2
 add_pdn_stripe -grid stdcell_analog1 -layer met4 -width 1.8 -pitch 20.0 -offset 24  -extend_to_core_ring -nets VREG -number_of_straps 11
 

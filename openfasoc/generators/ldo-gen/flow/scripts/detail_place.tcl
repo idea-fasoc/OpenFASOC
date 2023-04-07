@@ -10,17 +10,19 @@ set_placement_padding -global \
 
 # Place cmp1 correctly
 source $::env(SCRIPTS_DIR)/openfasoc/custom_place.tcl
+place_pt_unit $::env(UNIT) $::env(PLACE_LIMIT)
+
 
 detailed_placement
 
-if {[info exists ::env(ENABLE_DPO)] && $::env(ENABLE_DPO)} {
-  if {[info exist ::env(DPO_MAX_DISPLACEMENT)]} {
-    improve_placement -max_displacement $::env(DPO_MAX_DISPLACEMENT)
-  } else {
-    improve_placement
-  }
-}
-optimize_mirroring
+#if {[info exists ::env(ENABLE_DPO)] && $::env(ENABLE_DPO)} {
+  #if {[info exist ::env(DPO_MAX_DISPLACEMENT)]} {
+    #improve_placement -max_displacement $::env(DPO_MAX_DISPLACEMENT)
+  #} else {
+    #improve_placement
+  #}
+#}
+#optimize_mirroring
 
 utl::info FLW 12 "Placement violations [check_placement -verbose]."
 
