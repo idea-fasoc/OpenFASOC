@@ -310,6 +310,7 @@ if args.prepex :
       pdks_path + "sky130A/libs.tech/ngspice/sky130.lib.spice",
       "./../" + flowDir + designName + "_sim.spice",
       "./../" + platformDir + "cdl/" + pdk_lib_name + ".spice",
+      args.platform,
       prepex = True
   )
 
@@ -319,6 +320,7 @@ if args.pex :
       pdks_path + "sky130A/libs.tech/ngspice/sky130.lib.spice",
       "./../" + flowDir + designName + "_pex.spice",
       "./../" + platformDir + "cdl/" + pdk_lib_name + ".spice",
+      args.platform,
       prepex = False
   )
 
