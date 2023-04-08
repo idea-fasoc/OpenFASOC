@@ -2,7 +2,7 @@
 # Run temp sensor design
 # ==============================================================================
 sim_pex=
-sim=
+sim=pex
 
 ifneq ("$(sim)","")
 	sim_pex = --pex
