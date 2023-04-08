@@ -6,7 +6,7 @@ import layers
 import subcon
 import nwellcon
 
-
+@gf.cell
 def pfet_03p3(width,length):
     comp = gf.Component("pfet")
     contact_no = round((width-0.07)/(0.22+0.28))
