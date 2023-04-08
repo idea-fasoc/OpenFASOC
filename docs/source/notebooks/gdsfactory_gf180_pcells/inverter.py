@@ -6,6 +6,7 @@ import layers
 import nfet
 import pfet
 
+@gf.cell
 def poly_contact():
     comp = gf.Component("poly_contact")
     poly_con = comp << layers.poly(0.36,0.36,30)
@@ -15,7 +16,7 @@ def poly_contact():
     return comp
 pc5 = poly_contact()
 
-
+@gf.cell
 def inverter(width,length,strength):
     comp = gf.Component("inverter")
     n_inst = comp << nfet.nfet_03p3(width,length)
