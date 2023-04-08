@@ -5,6 +5,7 @@ warnings.filterwarnings('ignore')
 import layers
 import subcon
 
+@gf.cell
 def nfet_03p3(width,length):
     comp = gf.Component("nfet")
     contact_no = round((width-0.07)/(0.22+0.28))
