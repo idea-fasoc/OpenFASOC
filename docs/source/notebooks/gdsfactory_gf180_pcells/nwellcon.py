@@ -4,6 +4,7 @@ from gdsfactory.generic_tech import get_generic_pdk
 warnings.filterwarnings('ignore')
 import layers
 
+@gf.cell
 def nwell_contact(width):
     comp = gf.Component("nwell_contact")
     con_no = round((width-0.13)/(0.22+0.28))
