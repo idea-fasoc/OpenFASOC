@@ -145,6 +145,45 @@ else
 fi
 
 
+if cat /etc/os-release | grep "ubuntu" >> /dev/null; then
+
+        apt-get update
+
+        # Check if gcc is installed; if not, install it
+        if ! [ -x "$(command -v gcc)" ]; then
+        apt-get install -y gcc
+        fi
+
+        # Check if g++ is installed; if not, install it
+        if ! [ -x "$(command -v g++)" ]; then
+        apt-get install -y g++
+        fi
+
+        # Check if make is installed; if not, install it
+        if ! [ -x "$(command -v make)" ]; then
+        apt-get install -y make
+        fi
+
+elif cat /etc/os-release | grep -e "centos" >> /dev/null; then
+
+        yum update -y
+
+        # Check if gcc is installed; if not, install it
+        if ! [ -x "$(command -v gcc)" ]; then
+        yum install -y gcc
+        fi
+
+        # Check if g++ is installed; if not, install it
+        if ! [ -x "$(command -v g++)" ]; then
+        yum install -y gcc-c++
+        fi
+
+        # Check if make is installed; if not, install it
+        if ! [ -x "$(command -v make)" ]; then
+        yum install -y make
+        fi
+
+fi
 
 # install miniconda3
 if ! [ -x /usr/bin/miniconda3 ]
@@ -159,9 +198,10 @@ fi
 if [ $? == 0 ] && [ -x /usr/bin/miniconda3 ]
 then
         echo "miniconda3 installed successfully. Continuing the installation...\n"
-        if ! grep -q "/usr/bin/miniconda3/bin" ~/.bashrc || ! echo "$PATH" | grep -q "/usr/bin/miniconda3/bin"; then
-                echo "" >> ~/.bashrc
-                echo 'export PATH="/usr/bin/miniconda3/bin:$PATH"' >> ~/.bashrc
+        if ! grep -q "/usr/bin/miniconda3/bin" /home/$(logname)/.bashrc || ! echo "$PATH" | grep -q "/usr/bin/miniconda3/bin"; then
+                echo "" >> /home/$(logname)/.bashrc
+                echo 'export PATH="/usr/bin/miniconda3/bin:$PATH"' >> /home/$(logname)/.bashrc
+                echo "miniconda3 added to PATH"
         fi
 	export PATH=/usr/bin/miniconda3/bin:$PATH
 	conda update -y conda
@@ -298,9 +338,9 @@ export PATH=/usr/bin/miniconda3/bin:$PATH
 
 if [ -x /usr/bin/miniconda3/share/pdk/ ]
 then
-        if ! grep -q "PDK_ROOT=/usr/bin/miniconda3/share/pdk/" ~/.bashrc; then
-                echo "" >> ~/.bashrc
-                echo 'export PDK_ROOT=/usr/bin/miniconda3/share/pdk/' >> ~/.bashrc
+        if ! grep -q "PDK_ROOT=/usr/bin/miniconda3/share/pdk/" /home/$(logname)/.bashrc; then
+                echo "" >> /home/$(logname)/.bashrc
+                echo 'export PDK_ROOT=/usr/bin/miniconda3/share/pdk/' >> /home/$(logname)/.bashrc
         fi
         export PDK_ROOT=/usr/bin/miniconda3/share/pdk/
         echo "PDK_ROOT is set to /usr/bin/miniconda3/share/pdk/. If this variable is empty, try setting PDK_ROOT variable to /usr/bin/miniconda3/share/pdk/"
@@ -309,7 +349,7 @@ else
 fi
 echo ""
 echo ""
-echo "To access the installed binaries, please run this command or add this to your .bashrc file - export PATH=/usr/bin/miniconda3/bin:\$PATH"
+# echo "To access the installed binaries, please run this command or add this to your .bashrc file - export PATH=/usr/bin/miniconda3/bin:\$PATH"
 echo "To access xyce binary, create an alias - xyce='/opt/xyce/xyce_serial/bin/Xyce'"
 
 echo "################################"
