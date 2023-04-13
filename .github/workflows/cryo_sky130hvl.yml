@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  sky130hd_ldoGen:
+  sky130hvl_ldoGen:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
