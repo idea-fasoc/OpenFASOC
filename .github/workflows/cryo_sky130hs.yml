@@ -25,7 +25,6 @@ jobs:
             -w $PWD\
             $IMAGE_NAME\
             bash -c "\
-              ls -al
               cp ./.github/scripts/parse_rpt.py ./openfasoc/generators/cryo-gen/. &&\
               pip3 install -r requirements.txt &&\
               cd ./openfasoc/generators/cryo-gen &&\
