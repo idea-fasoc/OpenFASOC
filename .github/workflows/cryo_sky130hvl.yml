@@ -26,10 +26,10 @@ jobs:
             $IMAGE_NAME\
             bash -c "\
               ls -al
-              cp ./.github/scripts/parse_rpt.py ./openfasoc/generators/cryo-gen/. &&\
+              ls .github/scripts &&\
               pip3 install -r requirements.txt &&\
               cd ./openfasoc/generators/cryo-gen &&\
               make sky130hvl_cryo &&\
-              python3 parse_rpt.py
+              python3 ../../../.github/scripts/parse_rpt.py 
             "| tee -a file.log
             if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi
