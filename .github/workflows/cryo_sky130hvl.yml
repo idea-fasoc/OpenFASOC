@@ -25,7 +25,7 @@ jobs:
             -w $PWD\
             $IMAGE_NAME\
             bash -c "\
-              cp .github/scripts/parse_rpt.py &&\
+              cp .github/scripts/parse_rpt.py . &&\
               pip3 install -r requirements.txt &&\
               cd ./openfasoc/generators/cryo-gen &&\
               make sky130hvl_cryo &&\
