@@ -21,6 +21,9 @@ parser.add_argument("--file_path","-f", help="sim path")
 parser.add_argument("--vref","-v", help="vrefspec")
 parser.add_argument("--iload","-i", help="iloadspec")
 parser.add_argument("--odir","-od", help="output dir")
+parser.add_argument("--figs","-fg", help="figures")
+parser.add_argument("--simType","-sim", help="simulations Type")
+
 args = parser.parse_args()
 
 output_file_names = []
@@ -28,12 +31,14 @@ sim_dir = args.file_path
 vrefspec = args.vref
 iloadspec = args.iload
 odir = args.odir
+simtype = args.simType
+
 ext = ('.raw',)
 for files in os.scandir(sim_dir):
-    if files.path.endswith(ext):
-       output_file_names.append(files) 
+    if files.path.endswith(ext) and "cap" in files.name:
+       output_file_names.append(files.name) 
 
-   
+
 def fig_VREG_results(raw_files, vrefspec):
     """Create VREG output plots for all caps at particular freq simulations"""
     figureVREG, axesVREG = plt.subplots(len(raw_files),figsize=(30, 15))
@@ -166,8 +171,8 @@ def raw_to_csv(raw_files, vrefspec,odir):
     freq = []
     cap = []
     load = []
-    csv1 = odir + "/" + "csv_data"
-    os.mkdir(csv1)
+    csv1 = odir + "/"+simtype+ "/csv_data"
+    os.system("mkdir -p "+csv1)
     for i,raw_file in enumerate(raw_files):
         data = ltspice.Ltspice(raw_file)
         data.parse()
@@ -192,29 +197,31 @@ def raw_to_csv(raw_files, vrefspec,odir):
         df.to_csv(csv1 + "/" + test_conditions +"_.csv",index=False)
     df2 = pd.DataFrame({"Iload":load,"Frequency":freq,"Cap_Value":cap, "VREG_Ripple" : vripple,"Settling Time" : time_settle})
     df2.to_csv(csv1 + "/" + "parameters.csv" , index=False)
-    
+
 raw_files = [(sim_dir + ofile) for ofile in output_file_names]
-raw_to_csv(raw_files,vrefspec,odir)
-figures = list()
-figure_names = list()
-figure_names.extend(["VREG_output", "VDIF", "VREG_ripple"])
-figures.extend(fig_VREG_results(raw_files, vrefspec))
-figure_names.append("cmp_out")
-figures.append(fig_comparator_results(raw_files))
-figure_names.append("active_switches")
-figures.append(fig_controller_results(raw_files))
-# save results to png files
-current_freq_results = odir + "/" + "output_plots"
-try:
-   os.mkdir(current_freq_results)
-except OSError as error:
-       if args.mode != "post":
-          print(error)
-          exit(1)
-assert len(figures) == len(figure_names)
-for i, figure in enumerate(figures):
-    figure.savefig(current_freq_results + "/" + figure_names[i] + ".png")
-    fig_dc_results(sim_dir + "/isweep.raw").savefig(odir + "/dc.png")
-    max_load = iloadspec
-    load = max_load*1000
-    fig_load_change_results(sim_dir + "/" + str(load) + "mA_output_load_change.raw",load).savefig(odir + "/load_change.png")
+raw_to_csv(raw_files,float(vrefspec),odir)
+
+if args.figs == "True":
+    figures = list()
+    figure_names = list()
+    figure_names.extend(["VREG_output", "VDIF", "VREG_ripple"])
+    figures.extend(fig_VREG_results(raw_files, float(vrefspec)))
+    figure_names.append("cmp_out")
+    figures.append(fig_comparator_results(raw_files))
+    figure_names.append("active_switches")
+    figures.append(fig_controller_results(raw_files))
+    # save results to png files
+    current_freq_results = odir + "/" +simtype+ "/output_plots"
+    try:
+        os.mkdir(current_freq_results)
+    except OSError as error:
+        if args.mode != "post":
+            print(error)
+            exit(1)
+    assert len(figures) == len(figure_names)
+    for i, figure in enumerate(figures):
+        figure.savefig(current_freq_results + "/" + figure_names[i] + ".png")
+        fig_dc_results(sim_dir + "/isweep.raw").savefig(odir + "/" +simtype+"/dc.png")
+        max_load = float(iloadspec)
+        load = max_load*1000
+        fig_load_change_results(sim_dir + "/" + str(load) + "mA_output_load_change.raw",load).savefig(odir +"/" +simtype+ "/load_change.png")

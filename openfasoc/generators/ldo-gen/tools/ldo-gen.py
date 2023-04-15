@@ -43,6 +43,7 @@ parser.add_argument(
 )
 parser.add_argument("--clean", action="store_true", help="Clean the workspace.")
 parser.add_argument("--simtype",choices=["postPEX","prePEX"], help="Simulations type prePEX or postPEX")
+parser.add_argument("--pex", help="enable postPEX along with prePEX")
 args = parser.parse_args()
 
 
@@ -189,7 +190,7 @@ if args.mode != "verilog" and clean_work_dir:
 
     # prepare simulation scripts, passing prePEX_sim_dir and pex=false to function *_prepare_scripts() runs preprex sims
     # there should be one output file name specified for each cap value. outputs sent to sim_dir_structure directories
-    if args.simtype == "postPEX":
+    if args.simtype == "postPEX" or args.pex == "True":
        if jsonConfig["simTool"] == "ngspice":
            [sim, output_file_names] = ngspice_prepare_scripts(
             head,
@@ -266,7 +267,7 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
     processes = []
     #assert len(output_file_names) == len(cap_list)*len(freq_list)
     if args.mode != "post":
-       if args.simtype == "postPEX":
+       if args.simtype == "postPEX" or args.pex == "True":
           run_dir = directories["genDir"] + "tools/"
           vref = user_specs["vin"]
           iload = user_specs["imax"]
@@ -278,7 +279,7 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
           for p in processes:
               p.wait()
                  
-          p = sp.Popen(["python3","processing.py","--file_path",postPEX_sim_dir,"--vref",str(vref),"--iload",str(iload),"--odir",odir],cwd=run_dir)
+          p = sp.Popen(["python3","processing.py","--file_path",postPEX_sim_dir,"--vref",str(vref),"--iload",str(iload),"--odir",odir, "--figs", "True", "--simType", "postPEX"],cwd=run_dir)
           p.wait()
           
        if args.simtype == "prePEX":
@@ -293,7 +294,7 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
           for p in processes:
               p.wait()
               
-          p = sp.Popen(["python3","processing.py","--file_path",prePEX_sim_dir,"--vref",str(vref),"--iload",str(iload),"--odir",odir],cwd=run_dir)
+          p = sp.Popen(["python3","processing.py","--file_path",prePEX_sim_dir,"--vref",str(vref),"--iload",str(iload),"--odir",odir, "--figs", "True", "--simType", "prePEX"],cwd=run_dir)
           p.wait()
        """
           for s in range (len(sim)):
