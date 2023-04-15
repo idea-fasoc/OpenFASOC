@@ -1,4 +1,4 @@
-name: sky130hvl_ldo-generator
+name: sky130hd_cryo-generator
 
 on:
   push:
@@ -14,7 +14,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Test sky130hvl LDO
+      - name: Test sky130hd Cryo Gen
         env:
                 IMAGE_NAME: msaligane/openfasoc:stable
         run: |
@@ -25,8 +25,10 @@ jobs:
             -w $PWD\
             $IMAGE_NAME\
             bash -c "\
+              cp ./.github/scripts/parse_rpt.py ./openfasoc/generators/cryo-gen/. &&\
               pip3 install -r requirements.txt &&\
-              cd ./openfasoc/generators/ldo-gen &&\
-              make sky130hvl_ldo\
+              cd ./openfasoc/generators/cryo-gen &&\
+              make sky130hd_cryo &&\
+              python3 parse_rpt.py
             "| tee -a file.log
-            if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi
+            if grep "^Error" file.log; then exit 1; else exit 0; fi
