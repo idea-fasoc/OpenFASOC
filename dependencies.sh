@@ -38,9 +38,8 @@ if $update_confirmed; then
                 echo "Conda could not be found. If you have not yet successfully installed the dependencies, you cannot update the dependencies."
                 exit
         fi
-        printf "\nNote: Because the latest version of Conda requires Python 3.8 or higher, your device
-must be equipped with Python 3.8 or above for this script to fully update everything. If you have
-Python 3.7, this script will nonetheless run and attempt to install every compatible update. \n"
+        printf "\nNote: Because the latest version of Conda requires Python 3.7 or higher, your device
+must be equipped with Python 3.7 or above for this script to fully update everything. If you have an earlier version of Python, this script will nonetheless run and attempt to install every compatible update. \n"
         export PATH=/usr/bin/miniconda3/bin:$PATH
 
         printf "\nAttempting to update Conda using: conda update conda -y \n\n"
@@ -147,41 +146,15 @@ fi
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null; then
 
-        apt-get update
+        apt-get update -y
 
-        # Check if gcc is installed; if not, install it
-        if ! [ -x "$(command -v gcc)" ]; then
-        apt-get install -y gcc
-        fi
-
-        # Check if g++ is installed; if not, install it
-        if ! [ -x "$(command -v g++)" ]; then
-        apt-get install -y g++
-        fi
-
-        # Check if make is installed; if not, install it
-        if ! [ -x "$(command -v make)" ]; then
-        apt-get install -y make
-        fi
+        apt-get install -y autoconf libtool automake make g++ gcc
 
 elif cat /etc/os-release | grep -e "centos" >> /dev/null; then
 
         yum update -y
 
-        # Check if gcc is installed; if not, install it
-        if ! [ -x "$(command -v gcc)" ]; then
-        yum install -y gcc
-        fi
-
-        # Check if g++ is installed; if not, install it
-        if ! [ -x "$(command -v g++)" ]; then
-        yum install -y gcc-c++
-        fi
-
-        # Check if make is installed; if not, install it
-        if ! [ -x "$(command -v make)" ]; then
-        yum install -y make
-        fi
+        yum install -y autoconf libtool automake make g++ gcc
 
 fi
 
@@ -257,7 +230,6 @@ then
 	./xyce_install.sh
 elif cat /etc/os-release | grep "centos" >> /dev/null
 then
-	export DEBIAN_FRONTEND=noninteractive
 	cd docker/conda/scripts
         chmod +x xyce_install_centos.sh
 	./xyce_install_centos.sh

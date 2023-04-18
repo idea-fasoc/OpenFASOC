@@ -13,25 +13,25 @@
 #Install Dependancies
 ###########################################################################
 
-yum install wget git make gcc-c++ python3 -y
-yum install gcc-gfortran bison flex libtool-ltdl-devel -y
-yum install fftw-devel suitesparse-devel blas-devel lapack-devel -y
-yum install openmpi-devel openmpi -y
-yum install cmake
-yum install lapack-devel
-yum install lapack
-yum install bison
-yum install flex
-yum install blas
-yum install fftw
-yum install fftw-devel
-yum install suitesparse-devel
-yum install suitesparse
-yum install autoconf
-yum install automake
-yum install libtool
-yum install openmpi
-yum install openmpi-devel
+yum install -y wget git make gcc-c++ python3 
+yum install -y gcc-gfortran bison flex libtool-ltdl-devel
+yum install -y fftw-devel suitesparse-devel blas-devel lapack-devel
+yum install -y openmpi-devel openmpi
+yum install -y cmake
+yum install -y lapack-devel
+yum install -y lapack
+yum install -y bison
+yum install -y flex
+yum install -y blas
+yum install -y fftw
+yum install -y fftw-devel
+yum install -y suitesparse-devel
+yum install -y suitesparse
+yum install -y autoconf
+yum install -y automake
+yum install -y libtool
+yum install -y openmpi
+yum install -y openmpi-devel
 
 # gcc v7 necessary for successful build of Xyce
 yum install -y centos-release-scl
