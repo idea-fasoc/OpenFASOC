@@ -1,3 +1,4 @@
+#!/bin/sh
 # https://github.com/Xyce/Xyce/discussions/4#discussioncomment-169255
 
 ###########################################################################
@@ -21,6 +22,8 @@ yum install lapack-devel
 yum install lapack
 yum install bison
 yum install flex
+yum install blas
+yum install fftw
 yum install fftw-devel
 yum install suitesparse-devel
 yum install suitesparse
@@ -32,8 +35,8 @@ yum install openmpi-devel
 
 # gcc v7 necessary for successful build of Xyce
 yum install -y centos-release-scl
-yum install -y devtoolset-7
-scl enable devtoolset-7 bash
+yum install -y devtoolset-8
+source /opt/rh/devtoolset-8/enable
 
 ###########################################################################
 #Install Trilinos from source

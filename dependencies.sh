@@ -188,9 +188,9 @@ fi
 # install miniconda3
 if ! [ -x /usr/bin/miniconda3 ]
 then
-      wget https://repo.anaconda.com/miniconda/Miniconda3-py37_4.12.0-Linux-x86_64.sh \
-    && bash Miniconda3-py37_4.12.0-Linux-x86_64.sh -b -p /usr/bin/miniconda3/ \
-    && rm -f Miniconda3-py37_4.12.0-Linux-x86_64.sh
+      wget https://repo.anaconda.com/miniconda/Miniconda3-py37_23.1.0-1-Linux-x86_64.sh \
+    && bash Miniconda3-py37_23.1.0-1-Linux-x86_64.sh -b -p /usr/bin/miniconda3/ \
+    && rm -f Miniconda3-py37_23.1.0-1-Linux-x86_64.sh
 else
     echo "Found miniconda3. Continuing the installation...\n"
 fi
@@ -212,7 +212,8 @@ else
 	exit
 fi
 
-# install pip and/or download packages
+# download packages using pip3 in miniconda3
+export PATH=/usr/bin/miniconda3/bin/pip3:$PATH
 if which pip3 >> /dev/null
 then
         echo "Pip3 exists"
@@ -222,47 +223,8 @@ then
         else
         echo "Python packages could not be installed."
         fi
-
 else
-        if cat /etc/os-release | grep "ubuntu" >> /dev/null
-        then
-                echo "Ubuntu"
-                apt install python3-pip -y
-                if [ $? == 0 ]
-                then
-                       pip3 install -r requirements.txt
-                       if [ $? == 0 ]; then 
-                       echo "Python packages installed successfully."
-                       else
-                       echo "Python packages could not be installed."; exit
-                       fi
-                       apt install wget git -y
-                else
-                        echo "Pip3 installation failed.. exiting"
-                        exit
-                fi
-
-        elif cat /etc/os-release | grep -e "centos" -e "el7" -e "el8" >> /dev/null
-        then
-                echo "Centos"
-                yum install python3-pip -y
-                if [ $? == 0 ]
-                then
-                       pip3 install -r requirements.txt
-                       if [ $? == 0 ]; then 
-                       echo "Python packages installed successfully."
-                       else
-                       echo "Python packages could not be installed."; exit
-                       fi
-                       yum install wget git -y
-                else
-                        echo "Pip3 installation failed.. exiting"
-                        exit
-                fi
-        else
-                echo "This script is not compatabile with your Linux Distribution"
-		exit
-        fi
+        echo "Pip3 not found in miniconda3."
 fi
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null
@@ -273,7 +235,7 @@ then
 
 elif cat /etc/os-release | grep "centos" >> /dev/null
 then
-	sudo yum install bison flex libX11-devel libX11 libXaw-devel readline-devel autoconf libtool automake -y
+	yum install bison flex libX11-devel libX11 libXaw-devel readline-devel autoconf libtool automake -y
 	git clone http://git.code.sf.net/p/ngspice/ngspice
 	cd ngspice && ./compile_linux.sh
 fi
@@ -297,6 +259,7 @@ elif cat /etc/os-release | grep "centos" >> /dev/null
 then
 	export DEBIAN_FRONTEND=noninteractive
 	cd docker/conda/scripts
+        chmod +x xyce_install_centos.sh
 	./xyce_install_centos.sh
 fi
 
