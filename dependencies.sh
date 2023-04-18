@@ -154,7 +154,7 @@ elif cat /etc/os-release | grep -e "centos" >> /dev/null; then
 
         yum update -y
 
-        yum install -y autoconf libtool automake make g++ gcc
+        yum install -y autoconf libtool automake make gcc gcc-c++
 
 fi
 
