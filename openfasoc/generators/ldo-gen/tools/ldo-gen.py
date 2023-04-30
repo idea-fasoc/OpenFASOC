@@ -10,6 +10,7 @@ import subprocess as sp
 from configure_workspace import *
 from generate_verilog import *
 from simulations import *
+from processing import *
 
 print("#---------------------------------------------------------------------")
 print("# Parsing command line arguments...")
@@ -42,6 +43,7 @@ parser.add_argument(
     "--arr_size_in", help="Debug option to manually set power arr size."
 )
 parser.add_argument("--clean", action="store_true", help="Clean the workspace.")
+parser.add_argument("--simtype",choices=["postPEX","prePEX"], help="Simulations type prePEX or postPEX")
 args = parser.parse_args()
 
 
@@ -152,17 +154,10 @@ if args.mode != "verilog" and clean_work_dir:
     print("#----------------------------------------------------------------------")
     print("# LVS and DRC finished successfully")
     print("#----------------------------------------------------------------------")
+    
     # function defined in configure_workspace.py
     copy_outputs(directories, args.outputDir, args.platform, user_specs["designName"])
 
-
-# ------------------------------------------------------------------------------
-# run simulations
-# ------------------------------------------------------------------------------
-if args.mode == "full" or args.mode == "sim" or args.mode == "post":
-    print("#----------------------------------------------------------------------")
-    print("# Running Simulations")
-    print("#----------------------------------------------------------------------")
     # simulations are ran for the following configurations:
     cap_list = ["1p", "5p"]  # additional capacitance at node VREG
     freq_list = [0.1 * 10**6, 1 * 10**6, 10 * 10**6]  # clock frequency
@@ -193,8 +188,9 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
 
     # prepare simulation scripts, passing prePEX_sim_dir and pex=false to function *_prepare_scripts() runs preprex sims
     # there should be one output file name specified for each cap value. outputs sent to sim_dir_structure directories
-    if jsonConfig["simTool"] == "ngspice":
-        [run_sims_bash, output_file_names] = ngspice_prepare_scripts(
+    if args.simtype == "postPEX":
+       if jsonConfig["simTool"] == "ngspice":
+           [sim, output_file_names] = ngspice_prepare_scripts(
             head,
             cap_list,
             directories["simDir"] + "/templates/",
@@ -204,53 +200,134 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
             pdk_path,
             freq_list,
             "tt",
+            pex=True
         )
-    elif jsonConfig["simTool"] == "Xyce":
-          [run_sims_bash, output_file_names] = xyce_prepare_scripts(
+       elif jsonConfig["simTool"] == "Xyce":
+             [sim, output_file_names] = xyce_prepare_scripts(
+              head,
+              cap_list,
+              directories["simDir"] + "/templates/",
+              postPEX_sim_dir,
+              user_specs,
+              arrSize,
+              pdk_path,
+              freq_list,
+              "tt",
+              pex=True
+        )
+       else:
+            print("simtool not supported")
+            exit(1)
+    
+    if args.simtype == "prePEX":
+       if jsonConfig["simTool"] == "ngspice":
+           [sim, output_file_names] = ngspice_prepare_scripts(
             head,
             cap_list,
             directories["simDir"] + "/templates/",
-            postPEX_sim_dir,
+            prePEX_sim_dir,
             user_specs,
             arrSize,
             pdk_path,
             freq_list,
             "tt",
+            pex=False
         )
-    else:
-        print("simtool not supported")
-        exit(1)
+       elif jsonConfig["simTool"] == "Xyce":
+             [sim, output_file_names] = xyce_prepare_scripts(
+              head,
+              cap_list,
+              directories["simDir"] + "/templates/",
+              prePEX_sim_dir,
+              user_specs,
+              arrSize,
+              pdk_path,
+              freq_list,
+              "tt",
+              pex=False
+        )
+       else:
+            print("simtool not supported")
+            exit(1)
+    
+    print("#----------------------------------------------------------------------")
+    print("# Spice netlists created successfully")
+    print("#----------------------------------------------------------------------")    
 
+# ------------------------------------------------------------------------------
+# run simulations
+# ------------------------------------------------------------------------------
+if args.mode == "full" or args.mode == "sim" or args.mode == "post":
+    print("#----------------------------------------------------------------------")
+    print("# Running Simulations")
+    print("#----------------------------------------------------------------------")
     # run sims
+    processes = []
     #assert len(output_file_names) == len(cap_list)*len(freq_list)
     if args.mode != "post":
-        with open(postPEX_sim_dir + "run_all_sims.bash", "w") as simsbash:
-            simsbash.write(run_sims_bash)
-        sp.run(["bash", "run_all_sims.bash"], cwd=postPEX_sim_dir)
-
-    # perform post processing on simulation results and save figures to work dir
-    raw_files = [(postPEX_sim_dir + ofile) for ofile in output_file_names]
-    raw_to_csv(raw_files,user_specs["vin"],args.outputDir)
-    figures = list()
-    figure_names = list()
-    figure_names.extend(["VREG_output", "VDIF", "VREG_ripple"])
-    figures.extend(fig_VREG_results(raw_files, user_specs["vin"]))
-    figure_names.append("cmp_out")
-    figures.append(fig_comparator_results(raw_files))
-    figure_names.append("active_switches")
-    figures.append(fig_controller_results(raw_files))
-    # save results to png files
-    current_freq_results = args.outputDir + "/" + "output_plots"
-    try:
-        os.mkdir(current_freq_results)
-    except OSError as error:
-        if args.mode != "post":
-           print(error)
-           exit(1)
-    assert len(figures) == len(figure_names)
-    for i, figure in enumerate(figures):
-        figure.savefig(current_freq_results + "/" + figure_names[i] + ".png")
-    fig_dc_results(postPEX_sim_dir + "/isweep.raw").savefig(args.outputDir + "/dc.png")
-    max_load = user_specs["imax"]
-    load = max_load*1000
-    fig_load_change_results(postPEX_sim_dir + "/" + str(load) + "mA_output_load_change.raw",load).savefig(args.outputDir + "/load_change.png")
+       if args.simtype == "postPEX":
+          for s in range (len(sim)):
+              p = sp.Popen(sim[s],cwd=postPEX_sim_dir,shell=True)
+              processes.append(p)
+            
+          for p in processes:
+              p.wait()   
+          # perform post processing on simulation results and save figures to work dir
+          raw_files = [(postPEX_sim_dir + ofile) for ofile in output_file_names]
+          raw_to_csv(raw_files,user_specs["vin"],args.outputDir)
+          figures = list()
+          figure_names = list()
+          figure_names.extend(["VREG_output", "VDIF", "VREG_ripple"])
+          figures.extend(fig_VREG_results(raw_files, user_specs["vin"]))
+          figure_names.append("cmp_out")
+          figures.append(fig_comparator_results(raw_files))
+          figure_names.append("active_switches")
+          figures.append(fig_controller_results(raw_files))
+          # save results to png files
+          current_freq_results = args.outputDir + "/" + "output_plots"
+          try:
+             os.mkdir(current_freq_results)
+          except OSError as error:
+              if args.mode != "post":
+                 print(error)
+                 exit(1)
+          assert len(figures) == len(figure_names)
+          for i, figure in enumerate(figures):
+              figure.savefig(current_freq_results + "/" + figure_names[i] + ".png")
+              fig_dc_results(postPEX_sim_dir + "/isweep.raw").savefig(args.outputDir + "/dc.png")
+              max_load = user_specs["imax"]
+              load = max_load*1000
+              fig_load_change_results(postPEX_sim_dir + "/" + str(load) + "mA_output_load_change.raw",load).savefig(args.outputDir + "/load_change.png")
+       if args.simtype == "prePEX":
+          for s in range (len(sim)):
+              p = sp.Popen(sim[s],cwd=prePEX_sim_dir,shell=True)
+              processes.append(p)
+            
+          for p in processes:
+              p.wait()   
+          # perform post processing on simulation results and save figures to work dir
+          raw_files = [(prePEX_sim_dir + ofile) for ofile in output_file_names]
+          raw_to_csv(raw_files,user_specs["vin"],args.outputDir)
+          figures = list()
+          figure_names = list()
+          figure_names.extend(["VREG_output", "VDIF", "VREG_ripple"])
+          figures.extend(fig_VREG_results(raw_files, user_specs["vin"]))
+          figure_names.append("cmp_out")
+          figures.append(fig_comparator_results(raw_files))
+          figure_names.append("active_switches")
+          figures.append(fig_controller_results(raw_files))
+          # save results to png files
+          current_freq_results = args.outputDir + "/" + "output_plots"
+          try:
+             os.mkdir(current_freq_results)
+          except OSError as error:
+              if args.mode != "post":
+                 print(error)
+                 exit(1)
+          assert len(figures) == len(figure_names)
+          for i, figure in enumerate(figures):
+              figure.savefig(current_freq_results + "/" + figure_names[i] + ".png")
+              fig_dc_results(prePEX_sim_dir + "/isweep.raw").savefig(args.outputDir + "/dc.png")
+              max_load = user_specs["imax"]
+              load = max_load*1000
+              fig_load_change_results(prePEX_sim_dir + "/" + str(load) + "mA_output_load_change.raw",load).savefig(args.outputDir + "/load_change.png")

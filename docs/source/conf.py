@@ -17,9 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "OpenFASOC"
-copyright = "2022, Mehdi Saligane"
-author = "Mehdi Saligane"
+project = "OpenFASoC"
+copyright = "2023, OpenFASoC team"
+author = "OpenFASoC team"
 
 
 # -- General configuration ---------------------------------------------------

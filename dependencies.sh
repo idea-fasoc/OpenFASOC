@@ -4,7 +4,7 @@ printf "Function: \nIf this script runs smoothly, all necessary dependencies for
 downloaded at once. If you've already downloaded all dependencies with this script, 
 you can run this script again to update the installed dependencies.\n
 Basic Requirements (not exhaustive): 
-(1) Python 3.7 or higher is required.
+(1) Python 3.6 or higher is required.
 (2) Intel x86 architecture is required, as this script will use Conda to download several
 Python packages for which versions compatible with ARM architecture currently do not
 exist for installation in Conda's package repository. If your machine does not run 
@@ -16,7 +16,7 @@ proceed_confirmed=false
 update_confirmed=false
 while ! $proceed_confirmed
 do
-        echo "Do you wish to proceed with the installation? 
+        echo "[OpenFASoC] Do you wish to proceed with the installation? 
 [y] Yes. Install for the first time.
 [u] Yes. Update already-installed dependencies.
 [n] No. Exit this script." 
@@ -29,40 +29,38 @@ do
         update_confirmed=true
         proceed_confirmed=true
         else
-        echo "Invalid selection. Choose y or n."
+        echo "[OpenFASoC] Invalid selection. Choose y or n."
         fi
 done
 
 if $update_confirmed; then
         if ! [ -x /usr/bin/miniconda3 ]; then
-                echo "Conda could not be found. If you have not yet successfully installed the dependencies, you cannot update the dependencies."
+                echo "[OpenFASoC] Conda could not be found. If you have not yet successfully installed the dependencies, you cannot update the dependencies."
                 exit
         fi
-        printf "\nNote: Because the latest version of Conda requires Python 3.7 or higher, your device
-must be equipped with Python 3.7 or above for this script to fully update everything. If you have an earlier version of Python, this script will nonetheless run and attempt to install every compatible update. \n"
         export PATH=/usr/bin/miniconda3/bin:$PATH
 
-        printf "\nAttempting to update Conda using: conda update conda -y \n\n"
+        printf "\n[OpenFASoC] Attempting to update Conda using: conda update conda -y \n\n"
         conda update conda -y
         if [ $? == 0 ]
         then
-        printf "\n\nConda updated successfully with: conda update conda -y."
+        printf "\n\n[OpenFASoC] Conda updated successfully with: conda update conda -y."
         else 
-        printf "\n\nFailed to update Conda using: conda update conda -y."
-        printf "Attempting instead to update Conda using: install -c anaconda conda -y"
+        printf "\n\n[OpenFASoC] Failed to update Conda using: conda update conda -y."
+        printf "[OpenFASoC] Attempting instead to update Conda using: install -c anaconda conda -y"
         conda install -c anaconda conda -y; if [ $? == 0 ]; then 
-        printf "\n\nConda updated successfully with: install -c anaconda conda -y"
+        printf "\n\n[OpenFASoC] Conda updated successfully with: install -c anaconda conda -y"
         else
-        printf "\n\nConda could not be updated."; fi
+        printf "\n\n[OpenFASoC] Conda could not be updated."; fi
         fi
 
         update_successful=true
-        printf "\n\nAttempting to update packages using: conda update --all -y \n"
+        printf "\n\n[OpenFASoC] Attempting to update packages using: conda update --all -y \n"
         conda update --all -y
         if [ $? == 0 ]; then 
-        printf "Packages updated successfully with: conda update --all -y"
+        printf "[OpenFASoC] Packages updated successfully with: conda update --all -y"
         else 
-        printf "\n\nFailed to update packages using: conda update --all -y."
+        printf "\n\n[OpenFASoC] Failed to update packages using: conda update --all -y."
         printf "Attempting instead to install core packages individually..."
         conda install -c litex-hub magic -y; if [ $? != 0 ]; then update_successful=false; echo "magic could not be updated"; fi
         conda install -c litex-hub netgen -y; if [ $? != 0 ]; then update_successful=false; echo "netgen could not be updated"; fi
@@ -117,7 +115,6 @@ must be equipped with Python 3.7 or above for this script to fully update everyt
 fi
 
 
-
 if which python3 >> /dev/null
 then
 	echo "Python3 exists. Continuing..."
@@ -165,23 +162,23 @@ then
     && bash Miniconda3-py37_23.1.0-1-Linux-x86_64.sh -b -p /usr/bin/miniconda3/ \
     && rm -f Miniconda3-py37_23.1.0-1-Linux-x86_64.sh
 else
-    echo "Found miniconda3. Continuing the installation...\n"
+    echo "[OpenFASoC] Found miniconda3. Continuing the installation...\n"
 fi
 
-if [ $? == 0 ] && [ -x /usr/bin/miniconda3 ]
+if [ $? == 0 ] && [ -x /usr/bin/miniconda3/ ]
 then
-        echo "miniconda3 installed successfully. Continuing the installation...\n"
+        echo "[OpenFASoC] miniconda3 installed successfully. Continuing the installation...\n"
         if ! grep -q "/usr/bin/miniconda3/bin" /home/$(logname)/.bashrc || ! echo "$PATH" | grep -q "/usr/bin/miniconda3/bin"; then
                 echo "" >> /home/$(logname)/.bashrc
                 echo 'export PATH="/usr/bin/miniconda3/bin:$PATH"' >> /home/$(logname)/.bashrc
-                echo "miniconda3 added to PATH"
+                echo "[OpenFASoC] miniconda3 added to PATH"
         fi
 	export PATH=/usr/bin/miniconda3/bin:$PATH
 	conda update -y conda
-        if [ $? == 0 ];then conda install -c litex-hub --file conda_versions.txt -y ; else echo "Failed to update conda" ; exit ; fi
-        if [ $? == 0 ];then echo "Installed OpenROAD, Yosys, Skywater PDK, Magic and Netgen successfully" ; else echo "Failed to install conda packages" ; exit ; fi
+        if [ $? == 0 ];then conda install -c litex-hub --file conda_versions.txt -y ; else echo "[OpenFASoC] Failed to update conda version." ; exit ; fi
+        if [ $? == 0 ];then echo "[OpenFASoC] Installed OpenROAD, Yosys, Skywater PDK, Magic and Netgen successfully" ; else echo "[OpenFASoC] Failed to install conda packages" ; exit ; fi
 else
-	echo "Failed to install miniconda. Check above for error messages."
+	echo "[OpenFASoC] Failed to install miniconda. Check above for error messages."
 	exit
 fi
 
@@ -189,15 +186,15 @@ fi
 export PATH=/usr/bin/miniconda3/bin/pip3:$PATH
 if which pip3 >> /dev/null
 then
-        echo "Pip3 exists"
+        echo "[OpenFASoC] Pip3 exists"
         pip3 install -r requirements.txt
         if [ $? == 0 ]; then 
-        echo "Python packages installed successfully."
+        echo "[OpenFASoC] Python packages installed successfully."
         else
-        echo "Python packages could not be installed."
+        echo "[OpenFASoC] Python packages could not be installed."
         fi
 else
-        echo "Pip3 not found in miniconda3."
+        echo "[OpenFASoC] Pip3 not found in miniconda3."
 fi
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null
@@ -205,7 +202,6 @@ then
 	apt install bison flex libx11-dev libx11-6 libxaw7-dev libreadline6-dev autoconf libtool automake -y
 	git clone http://git.code.sf.net/p/ngspice/ngspice
 	cd ngspice && ./compile_linux.sh
-
 elif cat /etc/os-release | grep "centos" >> /dev/null
 then
 	yum install bison flex libX11-devel libX11 libXaw-devel readline-devel autoconf libtool automake -y
@@ -215,13 +211,12 @@ fi
 
 if [ $? == 0 ]
 then
- echo "Ngspice is installed. Checking pending. Continuing the installation...\n"
+ echo "[OpenFASoC] Ngspice is installed. Checking pending. Continuing the installation...\n"
  cd ../
 else
- echo "Failed to install Ngspice"
+ echo "[OpenFASoC] Failed to install Ngspice"
  exit
 fi
-
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null
 then
@@ -235,13 +230,14 @@ then
 	./xyce_install_centos.sh
 fi
 
-if [ $? == 0 ]
-then
- echo "Xyce is installed. Checking pending. Continuing the installation...\n"
-else
- echo "Failed to install Xyce"
- exit
-fi
+        if [ $? == 0 ]
+        then
+                echo "[OpenFASoC] Xyce is installed. Checking pending. Continuing the installation...\n"
+        else
+                echo "[OpenFASoC] Failed to install Xyce"
+                exit
+        fi
+
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null
 then
@@ -256,20 +252,20 @@ then
 	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.28.6-0.x86_64.rpm
 	rpm -i klayout-0.28.6-0.x86_64.rpm
 	yum install time -y
-        strip --remove-section=.note.ABI-tag /usr/lib64/libQt5Core.so.5
+  strip --remove-section=.note.ABI-tag /usr/lib64/libQt5Core.so.5
 else
-	echo "Cannot install klayout for other linux distrbutions via this script"
+	echo "[OpenFASoC] Cannot install klayout for other linux distrbutions via this script"
 fi
 
 if [ $? == 0 ]
 then
- echo "Installed Klayout successfully. Checking pending..."
+ echo "[OpenFASoC] Installed Klayout successfully. Checking pending..."
 else
- echo "Failed to install Klayout successfully"
+ echo "[OpenFASoC] Failed to install Klayout successfully"
  exit
 fi
 
-export PATH=/usr/bin/miniconda3/bin:$PATH
+export PATH=/usr/bin/miniconda3/:$PATH
 
 if [ -x /usr/bin/miniconda3/share/pdk/ ]
 then
@@ -278,17 +274,16 @@ then
                 echo 'export PDK_ROOT=/usr/bin/miniconda3/share/pdk/' >> /home/$(logname)/.bashrc
         fi
         export PDK_ROOT=/usr/bin/miniconda3/share/pdk/
-        echo "PDK_ROOT is set to /usr/bin/miniconda3/share/pdk/. If this variable is empty, try setting PDK_ROOT variable to /usr/bin/miniconda3/share/pdk/"
+        echo "[OpenFASoC] PDK_ROOT is set to /usr/bin/miniconda3/share/pdk/. If this variable is empty, try setting PDK_ROOT variable to /usr/bin/miniconda3/share/pdk/"
 else
-        echo "PDK not installed"
+        echo "[OpenFASoC] PDK not installed"
 fi
-echo ""
-echo ""
-# echo "To access the installed binaries, please run this command or add this to your .bashrc file - export PATH=/usr/bin/miniconda3/bin:\$PATH"
-echo "To access xyce binary, create an alias - xyce='/opt/xyce/xyce_serial/bin/Xyce'"
+echo "[OpenFASoC] "
+echo "[OpenFASoC] "
+echo "[OpenFASoC] To access xyce binary, create an alias - xyce='/opt/xyce/xyce_serial/bin/Xyce'"
 
 echo "################################"
-echo "Installation completed"
-echo "Thanks for using OpenFASOC dependencies script. To submit feedback, feel free to open a github issue on OpenFASOC repo"
-echo "To know more about generators, go to openfasoc.readthedocs.io"
+echo "[OpenFASoC] Installation completed"
+echo "[OpenFASoC] Thanks for using OpenFASOC dependencies script. To submit feedback, feel free to open a github issue on OpenFASOC repo"
+echo "[OpenFASoC] To know more about generators, go to openfasoc.readthedocs.io"
 echo "################################"
