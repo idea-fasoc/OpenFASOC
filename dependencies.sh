@@ -118,6 +118,7 @@ fi
 
 
 
+
 if which python3 >> /dev/null
 then
 	echo "Python3 exists. Continuing..."
@@ -131,12 +132,12 @@ mi_ver=$(python3 -c"import sys; print(str(sys.version_info.minor))")
 
 if [ "$ma_ver" -lt 3 ]
 then
-    echo "[Warning] python version less than 3.* . Not compatible. You atleast need version above or equal to 3.7."
+    echo "[Warning] python version less than 3.* . Not compatible. You atleast need version above or equal to 3.6."
     sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
     echo "[Warning] Skipping installing the gdsfactory python package because of that error. Continuing installation..."
 elif [ "$mi_ver" -lt 6 ]
 then
-    echo "[Warning] python version less than 3.6 . Not compatible. You atleast need version above or equal to 3.7."
+    echo "[Warning] python version less than 3.6 . Not compatible. You atleast need version above or equal to 3.6."
     sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
     echo "[Warning] Skipping installing the gdsfactory python package because of that error. Continuing installation..."
 else
