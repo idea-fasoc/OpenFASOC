@@ -34,10 +34,12 @@ help:banner
 	@@echo ""
 
 gen_tc__line_res_via_chain:
+	mkdir -p result_dir/line-res_via-chain	
 	cp ./scripts/line-res_via-chain/pad_forty_met1_met5.GDS ./result_dir/line-res_via-chain/
 	make lr_vc__all
 
 gen_tc__mimcap_array:
+	mkdir -p result_dir/mimcap-array
 	cp ./scripts/mimcap-array/pad_forty_met1_met5.GDS ./result_dir/mimcap-array/
 	make mimcap_m3
 
