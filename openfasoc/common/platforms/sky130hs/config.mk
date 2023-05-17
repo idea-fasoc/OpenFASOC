@@ -90,8 +90,10 @@ export PLACE_DENSITY ?= 0.50
 export HOLD_BUF_CELL = sky130_fd_sc_hs__buf_1
 
 # IO Placer pin layers
-export IO_PLACER_H = 4
-export IO_PLACER_V = 3
+#export IO_PLACER_H = 4
+#export IO_PLACER_V = 3
+export IO_PLACER_H = met3
+export IO_PLACER_V = met2
 
 # keep with gf
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 4
