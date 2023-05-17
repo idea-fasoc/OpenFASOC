@@ -12,7 +12,6 @@ export CORE_AREA   		= 2.32 2.32 97.68 37.68
 
 export PDN_TCL                  = ../blocks/$(PLATFORM)/pdn.tcl
 
-
 # RO inverter placement config
 
 # this is the floorplan dimension for the RO, <W,H>, this should be sufficiently large to allow padding between cells
