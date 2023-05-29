@@ -2,13 +2,10 @@
 
 import json
 import os
-import re
 import shutil
 import subprocess as sp
 import sys
-import time
 
-import TEMP_netlist
 from readparamgen import args, check_search_done, designName
 from simulation import generate_runs
 
