@@ -10,8 +10,8 @@ import re
 from readparamgen import args, check_search_done, designName
 from simulation import generate_runs
 
+# TODO: Find a better way to import modules from parent directory
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-
 from common.verilog_generation import generate_verilog
 
 genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)), "../")
@@ -100,24 +100,6 @@ print("#----------------------------------------------------------------------")
 print("# Verilog Generation")
 print("#----------------------------------------------------------------------")
 
-
-# TODO: Previous code. Remove later.
-# if args.platform == "sky130hd":
-#     aux1 = "sky130_fd_sc_hd__nand2_1"
-#     aux2 = "sky130_fd_sc_hd__inv_1"
-#     aux3 = "sky130_fd_sc_hd__buf_1"
-#     aux4 = "sky130_fd_sc_hd__buf_1"
-#     aux5 = "HEADER"
-#     aux6 = "SLC"
-# elif args.platform == "sky130hs":
-#     aux1 = "sky130_fd_sc_hs__nand2_1"
-#     aux2 = "sky130_fd_sc_hs__inv_1"
-#     aux3 = "sky130_fd_sc_hs__buf_1"
-#     aux4 = "sky130_fd_sc_hs__buf_1"
-#     aux5 = "HEADER_hs"
-#     aux6 = "SLC_hs"
-# TEMP_netlist.gen_temp_netlist(ninv, nhead, aux1, aux2, aux3, aux4, aux5, srcDir)
-
 generate_verilog(
     parameters={
         "design_name": designName,
@@ -154,20 +136,6 @@ with open(flowDir + "design/sky130hd/tempsense/config.mk", "r") as rf:
     )
 with open(flowDir + "design/sky130hd/tempsense/config.mk", "w") as wf:
     wf.write(filedata)
-
-# shutil.copyfile(
-#     srcDir + "TEMP_ANALOG_lv.nl.v", flowDir + "design/src/tempsense/TEMP_ANALOG_lv.nl.v"
-# )
-# shutil.copyfile(
-#     srcDir + "TEMP_ANALOG_hv.nl.v", flowDir + "design/src/tempsense/TEMP_ANALOG_hv.nl.v"
-# )
-# shutil.copyfile(
-#     srcDir + "TEMP_AUTO_def.v", flowDir + "design/src/tempsense/TEMP_AUTO_def.v"
-# )
-# shutil.copyfile(
-#     srcDir + "tempsenseInst.v", flowDir + "design/src/tempsense/" + designName + ".v"
-# )
-# shutil.copyfile(srcDir + "counter.v", flowDir + "design/src/tempsense/counter" + ".v")
 
 print("#----------------------------------------------------------------------")
 print("# Verilog Generated")
