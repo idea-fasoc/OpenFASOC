@@ -2,7 +2,7 @@ from mako.template import Template
 from os import path, makedirs, listdir
 
 def __get_output_filepath(filename: str, out_dir: str) -> str:
-	return path.join(out_dir, filename.replace(".template", ""))
+	return path.join(out_dir, filename)
 
 def __generate_file(input_path: str, output_path: str, parameters: dict) -> None:
 	template = Template(filename=input_path)
