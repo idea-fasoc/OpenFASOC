@@ -100,22 +100,21 @@ print("# Verilog Generation")
 print("#----------------------------------------------------------------------")
 
 
-if args.platform == "sky130hd":
-    aux1 = "sky130_fd_sc_hd__nand2_1"
-    aux2 = "sky130_fd_sc_hd__inv_1"
-    aux3 = "sky130_fd_sc_hd__buf_1"
-    aux4 = "sky130_fd_sc_hd__buf_1"
-    aux5 = "HEADER"
-    aux6 = "SLC"
-elif args.platform == "sky130hs":
-    aux1 = "sky130_fd_sc_hs__nand2_1"
-    aux2 = "sky130_fd_sc_hs__inv_1"
-    aux3 = "sky130_fd_sc_hs__buf_1"
-    aux4 = "sky130_fd_sc_hs__buf_1"
-    aux5 = "HEADER_hs"
-    aux6 = "SLC_hs"
-
 # TODO: Previous code. Remove later.
+# if args.platform == "sky130hd":
+#     aux1 = "sky130_fd_sc_hd__nand2_1"
+#     aux2 = "sky130_fd_sc_hd__inv_1"
+#     aux3 = "sky130_fd_sc_hd__buf_1"
+#     aux4 = "sky130_fd_sc_hd__buf_1"
+#     aux5 = "HEADER"
+#     aux6 = "SLC"
+# elif args.platform == "sky130hs":
+#     aux1 = "sky130_fd_sc_hs__nand2_1"
+#     aux2 = "sky130_fd_sc_hs__inv_1"
+#     aux3 = "sky130_fd_sc_hs__buf_1"
+#     aux4 = "sky130_fd_sc_hs__buf_1"
+#     aux5 = "HEADER_hs"
+#     aux6 = "SLC_hs"
 # TEMP_netlist.gen_temp_netlist(ninv, nhead, aux1, aux2, aux3, aux4, aux5, srcDir)
 
 generate_verilog(
