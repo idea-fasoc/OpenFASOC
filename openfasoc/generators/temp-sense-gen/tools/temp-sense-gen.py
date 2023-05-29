@@ -119,6 +119,7 @@ print("#----------------------------------------------------------------------")
 
 generate_verilog(
     parameters={
+        "design_name": designName,
         "cell_prefix": "sky130_fd_sc_hd__" if args.platform == "sky130hd" else "sky130_fd_sc_hs__",
         "cell_suffix": "_1",
         "header_cell": "HEADER" if args.platform == "sky130hd" else "HEADER_hs",
