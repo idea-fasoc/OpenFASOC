@@ -12,6 +12,10 @@ import TEMP_netlist
 from readparamgen import args, check_search_done, designName
 from simulation import generate_runs
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+
+from common.verilog_generation import generate_verilog
+
 genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)), "../")
 srcDir = genDir + "src/"
 flowDir = genDir + "flow/"
@@ -115,50 +119,65 @@ elif args.platform == "sky130hs":
     aux6 = "SLC_hs"
 
 ninv = ninv + 1
-TEMP_netlist.gen_temp_netlist(ninv, nhead, aux1, aux2, aux3, aux4, aux5, srcDir)
 
-with open(srcDir + "TEMP_ANALOG_hv.nl.v", "r") as rf:
-    filedata = rf.read()
-header_list = re.findall("HEADER\s+(\w+)\(", filedata)
-with open(genDir + "blocks/sky130hd/tempsenseInst_custom_net.txt", "w") as wf:
-    wf.write("r_VIN\n")
-    for header_cell in header_list:
-        wf.write("temp_analog_1." + header_cell + " VIN\n")
+# TODO: Previous code. Remove later.
+# TEMP_netlist.gen_temp_netlist(ninv, nhead, aux1, aux2, aux3, aux4, aux5, srcDir)
 
-with open(srcDir + "TEMP_ANALOG_lv.nl.v", "r") as rf:
-    filedata = rf.read()
-lv_list = re.findall("\nsky130_fd_sc\w*\s+(\w+)\s+\(", filedata)
-with open(genDir + "blocks/sky130hd/tempsenseInst_domain_insts.txt", "w") as wf:
-    for lv_cell in lv_list:
-        wf.write("temp_analog_0." + lv_cell + "\n")
-
-with open(srcDir + "tempsenseInst.v", "r") as rf:
-    filedata = rf.read()
-    filedata = re.sub("module\s*(\w+)\s*\n", "module " + designName + "\n", filedata)
-with open(srcDir + "tempsenseInst.v", "w") as wf:
-    wf.write(filedata)
-
-with open(flowDir + "design/sky130hd/tempsense/config.mk", "r") as rf:
-    filedata = rf.read()
-    filedata = re.sub(
-        "export DESIGN_NAME\s*=\s*(\w+)", "export DESIGN_NAME = " + designName, filedata
-    )
-with open(flowDir + "design/sky130hd/tempsense/config.mk", "w") as wf:
-    wf.write(filedata)
-
-shutil.copyfile(
-    srcDir + "TEMP_ANALOG_lv.nl.v", flowDir + "design/src/tempsense/TEMP_ANALOG_lv.nl.v"
+generate_verilog(
+    parameters={
+        "cell_prefix": "sky130_fd_sc_hd__" if args.platform == "sky130hd" else "sky130_fd_sc_hs__",
+        "cell_suffix": "_1",
+        "header_cell": "HEADER" if args.platform == "sky130hd" else "HEADER_hs",
+        "slc_cell": "SLC" if args.platform == "sky130hd" else "SLC_hs",
+        "ninv": ninv,
+        "nhead": nhead
+    },
+    out_dir=os.path.join('flow', 'design', 'src', 'tempsense')
 )
-shutil.copyfile(
-    srcDir + "TEMP_ANALOG_hv.nl.v", flowDir + "design/src/tempsense/TEMP_ANALOG_hv.nl.v"
-)
-shutil.copyfile(
-    srcDir + "TEMP_AUTO_def.v", flowDir + "design/src/tempsense/TEMP_AUTO_def.v"
-)
-shutil.copyfile(
-    srcDir + "tempsenseInst.v", flowDir + "design/src/tempsense/" + designName + ".v"
-)
-shutil.copyfile(srcDir + "counter.v", flowDir + "design/src/tempsense/counter" + ".v")
+
+# TODO: Previous code. Remove later.
+# with open(srcDir + "TEMP_ANALOG_hv.nl.v", "r") as rf:
+#     filedata = rf.read()
+# header_list = re.findall("HEADER\s+(\w+)\(", filedata)
+# with open(genDir + "blocks/sky130hd/tempsenseInst_custom_net.txt", "w") as wf:
+#     wf.write("r_VIN\n")
+#     for header_cell in header_list:
+#         wf.write("temp_analog_1." + header_cell + " VIN\n")
+
+# with open(srcDir + "TEMP_ANALOG_lv.nl.v", "r") as rf:
+#     filedata = rf.read()
+# lv_list = re.findall("\nsky130_fd_sc\w*\s+(\w+)\s+\(", filedata)
+# with open(genDir + "blocks/sky130hd/tempsenseInst_domain_insts.txt", "w") as wf:
+#     for lv_cell in lv_list:
+#         wf.write("temp_analog_0." + lv_cell + "\n")
+
+# with open(srcDir + "tempsenseInst.v", "r") as rf:
+#     filedata = rf.read()
+#     filedata = re.sub("module\s*(\w+)\s*\n", "module " + designName + "\n", filedata)
+# with open(srcDir + "tempsenseInst.v", "w") as wf:
+#     wf.write(filedata)
+
+# with open(flowDir + "design/sky130hd/tempsense/config.mk", "r") as rf:
+#     filedata = rf.read()
+#     filedata = re.sub(
+#         "export DESIGN_NAME\s*=\s*(\w+)", "export DESIGN_NAME = " + designName, filedata
+#     )
+# with open(flowDir + "design/sky130hd/tempsense/config.mk", "w") as wf:
+#     wf.write(filedata)
+
+# shutil.copyfile(
+#     srcDir + "TEMP_ANALOG_lv.nl.v", flowDir + "design/src/tempsense/TEMP_ANALOG_lv.nl.v"
+# )
+# shutil.copyfile(
+#     srcDir + "TEMP_ANALOG_hv.nl.v", flowDir + "design/src/tempsense/TEMP_ANALOG_hv.nl.v"
+# )
+# shutil.copyfile(
+#     srcDir + "TEMP_AUTO_def.v", flowDir + "design/src/tempsense/TEMP_AUTO_def.v"
+# )
+# shutil.copyfile(
+#     srcDir + "tempsenseInst.v", flowDir + "design/src/tempsense/" + designName + ".v"
+# )
+# shutil.copyfile(srcDir + "counter.v", flowDir + "design/src/tempsense/counter" + ".v")
 
 print("#----------------------------------------------------------------------")
 print("# Verilog Generated")
