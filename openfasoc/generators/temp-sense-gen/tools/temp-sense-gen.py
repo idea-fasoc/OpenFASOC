@@ -115,8 +115,6 @@ elif args.platform == "sky130hs":
     aux5 = "HEADER_hs"
     aux6 = "SLC_hs"
 
-ninv = ninv + 1
-
 # TODO: Previous code. Remove later.
 # TEMP_netlist.gen_temp_netlist(ninv, nhead, aux1, aux2, aux3, aux4, aux5, srcDir)
 
@@ -278,7 +276,7 @@ print("#----------------------------------------------------------------------")
 print("# Generating spice netlists for the macro")
 print("#----------------------------------------------------------------------")
 
-stage_var = [int(ninv) - 1]
+stage_var = [int(ninv)]
 header_var = [int(nhead)]
 
 # make a temp list, TODO: get from JSON config
