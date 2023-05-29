@@ -35,6 +35,6 @@ counter async_counter_0(
 // SLC
 ${slc_cell} a_lc_0(.IN(out), .INB(outb), .VOUT(lc_0));
 // @@ @no a_buffer_0 (.A(lc_0), .nbout(lc_out));
-${cell('buf')} a_buffer_0 (.A(lc_0), .nbout(lc_out));
+${cell('buf')} a_buffer_0 (.A(lc_0), .X(lc_out));
 
 endmodule
