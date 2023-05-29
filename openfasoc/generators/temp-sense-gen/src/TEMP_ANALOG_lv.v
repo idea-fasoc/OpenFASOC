@@ -13,7 +13,7 @@ module TEMP_ANALOG_lv (EN, OUT, OUTB);
 wire nx1, nx2, nx3, nb1, nb2;
 
 // @@ @na a_nand_0 ( .A(EN), .B(n@n0), .Y(n1));
-${cell('nand2')} a_nand_0 ( .A(EN), .B(${ninv + 1}, .Y(n1)));
+${cell('nand2')} a_nand_0 ( .A(EN), .B(n${ninv + 1}), .Y(n1));
 
 // @@ @nb a_inv_@ni ( .A(n@n1), .Y(n@n2));
 % for i in range(ninv):
@@ -24,7 +24,7 @@ ${cell('nand2')} a_nand_0 ( .A(EN), .B(${ninv + 1}, .Y(n1)));
 ${cell('inv')} a_inv_m1 ( .A(n${ninv + 1}), .Y(nx1));
 
 // @@ @nk a_inv_m2 ( .A(n@n4), .Y(nx2));
-${cell('inv')} a_inv_m1 ( .A(n${ninv + 1}), .Y(nx2));
+${cell('inv')} a_inv_m2 ( .A(n${ninv + 1}), .Y(nx2));
 
 // @@ @nm a_inv_m3 ( .A(nx2), .Y(nx3));
 ${cell('inv')} a_inv_m3 ( .A(nx2), .Y(nx3));
