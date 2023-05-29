@@ -5,6 +5,7 @@ import os
 import shutil
 import subprocess as sp
 import sys
+import re
 
 from readparamgen import args, check_search_done, designName
 from simulation import generate_runs
@@ -146,19 +147,13 @@ generate_verilog(
 #     for lv_cell in lv_list:
 #         wf.write("temp_analog_0." + lv_cell + "\n")
 
-# with open(srcDir + "tempsenseInst.v", "r") as rf:
-#     filedata = rf.read()
-#     filedata = re.sub("module\s*(\w+)\s*\n", "module " + designName + "\n", filedata)
-# with open(srcDir + "tempsenseInst.v", "w") as wf:
-#     wf.write(filedata)
-
-# with open(flowDir + "design/sky130hd/tempsense/config.mk", "r") as rf:
-#     filedata = rf.read()
-#     filedata = re.sub(
-#         "export DESIGN_NAME\s*=\s*(\w+)", "export DESIGN_NAME = " + designName, filedata
-#     )
-# with open(flowDir + "design/sky130hd/tempsense/config.mk", "w") as wf:
-#     wf.write(filedata)
+with open(flowDir + "design/sky130hd/tempsense/config.mk", "r") as rf:
+    filedata = rf.read()
+    filedata = re.sub(
+        "export DESIGN_NAME\s*=\s*(\w+)", "export DESIGN_NAME = " + designName, filedata
+    )
+with open(flowDir + "design/sky130hd/tempsense/config.mk", "w") as wf:
+    wf.write(filedata)
 
 # shutil.copyfile(
 #     srcDir + "TEMP_ANALOG_lv.nl.v", flowDir + "design/src/tempsense/TEMP_ANALOG_lv.nl.v"
