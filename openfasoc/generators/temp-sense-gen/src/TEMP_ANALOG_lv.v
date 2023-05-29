@@ -8,7 +8,7 @@ module TEMP_ANALOG_lv (EN, OUT, OUTB);
 
 // @@ wire n@nn;
 % for i in range(ninv + 1):
-	wire n${i + 1};
+wire n${i + 1};
 % endfor
 wire nx1, nx2, nx3, nb1, nb2;
 
@@ -17,7 +17,7 @@ ${cell('nand2')} a_nand_0 ( .A(EN), .B(n${ninv + 1}), .Y(n1));
 
 // @@ @nb a_inv_@ni ( .A(n@n1), .Y(n@n2));
 % for i in range(ninv):
-	${cell('inv')} a_inv_${i} ( .A(n${i + 1}), .Y(n${i + 2}));
+${cell('inv')} a_inv_${i} ( .A(n${i + 1}), .Y(n${i + 2}));
 % endfor
 
 // @@ @ng a_inv_m1 ( .A(n@n3), .Y(nx1));
