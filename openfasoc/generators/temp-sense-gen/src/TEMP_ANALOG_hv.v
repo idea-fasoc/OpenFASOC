@@ -1,5 +1,3 @@
-<%def name="cell(name)">${cell_prefix}${name}${cell_suffix}</%def>
-
 module TEMP_ANALOG_hv
 (
 input CLK_REF,

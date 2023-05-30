@@ -1,6 +1,20 @@
 from mako.template import Template
 from os import path, makedirs, listdir
 
+# TODO: Find a better way to import common used defs in the future.
+__COMMON_MAKO_DEFS = '''
+<%def name="cell(name)">${cell_prefix}${name}${cell_suffix}</%def>
+'''
+
+def __mako_defs_preprocessor(input: str) -> str:
+	"""A Mako preprocessor that appens commonly used defs to the template.
+
+	Mako templates have a preprocessor argument. See https://docs.makotemplates.org/en/latest/usage.html#mako.template.Template.params.preprocessor.
+	This preprocessor adds defs commonly used in Verilog files to the template.
+	TODO: Find a better way to import common used defs in the future.
+	"""
+	return __COMMON_MAKO_DEFS + input
+
 def __generate_file(input_path: str, output_path: str, parameters: dict) -> None:
 	"""Generates a single output Verilog file from its Mako template.
 
@@ -9,7 +23,9 @@ def __generate_file(input_path: str, output_path: str, parameters: dict) -> None
 	- `output_path` (str): Path to the output file location with the extension.
 	- `parameters` (dict): Dictionary of all the parameters used in the Mako template.
 	"""
-	template = Template(filename=input_path)
+
+	# TODO: Find a better way to import common used defs in the future.
+	template = Template(filename=input_path, preprocessor=__mako_defs_preprocessor)
 
 	out_file = open(output_path, "w")
 	out_file.write(template.render(**parameters))

@@ -1,5 +1,3 @@
-<%def name="cell(name)">${cell_prefix}${name}${cell_suffix}</%def>
-
 module counter#
 (
 	parameter NBIT = 24
