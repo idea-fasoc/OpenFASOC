@@ -1,31 +1,51 @@
 from mako.template import Template
 from os import path, makedirs, listdir
 
-def __get_output_filepath(filename: str, out_dir: str) -> str:
-	return path.join(out_dir, filename)
-
 def __generate_file(input_path: str, output_path: str, parameters: dict) -> None:
+	"""Generates a single output Verilog file from its Mako template.
+
+	Arguments:
+	- `input_path` (str): Path to the input file (Mako template) with the extension.
+	- `output_path` (str): Path to the output file location with the extension.
+	- `parameters` (dict): Dictionary of all the parameters used in the Mako template.
+	"""
 	template = Template(filename=input_path)
 
 	out_file = open(output_path, "w")
 	out_file.write(template.render(**parameters))
 
 def __generate_subdirectory(src_dir: str, out_dir: str, parameters: dict) -> None:
+	"""Generates the output Verilog files of a single subdirectory of Mako templates.
+
+	Reads Mako templates from a subdirectory (`src_dir`), generates the output files in the output directory (`out_dir`), and maintains the directory structure. i.e., templates from a subdirectory of the `src_dir` will be generated in a subdirectory in `out_dir` with the same name.
+
+	This function recursively calls itself for subdirectories.
+
+	Arguments:
+	- `src_dir` (str): Path to the source directory with Mako templates.
+	- `out_dir` (str): Path to the output directory.
+	- `parameters` (dict): Dictionary of all the parameters used in the Mako template.
+	"""
 	# generate the output directory if it doesn't exist
 	if not path.exists(out_dir):
 		makedirs(out_dir)
 
 	for filename in listdir(src_dir):
-		file_path = path.join(src_dir, filename)
+		input_filepath = path.join(src_dir, filename)
+		output_filepath = path.join(out_dir, filename)
 
-		if path.isdir(file_path):
+		if path.isdir(input_filepath):
 			# if the path is a subdirectory, recursively call the function
-			__generate_subdirectory(file_path, path.join(out_dir, filename), parameters)
+			__generate_subdirectory(
+				input_filepath,
+				output_filepath,
+				parameters
+			)
 		else:
 			# if the path is a fine, generate the output
 			__generate_file(
-				file_path,
-				__get_output_filepath(filename, out_dir),
+				input_filepath,
+				output_filepath,
 				parameters
 			)
 
@@ -34,4 +54,16 @@ def generate_verilog(
 	src_dir: str = "src",
 	out_dir: str = path.join("flow", "design", "src")
 ) -> None:
+	"""Generates output Verilog files from source Mako templates.
+
+	Reads source Verilog files from `src_dir` and generates output Verilog files for synthesis in the OpenROAD flow.
+	The source files are Mako templates. See https://makotemplates.org for syntax and documentation.
+
+	This function maintains the source directory (`src_dir`) structure in the output directory (`out_dir`). i.e., source files from a subdirectory of the `src_dir` will be generated in a subdirectory in `out_dir` with the same name.
+
+	Arguments:
+	- `parameters` (dict): Dictionary of all the parameters used in the Mako templates. See https://makotemplates.org for documentation.
+	- `src_dir` (str): Path to the directory with the source Verilog templates.
+	- `out_dir` (str): Path to the directory in which the output will be generated.
+	"""
 	__generate_subdirectory(src_dir, out_dir, parameters)
