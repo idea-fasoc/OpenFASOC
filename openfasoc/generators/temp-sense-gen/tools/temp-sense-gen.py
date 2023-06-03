@@ -100,6 +100,8 @@ print("#----------------------------------------------------------------------")
 print("# Verilog Generation")
 print("#----------------------------------------------------------------------")
 
+# The directory in which the output Verilog is generated
+verilog_gen_dir=os.path.join('flow', 'design', 'src', 'tempsense')
 generate_verilog(
     parameters={
         "design_name": designName,
@@ -110,24 +112,25 @@ generate_verilog(
         "ninv": ninv,
         "nhead": nhead
     },
-    out_dir=os.path.join('flow', 'design', 'src', 'tempsense')
+    out_dir=verilog_gen_dir
 )
 
-# TODO: Previous code. Remove later.
-# with open(srcDir + "TEMP_ANALOG_hv.nl.v", "r") as rf:
-#     filedata = rf.read()
-# header_list = re.findall("HEADER\s+(\w+)\(", filedata)
-# with open(genDir + "blocks/sky130hd/tempsenseInst_custom_net.txt", "w") as wf:
-#     wf.write("r_VIN\n")
-#     for header_cell in header_list:
-#         wf.write("temp_analog_1." + header_cell + " VIN\n")
+with open(os.path.join(verilog_gen_dir, "TEMP_ANALOG_hv.v"), "r") as rf:
+    filedata = rf.read()
+header_list = re.findall("HEADER\s+(\w+)\(", filedata)
 
-# with open(srcDir + "TEMP_ANALOG_lv.nl.v", "r") as rf:
-#     filedata = rf.read()
-# lv_list = re.findall("\nsky130_fd_sc\w*\s+(\w+)\s+\(", filedata)
-# with open(genDir + "blocks/sky130hd/tempsenseInst_domain_insts.txt", "w") as wf:
-#     for lv_cell in lv_list:
-#         wf.write("temp_analog_0." + lv_cell + "\n")
+with open(genDir + "blocks/sky130hd/tempsenseInst_custom_net.txt", "w") as wf:
+    wf.write("r_VIN\n")
+    for header_cell in header_list:
+        wf.write("temp_analog_1." + header_cell + " VIN\n")
+
+with open(os.path.join(verilog_gen_dir, "TEMP_ANALOG_lv.v"), "r") as rf:
+    filedata = rf.read()
+lv_list = re.findall("\nsky130_fd_sc\w*\s+(\w+)\s+\(", filedata)
+
+with open(genDir + "blocks/sky130hd/tempsenseInst_domain_insts.txt", "w") as wf:
+    for lv_cell in lv_list:
+        wf.write("temp_analog_0." + lv_cell + "\n")
 
 with open(flowDir + "design/sky130hd/tempsense/config.mk", "r") as rf:
     filedata = rf.read()
