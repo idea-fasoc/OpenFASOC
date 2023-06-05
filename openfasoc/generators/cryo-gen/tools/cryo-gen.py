@@ -29,12 +29,15 @@ if args.clean:
     p.wait()
 
 if args.platform == "sky130hd":
+    spice_file = "sky130_fd_sc_hd.spice"
     p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hd.spice"])
     p.wait()
 elif args.platform == "sky130hs":
+    spice_file = "sky130_fd_sc_hs.spice"
     p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hs.spice"])
     p.wait()
 elif args.platform == "sky130hvl":
+    spice_file = "sky130_fd_sc_hvl.spice"
     p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hvl.spice"])
     p.wait()
 elif args.platform == "sky130osu12Ths":
@@ -204,7 +207,7 @@ print("#----------------------------------------------------------------------")
 print("# Run Synthesis and APR")
 print("#----------------------------------------------------------------------")
 # make with different deisgn config
-p = sp.Popen(["make", "PLATFORM_ARG=" + args.platform], cwd=flowDir)
+p = sp.Popen(["make", "PLATFORM_ARG=" + args.platform, "SPICE_FILE=" + spice_file], cwd=flowDir)
 p.wait()
 
 
@@ -214,7 +217,7 @@ print("#----------------------------------------------------------------------")
 
 time.sleep(2)
 
-p = sp.Popen(["make", "magic_drc", "PLATFORM_ARG=" + args.platform], cwd=flowDir)
+p = sp.Popen(["make", "magic_drc", "PLATFORM_ARG=" + args.platform, "SPICE_FILE=" + spice_file], cwd=flowDir)
 p.wait()
 
 print("#----------------------------------------------------------------------")
@@ -223,7 +226,7 @@ print("#----------------------------------------------------------------------")
 
 time.sleep(2)
 
-p = sp.Popen(["make", "netgen_lvs"], cwd=flowDir)
+p = sp.Popen(["make", "netgen_lvs", "PLATFORM_ARG=" + args.platform, "SPICE_FILE=" + spice_file], cwd=flowDir)
 p.wait()
 
 
@@ -263,16 +266,16 @@ shutil.copyfile(
     genDir + args.outputDir + "/" + args.platform + "/" + designName + ".cdl",
 )
 shutil.copyfile(
+    flowDir + "objects/" + args.platform + "/cryo/netgen_lvs/spice/" + designName + ".spice",
     flowDir + designName + ".spice",
-    genDir + args.outputDir + "/" + args.platform + "/" + designName + ".spice",
 )
 shutil.copyfile(
+    flowDir + "objects/" + args.platform + "/cryo/netgen_lvs/spice/" + designName + "_pex.spice",
     flowDir + designName + "_pex.spice",
-    genDir + args.outputDir + "/" + args.platform + "/" + designName + "_pex.spice",
 )
 shutil.copyfile(
+    flowDir + "objects/" + args.platform + "/cryo/netgen_lvs/spice/" + designName + "_sim.spice",
     flowDir + designName + "_sim.spice",
-    genDir + args.outputDir + "/" + args.platform + "/" + designName + "_sim.spice",
 )
 shutil.copyfile(
     flowDir + "reports/" + args.platform + "/cryo/6_final_drc.rpt",
@@ -299,14 +302,27 @@ p.wait()
 p = sp.Popen(["yum", "install", "-y", "libXaw"])
 p.wait()
 
-pdks_path = "/shared/OpenLane/pdks/"
+pdks_path = "/usr/bin/miniconda3/share/pdk/"
 
-simulation.run_cryo_sim(
-    simDir,
-    pdks_path + "sky130A/libs.tech/ngspice/sky130.lib.spice",
-    "./../work/" + args.platform + "/" + designName + "_sim.spice",
-    "./../" + platformDir + "cdl/" + pdk_lib_name + ".spice",
-)
+if args.prepex :
+  simulation.run_cryo_sim(
+      simDir,
+      pdks_path + "sky130A/libs.tech/ngspice/sky130.lib.spice",
+      "./../" + flowDir + designName + "_sim.spice",
+      "./../" + platformDir + "cdl/" + pdk_lib_name + ".spice",
+      args.platform,
+      prepex = True
+  )
+
+if args.pex :
+  simulation.run_cryo_sim(
+      simDir,
+      pdks_path + "sky130A/libs.tech/ngspice/sky130.lib.spice",
+      "./../" + flowDir + designName + "_pex.spice",
+      "./../" + platformDir + "cdl/" + pdk_lib_name + ".spice",
+      args.platform,
+      prepex = False
+  )
 
 print("#----------------------------------------------------------------------")
 print("# Simulation output Generated")

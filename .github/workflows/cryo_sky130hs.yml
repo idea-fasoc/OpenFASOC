@@ -1,0 +1,34 @@
+name: sky130hs_cryo-generator
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  sky130hs_ldoGen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Test sky130hs Cryo Gen
+        env:
+                IMAGE_NAME: msaligane/openfasoc:stable
+        run: |
+          cd $GITHUB_WORKSPACE
+          touch file.log
+          docker run --rm \
+            -v $PWD:$PWD\
+            -w $PWD\
+            $IMAGE_NAME\
+            bash -c "\
+              cp ./.github/scripts/parse_rpt.py ./openfasoc/generators/cryo-gen/. &&\
+              pip3 install -r requirements.txt &&\
+              cd ./openfasoc/generators/cryo-gen &&\
+              make sky130hs_cryo &&\
+              python3 parse_rpt.py sky130hs
+            "| tee -a file.log
+            if grep "^Error" file.log; then exit 1; else exit 0; fi
