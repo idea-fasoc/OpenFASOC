@@ -43,5 +43,5 @@ def test_different_params(tmp_path):
 	expected_verilog_1 = open(expected_file_1).read()
 	expected_verilog_2 = open(expected_file_2).read()
 
-	assert generated_verilog_1 == expected_verilog_1, "Generated Verilog should be equal to the expected Verilog (6 inverters)."
-	assert generated_verilog_2 == expected_verilog_2, "Generated Verilog should be equal to the expected Verilog (8 inverters)."
+	assert generated_verilog_1 == expected_verilog_1, "Generated Verilog does not match the expected Verilog (6 inverters)."
+	assert generated_verilog_2 == expected_verilog_2, "Generated Verilog does not match the expected Verilog (8 inverters)."
