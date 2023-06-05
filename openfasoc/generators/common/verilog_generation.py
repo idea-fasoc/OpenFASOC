@@ -6,7 +6,7 @@ __COMMON_MAKO_DEFS = '''
 <%def name="cell(name)">${cell_prefix}${name}${cell_suffix}</%def>
 '''
 
-def __mako_defs_preprocessor(input: str) -> str:
+def _mako_defs_preprocessor(input: str) -> str:
 	"""A Mako preprocessor that appens commonly used defs to the template.
 
 	Mako templates have a preprocessor argument. See https://docs.makotemplates.org/en/latest/usage.html#mako.template.Template.params.preprocessor.
@@ -15,7 +15,7 @@ def __mako_defs_preprocessor(input: str) -> str:
 	"""
 	return __COMMON_MAKO_DEFS + input
 
-def __generate_file(input_path: str, output_path: str, parameters: dict) -> None:
+def _generate_file(input_path: str, output_path: str, parameters: dict) -> None:
 	"""Generates a single output Verilog file from its Mako template.
 
 	Arguments:
@@ -25,12 +25,12 @@ def __generate_file(input_path: str, output_path: str, parameters: dict) -> None
 	"""
 
 	# TODO: Find a better way to import common used defs in the future.
-	template = Template(filename=input_path, preprocessor=__mako_defs_preprocessor)
+	template = Template(filename=input_path, preprocessor=_mako_defs_preprocessor)
 
 	out_file = open(output_path, "w")
 	out_file.write(template.render(**parameters))
 
-def __generate_subdirectory(src_dir: str, out_dir: str, parameters: dict) -> None:
+def _generate_subdirectory(src_dir: str, out_dir: str, parameters: dict) -> None:
 	"""Generates the output Verilog files of a single subdirectory of Mako templates.
 
 	Reads Mako templates from a subdirectory (`src_dir`), generates the output files in the output directory (`out_dir`), and maintains the directory structure. i.e., templates from a subdirectory of the `src_dir` will be generated in a subdirectory in `out_dir` with the same name.
@@ -52,14 +52,14 @@ def __generate_subdirectory(src_dir: str, out_dir: str, parameters: dict) -> Non
 
 		if path.isdir(input_filepath):
 			# if the path is a subdirectory, recursively call the function
-			__generate_subdirectory(
+			_generate_subdirectory(
 				input_filepath,
 				output_filepath,
 				parameters
 			)
 		else:
 			# if the path is a fine, generate the output
-			__generate_file(
+			_generate_file(
 				input_filepath,
 				output_filepath,
 				parameters
@@ -82,4 +82,4 @@ def generate_verilog(
 	- `src_dir` (str): Path to the directory with the source Verilog templates.
 	- `out_dir` (str): Path to the directory in which the output will be generated.
 	"""
-	__generate_subdirectory(src_dir, out_dir, parameters)
+	_generate_subdirectory(src_dir, out_dir, parameters)
