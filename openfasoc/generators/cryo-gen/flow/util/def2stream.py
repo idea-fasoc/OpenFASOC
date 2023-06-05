@@ -1,15 +1,14 @@
-import copy
-import json
-import os
-import re
-import sys
-
 import pya
+import re
+import json
+import copy
+import sys
+import os
 
 errors = 0
 
 # Expand layers in json
-def expand_cfg_layers(cfg) -> None:
+def expand_cfg_layers(cfg):
     layers = cfg["layers"]
     expand = [layer for layer in layers if "layers" in layers[layer]]
     for layer in expand:
@@ -109,6 +108,8 @@ def read_fills(top):
 tech = pya.Technology()
 tech.load(tech_file)
 layoutOptions = tech.load_layout_options
+if len(layer_map) > 0:
+    layoutOptions.lefdef_config.map_file = layer_map
 
 # Load def file
 main_layout = pya.Layout()

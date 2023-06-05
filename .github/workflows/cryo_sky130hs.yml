@@ -29,6 +29,6 @@ jobs:
               pip3 install -r requirements.txt &&\
               cd ./openfasoc/generators/cryo-gen &&\
               make sky130hs_cryo &&\
-              python3 parse_rpt.py
+              python3 parse_rpt.py sky130hs
             "| tee -a file.log
             if grep "^Error" file.log; then exit 1; else exit 0; fi
