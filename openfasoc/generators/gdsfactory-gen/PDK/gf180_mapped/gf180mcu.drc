@@ -5453,4 +5453,3 @@ end #OFFGRID-ANGLES
 exec_end_time = Time.now
 run_time = exec_end_time - exec_start_time
 logger.info("DRC Total Run time %f seconds" % [run_time])
-

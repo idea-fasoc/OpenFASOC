@@ -1,17 +1,15 @@
 import sys
 
-if len(sys.argv) == 1 :
+if len(sys.argv) == 1:
     drc_filename = "work/6_final_drc.rpt"
 else:
-    drc_filename = "work/"+sys.argv[1]+"/6_final_drc.rpt"
+    drc_filename = "work/" + sys.argv[1] + "/6_final_drc.rpt"
 
 
-
-if len(sys.argv) == 1 :
+if len(sys.argv) == 1:
     lvs_filename = "work/6_final_lvs.rpt"
 else:
-    lvs_filename = "work/"+sys.argv[1]+"/6_final_lvs.rpt"
-
+    lvs_filename = "work/" + sys.argv[1] + "/6_final_lvs.rpt"
 
 
 num_lines = sum(1 for line in open(drc_filename))

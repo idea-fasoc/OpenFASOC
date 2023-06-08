@@ -27,6 +27,7 @@ bot_width = float(args.wbot)
 top_layer = int(args.lyrtop)
 gds_outdir = str(args.output_dir)
 
+
 @cell
 def create_Carray() -> Component:
     # ARRAY
@@ -144,41 +145,41 @@ def create_Carray() -> Component:
         Carray << Cmesh
 
         j += pitch
-    
+
     return Carray
+
 
 @cell
 def create_Carray20() -> Component:
-    
+
     Carray20 = gf.Component()
     Carray = create_Carray()
     i = 0
     for i in range(20):
-        #Rpad = Cstructure << Cpad
-        #Rpad.move([i * 60, 0])
+        # Rpad = Cstructure << Cpad
+        # Rpad.move([i * 60, 0])
         Rarray = Carray20 << Carray
         Rarray.move(origin=Rarray.center, destination=[i * 60 + 20, 60])
-        #Rpad = Cstructure << Cpad
-        #Rpad.move([i * 60, 80])
-    
+        # Rpad = Cstructure << Cpad
+        # Rpad.move([i * 60, 80])
+
     return Carray20
 
+
 @cell
-def create_Crail(
-    top_rail_pts,
-    bot_rail_pts
-) -> Component:
+def create_Crail(top_rail_pts, bot_rail_pts) -> Component:
     Crail = gf.Component()
     Crail.add_polygon(top_rail_pts, layer=(top_layer, 20))
     Crail.add_polygon(bot_rail_pts, layer=(top_layer - 1, 20))
 
     return Crail
 
+
 @cell
-def create_Cstructure() -> Component :
+def create_Cstructure() -> Component:
     Cstructure = gf.Component()
 
-    # create pad ring    
+    # create pad ring
     Carray20 = create_Carray20()
 
     # import and place pads and arrays
@@ -188,8 +189,8 @@ def create_Cstructure() -> Component :
     for i in range(20):
         Rpad = Cstructure << Cpad
         Rpad.move([i * 60, 0])
-        #Rarray = Carray20 << Carray
-        #Rarray.move(origin=Rarray.center, destination=[i * 60 + 20, 60])
+        # Rarray = Carray20 << Carray
+        # Rarray.move(origin=Rarray.center, destination=[i * 60 + 20, 60])
         Rpad = Cstructure << Cpad
         Rpad.move([i * 60, 80])
 
@@ -215,7 +216,6 @@ def create_Cstructure() -> Component :
         (right_edge, bot_edge - allowed_space + bot_width),
         (left_edge, bot_edge - allowed_space + bot_width),
     ]
-
 
     Crail = create_Crail(top_rail_pts, bot_rail_pts)
 
@@ -250,9 +250,16 @@ def create_Cstructure() -> Component :
 
     return Cstructure
 
+
 Cstructure = create_Cstructure()
 
 # OUTPUT
 Cstructure.write_gds(
-    gds_outdir + "/" + "merged_" + str(top_layer - 1) + "_" + str(top_layer) + "_cap_array.gds"
+    gds_outdir
+    + "/"
+    + "merged_"
+    + str(top_layer - 1)
+    + "_"
+    + str(top_layer)
+    + "_cap_array.gds"
 )

@@ -28,13 +28,13 @@ help:banner
 	@@echo ""
 	@@echo "5. make run_flow"
 	@@echo "	> This will run the above targets in sequence"
-	@@echo ""	
+	@@echo ""
 	@@echo "6. make clean"
 	@@echo "	> This will clean all the files in the result_dir"
 	@@echo ""
 
 gen_tc__line_res_via_chain:
-	mkdir -p result_dir/line-res_via-chain	
+	mkdir -p result_dir/line-res_via-chain
 	cp ./scripts/line-res_via-chain/pad_forty_met1_met5.GDS ./result_dir/line-res_via-chain/
 	make lr_vc__all
 
@@ -60,7 +60,7 @@ run_flow:
 
 # met1 = layer 68, width = via_dim + 2 * 0.06, spacing = seg_length = width + 0.14 (met1 spacing)
 lr_vc__met1:
-	python3 ./scripts/line-res_via-chain/via_chain_gen.py --dimension 40 --spacing 0.43 --width 0.29 --res_sets 40 --via_sets 20 --seg_length 0.43 --seg_width 0.2 --via_dim 0.17 --wire_layer 68 --output_dir=./result_dir/line-res_via-chain 
+	python3 ./scripts/line-res_via-chain/via_chain_gen.py --dimension 40 --spacing 0.43 --width 0.29 --res_sets 40 --via_sets 20 --seg_length 0.43 --seg_width 0.2 --via_dim 0.17 --wire_layer 68 --output_dir=./result_dir/line-res_via-chain
 	python3 ./scripts/line-res_via-chain/line_res_gen.py --dimension 40 --spacing 0.43 --width 0.29 --res_sets 40 --wire_layer 68 --output_dir=./result_dir/line-res_via-chain
 	python3 ./scripts/line-res_via-chain/line_res_gen.py --dimension 40 --spacing 2 --width 1 --res_sets 10 --wire_layer 68 --mode 1 --output_dir=./result_dir/line-res_via-chain
 

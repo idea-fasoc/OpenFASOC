@@ -69,8 +69,8 @@ foreach inst $allInsts {
 		       	   -orient R0
 	}
 }
-		      
-		       			  
+
+
 estimate_parasitics -placement
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl

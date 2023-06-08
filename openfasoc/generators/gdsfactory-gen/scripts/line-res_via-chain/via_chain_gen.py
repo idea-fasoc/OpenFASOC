@@ -110,6 +110,7 @@ for i in range(res_sets):
 
 ## Definitions to create components
 
+
 @cell
 def create_Cvia() -> Component:
     # create a "via component"
@@ -121,20 +122,24 @@ def create_Cvia() -> Component:
     r.move([-seg_width / 2, -seg_width / 2])
     r = Cvia << gf.components.rectangle(size=[width, width], layer=(wire_layer, 20))
     r.move([-width / 2, -width / 2])
-    r = Cvia << gf.components.rectangle(size=[via_dim, via_dim], layer=(wire_layer - 1, 44))
+    r = Cvia << gf.components.rectangle(
+        size=[via_dim, via_dim], layer=(wire_layer - 1, 44)
+    )
     r.move([-via_dim / 2, -via_dim / 2])
 
     return Cvia
+
 
 # cross section of wires and segments
 Xwire = gf.CrossSection(width=width, offset=0, layer=(wire_layer, 20))
 Xseg = gf.CrossSection(width=seg_width, offset=0, layer=(wire_layer - 1, 20))
 
+
 @cell
 def create_Cviachain() -> Component:
     # create a via chain
-    cviachain = Component()    
-    
+    cviachain = Component()
+
     # create wire and via segments from points
 
     is_wire = True  # by default, the first piece between two points is a wire
@@ -171,7 +176,6 @@ def create_Cviachain() -> Component:
         v = cviachain << Cvia
         v.move(list(coord))
 
-
     return cviachain
 
 
@@ -182,7 +186,7 @@ def create_Ctop() -> Component:
 
     # TOP
     # create top level component
-    Ctop = gf.Component() 
+    Ctop = gf.Component()
     # create a reference in top
     Rviachain = Ctop << Cviachain
 
@@ -192,7 +196,9 @@ def create_Ctop() -> Component:
 
     # create and reference tails
     Ctail1 = gf.path.extrude(gf.Path([(dim / 2, 0), (dim / 2, res_tail)]), Xwire)
-    Ctail2 = gf.path.extrude(gf.Path([(dim / 2, dim), (dim / 2, dim - res_tail)]), Xwire)
+    Ctail2 = gf.path.extrude(
+        gf.Path([(dim / 2, dim), (dim / 2, dim - res_tail)]), Xwire
+    )
 
     Ctop << Ctail1
     Ctop << Ctail2
@@ -214,11 +220,9 @@ def create_Cstructure() -> Component:
         Rpad = Cstructure << Cpad
         Rpad.move([0, i * 60])
 
-
     # move top to a proper location
     Rtop = Cstructure << Ctop
     Rtop.move([50, 90])
-
 
     # connect current ports of top to pads
     Xwire_i = gf.CrossSection(width=3 * width, offset=0, layer=(wire_layer, 20))
@@ -239,6 +243,7 @@ def create_Cstructure() -> Component:
     Cstructure << Ctail2
 
     return Cstructure
+
 
 Cstructure = create_Cstructure()
 

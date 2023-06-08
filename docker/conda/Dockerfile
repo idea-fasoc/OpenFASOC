@@ -9,7 +9,7 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-py37_23.1.0-1-Linux-x86_
     && rm -f Miniconda3-py37_23.1.0-1-Linux-x86_64.sh
 
 ENV PATH=/usr/bin/miniconda3/bin:${PATH}
-RUN conda update -y conda 
+RUN conda update -y conda
 RUN conda install -y -c litex-hub yosys \
                                 open_pdks.sky130a \
                                 magic \
