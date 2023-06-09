@@ -12,7 +12,7 @@ from simulation import generate_runs
 
 # TODO: Find a better way to import modules from parent directory
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-from common.verilog_generation import generate_verilog
+from common.verilog_generation import generate_verilog, COMMON_PLATFORMS_PREFIX_MAP
 
 genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)), "../")
 srcDir = genDir + "src/"
@@ -105,7 +105,7 @@ verilog_gen_dir=os.path.join('flow', 'design', 'src', 'tempsense')
 generate_verilog(
     parameters={
         "design_name": designName,
-        "cell_prefix": "sky130_fd_sc_hd__" if args.platform == "sky130hd" else "sky130_fd_sc_hs__",
+        "cell_prefix": COMMON_PLATFORMS_PREFIX_MAP[args.platform],
         "cell_suffix": "_1",
         "header_cell": "HEADER" if args.platform == "sky130hd" else "HEADER_hs",
         "slc_cell": "SLC" if args.platform == "sky130hd" else "SLC_hs",
