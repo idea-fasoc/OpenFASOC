@@ -85,6 +85,7 @@ def generate_verilog(
 	_generate_subdirectory(src_dir, out_dir, parameters)
 
 # A dictionary of commonly used platforms and the prefix used in their cell naming
+# Currently includes only sky130 platform prefixes
 COMMON_PLATFORMS_PREFIX_MAP = {
 	"sky130hd": "sky130_fd_sc_hd__",
 	"sky130hs": "sky130_fd_sc_hs__",
