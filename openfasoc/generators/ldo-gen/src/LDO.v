@@ -1,4 +1,4 @@
-module ldoInst(
+module ${design_name}(
    input        clk,
    input        reset,
    input	trim1,trim2,trim3,trim4,trim5,trim6,trim7,trim8,trim9,trim10,
@@ -16,7 +16,7 @@ module ldoInst(
    //input        VREF              // Reference Voltage
 );
 
-   parameter integer ARRSZ = 50;
+   parameter integer ARRSZ = ${arrSize};
 
    reg             ctrl_in, mode;
    reg [ARRSZ-1:0] pt_ctrl_word;
