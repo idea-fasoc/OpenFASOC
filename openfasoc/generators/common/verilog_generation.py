@@ -83,3 +83,19 @@ def generate_verilog(
 	- `out_dir` (str): Path to the directory in which the output will be generated.
 	"""
 	_generate_subdirectory(src_dir, out_dir, parameters)
+
+# A dictionary of commonly used platforms and the prefix used in their cell naming
+COMMON_PLATFORMS_PREFIX_MAP = {
+	"sky130hd": "sky130_fd_sc_hd__",
+	"sky130hs": "sky130_fd_sc_hs__",
+	"sky130hvl": "sky130_fd_sc_hvl__",
+	"sky130osu12Ths": "sky130_osu_sc_12T_hs__",
+	"sky130osu12Tms": "sky130_osu_sc_12T_ms__",
+	"sky130osu12Tls": "sky130_osu_sc_12T_ls__",
+	"sky130osu15Ths": "sky130_osu_sc_15T_hs__",
+	"sky130osu15Tms": "sky130_osu_sc_15T_ms__",
+	"sky130osu15Tls": "sky130_osu_sc_15T_ls__",
+	"sky130osu18Ths": "sky130_osu_sc_18T_hs__",
+	"sky130osu18Tms": "sky130_osu_sc_18T_ms__",
+	"sky130osu18Tls": "sky130_osu_sc_18T_ls__"
+}
