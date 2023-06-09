@@ -11,6 +11,10 @@ from configure_workspace import *
 from generate_verilog import *
 from simulations import *
 
+# TODO: Find a better way to import modules from parent directory
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+from common.verilog_generation import generate_verilog, COMMON_PLATFORMS_PREFIX_MAP
+
 print("#---------------------------------------------------------------------")
 print("# Parsing command line arguments...")
 print("#---------------------------------------------------------------------")
@@ -112,8 +116,18 @@ print("# LDO - Design Area = " + str(designArea) + " um^2")
 update_area_and_place_density(directories["flowDir"], arrSize)
 
 # Generate the Behavioral Verilog
-generate_LDO_verilog(directories, args.outputDir, user_specs["designName"], arrSize)
-generate_controller_verilog(directories, args.outputDir, arrSize)
+verilog_gen_dir = os.path.join('flow', 'design', 'src', 'ldo')
+ctrlWdRst = get_ctrl_wd_rst(arrSize)
+
+generate_verilog(
+    parameters={
+        "design_name": user_specs["designName"],
+        "arrSize": arrSize,
+        "ctrlWdRst": ctrlWdRst
+    },
+    out_dir=verilog_gen_dir
+)
+
 if clean_work_dir:
     print("# LDO - Behavioural Verilog Generated")
     print("#----------------------------------------------------------------------")
@@ -156,7 +170,7 @@ if args.mode != "verilog" and clean_work_dir:
     print("#----------------------------------------------------------------------")
     print("# LVS and DRC finished successfully")
     print("#----------------------------------------------------------------------")
-    
+
     # function defined in configure_workspace.py
     copy_outputs(directories, args.outputDir, args.platform, user_specs["designName"])
 
@@ -220,7 +234,7 @@ if args.mode != "verilog" and clean_work_dir:
        else:
             print("simtool not supported")
             exit(1)
-    
+
     if args.simtype == "prePEX":
        if jsonConfig["simTool"] == "ngspice":
            [sim, output_file_names] = ngspice_prepare_scripts(
@@ -251,10 +265,10 @@ if args.mode != "verilog" and clean_work_dir:
        else:
             print("simtool not supported")
             exit(1)
-    
+
     print("#----------------------------------------------------------------------")
     print("# Spice netlists created successfully")
-    print("#----------------------------------------------------------------------")    
+    print("#----------------------------------------------------------------------")
 
 # ------------------------------------------------------------------------------
 # run simulations
@@ -275,13 +289,13 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
           for s in range (len(sim)):
               p = sp.Popen(sim[s],cwd=postPEX_sim_dir,shell=True)
               processes.append(p)
-            
+
           for p in processes:
               p.wait()
-                 
+
           p = sp.Popen(["python3","processing.py","--file_path",postPEX_sim_dir,"--vref",str(vref),"--iload",str(iload),"--odir",odir, "--figs", "True", "--simType", "postPEX"],cwd=run_dir)
           p.wait()
-          
+
        if args.simtype == "prePEX":
           run_dir = directories["genDir"] + "tools/"
           vref = user_specs["vin"]
@@ -290,20 +304,20 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
           for s in range (len(sim)):
               p = sp.Popen(sim[s],cwd=prePEX_sim_dir,shell=True)
               processes.append(p)
-            
+
           for p in processes:
               p.wait()
-              
+
           p = sp.Popen(["python3","processing.py","--file_path",prePEX_sim_dir,"--vref",str(vref),"--iload",str(iload),"--odir",odir, "--figs", "True", "--simType", "prePEX"],cwd=run_dir)
           p.wait()
        """
           for s in range (len(sim)):
               p = sp.Popen(sim[s],cwd=prePEX_sim_dir,shell=True)
               processes.append(p)
-            
+
           for p in processes:
               p.wait()
-             
+
           # perform post processing on simulation results and save figures to work dir
           raw_files = [(prePEX_sim_dir + ofile) for ofile in output_file_names]
           raw_to_csv(raw_files,user_specs["vin"],args.outputDir)
