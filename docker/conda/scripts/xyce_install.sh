@@ -25,7 +25,7 @@ apt install -y cmake
 #Install Trilinos from source
 ###########################################################################
 
-wget https://github.com/trilinos/Trilinos/archive/trilinos-release-12-12-1.tar.gz 
+wget https://github.com/trilinos/Trilinos/archive/trilinos-release-12-12-1.tar.gz
 tar zxvf trilinos-release-12-12-1.tar.gz
 
 SRCDIR=$PWD/Trilinos-trilinos-release-12-12-1

@@ -14,7 +14,7 @@ vVSS VSS 0 dc 0
 *change c0 to avoid "timestep is too small" error
 c0 OUT 0 25f
 
-*change step size and transient analysis time 
+*change step size and transient analysis time
 .TRAN 0.4n 24u
 
 .control

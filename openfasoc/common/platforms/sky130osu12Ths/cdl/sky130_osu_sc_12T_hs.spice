@@ -2,10 +2,10 @@
 * Created: Mon Nov 16 20:37:05 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__addf_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__addf_1  GND VDD A B CI CON S CO
-* 
+*
 * CO	CO
 * S	S
 * CON	CON
@@ -117,10 +117,10 @@ pX34_noxref noxref_25 CO CO PROBETYPE=1
 * Created: Mon Nov 16 20:37:11 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__addf_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__addf_l  GND VDD A B CI CON S CO
-* 
+*
 * CO	CO
 * S	S
 * CON	CON
@@ -232,10 +232,10 @@ pX34_noxref noxref_25 CO CO PROBETYPE=1
 * Created: Mon Nov 16 20:37:17 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__addh_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__addh_1  GND VDD CON B A S CO
-* 
+*
 * CO	CO
 * S	S
 * A	A
@@ -303,10 +303,10 @@ pX19_noxref noxref_15 A A PROBETYPE=1
 * Created: Mon Nov 16 20:37:22 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__addh_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__addh_l  GND VDD CON B A S CO
-* 
+*
 * CO	CO
 * S	S
 * A	A
@@ -374,10 +374,10 @@ pX19_noxref noxref_15 A A PROBETYPE=1
 * Created: Mon Nov 16 20:37:28 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__and2_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__and2_1  GND VDD A B Y
-* 
+*
 * Y	Y
 * B	B
 * A	A
@@ -417,10 +417,10 @@ pX9_noxref noxref_10 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:37:34 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__and2_2.pex.spice"
 .subckt sky130_osu_sc_12T_hs__and2_2  GND VDD A B Y
-* 
+*
 * Y	Y
 * B	B
 * A	A
@@ -466,10 +466,10 @@ pX11_noxref noxref_10 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:37:39 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__and2_4.pex.spice"
 .subckt sky130_osu_sc_12T_hs__and2_4  GND VDD A B Y
-* 
+*
 * Y	Y
 * B	B
 * A	A
@@ -527,10 +527,10 @@ pX15_noxref noxref_10 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:37:45 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__and2_6.pex.spice"
 .subckt sky130_osu_sc_12T_hs__and2_6  A B Y GND VDD
-* 
+*
 * Y	Y
 * B	B
 * A	A
@@ -598,10 +598,10 @@ pX19_noxref noxref_12 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:37:51 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__and2_8.pex.spice"
 .subckt sky130_osu_sc_12T_hs__and2_8  GND VDD A B Y
-* 
+*
 * Y	Y
 * B	B
 * A	A
@@ -683,10 +683,10 @@ pX23_noxref noxref_10 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:37:56 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__and2_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__and2_l  GND VDD A B Y
-* 
+*
 * Y	Y
 * B	B
 * A	A
@@ -726,10 +726,10 @@ pX9_noxref noxref_10 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:38:05 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__ant.pex.spice"
 .subckt sky130_osu_sc_12T_hs__ant  GND VDD A
-* 
+*
 * A	A
 * VDD	VDD
 * GND	GND
@@ -753,10 +753,10 @@ pX3_noxref noxref_4 A A PROBETYPE=1
 * Created: Mon Nov 16 20:38:11 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__aoi21_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__aoi21_l  GND VDD A0 A1 B0 Y
-* 
+*
 * Y	Y
 * B0	B0
 * A1	A1
@@ -798,10 +798,10 @@ pX10_noxref noxref_12 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:38:16 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__aoi22_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__aoi22_l  GND VDD A0 A1 B0 B1 Y
-* 
+*
 * Y	Y
 * B1	B1
 * B0	B0
@@ -851,10 +851,10 @@ pX13_noxref noxref_15 B1 B1 PROBETYPE=1
 * Created: Mon Nov 16 20:38:22 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__buf_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__buf_1  GND VDD A Y
-* 
+*
 * Y	Y
 * A	A
 * VDD	VDD
@@ -886,10 +886,10 @@ pX6_noxref noxref_7 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:38:28 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__buf_2.pex.spice"
 .subckt sky130_osu_sc_12T_hs__buf_2  GND VDD A Y
-* 
+*
 * Y	Y
 * A	A
 * VDD	VDD
@@ -927,10 +927,10 @@ pX8_noxref noxref_7 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:38:33 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__buf_4.pex.spice"
 .subckt sky130_osu_sc_12T_hs__buf_4  GND VDD A Y
-* 
+*
 * Y	Y
 * A	A
 * VDD	VDD
@@ -980,10 +980,10 @@ pX12_noxref noxref_7 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:38:39 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__buf_6.pex.spice"
 .subckt sky130_osu_sc_12T_hs__buf_6  A Y GND VDD
-* 
+*
 * Y	Y
 * A	A
 MM1005 N_noxref_1_M1005_d N_A_M1005_g N_A_27_115#_M1005_s N_noxref_1_M1005_b
@@ -1043,10 +1043,10 @@ pX16_noxref noxref_9 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:38:45 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__buf_8.pex.spice"
 .subckt sky130_osu_sc_12T_hs__buf_8  GND VDD A Y
-* 
+*
 * Y	Y
 * A	A
 * VDD	VDD
@@ -1120,10 +1120,10 @@ pX20_noxref noxref_7 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:38:50 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__buf_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__buf_l  GND VDD A Y
-* 
+*
 * Y	Y
 * A	A
 * VDD	VDD
@@ -1155,10 +1155,10 @@ pX6_noxref noxref_7 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:38:58 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__dff_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__dff_1  GND VDD D CK ON Q
-* 
+*
 * Q	Q
 * ON	ON
 * CK	CK
@@ -1261,10 +1261,10 @@ c_1319 A_551_521# 0 1.57671e-19 $X=2.755 $Y=2.605
 * Created: Mon Nov 16 20:39:04 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__dff_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__dff_l  GND VDD D CK Q
-* 
+*
 * Q	Q
 * ON	ON
 * CK	CK
@@ -1367,10 +1367,10 @@ c_1323 A_551_521# 0 1.57671e-19 $X=2.755 $Y=2.605
 * Created: Mon Nov 16 20:39:09 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__dffr_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__dffr_1  GND VDD RN D CK QN Q
-* 
+*
 * Q	Q
 * QN	QN
 * CK	CK
@@ -1493,10 +1493,10 @@ c_1783 A_926_521# 0 1.57671e-19 $X=4.63 $Y=2.605
 * Created: Mon Nov 16 20:39:15 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__dffr_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__dffr_l  GND VDD RN D CK QN Q
-* 
+*
 * Q	Q
 * QN	QN
 * CK	CK
@@ -1619,10 +1619,10 @@ c_1778 A_926_521# 0 1.57671e-19 $X=4.63 $Y=2.605
 * Created: Mon Nov 16 20:39:21 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__dffs_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__dffs_1  GND VDD SN D CK QN Q
-* 
+*
 * Q	Q
 * QN	QN
 * CK	CK
@@ -1739,10 +1739,10 @@ c_1608 A_736_521# 0 1.57671e-19 $X=3.68 $Y=2.605
 * Created: Mon Nov 16 20:39:27 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__dffs_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__dffs_l  GND VDD SN D CK QN Q
-* 
+*
 * Q	Q
 * QN	QN
 * CK	CK
@@ -1859,10 +1859,10 @@ c_1617 A_736_521# 0 1.57671e-19 $X=3.68 $Y=2.605
 * Created: Mon Nov 16 20:39:32 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__dffsr_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__dffsr_1  GND VDD RN SN D CK QN Q
-* 
+*
 * Q	Q
 * QN	QN
 * CK	CK
@@ -1999,10 +1999,10 @@ c_2169 A_1012_521# 0 1.57671e-19 $X=5.06 $Y=2.605
 * Created: Mon Nov 16 20:39:38 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__dffsr_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__dffsr_l  GND VDD RN SN D CK QN Q
-* 
+*
 * Q	Q
 * QN	QN
 * CK	CK
@@ -2139,10 +2139,10 @@ c_2177 A_1012_521# 0 1.57671e-19 $X=5.06 $Y=2.605
 * Created: Fri Nov 12 15:10:04 2021
 * Program "Calibre xRC"
 * Version "v2021.2_28.15"
-* 
+*
 .include "sky130_osu_sc_12T_hs__dlat_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__dlat_1  GND VDD D CK ON Q
-* 
+*
 * Q	Q
 * ON	ON
 * CK	CK
@@ -2215,10 +2215,10 @@ c_836 A_115_521# 0 1.57671e-19 $X=0.575 $Y=2.605
 * Created: Fri Nov 12 15:10:12 2021
 * Program "Calibre xRC"
 * Version "v2021.2_28.15"
-* 
+*
 .include "sky130_osu_sc_12T_hs__dlat_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__dlat_l  GND VDD D CK ON Q
-* 
+*
 * Q	Q
 * ON	ON
 * CK	CK
@@ -2291,10 +2291,10 @@ c_838 A_115_521# 0 1.57671e-19 $X=0.575 $Y=2.605
 * Created: Mon Nov 16 20:39:56 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__inv_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__inv_1  GND VDD A Y
-* 
+*
 * Y	Y
 * A	A
 * VDD	VDD
@@ -2320,10 +2320,10 @@ pX4_noxref noxref_6 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:40:01 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__inv_2.pex.spice"
 .subckt sky130_osu_sc_12T_hs__inv_2  GND VDD A Y
-* 
+*
 * Y	Y
 * A	A
 * VDD	VDD
@@ -2355,10 +2355,10 @@ pX6_noxref noxref_6 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:40:07 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__inv_3.pex.spice"
 .subckt sky130_osu_sc_12T_hs__inv_3  GND VDD A Y
-* 
+*
 * Y	Y
 * A	A
 * VDD	VDD
@@ -2396,10 +2396,10 @@ pX8_noxref noxref_6 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:40:13 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__inv_4.pex.spice"
 .subckt sky130_osu_sc_12T_hs__inv_4  GND VDD A Y
-* 
+*
 * Y	Y
 * A	A
 * VDD	VDD
@@ -2443,10 +2443,10 @@ pX10_noxref noxref_6 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:40:18 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__inv_6.pex.spice"
 .subckt sky130_osu_sc_12T_hs__inv_6  GND VDD A Y
-* 
+*
 * Y	Y
 * A	A
 * VDD	VDD
@@ -2502,10 +2502,10 @@ pX14_noxref noxref_6 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:40:24 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__inv_8.pex.spice"
 .subckt sky130_osu_sc_12T_hs__inv_8  GND VDD A Y
-* 
+*
 * Y	Y
 * A	A
 * VDD	VDD
@@ -2573,10 +2573,10 @@ pX18_noxref noxref_6 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:39:50 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__inv_10.pex.spice"
 .subckt sky130_osu_sc_12T_hs__inv_10  GND VDD A Y
-* 
+*
 * Y	Y
 * A	A
 * VDD	VDD
@@ -2656,10 +2656,10 @@ pX22_noxref noxref_6 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:40:30 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__inv_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__inv_l  GND VDD A Y
-* 
+*
 * Y	Y
 * A	A
 * VDD	VDD
@@ -2685,10 +2685,10 @@ pX4_noxref noxref_6 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:40:35 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__mux2_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__mux2_1  GND VDD S0 A0 Y A1
-* 
+*
 * A1	A1
 * Y	Y
 * A0	A0
@@ -2730,10 +2730,10 @@ pX10_noxref noxref_11 A1 A1 PROBETYPE=1
 * Created: Mon Nov 16 20:40:41 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__nand2_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__nand2_1  GND VDD A B Y
-* 
+*
 * Y	Y
 * B	B
 * A	A
@@ -2767,10 +2767,10 @@ pX7_noxref noxref_9 B B PROBETYPE=1
 * Created: Mon Nov 16 20:40:47 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__nand2_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__nand2_l  GND VDD A B Y
-* 
+*
 * Y	Y
 * B	B
 * A	A
@@ -2804,10 +2804,10 @@ pX7_noxref noxref_9 B B PROBETYPE=1
 * Created: Tue Apr 26 09:48:41 2022
 * Program "Calibre xRC"
 * Version "v2021.2_28.15"
-* 
+*
 .include "sky130_osu_sc_12T_hs__ncgate_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__ncgate_1  GND Q SE E CK ECK
-* 
+*
 * ECK	ECK
 * CK	CK
 * E	E
@@ -2909,10 +2909,10 @@ pX30_noxref noxref_23 ECK ECK PROBETYPE=1
 * Created: Tue Apr 26 09:48:49 2022
 * Program "Calibre xRC"
 * Version "v2021.2_28.15"
-* 
+*
 .include "sky130_osu_sc_12T_hs__ncgateCKa_new.pex.spice"
 .subckt sky130_osu_sc_12T_hs__ncgateCKa_new  GND VDD SE E CK Q CKA ECK
-* 
+*
 * ECK	ECK
 * CKA	CKA
 * Q	Q
@@ -3019,10 +3019,10 @@ pX33_noxref noxref_26 ECK ECK PROBETYPE=1
 * Created: Tue Apr 26 09:48:58 2022
 * Program "Calibre xRC"
 * Version "v2021.2_28.15"
-* 
+*
 .include "sky130_osu_sc_12T_hs__ndlat_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__ndlat_1  GND VDD D CK QN Q
-* 
+*
 * Q	Q
 * QN	QN
 * CK	CK
@@ -3094,10 +3094,10 @@ pX20_noxref noxref_17 Q Q PROBETYPE=1
 * Created: Tue Apr 26 09:49:06 2022
 * Program "Calibre xRC"
 * Version "v2021.2_28.15"
-* 
+*
 .include "sky130_osu_sc_12T_hs__ndlat_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__ndlat_l  GND VDD D CK QN Q
-* 
+*
 * Q	Q
 * QN	QN
 * CK	CK
@@ -3169,10 +3169,10 @@ pX20_noxref noxref_17 Q Q PROBETYPE=1
 * Created: Mon Nov 16 20:40:52 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__nor2_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__nor2_1  GND VDD B A Y
-* 
+*
 * Y	Y
 * A	A
 * B	B
@@ -3206,10 +3206,10 @@ pX7_noxref noxref_9 A A PROBETYPE=1
 * Created: Mon Nov 16 20:41:03 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__nor2_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__nor2_l  GND VDD B A Y
-* 
+*
 * Y	Y
 * A	A
 * B	B
@@ -3243,10 +3243,10 @@ pX7_noxref noxref_9 A A PROBETYPE=1
 * Created: Mon Nov 16 20:41:09 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__oai21_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__oai21_l  GND VDD A0 A1 B0 Y
-* 
+*
 * Y	Y
 * B0	B0
 * A1	A1
@@ -3288,10 +3288,10 @@ pX10_noxref noxref_12 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:41:14 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__oai22_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__oai22_l  GND VDD A0 A1 B0 B1 Y
-* 
+*
 * Y	Y
 * B1	B1
 * B0	B0
@@ -3341,10 +3341,10 @@ pX13_noxref noxref_15 B1 B1 PROBETYPE=1
 * Created: Mon Nov 16 20:41:20 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__or2_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__or2_1  GND VDD B A Y
-* 
+*
 * Y	Y
 * A	A
 * B	B
@@ -3384,10 +3384,10 @@ pX9_noxref noxref_10 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:41:26 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__or2_2.pex.spice"
 .subckt sky130_osu_sc_12T_hs__or2_2  GND VDD B A Y
-* 
+*
 * Y	Y
 * A	A
 * B	B
@@ -3433,10 +3433,10 @@ pX11_noxref noxref_10 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:41:32 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__or2_4.pex.spice"
 .subckt sky130_osu_sc_12T_hs__or2_4  GND VDD B A Y
-* 
+*
 * Y	Y
 * A	A
 * B	B
@@ -3494,10 +3494,10 @@ pX15_noxref noxref_10 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:41:37 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__or2_8.pex.spice"
 .subckt sky130_osu_sc_12T_hs__or2_8  GND VDD B A Y
-* 
+*
 * Y	Y
 * A	A
 * B	B
@@ -3579,10 +3579,10 @@ pX23_noxref noxref_10 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:41:43 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__or2_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__or2_l  GND VDD B A Y
-* 
+*
 * Y	Y
 * A	A
 * B	B
@@ -3622,10 +3622,10 @@ pX9_noxref noxref_10 Y Y PROBETYPE=1
 * Created: Tue Apr 26 09:50:31 2022
 * Program "Calibre xRC"
 * Version "v2021.2_28.15"
-* 
+*
 .include "sky130_osu_sc_12T_hs__pcgate_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__pcgate_1  GND VDD SE E CK Q ECK
-* 
+*
 * ECK	ECK
 * Q	Q
 * CK	CK
@@ -3729,10 +3729,10 @@ pX31_noxref noxref_24 ECK ECK PROBETYPE=1
 * Created: Tue Apr 26 09:50:40 2022
 * Program "Calibre xRC"
 * Version "v2021.2_28.15"
-* 
+*
 .include "sky130_osu_sc_12T_hs__pcgateCKa_new.pex.spice"
 .subckt sky130_osu_sc_12T_hs__pcgateCKa_new  GND VDD SE E CK CKA Q ECK
-* 
+*
 * ECK	ECK
 * Q	Q
 * CKA	CKA
@@ -3839,10 +3839,10 @@ pX33_noxref noxref_27 ECK ECK PROBETYPE=1
 * Created: Mon Nov 16 20:41:49 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__tbufi_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__tbufi_1  GND VDD OE A Y
-* 
+*
 * Y	Y
 * A	A
 * OE	OE
@@ -3882,10 +3882,10 @@ pX9_noxref noxref_11 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:41:55 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__tbufi_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__tbufi_l  GND VDD OE A Y
-* 
+*
 * Y	Y
 * A	A
 * OE	OE
@@ -3925,10 +3925,10 @@ pX9_noxref noxref_11 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:42:00 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__tiehi.pex.spice"
 .subckt sky130_osu_sc_12T_hs__tiehi  GND VDD Y
-* 
+*
 * Y	Y
 * VDD	VDD
 * GND	GND
@@ -3952,10 +3952,10 @@ pX3_noxref noxref_5 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:42:06 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__tielo.pex.spice"
 .subckt sky130_osu_sc_12T_hs__tielo  GND VDD Y
-* 
+*
 * Y	Y
 * VDD	VDD
 * GND	GND
@@ -3979,10 +3979,10 @@ pX3_noxref noxref_5 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:42:12 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__tnbufi_1.pex.spice"
 .subckt sky130_osu_sc_12T_hs__tnbufi_1  GND VDD OE A Y
-* 
+*
 * Y	Y
 * A	A
 * OE	OE
@@ -4022,10 +4022,10 @@ pX9_noxref noxref_11 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:42:17 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__tnbufi_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__tnbufi_l  GND VDD OE A Y
-* 
+*
 * Y	Y
 * A	A
 * OE	OE
@@ -4065,10 +4065,10 @@ pX9_noxref noxref_11 Y Y PROBETYPE=1
 * Created: Mon Nov 16 20:42:23 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__xnor2_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__xnor2_l  GND VDD A B Y
-* 
+*
 * Y	Y
 * B	B
 * A	A
@@ -4126,10 +4126,10 @@ pX15_noxref noxref_14 B B PROBETYPE=1
 * Created: Mon Nov 16 20:42:29 2020
 * Program "Calibre xRC"
 * Version "v2020.2_35.23"
-* 
+*
 .include "sky130_osu_sc_12T_hs__xor2_l.pex.spice"
 .subckt sky130_osu_sc_12T_hs__xor2_l  GND VDD A B Y
-* 
+*
 * Y	Y
 * B	B
 * A	A

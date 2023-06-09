@@ -61,7 +61,7 @@ else
         sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
         sed -i 's/ltspice/#ltspice/g' requirements.txt
         pip3 install -r requirements.txt
-                
+
         if [ $? == 0 ]
         then
                 echo "[OpenFASoC] Installed python packages except 'ltspice and gdsfactory'. You need to install GCC packages first and then install both these packages"

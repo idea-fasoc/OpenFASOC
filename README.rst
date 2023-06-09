@@ -54,9 +54,9 @@ Install all the prerequisites using `dependencies.sh` script provided in the hom
 
    - open_pdks is required to run drc/lvs check and the simulations
    - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
-  
+
   7. `Xyce <https://github.com/Xyce/Xyce>`_ (version: 7.6)
-   
+
    - Once the Xyce installation is complete, please make sure to add Xyce binary to $PATH environment variable.
 
   **Other notice:**

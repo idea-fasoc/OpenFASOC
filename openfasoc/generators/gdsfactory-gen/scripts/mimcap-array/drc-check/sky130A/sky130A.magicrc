@@ -33,7 +33,7 @@ source $PDK_ROOT/sky130A/libs.tech/magic/sky130A.tcl
 # load bind keys (optional)
 # source $PDK_ROOT/sky130A/libs.tech/magic/sky130A-BindKeys
 
-# set units to lambda grid 
+# set units to lambda grid
 snap lambda
 
 # set sky130 standard power, ground, and substrate names

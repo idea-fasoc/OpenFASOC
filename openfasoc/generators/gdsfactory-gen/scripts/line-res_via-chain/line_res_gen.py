@@ -71,6 +71,7 @@ Xwire = gf.CrossSection(width=width, offset=0, layer=(wire_layer, 20))
 Cwire = gf.path.extrude(Pwire, Xwire)
 translation = (dim / 2 - Cwire.center[0], dim / 2 - Cwire.center[1])
 
+
 @cell
 def create_Ctop() -> Component:
     # TOP
@@ -80,17 +81,20 @@ def create_Ctop() -> Component:
     # create a reference in top
     Rwire = Ctop << Cwire
 
-    # move the wire component reference    
+    # move the wire component reference
     Rwire.move(translation)
 
     # create and reference tails
     Ctail1 = gf.path.extrude(gf.Path([(dim / 2, 0), (dim / 2, res_tail)]), Xwire)
-    Ctail2 = gf.path.extrude(gf.Path([(dim / 2, dim), (dim / 2, dim - res_tail)]), Xwire)
+    Ctail2 = gf.path.extrude(
+        gf.Path([(dim / 2, dim), (dim / 2, dim - res_tail)]), Xwire
+    )
 
     Ctop << Ctail1
     Ctop << Ctail2
 
     return Ctop
+
 
 @cell
 def create_Cstructure() -> Component:
@@ -106,7 +110,7 @@ def create_Cstructure() -> Component:
     for i in range(4):
         Rpad = Cstructure << Cpad
         Rpad.move([0, i * 60])
-    
+
     Ctop = create_Ctop()
     # move top to a proper location
     Rtop = Cstructure << Ctop
@@ -129,11 +133,12 @@ def create_Cstructure() -> Component:
 
     Ctail1 = gf.path.extrude(gf.Path([(40, v_pt_a_y), (50, v_pt_a_y)]), Xwire)
     Ctail2 = gf.path.extrude(gf.Path([(40, v_pt_b_y), (50, v_pt_b_y)]), Xwire)
-    
+
     Cstructure << Ctail1
     Cstructure << Ctail2
 
     return Cstructure
+
 
 # OUTPUT
 if gen_mode == 0:
