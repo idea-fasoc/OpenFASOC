@@ -21,5 +21,6 @@ clean:
 	rm -f error_within_x.csv golden_error_opt.csv search_result.csv
 	rm -rf work
 	rm -rf tools/*.pyc tools/__pycache__/
+	rm -rf flow/design/src/dcdc
 	cd flow && make nuke
 	cd simulations && rm -rf run
