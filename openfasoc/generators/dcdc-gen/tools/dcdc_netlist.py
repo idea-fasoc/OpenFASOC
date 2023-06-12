@@ -2035,8 +2035,9 @@ def gen_dcdc_netlist_parameters(args, jsonSpec, platformConfig):
     print("dcdc_sw_size: " + str(dcdc_sw_size))
     print("pow_mux_config: " + ",".join(powmux_config) + "\n\n")
 
+    powmux_config_str = "{" + ",".join(powmux_config) + "}"
     return {
         "dcdc_cap_size": dcdc_cap_size,
         "dcdc_sw_size": dcdc_sw_size,
-        "powmux_config": powmux_config,
+        "powmux_config": powmux_config_str,
     }
