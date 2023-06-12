@@ -11,9 +11,9 @@ module DCDC_SIX_STAGES_CONV(
 	);
 
     parameter DCDC_NUM_STAGE = 6;
-    parameter DCDC_CAP_SIZE = 18;
-    parameter DCDC_SW_SIZE = 8;
-	parameter [(DCDC_NUM_STAGE*8)-1:0] DCDC_PWR_MUX_CONF = {8'd1,8'd1,8'd1,8'd1,8'd1,8'd2};
+    parameter DCDC_CAP_SIZE = ${dcdc_cap_size};
+    parameter DCDC_SW_SIZE = ${dcdc_sw_size};
+	parameter [(DCDC_NUM_STAGE*8)-1:0] DCDC_PWR_MUX_CONF = ${powmux_config};
 
     assign VOUT = w_vint[DCDC_NUM_STAGE-1];
 
