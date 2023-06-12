@@ -12,12 +12,16 @@ import glob
 
 import operator
 import readparamgen
-import dcdc_netlist
+from dcdc_netlist import gen_dcdc_netlist_parameters
 import os
 import time
 
 # designName is from the json Specfile, args is commandline args, jsonSpec is parsed json Specfile
 from readparamgen import designName, args, jsonSpec
+
+# TODO: Find a better way to import modules from parent directory
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+from common.verilog_generation import generate_verilog, COMMON_PLATFORMS_PREFIX_MAP
 
 # paths declaration
 genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)), "../")
@@ -146,12 +150,7 @@ elif args.platform == "sky130hs":
         "nand2_cell": "sky130_fd_sc_hs__nand2_1",
     }
 
-# generate updated verilog netlist based on the cells and jsonSpec
-
-dcdc_netlist.gen_dcdc_netlist(cells, args, jsonSpec, jsonConfig, srcDir)
-
 # generate SDC file
-
 Frequency = float(jsonSpec["specifications"]["Clock frequency (kHz)"])
 
 if re.search("sky130", args.platform):  # Update
@@ -170,14 +169,6 @@ filedata = re.sub(
 with open(flowDir + "/design/" + args.platform + "/dcdc/constraint.sdc", "w") as file:
     file.write(filedata)
 
-# replace designName in top level verilog
-
-with open(srcDir + "dcdcInst.v", "r") as rf:
-    filedata = rf.read()
-    filedata = re.sub("module\s*(\w+)\s*\n", "module " + designName + "\n", filedata)
-with open(srcDir + "dcdcInst.v", "w") as wf:
-    wf.write(filedata)
-
 # replace designName in flow/design/.../config.mk
 
 with open(flowDir + "design/" + args.platform + "/dcdc/config.mk", "r") as rf:
@@ -188,20 +179,19 @@ with open(flowDir + "design/" + args.platform + "/dcdc/config.mk", "r") as rf:
 with open(flowDir + "design/" + args.platform + "/dcdc/config.mk", "w") as wf:
     wf.write(filedata)
 
-# copy the generated verilog files into the flow directory
+# generate verilog files
+netlist_parameters = gen_dcdc_netlist_parameters(args, jsonSpec, jsonConfig)
+verilog_gen_parameters = {
+    "design_name": designName,
+    "cell_prefix": COMMON_PLATFORMS_PREFIX_MAP[args.platform],
+    "cell_suffix": "_1",
+    **netlist_parameters
+}
 
-shutil.copyfile(srcDir + "dcdcInst.v", flowDir + "design/src/dcdc/" + designName + ".v")
-shutil.copyfile(
-    srcDir + "DCDC_SIX_STAGES_CONV.v",
-    flowDir + "design/src/dcdc/DCDC_SIX_STAGES_CONV.v",
+generate_verilog(
+    parameters=verilog_gen_parameters,
+    out_dir=os.path.join('flow', 'design', 'src', 'dcdc')
 )
-# shutil.copyfile(srcDir + 'DCDC_CONV2TO1.v', flowDir + 'design/src/dcdc/DCDC_CONV2TO1.v')
-# shutil.copyfile(srcDir + 'DCDC_HUNIT_CONV2TO1.v', flowDir + 'design/src/dcdc/DCDC_HUNIT_CONV2TO1.v')
-shutil.copyfile(
-    srcDir + "DCDC_NOV_CLKGEN.sv", flowDir + "design/src/dcdc/DCDC_NOV_CLKGEN.sv"
-)
-shutil.copyfile(srcDir + "DCDC_BUFFER.sv", flowDir + "design/src/dcdc/DCDC_BUFFER.sv")
-shutil.copyfile(srcDir + "DCDC_POWMUX.v", flowDir + "design/src/dcdc/DCDC_POWMUX.v")
 
 print("#----------------------------------------------------------------------")
 print("# Verilog Generated")
