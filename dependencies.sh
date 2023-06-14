@@ -237,9 +237,6 @@ fi
                 echo "[OpenFASoC] Failed to install Xyce"
                 exit
         fi
-else
-	echo "[OpenFASoC] Cannot install klayout for other linux distrbutions via this script"
-fi
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null
 then
