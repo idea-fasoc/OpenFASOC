@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: [sky130hd_cryo, sky130hs_cryo, sky130hvl_cryo]
+        platform: [sky130hd, sky130hs, sky130hvl]
 
     steps:
       - name: Checkout repo
@@ -32,7 +32,7 @@ jobs:
               cp ./.github/scripts/parse_rpt.py ./openfasoc/generators/cryo-gen/. &&\
               pip3 install -r requirements.txt &&\
               cd ./openfasoc/generators/cryo-gen &&\
-              make ${{ matrix.platform }} &&\
+              make ${{ matrix.platform }}_cryo &&\
               python3 parse_rpt.py ${{ matrix.platform }}
             "| tee -a file.log
             if grep "^Error" file.log; then exit 1; else exit 0; fi
