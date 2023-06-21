@@ -49,6 +49,8 @@ Running ``make sky130hd_temp`` (temp for "temperature sensor") executes the `tem
 
 The generator starts from a Verilog template of the temperature sensor circuit, located in `temp-sense-gen/src/ <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/temp-sense-gen/src>`_. The ``.v`` templates follow `Mako <https://makotemplates.org>`_ syntax. For example, ``${param}`` is replaced with the value of the parameter ``param``.
 
+See `Common Python API <common-python-api.html#verilog-generation-common-verilog-generation>`_ for more information.
+
 Example: In `counter.v line 31 <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/temp-sense-gen/src/counter.v#L32>`_, ``${cell('buf')}`` with the buffer cell which is ``sky130_fd_sc_hd__buf_1`` for sky130hd.
 
 .. code-block:: verilog
