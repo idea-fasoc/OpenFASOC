@@ -33,22 +33,27 @@ help:banner
 	@@echo "	> This will clean all the files in the result_dir"
 	@@echo ""
 
+# Target to generate the line_res_via_chain structures
 gen_tc__line_res_via_chain:
 	mkdir -p result_dir/line-res_via-chain
 	cp ./scripts/line-res_via-chain/pad_forty_met1_met5.GDS ./result_dir/line-res_via-chain/
 	make lr_vc__all
 
+# Target to generate the mimcap_array structures
 gen_tc__mimcap_array:
 	mkdir -p result_dir/mimcap-array
 	cp ./scripts/mimcap-array/pad_forty_met1_met5.GDS ./result_dir/mimcap-array/
 	make mimcap_m3
 
+# Target to run drc on the generated line_res_via_chain structures
 run_drc__line_res_via_chain:
 	./scripts/line-res_via-chain/drc-check/run_drc.sh
 
+# Target to run drc on the generated line_res_via_chain structures
 run_drc__mimcap_array:
 	./scripts/mimcap-array/drc-check/run_drc.sh
 
+# Runs all the above targets in sequence
 run_flow:
 	make clean
 	make gen_tc__line_res_via_chain
@@ -56,8 +61,9 @@ run_flow:
 	make run_drc__line_res_via_chain
 	make run_drc__mimcap_array
 
-# Via Chain and Line Resistance targets
 
+# Via Chain and Line Resistance targets
+# 
 # met1 = layer 68, width = via_dim + 2 * 0.06, spacing = seg_length = width + 0.14 (met1 spacing)
 lr_vc__met1:
 	python3 ./scripts/line-res_via-chain/via_chain_gen.py --dimension 40 --spacing 0.43 --width 0.29 --res_sets 40 --via_sets 20 --seg_length 0.43 --seg_width 0.2 --via_dim 0.17 --wire_layer 68 --output_dir=./result_dir/line-res_via-chain
@@ -88,9 +94,11 @@ lr_vc__met5:
 	python3 ./scripts/line-res_via-chain/line_res_gen.py --dimension 40 --spacing 3.2 --width 1.6 --res_sets 6 --wire_layer 72 --output_dir=./result_dir/line-res_via-chain
 	python3 ./scripts/line-res_via-chain/line_res_gen.py --dimension 40 --spacing 5 --width 2.5 --res_sets 4 --wire_layer 72 --mode 1 --output_dir=./result_dir/line-res_via-chain
 
+# This calls the python script to merge the line res and via array structures
 lr_vc__merge:
 	python3 ./scripts/line-res_via-chain/merge_structures.py --output_dir=./result_dir/line-res_via-chain
 
+# This target calls all the targets mentioned above
 lr_vc__all:	lr_vc__met1 lr_vc__met2 lr_vc__met3 lr_vc__met4 lr_vc__met5 lr_vc__merge
 
 
@@ -103,7 +111,7 @@ mimcap_m4:
 	python3 ./scripts/mimcap-array/mimcap_gen.py --input_file ./scripts/mimcap-array/sky130_fd_pr__cap_mim_m3_2_FJK8MM.gds --pitch 4 --wtop 1.6 --wbot 0.3 --lyrtop 72 --output_dir=./result_dir/mimcap-array
 
 
-
+# removes all the generated GDS and report files for previous runs
 clean:
 	rm -f ./result_dir/line-res_via-chain/*.gds
 	rm -f ./result_dir/line-res_via-chain/*.GDS
