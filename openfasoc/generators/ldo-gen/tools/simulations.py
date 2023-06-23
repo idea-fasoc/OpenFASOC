@@ -34,7 +34,7 @@ def create_sim_dirs(arrSize, simDir, mode):
             exit(1)
         else:
             print("Post proessing: ignore and continue.")
-    return [prePEX_sim_dir + "/", postPEX_sim_dir + "/" ]
+    return [prePEX_sim_dir + "/", postPEX_sim_dir + "/"]
 
 
 # ------------------------------------------------------------------------------
@@ -136,7 +136,7 @@ def process_PEX_netlist(rawExtractedNetlistPath, simtool, designName):
         i = i + 1
     netlist = "\n".join(cells_array)
     if simtool == "Xyce":
-       netlist = netlist.replace("$",";")
+        netlist = netlist.replace("$", ";")
     return [
         netlist,
         newhead.replace(vref_node_to, "VREF")
@@ -166,7 +166,7 @@ def ngspice_prepare_scripts(
     pdk_path,
     freq_list,
     model_corner,
-    pex
+    pex,
 ):
     """Specializes ngspice simulations and returns (string) bash to run all sims."""
     designName = user_specs["designName"]
@@ -174,7 +174,7 @@ def ngspice_prepare_scripts(
     max_load = user_specs["imax"]
     model_file = pdk_path + "/libs.tech/ngspice/sky130.lib.spice"
     with open(templateScriptDir + "ldo_tran_ngspice.sp", "r") as sim_spice:
-         sim_template = sim_spice.read()
+        sim_template = sim_spice.read()
     sim_template = sim_template.replace("@model_file", model_file)
     sim_template = sim_template.replace("@model_corner", model_corner)
     sim_template = sim_template.replace("@design_nickname", designName)
@@ -196,24 +196,29 @@ def ngspice_prepare_scripts(
         sim_script = sim_script.replace("@sim_time", str(sim_time))
         sim_script = sim_script.replace("@sim_step", str(sim_time / 2000))
         if freq == 100000:
-           freq_name = "0.1MHz"
+            freq_name = "0.1MHz"
         elif freq == 1000000:
-             freq_name = "1.0MHz"
+            freq_name = "1.0MHz"
         else:
-             freq_name = "10.0MHz"
-        load = max_load*1000
+            freq_name = "10.0MHz"
+        load = max_load * 1000
         for cap in cap_list:
             sim_script_f = sim_script.replace("@Cap_Value", str(cap))
-            output_raw = str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw"
+            output_raw = (
+                str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw"
+            )
             sim_script_f = sim_script_f.replace("@output_raw", str(output_raw))
-            sim_name = "ldo_tran_" + str(load) + "mA_" + freq_name + "_" + str(cap) + ".sp"
+            sim_name = (
+                "ldo_tran_" + str(load) + "mA_" + freq_name + "_" + str(cap) + ".sp"
+            )
             scripts_to_run.append(
                 tuple(
                     (
                         sim_dir,
                         sim_name,
                         sim_script_f,
-                        "ngspice -b -o " "ldo_" + freq_name +"_" + str(cap) + "_out.txt -i " + sim_name,
+                        "ngspice -b -o "
+                        "ldo_" + freq_name + "_" + str(cap) + "_out.txt -i " + sim_name,
                     )
                 )
             )
@@ -239,8 +244,10 @@ def ngspice_prepare_scripts(
     load_sim_template = load_sim_template.replace("@model_corner", model_corner)
     load_sim_template = load_sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
     load_sim_template = load_sim_template.replace("@model_file", model_file)
-    load_sim_template = load_sim_template.replace("@Res_Value", str(1.2 * vref / max_load))
-    sim_time = 1.2 * arrSize/1000000
+    load_sim_template = load_sim_template.replace(
+        "@Res_Value", str(1.2 * vref / max_load)
+    )
+    sim_time = 1.2 * arrSize / 1000000
     load_sim_template = load_sim_template.replace("@sim_time", str(sim_time))
     load_sim_template = load_sim_template.replace("@sim_step", str(sim_time / 2000))
     output_raw = str(load) + "mA_output_load_change.raw"
@@ -268,18 +275,24 @@ def ngspice_prepare_scripts(
     for script in scripts_to_run:
         with open(script[0] + "/" + script[1], "w") as scriptfile:
             scriptfile.write(script[2])
-            shutil.copy2(os.path.abspath(templateScriptDir) + "/.spiceinit",os.path.abspath(script[0]))
+            shutil.copy2(
+                os.path.abspath(templateScriptDir) + "/.spiceinit",
+                os.path.abspath(script[0]),
+            )
         sim_list.append(script[3])
     for freq in freq_list:
         if freq == 100000:
-           freq_name = "0.1MHz"
+            freq_name = "0.1MHz"
         elif freq == 1000000:
-             freq_name = "1.0MHz"
+            freq_name = "1.0MHz"
         else:
-             freq_name = "10.0MHz"
+            freq_name = "10.0MHz"
         for cap in cap_list:
-            raw_data.append(str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw")  
+            raw_data.append(
+                str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw"
+            )
     return [sim_list, raw_data]
+
 
 def xyce_prepare_scripts(
     head,
@@ -291,7 +304,7 @@ def xyce_prepare_scripts(
     pdk_path,
     freq_list,
     model_corner,
-    pex
+    pex,
 ):
     """Specializes xyce simulations and returns (string) bash to run all sims."""
     designName = user_specs["designName"]
@@ -299,7 +312,7 @@ def xyce_prepare_scripts(
     max_load = user_specs["imax"]
     model_file = pdk_path + "/libs.tech/ngspice/sky130.lib.spice"
     with open(templateScriptDir + "ldo_tran_xyce.sp", "r") as sim_spice:
-         sim_template = sim_spice.read()
+        sim_template = sim_spice.read()
     sim_template = sim_template.replace("@model_file", model_file)
     sim_template = sim_template.replace("@model_corner", model_corner)
     sim_template = sim_template.replace("@design_nickname", designName)
@@ -321,24 +334,34 @@ def xyce_prepare_scripts(
         sim_script = sim_script.replace("@sim_time", str(sim_time))
         sim_script = sim_script.replace("@sim_step", str(sim_time / 2000))
         if freq == 100000:
-           freq_name = "0.1MHz"
+            freq_name = "0.1MHz"
         elif freq == 1000000:
-             freq_name = "1.0MHz"
+            freq_name = "1.0MHz"
         else:
-             freq_name = "10.0MHz"
-        load = max_load*1000
+            freq_name = "10.0MHz"
+        load = max_load * 1000
         for cap in cap_list:
             sim_script_f = sim_script.replace("@Cap_Value", str(cap))
-            output_raw = str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw"
+            output_raw = (
+                str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw"
+            )
             sim_script_f = sim_script_f.replace("@output_raw", str(output_raw))
-            sim_name = "ldo_tran_" + str(load) + "mA_" + freq_name + "_" + str(cap) + ".sp"
+            sim_name = (
+                "ldo_tran_" + str(load) + "mA_" + freq_name + "_" + str(cap) + ".sp"
+            )
             scripts_to_run.append(
                 tuple(
                     (
                         sim_dir,
                         sim_name,
                         sim_script_f,
-                        "Xyce -o " "ldo_" + freq_name +"_" + str(cap) + "_out.log -hspice-ext all " + sim_name,
+                        "Xyce -o "
+                        "ldo_"
+                        + freq_name
+                        + "_"
+                        + str(cap)
+                        + "_out.log -hspice-ext all "
+                        + sim_name,
                     )
                 )
             )
@@ -364,8 +387,10 @@ def xyce_prepare_scripts(
     load_sim_template = load_sim_template.replace("@model_corner", model_corner)
     load_sim_template = load_sim_template.replace("@VALUE_REF_VOLTAGE", str(vref))
     load_sim_template = load_sim_template.replace("@model_file", model_file)
-    load_sim_template = load_sim_template.replace("@Res_Value", str(1.2 * vref / max_load))
-    sim_time = 1.2 * arrSize/1000000
+    load_sim_template = load_sim_template.replace(
+        "@Res_Value", str(1.2 * vref / max_load)
+    )
+    sim_time = 1.2 * arrSize / 1000000
     load_sim_template = load_sim_template.replace("@sim_time", str(sim_time))
     load_sim_template = load_sim_template.replace("@sim_step", str(sim_time / 2000))
     output_raw = str(load) + "mA_output_load_change.raw"
@@ -393,18 +418,25 @@ def xyce_prepare_scripts(
     for script in scripts_to_run:
         with open(script[0] + "/" + script[1], "w") as scriptfile:
             scriptfile.write(script[2])
-            shutil.copy2(os.path.abspath(templateScriptDir) + "/.spiceinit",os.path.abspath(script[0]))
+            shutil.copy2(
+                os.path.abspath(templateScriptDir) + "/.spiceinit",
+                os.path.abspath(script[0]),
+            )
         sim_list.append(script[3])
     for freq in freq_list:
         if freq == 100000:
-           freq_name = "0.1MHz"
+            freq_name = "0.1MHz"
         elif freq == 1000000:
-             freq_name = "1.0MHz"
+            freq_name = "1.0MHz"
         else:
-             freq_name = "10.0MHz"
+            freq_name = "10.0MHz"
         for cap in cap_list:
-            raw_data.append(str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw")  
+            raw_data.append(
+                str(load) + "mA_" + freq_name + "_" + str(cap) + "_cap_output.raw"
+            )
     return [sim_list, raw_data]
+
+
 # ------------------------------------------------------------------------------
 # max current binary search (deprecated, instead use dc linear sweep)
 # ------------------------------------------------------------------------------

@@ -155,8 +155,8 @@ Below is an example of options for the temp-sense generator:
     ==============================================================
       ___  _____ ______ _   _ _____  _     ____   ___   ____
       / _ \|  _  \| ____| \ | |  ___|/ \   / ___| / _ \ / ___|
-    | | | | |_) ||  _| |  \| | |_  / _ \  \___ \| | | | |    
-    | |_| |  __/ | |___| |\  |  _|/ ___ \  ___) | |_| | |___ 
+    | | | | |_) ||  _| |  \| | |_  / _ \  \___ \| | | | |
+    | |_| |  __/ | |___| |\  |  _|/ ___ \  ___) | |_| | |___
       \___/|_|    |_____|_| \_|_| /_/   \_\|____/ \___/ \____|
 
     ===============================================================
@@ -165,13 +165,13 @@ Below is an example of options for the temp-sense generator:
     This project is led by a team of researchers at the University of Michigan and is inspired from FASOC
     For more info, visit https://fasoc.engin.umich.edu/
 
-    IP: Temperature Sensor 
-    Supported Technology: Sky130A 
+    IP: Temperature Sensor
+    Supported Technology: Sky130A
     Supported Library: sky130hd
 
     Targets supported:
     1. make sky130hd_temp_verilog
-        >> This will create the verilog file for the thermal sensor IP. It doesn't create a macro, won't create lef/def/gds files and won't run simulations 
+        >> This will create the verilog file for the thermal sensor IP. It doesn't create a macro, won't create lef/def/gds files and won't run simulations
     2. make sky130hd_temp [ninv=<num>] [nhead=<num>]
         >> This will create the macro for the thermal sensor, creates the lef/def/gds/spice netlist files and performs lvs/drc checks. But this won't run simulations.
     3. make sky130hd_temp_full [ninv=<num>] [nhead=<num>] [sim=pex]

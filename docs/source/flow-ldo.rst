@@ -335,22 +335,22 @@ Below images are the output plots generated from simulations.
 .. figure:: img/ldo_VREG_output.png
   :align: center
   :width: 500
-  
+
   VREG output plot
-  
+
 .. figure:: img/ldo_VREG_ripple.png
   :align: center
   :width: 500
-  
+
   VREG output ripple plot
-  
+
 .. figure:: img/ldo_active_switches.png
   :align: center
   :width: 500
-  
+
   Number of switches turned on (Active Switches) plot
-  
-  
+
+
 .. note::
    Currently we support Ngspice and Xyce tools for simulations.
 

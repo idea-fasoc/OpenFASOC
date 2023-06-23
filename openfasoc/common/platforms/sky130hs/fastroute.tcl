@@ -5,4 +5,3 @@ set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)
 if {[info exist env(MACRO_EXTENSION)]} {
 	  set_macro_extension $::env(MACRO_EXTENSION)
 }
-

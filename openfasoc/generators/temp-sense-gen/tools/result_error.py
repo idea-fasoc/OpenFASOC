@@ -47,7 +47,7 @@ try:
 except:
     print("Error calculation failed")
     sys.exit(0)
-    
+
 for k in data1:
     if k == "failed":
         val = "failed"

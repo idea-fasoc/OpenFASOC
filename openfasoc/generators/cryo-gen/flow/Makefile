@@ -555,7 +555,7 @@ GDS_FINAL_FILE = $(RESULTS_DIR)/6_final.$(STREAM_SYSTEM_EXT)
 finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.sdc \
-        $(GDS_FINAL_FILE) 
+        $(GDS_FINAL_FILE)
 # ==============================================================================
 
 ifneq ($(USE_FILL),)
