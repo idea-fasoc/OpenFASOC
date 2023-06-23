@@ -18,7 +18,7 @@ export SDC_FILE    		= ./design/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export DIE_AREA                 = 0 0 @PARAM_DIE_WIDTH @PARAM_DIE_LENGTH
 export CORE_AREA                = 15 15 @PARAM_CORE_WIDTH @PARAM_CORE_LENGTH
-export VREG_AREA                = 40 40 @PARAM_VREG_WIDTH 60
+export VREG_AREA                = 40 40 @PARAM_VREG_WIDTH 55
 
 export PDN_TCL 			= ../blocks/$(PLATFORM)/pdn.tcl
 
@@ -55,7 +55,8 @@ export ADDITIONAL_GDS  	        = ../blocks/$(PLATFORM)/gds/capacitor_test_nf.gd
                                   ../blocks/$(PLATFORM)/lib/vref_gen_nmos_with_trim.lib
 
 export DOMAIN_INSTS_LIST 	= ../blocks/$(PLATFORM)/ldo_domain_insts.txt
-
+export UNIT                    = ../blocks/$(PLATFORM)/ldo_place.txt
+export PLACE_LIMIT              = @PARAM_VREG_WIDTH
 # configuration for routing
 
 export PRE_GLOBAL_ROUTE = ./scripts/openfasoc/pre_global_route.tcl

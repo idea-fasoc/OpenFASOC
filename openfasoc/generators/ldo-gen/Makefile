@@ -15,6 +15,9 @@ endif
 ifdef ModuleName
 UserSpec += --name $(ModuleName)
 endif
+ifdef pex
+UserSpec += --pex $(pex)
+endif
 
 help:banner
 	@@echo "OpenFASOC is focused on open source automated analog generation"
@@ -76,6 +79,7 @@ clean:
 	-cd flow && make nuke
 	-rm -f blocks/sky130hvl/ldo_custom_net.txt blocks/sky130hvl/ldo_domain_insts.txt
 	-rm -rf ../../common/drc-lvs-check/sky130A
+	-rm -rf simulations/run
 
 clean_sims:
 	cd simulations && rm -rf run

@@ -32,6 +32,13 @@ def update_ldo_domain_insts(blocksDir, arrSize):
         # write arrSize pt cells
         for i in range(arrSize):
             ldo_domain_insts.write("{pt_array_unit\[" + str(i) + "\]}\n")
+            
+def update_ldo_place_insts(blocksDir, arrSize):
+    """Writes arrSize pt unit cell instances to ldo_domain_insts.txt."""
+    with open(blocksDir + "/ldo_place.txt", "w") as ldo_place_insts:
+        # write arrSize pt cells
+        for i in range(arrSize):
+            ldo_place_insts.write("{pt_array_unit\\\["+ str(i) +"\\\]} {pt_array_unit\[" + str(i) + "\]}\n")
 
 
 def update_custom_nets(blocksDir, arrSize):
@@ -110,7 +117,7 @@ def update_area_and_place_density(flowDir, arrSize):
     config_template = config_template.replace("@PARAM_DIE_LENGTH", str(die_length), 1)
     config_template = config_template.replace("@PARAM_CORE_WIDTH", str(core_width), 1)
     config_template = config_template.replace("@PARAM_CORE_LENGTH", str(core_length), 1)
-    config_template = config_template.replace("@PARAM_VREG_WIDTH", str(vreg_width), 1)
+    config_template = config_template.replace("@PARAM_VREG_WIDTH", str(vreg_width), 2)
     config_template = config_template.replace(
         "@PARAM_PLACE_DENSITY", str(place_density), 1
     )
