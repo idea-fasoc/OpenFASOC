@@ -21,7 +21,8 @@ sky130_glayer_mapping = {
     "met1": "li1drawing",
     "mcon": "licon1drawing",
     "poly": "polydrawing",
-    "active": "diffdrawing",
+    "active_diff": "diffdrawing",
+    "active_tap": "tapdrawing",
     "n+s/d": "nsdmdrawing",
     "p+s/d": "psdmdrawing",
     "nwell": "nwelldrawing",
@@ -29,5 +30,16 @@ sky130_glayer_mapping = {
     "dnwell": "dnwelldrawing",
 }
 
+sky130_lydrc_file_path = Path(__file__).resolve().parent / "sky130.lydrc"
 
-sky130_mapped_pdk = MappedPDK.from_gf_pdk(sky130.PDK, sky130_glayer_mapping)
+
+grulesobj = dict()
+for glayer in MappedPDK.valid_glayers:
+    grulesobj[glayer] = dict((x, None) for x in MappedPDK.valid_glayers)
+
+sky130_mapped_pdk = MappedPDK.from_gf_pdk(
+    sky130.PDK,
+    sky130_glayer_mapping,
+    grules=grulesobj,
+    klayout_lydrc_file=sky130_lydrc_file_path,
+)

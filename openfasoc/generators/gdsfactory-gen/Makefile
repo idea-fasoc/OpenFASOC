@@ -63,7 +63,7 @@ run_flow:
 
 
 # Via Chain and Line Resistance targets
-# 
+#
 # met1 = layer 68, width = via_dim + 2 * 0.06, spacing = seg_length = width + 0.14 (met1 spacing)
 lr_vc__met1:
 	python3 ./scripts/line-res_via-chain/via_chain_gen.py --dimension 40 --spacing 0.43 --width 0.29 --res_sets 40 --via_sets 20 --seg_length 0.43 --seg_width 0.2 --via_dim 0.17 --wire_layer 68 --output_dir=./result_dir/line-res_via-chain

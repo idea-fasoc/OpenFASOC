@@ -453,13 +453,9 @@ else
 end # BEOL
 
 # connectivity rules
-if $conn_drc == "true"
-  CONNECTIVITY_RULES = $conn_drc
-  logger.info("connectivity rules are enabled.")
-else
-  CONNECTIVITY_RULES = false
-  logger.info("connectivity rules are disabled.")
-end # connectivity rules
+CONNECTIVITY_RULES = true
+logger.info("connectivity rules are enabled.")
+
 
 # METAL_TOP
 if $metal_top

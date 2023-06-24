@@ -42,7 +42,11 @@ parser.add_argument(
     "--arr_size_in", help="Debug option to manually set power arr size."
 )
 parser.add_argument("--clean", action="store_true", help="Clean the workspace.")
-parser.add_argument("--simtype",choices=["postPEX","prePEX"], help="Simulations type prePEX or postPEX")
+parser.add_argument(
+    "--simtype",
+    choices=["postPEX", "prePEX"],
+    help="Simulations type prePEX or postPEX",
+)
 parser.add_argument("--pex", help="enable postPEX along with prePEX")
 args = parser.parse_args()
 
@@ -99,7 +103,7 @@ print("# LDO - Power Transistor array Size = " + str(arrSize))
 
 # Update the ldo_domain_insts.txt as per power transistor array size
 update_ldo_domain_insts(directories["blocksDir"], arrSize)
-#Update the ldo_place.txt as per power transistor array size
+# Update the ldo_place.txt as per power transistor array size
 update_ldo_place_insts(directories["blocksDir"], arrSize)
 # Update connections to VREG
 update_custom_nets(directories["blocksDir"], arrSize)
@@ -156,7 +160,7 @@ if args.mode != "verilog" and clean_work_dir:
     print("#----------------------------------------------------------------------")
     print("# LVS and DRC finished successfully")
     print("#----------------------------------------------------------------------")
-    
+
     # function defined in configure_workspace.py
     copy_outputs(directories, args.outputDir, args.platform, user_specs["designName"])
 
@@ -174,7 +178,7 @@ if args.mode != "verilog" and clean_work_dir:
     rawPEXPath = spice_dir + user_specs["designName"] + "_pex.spice"
     rawSynthPath = spice_dir + user_specs["designName"] + ".spice"
     [processedPEXnetlist, head] = process_PEX_netlist(
-        rawPEXPath, jsonConfig["simTool"],user_specs["designName"]
+        rawPEXPath, jsonConfig["simTool"], user_specs["designName"]
     )
     processedSynthNetlist = process_prePEX_netlist(rawSynthPath)
     powerArrayNetlist = process_power_array_netlist(rawSynthPath)
@@ -191,70 +195,70 @@ if args.mode != "verilog" and clean_work_dir:
     # prepare simulation scripts, passing prePEX_sim_dir and pex=false to function *_prepare_scripts() runs preprex sims
     # there should be one output file name specified for each cap value. outputs sent to sim_dir_structure directories
     if args.simtype == "postPEX" or args.pex == "True":
-       if jsonConfig["simTool"] == "ngspice":
-           [sim, output_file_names] = ngspice_prepare_scripts(
-            head,
-            cap_list,
-            directories["simDir"] + "/templates/",
-            postPEX_sim_dir,
-            user_specs,
-            arrSize,
-            pdk_path,
-            freq_list,
-            "tt",
-            pex=True
-        )
-       elif jsonConfig["simTool"] == "Xyce":
-             [sim, output_file_names] = xyce_prepare_scripts(
-              head,
-              cap_list,
-              directories["simDir"] + "/templates/",
-              postPEX_sim_dir,
-              user_specs,
-              arrSize,
-              pdk_path,
-              freq_list,
-              "tt",
-              pex=True
-        )
-       else:
+        if jsonConfig["simTool"] == "ngspice":
+            [sim, output_file_names] = ngspice_prepare_scripts(
+                head,
+                cap_list,
+                directories["simDir"] + "/templates/",
+                postPEX_sim_dir,
+                user_specs,
+                arrSize,
+                pdk_path,
+                freq_list,
+                "tt",
+                pex=True,
+            )
+        elif jsonConfig["simTool"] == "Xyce":
+            [sim, output_file_names] = xyce_prepare_scripts(
+                head,
+                cap_list,
+                directories["simDir"] + "/templates/",
+                postPEX_sim_dir,
+                user_specs,
+                arrSize,
+                pdk_path,
+                freq_list,
+                "tt",
+                pex=True,
+            )
+        else:
             print("simtool not supported")
             exit(1)
-    
+
     if args.simtype == "prePEX":
-       if jsonConfig["simTool"] == "ngspice":
-           [sim, output_file_names] = ngspice_prepare_scripts(
-            head,
-            cap_list,
-            directories["simDir"] + "/templates/",
-            prePEX_sim_dir,
-            user_specs,
-            arrSize,
-            pdk_path,
-            freq_list,
-            "tt",
-            pex=False
-        )
-       elif jsonConfig["simTool"] == "Xyce":
-             [sim, output_file_names] = xyce_prepare_scripts(
-              head,
-              cap_list,
-              directories["simDir"] + "/templates/",
-              prePEX_sim_dir,
-              user_specs,
-              arrSize,
-              pdk_path,
-              freq_list,
-              "tt",
-              pex=False
-        )
-       else:
+        if jsonConfig["simTool"] == "ngspice":
+            [sim, output_file_names] = ngspice_prepare_scripts(
+                head,
+                cap_list,
+                directories["simDir"] + "/templates/",
+                prePEX_sim_dir,
+                user_specs,
+                arrSize,
+                pdk_path,
+                freq_list,
+                "tt",
+                pex=False,
+            )
+        elif jsonConfig["simTool"] == "Xyce":
+            [sim, output_file_names] = xyce_prepare_scripts(
+                head,
+                cap_list,
+                directories["simDir"] + "/templates/",
+                prePEX_sim_dir,
+                user_specs,
+                arrSize,
+                pdk_path,
+                freq_list,
+                "tt",
+                pex=False,
+            )
+        else:
             print("simtool not supported")
             exit(1)
-    
+
     print("#----------------------------------------------------------------------")
     print("# Spice netlists created successfully")
-    print("#----------------------------------------------------------------------")    
+    print("#----------------------------------------------------------------------")
 
 # ------------------------------------------------------------------------------
 # run simulations
@@ -265,45 +269,81 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
     print("#----------------------------------------------------------------------")
     # run sims
     processes = []
-    #assert len(output_file_names) == len(cap_list)*len(freq_list)
+    # assert len(output_file_names) == len(cap_list)*len(freq_list)
     if args.mode != "post":
-       if args.simtype == "postPEX" or args.pex == "True":
-          run_dir = directories["genDir"] + "tools/"
-          vref = user_specs["vin"]
-          iload = user_specs["imax"]
-          odir = os.path.abspath(args.outputDir)
-          for s in range (len(sim)):
-              p = sp.Popen(sim[s],cwd=postPEX_sim_dir,shell=True)
-              processes.append(p)
-            
-          for p in processes:
-              p.wait()
-                 
-          p = sp.Popen(["python3","processing.py","--file_path",postPEX_sim_dir,"--vref",str(vref),"--iload",str(iload),"--odir",odir, "--figs", "True", "--simType", "postPEX"],cwd=run_dir)
-          p.wait()
-          
-       if args.simtype == "prePEX":
-          run_dir = directories["genDir"] + "tools/"
-          vref = user_specs["vin"]
-          iload = user_specs["imax"]
-          odir = os.path.abspath(args.outputDir)
+        if args.simtype == "postPEX" or args.pex == "True":
+            run_dir = directories["genDir"] + "tools/"
+            vref = user_specs["vin"]
+            iload = user_specs["imax"]
+            odir = os.path.abspath(args.outputDir)
+            for s in range(len(sim)):
+                p = sp.Popen(sim[s], cwd=postPEX_sim_dir, shell=True)
+                processes.append(p)
+
+            for p in processes:
+                p.wait()
+
+            p = sp.Popen(
+                [
+                    "python3",
+                    "processing.py",
+                    "--file_path",
+                    postPEX_sim_dir,
+                    "--vref",
+                    str(vref),
+                    "--iload",
+                    str(iload),
+                    "--odir",
+                    odir,
+                    "--figs",
+                    "True",
+                    "--simType",
+                    "postPEX",
+                ],
+                cwd=run_dir,
+            )
+            p.wait()
+
+        if args.simtype == "prePEX":
+            run_dir = directories["genDir"] + "tools/"
+            vref = user_specs["vin"]
+            iload = user_specs["imax"]
+            odir = os.path.abspath(args.outputDir)
+            for s in range(len(sim)):
+                p = sp.Popen(sim[s], cwd=prePEX_sim_dir, shell=True)
+                processes.append(p)
+
+            for p in processes:
+                p.wait()
+
+            p = sp.Popen(
+                [
+                    "python3",
+                    "processing.py",
+                    "--file_path",
+                    prePEX_sim_dir,
+                    "--vref",
+                    str(vref),
+                    "--iload",
+                    str(iload),
+                    "--odir",
+                    odir,
+                    "--figs",
+                    "True",
+                    "--simType",
+                    "prePEX",
+                ],
+                cwd=run_dir,
+            )
+            p.wait()
+        """
           for s in range (len(sim)):
               p = sp.Popen(sim[s],cwd=prePEX_sim_dir,shell=True)
               processes.append(p)
-            
+
           for p in processes:
               p.wait()
-              
-          p = sp.Popen(["python3","processing.py","--file_path",prePEX_sim_dir,"--vref",str(vref),"--iload",str(iload),"--odir",odir, "--figs", "True", "--simType", "prePEX"],cwd=run_dir)
-          p.wait()
-       """
-          for s in range (len(sim)):
-              p = sp.Popen(sim[s],cwd=prePEX_sim_dir,shell=True)
-              processes.append(p)
-            
-          for p in processes:
-              p.wait()
-             
+
           # perform post processing on simulation results and save figures to work dir
           raw_files = [(prePEX_sim_dir + ofile) for ofile in output_file_names]
           raw_to_csv(raw_files,user_specs["vin"],args.outputDir)

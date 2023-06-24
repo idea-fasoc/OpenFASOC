@@ -32,13 +32,20 @@ def update_ldo_domain_insts(blocksDir, arrSize):
         # write arrSize pt cells
         for i in range(arrSize):
             ldo_domain_insts.write("{pt_array_unit\[" + str(i) + "\]}\n")
-            
+
+
 def update_ldo_place_insts(blocksDir, arrSize):
     """Writes arrSize pt unit cell instances to ldo_domain_insts.txt."""
     with open(blocksDir + "/ldo_place.txt", "w") as ldo_place_insts:
         # write arrSize pt cells
         for i in range(arrSize):
-            ldo_place_insts.write("{pt_array_unit\\\["+ str(i) +"\\\]} {pt_array_unit\[" + str(i) + "\]}\n")
+            ldo_place_insts.write(
+                "{pt_array_unit\\\["
+                + str(i)
+                + "\\\]} {pt_array_unit\["
+                + str(i)
+                + "\]}\n"
+            )
 
 
 def update_custom_nets(blocksDir, arrSize):

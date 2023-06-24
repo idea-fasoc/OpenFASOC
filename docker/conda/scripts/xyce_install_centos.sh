@@ -13,7 +13,7 @@
 #Install Dependancies
 ###########################################################################
 
-yum install -y wget git make gcc-c++ python3 
+yum install -y wget git make gcc-c++ python3
 yum install -y gcc-gfortran bison flex libtool-ltdl-devel
 yum install -y fftw-devel suitesparse-devel blas-devel lapack-devel
 yum install -y openmpi-devel openmpi
@@ -42,7 +42,7 @@ source /opt/rh/devtoolset-8/enable
 #Install Trilinos from source
 ###########################################################################
 
-wget https://github.com/trilinos/Trilinos/archive/trilinos-release-12-12-1.tar.gz 
+wget https://github.com/trilinos/Trilinos/archive/trilinos-release-12-12-1.tar.gz
 tar zxvf trilinos-release-12-12-1.tar.gz
 
 SRCDIR=$PWD/Trilinos-trilinos-release-12-12-1
