@@ -1,19 +1,20 @@
-import gdsfactory as gf
-
 # from PDK.mappedpdk import MappedPDK
-from rectangular_ring import rectangular_ring
-from via_stack import via_stack
+from gdsfactory.cell import cell
+from gdsfactory.component import Component
+from gdsfactory.components.rectangle import rectangle
+from gdsfactory.components.rectangular_ring import rectangular_ring
+from via_gen import via_stack
 from typing import Optional
-import math
+from math import ceil
 
 
-@gf.cell
+@cell
 def ptapring(
     pdk,
     enclosed_rectangle=(2.0, 4.0),
     horizontal_glayer: Optional[str] = "met1",
     vertical_glayer: Optional[str] = "met2",
-) -> gf.Component:
+) -> Component:
     """ptapring produce a p substrate / pwell tap rectanglular ring
     This ring will legally enclose a rectangular shape
     args:
@@ -28,7 +29,7 @@ def ptapring(
         ["p+s/d", "active_tap", "mcon", horizontal_glayer, vertical_glayer]
     )
     pdk.activate()
-    ptapring = gf.Component()
+    ptapring = Component()
     if not "met" in horizontal_glayer or not "met" in vertical_glayer:
         raise ValueError("both horizontal and vertical glayers should be metals")
     # check that ring is not too small
@@ -86,7 +87,7 @@ def ptapring(
         for vianum in range(num_vias):
             viastack_ref_plus = ptapring << viastack
             viastack_ref_minus = ptapring << viastack
-            spacing_multiplier = ((-1) ** vianum) * math.ceil(vianum / 2)
+            spacing_multiplier = ((-1) ** vianum) * ceil(vianum / 2)
             if i == 0:  # horizontal layer
                 viastack_ref_plus.movex(spacing_multiplier * viaspacing_full).movey(
                     0.5 * (enclosed_rectangle[1] + tap_width)
@@ -110,16 +111,16 @@ def ptapring(
         max(viawidth, pdk.get_grule(horizontal_glayer)["min_width"]),
         enclosed_rectangle[1] + 2 * tap_width,
     )
-    metal_ref_n = ptapring << gf.components.rectangle(
+    metal_ref_n = ptapring << rectangle(
         layer=pdk.get_glayer(horizontal_glayer), size=ns_side_dims, centered=True
     )
-    metal_ref_e = ptapring << gf.components.rectangle(
+    metal_ref_e = ptapring << rectangle(
         layer=pdk.get_glayer(vertical_glayer), size=ew_side_dims, centered=True
     )
-    metal_ref_s = ptapring << gf.components.rectangle(
+    metal_ref_s = ptapring << rectangle(
         layer=pdk.get_glayer(horizontal_glayer), size=ns_side_dims, centered=True
     )
-    metal_ref_w = ptapring << gf.components.rectangle(
+    metal_ref_w = ptapring << rectangle(
         layer=pdk.get_glayer(vertical_glayer), size=ew_side_dims, centered=True
     )
     metal_ref_n.movey(0.5 * (enclosed_rectangle[1] + tap_width))

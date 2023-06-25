@@ -1,8 +1,23 @@
 from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
+from pydantic import validate_arguments
+from collections import OrderedDict
 
-# from PDK.mappedpdk import MappedPDK
+#from PDK.mappedpdk import MappedPDK
+
+@validate_arguments
+def __error_check_order_layers(pdk, glayer1: str, glayer2: str) -> tuple[int, int]:
+	"""correctly order layers (level1 should be lower than level2)"""
+	pdk.activate()
+	# check that the generic layers specfied can be routed between
+	if not all([pdk.is_routable_glayer(met) for met in [glayer1, glayer2]]):
+		raise ValueError("via_stack: specify between two routable layers")
+	level1 = int(glayer1[-1]) if "met" in glayer1 else 0
+	level2 = int(glayer2[-1]) if "met" in glayer2 else 0
+	if level1 > level2:
+		level1, level2 = level2, level1
+	return level1, level2
 
 
 @cell
@@ -16,17 +31,8 @@ def via_stack(pdk, glayer1: str, glayer2: str) -> Component:
     ****NOTE it does not matter what order you pass layers
     ****NOTE will not lay poly or active but will lay metals
     """
-    pdk.activate()
+    level1, level2 = __error_check_order_layers(pdk, glayer1, glayer2)
     viastack = Component()
-    # check that the generic layers specfied can be routed between
-    for layer in [glayer1, glayer2]:
-        if not pdk.is_routable_glayer(layer):
-            raise ValueError("via_stack: specify between two routable layers")
-    # correctly order layers (level1 should be lower than level2)
-    level1 = int(glayer1[-1]) if "met" in glayer1 else 0
-    level2 = int(glayer2[-1]) if "met" in glayer2 else 0
-    if level1 > level2:
-        level1, level2 = level2, level1
     # if same level return empty component
     if level1 == level2:
         return viastack
@@ -78,6 +84,37 @@ def via_stack(pdk, glayer1: str, glayer2: str) -> Component:
             size=(metdim, metdim), layer=pdk.get_glayer(gfinalmet), centered=True
         )
     return viastack.flatten()
+
+
+@cell
+def via_array(pdk, glayer1: str, glayer2: str, size=(2.0,4.0)) -> Component:
+	"""Fill a region with vias. Will automatically decide num rows and columns
+	args:
+	pdk: MappedPDK is the pdk to use
+	glayer1: str is the glayer to start on
+	glayer2: str is the glayer to end on
+	****NOTE it does not matter what order you pass layers
+	****NOTE will not lay poly or active but will lay metals
+	size: tuple is the (width, hieght) of the area to enclose
+	****NOTE: the size will be the dimensions of the top metal
+	"""
+	level1, level2 = __error_check_order_layers(pdk, glayer1, glayer2)
+	viaarray = Component()
+	# if same level return empty component
+	if level1 == level2:
+		return viaarray
+	# figure out min space between via stacks
+	via_spacing = [] if level1 else [pdk.get_grule("mcon")["min_seperation"]]
+	for level in range(level1,level2)
+		met_glayer = "met" + str(level)
+		via_glayer = "via" + str(level)
+		via_spacing.append(pdk.get_grule(met_glayer)["min_seperation"])
+		via_spacing.append(pdk.get_grule(via_glayer)["min_seperation"])
+	via_spacing.append(pdk.get_grule("met" + str(level2))["min_seperation"])
+	via_spacing = max(via_spacing)
+	# implement array
+	
+	return viaarray.flatten()
 
 
 if __name__ == "__main__":

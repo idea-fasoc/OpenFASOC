@@ -2,7 +2,8 @@
 usage: from mappedpdk import MappedPDK
 """
 
-import gdsfactory as gf
+from gdsfactory.pdk import Pdk
+from gdsfactory.typings import Component, PathType, Layer
 from pydantic import validator, StrictStr, ValidationError
 from typing import ClassVar, Optional
 from pathlib import Path
@@ -10,7 +11,7 @@ import tempfile
 import subprocess
 
 
-class MappedPDK(gf.pdk.Pdk):
+class MappedPDK(Pdk):
     """Inherits everything from the PDK class but also requires mapping to glayers
     glayers are generic layers which can be returned with get_glayer(name: str)
     has_required_glayers(list[str]) is used to verify all required generic layers are
@@ -63,8 +64,8 @@ class MappedPDK(gf.pdk.Pdk):
 
     def drc(
         self,
-        layout: gf.typings.Component | gf.typings.PathType,
-        output_dir_or_file: Optional[gf.typings.PathType] = None,
+        layout: Component | PathType,
+        output_dir_or_file: Optional[PathType] = None,
     ):
         """Returns true if the layout is DRC clean and false if not
         Also saves detailed results to output_dir_or_file location as lyrdb
@@ -73,10 +74,10 @@ class MappedPDK(gf.pdk.Pdk):
             raise NotImplementedError("no drc script for this PDK")
         # find layout gds file path
         tempdir = None
-        if isinstance(layout, gf.typings.Component):
+        if isinstance(layout, Component):
             tempdir = tempfile.TemporaryDirectory()
             layout_path = Path(layout.write_gds(tempdir)).resolve()
-        elif isinstance(layout, gf.typings.PathType):
+        elif isinstance(layout, PathType):
             layout_path = Path(layout).resolve()
         else:
             raise TypeError("layout should be a Component, Path, or string")
@@ -133,7 +134,7 @@ class MappedPDK(gf.pdk.Pdk):
             self.validate_layers([self.glayers[layer]])
 
     # TODO: implement LayerSpec type
-    def get_glayer(self, layer: str) -> gf.typings.Layer:
+    def get_glayer(self, layer: str) -> Layer:
         """Returns the PDK layer from the generic layer name"""
         return self.get_layer(self.glayers[layer])
 
@@ -169,14 +170,14 @@ class MappedPDK(gf.pdk.Pdk):
     @classmethod
     def from_gf_pdk(
         cls,
-        gfpdk: gf.pdk.Pdk,
+        gfpdk: Pdk,
         glayers: dict[str, str],
         grules: dict[StrictStr, dict[StrictStr, Optional[dict]]],
-        klayout_lydrc_file: Optional[gf.typings.PathType] = None,
+        klayout_lydrc_file: Optional[PathType] = None,
     ):
         """Construct a mapped pdk from an existing pdk and the extra parts of MappedPDK"""
         # input type and value validation
-        if not isinstance(gfpdk, gf.pdk.Pdk):
+        if not isinstance(gfpdk, Pdk):
             raise TypeError("from_gf_pdk: gfpdk arg only accepts GDSFactory PDK type")
         # convert gfpdk to dictionary
         parent_dict = gfpdk.dict()

@@ -2,9 +2,8 @@ from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
 
-# from PDK.mappedpdk import MappedPDK
 from typing import Optional
-from via_stack import via_stack
+from via_gen import via_stack
 from guardring import ptapring
 
 # GF180
@@ -17,7 +16,9 @@ from guardring import ptapring
 def PARTIALsingle_multiplier_gen_no_diff(
     pdk, width: float = 3, fingers: Optional[int] = 1
 ) -> Component:
-    multiplier = Component("partial multiplier")
+    pmultiplier = Component("partial multiplier")
+    if fingers==0:
+        return pmultiplier
     # create the poly gate
     length = pdk.get_grule("poly")["min_width"]
     poly_height = width + 2 * pdk.get_grule("poly", "active_diff")["overhang"]
@@ -37,26 +38,26 @@ def PARTIALsingle_multiplier_gen_no_diff(
     poly_spacing = max(viasize, mcon_poly_space)
     # lay poly for all fingers
     if fingers % 2:  # odd number of fingers
-        multiplier << poly_gate_comp  # center poly
-        sd_via_refr = multiplier << sd_via_comp
+        pmultiplier << poly_gate_comp  # center poly
+        sd_via_refr = pmultiplier << sd_via_comp
         sd_via_refr.movex(0.5 * (length + poly_spacing))
-        sd_via_refl = multiplier << sd_via_comp
+        sd_via_refl = pmultiplier << sd_via_comp
         sd_via_refl.movex(-0.5 * (length + poly_spacing))
         for fingermirror_num in range(int(fingers / 2)):
             f_offset_ = fingermirror_num * (poly_spacing + length)
-            poly_gate_refr = multiplier << poly_gate_comp
+            poly_gate_refr = pmultiplier << poly_gate_comp
             poly_gate_refr.movex(f_offset_ + length + poly_spacing)
-            poly_gate_refl = multiplier << poly_gate_comp
+            poly_gate_refl = pmultiplier << poly_gate_comp
             poly_gate_refl.movex(-1 * (f_offset_ + length + poly_spacing))
             f_offset_ += poly_spacing + length
-            sd_via_refr = multiplier << sd_via_comp
+            sd_via_refr = pmultiplier << sd_via_comp
             sd_via_refr.movex(0.5 * (length + poly_spacing) + f_offset_)
-            sd_via_refl = multiplier << sd_via_comp
+            sd_via_refl = pmultiplier << sd_via_comp
             sd_via_refl.movex(-0.5 * (length + poly_spacing) - f_offset_)
     else:
-        # TODO: implement
-        raise NotImplementedError("currenly only odd fingers are supported")
-    return multiplier.flatten()
+        mirror_pmult = Component("half partial multiplier")
+        mirror_pmult << poly_gate_comp
+    return pmultiplier.flatten()
 
 
 @cell

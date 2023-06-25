@@ -1,4 +1,4 @@
-# TODO: add all the cells from gf180 and a rule deck
+# TODO: add all the cells from gf180
 # TODO: note that gf180 pip is not up to date with github repo (no layer views)
 """
 usage: from gf180_mapped import gf180_mapped_pdk
@@ -6,12 +6,9 @@ usage: from gf180_mapped import gf180_mapped_pdk
 
 from gf180.layers import LAYER  # , LAYER_VIEWS
 
-# import mappedpdk from the main pdk dir (parent of this dir)
-import sys
+from PDK.mappedpdk import MappedPDK
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-from mappedpdk import MappedPDK
 
 
 gf180_glayer_mapping = {
