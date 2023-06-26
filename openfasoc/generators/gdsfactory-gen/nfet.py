@@ -1,10 +1,11 @@
 from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
-
+from PDK.mappedpdk import MappedPDK
 from typing import Optional
-from via_gen import via_stack
+from via_gen import via_array, via_stack
 from guardring import ptapring
+from math import ceil
 
 # GF180
 # NMOS target hieght = 2.19
@@ -13,11 +14,11 @@ from guardring import ptapring
 
 
 @cell
-def PARTIALsingle_multiplier_gen_no_diff(
-    pdk, width: float = 3, fingers: Optional[int] = 1
+def PARTIAL_multiplier_no_diff(
+    pdk: MappedPDK, width: float = 3, fingers: Optional[int] = 1
 ) -> Component:
     pmultiplier = Component("partial multiplier")
-    if fingers==0:
+    if fingers == 0:
         return pmultiplier
     # create the poly gate
     length = pdk.get_grule("poly")["min_width"]
@@ -25,38 +26,31 @@ def PARTIALsingle_multiplier_gen_no_diff(
     poly_gate_comp = rectangle(
         size=(length, poly_height), layer=pdk.get_glayer("poly"), centered=True
     )
-    # create active diff to met1 vias
-    sd_via_comp = Component("temp via array")
-    # TODO: implement sd_via_comp as via array
-    sd_via_comp << via_stack(pdk, "active_diff", "met1")
-    # figure out poly spacing s.t. metal does not overlap transistor
-    viasize = sd_via_comp.xmax - sd_via_comp.xmin
+    # figure out poly spacing s.t. metal/via does not overlap transistor
+    tempviastack = via_stack(pdk, "active_diff", "met1")
+    viasize = tempviastack.xmax - tempviastack.xmin
     mcon_poly_space = (
         2 * pdk.get_grule("poly", "mcon")["min_seperation"]
         + pdk.get_grule("mcon")["width"]
     )
     poly_spacing = max(viasize, mcon_poly_space)
-    # lay poly for all fingers
-    if fingers % 2:  # odd number of fingers
-        pmultiplier << poly_gate_comp  # center poly
-        sd_via_refr = pmultiplier << sd_via_comp
-        sd_via_refr.movex(0.5 * (length + poly_spacing))
-        sd_via_refl = pmultiplier << sd_via_comp
-        sd_via_refl.movex(-0.5 * (length + poly_spacing))
-        for fingermirror_num in range(int(fingers / 2)):
-            f_offset_ = fingermirror_num * (poly_spacing + length)
-            poly_gate_refr = pmultiplier << poly_gate_comp
-            poly_gate_refr.movex(f_offset_ + length + poly_spacing)
-            poly_gate_refl = pmultiplier << poly_gate_comp
-            poly_gate_refl.movex(-1 * (f_offset_ + length + poly_spacing))
-            f_offset_ += poly_spacing + length
-            sd_via_refr = pmultiplier << sd_via_comp
-            sd_via_refr.movex(0.5 * (length + poly_spacing) + f_offset_)
-            sd_via_refl = pmultiplier << sd_via_comp
-            sd_via_refl.movex(-0.5 * (length + poly_spacing) - f_offset_)
-    else:
-        mirror_pmult = Component("half partial multiplier")
-        mirror_pmult << poly_gate_comp
+    # create active diff to met1 vias
+    sd_via_comp = via_array(pdk, "active_diff", "met1", size=(viasize, width))
+    # lay poly and via arrays
+    for fingernum in range(fingers + 1):
+        spacing_multiplier = ((-1) ** fingernum) * ceil(fingernum / 2)
+        finger_spacing = poly_spacing + length
+        finger_offset = spacing_multiplier * finger_spacing
+        if (fingers % 2) == 0:  # even correction
+            finger_offset += 0.5 * finger_spacing
+        if fingernum == fingers:  # lay leftmost via then loop is done
+            left_sd_via_ref = pmultiplier << sd_via_comp
+            left_sd_via_ref.movex(0.5 * finger_spacing - abs(finger_offset))
+            break
+        poly_gate_ref = pmultiplier << poly_gate_comp
+        poly_gate_ref.movex(finger_offset)
+        right_sd_via_ref = pmultiplier << sd_via_comp
+        right_sd_via_ref.movex(finger_offset + 0.5 * finger_spacing)
     return pmultiplier.flatten()
 
 
@@ -87,23 +81,20 @@ def nmos(
 
     # create a single multiplier
     multiplier = Component("temp multiplier")
-    partialmult = PARTIALsingle_multiplier_gen_no_diff(
-        pdk, width=width, fingers=fingers
-    )
-
+    partialmult = PARTIAL_multiplier_no_diff(pdk, width=width, fingers=fingers)
+    # add diffusion
     diff_dims = (
         partialmult.xmax
         - partialmult.xmin
-        + 2 * pdk.get_grule("poly", "active_diff")["overhang"],
+        + 2 * pdk.get_grule("mcon", "active_diff")["min_enclosure"],
         width,
     )
-    # TODO: revise ruleset for active__diff, default=pdk.get_grule("active_tap","p+s/d")["min_enclosure"]
-    # .add_padding(layers=(pdk.get_glayer("p+s/d")),default=pdk.get_grule("active_tap","p+s/d")["min_enclosure"])
     multiplier << rectangle(
         size=diff_dims, layer=pdk.get_glayer("active_diff"), centered=True
     )
-    # multiplier.add_padding(layers=(pdk.get_glayer("p+s/d")),default=pdk.get_grule("poly","active_diff")["overhang"])
-    multiplier.add_padding(layers=(pdk.get_glayer("p+s/d")), default=0.1)
+    # add pplus
+    pplusoh = pdk.get_grule("p+s/d", "active_diff")["min_enclosure"]
+    multiplier.add_padding(layers=(pdk.get_glayer("p+s/d"),), default=pplusoh)
     multiplier << partialmult
     return multiplier.flatten()
 
@@ -121,4 +112,4 @@ if __name__ == "__main__":
     from PDK.gf180_mapped import gf180_mapped_pdk
 
     gf180_mapped_pdk.activate()
-    nmos(gf180_mapped_pdk, fingers=5).show()
+    nmos(gf180_mapped_pdk, fingers=4).show()

@@ -10,7 +10,6 @@ from PDK.mappedpdk import MappedPDK
 from pathlib import Path
 
 
-
 gf180_glayer_mapping = {
     "met4": "metal4",
     "via3": "via3",
@@ -121,7 +120,7 @@ grulesobj["n+s/d"]["met4"] = {}
 grulesobj["active_diff"]["dnwell"] = {}
 grulesobj["active_diff"]["pwell"] = {}
 grulesobj["active_diff"]["nwell"] = {}
-grulesobj["active_diff"]["p+s/d"] = {}
+grulesobj["active_diff"]["p+s/d"] = {"min_enclosure": 0.23}
 grulesobj["active_diff"]["n+s/d"] = {}
 grulesobj["active_diff"]["active_diff"] = {"min_width": 0.22, "min_seperation": 0.28}
 grulesobj["active_diff"]["active_tap"] = {

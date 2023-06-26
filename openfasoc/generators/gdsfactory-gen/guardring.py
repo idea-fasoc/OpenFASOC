@@ -1,4 +1,4 @@
-# from PDK.mappedpdk import MappedPDK
+from PDK.mappedpdk import MappedPDK
 from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
@@ -10,7 +10,7 @@ from math import ceil
 
 @cell
 def ptapring(
-    pdk,
+    pdk: MappedPDK,
     enclosed_rectangle=(2.0, 4.0),
     horizontal_glayer: Optional[str] = "met1",
     vertical_glayer: Optional[str] = "met2",
