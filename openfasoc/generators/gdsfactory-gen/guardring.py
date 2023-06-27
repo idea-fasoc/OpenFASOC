@@ -3,7 +3,7 @@ from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
 from gdsfactory.components.rectangular_ring import rectangular_ring
-from via_gen import via_stack
+from via_gen import via_array, via_stack
 from typing import Optional
 from math import ceil
 
@@ -12,8 +12,8 @@ from math import ceil
 def ptapring(
     pdk: MappedPDK,
     enclosed_rectangle=(2.0, 4.0),
-    horizontal_glayer: Optional[str] = "met1",
-    vertical_glayer: Optional[str] = "met2",
+    horizontal_glayer: Optional[str] = "met2",
+    vertical_glayer: Optional[str] = "met1",
 ) -> Component:
     """ptapring produce a p substrate / pwell tap rectanglular ring
     This ring will legally enclose a rectangular shape
@@ -58,71 +58,30 @@ def ptapring(
         centered=True,
         layer=pdk.get_glayer("p+s/d"),
     )
-    # compute via seperation. via_spacing[0] is horizontal, via_spacing[1] is vertical
-    xlvl = int(horizontal_glayer[-1])
-    ylvl = int(vertical_glayer[-1])
-    via_spacing = list()
-    for dlvl in [xlvl, ylvl]:
-        via_seperations = [pdk.get_grule("mcon")["min_seperation"]] + [
-            pdk.get_grule("via" + str(lvl))["min_seperation"]
-            for lvl in range(1, dlvl + 1)
-        ]
-        metal_seperations = [
-            pdk.get_grule("met" + str(lvl))["min_seperation"]
-            for lvl in range(1, dlvl + 1)
-        ]
-        via_spacing.append(max(via_seperations + metal_seperations))
-    # compute how many vias and create the vias
-    num_vias = list()
-    viawidth = 0  # need this for later
-    for i, toplayer in enumerate([horizontal_glayer, vertical_glayer]):
-        # figure out how many vias
-        viastack = via_stack(pdk, "active_tap", toplayer)
-        viawidth = max(viastack.xmax - viastack.xmin, viastack.ymax - viastack.ymin)
-        viaspacing_full = viawidth + via_spacing[i]
-        num_vias = int(enclosed_rectangle[i] / viaspacing_full)
-        if num_vias > 1:
-            num_vias = num_vias - 1
-        # lay vias
-        for vianum in range(num_vias):
-            viastack_ref_plus = ptapring << viastack
-            viastack_ref_minus = ptapring << viastack
-            spacing_multiplier = ((-1) ** vianum) * ceil(vianum / 2)
-            if i == 0:  # horizontal layer
-                viastack_ref_plus.movex(spacing_multiplier * viaspacing_full).movey(
-                    0.5 * (enclosed_rectangle[1] + tap_width)
-                )
-                viastack_ref_minus.movex(spacing_multiplier * viaspacing_full).movey(
-                    -0.5 * (enclosed_rectangle[1] + tap_width)
-                )
-            else:  # vertical layer
-                viastack_ref_plus.movex(
-                    0.5 * (enclosed_rectangle[0] + tap_width)
-                ).movey(spacing_multiplier * viaspacing_full)
-                viastack_ref_minus.movex(
-                    -0.5 * (enclosed_rectangle[0] + tap_width)
-                ).movey(spacing_multiplier * viaspacing_full)
-    # lay metal
-    ns_side_dims = (
-        enclosed_rectangle[0] + 2 * tap_width,
-        max(viawidth, pdk.get_grule(horizontal_glayer)["min_width"]),
+    # create via arrs
+    via_width_horizontal = 2 * via_stack(pdk, "active_diff", horizontal_glayer).ymax
+    arr_size_horizontal = enclosed_rectangle[0]
+    horizontal_arr = via_array(
+        pdk,
+        "active_diff",
+        horizontal_glayer,
+        (arr_size_horizontal, via_width_horizontal),
+        minus1=True,
     )
-    ew_side_dims = (
-        max(viawidth, pdk.get_grule(horizontal_glayer)["min_width"]),
-        enclosed_rectangle[1] + 2 * tap_width,
+    via_width_vertical = 2 * via_stack(pdk, "active_diff", vertical_glayer).ymax
+    arr_size_vertical = enclosed_rectangle[1]
+    vertical_arr = via_array(
+        pdk,
+        "active_diff",
+        vertical_glayer,
+        (via_width_vertical, arr_size_vertical),
+        minus1=True,
     )
-    metal_ref_n = ptapring << rectangle(
-        layer=pdk.get_glayer(horizontal_glayer), size=ns_side_dims, centered=True
-    )
-    metal_ref_e = ptapring << rectangle(
-        layer=pdk.get_glayer(vertical_glayer), size=ew_side_dims, centered=True
-    )
-    metal_ref_s = ptapring << rectangle(
-        layer=pdk.get_glayer(horizontal_glayer), size=ns_side_dims, centered=True
-    )
-    metal_ref_w = ptapring << rectangle(
-        layer=pdk.get_glayer(vertical_glayer), size=ew_side_dims, centered=True
-    )
+    # add via arrs
+    metal_ref_n = ptapring << horizontal_arr
+    metal_ref_e = ptapring << vertical_arr
+    metal_ref_s = ptapring << horizontal_arr
+    metal_ref_w = ptapring << vertical_arr
     metal_ref_n.movey(0.5 * (enclosed_rectangle[1] + tap_width))
     metal_ref_e.movex(0.5 * (enclosed_rectangle[0] + tap_width))
     metal_ref_s.movey(-0.5 * (enclosed_rectangle[1] + tap_width))

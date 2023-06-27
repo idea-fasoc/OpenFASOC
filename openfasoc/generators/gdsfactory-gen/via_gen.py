@@ -4,7 +4,8 @@ from gdsfactory.components.rectangle import rectangle
 from pydantic import validate_arguments
 from collections import OrderedDict
 from PDK.mappedpdk import MappedPDK
-from math import ceil, floor
+from math import floor
+from typing import Optional
 
 
 @validate_arguments
@@ -24,7 +25,9 @@ def __error_check_order_layers(
 
 
 @cell
-def via_stack(pdk: MappedPDK, glayer1: str, glayer2: str) -> Component:
+def via_stack(
+    pdk: MappedPDK, glayer1: str, glayer2: str, centered: Optional[bool] = True
+) -> Component:
     """produces a single via stack between two metal layers
     does not produce via arrays
     args:
@@ -86,11 +89,21 @@ def via_stack(pdk: MappedPDK, glayer1: str, glayer2: str) -> Component:
         viastack << rectangle(
             size=(metdim, metdim), layer=pdk.get_glayer(gfinalmet), centered=True
         )
-    return viastack.flatten()
+    center_stack = Component()
+    viastack_ref = center_stack << viastack
+    if not centered:
+        viastack_ref.movex(viastack.xmax).movey(viastack.ymax)
+    return center_stack.flatten()
 
 
 @cell
-def via_array(pdk: MappedPDK, glayer1: str, glayer2: str, size=(4.0, 2.0)) -> Component:
+def via_array(
+    pdk: MappedPDK,
+    glayer1: str,
+    glayer2: str,
+    size=(4.0, 1.0),
+    minus1: Optional[bool] = False,
+) -> Component:
     """Fill a region with vias. Will automatically decide num rows and columns
     args:
     pdk: MappedPDK is the pdk to use
@@ -124,22 +137,25 @@ def via_array(pdk: MappedPDK, glayer1: str, glayer2: str, size=(4.0, 2.0)) -> Co
     viaspacing_full = via_spacing + viadim
     # num_vias[0]=x, num_vias[1]=y
     num_vias = [(floor(dim / (viadim + via_spacing)) or 1) for dim in size]
-    # num_vias = [(dim-1 if dim>1 else dim) for dim in num_vias]
-    # create horizontal vias and center
-    horizontal_vias = Component("temp horizontal vias")
-    for vianum in range(num_vias[0]):
-        spacing_multiplier = ((-1) ** vianum) * ceil(vianum / 2)
-        viastack_ref = horizontal_vias << viastack
-        viastack_ref.movex(spacing_multiplier * viaspacing_full)
-        if (num_vias[0] % 2) == 0:  # adjust for even array size
-            viastack_ref.movex(viaspacing_full / 2)
-    # copy horizontal to create vertical
-    for vianum in range(num_vias[1]):
-        spacing_multiplier = ((-1) ** vianum) * ceil(vianum / 2)
-        viarow_ref = viaarray << horizontal_vias
-        viarow_ref.movey(spacing_multiplier * viaspacing_full)
-        if (num_vias[1] % 2) == 0:  # adjust for even array size
-            viarow_ref.movey(viaspacing_full / 2)
+    if minus1:
+        num_vias = [(dim - 1 if dim > 1 else dim) for dim in num_vias]
+    # create array and add to component
+    temparray = Component("temp horizontal vias")
+    temparray.add_array(
+        viastack,
+        columns=num_vias[0],
+        rows=num_vias[1],
+        spacing=[viaspacing_full, viaspacing_full],
+    )
+    array_ref = viaarray << temparray
+    center_offsety = -1 * viaspacing_full * floor(num_vias[1] / 2)
+    center_offsetx = -1 * viaspacing_full * floor(num_vias[0] / 2)
+    if (num_vias[0] % 2) == 0:  # even num columns
+        center_offsetx += viaspacing_full / 2
+    if (num_vias[1] % 2) == 0:  # even num rows
+        center_offsety += viaspacing_full / 2
+    array_ref.movex(center_offsetx)
+    array_ref.movey(center_offsety)
     # place top metal and return
     top_met_layer = pdk.get_glayer("met" + str(level2))
     viaarray << rectangle(size=size, layer=top_met_layer, centered=True)
