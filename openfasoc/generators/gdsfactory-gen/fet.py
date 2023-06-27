@@ -4,8 +4,9 @@ from gdsfactory.components.rectangle import rectangle
 from PDK.mappedpdk import MappedPDK
 from typing import Optional
 from via_gen import via_array, via_stack
-from guardring import ptapring
+from guardring import tapring
 from math import ceil
+from pydantic import validate_arguments
 
 
 @cell
@@ -136,34 +137,22 @@ def multiplier(
     return multiplier.flatten()
 
 
-@cell
-def nmos(
-    pdk,
-    width: float = 3,
+@validate_arguments
+def __mult_array_macro(
+    pdk: MappedPDK,
+    sdlayer: str,
+    width: Optional[float] = 3,
     fingers: Optional[int] = 1,
     multipliers: Optional[int] = 1,
-    with_tie: Optional[bool] = True,
-    with_dummy: Optional[bool] = True,
-):
-    """Generic NMOS generator: uses minumum length without deep nwell
-    width = expands the NMOS in the y direction
-    fingers = introduces additional fingers (sharing source/drain) of width=width
-    with_tie = true or false, specfies if a bulk tie is required
-    """
-    if width < pdk.get_grule("active_diff")["min_width"]:
-        raise ValueError("transistor min width violated")
-    # TODO: glayer checks
+    routing: Optional[bool] = True,
+    dummy: Optional[bool] = True,
+) -> Component:
+    # create multiplier array
     pdk.activate()
-    # 3) make sure all multipliers are on component then use bbox to place tie ring around nfet
-    # 4) place pwell
-    # 5) place dnwell
-    # 6) place tap ring
-    nfet = Component()
-
-    # create and add multipliers to nfet
+    # TODO: error checking
     multiplier_arr = Component("temp multiplier array")
     multiplier_comp = multiplier(
-        pdk, "n+s/d", width=width, fingers=fingers, dummy=with_dummy
+        pdk, sdlayer, width=width, fingers=fingers, dummy=dummy, routing=routing
     )
     multiplier_seperation = (
         pdk.get_grule("met2")["min_seperation"]
@@ -173,8 +162,36 @@ def nmos(
     multiplier_arr.add_array(
         multiplier_comp, columns=1, rows=multipliers, spacing=(1, multiplier_seperation)
     )
+    return multiplier_arr
+
+
+@cell
+def nmos(
+    pdk,
+    width: float = 3,
+    fingers: Optional[int] = 1,
+    multipliers: Optional[int] = 1,
+    with_tie: Optional[bool] = True,
+    with_dummy: Optional[bool] = True,
+    with_dnwell: Optional[bool] = True,
+    with_substrate_tap: Optional[bool] = True,
+) -> Component:
+    """Generic NMOS generator: uses minumum length without deep nwell
+    width = expands the NMOS in the y direction
+    fingers = introduces additional fingers (sharing source/drain) of width=width
+    with_tie = true or false, specfies if a bulk tie is required
+    """
+    if width < pdk.get_grule("active_diff")["min_width"]:
+        raise ValueError("transistor min width violated")
+    # TODO: glayer checks
+    pdk.activate()
+    nfet = Component()
+    # create and add multipliers to nfet
+    multiplier_arr = __mult_array_macro(
+        pdk, "n+s/d", width, fingers, multipliers, dummy=with_dummy
+    )
     nfet.add(multiplier_arr.ref_center())
-    # add tap if tap
+    # add tie if tie
     if with_tie:
         tap_seperation = max(
             pdk.get_grule("met2")["min_seperation"],
@@ -186,26 +203,116 @@ def nmos(
             2 * (tap_seperation + nfet.xmax),
             2 * (tap_seperation + nfet.ymax),
         )
-        nfet << ptapring(
+        nfet << tapring(
             pdk,
             enclosed_rectangle=tap_encloses,
+            sdlayer="p+s/d",
+            horizontal_glayer="met2",
+            vertical_glayer="met1",
+        )
+    # add pwell
+    nfet.add_padding(
+        layers=(pdk.get_glayer("pwell"),),
+        default=pdk.get_grule("pwell", "active_tap")["min_enclosure"],
+    )
+    # add dnwell if dnwell
+    if with_dnwell:
+        nfet.add_padding(
+            layers=(pdk.get_glayer("dnwell"),),
+            default=pdk.get_grule("pwell", "dnwell")["min_enclosure"],
+        )
+    # add substrate tap if with_substrate_tap
+    if with_substrate_tap:
+        substrate_tap_seperation = pdk.get_grule("dnwell", "active_tap")[
+            "min_seperation"
+        ]
+        substrate_tap_encloses = (
+            2 * (substrate_tap_seperation + nfet.xmax),
+            2 * (substrate_tap_seperation + nfet.ymax),
+        )
+        nfet << tapring(
+            pdk,
+            enclosed_rectangle=substrate_tap_encloses,
+            sdlayer="p+s/d",
             horizontal_glayer="met2",
             vertical_glayer="met1",
         )
     return nfet.flatten()
 
 
-# @cell
-# def pmos(pdk: MappedPDK, width: float, fingers = Optional[int] = 1, with_tie: Optional[bool] = False):
-# 	"""Generic PMOS generator: uses minumum length
-# 	width = expands the PMOS in the y direction
-# 	fingers = introduces additional fingers (sharing source/drain) of width=width
-# 	with_tie = true or false, specfies if a bulk tie is required
-# 	"""
-# 	return
+@cell
+def pmos(
+    pdk,
+    width: float = 3,
+    fingers: Optional[int] = 1,
+    multipliers: Optional[int] = 1,
+    with_tie: Optional[bool] = True,
+    dnwell: Optional[bool] = False,
+    with_dummy: Optional[bool] = True,
+    with_substrate_tap: Optional[bool] = True,
+) -> Component:
+    """Generic NMOS generator: uses minumum length without deep nwell
+    width = expands the NMOS in the y direction
+    fingers = introduces additional fingers (sharing source/drain) of width=width
+    with_tie = true or false, specfies if a bulk tie is required
+    """
+    if width < pdk.get_grule("active_diff")["min_width"]:
+        raise ValueError("transistor min width violated")
+    # TODO: glayer checks
+    pdk.activate()
+    pfet = Component()
+    # create and add multipliers to nfet
+    multiplier_arr = __mult_array_macro(
+        pdk, "p+s/d", width, fingers, multipliers, dummy=with_dummy
+    )
+    pfet.add(multiplier_arr.ref_center())
+    # add tie if tie
+    if with_tie:
+        tap_seperation = max(
+            pdk.get_grule("met2")["min_seperation"],
+            pdk.get_grule("met1")["min_seperation"],
+            pdk.get_grule("active_diff", "active_tap")["min_seperation"],
+        )
+        tap_seperation += pdk.get_grule("n+s/d", "active_tap")["min_enclosure"]
+        tap_encloses = (
+            2 * (tap_seperation + pfet.xmax),
+            2 * (tap_seperation + pfet.ymax),
+        )
+        pfet << tapring(
+            pdk,
+            enclosed_rectangle=tap_encloses,
+            sdlayer="n+s/d",
+            horizontal_glayer="met2",
+            vertical_glayer="met1",
+        )
+    # add nwell
+    nwell_glayer = "dnwell" if dnwell else "nwell"
+    nwell_layer = pdk.get_glayer(nwell_glayer)
+    pfet.add_padding(
+        layers=(nwell_layer,),
+        default=pdk.get_grule("active_tap", nwell_glayer)["min_enclosure"],
+    )
+    # add substrate tap if with_substrate_tap
+    if with_substrate_tap:
+        substrate_tap_seperation = pdk.get_grule("dnwell", "active_tap")[
+            "min_seperation"
+        ]
+        substrate_tap_encloses = (
+            2 * (substrate_tap_seperation + pfet.xmax),
+            2 * (substrate_tap_seperation + pfet.ymax),
+        )
+        pfet << tapring(
+            pdk,
+            enclosed_rectangle=substrate_tap_encloses,
+            sdlayer="n+s/d",
+            horizontal_glayer="met2",
+            vertical_glayer="met1",
+        )
+    return pfet.flatten()
+
 
 if __name__ == "__main__":
     from PDK.gf180_mapped import gf180_mapped_pdk
 
     gf180_mapped_pdk.activate()
-    nmos(gf180_mapped_pdk, fingers=5, multipliers=2).show()
+    pmos(gf180_mapped_pdk, fingers=5, multipliers=2).show()

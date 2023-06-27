@@ -9,9 +9,10 @@ from math import ceil
 
 
 @cell
-def ptapring(
+def tapring(
     pdk: MappedPDK,
     enclosed_rectangle=(2.0, 4.0),
+    sdlayer: Optional[str] = "p+s/d",
     horizontal_glayer: Optional[str] = "met2",
     vertical_glayer: Optional[str] = "met1",
 ) -> Component:
@@ -26,7 +27,7 @@ def ptapring(
     """
     # check layers, activate pdk, create top cell
     pdk.has_required_glayers(
-        ["p+s/d", "active_tap", "mcon", horizontal_glayer, vertical_glayer]
+        [sdlayer, "active_tap", "mcon", horizontal_glayer, vertical_glayer]
     )
     pdk.activate()
     ptapring = Component()
@@ -49,14 +50,14 @@ def ptapring(
         layer=pdk.get_glayer("active_tap"),
     )
     # create p plus area
-    pp_enclosure = pdk.get_grule("active_tap", "p+s/d")["min_enclosure"]
+    pp_enclosure = pdk.get_grule("active_tap", sdlayer)["min_enclosure"]
     pp_width = 2 * pp_enclosure + tap_width
     pp_enclosed_rectangle = [dim - 2 * pp_enclosure for dim in enclosed_rectangle]
     ptapring << rectangular_ring(
         enclosed_size=pp_enclosed_rectangle,
         width=pp_width,
         centered=True,
-        layer=pdk.get_glayer("p+s/d"),
+        layer=pdk.get_glayer(sdlayer),
     )
     # create via arrs
     via_width_horizontal = 2 * via_stack(pdk, "active_diff", horizontal_glayer).ymax
@@ -94,4 +95,4 @@ if __name__ == "__main__":
     from PDK.gf180_mapped import gf180_mapped_pdk
 
     gf180_mapped_pdk.activate()
-    ptapring(gf180_mapped_pdk, enclosed_rectangle=(5, 5)).show()
+    tapring(gf180_mapped_pdk, "p+s/d", enclosed_rectangle=(5, 5)).show()

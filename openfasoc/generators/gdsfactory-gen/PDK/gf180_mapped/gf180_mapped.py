@@ -121,7 +121,7 @@ grulesobj["active_diff"]["dnwell"] = {}
 grulesobj["active_diff"]["pwell"] = {}
 grulesobj["active_diff"]["nwell"] = {}
 grulesobj["active_diff"]["p+s/d"] = {"min_enclosure": 0.23}
-grulesobj["active_diff"]["n+s/d"] = {"min_enclosure": 0.16}
+grulesobj["active_diff"]["n+s/d"] = {"min_enclosure": 0.23}
 grulesobj["active_diff"]["active_diff"] = {"min_width": 0.22, "min_seperation": 0.28}
 grulesobj["active_diff"]["active_tap"] = {
     "0.3)": "*****FIXTHIS!!!MANUALLY!*****",
