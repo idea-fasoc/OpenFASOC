@@ -17,7 +17,7 @@ module ${design_name} (
 
     wire w_clk0, w_clk0b, w_clk1, w_clk1b;
 	wire comp_out, clk_gate_out, FF_out, FF_out_inv;
-	wire [3:0] non_clk_dcde_noise_injection
+	wire [3:0] non_clk_dcde_noise_injection;
 
 	DCDC_SIX_STAGES_CONV u_DCDC_SIX_STAGES_CONV(
 		.VOUT(VOUT),
