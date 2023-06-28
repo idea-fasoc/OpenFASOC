@@ -23,4 +23,3 @@ clean:
 	rm -rf tools/*.pyc tools/__pycache__/
 	rm -rf flow/design/src/dcdc
 	cd flow && make nuke
-	cd simulations && rm -rf run
