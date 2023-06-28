@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = dcdc
-export DESIGN_NAME = DCDC_SIX_STAGES_CONV
+export DESIGN_NAME = DCDC_CONV
 
 export PLATFORM    = sky130hd
 #export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
