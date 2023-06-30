@@ -34,7 +34,7 @@ def tapring(
     if not "met" in horizontal_glayer or not "met" in vertical_glayer:
         raise ValueError("both horizontal and vertical glayers should be metals")
     # check that ring is not too small
-    min_gap_tap = pdk.get_grule("active_tap")["min_seperation"]
+    min_gap_tap = pdk.get_grule("active_tap")["min_separation"]
     if enclosed_rectangle[0] < min_gap_tap:
         raise ValueError("ptapring must be larger than " + str(min_gap_tap))
     # create active tap
@@ -92,7 +92,6 @@ def tapring(
 
 
 if __name__ == "__main__":
-    from PDK.gf180_mapped import gf180_mapped_pdk
+    from PDK.util.standard_main import pdk
 
-    gf180_mapped_pdk.activate()
-    tapring(gf180_mapped_pdk, "p+s/d", enclosed_rectangle=(5, 5)).show()
+    tapring(pdk, "p+s/d", enclosed_rectangle=(5, 5)).show()

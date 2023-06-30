@@ -5,7 +5,6 @@ from PDK.mappedpdk import MappedPDK
 from typing import Optional
 from via_gen import via_array, via_stack
 from guardring import tapring
-from math import ceil
 from pydantic import validate_arguments
 
 
@@ -28,7 +27,7 @@ def multiplier(
     length = pdk.get_grule("poly")["min_width"]
     poly_overhang = pdk.get_grule("poly", "active_diff")["overhang"]
     poly_height = width + 2 * poly_overhang
-    routing_pfac = pdk.get_grule("met1")["min_seperation"] if routing else 0
+    routing_pfac = pdk.get_grule("met1")["min_separation"] if routing else 0
     poly_height += routing_pfac
     poly_gate_comp = Component("temp poly gate")
     tempref = poly_gate_comp << rectangle(
@@ -39,18 +38,18 @@ def multiplier(
     tempviastack = via_stack(pdk, "active_diff", "met1")
     viasize = tempviastack.xmax - tempviastack.xmin
     mcon_poly_space = (
-        2 * pdk.get_grule("poly", "mcon")["min_seperation"]
+        2 * pdk.get_grule("poly", "mcon")["min_separation"]
         + pdk.get_grule("mcon")["width"]
     )
     poly_spacing = max(viasize, mcon_poly_space)
     # create a single finger
     finger = Component("temp finger comp")
     finger << poly_gate_comp
-    routing_mfac = pdk.get_grule("met1")["min_seperation"] if routing else 0
+    routing_mfac = pdk.get_grule("met1")["min_separation"] if routing else 0
     vwidth = width + routing_mfac
     sd_via_comp = via_array(pdk, "active_diff", "met1", size=(viasize, vwidth))
     sd_via_ref_arr = finger << sd_via_comp
-    finger_dim = poly_spacing + length
+    finger_dim = poly_spacing + max(length, pdk.get_grule("met1")["min_separation"])
     sd_via_ref_arr.movex(finger_dim / 2).movey(routing_mfac / 2)
     # create finger array and add to multiplier
     fingerarray = Component("temp finger array")
@@ -75,8 +74,12 @@ def multiplier(
     multiplier << diff_area
     # route all drains/ gates/ sources
     if routing:
-        # TODO: fix poly overhang / met1 seperation
-        extracted_gates = multiplier.extract(pdk.get_glayer("poly"))
+        if fingers == 1:
+            raise NotImplementedError("fingers=1 not supported for routing")
+        # create sdvia (need dims)
+        sdvia = via_stack(pdk, "met1", "met2")
+        # TODO: fix poly overhang / met1 separation
+        extracted_gates = multiplier.extract([pdk.get_glayer("poly")])
         gate_route_width = (
             pdk.get_grule("mcon")["width"]
             + 2 * pdk.get_grule("poly", "mcon")["min_enclosure"]
@@ -93,28 +96,28 @@ def multiplier(
         # source and drain routing
         sw_corner_os = [
             fingerarray_ref.xmin + viasize / 2,
-            fingerarray_ref.ymax + tempviastack.extract(pdk.get_glayer("met1")).ymax,
+            fingerarray_ref.parent.extract([pdk.get_glayer("met1")]).ymax
+            + sdvia.extract([pdk.get_glayer("met1")]).ymax,
         ]
-        sdvia = via_stack(pdk, "met1", "met2")
         for finger in range(fingers + 1):
             sdrouting = Component("temp routing comp")
             sdrouting << sdvia
             doffset_met1 = 0
             if finger % 2:
-                doffset_met1 = sdvia.ymax - sdvia.extract(pdk.get_glayer("met1")).ymax
-                doffset = (2 * sdvia.ymax) + pdk.get_grule("met2")["min_seperation"]
+                doffset_met1 = sdvia.ymax - sdvia.extract([pdk.get_glayer("met1")]).ymax
+                doffset = (2 * sdvia.ymax) + pdk.get_grule("met2")["min_separation"]
                 extendm = sdrouting << rectangle(
                     size=(viasize, doffset + doffset_met1),
                     centered=True,
                     layer=pdk.get_glayer("met1"),
                 )
-                extendm.movey(-0.5 * doffset - sdvia.ymax)
+                extendm.movey(-0.5 * doffset - sdvia.ymax + doffset_met1 / 2)
             sdrouting_ref = multiplier << sdrouting
             sdrouting_ref.move(destination=(sw_corner_os))
             if finger % 2:
                 sdrouting_ref.movey(extendm.ymax - extendm.ymin)
             sw_corner_os[0] += finger_dim
-        met2_ext = multiplier.extract(pdk.get_glayer("met2"))
+        met2_ext = multiplier.extract([pdk.get_glayer("met2")])
         met2route_dims = (met2_ext.xmax - met2_ext.xmin, 2 * sdvia.ymax)
         sd_met2_connect = rectangle(
             layer=pdk.get_glayer("met2"), size=met2route_dims, centered=True
@@ -130,7 +133,7 @@ def multiplier(
         )
         dummy_space = pdk.get_grule(sdlayer, "active_diff")["min_enclosure"]
         dummy.add_padding(layers=(pdk.get_glayer(sdlayer),), default=dummy_space)
-        dummy_space += pdk.get_grule(sdlayer)["min_seperation"] + size[0] / 2
+        dummy_space += pdk.get_grule(sdlayer)["min_separation"] + size[0] / 2
         for side in [-1, 1]:
             dummy_ref = multiplier << dummy
             dummy_ref.movex(side * (dummy_space + multiplier.xmax))
@@ -154,13 +157,13 @@ def __mult_array_macro(
     multiplier_comp = multiplier(
         pdk, sdlayer, width=width, fingers=fingers, dummy=dummy, routing=routing
     )
-    multiplier_seperation = (
-        pdk.get_grule("met2")["min_seperation"]
+    multiplier_separation = (
+        pdk.get_grule("met2")["min_separation"]
         + multiplier_comp.ymax
         - multiplier_comp.ymin
     )
     multiplier_arr.add_array(
-        multiplier_comp, columns=1, rows=multipliers, spacing=(1, multiplier_seperation)
+        multiplier_comp, columns=1, rows=multipliers, spacing=(1, multiplier_separation)
     )
     return multiplier_arr
 
@@ -193,15 +196,15 @@ def nmos(
     nfet.add(multiplier_arr.ref_center())
     # add tie if tie
     if with_tie:
-        tap_seperation = max(
-            pdk.get_grule("met2")["min_seperation"],
-            pdk.get_grule("met1")["min_seperation"],
-            pdk.get_grule("active_diff", "active_tap")["min_seperation"],
+        tap_separation = max(
+            pdk.get_grule("met2")["min_separation"],
+            pdk.get_grule("met1")["min_separation"],
+            pdk.get_grule("active_diff", "active_tap")["min_separation"],
         )
-        tap_seperation += pdk.get_grule("p+s/d", "active_tap")["min_enclosure"]
+        tap_separation += pdk.get_grule("p+s/d", "active_tap")["min_enclosure"]
         tap_encloses = (
-            2 * (tap_seperation + nfet.xmax),
-            2 * (tap_seperation + nfet.ymax),
+            2 * (tap_separation + nfet.xmax),
+            2 * (tap_separation + nfet.ymax),
         )
         nfet << tapring(
             pdk,
@@ -223,12 +226,12 @@ def nmos(
         )
     # add substrate tap if with_substrate_tap
     if with_substrate_tap:
-        substrate_tap_seperation = pdk.get_grule("dnwell", "active_tap")[
-            "min_seperation"
+        substrate_tap_separation = pdk.get_grule("dnwell", "active_tap")[
+            "min_separation"
         ]
         substrate_tap_encloses = (
-            2 * (substrate_tap_seperation + nfet.xmax),
-            2 * (substrate_tap_seperation + nfet.ymax),
+            2 * (substrate_tap_separation + nfet.xmax),
+            2 * (substrate_tap_separation + nfet.ymax),
         )
         nfet << tapring(
             pdk,
@@ -268,15 +271,15 @@ def pmos(
     pfet.add(multiplier_arr.ref_center())
     # add tie if tie
     if with_tie:
-        tap_seperation = max(
-            pdk.get_grule("met2")["min_seperation"],
-            pdk.get_grule("met1")["min_seperation"],
-            pdk.get_grule("active_diff", "active_tap")["min_seperation"],
+        tap_separation = max(
+            pdk.get_grule("met2")["min_separation"],
+            pdk.get_grule("met1")["min_separation"],
+            pdk.get_grule("active_diff", "active_tap")["min_separation"],
         )
-        tap_seperation += pdk.get_grule("n+s/d", "active_tap")["min_enclosure"]
+        tap_separation += pdk.get_grule("n+s/d", "active_tap")["min_enclosure"]
         tap_encloses = (
-            2 * (tap_seperation + pfet.xmax),
-            2 * (tap_seperation + pfet.ymax),
+            2 * (tap_separation + pfet.xmax),
+            2 * (tap_separation + pfet.ymax),
         )
         pfet << tapring(
             pdk,
@@ -294,17 +297,17 @@ def pmos(
     )
     # add substrate tap if with_substrate_tap
     if with_substrate_tap:
-        substrate_tap_seperation = pdk.get_grule("dnwell", "active_tap")[
-            "min_seperation"
+        substrate_tap_separation = pdk.get_grule("dnwell", "active_tap")[
+            "min_separation"
         ]
         substrate_tap_encloses = (
-            2 * (substrate_tap_seperation + pfet.xmax),
-            2 * (substrate_tap_seperation + pfet.ymax),
+            2 * (substrate_tap_separation + pfet.xmax),
+            2 * (substrate_tap_separation + pfet.ymax),
         )
         pfet << tapring(
             pdk,
             enclosed_rectangle=substrate_tap_encloses,
-            sdlayer="n+s/d",
+            sdlayer="p+s/d",
             horizontal_glayer="met2",
             vertical_glayer="met1",
         )
@@ -312,7 +315,6 @@ def pmos(
 
 
 if __name__ == "__main__":
-    from PDK.gf180_mapped import gf180_mapped_pdk
+    from PDK.util.standard_main import pdk
 
-    gf180_mapped_pdk.activate()
-    pmos(gf180_mapped_pdk, fingers=5, multipliers=2).show()
+    pmos(pdk, fingers=3).show()

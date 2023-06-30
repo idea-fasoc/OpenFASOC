@@ -120,20 +120,21 @@ def via_array(
     if level1 == level2:
         return viaarray
     # figure out min space between via stacks
-    via_spacing = [] if level1 else [pdk.get_grule("mcon")["min_seperation"]]
+    via_spacing = [] if level1 else [pdk.get_grule("mcon")["min_separation"]]
     level1 = level1 if level1 else level1 + 1
     for level in range(level1, level2):
         met_glayer = "met" + str(level)
         via_glayer = "via" + str(level)
-        via_spacing.append(pdk.get_grule(met_glayer)["min_seperation"])
-        via_spacing.append(pdk.get_grule(via_glayer)["min_seperation"])
-    via_spacing.append(pdk.get_grule("met" + str(level2))["min_seperation"])
+        via_spacing.append(pdk.get_grule(met_glayer)["min_separation"])
+        via_spacing.append(pdk.get_grule(via_glayer)["min_separation"])
+    via_spacing.append(pdk.get_grule("met" + str(level2))["min_separation"])
     via_spacing = max(via_spacing)
     # error check size and get viaspacing_full
     viastack = via_stack(pdk, glayer1, glayer2)
     viadim = max(viastack.xmax - viastack.xmin, viastack.ymax - viastack.ymin)
-    if any([viadim > dim for dim in size]):
-        raise ValueError("via_array size: one or more dims too small")
+    for i, dim in enumerate(size):
+        if round(viadim, 8) > round(dim, 8):
+            raise ValueError(f"via_array,size:dim {i}={dim} less than {viadim}")
     viaspacing_full = via_spacing + viadim
     # num_vias[0]=x, num_vias[1]=y
     num_vias = [(floor(dim / (viadim + via_spacing)) or 1) for dim in size]
@@ -163,7 +164,16 @@ def via_array(
 
 
 if __name__ == "__main__":
-    from PDK.gf180_mapped import gf180_mapped_pdk
+    from PDK.util.standard_main import pdk
+    from sys import exit
 
-    gf180_mapped_pdk.activate()
-    via_array(gf180_mapped_pdk, "active_diff", "met1").show()
+    test_all = False
+
+    if not test_all:
+        via_array(pdk, "active_diff", "met3").show()
+        exit(0)
+
+    layers = ["poly", "met1", "met2", "met3"]
+    for lay1 in layers:
+        for lay2 in layers:
+            via_array(pdk, lay1, lay2).show()
