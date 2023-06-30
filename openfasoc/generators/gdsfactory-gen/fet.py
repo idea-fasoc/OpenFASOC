@@ -2,7 +2,7 @@ from gdsfactory.cell import cell
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
 from PDK.mappedpdk import MappedPDK
-from typing import Optional
+from typing import Optional, Union
 from via_gen import via_array, via_stack
 from guardring import tapring
 from pydantic import validate_arguments
@@ -15,7 +15,8 @@ def multiplier(
     width: Optional[float] = 3,
     fingers: Optional[int] = 1,
     routing: Optional[bool] = True,
-    dummy: Optional[bool] = True,
+    dummy: Optional[Union[bool, tuple[bool, bool]]] = True,
+    length: Optional[float] = None,
 ) -> Component:
     # error checking
     if "+s/d" not in sdlayer:
@@ -24,7 +25,7 @@ def multiplier(
     if fingers == 0:
         return multiplier
     # create the poly gate
-    length = pdk.get_grule("poly")["min_width"]
+    length = length or pdk.get_grule("poly")["min_width"]
     poly_overhang = pdk.get_grule("poly", "active_diff")["overhang"]
     poly_height = width + 2 * poly_overhang
     routing_pfac = pdk.get_grule("met1")["min_separation"] if routing else 0
@@ -125,16 +126,28 @@ def multiplier(
         for m2offset in [sw_corner_os[1], met2_ext.ymax - sdvia.ymax]:
             m2ref = multiplier << sd_met2_connect
             m2ref.movey(m2offset)
-    if dummy:
+    # create dummy regions
+    if isinstance(dummy, bool):
+        dummyl = dummy
+        dummyr = dummy
+    else:
+        dummyl = dummy[0]
+        dummyr = dummy[1]
+    if dummyl or dummyr:
         dummy = Component("temp dummy region")
-        size = (pdk.get_grule("active_diff")["min_width"], width)
+        size = (length, width)
         dummy << rectangle(
             layer=pdk.get_glayer("active_diff"), size=size, centered=True
         )
         dummy_space = pdk.get_grule(sdlayer, "active_diff")["min_enclosure"]
         dummy.add_padding(layers=(pdk.get_glayer(sdlayer),), default=dummy_space)
         dummy_space += pdk.get_grule(sdlayer)["min_separation"] + size[0] / 2
-        for side in [-1, 1]:
+        sides = list()
+        if dummyl:
+            sides.append(-1)
+        if dummyr:
+            sides.append(1)
+        for side in sides:
             dummy_ref = multiplier << dummy
             dummy_ref.movex(side * (dummy_space + multiplier.xmax))
     return multiplier.flatten()
@@ -148,14 +161,21 @@ def __mult_array_macro(
     fingers: Optional[int] = 1,
     multipliers: Optional[int] = 1,
     routing: Optional[bool] = True,
-    dummy: Optional[bool] = True,
+    dummy: Optional[Union[bool, tuple[bool, bool]]] = True,
+    length: Optional[float] = None,
 ) -> Component:
     # create multiplier array
     pdk.activate()
     # TODO: error checking
     multiplier_arr = Component("temp multiplier array")
     multiplier_comp = multiplier(
-        pdk, sdlayer, width=width, fingers=fingers, dummy=dummy, routing=routing
+        pdk,
+        sdlayer,
+        width=width,
+        fingers=fingers,
+        dummy=dummy,
+        routing=routing,
+        length=length,
     )
     multiplier_separation = (
         pdk.get_grule("met2")["min_separation"]
@@ -175,9 +195,10 @@ def nmos(
     fingers: Optional[int] = 1,
     multipliers: Optional[int] = 1,
     with_tie: Optional[bool] = True,
-    with_dummy: Optional[bool] = True,
+    with_dummy: Optional[Union[bool, tuple[bool, bool]]] = True,
     with_dnwell: Optional[bool] = True,
     with_substrate_tap: Optional[bool] = True,
+    length: Optional[float] = None,
 ) -> Component:
     """Generic NMOS generator: uses minumum length without deep nwell
     width = expands the NMOS in the y direction
@@ -191,7 +212,7 @@ def nmos(
     nfet = Component()
     # create and add multipliers to nfet
     multiplier_arr = __mult_array_macro(
-        pdk, "n+s/d", width, fingers, multipliers, dummy=with_dummy
+        pdk, "n+s/d", width, fingers, multipliers, dummy=with_dummy, length=length
     )
     nfet.add(multiplier_arr.ref_center())
     # add tie if tie
@@ -251,8 +272,9 @@ def pmos(
     multipliers: Optional[int] = 1,
     with_tie: Optional[bool] = True,
     dnwell: Optional[bool] = False,
-    with_dummy: Optional[bool] = True,
+    with_dummy: Optional[Union[bool, tuple[bool, bool]]] = True,
     with_substrate_tap: Optional[bool] = True,
+    length: Optional[float] = None,
 ) -> Component:
     """Generic NMOS generator: uses minumum length without deep nwell
     width = expands the NMOS in the y direction
@@ -266,7 +288,7 @@ def pmos(
     pfet = Component()
     # create and add multipliers to nfet
     multiplier_arr = __mult_array_macro(
-        pdk, "p+s/d", width, fingers, multipliers, dummy=with_dummy
+        pdk, "p+s/d", width, fingers, multipliers, dummy=with_dummy, length=length
     )
     pfet.add(multiplier_arr.ref_center())
     # add tie if tie
@@ -317,4 +339,4 @@ def pmos(
 if __name__ == "__main__":
     from PDK.util.standard_main import pdk
 
-    pmos(pdk, fingers=3).show()
+    pmos(pdk, fingers=8, with_dummy=True).show()

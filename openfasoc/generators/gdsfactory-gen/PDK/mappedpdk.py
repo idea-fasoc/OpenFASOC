@@ -17,6 +17,8 @@ class MappedPDK(Pdk):
     has_required_glayers(list[str]) is used to verify all required generic layers are
     present"""
 
+    # of all the cap* layers, capmet is the only real layer
+    # the other cap layers get initialized to copies of the respective layers
     valid_glayers: ClassVar[tuple[str]] = (
         "dnwell",
         "pwell",
@@ -34,6 +36,13 @@ class MappedPDK(Pdk):
         "met3",
         "via3",
         "met4",
+        "via4",
+        "met5",
+        "capmet",
+        # copied layers
+        "capbottommet",
+        "captopmet",
+        "capvia",
     )
 
     glayers: dict[StrictStr, StrictStr]

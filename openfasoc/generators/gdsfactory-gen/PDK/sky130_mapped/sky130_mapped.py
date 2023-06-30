@@ -6,8 +6,18 @@ import sky130
 from PDK.mappedpdk import MappedPDK
 from pathlib import Path
 
+sky130.PDK.layers["capm3"] = (89, 44)
 
+# use mimcap over metal 3
 sky130_glayer_mapping = {
+    # copied layers
+    "capbottommet": "met3drawing",
+    "captopmet": "met4drawing",
+    "capvia": "via3drawing",
+    # original layers
+    "capmet": "capm3",
+    "met5": "met4drawing",
+    "via4": "via3drawing",
     "met4": "met3drawing",
     "via3": "via2drawing",
     "met3": "met2drawing",
@@ -55,7 +65,7 @@ grulesobj["pwell"]["nwell"] = {}
 grulesobj["pwell"]["p+s/d"] = {}
 grulesobj["pwell"]["n+s/d"] = {}
 grulesobj["pwell"]["active_diff"] = {}
-grulesobj["pwell"]["active_tap"] = {}
+grulesobj["pwell"]["active_tap"] = {"min_enclosure": 0.18}
 grulesobj["pwell"]["poly"] = {}
 grulesobj["pwell"]["mcon"] = {}
 grulesobj["pwell"]["met1"] = {}
@@ -293,7 +303,6 @@ grulesobj["met4"]["via2"] = {}
 grulesobj["met4"]["met3"] = {}
 grulesobj["met4"]["via3"] = {}
 grulesobj["met4"]["met4"] = {"min_width": 0.3, "min_separation": 0.3}
-
 
 sky130_mapped_pdk = MappedPDK.from_gf_pdk(
     sky130.PDK,

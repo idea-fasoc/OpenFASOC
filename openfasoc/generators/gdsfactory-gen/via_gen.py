@@ -2,7 +2,6 @@ from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
 from pydantic import validate_arguments
-from collections import OrderedDict
 from PDK.mappedpdk import MappedPDK
 from math import floor
 from typing import Optional

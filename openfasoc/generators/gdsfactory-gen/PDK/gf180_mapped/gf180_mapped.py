@@ -1,5 +1,4 @@
-# TODO: add all the cells from gf180
-# TODO: note that gf180 pip is not up to date with github repo (no layer views)
+# TODO: gf180 mimcap generator
 """
 usage: from gf180_mapped import gf180_mapped_pdk
 """
@@ -11,6 +10,8 @@ from pathlib import Path
 
 
 gf180_glayer_mapping = {
+    "met5": "metal5",
+    "via4": "via4",
     "met4": "metal4",
     "via3": "via3",
     "met3": "metal3",
