@@ -219,19 +219,19 @@ os.mkdir(genDir + args.outputDir)
 #  subprocess.run(["ls", "-l", flowDir, "results/", args.platform, "/cryo"])
 
 shutil.copyfile(
-    flowDir + "results/" + args.platform + "/cryo/6_final.gds",
+    flowDir + "results/" + args.platform + "/dcdc/6_final.gds",
     genDir + args.outputDir + "/" + args.platform + "/" + designName + ".gds",
 )
 shutil.copyfile(
-    flowDir + "results/" + args.platform + "/cryo/6_final.def",
+    flowDir + "results/" + args.platform + "/dcdc/6_final.def",
     genDir + args.outputDir + "/" + args.platform + "/" + designName + ".def",
 )
 shutil.copyfile(
-    flowDir + "results/" + args.platform + "/cryo/6_final.v",
+    flowDir + "results/" + args.platform + "/dcdc/6_final.v",
     genDir + args.outputDir + "/" + args.platform + "/" + designName + ".v",
 )
 shutil.copyfile(
-    flowDir + "results/" + args.platform + "/cryo/6_1_fill.sdc",
+    flowDir + "results/" + args.platform + "/dcdc/6_1_fill.sdc",
     genDir + args.outputDir + "/" + args.platform + "/" + designName + ".sdc",
 )
 shutil.copyfile(
@@ -243,11 +243,11 @@ shutil.copyfile(
     genDir + args.outputDir + "/" + args.platform + "/" + designName + "_pex.spice",
 )
 shutil.copyfile(
-    flowDir + "reports/" + args.platform + "/cryo/6_final_drc.rpt",
+    flowDir + "reports/" + args.platform + "/dcdc/6_final_drc.rpt",
     genDir + args.outputDir + "/" + args.platform + "/6_final_drc.rpt",
 )
 shutil.copyfile(
-    flowDir + "reports/" + args.platform + "/cryo/6_final_lvs.rpt",
+    flowDir + "reports/" + args.platform + "/dcdc/6_final_lvs.rpt",
     genDir + args.outputDir + "/" + args.platform + "/6_final_lvs.rpt",
 )
 
