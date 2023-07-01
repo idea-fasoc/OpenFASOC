@@ -195,7 +195,7 @@ $(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synt
 
 # STEP 1.1: DEF manipulation
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/six_stage.macro_placment.cfg:
+$(RESULTS_DIR)/six_stage.macro_placment.cfg: $(RESULTS_DIR)/2_1_floorplan.def
 	python3 $(UTILS_DIR)/place_six_stage.py
 
 # STEP 2: IO Placement
