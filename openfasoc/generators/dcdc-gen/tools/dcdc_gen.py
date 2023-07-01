@@ -181,7 +181,7 @@ print("#----------------------------------------------------------------------")
 print("# Run Synthesis and APR")
 print("#----------------------------------------------------------------------")
 
-p = sp.Popen(["make", args.platform], cwd=flowDir)
+p = sp.Popen(["make", "finish"], cwd=flowDir)
 p.wait()
 
 
