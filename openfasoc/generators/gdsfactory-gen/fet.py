@@ -200,13 +200,10 @@ def __mult_array_macro(
         + multiplier_comp.ymax
         - multiplier_comp.ymin
     )
-    ref_displacment = (
-        multiplier_separation + multiplier_comp.ymax - multiplier_comp.ymin
-    )
     for rownum in range(multipliers):
-        row_displacment = rownum * ref_displacment
+        row_displacment = rownum * multiplier_separation
         row_ref = multiplier_arr << multiplier_comp
-        row_ref.movey(ref_displacment)
+        row_ref.movey(row_displacment)
         multiplier_arr.add_ports(
             row_ref.get_ports_list(), prefix="multiplier_" + str(rownum) + "_"
         )
@@ -368,7 +365,7 @@ def pmos(
 if __name__ == "__main__":
     from PDK.util.standard_main import pdk
 
-    mytransistor = nmos(pdk, fingers=8, with_dummy=True)
+    mytransistor = nmos(pdk, fingers=8, multipliers=2, with_dummy=True)
     mytransistor.show()
     for key in mytransistor.ports.keys():
         print(key)

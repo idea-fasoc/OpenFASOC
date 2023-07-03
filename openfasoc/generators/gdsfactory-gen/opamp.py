@@ -6,6 +6,7 @@ from typing import Optional
 from fet import nmos, pmos, multiplier
 from diff_pair import diff_pair
 from guardring import tapring
+from mimcap import mimcap
 
 
 @cell
@@ -14,13 +15,19 @@ def opamp(
     diffpair_params: Optional[tuple[float, float, int, int]] = (6, 0, 4, 2),
     tailcurrent_params: Optional[tuple[float, float, int, int]] = (6, 2, 4, 1),
     cmirror_hparams: Optional[tuple[float, float, int, int]] = (6, 2, 8, 3),
+    cmirror_outhparams: Optional[tuple[float, float, int, int]] = (6, 2, 2, 1),
     pamp_hparams: Optional[tuple[float, float, int, int]] = (7, 1, 10, 3),
+    mim_cap_size=(12, 12),
+    output_amphparams: Optional[tuple[float, float, int, int]] = (5, 1, 8, 1),
 ) -> Component:
     """create an opamp, args:
     pdk=pdk to use
     diffpair_params = diffpair (width,length,fingers,mults)
     tailcurrent_params = tailcurrent nmos (width,length,fingers,mults)
-    cmirror_hparams = cmirror_hparams (width,length,fingers,mults)
+    cmirror_hparams = west current mirror (width,length,fingers,mults)
+    cmirror_outhparams = east current mirror used to bias output fet (width,length,fingers,mults)
+    pamp_hparams = pmos top component amp (width,length,fingers,mults)
+    mim_cap_size = width,length of individual mim_cap
     """
     opamp_top = Component()
     # place nmos components
@@ -121,7 +128,7 @@ def opamp(
         )
         halfMultp_ref = pmos_comps << halfMultp
         halfMultp_ref.movex(direction * abs(x_dim_center + halfMultp_ref.xmax))
-    # finish place
+    # finish place central
     ydim_ncomps = opamp_top.ymax - opamp_top.ymin
     pmos_comps.add_padding(
         layers=[pdk.get_glayer("nwell")],
@@ -132,7 +139,60 @@ def opamp(
     pmos_comps << tapring(pdk, tapcenter_rect, "p+s/d")
     pmos_comps_ref = opamp_top << pmos_comps
     pmos_comps_ref.movey(ydim_ncomps + pmos_comps_ref.ymax)
-    # route
+    # place mimcaps
+    mimcap_single = mimcap(pdk, mim_cap_size)
+    prev_xmax = opamp_top.xmax
+    center_xmax = opamp_top.xmax + mimcap_single.xmax
+    mimcap_space = (
+        pdk.get_grule("met5")["min_separation"]
+        + mimcap_single.xmax
+        - mimcap_single.xmin
+    )
+    mimcaps_ref = opamp_top.add_array(
+        mimcap_single, rows=3, columns=2, spacing=(mimcap_space, mimcap_space)
+    )
+    # TODO: fix mimcap to transistor separation
+    displace_fact = 4 * pdk.get_grule("met5")["min_separation"]
+    mimcaps_ref.movex(center_xmax + displace_fact)
+    mimcaps_ref.movey(pmos_comps_ref.ymin + mimcap_single.ymax)
+    # place cmirror for output amp
+    cmirror_out = nmos(
+        pdk,
+        width=cmirror_outhparams[0],
+        length=cmirror_outhparams[1],
+        fingers=cmirror_outhparams[2],
+        multipliers=cmirror_outhparams[3],
+        with_tie=False,
+        with_dnwell=False,
+        with_substrate_tap=True,
+        with_dummy=True,
+    )
+    cmirror_out_ref = opamp_top.add_ref(cmirror_out, "output fet bias current")
+    cmirror_out_ref.movex(prev_xmax + cmirror_out_ref.xmax + displace_fact).movey(
+        opamp_top.ymin + cmirror_out_ref.ymax
+    )
+    # place output amp
+    output_amp = Component("output fet")
+    for side in [-1, 1]:
+        fet_half = nmos(
+            pdk,
+            width=output_amphparams[0],
+            length=output_amphparams[1],
+            fingers=output_amphparams[2],
+            multipliers=output_amphparams[3],
+            with_tie=False,
+            with_dnwell=False,
+            with_substrate_tap=False,
+            with_dummy=(bool(side - 1), bool(side + 1)),
+        )
+        fet_half_ref = output_amp << fet_half
+        fet_half_ref.movex(side * fet_half_ref.xmax)
+    tapcenter_rectf = [2 * output_amp.xmax + 1, 2 * output_amp.ymax + 1]
+    output_amp << tapring(pdk, tapcenter_rectf, "p+s/d")
+    output_amp_ref = opamp_top << output_amp
+    output_amp_ref.movex(prev_xmax + output_amp.xmax + displace_fact).movey(
+        2 * output_amp.ymax
+    )
     # TODO: implement
     return opamp_top
 
