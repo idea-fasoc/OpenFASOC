@@ -35,33 +35,39 @@ def via_stack(
     glayer2: str is the glayer to end on
     ****NOTE it does not matter what order you pass layers
     ****NOTE will not lay poly or active but will lay metals
+    ports (one port for each edge):
+    top_met_...all edges
+    bottom_via_...all edges
+    bottom_met_...all edges
     """
     level1, level2 = __error_check_order_layers(pdk, glayer1, glayer2)
     viastack = Component()
     # if same level return empty component
     if level1 == level2:
         return viastack
+    #topmet,bottomvia,bottommet, finalized?,what are they
+    port_refs = [[False,None],[False,None],[False,None]]
     # lay mcon if first layer is active or poly
     if not level1:
         pdk.has_required_glayers(["mcon", "met1"])
         mcondim = pdk.get_grule("mcon")["width"]
-        viastack << rectangle(
+        port_refs[1][1] = viastack << rectangle(
             size=(mcondim, mcondim), layer=pdk.get_glayer("mcon"), centered=True
         )
         metdim = max(
             2 * pdk.get_grule("met1", "mcon")["min_enclosure"] + mcondim,
             pdk.get_grule("met1")["min_width"],
         )
-        viastack << rectangle(
+        port_refs[2][1] = viastack << rectangle(
             size=(metdim, metdim), layer=pdk.get_glayer("met1"), centered=True
         )
-        # add one to level1 (make it a metal) so we can use the code below
-        level1 += 1
-        # check if layers are now same
-        if level1 == level2:
-            return viastack.flatten()
-    # construct metal stack if both are metals
-    if level1 and level2:
+        port_refs[1][0] = True
+        port_refs[2][0] = True
+        level1 += 1 # make bottom met so we can use code below
+    if level1 == level2: # re-check same layer
+        port_refs[0][1] = port_refs[2][1]
+        port_refs[0][0] = True
+    elif level1 and level2: # construct metal stack if both are metals
         for level in range(level1, level2):
             gmetlayer = "met" + str(level)
             gnextvia = "via" + str(level)
@@ -71,13 +77,19 @@ def via_stack(
                 + pdk.get_grule(gnextvia)["width"],
                 pdk.get_grule(gmetlayer)["min_width"],
             )
-            viastack << rectangle(
+            metref = viastack << rectangle(
                 size=(metdim, metdim), layer=pdk.get_glayer(gmetlayer), centered=True
             )
             viadim = pdk.get_grule(gnextvia)["width"]
-            viastack << rectangle(
+            viaref = viastack << rectangle(
                 size=(viadim, viadim), layer=pdk.get_glayer(gnextvia), centered=True
             )
+            if not port_refs[2][0]:
+                port_refs[2][1] = metref
+                port_refs[2][0] = True
+            if not port_refs[1][0]:
+                port_refs[1][1] = viaref
+                port_refs[1][0] = True
         gfinalmet = "met" + str(level2)
         gprevvia = "via" + str(level)
         metdim = max(
@@ -85,13 +97,18 @@ def via_stack(
             + pdk.get_grule(gprevvia)["width"],
             pdk.get_grule(gfinalmet)["min_width"],
         )
-        viastack << rectangle(
+        port_refs[0][1] = viastack << rectangle(
             size=(metdim, metdim), layer=pdk.get_glayer(gfinalmet), centered=True
         )
+    # add ports and implement center option
+    pre = ["top_met_","bottom_via_","bottom_met_"]
+    for i in range(3):
+        viastack.add_ports(port_refs[1][1].get_ports_list(),prefix=pre[i])
     center_stack = Component()
     viastack_ref = center_stack << viastack
     if not centered:
         viastack_ref.movex(viastack.xmax).movey(viastack.ymax)
+    center_stack.add_ports(viastack_ref.get_ports_list())
     return center_stack.flatten()
 
 
@@ -112,6 +129,8 @@ def via_array(
     ****NOTE will not lay poly or active but will lay metals
     size: tuple is the (width, hieght) of the area to enclose
     ****NOTE: the size will be the dimensions of the top metal
+    ports (one port for each edge):
+    top_met_...all edges
     """
     level1, level2 = __error_check_order_layers(pdk, glayer1, glayer2)
     viaarray = Component()
@@ -158,7 +177,8 @@ def via_array(
     array_ref.movey(center_offsety)
     # place top metal and return
     top_met_layer = pdk.get_glayer("met" + str(level2))
-    viaarray << rectangle(size=size, layer=top_met_layer, centered=True)
+    mref = viaarray << rectangle(size=size, layer=top_met_layer, centered=True)
+    viaarray.add_ports(mref.get_ports_list(),prefix="top_met_")
     return viaarray.flatten()
 
 
@@ -169,7 +189,9 @@ if __name__ == "__main__":
     test_all = False
 
     if not test_all:
-        via_array(pdk, "active_diff", "met3").show()
+        myarray = via_array(pdk, "active_diff", "met3")
+        myarray.show()
+        print(myarray.ports)
         exit(0)
 
     layers = ["poly", "met1", "met2", "met3"]

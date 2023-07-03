@@ -15,13 +15,26 @@ def split_rule(rule: str) -> tuple:
     """Accepts a rule in the expected format and splits into rule name and float value"""
     if (rule != "") and (not "," in rule):
         raise ValueError("rule may be formatted wrong " + rule)
-    rule = rule.replace(" ", "").split(",")[-1]
+    rule = rule.replace(" ", "").split(",",maxsplit=1)[-1]
     rtr = rule.split("=")
     if len(rtr) != 2:
         rtr.append("*****FIXTHIS!!!MANUALLY!*****")
+    elif "," in rtr[1]:
+        strlist = rtr[1].replace("(","").replace(")","").split(",")
+        rtr[1] = tuple([int(layint) for layint in strlist])
     else:
         rtr[1] = float(rtr[1])
     return tuple(rtr)
+
+
+def __str_rules(groupdata: tuple, group: list, glayers: list) -> str:
+    """appends the rules in groupdata to output"""
+    group_rules = str()
+    for edgenum, edge in enumerate(groupdata):
+        group_rules += 'grulesobj["' + group[1] + '"]'
+        group_rules += '["' + glayers[edgenum] + '"] = ' + str(edge)
+        group_rules += "\n"
+    return group_rules
 
 
 def create_ruledeck_python_dictionary_definition(csvtoread: Path):
@@ -52,7 +65,6 @@ def create_ruledeck_python_dictionary_definition(csvtoread: Path):
                         if colnum == 0:
                             continue
                         groupdata.append(dict())
-
                 for colnum, col in enumerate(row):
                     if colnum == 0:
                         continue
@@ -60,29 +72,14 @@ def create_ruledeck_python_dictionary_definition(csvtoread: Path):
                         continue
                     key_val_pair = split_rule(col)
                     groupdata[colnum - 1][key_val_pair[0]] = key_val_pair[1]
-                # finished with the group so
+                # finished with the group
                 if group[0] == 2:  # last in group
-                    for edgenum, edge in enumerate(groupdata):
-                        output += (
-                            'grulesobj["'
-                            + group[1]
-                            + '"]["'
-                            + glayers[edgenum]
-                            + '"] = '
-                            + str(edge)
-                        ) + "\n"
+                    output += __str_rules(groupdata,group,glayers)
                 # update group index
                 group[0] = (group[0] + 1) % 3
         # incase missed last group print one more time
-        for edgenum, edge in enumerate(groupdata):
-            output += (
-                'grulesobj["'
-                + group[1]
-                + '"]["'
-                + glayers[edgenum]
-                + '"] = '
-                + str(edge)
-            ) + "\n"
+        last_grp_rules = __str_rules(groupdata,group,glayers)
+        output += "\n" if last_grp_rules in output else last_grp_rules
     return output
 
 
@@ -92,8 +89,19 @@ if __name__ == "__main__":
     parser = ArgumentParser(
         prog="print rules", description="read rule deck we have saved in google sheets"
     )
-    parser.add_argument("-f", "--file")
+    parser.add_argument("-f", "--file",help="path of csv file to read")
+    parser.add_argument("-c", "--code",action='store_true',help="true/false write python file to current dir")
     args = parser.parse_args()
     csvtoread = Path(args.file).resolve()
     output = create_ruledeck_python_dictionary_definition(csvtoread)
     print(output)
+    if args.code:
+        append_front = """from PDK.mappedpdk import MappedPDK\n
+grulesobj = dict()
+for glayer in MappedPDK.valid_glayers:
+    grulesobj[glayer] = dict((x, None) for x in MappedPDK.valid_glayers)\n
+"""
+        output = append_front + output
+        with open("grules.py", "w") as outputpy:
+            outputpy.write(output)
+

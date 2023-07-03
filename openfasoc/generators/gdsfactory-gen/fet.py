@@ -1,3 +1,4 @@
+from gdsfactory.grid import grid
 from gdsfactory.cell import cell
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
@@ -18,6 +19,20 @@ def multiplier(
     dummy: Optional[Union[bool, tuple[bool, bool]]] = True,
     length: Optional[float] = None,
 ) -> Component:
+    """Generic poly/sd vias generator
+    args:
+    pdk = pdk to use
+    sdlayer = either p+s/d for pmos or n+s/d for nmos
+    width = expands the transistor in the y direction
+    fingers = introduces additional fingers (sharing s/d) of width=width
+    routing = true or false, specfies if sd should be connected
+    dummy = true or false add dummy active/plus doped regions
+    length = transitor length (if left None defaults to min length)
+    ports (one port for each edge):
+    gate_... all edges (top met route of gate connection)
+    source_...all edges (top met route of source connections)
+    drain_...all edges (top met route of drain connections)
+    """
     # error checking
     if "+s/d" not in sdlayer:
         raise ValueError("specify + doped region for multiplier")
@@ -91,9 +106,10 @@ def multiplier(
             rectangle(size=routedims, layer=pdk.get_glayer("poly"), centered=True)
         )
         routedims[1] = 2 * via_stack(pdk, "poly", "met2").ymax
-        gate_route << via_array(pdk, "poly", "met2", size=routedims)
+        g_conref = gate_route << via_array(pdk, "poly", "met2", size=routedims)
         gate_route_ref = multiplier << gate_route
         gate_route_ref.movey(-0.5 * (poly_height + gate_route_width + routing_pfac))
+        multiplier.add_ports(gate_route_ref.get_ports_list(),prefix="gate_")
         # source and drain routing
         sw_corner_os = [
             fingerarray_ref.xmin + viasize / 2,
@@ -123,9 +139,11 @@ def multiplier(
         sd_met2_connect = rectangle(
             layer=pdk.get_glayer("met2"), size=met2route_dims, centered=True
         )
-        for m2offset in [sw_corner_os[1], met2_ext.ymax - sdvia.ymax]:
+        prefix = ["source_", "drain_"]
+        for i, mof in enumerate([sw_corner_os[1], met2_ext.ymax - sdvia.ymax]):
             m2ref = multiplier << sd_met2_connect
-            m2ref.movey(m2offset)
+            m2ref.movey(mof)
+            multiplier.add_ports(m2ref.get_ports_list(),prefix=prefix[i])
     # create dummy regions
     if isinstance(dummy, bool):
         dummyl = dummy
@@ -182,10 +200,13 @@ def __mult_array_macro(
         + multiplier_comp.ymax
         - multiplier_comp.ymin
     )
-    multiplier_arr.add_array(
-        multiplier_comp, columns=1, rows=multipliers, spacing=(1, multiplier_separation)
-    )
-    return multiplier_arr
+    ref_displacment = multiplier_separation + multiplier_comp.ymax - multiplier_comp.ymin
+    for rownum in range(multipliers):
+        row_displacment = rownum * ref_displacment
+        row_ref = multiplier_arr << multiplier_comp
+        row_ref.movey(ref_displacment)
+        multiplier_arr.add_ports(row_ref.get_ports_list(), prefix="multiplier_"+str(rownum)+"_")
+    return multiplier_arr.flatten()
 
 
 @cell
@@ -200,7 +221,7 @@ def nmos(
     with_substrate_tap: Optional[bool] = True,
     length: Optional[float] = None,
 ) -> Component:
-    """Generic NMOS generator: uses minumum length without deep nwell
+    """Generic NMOS generator
     width = expands the NMOS in the y direction
     fingers = introduces additional fingers (sharing source/drain) of width=width
     with_tie = true or false, specfies if a bulk tie is required
@@ -214,7 +235,9 @@ def nmos(
     multiplier_arr = __mult_array_macro(
         pdk, "n+s/d", width, fingers, multipliers, dummy=with_dummy, length=length
     )
-    nfet.add(multiplier_arr.ref_center())
+    multiplier_arr_ref = multiplier_arr.ref_center()
+    nfet.add(multiplier_arr_ref)
+    nfet.add_ports(multiplier_arr_ref.get_ports_list())
     # add tie if tie
     if with_tie:
         tap_separation = max(
@@ -276,8 +299,8 @@ def pmos(
     with_substrate_tap: Optional[bool] = True,
     length: Optional[float] = None,
 ) -> Component:
-    """Generic NMOS generator: uses minumum length without deep nwell
-    width = expands the NMOS in the y direction
+    """Generic PMOS generator
+    width = expands the PMOS in the y direction
     fingers = introduces additional fingers (sharing source/drain) of width=width
     with_tie = true or false, specfies if a bulk tie is required
     """
@@ -290,7 +313,9 @@ def pmos(
     multiplier_arr = __mult_array_macro(
         pdk, "p+s/d", width, fingers, multipliers, dummy=with_dummy, length=length
     )
-    pfet.add(multiplier_arr.ref_center())
+    multiplier_arr_ref = multiplier_arr.ref_center()
+    pfet.add(multiplier_arr_ref)
+    pfet.add_ports(multiplier_arr_ref.get_ports_list())
     # add tie if tie
     if with_tie:
         tap_separation = max(
@@ -339,4 +364,7 @@ def pmos(
 if __name__ == "__main__":
     from PDK.util.standard_main import pdk
 
-    pmos(pdk, fingers=8, with_dummy=True).show()
+    mytransistor = nmos(pdk, fingers=8, with_dummy=True)
+    mytransistor.show()
+    for key in mytransistor.ports.keys():
+        print(key)

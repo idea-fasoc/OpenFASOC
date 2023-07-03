@@ -717,5 +717,5 @@ def diff_pair(pdk, mult=3, fingers=3, cell_height=0.67) -> Component:
 if __name__ == "__main__":
     from PDK.util.standard_main import pdk
 
-    Top_cell = diff_pair(pdk, mult=2, fingers=8, cell_height=1.34)
+    Top_cell = diff_pair(pdk, mult=2, fingers=4, cell_height=1.34)
     Top_cell.show()

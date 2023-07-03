@@ -17,8 +17,6 @@ class MappedPDK(Pdk):
     has_required_glayers(list[str]) is used to verify all required generic layers are
     present"""
 
-    # of all the cap* layers, capmet is the only real layer
-    # the other cap layers get initialized to copies of the respective layers
     valid_glayers: ClassVar[tuple[str]] = (
         "dnwell",
         "pwell",
@@ -39,10 +37,6 @@ class MappedPDK(Pdk):
         "via4",
         "met5",
         "capmet",
-        # copied layers
-        "capbottommet",
-        "captopmet",
-        "capvia",
     )
 
     glayers: dict[StrictStr, StrictStr]
@@ -141,6 +135,24 @@ class MappedPDK(Pdk):
                     f"{layer!r} not in self.glayers {list(self.glayers.keys())}"
                 )
             self.validate_layers([self.glayers[layer]])
+
+    def layer_to_glayer(self, layer: tuple[int,int]) -> str:
+        """if layer provided corresponds to a glayer, will return a glayer
+        else will raise an exception
+        takes layer as a tuple(int,int)"""
+        # lambda for finding last matching key in dict from val
+        find_last = lambda val, d : [x for x,y in d.items() if y==val].pop()
+        # find glayer verfying presence along the way
+        pdk_real_layers = self.layers.values()
+        if layer in pdk_real_layers:
+            layer_name = find_last(layer, self.layers)
+            if layer_name in self.glayers.values():
+                glayer_name = find_last(layer_name, self.glayers)
+            else:
+                raise ValueError("layer does not correspond to a glayer")
+        else:
+            raise ValueError("layer is not a layer present in the pdk")
+        return glayer_name
 
     # TODO: implement LayerSpec type
     def get_glayer(self, layer: str) -> Layer:

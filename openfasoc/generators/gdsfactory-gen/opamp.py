@@ -123,6 +123,10 @@ def opamp(
         halfMultp_ref.movex(direction * abs(x_dim_center + halfMultp_ref.xmax))
     # finish place
     ydim_ncomps = opamp_top.ymax - opamp_top.ymin
+    pmos_comps.add_padding(layers=[pdk.get_glayer("nwell")],default=pdk.get_grule("nwell","active_tap")["min_enclosure"])
+    #tapcenter_rect = [2*pmos_comps.xmax+pdk.get_grule("nwell","active_tap")["min_separation"], 2*pmos_comps.ymax+pdk.get_grule("nwell","active_tap")["min_separation"]]
+    tapcenter_rect = [2*pmos_comps.xmax+1, 2*pmos_comps.ymax+1]
+    pmos_comps << tapring(pdk, tapcenter_rect, "p+s/d")
     pmos_comps_ref = opamp_top << pmos_comps
     pmos_comps_ref.movey(ydim_ncomps + pmos_comps_ref.ymax)
     # route
