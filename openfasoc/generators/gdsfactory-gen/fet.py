@@ -109,7 +109,7 @@ def multiplier(
         g_conref = gate_route << via_array(pdk, "poly", "met2", size=routedims)
         gate_route_ref = multiplier << gate_route
         gate_route_ref.movey(-0.5 * (poly_height + gate_route_width + routing_pfac))
-        multiplier.add_ports(gate_route_ref.get_ports_list(),prefix="gate_")
+        multiplier.add_ports(gate_route_ref.get_ports_list(), prefix="gate_")
         # source and drain routing
         sw_corner_os = [
             fingerarray_ref.xmin + viasize / 2,
@@ -143,7 +143,7 @@ def multiplier(
         for i, mof in enumerate([sw_corner_os[1], met2_ext.ymax - sdvia.ymax]):
             m2ref = multiplier << sd_met2_connect
             m2ref.movey(mof)
-            multiplier.add_ports(m2ref.get_ports_list(),prefix=prefix[i])
+            multiplier.add_ports(m2ref.get_ports_list(), prefix=prefix[i])
     # create dummy regions
     if isinstance(dummy, bool):
         dummyl = dummy
@@ -200,12 +200,16 @@ def __mult_array_macro(
         + multiplier_comp.ymax
         - multiplier_comp.ymin
     )
-    ref_displacment = multiplier_separation + multiplier_comp.ymax - multiplier_comp.ymin
+    ref_displacment = (
+        multiplier_separation + multiplier_comp.ymax - multiplier_comp.ymin
+    )
     for rownum in range(multipliers):
         row_displacment = rownum * ref_displacment
         row_ref = multiplier_arr << multiplier_comp
         row_ref.movey(ref_displacment)
-        multiplier_arr.add_ports(row_ref.get_ports_list(), prefix="multiplier_"+str(rownum)+"_")
+        multiplier_arr.add_ports(
+            row_ref.get_ports_list(), prefix="multiplier_" + str(rownum) + "_"
+        )
     return multiplier_arr.flatten()
 
 

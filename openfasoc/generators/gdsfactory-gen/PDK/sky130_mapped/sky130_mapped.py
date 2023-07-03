@@ -35,7 +35,6 @@ sky130_glayer_mapping = {
 sky130_lydrc_file_path = Path(__file__).resolve().parent / "sky130.lydrc"
 
 
-
 sky130_mapped_pdk = MappedPDK.from_gf_pdk(
     sky130.PDK,
     sky130_glayer_mapping,

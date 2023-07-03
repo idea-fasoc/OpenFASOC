@@ -136,12 +136,12 @@ class MappedPDK(Pdk):
                 )
             self.validate_layers([self.glayers[layer]])
 
-    def layer_to_glayer(self, layer: tuple[int,int]) -> str:
+    def layer_to_glayer(self, layer: tuple[int, int]) -> str:
         """if layer provided corresponds to a glayer, will return a glayer
         else will raise an exception
         takes layer as a tuple(int,int)"""
         # lambda for finding last matching key in dict from val
-        find_last = lambda val, d : [x for x,y in d.items() if y==val].pop()
+        find_last = lambda val, d: [x for x, y in d.items() if y == val].pop()
         # find glayer verfying presence along the way
         pdk_real_layers = self.layers.values()
         if layer in pdk_real_layers:

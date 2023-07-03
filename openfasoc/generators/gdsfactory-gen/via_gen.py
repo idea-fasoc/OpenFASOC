@@ -45,8 +45,8 @@ def via_stack(
     # if same level return empty component
     if level1 == level2:
         return viastack
-    #topmet,bottomvia,bottommet, finalized?,what are they
-    port_refs = [[False,None],[False,None],[False,None]]
+    # topmet,bottomvia,bottommet, finalized?,what are they
+    port_refs = [[False, None], [False, None], [False, None]]
     # lay mcon if first layer is active or poly
     if not level1:
         pdk.has_required_glayers(["mcon", "met1"])
@@ -63,11 +63,11 @@ def via_stack(
         )
         port_refs[1][0] = True
         port_refs[2][0] = True
-        level1 += 1 # make bottom met so we can use code below
-    if level1 == level2: # re-check same layer
+        level1 += 1  # make bottom met so we can use code below
+    if level1 == level2:  # re-check same layer
         port_refs[0][1] = port_refs[2][1]
         port_refs[0][0] = True
-    elif level1 and level2: # construct metal stack if both are metals
+    elif level1 and level2:  # construct metal stack if both are metals
         for level in range(level1, level2):
             gmetlayer = "met" + str(level)
             gnextvia = "via" + str(level)
@@ -101,9 +101,9 @@ def via_stack(
             size=(metdim, metdim), layer=pdk.get_glayer(gfinalmet), centered=True
         )
     # add ports and implement center option
-    pre = ["top_met_","bottom_via_","bottom_met_"]
+    pre = ["top_met_", "bottom_via_", "bottom_met_"]
     for i in range(3):
-        viastack.add_ports(port_refs[1][1].get_ports_list(),prefix=pre[i])
+        viastack.add_ports(port_refs[1][1].get_ports_list(), prefix=pre[i])
     center_stack = Component()
     viastack_ref = center_stack << viastack
     if not centered:
@@ -178,7 +178,7 @@ def via_array(
     # place top metal and return
     top_met_layer = pdk.get_glayer("met" + str(level2))
     mref = viaarray << rectangle(size=size, layer=top_met_layer, centered=True)
-    viaarray.add_ports(mref.get_ports_list(),prefix="top_met_")
+    viaarray.add_ports(mref.get_ports_list(), prefix="top_met_")
     return viaarray.flatten()
 
 
