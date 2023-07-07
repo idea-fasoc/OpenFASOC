@@ -5,10 +5,12 @@ usage: from mappedpdk import MappedPDK
 from gdsfactory.pdk import Pdk
 from gdsfactory.typings import Component, PathType, Layer
 from pydantic import validator, StrictStr, ValidationError
-from typing import ClassVar, Optional
+from typing import ClassVar, Optional, Any
 from pathlib import Path
+from decimal import Decimal, DefaultContext, setcontext, FloatOperation
 import tempfile
 import subprocess
+from decimal import Decimal
 
 
 class MappedPDK(Pdk):
@@ -41,7 +43,7 @@ class MappedPDK(Pdk):
 
     glayers: dict[StrictStr, StrictStr]
     # friendly way to implement a graph
-    grules: dict[StrictStr, dict[StrictStr, Optional[dict]]]
+    grules: dict[StrictStr, dict[StrictStr, Optional[dict[StrictStr, Any]]]]
     klayout_lydrc_file: Optional[Path] = None
 
     @validator("glayers")
@@ -79,7 +81,7 @@ class MappedPDK(Pdk):
         tempdir = None
         if isinstance(layout, Component):
             tempdir = tempfile.TemporaryDirectory()
-            layout_path = Path(layout.write_gds(tempdir)).resolve()
+            layout_path = Path(layout.write_gds(gdsdir=tempdir.name)).resolve()
         elif isinstance(layout, PathType):
             layout_path = Path(layout).resolve()
         else:
@@ -192,28 +194,43 @@ class MappedPDK(Pdk):
     def from_gf_pdk(
         cls,
         gfpdk: Pdk,
-        glayers: dict[str, str],
-        grules: dict[StrictStr, dict[StrictStr, Optional[dict]]],
-        klayout_lydrc_file: Optional[PathType] = None,
+        **kwargs
     ):
-        """Construct a mapped pdk from an existing pdk and the extra parts of MappedPDK"""
+        """Construct a mapped pdk from an existing pdk and the extra parts of MappedPDK
+        grid is the grid size in nm"""
         # input type and value validation
         if not isinstance(gfpdk, Pdk):
             raise TypeError("from_gf_pdk: gfpdk arg only accepts GDSFactory PDK type")
-        # convert gfpdk to dictionary
-        parent_dict = gfpdk.dict()
-        # add glayers mapping and lydrc file
-        parent_dict["glayers"] = glayers
-        parent_dict["klayout_lydrc_file"] = Path(klayout_lydrc_file).resolve()
-        parent_dict["grules"] = grules
-        # get mapped value and try to resolve validation issues
-        try:
-            rtrval = cls.parse_obj(parent_dict)
-        except ValidationError as valerr:
-            errorobj_list = valerr.errors()
-            for errorobj in errorobj_list:
-                problem_field = errorobj["loc"][0]
-                if problem_field in parent_dict:
-                    parent_dict.pop(problem_field)
-            rtrval = cls.parse_obj(parent_dict)
-        return rtrval
+        # create argument dictionary
+        passargs = dict()
+        # pdk args
+        passargs["name"]=gfpdk.name
+        passargs["cross_sections"]=gfpdk.cross_sections
+        passargs["cells"]=gfpdk.cells
+        passargs["symbols"]=gfpdk.symbols
+        passargs["default_symbol_factory"]=gfpdk.default_symbol_factory
+        passargs["containers"]=gfpdk.containers
+        passargs["base_pdk"]=gfpdk.base_pdk
+        passargs["default_decorator"]=gfpdk.default_decorator
+        passargs["layers"]=gfpdk.layers
+        passargs["layer_stack"]=gfpdk.layer_stack
+        #passargs["layer_views"]=gfpdk.layer_views#??? layer view broken???
+        passargs["layer_transitions"]=gfpdk.layer_transitions
+        passargs["sparameters_path"]=gfpdk.sparameters_path
+        passargs["modes_path"]=gfpdk.modes_path
+        passargs["interconnect_cml_path"]=gfpdk.interconnect_cml_path
+        passargs["warn_off_grid_ports"]=gfpdk.warn_off_grid_ports
+        passargs["constants"]=gfpdk.constants
+        passargs["materials_index"]=gfpdk.materials_index
+        passargs["routing_strategies"]=gfpdk.routing_strategies
+        passargs["circuit_yaml_parser"]=gfpdk.circuit_yaml_parser
+        passargs["gds_write_settings"]=gfpdk.gds_write_settings
+        passargs["oasis_settings"]=gfpdk.oasis_settings
+        passargs["cell_decorator_settings"]=gfpdk.cell_decorator_settings
+        passargs["bend_points_distance"]=gfpdk.bend_points_distance
+        # MappedPDK args override existing args
+        passargs.update(kwargs)
+        # create and return MappedPDK
+        mappedpdk = MappedPDK(**passargs)
+        return mappedpdk
+

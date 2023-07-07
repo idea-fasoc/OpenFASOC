@@ -32,12 +32,16 @@ sky130_glayer_mapping = {
     "dnwell": "dnwelldrawing",
 }
 
+
 sky130_lydrc_file_path = Path(__file__).resolve().parent / "sky130.lydrc"
 
 
 sky130_mapped_pdk = MappedPDK.from_gf_pdk(
     sky130.PDK,
-    sky130_glayer_mapping,
+    glayers=sky130_glayer_mapping,
     grules=grulesobj,
     klayout_lydrc_file=sky130_lydrc_file_path,
 )
+# set the grid size
+sky130_mapped_pdk.gds_write_settings.precision = 5*10**-9
+sky130_mapped_pdk.cell_decorator_settings.cache=False

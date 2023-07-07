@@ -6,6 +6,7 @@ from gdsfactory.components.rectangular_ring import rectangular_ring
 from via_gen import via_array, via_stack
 from typing import Optional
 from math import ceil
+from PDK.util.snap_to_grid import component_snap_to_grid
 
 
 @cell
@@ -83,15 +84,15 @@ def tapring(
     metal_ref_e = ptapring << vertical_arr
     metal_ref_s = ptapring << horizontal_arr
     metal_ref_w = ptapring << vertical_arr
-    metal_ref_n.movey(0.5 * (enclosed_rectangle[1] + tap_width))
-    metal_ref_e.movex(0.5 * (enclosed_rectangle[0] + tap_width))
-    metal_ref_s.movey(-0.5 * (enclosed_rectangle[1] + tap_width))
-    metal_ref_w.movex(-0.5 * (enclosed_rectangle[0] + tap_width))
+    metal_ref_n.movey(round(0.5 * (enclosed_rectangle[1] + tap_width),4))
+    metal_ref_e.movex(round(0.5 * (enclosed_rectangle[0] + tap_width),4))
+    metal_ref_s.movey(round(-0.5 * (enclosed_rectangle[1] + tap_width),4))
+    metal_ref_w.movex(round(-0.5 * (enclosed_rectangle[0] + tap_width),4))
     # done, flatten and return
-    return ptapring.flatten()
+    return component_snap_to_grid(ptapring)
 
 
 if __name__ == "__main__":
     from PDK.util.standard_main import pdk
 
-    tapring(pdk, "p+s/d", enclosed_rectangle=(5, 5)).show()
+    tapring(pdk, "p+s/d", enclosed_rectangle=(26, 10)).show()

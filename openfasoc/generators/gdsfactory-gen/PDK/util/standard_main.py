@@ -11,8 +11,8 @@ from PDK.util.standard_main import pdk
 the pdk is the pdk object which defaults to sky130 if none selected
 """
 
-from PDK.gf180_mapped import gf180_mapped_pdk
 from PDK.sky130_mapped import sky130_mapped_pdk
+from PDK.gf180_mapped import gf180_mapped_pdk
 from argparse import ArgumentParser
 
 parser = ArgumentParser(prog="PDK agnostic fet generator")
@@ -27,3 +27,5 @@ elif args.pdk == "gf180":
 else:
     pdk = sky130_mapped_pdk
 pdk.activate()
+
+

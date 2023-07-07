@@ -1,721 +1,126 @@
-from gdsfactory.cell import cell
-from gdsfactory.component import Component
-from gdsfactory.components.rectangle import rectangle
-from fet import multiplier
+# 1- create single transistor component
+# 2- create a 4 array of them with top transistors mirrored along xaxis such that gate routes are facing out
+#		separation in the middle should be max of 
 
+from gdsfactory.cell import cell
+from gdsfactory.component import Component, copy
+from gdsfactory.components.rectangle import rectangle
+from fet import nmos, pmos
+from PDK.mappedpdk import MappedPDK
+from typing import Optional
+from gdsfactory.routing.route_quad import route_quad
+from gdsfactory.routing.route_sharp import route_sharp
+from c_route import c_route
+from PDK.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, movex, movey, get_orientation, set_orientation, evaluate_bbox, align_comp_to_port
+from via_gen import via_stack
+
+#diffpair << route_sharp(b_topr.ports["multiplier_0_source_E"],viam2m3_ref_tr.ports["bottom_met_W"], width=connect_width, layer=pdk.get_glayer("met2"), path_type="manhattan")
 
 @cell
-def diff_pair(pdk, mult=3, fingers=3, cell_height=0.67) -> Component:
-    pwell_drawing = pdk.get_glayer("pwell")
-    dnwell_drawing = pdk.get_glayer("dnwell")
-    poly_drawing = pdk.get_glayer("poly")
-
-    Top_cell = Component("top")
-
-    mult = mult * 2
-    # mos_comp = nmos(cell_height, fingers)
-    mos_comp = multiplier(
-        pdk, sdlayer="n+s/d", fingers=fingers, routing=False, dummy=False
-    )
-    cell_height = mos_comp.ymax - mos_comp.ymin
-    cell_width = mos_comp.xmax - mos_comp.xmin
-    # cell_width = 1.1 + 0.55*(fingers-1)
-    space_bet_rows = 4
-    space_bet_mult = 1.5
-    rows = 2
-
-    ##pwell
-    pwell_width = cell_width * (mult / rows) + 0.11 + space_bet_mult
-    pwell_height = (cell_height * 1) * rows + 0.11 + space_bet_rows
-
-    pwell_rect = rectangle(size=(pwell_width, pwell_height), layer=pwell_drawing)
-    # pwell_rect_ref = Top_cell << pwell_rect
-    # pwell_rect_ref.movex(-0.055).movey(-0.055)
-
-    ##dnwell
-    # dnwell_width = (cell_width*((mult+1)/2)) + 0.91
-    dnwell_width = cell_width * (mult / rows) + 0.91 + space_bet_mult
-    dnwell_height = (cell_height * 1) * rows + 0.91 + space_bet_rows
-    dnwell_rect = rectangle(size=(dnwell_width, dnwell_height), layer=dnwell_drawing)
-    # dnwell_rect_ref = Top_cell << dnwell_rect
-    # dnwell_rect_ref.movex(-0.455).movey(-0.455)
-
-    for i in range(int(mult / rows)):
-        j = 0
-        for j in range(rows):
-            print(j)
-            ref = Top_cell << mos_comp
-            if i == 0:
-                ref.movex(cell_width * i + cell_width / 2).movey(
-                    cell_height * (j) + cell_height / 2 + space_bet_rows * (j)
-                )
-            else:
-                ref.movex(cell_width * i + cell_width / 2 + space_bet_mult).movey(
-                    cell_height * (j) + cell_height / 2 + space_bet_rows * (j)
-                )
-
-    met3_sq_dim = max(
-        pdk.get_grule("via2")["min_width"]
-        + 2 * pdk.get_grule("met3", "via2")["min_enclosure"],
-        pdk.get_grule("met3")["min_width"],
-    )
-
-    ##Change from 0.14 to 0.28
-    met2_sq_dim = max(
-        pdk.get_grule("via1")["min_width"]
-        + 2 * pdk.get_grule("met2", "via1")["min_enclosure"],
-        pdk.get_grule("met2")["min_width"],
-    )
-    ##VSS trunk -- merging
-    met3_VSS_trunk_width = cell_width * (i + 1) + space_bet_mult * i + 1
-    met3_VSS_trunk = rectangle(
-        size=(met3_VSS_trunk_width, met3_sq_dim), layer=pdk.get_glayer("met3")
-    )
-
-    met3_VSS_trunk_ref = Top_cell << met3_VSS_trunk
-    met3_VSS_trunk_ref.movey(cell_height + space_bet_rows * 0.9 - met3_sq_dim / 2)
-
-    met3_VSS_trunk_ref = Top_cell << met3_VSS_trunk
-    met3_VSS_trunk_ref.movey(cell_height + space_bet_rows * 0.1 - met3_sq_dim / 2)
-
-    met3_met2_VSS_trunk_height = space_bet_rows * 0.8 + met3_sq_dim
-    met3_met2_VSS_trunk = rectangle(
-        size=(met2_sq_dim, met3_met2_VSS_trunk_height), layer=pdk.get_glayer("met2")
-    )
-
-    met3_met2_VSS_trunk_ref = Top_cell << met3_met2_VSS_trunk
-    met3_met2_VSS_trunk_ref.movey(
-        cell_height + space_bet_rows * 0.1 - met3_sq_dim / 2
-    ).movex(met3_VSS_trunk_width - met2_sq_dim)
-
-    via2_via_dim = pdk.get_grule("via2")["min_width"]
-    via2_via = rectangle(
-        size=(via2_via_dim, via2_via_dim), layer=pdk.get_glayer("via2")
-    )
-
-    ## via2 pulled to met2
-    via2_via_ref = Top_cell << via2_via
-    via2_via_ref.movey(
-        cell_height + space_bet_rows * 0.1 - met3_sq_dim / 2 + via2_via_dim / 2
-    ).movex(met3_VSS_trunk_width - met2_sq_dim + via2_via_dim / 2)
-
-    ## via2 pulled to met2
-    via2_via_ref = Top_cell << via2_via
-    via2_via_ref.movey(
-        cell_height
-        + space_bet_rows * 0.1
-        - met3_sq_dim
-        + met3_met2_VSS_trunk_height
-        - via2_via_dim / 2
-    ).movex(met3_VSS_trunk_width - met2_sq_dim + via2_via_dim / 2)
-
-    # Extending Poly trunk
-    for i in range(int(mult / rows)):
-        for j in range(rows):
-
-            # poly extending trunk
-            poly_width = pdk.get_grule("poly")["min_width"]
-            mcon_poly_space = (
-                2 * pdk.get_grule("poly", "mcon")["min_separation"]
-                + pdk.get_grule("mcon")["width"]
-            )
-            poly_finger2finger_x = poly_width + mcon_poly_space
-
-            if fingers % 2 != 0:
-                poly_left_edge = (
-                    cell_width / 2
-                    - poly_width / 2
-                    - ((fingers - 1) / 2) * poly_finger2finger_x
-                )
-            else:
-                poly_left_edge = (
-                    cell_width / 2
-                    - poly_width / 2
-                    - poly_finger2finger_x / 2
-                    - ((fingers / 2) - 1) * poly_finger2finger_x
-                )
-
-            poly_ext_trunk_width = poly_width + (fingers - 1) * poly_finger2finger_x
-
-            ##poly_trunk
-            # poly_ext_trunk_height = pdk.get_grule("poly")['min_width']
-            poly_ext_trunk_height = 0.5
-            poly_ext_trunk_ref = rectangle(
-                size=(poly_ext_trunk_width, poly_ext_trunk_height), layer=poly_drawing
-            )
-
-            mcon_via = rectangle(
-                size=(pdk.get_grule("mcon")["width"], pdk.get_grule("mcon")["width"]),
-                layer=pdk.get_glayer("mcon"),
-            )
-
-            met1_sq_dim = max(
-                pdk.get_grule("mcon")["width"]
-                + 2 * pdk.get_grule("met1", "mcon")["min_enclosure"],
-                pdk.get_grule("met1")["min_width"],
-            )
-            met1_square = rectangle(
-                size=(met1_sq_dim, met1_sq_dim), layer=pdk.get_glayer("met1")
-            )
-
-            via1_via_dim = pdk.get_grule("via1")["min_width"]
-            via1_via = rectangle(
-                size=(via1_via_dim, via1_via_dim), layer=pdk.get_glayer("via1")
-            )
-
-            ##Change from 0.14 to 0.28
-            met2_sq_dim = max(
-                pdk.get_grule("via1")["min_width"]
-                + 2 * pdk.get_grule("met2", "via1")["min_enclosure"],
-                pdk.get_grule("met2")["min_width"],
-            )
-            met2_square = rectangle(
-                size=(met2_sq_dim, met2_sq_dim), layer=pdk.get_glayer("met2")
-            )
-
-            met2_poly_ext_1_height = 1.5
-            met2_poly_ext_2_height = met2_poly_ext_1_height + 1
-            met2_poly_ext_1 = rectangle(
-                size=(met2_sq_dim, met2_poly_ext_1_height), layer=pdk.get_glayer("met2")
-            )
-            met2_poly_ext_2 = rectangle(
-                size=(met2_sq_dim, met2_poly_ext_2_height), layer=pdk.get_glayer("met2")
-            )
-
-            via2_via_dim = pdk.get_grule("via2")["min_width"]
-            via2_via = rectangle(
-                size=(via2_via_dim, via2_via_dim), layer=pdk.get_glayer("via2")
-            )
-
-            via3_via_dim = pdk.get_grule("via3")["min_width"]
-            via3_via = rectangle(
-                size=(via3_via_dim, via3_via_dim), layer=pdk.get_glayer("via3")
-            )
-
-            met4_sq_dim = max(
-                pdk.get_grule("via3")["min_width"]
-                + 2 * pdk.get_grule("met4", "via3")["min_enclosure"],
-                pdk.get_grule("met4")["min_width"],
-            )
-
-            met3_sq_dim = max(
-                pdk.get_grule("via2")["min_width"]
-                + 2 * pdk.get_grule("met3", "via2")["min_enclosure"],
-                pdk.get_grule("met3")["min_width"],
-            )
-
-            met3_poly_ext_width = cell_width * (i + 1) + space_bet_mult * i + 2
-            met3_poly_ext = rectangle(
-                size=(met3_poly_ext_width, met3_sq_dim), layer=pdk.get_glayer("met3")
-            )
-
-            met2_poly_ext_outer_trunk_h = cell_height * 2 + space_bet_rows + 2.7 * 2
-            met2_poly_ext_outer_trunk = rectangle(
-                size=(met2_sq_dim, met2_poly_ext_outer_trunk_h),
-                layer=pdk.get_glayer("met2"),
-            )
-
-            met2_poly_ext_outer_trunk_ref = Top_cell << met2_poly_ext_outer_trunk
-            met2_poly_ext_outer_trunk_ref.movex(-2).movey(-2.7)
-            met2_poly_ext_outer_trunk_ref = Top_cell << met2_poly_ext_outer_trunk
-            met2_poly_ext_outer_trunk_ref.movex(-1).movey(-2.7)
-
-            ## VSS extensions
-            met3_VSS_trunk_width = cell_width
-            met3_VSS_trunk = rectangle(
-                size=(met3_VSS_trunk_width, met3_sq_dim), layer=pdk.get_glayer("met3")
-            )
-
-            ## Drain extensions
-            met3_Drain_trunk_width = cell_width
-            met3_Drain_trunk = rectangle(
-                size=(met3_Drain_trunk_width, met3_sq_dim), layer=pdk.get_glayer("met3")
-            )
-
-            ## Drain connections using met3
-            ## In the center
-            met3_Drain_conn_width = space_bet_mult + 0.3 * 3 + via2_via_dim
-            met3_Drain_conn = rectangle(
-                size=(met3_Drain_conn_width, met3_sq_dim), layer=pdk.get_glayer("met3")
-            )
-            # met3_Drain_conn
-            met3_Drain_conn_ref = Top_cell << met3_Drain_conn
-            met3_Drain_conn_ref.movex(cell_width - 0.3 - via2_via_dim * 1.5).movey(
-                cell_height + space_bet_rows / 2 - met3_sq_dim / 2
-            )
-
-            ## via2 pulled to met2
-            via2_via_ref = Top_cell << via2_via
-            via2_via_ref.movey(
-                cell_height + space_bet_rows / 2 - via2_via_dim / 2
-            ).movex(cell_width - 0.3 - via2_via_dim * 1)
-
-            ## via2 pulled to met2
-            via2_via_ref = Top_cell << via2_via
-            via2_via_ref.movey(
-                cell_height + space_bet_rows / 2 - via2_via_dim / 2
-            ).movex(
-                met3_Drain_conn_width
-                + cell_width
-                - 0.3
-                - via2_via_dim * 1
-                - met2_sq_dim
-            )
-
-            met2_met3_Drain_conn_height = space_bet_rows * 0.3
-            met2_met3_Drain_conn = rectangle(
-                size=(met2_sq_dim, met2_met3_Drain_conn_height),
-                layer=pdk.get_glayer("met2"),
-            )
-            # met2_Drain_conn
-            # met3_Drain_conn
-            met2_met3_Drain_conn_ref = Top_cell << met2_met3_Drain_conn
-            met2_met3_Drain_conn_ref.movex(cell_width - 0.3 - via2_via_dim * 1.5).movey(
-                cell_height + space_bet_rows / 2 - met3_sq_dim / 2
-            )
-
-            met2_met3_Drain_conn_ref = Top_cell << met2_met3_Drain_conn
-            met2_met3_Drain_conn_ref.movex(
-                cell_width + space_bet_mult + 0.3 - via2_via_dim * 1.5 + met2_sq_dim / 2
-            ).movey(
-                cell_height
-                + space_bet_rows / 2
-                - met3_sq_dim / 2
-                - met2_met3_Drain_conn_height
-                + met3_sq_dim
-            )
-
-            ## Drain connection using met1
-            ## In the center
-            met2_Drain_conn_height = space_bet_rows * 0.48
-            met2_Drain_conn = rectangle(
-                size=(met2_sq_dim, met2_Drain_conn_height), layer=pdk.get_glayer("met2")
-            )
-            # met2_Drain_conn
-            met2_Drain_conn_ref = Top_cell << met2_Drain_conn
-            met2_Drain_conn_ref.movex(
-                cell_width + space_bet_mult / 2 - via2_via_dim / 2
-            ).movey(cell_height + space_bet_rows * 0.3 - met3_sq_dim / 2)
-
-            ## via2 pulled to met3 --- > hor
-            via2_via_ref = Top_cell << via2_via
-            via2_via_ref.movey(
-                cell_height + space_bet_rows * 0.3 - via2_via_dim / 2
-            ).movex(cell_width + space_bet_mult / 2)
-
-            ## via2 pulled to met3 --- > hor
-            via2_via_ref = Top_cell << via2_via
-            via2_via_ref.movey(
-                cell_height
-                + space_bet_rows * 0.3
-                + met2_Drain_conn_height
-                - via2_via_dim / 2
-                - met3_sq_dim
-            ).movex(cell_width + space_bet_mult / 2)
-
-            ## met3 connecting cell extensions
-            ## In the center
-            met3_ext_conn_width = space_bet_mult * 0.5 + 0.3 + met2_sq_dim
-            met3_ext_conn = rectangle(
-                size=(met3_ext_conn_width, met3_sq_dim), layer=pdk.get_glayer("met3")
-            )
-            # met3_Drain_conn
-            met3_ext_conn_ref = Top_cell << met3_ext_conn
-            met3_ext_conn_ref.movex(cell_width - 0.3).movey(
-                cell_height + space_bet_rows * 0.3 - met3_sq_dim / 2
-            )
-
-            # met3_Drain_conn
-            met3_ext_conn_ref = Top_cell << met3_ext_conn
-            met3_ext_conn_ref.movex(cell_width + space_bet_mult / 2 - 0.3).movey(
-                cell_height + space_bet_rows * 0.7 - met3_sq_dim / 2
-            )
-
-            if j == 1:
-                ##poly trunk
-                poly_trunk = Top_cell << poly_ext_trunk_ref
-                poly_trunk.movex(
-                    poly_left_edge + cell_width * i + space_bet_mult * i
-                ).movey(cell_height * 2 + space_bet_rows * (j))
-                poly_trunk_center_y = (poly_trunk.ymax - poly_trunk.ymin) / 2
-
-                ## Drain Stripes
-                for con in range(fingers + 1):
-                    if con % 2 != 0:
-                        y_move = cell_height + space_bet_rows * 0.7
-                        x_move = (
-                            cell_width * i
-                            + space_bet_mult * i
-                            + poly_left_edge
-                            + poly_width / 2
-                            - poly_finger2finger_x / 2
-                            + con * poly_finger2finger_x
-                        )
-
-                        ## Drain extensions
-                        met3_Drain_trunk_ref = Top_cell << met3_Drain_trunk
-                        met3_Drain_trunk_ref.movex(
-                            cell_width * i + space_bet_mult * i
-                        ).movey(y_move - met3_sq_dim / 2)
-
-                        ## Drain extension connecting via
-                        if i == 0:
-                            via2_via_ref = Top_cell << via2_via
-                            via2_via_ref.movey(y_move - via2_via_dim / 2).movex(
-                                cell_width * (i + 1)
-                                + space_bet_mult * i
-                                - 0.3
-                                - via2_via_dim
-                            )
-                        else:
-                            via3_via_ref = Top_cell << via3_via
-                            via3_via_ref.movey(y_move - via3_via_dim / 2).movex(
-                                cell_width * (i) + space_bet_mult * i + 0.3
-                            )
-
-                        ## Drain stripes
-                        met2_Drain_stripes = rectangle(
-                            size=(met2_sq_dim, cell_height + space_bet_rows * 0.3),
-                            layer=pdk.get_glayer("met2"),
-                        )
-                        met2_square_ref = Top_cell << met2_Drain_stripes
-                        met2_square_ref.movey(y_move - met2_sq_dim / 2).movex(
-                            x_move - met2_sq_dim / 2
-                        )
-
-                        via2_via_ref = Top_cell << via2_via
-                        via2_via_ref.movey(y_move - via2_via_dim / 2).movex(
-                            x_move - via2_via_dim / 2
-                        )
-
-                ## VSS Stripes
-                for con in range(fingers + 1):
-                    if con % 2 == 0:
-                        y_move = cell_height + space_bet_rows * 0.9
-                        x_move = (
-                            cell_width * i
-                            + space_bet_mult * i
-                            + poly_left_edge
-                            + poly_width / 2
-                            - poly_finger2finger_x / 2
-                            + con * poly_finger2finger_x
-                        )
-
-                        ## VSS extensions
-                        met3_VSS_trunk_ref = Top_cell << met3_VSS_trunk
-                        met3_VSS_trunk_ref.movex(
-                            cell_width * i + space_bet_mult * i
-                        ).movey(y_move - met3_sq_dim / 2)
-
-                        met2_VSS_stripes = rectangle(
-                            size=(met2_sq_dim, cell_height + space_bet_rows * 0.25),
-                            layer=pdk.get_glayer("met2"),
-                        )
-                        met2_square_ref = Top_cell << met2_VSS_stripes
-                        met2_square_ref.movey(y_move - met2_sq_dim / 2).movex(
-                            x_move - met2_sq_dim / 2
-                        )
-
-                        via2_via_ref = Top_cell << via2_via
-                        via2_via_ref.movey(y_move - via2_via_dim / 2).movex(
-                            x_move - via2_via_dim / 2
-                        )
-
-                ## Drain Stripes
-                for con in range(fingers + 1):
-                    if con % 2 == 0:
-                        y_move = (
-                            cell_height * 1 + space_bet_rows * (j) + poly_trunk_center_y
-                        )
-                        x_move = (
-                            cell_width * i
-                            + space_bet_mult * i
-                            + poly_left_edge
-                            + poly_width / 2
-                            - poly_finger2finger_x / 2
-                            + con * poly_finger2finger_x
-                        )
-
-                        # met2_VSS_stripes = rectangle(size=( met2_sq_dim, cell_height + space_bet_rows*0.25), layer=pdk.get_glayer("met2"))
-                        # met2_square_ref = Top_cell << met2_VSS_stripes
-                        # met2_square_ref.movey(0).movex( x_move - met2_sq_dim/2 )
-
-                        # via2_via_ref = Top_cell << via2_via
-                        # via2_via_ref.movey(cell_height + space_bet_rows/2 - via2_via_dim/2).movex( x_move - via2_via_dim/2)
-
-                ## Contacts on Poly trunk
-                for con in range(fingers - 1):
-                    y_move = (
-                        cell_height * 2 + space_bet_rows * (j) + poly_trunk_center_y
-                    )
-                    x_move = (
-                        cell_width * i
-                        + space_bet_mult * i
-                        + poly_left_edge
-                        + poly_width / 2
-                        + poly_finger2finger_x / 2
-                        + con * poly_finger2finger_x
-                    )
-
-                    mcon_via_ref = Top_cell << mcon_via
-                    mcon_via_ref.movey(
-                        y_move - pdk.get_grule("mcon")["width"] / 2
-                    ).movex(x_move - pdk.get_grule("mcon")["width"] / 2)
-
-                    met1_square_ref = Top_cell << met1_square
-                    met1_square_ref.movey(y_move - met1_sq_dim / 2).movex(
-                        x_move - met1_sq_dim / 2
-                    )
-
-                    via1_via_ref = Top_cell << via1_via
-                    via1_via_ref.movey(y_move - via1_via_dim / 2).movex(
-                        x_move - via1_via_dim / 2
-                    )
-
-                    met2_square_ref = Top_cell << met2_square
-                    met2_square_ref.movey(y_move - met2_sq_dim / 2).movex(
-                        x_move - met2_sq_dim / 2
-                    )
-
-                    if i == 0:
-                        met2_poly_ext_1_ref = Top_cell << met2_poly_ext_1
-                        met2_poly_ext_1_ref.movey(y_move - met2_sq_dim / 2).movex(
-                            x_move - met2_sq_dim / 2
-                        )
-
-                        via2_via_ref = Top_cell << via2_via
-                        via2_via_ref.movey(
-                            met2_poly_ext_1_height
-                            - met2_sq_dim
-                            + y_move
-                            - via2_via_dim / 2
-                        ).movex(x_move - via2_via_dim / 2)
-
-                        met3_poly_ext_ref = Top_cell << met3_poly_ext
-                        met3_poly_ext_ref.movey(
-                            y_move + met2_poly_ext_1_height - met2_sq_dim - via2_via_dim
-                        ).movex(-2)
-
-                        # Connecting to trunk
-                        via2_via_ref = Top_cell << via2_via
-                        via2_via_ref.movey(
-                            met2_poly_ext_1_height
-                            - met2_sq_dim
-                            + y_move
-                            - via2_via_dim / 2
-                        ).movex(-1 + via2_via_dim / 2)
-
-                        # Connecting trunk
-
-                    if i == 1:
-                        met2_poly_ext_2_ref = Top_cell << met2_poly_ext_2
-                        met2_poly_ext_2_ref.movey(y_move - met2_sq_dim / 2).movex(
-                            x_move - met2_sq_dim / 2
-                        )
-
-                        via2_via_ref = Top_cell << via2_via
-                        via2_via_ref.movey(
-                            met2_poly_ext_2_height
-                            - met2_sq_dim
-                            + y_move
-                            - via2_via_dim / 2
-                        ).movex(x_move - via2_via_dim / 2)
-
-                        met3_poly_ext_ref = Top_cell << met3_poly_ext
-                        met3_poly_ext_ref.movey(
-                            y_move + met2_poly_ext_2_height - met2_sq_dim - via2_via_dim
-                        ).movex(-2)
-
-                        via2_via_ref = Top_cell << via2_via
-                        via2_via_ref.movey(
-                            met2_poly_ext_2_height
-                            - met2_sq_dim
-                            + y_move
-                            - via2_via_dim / 2
-                        ).movex(-2 + via2_via_dim / 2)
-
-            if j == 0:
-                ##poly trunk
-                poly_trunk = Top_cell << poly_ext_trunk_ref
-                poly_trunk.movex(
-                    poly_left_edge + cell_width * i + space_bet_mult * i
-                ).movey(-poly_ext_trunk_height + cell_height * j + space_bet_rows * (j))
-                poly_trunk_center_y = (poly_trunk.ymax - poly_trunk.ymin) / 2
-
-                ## Drain Stripes
-                for con in range(fingers + 1):
-                    if con % 2 != 0:
-                        y_move = cell_height + space_bet_rows * 0.3
-                        x_move = (
-                            cell_width * i
-                            + space_bet_mult * i
-                            + poly_left_edge
-                            + poly_width / 2
-                            - poly_finger2finger_x / 2
-                            + con * poly_finger2finger_x
-                        )
-
-                        ## Drain extensions
-                        met3_Drain_trunk_ref = Top_cell << met3_Drain_trunk
-                        met3_Drain_trunk_ref.movex(
-                            cell_width * i + space_bet_mult * i
-                        ).movey(y_move - met3_sq_dim / 2)
-
-                        ## Drain extension connecting via
-                        if i == 1:
-                            via2_via_ref = Top_cell << via2_via
-                            via2_via_ref.movey(y_move - via2_via_dim / 2).movex(
-                                cell_width * (i) + space_bet_mult * i + 0.3
-                            )
-                        met2_Drain_stripes = rectangle(
-                            size=(met2_sq_dim, cell_height + space_bet_rows * 0.3),
-                            layer=pdk.get_glayer("met2"),
-                        )
-                        met2_square_ref = Top_cell << met2_Drain_stripes
-                        met2_square_ref.movey(0 + met2_sq_dim + 0.05).movex(
-                            x_move - met2_sq_dim / 2
-                        )
-
-                        via2_via_ref = Top_cell << via2_via
-                        via2_via_ref.movey(y_move - via2_via_dim / 2).movex(
-                            x_move - via2_via_dim / 2
-                        )
-
-                ## VSS Stripes
-                for con in range(fingers + 1):
-                    if con % 2 == 0:
-                        y_move = cell_height + space_bet_rows * 0.1
-                        x_move = (
-                            cell_width * i
-                            + space_bet_mult * i
-                            + poly_left_edge
-                            + poly_width / 2
-                            - poly_finger2finger_x / 2
-                            + con * poly_finger2finger_x
-                        )
-
-                        ## VSS extensions
-                        met3_VSS_trunk_ref = Top_cell << met3_VSS_trunk
-                        met3_VSS_trunk_ref.movex(
-                            cell_width * i + space_bet_mult * i
-                        ).movey(y_move - met3_sq_dim / 2)
-
-                        met2_VSS_stripes = rectangle(
-                            size=(met2_sq_dim, cell_height + space_bet_rows * 0.25),
-                            layer=pdk.get_glayer("met2"),
-                        )
-                        met2_square_ref = Top_cell << met2_VSS_stripes
-                        met2_square_ref.movey(0 - met2_sq_dim - 0.15).movex(
-                            x_move - met2_sq_dim / 2
-                        )
-
-                        via2_via_ref = Top_cell << via2_via
-                        via2_via_ref.movey(y_move - via2_via_dim / 2).movex(
-                            x_move - via2_via_dim / 2
-                        )
-
-                ## Contacts on Poly trunk
-                for con in range(fingers - 1):
-                    y_move = (
-                        -poly_ext_trunk_height
-                        + cell_height * j
-                        + space_bet_rows * (j)
-                        + poly_trunk_center_y
-                    )
-                    x_move = (
-                        cell_width * i
-                        + space_bet_mult * i
-                        + poly_left_edge
-                        + poly_width / 2
-                        + poly_finger2finger_x / 2
-                        + con * poly_finger2finger_x
-                    )
-
-                    mcon_via_ref = Top_cell << mcon_via
-                    mcon_via_ref.movey(
-                        y_move - pdk.get_grule("mcon")["width"] / 2
-                    ).movex(x_move - pdk.get_grule("mcon")["width"] / 2)
-
-                    met1_square_ref = Top_cell << met1_square
-                    met1_square_ref.movey(y_move - met1_sq_dim / 2).movex(
-                        x_move - met1_sq_dim / 2
-                    )
-
-                    via1_via_ref = Top_cell << via1_via
-                    via1_via_ref.movey(y_move - via1_via_dim / 2).movex(
-                        x_move - via1_via_dim / 2
-                    )
-
-                    met2_square_ref = Top_cell << met2_square
-                    met2_square_ref.movey(y_move - met2_sq_dim / 2).movex(
-                        x_move - met2_sq_dim / 2
-                    )
-
-                    if i == 1:
-                        met2_poly_ext_1_ref = Top_cell << met2_poly_ext_1
-                        met2_poly_ext_1_ref.movey(
-                            met2_sq_dim
-                            - met2_poly_ext_1_height
-                            + y_move
-                            - met2_sq_dim / 2
-                        ).movex(x_move - met2_sq_dim / 2)
-
-                        via2_via_ref = Top_cell << via2_via
-                        via2_via_ref.movey(
-                            met2_sq_dim
-                            - met2_poly_ext_1_height
-                            + y_move
-                            - via2_via_dim / 2
-                        ).movex(x_move - via2_via_dim / 2)
-
-                        met3_poly_ext_ref = Top_cell << met3_poly_ext
-                        met3_poly_ext_ref.movey(
-                            met2_sq_dim - met2_poly_ext_1_height + y_move - via2_via_dim
-                        ).movex(-2)
-
-                        via2_via_ref = Top_cell << via2_via
-                        via2_via_ref.movey(
-                            met2_sq_dim
-                            - met2_poly_ext_1_height
-                            + y_move
-                            - via2_via_dim / 2
-                        ).movex(-2 + via2_via_dim / 2)
-
-                    if i == 0:
-                        met2_poly_ext_2_ref = Top_cell << met2_poly_ext_2
-                        met2_poly_ext_2_ref.movey(
-                            met2_sq_dim
-                            - met2_poly_ext_2_height
-                            + y_move
-                            - met2_sq_dim / 2
-                        ).movex(x_move - met2_sq_dim / 2)
-
-                        via2_via_ref = Top_cell << via2_via
-                        via2_via_ref.movey(
-                            met2_sq_dim
-                            - met2_poly_ext_2_height
-                            + y_move
-                            - via2_via_dim / 2
-                        ).movex(x_move - via2_via_dim / 2)
-
-                        met3_poly_ext_ref = Top_cell << met3_poly_ext
-                        met3_poly_ext_ref.movey(
-                            met2_sq_dim - met2_poly_ext_2_height + y_move - via2_via_dim
-                        ).movex(-2)
-
-                        via2_via_ref = Top_cell << via2_via
-                        via2_via_ref.movey(
-                            met2_sq_dim
-                            - met2_poly_ext_2_height
-                            + y_move
-                            - via2_via_dim / 2
-                        ).movex(-1 + via2_via_dim / 2)
-
-    return Top_cell
+def diff_pair(
+	pdk: MappedPDK,
+	width: Optional[float] = 3,
+	fingers: Optional[int] = 4,
+	length: Optional[float] = None,
+	n_or_p_fet: Optional[bool] = True,
+) -> Component:
+	"""create a diffpair with 2 transistors placed in two rows with common centroid place. Sources are shorted
+	width = width of the transistors
+	fingers = number of fingers in the transistors (must be 2 or more)
+	length = length of the transistors, None means use min length
+	short_source = if true connects source of both transistors
+	n_or_p_fet = if true the diffpair is made of nfets else it is made of pfets
+	"""
+	# TODO: error checking
+	pdk.activate()
+	diffpair = Component()
+	# create transistors
+	well = None
+	if n_or_p_fet:
+		fet = nmos(pdk, width=width, fingers=fingers,length=length,multipliers=1,with_tie=False,with_dummy=False,with_dnwell=False,with_substrate_tap=False)
+		min_spacing_x = pdk.get_grule("n+s/d")["min_separation"] - 2*(fet.xmax - fet.ports["multiplier_0_plusdoped_E"].center[0])
+		well = "pwell"
+	else:
+		fet = pmos(pdk, width=width, fingers=fingers,length=length,multipliers=1,with_tie=False,with_dummy=False,dnwell=False,with_substrate_tap=False)
+		min_spacing_x = pdk.get_grule("p+s/d")["min_separation"] - 2*(fet.xmax - fet.ports["multiplier_0_plusdoped_E"].center[0])
+		well = "nwell"
+	# place transistors
+	viam2m3 = via_stack(pdk,"met2","met3",centered=True)
+	metal_min_dim = max(pdk.get_grule("met2")["min_width"],pdk.get_grule("met3")["min_width"])
+	metal_space = max(pdk.get_grule("met2")["min_separation"],pdk.get_grule("met3")["min_separation"],metal_min_dim)
+	gate_route_os = evaluate_bbox(viam2m3)[0] - fet.ports["multiplier_0_gate_W"].width + metal_space
+	min_spacing_y = metal_space + 2*gate_route_os
+	min_spacing_y = min_spacing_y - 2*abs(fet.ports["well_S"].center[1] - fet.ports["multiplier_0_gate_S"].center[1])
+	a_topl = (diffpair << fet).movey(fet.ymax+min_spacing_y/2).movex(0-fet.xmax-min_spacing_x/2)
+	b_topr = (diffpair << fet).movey(fet.ymax+min_spacing_y/2).movex(fet.xmax+min_spacing_x/2)
+	a_botr = (diffpair << fet)
+	a_botr.mirror_y().movey(0-fet.ymax-min_spacing_y/2).movex(fet.xmax+min_spacing_x/2)
+	b_botl = (diffpair << fet)
+	b_botl.mirror_y().movey(0-fet.ymax-min_spacing_y/2).movex(0-fet.xmax-min_spacing_x/2)
+	# create gate route between transistor A mults
+	avia_gate_tl = align_comp_to_port(viam2m3, a_topl.ports["multiplier_0_gate_E"], ('r','b'))
+	diffpair.add(avia_gate_tl)
+	avia_gate_br = align_comp_to_port(viam2m3, a_botr.ports["multiplier_0_gate_W"], ('l','t'))
+	diffpair.add(avia_gate_br)
+	# lay metal spacer
+	min_metal_spacer = rectangle(size=(avia_gate_tl.ports["top_met_S"].width, metal_space), layer=pdk.get_glayer("met3"), centered=True)
+	metal_space_tl = align_comp_to_port(min_metal_spacer, avia_gate_tl.ports["top_met_S"], ('l','b'))
+	diffpair.add(metal_space_tl)
+	metal_space_br = align_comp_to_port(min_metal_spacer, avia_gate_br.ports["top_met_N"], ('r','t'))
+	diffpair.add(metal_space_br)
+	# lay cross metal
+	amet_cross_width = abs(metal_space_br.ports["e3"].center[0] - metal_space_tl.ports["e1"].center[0])
+	amet_cross_hieght = abs(metal_space_tl.ports["e4"].center[1] - metal_space_br.ports["e2"].center[1])
+	amet_gate_cross = rectangle(size=(amet_cross_width, amet_cross_hieght), layer=pdk.get_glayer("met3"), centered=True)
+	cross_metal_gate_a = align_comp_to_port(amet_gate_cross, metal_space_br.ports["e2"], ('l','t'))
+	diffpair.add(cross_metal_gate_a)
+	# create gate route between transistor B mults
+	min_metal_spacer_2 = rectangle(size=(avia_gate_tl.ports["top_met_S"].width, gate_route_os), layer=pdk.get_glayer("met2"), centered=True)
+	# lay metal spacers
+	metal_space_bl = align_comp_to_port(min_metal_spacer_2, b_botl.ports["multiplier_0_gate_S"], ('r','t'))
+	diffpair.add(metal_space_bl)
+	metal_space_tr = align_comp_to_port(min_metal_spacer_2, b_topr.ports["multiplier_0_gate_S"], ('l','b'))
+	diffpair.add(metal_space_tr)
+	# lay cross metal
+	bmet_cross_width = abs(metal_space_tr.ports["e3"].center[0] - metal_space_bl.ports["e1"].center[0])
+	bmet_gate_cross = rectangle(size=(bmet_cross_width, metal_space), layer=pdk.get_glayer("met2"), centered=True)
+	cross_metal_gate_b = align_comp_to_port(bmet_gate_cross, metal_space_tr.ports["e4"], ('l','b'))
+	diffpair.add(cross_metal_gate_b)
+	# route sources (short sources)
+	diffpair << route_quad(a_topl.ports["multiplier_0_source_E"], b_topr.ports["multiplier_0_source_W"], layer=pdk.get_glayer("met2"))
+	diffpair << route_quad(b_botl.ports["multiplier_0_source_E"], a_botr.ports["multiplier_0_source_W"], layer=pdk.get_glayer("met2"))
+	sextension = b_topr.ports["well_E"].center[0] - b_topr.ports["multiplier_0_source_E"].center[0]
+	source_routeE = diffpair << c_route(pdk, b_topr.ports["multiplier_0_source_E"], a_botr.ports["multiplier_0_source_E"],extension=sextension)
+	source_routeW = diffpair << c_route(pdk, a_topl.ports["multiplier_0_source_W"], b_botl.ports["multiplier_0_source_W"],extension=sextension)
+	# route drains
+	# place via at the drain
+	drain_br_via = diffpair << viam2m3
+	drain_bl_via = diffpair << viam2m3
+	drain_br_via.move(a_botr.ports["multiplier_0_drain_N"].center).movey(viam2m3.ymin)
+	drain_bl_via.move(b_botl.ports["multiplier_0_drain_N"].center).movey(viam2m3.ymin)
+	drain_br_viatm = diffpair << viam2m3
+	drain_bl_viatm = diffpair << viam2m3
+	drain_br_viatm.move(a_botr.ports["multiplier_0_drain_N"].center).movey(viam2m3.ymin)
+	drain_bl_viatm.move(b_botl.ports["multiplier_0_drain_N"].center).movey(-1.5 * evaluate_bbox(viam2m3)[1] - metal_space)
+	# create route to drain via
+	width_drain_route = b_topr.ports["multiplier_0_drain_E"].width
+	dextension = source_routeE.xmax - b_topr.ports["multiplier_0_drain_E"].center[0] + metal_space
+	bottom_extension = viam2m3.ymax + width_drain_route/2 + 2*metal_space
+	drain_br_viatm.movey(0-bottom_extension - metal_space - width_drain_route/2 - viam2m3.ymax)
+	diffpair << route_quad(drain_br_viatm.ports["top_met_N"], drain_br_via.ports["top_met_S"], layer=pdk.get_glayer("met3"))
+	diffpair << route_quad(drain_bl_viatm.ports["top_met_N"], drain_bl_via.ports["top_met_S"], layer=pdk.get_glayer("met3"))
+	floating_port_drain_bottom_L = set_orientation(movey(drain_bl_via.ports["bottom_met_W"],0-bottom_extension), get_orientation("E"))
+	floating_port_drain_bottom_R = set_orientation(movey(drain_br_via.ports["bottom_met_E"],0-bottom_extension - metal_space - width_drain_route), get_orientation("W"))
+	drain_routeTR_BL = diffpair << c_route(pdk, floating_port_drain_bottom_L, b_topr.ports["multiplier_0_drain_E"],extension=dextension, width=width_drain_route)
+	drain_routeTL_BR = diffpair << c_route(pdk, floating_port_drain_bottom_R, a_topl.ports["multiplier_0_drain_W"],extension=dextension, width=width_drain_route)
+	# correct pwell place, add ports, flatten, and return
+	diffpair.add_padding(layers=(pdk.get_glayer(well),), default=0)
+	return rename_ports_by_orientation(diffpair.flatten())
 
 
 if __name__ == "__main__":
-    from PDK.util.standard_main import pdk
+	from PDK.util.standard_main import pdk
+	mycomp = diff_pair(pdk)
+	mycomp.show()
+	print_ports(mycomp)
 
-    Top_cell = diff_pair(pdk, mult=2, fingers=4, cell_height=1.34)
-    Top_cell.show()

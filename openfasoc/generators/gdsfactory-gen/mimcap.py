@@ -4,6 +4,7 @@ from gdsfactory.components.rectangle import rectangle
 from PDK.mappedpdk import MappedPDK
 from typing import Optional
 from via_gen import via_array
+from PDK.util.custom_comp_utils import rename_ports_by_orientation
 
 
 @cell
@@ -21,18 +22,20 @@ def mimcap(
     # get cap layers and run error checking
     pdk.has_required_glayers(["capmet", route_layer])
     capmettop = pdk.layer_to_glayer(pdk.get_grule("capmet")["capmettop"])
+    capmetbottom_actual = pdk.get_grule("capmet")["capmetbottom"]
     capmetbottom = pdk.layer_to_glayer(pdk.get_grule("capmet")["capmetbottom"])
     pdk.activate()
     # create top component
     mim_cap = Component()
     mim_cap << rectangle(size=size, layer=pdk.get_glayer("capmet"), centered=True)
     top_met_ref = mim_cap << via_array(
-        pdk, capmetbottom, capmettop, size=size, minus1=True
+        pdk, capmetbottom, capmettop, size=size, minus1=True, lay_bottom=False
     )
+    bottom_met_enclosure = pdk.get_grule(capmetbottom,"capmet")["min_enclosure"]
+    mim_cap.add_padding(layers=(capmetbottom_actual,),default=bottom_met_enclosure)
     # flatten and create ports
     mim_cap.add_ports(top_met_ref.get_ports_list())
-    mim_cap = mim_cap.flatten()
-    return mim_cap
+    return rename_ports_by_orientation(mim_cap).flatten()
 
 
 if __name__ == "__main__":
