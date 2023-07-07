@@ -315,7 +315,7 @@ def to_decimal(elements: Union[tuple,list,float,int,str]):
 	return elements
 
 @validate_arguments
-def to_float(elements: Union[tuple,list,Decimal]):
+def to_float(elements: Union[tuple,list,Decimal,float]):
 	"""converts all elements of list like object into floats and snaps to grid
 	or converts single decimal into floats"""
 	if not isinstance(elements,Iterable):
@@ -323,12 +323,14 @@ def to_float(elements: Union[tuple,list,Decimal]):
 	else:
 		elements = list(elements)
 	for i, element in enumerate(elements):
-		if isinstance(element, Decimal):
+		if isinstance(element, Union[float,Decimal]):
 			elements[i] = snap_to_grid(float(element))
 	return elements
 
 @validate_arguments
 def prec_array(custom_comp: Component, columns: int, rows: int, spacing: tuple[Union[float,Decimal],Union[float,Decimal]]) -> Component:
+	"""instead of using the component.add_array function, if you are having grid snapping issues try using this function
+	works the same way as add_array but uses decimals and snaps to grid to mitigate grid snapping issues"""
 	# make sure to work with decimals
 	precspacing = list(spacing)
 	for i in range(2):
@@ -344,3 +346,18 @@ def prec_array(custom_comp: Component, columns: int, rows: int, spacing: tuple[U
 			cref.movex(to_float(coldisp)).movey(to_float(rowdisp))
 	precarray.add_ports(custom_comp.get_ports_list())
 	return precarray.flatten()
+
+
+@validate_arguments
+def prec_center(custom_comp: Union[Component,ComponentReference], return_decimal: bool=False) -> tuple[Union[float,Decimal],Union[float,Decimal]]:
+	"""instead of using component.ref_center() to get the center of a component,
+	use this function which will return the correct offset to center a component
+	you can then run component.move(prec_center(component))
+	returns (x,y) corrections
+	if return_decimal=True, return in Decimal, otherwise return float"""
+	correctmax = [dim/2 for dim in evaluate_bbox(custom_comp, True)]
+	currentmax = to_decimal((custom_comp.xmax,custom_comp.ymax))
+	correctionxy = [correctmax[i] - currentmax[i] for i in range(2)]
+	if return_decimal:
+		return correctionxy
+	return to_float(correctionxy)

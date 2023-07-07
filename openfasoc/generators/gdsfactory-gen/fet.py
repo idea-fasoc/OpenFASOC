@@ -7,7 +7,7 @@ from typing import Optional, Union
 from via_gen import via_array, via_stack
 from guardring import tapring
 from pydantic import validate_arguments
-from PDK.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, evaluate_bbox, to_float, to_decimal, prec_array
+from PDK.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, evaluate_bbox, to_float, to_decimal, prec_array, prec_center
 from c_route import c_route
 from PDK.util.snap_to_grid import component_snap_to_grid
 from decimal import Decimal
@@ -194,7 +194,8 @@ def __mult_array_macro(
     gate_route_topmet: Optional[str] = "met2",
     sd_route_left: Optional[bool] = True,
 ) -> Component:
-    """create a multiplier array with multiplier_0 at the bottom"""
+    """create a multiplier array with multiplier_0 at the bottom
+    The array is correctly centered"""
     # create multiplier array
     pdk.activate()
     # TODO: error checking
@@ -215,7 +216,7 @@ def __mult_array_macro(
         + evaluate_bbox(multiplier_comp, True)[1]
     )
     for rownum in range(multipliers):
-        row_displacment = rownum * multiplier_separation
+        row_displacment = rownum * multiplier_separation - (multiplier_separation/2 * (multipliers-1))
         row_ref = multiplier_arr << multiplier_comp
         row_ref.movey(to_float(row_displacment))
         multiplier_arr.add_ports(
@@ -248,8 +249,13 @@ def __mult_array_macro(
             next_gate = multiplier_arr.ports[nextmult + "gate_"+gate_side]
             gate_ref = multiplier_arr << c_route(pdk, this_gate, next_gate, viaoffset=(True,False), extension=to_float(src_extension))
             multiplier_arr.add_ports(gate_ref.get_ports_list(), prefix=gatepfx)
-    # clean TODO: solution is in pmos/nmos do a real copy instead of adding ref
-    return component_snap_to_grid(rename_ports_by_orientation(multiplier_arr))
+    multiplier_arr = component_snap_to_grid(rename_ports_by_orientation(multiplier_arr))
+    # recenter
+    final_arr = Component()
+    marrref = final_arr << multiplier_arr
+    correctionxy = prec_center(marrref)
+    marrref.movex(correctionxy[0]).movey(correctionxy[1])
+    return component_snap_to_grid(final_arr)
 
 
 @cell
@@ -281,7 +287,7 @@ def nmos(
     multiplier_arr = __mult_array_macro(
         pdk, "n+s/d", width, fingers, multipliers, dummy=with_dummy, length=length, sd_route_topmet=sd_route_topmet, gate_route_topmet=gate_route_topmet, sd_route_left=sd_route_left
     )
-    multiplier_arr_ref = multiplier_arr.ref_center()
+    multiplier_arr_ref = multiplier_arr.ref()
     nfet.add(multiplier_arr_ref)
     nfet.add_ports(multiplier_arr_ref.get_ports_list())
     # add tie if tie
@@ -363,7 +369,7 @@ def pmos(
     multiplier_arr = __mult_array_macro(
         pdk, "p+s/d", width, fingers, multipliers, dummy=with_dummy, length=length, sd_route_topmet=sd_route_topmet, gate_route_topmet=gate_route_topmet, sd_route_left=sd_route_left
     )
-    multiplier_arr_ref = multiplier_arr.ref_center()
+    multiplier_arr_ref = multiplier_arr.ref()
     pfet.add(multiplier_arr_ref)
     pfet.add_ports(multiplier_arr_ref.get_ports_list())
     # add tie if tie
