@@ -205,7 +205,8 @@ def assert_ports_perpindicular(edge1: Port, edge2: Port) -> bool:
 	"""raises assertionerror if edges are not perindicular"""
 	or1 = round(edge1.orientation)
 	or2 = round(edge2.orientation)
-	if abs(round(or1-or2)) != 90:
+	angle_difference = abs(round(or1-or2))
+	if angle_difference != 90 and angle_difference != 270:
 		raise AssertionError("edges are not perpindicular")
 	return True
 
@@ -223,7 +224,23 @@ def set_orientation(custom_comp: Port, orientation: Union[float, int]) -> Port:
 		shear_angle = custom_comp.shear_angle,
 		layer = custom_comp.layer,
 		width = custom_comp.width,
-		
+	)
+	return newport
+
+
+@validate_arguments
+def set_port_width(custom_comp: Port, width: float) -> Port:
+	"""creates a new port with the desired width and returns the new port"""
+	newport = Port(
+		name = custom_comp.name,
+		center = custom_comp.center,
+		orientation = custom_comp.orientation,
+		parent = custom_comp.parent,
+		port_type = custom_comp.port_type,
+		cross_section = custom_comp.cross_section,
+		shear_angle = custom_comp.shear_angle,
+		layer = custom_comp.layer,
+		width = width,
 	)
 	return newport
 
@@ -352,7 +369,6 @@ def prec_array(custom_comp: Component, columns: int, rows: int, spacing: tuple[U
 def prec_center(custom_comp: Union[Component,ComponentReference], return_decimal: bool=False) -> tuple[Union[float,Decimal],Union[float,Decimal]]:
 	"""instead of using component.ref_center() to get the center of a component,
 	use this function which will return the correct offset to center a component
-	you can then run component.move(prec_center(component))
 	returns (x,y) corrections
 	if return_decimal=True, return in Decimal, otherwise return float"""
 	correctmax = [dim/2 for dim in evaluate_bbox(custom_comp, True)]
@@ -361,3 +377,14 @@ def prec_center(custom_comp: Union[Component,ComponentReference], return_decimal
 	if return_decimal:
 		return correctionxy
 	return to_float(correctionxy)
+
+@validate_arguments
+def prec_ref_center(custom_comp: Union[Component,ComponentReference], return_decimal: bool=False) -> tuple[Union[float,Decimal],Union[float,Decimal]]:
+	"""instead of using component.ref_center() to get a ref to center at origin,
+	use this function which will return a centered ref
+	you can then run component.add(prec_ref_center(custom_comp)) to add the reference to your component
+	returns component reference
+	"""
+	compref = custom_comp if isinstance(custom_comp, ComponentReference) else custom_comp.ref()
+	xcor, ycor = prec_center(compref, False)
+	return compref.movex(xcor).movey(ycor)

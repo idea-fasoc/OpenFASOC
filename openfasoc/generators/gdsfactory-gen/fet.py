@@ -255,6 +255,7 @@ def __mult_array_macro(
     marrref = final_arr << multiplier_arr
     correctionxy = prec_center(marrref)
     marrref.movex(correctionxy[0]).movey(correctionxy[1])
+    final_arr.add_ports(marrref.get_ports_list())
     return component_snap_to_grid(final_arr)
 
 
@@ -302,13 +303,14 @@ def nmos(
             2 * (tap_separation + nfet.xmax),
             2 * (tap_separation + nfet.ymax),
         )
-        nfet << tapring(
+        tiering_ref = nfet << tapring(
             pdk,
             enclosed_rectangle=tap_encloses,
             sdlayer="p+s/d",
             horizontal_glayer="met2",
             vertical_glayer="met1",
         )
+        nfet.add_ports(tiering_ref.get_ports_list(), prefix="tie_")
     # add pwell
     nfet.add_padding(
         layers=(pdk.get_glayer("pwell"),),
@@ -330,13 +332,15 @@ def nmos(
             2 * (substrate_tap_separation + nfet.xmax),
             2 * (substrate_tap_separation + nfet.ymax),
         )
-        nfet << tapring(
+        ringtoadd = tapring(
             pdk,
             enclosed_rectangle=substrate_tap_encloses,
             sdlayer="p+s/d",
             horizontal_glayer="met2",
             vertical_glayer="met1",
         )
+        tapring_ref = nfet << ringtoadd
+        nfet.add_ports(tapring_ref.get_ports_list(),prefix="guardring_")
     return rename_ports_by_orientation(nfet).flatten()
 
 

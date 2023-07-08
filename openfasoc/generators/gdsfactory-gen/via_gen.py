@@ -40,6 +40,7 @@ def via_stack(
     glayer2: str is the glayer to end on
     ****NOTE it does not matter what order you pass layers
     ****NOTE will not lay poly or active but will lay metals
+    fullbottom: will lay the bottom glayer all over the area of the viastack
     ports (one port for each edge):
     top_met_...all edges
     bottom_via_...all edges
@@ -76,11 +77,17 @@ def via_stack(
         for level in range(level1, level2):
             gmetlayer = "met" + str(level)
             gnextvia = "via" + str(level)
+            if level != level1:
+                gprevvia = "via" + str(level-1)
+                gprevvia_rule = 2 * pdk.get_grule(gmetlayer, gprevvia)["min_enclosure"] + pdk.get_grule(gprevvia)["width"]
+            else:
+                gprevvia_rule=0
             pdk.has_required_glayers([gmetlayer, gnextvia])
             metdim = round(max(
                 2 * pdk.get_grule(gmetlayer, gnextvia)["min_enclosure"]
                 + pdk.get_grule(gnextvia)["width"],
                 pdk.get_grule(gmetlayer)["min_width"],
+                gprevvia_rule
             ),6)
             metref = viastack << rectangle(
                 size=(metdim, metdim), layer=pdk.get_glayer(gmetlayer), centered=True
@@ -110,14 +117,16 @@ def via_stack(
     for i in range(3):
         viastack.add_ports(port_refs[i][1].get_ports_list(), prefix=pre[i])
     if fullbottom:
-        viastack << rectangle(size=evaluate_bbox(viastack),layer=pdk.get_glayer("met"+str(level1)), centered=True)
+        gprevia = "via"+str(level1-1) if level1 != 1 else "mcon"
+        bottomsize = max(2*pdk.get_grule("met"+str(level1),gprevia)["min_enclosure"] + pdk.get_grule(gprevia)["width"], evaluate_bbox(viastack)[0])
+        viastack << rectangle(size=2*[bottomsize],layer=pdk.get_glayer("met"+str(level1)), centered=True)
     center_stack = Component()
     viastack_ref = center_stack << viastack
     if not centered:
         viastack_ref.movex(viastack.xmax).movey(viastack.ymax)
     
     center_stack.add_ports(viastack_ref.get_ports_list())
-    return rename_ports_by_orientation(center_stack.flatten())
+    return rename_ports_by_orientation(center_stack).flatten()
 
 
 @cell

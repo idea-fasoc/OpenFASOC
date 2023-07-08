@@ -6,7 +6,9 @@ from gdsfactory.components.rectangular_ring import rectangular_ring
 from via_gen import via_array, via_stack
 from typing import Optional
 from math import ceil
+from PDK.util.custom_comp_utils import print_ports
 from PDK.util.snap_to_grid import component_snap_to_grid
+from L_route import L_route
 
 
 @cell
@@ -25,6 +27,12 @@ def tapring(
     ****NOTE: the enclosed_rectangle will be the enclosed dimensions of active_tap
     horizontal_glayer: string=met2, layer used over the ring horizontally
     vertical_glayer: string=met1, layer used over the ring vertically
+    ports:
+    Narr_... all ports in top via array
+    Sarr_... all ports in bottom via array
+    Earr_... all ports in right via array
+    Warr_... all ports in left via array
+    bl_corner_...all ports in bottom left L route
     """
     # check layers, activate pdk, create top cell
     pdk.has_required_glayers(
@@ -61,25 +69,26 @@ def tapring(
         layer=pdk.get_glayer(sdlayer),
     )
     # create via arrs
-    via_width_horizontal = 2 * via_stack(pdk, "active_diff", horizontal_glayer).ymax
+    via_width_horizontal = 2 * via_stack(pdk, "active_tap", horizontal_glayer).ymax
     arr_size_horizontal = enclosed_rectangle[0]
     horizontal_arr = via_array(
         pdk,
-        "active_diff",
+        "active_tap",
         horizontal_glayer,
         (arr_size_horizontal, via_width_horizontal),
         minus1=True,
     )
-    via_width_vertical = 2 * via_stack(pdk, "active_diff", vertical_glayer).ymax
+    via_width_vertical = 2 * via_stack(pdk, "active_tap", vertical_glayer).ymax
     arr_size_vertical = enclosed_rectangle[1]
     vertical_arr = via_array(
         pdk,
-        "active_diff",
+        "active_tap",
         vertical_glayer,
         (via_width_vertical, arr_size_vertical),
         minus1=True,
     )
     # add via arrs
+    refs_prefixes = list()
     metal_ref_n = ptapring << horizontal_arr
     metal_ref_e = ptapring << vertical_arr
     metal_ref_s = ptapring << horizontal_arr
@@ -88,11 +97,20 @@ def tapring(
     metal_ref_e.movex(round(0.5 * (enclosed_rectangle[0] + tap_width),4))
     metal_ref_s.movey(round(-0.5 * (enclosed_rectangle[1] + tap_width),4))
     metal_ref_w.movex(round(-0.5 * (enclosed_rectangle[0] + tap_width),4))
-    # done, flatten and return
+    refs_prefixes += [(metal_ref_n,"N_"), (metal_ref_e,"E_"), (metal_ref_s,"S_"), (metal_ref_w,"W_")]
+    # connect vertices
+    tlvia = ptapring << L_route(pdk, metal_ref_n.ports["top_met_W"], metal_ref_w.ports["top_met_N"])
+    trvia = ptapring << L_route(pdk, metal_ref_n.ports["top_met_E"], metal_ref_e.ports["top_met_N"])
+    blvia = ptapring << L_route(pdk, metal_ref_s.ports["top_met_W"], metal_ref_w.ports["top_met_S"])
+    brvia = ptapring << L_route(pdk, metal_ref_s.ports["top_met_E"], metal_ref_e.ports["top_met_S"])
+    refs_prefixes += [(tlvia,"tl_"),(trvia,"tr_"),(blvia,"bl_"),(brvia,"br_")]
+    # add ports, flatten and return
+    for ref_, prefix in refs_prefixes:
+        ptapring.add_ports(ref_.get_ports_list(),prefix=prefix)
     return component_snap_to_grid(ptapring)
 
 
 if __name__ == "__main__":
     from PDK.util.standard_main import pdk
 
-    tapring(pdk, "p+s/d", enclosed_rectangle=(26, 10)).show()
+    tapring(pdk, sdlayer="p+s/d", enclosed_rectangle=(26, 10)).show()

@@ -3,9 +3,10 @@ from gdsfactory.component import Component
 from gdsfactory.port import Port
 from PDK.mappedpdk import MappedPDK
 from typing import Optional
-from via_gen import via_stack
+from via_gen import via_stack, via_array
 from gdsfactory.components.rectangle import rectangle
-from PDK.util.custom_comp_utils import evaluate_bbox, align_comp_to_port, rename_ports_by_orientation, rename_ports_by_list, print_ports, assert_is_manhattan, assert_ports_perpindicular
+from PDK.util.custom_comp_utils import evaluate_bbox, align_comp_to_port, rename_ports_by_orientation, rename_ports_by_list, print_ports, assert_is_manhattan, assert_ports_perpindicular, to_decimal, to_float, prec_ref_center
+from decimal import Decimal
 
 
 @cell
@@ -57,18 +58,18 @@ def L_route(
 	else:
 		hport, vport = edge1, edge2
 	# arg setup
-	vwidth = vwidth if vwidth else vport.width
-	hwidth = hwidth if hwidth else hport.width
+	vwidth = to_decimal(vwidth if vwidth else vport.width)
+	hwidth = to_decimal(hwidth if hwidth else hport.width)
 	hglayer = hglayer if hglayer else pdk.layer_to_glayer(vport.layer)
 	vglayer = vglayer if vglayer else pdk.layer_to_glayer(hport.layer)
 	# compute required dimensions
-	hdim_center = vport.center[0] - hport.center[0]
-	vdim_center = hport.center[1] - vport.center[1]
+	hdim_center = to_decimal(vport.center[0]) - to_decimal(hport.center[0])
+	vdim_center = to_decimal(hport.center[1]) - to_decimal(vport.center[1])
 	hdim = abs(hdim_center) + hwidth/2
 	vdim = abs(vdim_center) + vwidth/2
 	# create and place vertical and horizontal connections
-	hconnect = rectangle(size=(hdim,vwidth),layer=pdk.get_glayer(hglayer))
-	vconnect = rectangle(size=(hwidth,vdim),layer=pdk.get_glayer(vglayer))
+	hconnect = rectangle(size=to_float((hdim,vwidth)),layer=pdk.get_glayer(hglayer))
+	vconnect = rectangle(size=to_float((hwidth,vdim)),layer=pdk.get_glayer(vglayer))
 	#xalign
 	valign = ("l","c") if hdim_center > 0 else ("r","c")
 	halign = ("c","b") if vdim_center > 0 else ("c","t")
@@ -77,17 +78,26 @@ def L_route(
 	Lroute.add(hconnect_ref)
 	vconnect_ref = align_comp_to_port(vconnect, hport, halign)
 	Lroute.add(vconnect_ref)
-	# create and place via
-	h_to_v_via_ref = Lroute << via_stack(pdk, hglayer, vglayer)
+	# create and place via (decide between via stack and via array)
+	hv_via = via_stack(pdk, hglayer, vglayer,fullbottom=True)
+	hv_via_dims = evaluate_bbox(hv_via,True)
+	use_stack = hv_via_dims[0] > hwidth or hv_via_dims[1] > vwidth
+	if not use_stack:
+		hv_via = via_array(pdk, hglayer, vglayer, size=to_float((hwidth,vwidth)), lay_bottom=True)
+	h_to_v_via_ref = prec_ref_center(hv_via)
+	Lroute.add(h_to_v_via_ref)
 	h_to_v_via_ref.move(destination=(hport.center[0], vport.center[1]))
 	if viaoffset:
-		viadim_os = evaluate_bbox(h_to_v_via_ref)[0]/2
-		viaxofs = abs(hwidth/2-viadim_os)
-		viaxofs = viaxofs if hdim_center > 0 else -1*viaxofs
-		viayofs = abs(vwidth/2-viadim_os)
-		viayofs = viayofs if vdim_center > 0 else -1*viayofs
+		viadim_osx = evaluate_bbox(h_to_v_via_ref,True)[0]/2
+		viaxofs = abs(hwidth/2-viadim_osx)
+		viaxofs = to_float(viaxofs if hdim_center > 0 else -1*viaxofs)
+		viadim_osy = evaluate_bbox(h_to_v_via_ref,True)[1]/2
+		viayofs = abs(vwidth/2-viadim_osy)
+		viayofs = to_float(viayofs if vdim_center > 0 else -1*viayofs)
 		h_to_v_via_ref.movex(viaxofs).movey(viayofs)
-	return Lroute.flatten()
+	# add ports and return
+	Lroute.add_ports(h_to_v_via_ref.get_ports_list())
+	return rename_ports_by_orientation(Lroute.flatten())
 
 
 if __name__ == "__main__":

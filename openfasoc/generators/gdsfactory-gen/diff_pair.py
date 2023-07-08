@@ -13,6 +13,7 @@ from gdsfactory.routing.route_sharp import route_sharp
 from c_route import c_route
 from PDK.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, movex, movey, get_orientation, set_orientation, evaluate_bbox, align_comp_to_port
 from via_gen import via_stack
+from PDK.util.snap_to_grid import component_snap_to_grid
 
 #diffpair << route_sharp(b_topr.ports["multiplier_0_source_E"],viam2m3_ref_tr.ports["bottom_met_W"], width=connect_width, layer=pdk.get_glayer("met2"), path_type="manhattan")
 
@@ -38,6 +39,7 @@ def diff_pair(
 	well = None
 	if n_or_p_fet:
 		fet = nmos(pdk, width=width, fingers=fingers,length=length,multipliers=1,with_tie=False,with_dummy=False,with_dnwell=False,with_substrate_tap=False)
+		#print_ports(fet)
 		min_spacing_x = pdk.get_grule("n+s/d")["min_separation"] - 2*(fet.xmax - fet.ports["multiplier_0_plusdoped_E"].center[0])
 		well = "pwell"
 	else:
@@ -111,16 +113,20 @@ def diff_pair(
 	diffpair << route_quad(drain_bl_viatm.ports["top_met_N"], drain_bl_via.ports["top_met_S"], layer=pdk.get_glayer("met3"))
 	floating_port_drain_bottom_L = set_orientation(movey(drain_bl_via.ports["bottom_met_W"],0-bottom_extension), get_orientation("E"))
 	floating_port_drain_bottom_R = set_orientation(movey(drain_br_via.ports["bottom_met_E"],0-bottom_extension - metal_space - width_drain_route), get_orientation("W"))
-	drain_routeTR_BL = diffpair << c_route(pdk, floating_port_drain_bottom_L, b_topr.ports["multiplier_0_drain_E"],extension=dextension, width=width_drain_route)
-	drain_routeTL_BR = diffpair << c_route(pdk, floating_port_drain_bottom_R, a_topl.ports["multiplier_0_drain_W"],extension=dextension, width=width_drain_route)
+	drain_routeTR_BL = diffpair << c_route(pdk, floating_port_drain_bottom_L, b_topr.ports["multiplier_0_drain_E"],extension=dextension, width1=width_drain_route,width2=width_drain_route)
+	drain_routeTL_BR = diffpair << c_route(pdk, floating_port_drain_bottom_R, a_topl.ports["multiplier_0_drain_W"],extension=dextension, width1=width_drain_route,width2=width_drain_route)
 	# correct pwell place, add ports, flatten, and return
+	diffpair.add_ports(a_topl.get_ports_list(),prefix="tl_")
+	diffpair.add_ports(b_topr.get_ports_list(),prefix="tr_")
+	diffpair.add_ports(b_botl.get_ports_list(),prefix="bl_")
+	diffpair.add_ports(a_botr.get_ports_list(),prefix="br_")
 	diffpair.add_padding(layers=(pdk.get_glayer(well),), default=0)
-	return rename_ports_by_orientation(diffpair.flatten())
+	return component_snap_to_grid(rename_ports_by_orientation(diffpair))
 
 
 if __name__ == "__main__":
 	from PDK.util.standard_main import pdk
-	mycomp = diff_pair(pdk)
+	mycomp = diff_pair(pdk,length=1,width=6,fingers=4)
 	mycomp.show()
 	print_ports(mycomp)
 
