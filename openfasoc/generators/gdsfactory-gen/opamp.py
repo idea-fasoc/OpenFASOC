@@ -21,7 +21,7 @@ from PDK.sky130_mapped.sky130_add_npc import sky130_add_npc
 @cell
 def opamp(
     pdk: MappedPDK,
-    diffpair_params: Optional[tuple[float, float, int, int]] = (6, 0, 4),
+    diffpair_params: Optional[tuple[float, float, int]] = (6, 0, 4),
     tailcurrent_params: Optional[tuple[float, float, int, int]] = (6, 2, 4, 1),
     cmirror_hparams: Optional[tuple[float, float, int, int]] = (6, 2, 8, 3),
     cmirror_outhparams: Optional[tuple[float, float, int, int]] = (6, 2, 2, 1),

@@ -6,6 +6,7 @@ import sky130
 from PDK.mappedpdk import MappedPDK
 from PDK.sky130_mapped.grules import grulesobj
 from pathlib import Path
+from PDK.sky130_mapped.sky130_add_npc import sky130_add_npc
 
 sky130.PDK.layers["capm3"] = (89, 44)
 
@@ -42,8 +43,9 @@ sky130_mapped_pdk = MappedPDK.from_gf_pdk(
     glayers=sky130_glayer_mapping,
     grules=grulesobj,
     klayout_lydrc_file=sky130_lydrc_file_path,
+    default_decorator=sky130_add_npc
 )
 # set the grid size
 sky130_mapped_pdk.gds_write_settings.precision = 5*10**-9
-sky130_mapped_pdk.cell_decorator_settings.cache=False
+#sky130_mapped_pdk.cell_decorator_settings.cache=False
 sky130_mapped_pdk.gds_write_settings.flatten_invalid_refs=False

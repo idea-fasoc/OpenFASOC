@@ -3,16 +3,19 @@ from gdsfactory.polygon import Polygon
 from gdsfactory.geometry.boolean import boolean
 
 
-
 def sky130_add_npc(comp: Component) -> Component:
 	"""To keep with the generic generator structure,
 	we do NOT add nitride poly cut layer in the generic generators (npc is specfic to sky130).
 	Because it is easy to add idenpedently, 
 	we implement this as a function wrapper to correctly lay npc
 	returns the modified component"""
-	# extract licon polygons which are over poly (using klayout booleans)
-	licon_comp = comp.extract(layers=[(66,44)])
-	poly_comp = comp.extract(layers=[(66,20)])
+	# extract licon polygons which are over poly (using booleans)
+	licon_comp = Component("tempLICON_ONLY")
+	licon_comp.add(comp.get_polygons(by_spec=(66,44), depth=None, as_array=False))
+	poly_comp = Component("tempPOLY_ONLY")
+	poly_comp.add(comp.get_polygons(by_spec=(66,20), depth=None, as_array=False))
+	if not len(licon_comp.get_polygons()) or not len(poly_comp.get_polygons()):
+		return comp
 	liconANDpoly = boolean(licon_comp, poly_comp, layer=(1,2), operation="and")
 	licon_polygons = liconANDpoly.get_polygons(as_array=False)
 	# iterate through all licon and create npc (ignore merges for now)
