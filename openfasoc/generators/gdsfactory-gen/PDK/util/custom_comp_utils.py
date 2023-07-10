@@ -134,59 +134,83 @@ def print_ports(custom_comp: Union[Component, ComponentReference], names_only: O
 def evaluate_bbox(custom_comp: Union[Component, ComponentReference], return_decimal: Optional[bool]=False) -> tuple[Union[float,Decimal],Union[float,Decimal]]:
 	"""returns the length and height of a component like object"""
 	compbbox = custom_comp.bbox
-	width = Decimal(str(compbbox[1][0])) - Decimal(str(compbbox[0][0]))
-	height = Decimal(str(compbbox[1][1])) - Decimal(str(compbbox[0][1]))
+	width = abs(Decimal(str(compbbox[1][0])) - Decimal(str(compbbox[0][0])))
+	height = abs(Decimal(str(compbbox[1][1])) - Decimal(str(compbbox[0][1])))
 	if return_decimal:
 		return (width,height)
 	return (float(width),float(height))
 
 
 @validate_arguments
-def move(custom_comp: Union[Port, ComponentReference], offsetxy: Optional[tuple[float,float]] = 0) -> Union[Port, ComponentReference]:
+def move(custom_comp: Union[Port, ComponentReference], offsetxy: Optional[tuple[float,float]] = 0, destination: Optional[tuple[Optional[float],Optional[float]]]=None) -> Union[Port, ComponentReference]:
 	"""moves custom_comp by offset[0]=x offset, offset[1]=y offset
+	destination (x,y) if not none overrides offset option
 	returns the modified custom_comp
 	"""
+	if destination is not None:
+		xoffset = destination[0] - custom_comp.center[0] if destination[0] is not None else 0
+		yoffset = destination[1] - custom_comp.center[1] if destination[1] is not None else 0
 	if isinstance(custom_comp, Port):
-		custom_comp.move(offsetxy)
+		if destination is None:
+			custom_comp.move(offsetxy)
+		else:
+			custom_comp.move((xoffset,yoffset))
 	elif isinstance(custom_comp, ComponentReference):
-		custom_comp.movex(offsetxy[0]).movey(offsetxy[1])
+		if destination is None:
+			custom_comp.movex(offsetxy[0]).movey(offsetxy[1])
+		else:
+			custom_comp.movex(xoffset).movey(yoffset)
 	return custom_comp
 
 
 @validate_arguments
-def movex(custom_comp: Union[Port, ComponentReference], offsetx: Optional[float] = 0) -> Union[Port, ComponentReference]:
+def movex(custom_comp: Union[Port, ComponentReference], offsetx: Optional[float] = 0, destination: Optional[float]=None) -> Union[Port, ComponentReference]:
 	"""moves custom_comp by offsetx in the x direction
 	returns the modified custom_comp
 	"""
-	return move(custom_comp, (offsetx,0))
+	if destination is not None:
+		destination = (destination, None)
+	return move(custom_comp, (offsetx,0),destination)
 
 
 @validate_arguments
-def movey(custom_comp: Union[Port, ComponentReference], offsety: Optional[float] = 0) -> Union[Port, ComponentReference]:
+def movey(custom_comp: Union[Port, ComponentReference], offsety: Optional[float] = 0, destination: Optional[float]=None) -> Union[Port, ComponentReference]:
 	"""moves custom_comp by offsety in the y direction
 	returns the modified custom_comp
 	"""
-	return move(custom_comp, (0,offsety))
+	if destination is not None:
+		destination = (None, destination)
+	return move(custom_comp, (0,offsety),destination)
 
 
 @validate_arguments
-def get_orientation(orientation: str) -> int:
+def get_orientation(orientation: Union[int,float,str]) -> Union[float,int,str]:
 	"""returns the angle corresponding to port orientation
 	orientation must contain N/n,E/e,S/s,W/w
 	e.g. all the follwing are valid:
 	N/n or N/north,E/e or E/east,S/s or S/south, W/w or W/west
 	"""
-	orientation = orientation.lower()
-	if "n" in orientation:
-		return 90
-	elif "e" in orientation:
-		return 0
-	elif "w" in orientation:
-		return 180
-	elif "s" in orientation:
-		return 270
-	else:
-		raise ValueError("orientation must contain N/n,E/e,S/s,W/w")
+	if isinstance(orientation,str):
+		orientation = orientation.lower()
+		if "n" in orientation:
+			return 90
+		elif "e" in orientation:
+			return 0
+		elif "w" in orientation:
+			return 180
+		elif "s" in orientation:
+			return 270
+		else:
+			raise ValueError("orientation must contain N/n,E/e,S/s,W/w")
+	else:# must be a float/int
+		orientation = int(orientation)
+		orientation_index = int((orientation % 360) / 90)
+		orientations = ["E","N","W","S"]
+		try:
+			orientation = orientations[orientation_index]
+		except IndexError as e:
+			raise ValueError("orientation must be 0,90,180,270 to use this function")
+		return orientation
 
 
 @validate_arguments
@@ -212,8 +236,10 @@ def assert_ports_perpindicular(edge1: Port, edge2: Port) -> bool:
 
 
 @validate_arguments
-def set_orientation(custom_comp: Port, orientation: Union[float, int]) -> Port:
+def set_orientation(custom_comp: Port, orientation: Union[float, int, str]) -> Port:
 	"""creates a new port with the desired orientation and returns the new port"""
+	if isinstance(orientation,str):
+		orientation = get_orientation(orientation)
 	newport = Port(
 		name = custom_comp.name,
 		center = custom_comp.center,

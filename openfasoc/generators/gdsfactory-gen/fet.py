@@ -94,7 +94,7 @@ def multiplier(
     )
     multiplier << rectangle(size=to_float(diff_dims), layer=pdk.get_glayer("active_diff"), centered=True)
     sd_ovhg = Decimal(str(pdk.get_grule(sdlayer, "active_diff")["min_enclosure"]))
-    sd_ovhg_dims = [dim + sd_ovhg for dim in diff_dims]
+    sd_ovhg_dims = [dim + 2*sd_ovhg for dim in diff_dims]
     sdlayer_ref = multiplier << rectangle(layer=pdk.get_glayer(sdlayer), size=to_float(sd_ovhg_dims), centered=True)
     multiplier.add_ports(sdlayer_ref.get_ports_list(),prefix="plusdoped_")
     # route all drains/ gates/ sources
@@ -256,7 +256,7 @@ def __mult_array_macro(
     correctionxy = prec_center(marrref)
     marrref.movex(correctionxy[0]).movey(correctionxy[1])
     final_arr.add_ports(marrref.get_ports_list())
-    return component_snap_to_grid(final_arr)
+    return component_snap_to_grid(rename_ports_by_orientation(final_arr))
 
 
 @cell
@@ -388,13 +388,14 @@ def pmos(
             2 * (tap_separation + pfet.xmax),
             2 * (tap_separation + pfet.ymax),
         )
-        pfet << tapring(
+        tapring_ref = pfet << tapring(
             pdk,
             enclosed_rectangle=tap_encloses,
             sdlayer="n+s/d",
             horizontal_glayer="met2",
             vertical_glayer="met1",
         )
+        pfet.add_ports(tapring_ref.get_ports_list(),prefix="tie_")
     # add nwell
     nwell_glayer = "dnwell" if dnwell else "nwell"
     pfet.add_padding(
@@ -424,7 +425,7 @@ def pmos(
 if __name__ == "__main__":
     from PDK.util.standard_main import pdk
 
-    showmult = False
+    showmult = True
     if showmult:
         mycomp = multiplier(pdk, "p+s/d", fingers=8, dummy=True, gate_route_topmet="met4",sd_route_topmet="met3", length=1)
     else:

@@ -7,7 +7,7 @@ from math import isclose
 from via_gen import via_stack
 from gdsfactory.routing.route_quad import route_quad
 from gdsfactory.components.rectangle import rectangle
-from PDK.util.custom_comp_utils import evaluate_bbox, add_ports_perimeter, rename_ports_by_orientation, rename_ports_by_list, print_ports, set_port_width
+from PDK.util.custom_comp_utils import evaluate_bbox, add_ports_perimeter, rename_ports_by_orientation, rename_ports_by_list, print_ports, set_port_width, set_orientation, get_orientation
 from pydantic import validate_arguments
 
 
@@ -185,7 +185,12 @@ def c_route(
 	if cwidth:
 		route_ports = [set_port_width(port_,cwidth) for port_ in route_ports]
 	cconnection = croute << route_quad(route_ports[0],route_ports[1],layer=pdk.get_glayer(cglayer))
-	croute.add_ports(cconnection.get_ports_list(),prefix="con_")
+	for i,port_to_add in enumerate(route_ports):
+		orta = get_orientation(port_to_add.orientation)
+		#orta = "S" if orta=="N" else ("N" if orta=="S" else orta)
+		#orta = "E" if orta=="W" else ("W" if orta=="E" else orta)
+		route_ports[i] = set_orientation(port_to_add, orta)
+	croute.add_ports(route_ports,prefix="con_")
 	return rename_ports_by_orientation(rename_ports_by_list(croute.flatten(), [("con_","con_")]))
 
 if __name__ == "__main__":

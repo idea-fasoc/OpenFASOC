@@ -16,6 +16,7 @@ def straight_route(
 	glayer1: Optional[str] = None,
 	width: Optional[float] = None,
 	glayer2: Optional[str] = None,
+	fullbottom: Optional[bool] = False
 ) -> Component:
 	"""extends a route from edge1 until perpindicular with edge2, then places a via
 	This depends on the orientation of edge1 and edge2
@@ -44,7 +45,7 @@ def straight_route(
 	glayer1 = glayer1 if glayer1 else pdk.layer_to_glayer(edge1.layer)
 	front_via = None
 	if glayer1 != pdk.layer_to_glayer(edge1.layer):
-		front_via = via_stack(pdk,glayer1,pdk.layer_to_glayer(edge1.layer),fullbottom=True)
+		front_via = via_stack(pdk,glayer1,pdk.layer_to_glayer(edge1.layer),fullbottom=fullbottom)
 	glayer2 = glayer2 if glayer2 else pdk.layer_to_glayer(edge2.layer)
 	assert_is_manhattan([edge1,edge2])
 	if edge1.orientation == edge2.orientation:
@@ -68,7 +69,7 @@ def straight_route(
 		size = (width,abs(extension))
 	# create route and via
 	route = rectangle(layer=pdk.get_glayer(glayer1),size=size,centered=True)
-	out_via = via_stack(pdk,glayer1,glayer2,fullbottom=True)
+	out_via = via_stack(pdk,glayer1,glayer2,fullbottom=fullbottom)
 	# place route and via
 	straightroute = Component()
 	route_ref = align_comp_to_port(route,edge1,alignment=alignment)

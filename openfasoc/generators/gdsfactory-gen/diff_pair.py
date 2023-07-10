@@ -24,6 +24,7 @@ def diff_pair(
 	fingers: Optional[int] = 4,
 	length: Optional[float] = None,
 	n_or_p_fet: Optional[bool] = True,
+	plus_minus_seperation: Optional[float] = 0
 ) -> Component:
 	"""create a diffpair with 2 transistors placed in two rows with common centroid place. Sources are shorted
 	width = width of the transistors
@@ -115,11 +116,29 @@ def diff_pair(
 	floating_port_drain_bottom_R = set_orientation(movey(drain_br_via.ports["bottom_met_E"],0-bottom_extension - metal_space - width_drain_route), get_orientation("W"))
 	drain_routeTR_BL = diffpair << c_route(pdk, floating_port_drain_bottom_L, b_topr.ports["multiplier_0_drain_E"],extension=dextension, width1=width_drain_route,width2=width_drain_route)
 	drain_routeTL_BR = diffpair << c_route(pdk, floating_port_drain_bottom_R, a_topl.ports["multiplier_0_drain_W"],extension=dextension, width1=width_drain_route,width2=width_drain_route)
+	# cross gate route top with c_route. bar_minus ABOVE bar_plus
+	get_left_extension = lambda bar, a_topl=a_topl, diffpair=diffpair, pdk=pdk : (abs(diffpair.xmin-min(a_topl.ports["multiplier_0_gate_W"].center[0],bar.ports["e1"].center[0])) + pdk.get_grule("met2")["min_separation"])
+	get_right_extension = lambda bar, b_topr=b_topr, diffpair=diffpair, pdk=pdk : (abs(diffpair.xmax-max(b_topr.ports["multiplier_0_gate_E"].center[0],bar.ports["e3"].center[0])) + pdk.get_grule("met2")["min_separation"])
+	# lay bar plus and PLUSgate_routeW
+	bar_comp = rectangle(centered=True,size=(abs(b_topr.xmax-a_topl.xmin), b_topr.ports["multiplier_0_gate_E"].width),layer=pdk.get_glayer("met2"))
+	bar_plus = (diffpair << bar_comp).movey(diffpair.ymax + bar_comp.ymax + pdk.get_grule("met2")["min_separation"])
+	PLUSgate_routeW = diffpair << c_route(pdk, a_topl.ports["multiplier_0_gate_W"], bar_plus.ports["e1"], extension=get_left_extension(bar_plus))
+	#lay bar minus and MINUSgate_routeE
+	plus_minus_seperation = max(pdk.get_grule("met2")["min_separation"], plus_minus_seperation)
+	bar_minus = (diffpair << bar_comp).movey(diffpair.ymax +bar_comp.ymax + plus_minus_seperation)
+	MINUSgate_routeE = diffpair << c_route(pdk, b_topr.ports["multiplier_0_gate_E"], bar_minus.ports["e3"], extension=get_right_extension(bar_minus))
+	# lay MINUSgate_routeW and PLUSgate_routeE
+	MINUSgate_routeW = diffpair << c_route(pdk, set_orientation(b_botl.ports["multiplier_0_gate_E"],"W"), bar_minus.ports["e1"], extension=get_left_extension(bar_minus))
+	PLUSgate_routeE = diffpair << c_route(pdk, set_orientation(a_botr.ports["multiplier_0_gate_W"],"E"), bar_plus.ports["e3"], extension=get_right_extension(bar_plus))
 	# correct pwell place, add ports, flatten, and return
 	diffpair.add_ports(a_topl.get_ports_list(),prefix="tl_")
 	diffpair.add_ports(b_topr.get_ports_list(),prefix="tr_")
 	diffpair.add_ports(b_botl.get_ports_list(),prefix="bl_")
 	diffpair.add_ports(a_botr.get_ports_list(),prefix="br_")
+	diffpair.add_ports(source_routeE.get_ports_list(),prefix="source_routeE_")
+	diffpair.add_ports(source_routeW.get_ports_list(),prefix="source_routeW_")
+	diffpair.add_ports(drain_routeTR_BL.get_ports_list(),prefix="drain_routeTR_BL_")
+	diffpair.add_ports(drain_routeTL_BR.get_ports_list(),prefix="drain_routeTL_BR_")
 	diffpair.add_padding(layers=(pdk.get_glayer(well),), default=0)
 	return component_snap_to_grid(rename_ports_by_orientation(diffpair))
 
