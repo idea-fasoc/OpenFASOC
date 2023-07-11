@@ -5,7 +5,7 @@ from PDK.mappedpdk import MappedPDK
 from typing import Optional
 from via_gen import via_stack, via_array
 from gdsfactory.components.rectangle import rectangle
-from PDK.util.custom_comp_utils import evaluate_bbox, align_comp_to_port,assert_is_manhattan
+from PDK.util.custom_comp_utils import evaluate_bbox, align_comp_to_port,assert_is_manhattan, set_orientation
 
 
 @cell
@@ -20,9 +20,8 @@ def straight_route(
 ) -> Component:
 	"""extends a route from edge1 until perpindicular with edge2, then places a via
 	This depends on the orientation of edge1 and edge2
-	
-	REQUIRES:
-	edge1 is not parrallel to edge2
+	if edge1 has the same orientation as edge2, the generator will rotate edge2 180 degrees
+	Will not modify edge1 or edge2
 	
 	DOES NOT REQUIRE:
 	edge2 is directly inline with edge1
@@ -49,7 +48,9 @@ def straight_route(
 	glayer2 = glayer2 if glayer2 else pdk.layer_to_glayer(edge2.layer)
 	assert_is_manhattan([edge1,edge2])
 	if edge1.orientation == edge2.orientation:
-		raise ValueError("edge1 and edge2 cannot be parrallel")
+		import pdb; pdb.set_trace()
+		edge2 = set_orientation(edge2,edge2.orientation,flip180=True)
+		#pass#raise ValueError("edge1 and edge2 cannot be parrallel")
 	pdk.activate()
 	# find extension length and direction
 	edge1_is_EW = bool(round(edge1.orientation + 90) % 180)

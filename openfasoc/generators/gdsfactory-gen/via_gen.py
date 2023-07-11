@@ -30,7 +30,7 @@ def __error_check_order_layers(
 
 @cell
 def via_stack(
-    pdk: MappedPDK, glayer1: str, glayer2: str, centered: Optional[bool] = True, fullbottom: Optional[bool] = False
+    pdk: MappedPDK, glayer1: str, glayer2: str, centered: Optional[bool] = True, fullbottom: Optional[bool] = False, fulltop: Optional[bool] = False
 ) -> Component:
     """produces a single via stack between two metal layers
     does not produce via arrays
@@ -41,6 +41,7 @@ def via_stack(
     ****NOTE it does not matter what order you pass layers
     ****NOTE will not lay poly or active but will lay metals
     fullbottom: will lay the bottom glayer all over the area of the viastack
+    fulltop: will lay the top glayer all over the area of the viastack
     ports (one port for each edge):
     top_met_...all edges
     bottom_via_...all edges
@@ -116,10 +117,12 @@ def via_stack(
     pre = ["top_met_", "bottom_via_", "bottom_met_"]
     for i in range(3):
         viastack.add_ports(port_refs[i][1].get_ports_list(), prefix=pre[i])
+    gprevia = "via"+str(level1-1) if level1 != 1 else "mcon"
+    bottomsize = max(2*pdk.get_grule("met"+str(level1),gprevia)["min_enclosure"] + pdk.get_grule(gprevia)["width"], evaluate_bbox(viastack)[0])
     if fullbottom:
-        gprevia = "via"+str(level1-1) if level1 != 1 else "mcon"
-        bottomsize = max(2*pdk.get_grule("met"+str(level1),gprevia)["min_enclosure"] + pdk.get_grule(gprevia)["width"], evaluate_bbox(viastack)[0])
         viastack << rectangle(size=2*[bottomsize],layer=pdk.get_glayer("met"+str(level1)), centered=True)
+    if fulltop:
+        viastack << rectangle(size=2*[bottomsize],layer=pdk.get_glayer("met"+str(level2)), centered=True)
     center_stack = Component()
     viastack_ref = center_stack << viastack
     if not centered:

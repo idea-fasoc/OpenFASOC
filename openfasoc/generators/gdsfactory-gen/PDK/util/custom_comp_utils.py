@@ -184,11 +184,14 @@ def movey(custom_comp: Union[Port, ComponentReference], offsety: Optional[float]
 
 
 @validate_arguments
-def get_orientation(orientation: Union[int,float,str]) -> Union[float,int,str]:
+def get_orientation(orientation: Union[int,float,str], int_only: Optional[bool]=False) -> Union[float,int,str]:
 	"""returns the angle corresponding to port orientation
 	orientation must contain N/n,E/e,S/s,W/w
 	e.g. all the follwing are valid:
 	N/n or N/north,E/e or E/east,S/s or S/south, W/w or W/west
+	if int_only, will return int regardless of input type,
+	else will return the opposite type of that given
+	(i.e. will return str if given int/float and int if given str)
 	"""
 	if isinstance(orientation,str):
 		orientation = orientation.lower()
@@ -204,6 +207,8 @@ def get_orientation(orientation: Union[int,float,str]) -> Union[float,int,str]:
 			raise ValueError("orientation must contain N/n,E/e,S/s,W/w")
 	else:# must be a float/int
 		orientation = int(orientation)
+		if int_only:
+			return orientation
 		orientation_index = int((orientation % 360) / 90)
 		orientations = ["E","N","W","S"]
 		try:
@@ -236,10 +241,12 @@ def assert_ports_perpindicular(edge1: Port, edge2: Port) -> bool:
 
 
 @validate_arguments
-def set_orientation(custom_comp: Port, orientation: Union[float, int, str]) -> Port:
+def set_orientation(custom_comp: Port, orientation: Union[float, int, str], flip180: Optional[bool]=False) -> Port:
 	"""creates a new port with the desired orientation and returns the new port"""
 	if isinstance(orientation,str):
-		orientation = get_orientation(orientation)
+		orientation = get_orientation(orientation, int_only=True)
+	if flip180:
+		orientation = (orientation + 180) % 360
 	newport = Port(
 		name = custom_comp.name,
 		center = custom_comp.center,
@@ -272,7 +279,7 @@ def set_port_width(custom_comp: Port, width: float) -> Port:
 
 
 @validate_arguments
-def align_comp_to_port(custom_comp: Component, align_to: Port, alignment: Optional[tuple[str,str]] = None) -> ComponentReference:
+def align_comp_to_port(custom_comp: Union[Component,ComponentReference], align_to: Port, alignment: Optional[tuple[str,str]] = None) -> ComponentReference:
 	"""Returns component reference of component aligned to port as specifed
 	custom_comp = component to align properly
 	align_to = Port to align to
@@ -309,8 +316,12 @@ def align_comp_to_port(custom_comp: Component, align_to: Port, alignment: Option
 	is_EW = bool(round(align_to.orientation + 90) % 180)
 	xalign = xalign.lower()
 	yalign = yalign.lower()
-	comp_ref = custom_comp.ref_center()
-	comp_ref.move(align_to.center)
+	if isinstance(custom_comp, Component):
+		comp_ref = custom_comp.ref_center()
+		comp_ref.move(align_to.center)
+	else:
+		comp_ref = custom_comp
+		move(comp_ref, destination=tuple(align_to.center))
 	width = align_to.width
 	xdim = evaluate_bbox(custom_comp)[0]
 	ydim = evaluate_bbox(custom_comp)[1]

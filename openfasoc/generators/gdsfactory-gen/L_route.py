@@ -2,7 +2,7 @@ from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.port import Port
 from PDK.mappedpdk import MappedPDK
-from typing import Optional
+from typing import Optional, Union
 from via_gen import via_stack, via_array
 from gdsfactory.components.rectangle import rectangle
 from PDK.util.custom_comp_utils import evaluate_bbox, align_comp_to_port, rename_ports_by_orientation, rename_ports_by_list, print_ports, assert_is_manhattan, assert_ports_perpindicular, to_decimal, to_float, prec_ref_center
@@ -18,7 +18,7 @@ def L_route(
 	hwidth: Optional[float] = None,
 	hglayer: Optional[str] = None,
 	vglayer: Optional[str] = None,
-	viaoffset: Optional[bool]=True
+	viaoffset: Optional[Union[tuple[bool,bool],bool]]=True
 ) -> Component:
 	"""creates a L shaped route between two Ports.
 	
@@ -43,6 +43,7 @@ def L_route(
 	hglayer = glayer for vertical route. Defaults to the layer of the edge oriented N/S
 	vglayer = glayer for horizontal route. Defaults to the layer of the edge oriented E/W
 	viaoffset = push the via away from both edges so that inside corner aligns with via corner
+	****via offset can also be specfied as a tuple(bool,bool): movex? if viaoffset[0] and movey? if viaoffset[1]
 	"""
 	# error checking, TODO: validate layers
 	assert_is_manhattan([edge1,edge2])
@@ -62,6 +63,8 @@ def L_route(
 	hwidth = to_decimal(hwidth if hwidth else hport.width)
 	hglayer = hglayer if hglayer else pdk.layer_to_glayer(vport.layer)
 	vglayer = vglayer if vglayer else pdk.layer_to_glayer(hport.layer)
+	if isinstance(viaoffset,bool):
+		viaoffset = (True,True) if viaoffset else (False,False)
 	# compute required dimensions
 	hdim_center = to_decimal(vport.center[0]) - to_decimal(hport.center[0])
 	vdim_center = to_decimal(hport.center[1]) - to_decimal(vport.center[1])
@@ -79,7 +82,7 @@ def L_route(
 	vconnect_ref = align_comp_to_port(vconnect, hport, halign)
 	Lroute.add(vconnect_ref)
 	# create and place via (decide between via stack and via array)
-	hv_via = via_stack(pdk, hglayer, vglayer,fullbottom=True)
+	hv_via = via_stack(pdk, hglayer, vglayer,fullbottom=True,fulltop=True)
 	hv_via_dims = evaluate_bbox(hv_via,True)
 	use_stack = hv_via_dims[0] > hwidth or hv_via_dims[1] > vwidth
 	if not use_stack:
@@ -87,13 +90,15 @@ def L_route(
 	h_to_v_via_ref = prec_ref_center(hv_via)
 	Lroute.add(h_to_v_via_ref)
 	h_to_v_via_ref.move(destination=(hport.center[0], vport.center[1]))
-	if viaoffset:
+	if viaoffset[0] or viaoffset[1]:
 		viadim_osx = evaluate_bbox(h_to_v_via_ref,True)[0]/2
 		viaxofs = abs(hwidth/2-viadim_osx)
 		viaxofs = to_float(viaxofs if hdim_center > 0 else -1*viaxofs)
+		viaxofs = viaxofs if viaoffset[0] else 0
 		viadim_osy = evaluate_bbox(h_to_v_via_ref,True)[1]/2
 		viayofs = abs(vwidth/2-viadim_osy)
 		viayofs = to_float(viayofs if vdim_center > 0 else -1*viayofs)
+		viayofs = viayofs if viaoffset[1] else 0
 		h_to_v_via_ref.movex(viaxofs).movey(viayofs)
 	# add ports and return
 	Lroute.add_ports(h_to_v_via_ref.get_ports_list())
