@@ -10,13 +10,15 @@ def sky130_add_npc(comp: Component) -> Component:
 	we implement this as a function wrapper to correctly lay npc
 	returns the modified component"""
 	# extract licon polygons which are over poly (using booleans)
-	licon_comp = Component("tempLICON_ONLY")
-	licon_comp.add(comp.get_polygons(by_spec=(66,44), depth=None, as_array=False))
-	poly_comp = Component("tempPOLY_ONLY")
-	poly_comp.add(comp.get_polygons(by_spec=(66,20), depth=None, as_array=False))
-	if not len(licon_comp.get_polygons()) or not len(poly_comp.get_polygons()):
+	licon_comp = comp.extract(layers=[(66,44)])
+	poly_comp = comp.extract(layers=[(66,20)])
+	existing_npc = comp.extract(layers=[(95,20)])
+	# TODO: look into better method for filtering small cells
+	if len(licon_comp.get_polygons()) < 2 and len(poly_comp.get_polygons()) < 2:
 		return comp
 	liconANDpoly = boolean(licon_comp, poly_comp, layer=(1,2), operation="and")
+	if len(existing_npc.get_polygons()) > 1:
+		liconANDpoly = boolean(liconANDpoly, existing_npc, layer=(1,2), operation="A-B")
 	licon_polygons = liconANDpoly.get_polygons(as_array=False)
 	# iterate through all licon and create npc (ignore merges for now)
 	npc_polygons = list()

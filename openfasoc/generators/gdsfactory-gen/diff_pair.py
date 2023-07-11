@@ -139,6 +139,10 @@ def diff_pair(
 	diffpair.add_ports(source_routeW.get_ports_list(),prefix="source_routeW_")
 	diffpair.add_ports(drain_routeTR_BL.get_ports_list(),prefix="drain_routeTR_BL_")
 	diffpair.add_ports(drain_routeTL_BR.get_ports_list(),prefix="drain_routeTL_BR_")
+	diffpair.add_ports(MINUSgate_routeW.get_ports_list(),prefix="MINUSgateroute_W_")
+	diffpair.add_ports(MINUSgate_routeE.get_ports_list(),prefix="MINUSgateroute_E_")
+	diffpair.add_ports(PLUSgate_routeW.get_ports_list(),prefix="PLUSgateroute_W_")
+	diffpair.add_ports(PLUSgate_routeE.get_ports_list(),prefix="PLUSgateroute_E_")
 	diffpair.add_padding(layers=(pdk.get_glayer(well),), default=0)
 	return component_snap_to_grid(rename_ports_by_orientation(diffpair))
 

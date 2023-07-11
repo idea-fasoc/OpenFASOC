@@ -281,9 +281,12 @@ def align_comp_to_port(custom_comp: Component, align_to: Port, alignment: Option
 	****xalign = either l/left or r/right or c/center. component will be flush to right or left side of port or centered
 	****yalgin = either t/top or b/bottom or c/center. top or bottom edge or center of component will align with port top/bottom/center
 	"""
+	if isinstance(custom_comp, Component):
+		try:
+			custom_comp.is_unlocked()
+		except ValueError:
+			custom_comp = custom_comp.copy()
 	# error checks and decide orientation if None
-	xalign = alignment[0]
-	yalign = alignment[1]
 	if alignment is None:
 		if round(align_to.orientation) == 0:# facing east
 			xalign = "r"
@@ -299,6 +302,9 @@ def align_comp_to_port(custom_comp: Component, align_to: Port, alignment: Option
 			yalign = "t"
 		else:
 			raise ValueError("port must be vertical or horizontal")
+	else:
+		xalign = alignment[0]
+		yalign = alignment[1]
 	# setup
 	is_EW = bool(round(align_to.orientation + 90) % 180)
 	xalign = xalign.lower()

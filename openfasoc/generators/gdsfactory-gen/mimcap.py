@@ -4,7 +4,7 @@ from gdsfactory.components.rectangle import rectangle
 from PDK.mappedpdk import MappedPDK
 from typing import Optional
 from via_gen import via_array
-from PDK.util.custom_comp_utils import rename_ports_by_orientation
+from PDK.util.custom_comp_utils import rename_ports_by_orientation, add_ports_perimeter
 
 
 @cell
@@ -18,6 +18,7 @@ def mimcap(
     ****Note: size is the size of the capmet layer
     ports:
     top_met_...all edges, this is the metal over the capmet
+    bottom_met_...all edges, this is the metal below capmet
     """
     # get cap layers and run error checking
     pdk.has_required_glayers(["capmet", route_layer])
@@ -34,6 +35,7 @@ def mimcap(
     bottom_met_enclosure = pdk.get_grule(capmetbottom,"capmet")["min_enclosure"]
     mim_cap.add_padding(layers=(capmetbottom_actual,),default=bottom_met_enclosure)
     # flatten and create ports
+    mim_cap = add_ports_perimeter(mim_cap, layer=capmetbottom_actual, prefix="bottom_met_")
     mim_cap.add_ports(top_met_ref.get_ports_list())
     return rename_ports_by_orientation(mim_cap).flatten()
 
