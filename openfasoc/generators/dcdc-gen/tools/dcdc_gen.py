@@ -181,7 +181,7 @@ print("#----------------------------------------------------------------------")
 print("# Run Synthesis and APR")
 print("#----------------------------------------------------------------------")
 
-p = sp.Popen(["make", "finish"], cwd=flowDir)
+p = sp.Popen(["make", "finish", "PLATFORM_ARG=" + args.platform], cwd=flowDir)
 p.wait()
 if p.returncode:
     print("[Error] Place and Route failed. Refer to the log file")
@@ -193,7 +193,7 @@ print("#----------------------------------------------------------------------")
 
 time.sleep(2)
 
-p = sp.Popen(["make", "magic_drc"], cwd=flowDir)
+p = sp.Popen(["make", "magic_drc", "PLATFORM_ARG=" + args.platform], cwd=flowDir)
 p.wait()
 if p.returncode:
     print("[Error] DRC failed. Refer to the report")
@@ -206,7 +206,7 @@ print("#----------------------------------------------------------------------")
 
 time.sleep(2)
 
-p = sp.Popen(["make", "netgen_lvs"], cwd=flowDir)
+p = sp.Popen(["make", "netgen_lvs", "PLATFORM_ARG=" + args.platform], cwd=flowDir)
 p.wait()
 if p.returncode:
     print("[Error] LVS failed. Refer to the report")

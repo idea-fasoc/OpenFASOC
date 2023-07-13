@@ -8,8 +8,8 @@ module ${design_name} (
     inout VOUT,
     input clk,
 	input VREF_in, //new added input
-	input [5:0] sel_vh, sel_vl
-	// input [1:0] s
+	input [5:0] sel_vh, sel_vl,
+	input [1:0] s
 	// input non_clk_rst_n //give a low-level voltage to reset seeds at the beginnnig
 	// input non_clk_control, //inject random noise all the time
 	// input [8:0] non_clk_seed //inject seeds of random noise at reset time

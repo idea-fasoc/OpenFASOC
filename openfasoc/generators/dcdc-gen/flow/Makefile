@@ -13,8 +13,8 @@ default: finish
 # ==============================================================================
 
 # Include design and platform configuration
-
-DESIGN_CONFIG = ./design/sky130hd/dcdc/config.mk
+PLATFORM_ARG  ?= sky130hd
+DESIGN_CONFIG = ./design/$(PLATFORM_ARG)/dcdc/config.mk
 
 include $(DESIGN_CONFIG)
 
