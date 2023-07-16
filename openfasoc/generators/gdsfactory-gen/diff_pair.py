@@ -29,7 +29,7 @@ def diff_pair(
 	"""create a diffpair with 2 transistors placed in two rows with common centroid place. Sources are shorted
 	width = width of the transistors
 	fingers = number of fingers in the transistors (must be 2 or more)
-	length = length of the transistors, None means use min length
+	length = length of the transistors, None or 0 means use min length
 	short_source = if true connects source of both transistors
 	n_or_p_fet = if true the diffpair is made of nfets else it is made of pfets
 	"""

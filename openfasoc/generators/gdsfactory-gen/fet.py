@@ -79,7 +79,7 @@ def multiplier(
     sd_via_ref_arr.movex(to_float(finger_dim / 2)).movey(to_float(routing_mfac / 2))
     # create finger array and add to multiplier
     fingerarray = Component("temp finger array")
-    fingerarray = prec_array(finger, columns=fingers, rows=1, spacing=(finger_dim, 1))
+    fingerarray = prec_array(finger, columns=fingers, rows=1, spacing=(finger_dim, 1), absolute_spacing=True)
     sd_via_ref_left = fingerarray << sd_via_comp
     sd_via_ref_left.movex(to_float(0-finger_dim/2)).movey(to_float(routing_mfac / 2))
     fingerarray = component_snap_to_grid(fingerarray)
@@ -211,8 +211,9 @@ def __mult_array_macro(
         sd_route_topmet=sd_route_topmet,
         gate_route_topmet=gate_route_topmet
     )
+    _max_metal_seperation_ps = max([pdk.get_grule("met"+str(i))["min_separation"] for i in range(1,5)])
     multiplier_separation = (
-        to_decimal(pdk.get_grule("met2")["min_separation"])
+        to_decimal(_max_metal_seperation_ps)
         + evaluate_bbox(multiplier_comp, True)[1]
     )
     for rownum in range(multipliers):

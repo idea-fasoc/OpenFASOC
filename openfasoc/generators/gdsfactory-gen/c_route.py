@@ -75,8 +75,8 @@ def c_route(
 	pdk.activate()
 	# create route
 	croute = Component()
-	viastack1 = via_stack(pdk,e1glayer,cglayer,fullbottom=fullbottom)
-	viastack2 = via_stack(pdk,e2glayer,cglayer,fullbottom=fullbottom)
+	viastack1 = via_stack(pdk,e1glayer,cglayer,fullbottom=fullbottom,assume_bottom_via=True)
+	viastack2 = via_stack(pdk,e2glayer,cglayer,fullbottom=fullbottom,assume_bottom_via=True)
 	if e1glayer == e2glayer:
 		__fill_empty_viastack__macro(pdk,e1glayer,size=(width1,width2))
 	elif e1glayer == cglayer:

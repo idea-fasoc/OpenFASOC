@@ -5,15 +5,16 @@ from pydantic import validate_arguments
 from PDK.mappedpdk import MappedPDK
 from math import floor
 from typing import Optional, Union
-from PDK.util.custom_comp_utils import rename_ports_by_orientation, evaluate_bbox, prec_array
+from PDK.util.custom_comp_utils import rename_ports_by_orientation, evaluate_bbox, prec_array, print_ports, to_float
 from PDK.util.snap_to_grid import component_snap_to_grid
 from decimal import Decimal
+from typing import Literal
 
 
 @validate_arguments
 def __error_check_order_layers(
     pdk: MappedPDK, glayer1: str, glayer2: str
-) -> tuple[int, int]:
+) -> tuple[tuple[int, int], tuple[str, str]]:
     """correctly order layers (level1 should be lower than level2)"""
     pdk.activate()
     # check that the generic layers specfied can be routed between
@@ -21,115 +22,138 @@ def __error_check_order_layers(
         raise ValueError("via_stack: specify between two routable layers")
     level1 = int(glayer1[-1]) if "met" in glayer1 else 0
     level2 = int(glayer2[-1]) if "met" in glayer2 else 0
-    lay1, lay2 = glayer1, glayer2
     if level1 > level2:
         level1, level2 = level2, level1
-        lay1, lay2 = glayer2, glayer1
-    return ((level1,level2),(lay1,lay2))
+        glayer1, glayer2 = glayer2, glayer1
+    # check that all layers needed between glayer1-glayer2 are present
+    required_glayers = [glayer2]
+    for level in range(level1,level2):
+        via_name = "mcon" if level==0 else "via"+str(level)
+        layer_name = glayer1 if level==0 else "met"+str(level)
+        required_glayers += [via_name,layer_name]
+    pdk.has_required_glayers(required_glayers)
+    return ((level1,level2),(glayer1,glayer2))
+
+
+@validate_arguments
+def __get_layer_dim(pdk: MappedPDK, glayer: str, mode: Literal["both","above","below"]="both") -> float:
+	"""Returns the required dimension of a routable layer in a via stack
+	glayer is the routable glayer
+	mode is one of [both,below,above]
+	This specfies the vias to consider.
+	****enclosure rules of the via above and below are considered by default, via1<->met2<->via2
+	****using below specfier only considers the enclosure rules for the via below, via1<->met2
+	****using above specfier only considers the enclosure rules for the via above, met2<->via2
+	****specfying both or below for active/poly layer is valid, function knows to ignore below
+	"""
+	# error checking
+	if not pdk.is_routable_glayer(glayer):
+		raise ValueError("__get_layer_dim: glayer must be a routable layer")
+	# split into above rules and below rules
+	consider_above = (mode=="both" or mode=="above")
+	consider_below = (mode=="both" or mode=="below")
+	is_lvl0 = any([hint in glayer for hint in ["poly","active"]])
+	layer_dim=0
+	if consider_below and not is_lvl0:
+		via_below = "mcon" if glayer=="met1" else "via"+str(int(glayer[-1])-1)
+		layer_dim = pdk.get_grule(via_below)["width"] + 2*pdk.get_grule(via_below,glayer)["min_enclosure"]
+	if consider_above:
+		via_above = "mcon" if is_lvl0 else "via"+str(glayer[-1])
+		layer_dim = max(layer_dim, pdk.get_grule(via_above)["width"] + 2*pdk.get_grule(via_above,glayer)["min_enclosure"])
+	layer_dim = max(layer_dim, pdk.get_grule(glayer)["min_width"])
+	return layer_dim
 
 
 @cell
 def via_stack(
-    pdk: MappedPDK, glayer1: str, glayer2: str, centered: Optional[bool] = True, fullbottom: Optional[bool] = False, fulltop: Optional[bool] = False
+    pdk: MappedPDK,
+    glayer1: str,
+    glayer2: str,
+    centered: bool = True,
+    fullbottom: bool = False,
+    fulltop: bool = False,
+    assume_bottom_via: bool = False,
+    same_layer_behavior: Literal["lay_nothing","min_square"] = "lay_nothing"
 ) -> Component:
-    """produces a single via stack between two metal layers
-    does not produce via arrays
+    """produces a single via stack between two layers that are routable (metal, poly, or active)
+    
     args:
     pdk: MappedPDK is the pdk to use
     glayer1: str is the glayer to start on
     glayer2: str is the glayer to end on
     ****NOTE it does not matter what order you pass layers
-    ****NOTE will not lay poly or active but will lay metals
-    fullbottom: will lay the bottom glayer all over the area of the viastack
-    fulltop: will lay the top glayer all over the area of the viastack
-    ports (one port for each edge):
+    fullbottom: if True will lay the bottom layer all over the area of the viastack else makes minimum legal size
+    assume_bottom_via: assume that the via underneath the bottom met is present (legalize viastack under this assumption)
+    fulltop: if True will lay the top layer all over the area of the viastack else makes minimum legal size
+    ****NOTE: generator can figure out which layer is top and which is bottom (i.e. met5 is higher than met1)
+    same_layer_behavior: sometimes (especially when used in other generators) it is unknown what two layers are specfied
+    this option provides the generator with guidance on how to handle a case where same layer is given
+    by default, (lay_nothing option) nothing is laid and an empty component is returned
+    if min_square is specfied, a square of min_width * min_width is laid
+    
+    PORTS, some ports are not layed when it does not make sense (e.g. empty component):
     top_met_...all edges
     bottom_via_...all edges
     bottom_met_...all edges
+    bottom_layer_...all edges (may be different than bottom met if on diff/poly)
     """
-    level1, level2 = __error_check_order_layers(pdk, glayer1, glayer2)[0]
+    ordered_layer_info = __error_check_order_layers(pdk, glayer1, glayer2)
+    level1, level2 = ordered_layer_info[0]
+    glayer1, glayer2 = ordered_layer_info[1]
     viastack = Component()
-    # if same level return empty component
+    # if same level return component with min_width rectangle on that layer
     if level1 == level2:
-        return viastack
-    # topmet,bottomvia,bottommet, finalized?,what are they
-    port_refs = [[False, None], [False, None], [False, None]]
-    # lay mcon if first layer is active or poly
-    if not level1:
-        pdk.has_required_glayers(["mcon", "met1"])
-        mcondim = pdk.get_grule("mcon")["width"]
-        port_refs[1][1] = viastack << rectangle(
-            size=(mcondim, mcondim), layer=pdk.get_glayer("mcon"), centered=True
-        )
-        metdim = round(max(
-            2 * pdk.get_grule("met1", "mcon")["min_enclosure"] + mcondim,
-            pdk.get_grule("met1")["min_width"],
-        ),6)
-        port_refs[2][1] = viastack << rectangle(
-            size=(metdim, metdim), layer=pdk.get_glayer("met1"), centered=True
-        )
-        port_refs[1][0] = True
-        port_refs[2][0] = True
-        level1 += 1  # make bottom met so we can use code below
-    if level1 == level2:  # re-check same layer
-        port_refs[0][1] = port_refs[2][1]
-        port_refs[0][0] = True
-    elif level1 and level2:  # construct metal stack if both are metals
-        for level in range(level1, level2):
-            gmetlayer = "met" + str(level)
-            gnextvia = "via" + str(level)
-            if level != level1:
-                gprevvia = "via" + str(level-1)
-                gprevvia_rule = 2 * pdk.get_grule(gmetlayer, gprevvia)["min_enclosure"] + pdk.get_grule(gprevvia)["width"]
-            else:
-                gprevvia_rule=0
-            pdk.has_required_glayers([gmetlayer, gnextvia])
-            metdim = round(max(
-                2 * pdk.get_grule(gmetlayer, gnextvia)["min_enclosure"]
-                + pdk.get_grule(gnextvia)["width"],
-                pdk.get_grule(gmetlayer)["min_width"],
-                gprevvia_rule
-            ),6)
-            metref = viastack << rectangle(
-                size=(metdim, metdim), layer=pdk.get_glayer(gmetlayer), centered=True
-            )
-            viadim = pdk.get_grule(gnextvia)["width"]
-            viaref = viastack << rectangle(
-                size=(viadim, viadim), layer=pdk.get_glayer(gnextvia), centered=True
-            )
-            if not port_refs[2][0]:
-                port_refs[2][1] = metref
-                port_refs[2][0] = True
-            if not port_refs[1][0]:
-                port_refs[1][1] = viaref
-                port_refs[1][0] = True
-        gfinalmet = "met" + str(level2)
-        gprevvia = "via" + str(level)
-        metdim = round(max(
-            2 * pdk.get_grule(gfinalmet, gprevvia)["min_enclosure"]
-            + pdk.get_grule(gprevvia)["width"],
-            pdk.get_grule(gfinalmet)["min_width"],
-        ),6)
-        port_refs[0][1] = viastack << rectangle(
-            size=(metdim, metdim), layer=pdk.get_glayer(gfinalmet), centered=True
-        )
-    # add ports and implement center option
-    pre = ["top_met_", "bottom_via_", "bottom_met_"]
-    for i in range(3):
-        viastack.add_ports(port_refs[i][1].get_ports_list(), prefix=pre[i])
-    gprevia = "via"+str(level1-1) if level1 != 1 else "mcon"
-    bottomsize = max(2*pdk.get_grule("met"+str(level1),gprevia)["min_enclosure"] + pdk.get_grule(gprevia)["width"], evaluate_bbox(viastack)[0])
-    if fullbottom:
-        viastack << rectangle(size=2*[bottomsize],layer=pdk.get_glayer("met"+str(level1)), centered=True)
-    if fulltop:
-        viastack << rectangle(size=2*[bottomsize],layer=pdk.get_glayer("met"+str(level2)), centered=True)
-    center_stack = Component()
-    viastack_ref = center_stack << viastack
-    if not centered:
-        viastack_ref.movex(viastack.xmax).movey(viastack.ymax)
-    
-    center_stack.add_ports(viastack_ref.get_ports_list())
-    return rename_ports_by_orientation(center_stack).flatten()
+        if same_layer_behavior=="lay_nothing":
+            return viastack
+        min_square = viastack << rectangle(size=2*[pdk.get_grule(glayer1)["min_width"]],layer=pdk.get_glayer(glayer1), centered=centered)
+        # update ports
+        if level1==0:# both poly or active
+            viastack.add_ports(min_square.get_ports_list(),prefix="bottom_layer_")
+        else:# both mets
+            viastack.add_ports(min_square.get_ports_list(),prefix="top_met_")
+            viastack.add_ports(min_square.get_ports_list(),prefix="bottom_met_")
+    else:
+        ports_to_add = dict()
+        for level in range(level1,level2+1):
+            via_name = "mcon" if level==0 else "via"+str(level)
+            layer_name = glayer1 if level==0 else "met"+str(level)
+            # get layer sizing
+            mode = "below" if level==level2 else ("above" if level==level1 else "both")
+            mode = "both" if assume_bottom_via and level==level1 else mode
+            layer_dim = __get_layer_dim(pdk, layer_name, mode=mode)
+            # place met/via, do not place via if on top layer
+            if level != level2:
+                via_dim = pdk.get_grule(via_name)["width"]
+                via_ref = viastack << rectangle(size=[via_dim,via_dim],layer=pdk.get_glayer(via_name), centered=True)
+            lay_ref = viastack << rectangle(size=[layer_dim,layer_dim],layer=pdk.get_glayer(layer_name), centered=True)
+            # update ports
+            if layer_name == glayer1:
+                ports_to_add["bottom_layer_"] = lay_ref.get_ports_list()
+                ports_to_add["bottom_via_"] = via_ref.get_ports_list()
+            if (level1==0 and level==1) or (level1>0 and layer_name==glayer1):
+                ports_to_add["bottom_met_"] = lay_ref.get_ports_list()
+            if layer_name == glayer2:
+                ports_to_add["top_met_"] = lay_ref.get_ports_list()
+        # implement fulltop and fullbottom options. update ports_to_add accordingly 
+        if fullbottom:
+            bot_ref = viastack << rectangle(size=evaluate_bbox(viastack),layer=pdk.get_glayer(glayer1), centered=True)
+            if level1!=0:
+                ports_to_add["bottom_met_"] = bot_ref.get_ports_list()
+            ports_to_add["bottom_layer_"] = bot_ref.get_ports_list()
+        if fulltop:
+            ports_to_add["top_met_"] = (viastack << rectangle(size=evaluate_bbox(viastack),layer=pdk.get_glayer(glayer2), centered=True)).get_ports_list()
+        # add all ports in ports_to_add
+        for prefix, ports_list in ports_to_add.items():
+            viastack.add_ports(ports_list,prefix=prefix)
+        # implement centering of the component
+        center_stack = Component()
+        viastack_ref = center_stack << viastack
+        if not centered:
+            viastack_ref.movex(viastack.xmax).movey(viastack.ymax)
+        center_stack.add_ports(viastack_ref.get_ports_list())
+        center_stack.flatten()
+        viastack = center_stack
+    return rename_ports_by_orientation(viastack.flatten())
 
 
 @cell
@@ -137,20 +161,22 @@ def via_array(
     pdk: MappedPDK,
     glayer1: str,
     glayer2: str,
-    size=(4.0, 1.0),
-    minus1: Optional[bool] = False,
-    lay_bottom: Optional[bool] = False
+    size: tuple[float,float] = (4.0, 1.0),
+    minus1: bool = False,
+    lay_bottom: bool = False
 ) -> Component:
     """Fill a region with vias. Will automatically decide num rows and columns
     args:
     pdk: MappedPDK is the pdk to use
     glayer1: str is the glayer to start on
     glayer2: str is the glayer to end on
-    lay_bottom: bool if true will lay bottom met
+    lay_bottom: bool if true will lay bottom met all over size (by default only lays top met all over size)
     ****NOTE it does not matter what order you pass layers
     ****NOTE will not lay poly or active but will lay metals
     size: tuple is the (width, hieght) of the area to enclose
     ****NOTE: the size will be the dimensions of the top metal
+    minus1: if true removes 1 via from rows/cols num vias 
+    ****use if you want extra space at the edges of the array
     ports (one port for each edge):
     top_met_...all edges
     bottom_met_...all edges (only if lay_bottom is specified)
@@ -184,10 +210,10 @@ def via_array(
         if level == (level2-1):
             outer_enclosure = Decimal(str(pdk.get_grule(glayer2,via_glayer)["min_enclosure"]))
     via_spacing = max(via_spacing)
-    # error check size and get viaspacing_full
+    # error check size
     viadim = 2*Decimal(str(viastack.xmax))
     for i, dim in enumerate(size):
-        if viadim > dim:
+        if Decimal(str(to_float(viadim))) > Decimal(str(to_float(dim))):
             raise ValueError(f"via_array,size:dim {i}={dim} less than {viadim}")
     viaspacing_full = via_spacing + viadim
     # num_vias[0]=x, num_vias[1]=y
@@ -202,6 +228,7 @@ def via_array(
         columns=num_vias[0],
         rows=num_vias[1],
         spacing=[viaspacing_full, viaspacing_full],
+        absolute_spacing=True
     )
     # center the array
     array_ref = viaarray.add(temparray.ref_center())
@@ -226,19 +253,41 @@ def via_array(
 
 
 if __name__ == "__main__":
-    from PDK.util.standard_main import pdk
+    from PDK.util.standard_main import pdk, parser
     from PDK.util.custom_comp_utils import print_ports
-    from sys import exit
+    from pathlib import Path
 
-    test_all = False
-
-    if not test_all:
+    # default behavoir is to run one design and exit
+    parser.add_argument("--all", "-a", action="store_true", help="runs all tests")
+    parser.add_argument("--viastack", "-s", action="store_true", help="runs all via_stack tests")
+    parser.add_argument("--viaarray", "-v", action="store_true", help="runs all via_array tests")
+    parser.add_argument("--write", "-w", help="writes all gds files to directory specfied")
+    parser.add_argument("--ports", action="store_true", help="print ports")
+    args = parser.parse_args()
+    # run comps
+    comps = list()
+    if args.viaarray or args.all:
+        layers = ["poly", "met1", "met2", "met3"]
+        for lay1 in layers:
+            for lay2 in layers:
+                comps.append(via_array(pdk, lay1, lay2, lay_bottom=True))
+    elif args.viastack or args.all:
+        layers = ["poly", "met1", "met2", "met3"]
+        for lay1 in layers:
+            for lay2 in layers:
+                comps.append(via_stack(pdk, lay1, lay2,fullbottom=True,fulltop=True))
+    else:
         myarray = via_array(pdk, "poly", "met2",size=(5,4))
-        myarray.show()
-        print_ports(myarray, False)
-        exit(0)
-
-    layers = ["poly", "met1", "met2", "met3"]
-    for lay1 in layers:
-        for lay2 in layers:
-            via_array(pdk, lay1, lay2, lay_bottom=True).show()
+    # show and write (if write is specfied)
+    if args.write:
+        gds_write_path = Path(args.write)
+        if not gds_write_path.is_dir():
+            raise ValueError("gds write must be a dir path")
+        for comp in comps:
+            comp.write_gds(comp.name+".gds")
+    for comp in comps:
+        comp.show()
+    # print_ports
+    if args.ports:
+        for comp in comps:
+            print_ports(myarray)

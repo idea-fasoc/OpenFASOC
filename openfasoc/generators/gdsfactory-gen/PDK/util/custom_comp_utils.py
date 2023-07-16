@@ -388,14 +388,24 @@ def to_float(elements: Union[tuple,list,Decimal,float]):
 	return elements
 
 @validate_arguments
-def prec_array(custom_comp: Component, columns: int, rows: int, spacing: tuple[Union[float,Decimal],Union[float,Decimal]]) -> Component:
+def prec_array(custom_comp: Component, rows: int, columns: int, spacing: tuple[Union[float,Decimal],Union[float,Decimal]], absolute_spacing: Optional[bool]=False) -> Component:
 	"""instead of using the component.add_array function, if you are having grid snapping issues try using this function
-	works the same way as add_array but uses decimals and snaps to grid to mitigate grid snapping issues"""
+	works the same way as add_array but uses decimals and snaps to grid to mitigate grid snapping issues
+	args
+	custom_comp: Component type to make an array from
+	columns: num cols in the array
+	rows: num rows in the array
+	absolute_spacing: the spacing mode of spacing variable
+	spacing: IF absolute_spacing spacing BETWEEN elements in the array ELSE spacing BETWEEN ORIGINS of elements in the array
+	****NOTE do not use negative spacing, instead specify absolute_spacing=True
+	"""
 	# make sure to work with decimals
 	precspacing = list(spacing)
 	for i in range(2):
 		if isinstance(spacing[i],Union[int,float]):
 			precspacing[i] = Decimal(str(spacing[i]))
+	if not absolute_spacing:
+		precspacing = [precspacing[i] + evaluate_bbox(custom_comp,True)[i] for i in range(2)]
 	# create array
 	precarray = Component()
 	for colnum in range(columns):
@@ -404,7 +414,7 @@ def prec_array(custom_comp: Component, columns: int, rows: int, spacing: tuple[U
 			rowdisp = rownum * precspacing[1]
 			cref = precarray << custom_comp
 			cref.movex(to_float(coldisp)).movey(to_float(rowdisp))
-	precarray.add_ports(custom_comp.get_ports_list())
+			precarray.add_ports(cref.get_ports_list(),prefix=f"row{rownum}_col{colnum}_")
 	return precarray.flatten()
 
 

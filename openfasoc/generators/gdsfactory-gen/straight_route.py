@@ -48,9 +48,7 @@ def straight_route(
 	glayer2 = glayer2 if glayer2 else pdk.layer_to_glayer(edge2.layer)
 	assert_is_manhattan([edge1,edge2])
 	if edge1.orientation == edge2.orientation:
-		import pdb; pdb.set_trace()
 		edge2 = set_orientation(edge2,edge2.orientation,flip180=True)
-		#pass#raise ValueError("edge1 and edge2 cannot be parrallel")
 	pdk.activate()
 	# find extension length and direction
 	edge1_is_EW = bool(round(edge1.orientation + 90) % 180)

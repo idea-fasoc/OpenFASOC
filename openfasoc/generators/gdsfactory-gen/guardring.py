@@ -5,10 +5,11 @@ from gdsfactory.components.rectangle import rectangle
 from gdsfactory.components.rectangular_ring import rectangular_ring
 from via_gen import via_array, via_stack
 from typing import Optional
-from math import ceil
-from PDK.util.custom_comp_utils import print_ports
+from PDK.util.custom_comp_utils import print_ports, to_decimal, to_float
 from PDK.util.snap_to_grid import component_snap_to_grid
 from L_route import L_route
+from decimal import ROUND_UP, Decimal
+from PDK.util.snap_to_grid import snap_to_2xgrid
 
 
 @cell
@@ -34,6 +35,7 @@ def tapring(
     Warr_... all ports in left via array
     bl_corner_...all ports in bottom left L route
     """
+    enclosed_rectangle = snap_to_2xgrid(enclosed_rectangle)
     # check layers, activate pdk, create top cell
     pdk.has_required_glayers(
         [sdlayer, "active_tap", "mcon", horizontal_glayer, vertical_glayer]
@@ -113,4 +115,7 @@ def tapring(
 if __name__ == "__main__":
     from PDK.util.standard_main import pdk
 
-    tapring(pdk, sdlayer="p+s/d", enclosed_rectangle=(26, 10)).show()
+    mycomp = Component("displacment test")
+    tapref = mycomp << tapring(pdk, sdlayer="p+s/d", enclosed_rectangle=(75.9, 31.0))
+    #tapref.movey(100.105)
+    mycomp.show()
