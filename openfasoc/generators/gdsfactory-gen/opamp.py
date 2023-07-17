@@ -297,10 +297,17 @@ def opamp(
     mimcaps_ref.movex(opamp_top.xmax + displace_fact + mim_cap_size[0]/2)
     mimcaps_ref.movey(pmos_comps_ref.ymin + mim_cap_size[1]/2)
     # connect mimcap to gnd
-    opamp_top << L_route(pdk,mimcaps_ref.ports["row0_col1_top_met_S"],_cref.ports["con_E"],hwidth=3)
+    gnd_pin_mimcap_route = opamp_top << L_route(pdk,mimcaps_ref.ports["row0_col1_top_met_S"],_cref.ports["con_E"],hwidth=3)
     opamp_top << L_route(pdk, mimcaps_ref.ports["row0_col0_bottom_met_S"], set_orientation(n_to_p_output_route.ports["con_S"],"E"), hwidth=3)
     # return
-    return opamp_top.flatten()
+    opamp_top.add_ports(gnd_pin_mimcap_route.get_ports_list(), prefix="gnd_pin_")
+    opamp_top.add_ports(vddpin.get_ports_list(), prefix="vdd_pin_")
+    opamp_top.add_ports(vbias1.get_ports_list(), prefix="vbias1_pin_")
+    opamp_top.add_ports(vbias2.get_ports_list(), prefix="vbias2_pin_")
+    opamp_top.add_ports(plus_pin.get_ports_list(), prefix="plus_pin_")
+    opamp_top.add_ports(minus_pin.get_ports_list(), prefix="minus_pin_")
+    opamp_top.add_ports(output.get_ports_list(), prefix="output_pin_")
+    return rename_ports_by_orientation(component_snap_to_grid(opamp_top))
 
 
 if __name__ == "__main__":

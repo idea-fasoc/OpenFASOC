@@ -148,6 +148,8 @@ def move(custom_comp: Union[Port, ComponentReference, Component], offsetxy: Opti
 	destination (x,y) if not none overrides offset option
 	returns the modified custom_comp
 	"""
+	#xcenter = custom_comp.xmin + evaluate_bbox(custom_comp)[0]/2 if isinstance(custom_comp, Component) else custom_comp.center[0]
+	#ycenter = custom_comp.ymin + evaluate_bbox(custom_comp)[1]/2 if isinstance(custom_comp, Component) else custom_comp.center[1]
 	if destination is not None:
 		xoffset = destination[0] - custom_comp.center[0] if destination[0] is not None else 0
 		yoffset = destination[1] - custom_comp.center[1] if destination[1] is not None else 0
@@ -162,10 +164,10 @@ def move(custom_comp: Union[Port, ComponentReference, Component], offsetxy: Opti
 		else:
 			custom_comp.movex(xoffset).movey(yoffset)
 	elif isinstance(custom_comp, Component):
-		ref = custom_comp.ref()
+		ref = custom_comp.copy().ref()
 		# this is a recursive call but with type=component reference
 		ref = move(ref, offsetxy, destination)
-		custom_comp = transformed(ref)
+		custom_comp = transformed(ref).copy()
 	return custom_comp
 
 
