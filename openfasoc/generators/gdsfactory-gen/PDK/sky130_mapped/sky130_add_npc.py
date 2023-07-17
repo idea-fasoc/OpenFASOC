@@ -13,7 +13,7 @@ def sky130_add_npc(comp: Component) -> Component:
 	licon_comp = comp.extract(layers=[(66,44)])
 	poly_comp = comp.extract(layers=[(66,20)])
 	existing_npc = comp.extract(layers=[(95,20)])
-	# TODO: look into better method for filtering small cells
+	# TODO: see about an implemtation using gdsfactory component metadata
 	if len(licon_comp.get_polygons()) < 2 and len(poly_comp.get_polygons()) < 2:
 		return comp
 	liconANDpoly = boolean(licon_comp, poly_comp, layer=(1,2), operation="and")

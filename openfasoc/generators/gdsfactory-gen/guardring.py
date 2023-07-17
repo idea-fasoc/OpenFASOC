@@ -5,10 +5,9 @@ from gdsfactory.components.rectangle import rectangle
 from gdsfactory.components.rectangular_ring import rectangular_ring
 from via_gen import via_array, via_stack
 from typing import Optional
-from PDK.util.custom_comp_utils import print_ports, to_decimal, to_float
+from PDK.util.custom_comp_utils import print_ports, to_decimal, to_float, evaluate_bbox
 from PDK.util.snap_to_grid import component_snap_to_grid
 from L_route import L_route
-from decimal import ROUND_UP, Decimal
 from PDK.util.snap_to_grid import snap_to_2xgrid
 
 
@@ -71,7 +70,7 @@ def tapring(
         layer=pdk.get_glayer(sdlayer),
     )
     # create via arrs
-    via_width_horizontal = 2 * via_stack(pdk, "active_tap", horizontal_glayer).ymax
+    via_width_horizontal = evaluate_bbox(via_stack(pdk, "active_tap", horizontal_glayer))[0]
     arr_size_horizontal = enclosed_rectangle[0]
     horizontal_arr = via_array(
         pdk,
@@ -80,7 +79,7 @@ def tapring(
         (arr_size_horizontal, via_width_horizontal),
         minus1=True,
     )
-    via_width_vertical = 2 * via_stack(pdk, "active_tap", vertical_glayer).ymax
+    via_width_vertical = evaluate_bbox(via_stack(pdk, "active_tap", vertical_glayer))[1]
     arr_size_vertical = enclosed_rectangle[1]
     vertical_arr = via_array(
         pdk,

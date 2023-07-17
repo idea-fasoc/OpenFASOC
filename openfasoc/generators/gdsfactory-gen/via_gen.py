@@ -5,7 +5,7 @@ from pydantic import validate_arguments
 from PDK.mappedpdk import MappedPDK
 from math import floor
 from typing import Optional, Union
-from PDK.util.custom_comp_utils import rename_ports_by_orientation, evaluate_bbox, prec_array, print_ports, to_float
+from PDK.util.custom_comp_utils import rename_ports_by_orientation, evaluate_bbox, prec_array, print_ports, to_float, move
 from PDK.util.snap_to_grid import component_snap_to_grid
 from decimal import Decimal
 from typing import Literal
@@ -83,7 +83,7 @@ def via_stack(
     glayer2: str is the glayer to end on
     ****NOTE it does not matter what order you pass layers
     fullbottom: if True will lay the bottom layer all over the area of the viastack else makes minimum legal size
-    assume_bottom_via: assume that the via underneath the bottom met is present (legalize viastack under this assumption)
+    assume_bottom_via: legalize viastack assuming the via underneath bottom met is present, e.g. if bottom met is met3, assume via2 is present
     fulltop: if True will lay the top layer all over the area of the viastack else makes minimum legal size
     ****NOTE: generator can figure out which layer is top and which is bottom (i.e. met5 is higher than met1)
     same_layer_behavior: sometimes (especially when used in other generators) it is unknown what two layers are specfied
@@ -145,14 +145,9 @@ def via_stack(
         # add all ports in ports_to_add
         for prefix, ports_list in ports_to_add.items():
             viastack.add_ports(ports_list,prefix=prefix)
-        # implement centering of the component
-        center_stack = Component()
-        viastack_ref = center_stack << viastack
+        # move SW corner to 0,0 if centered=False
         if not centered:
-            viastack_ref.movex(viastack.xmax).movey(viastack.ymax)
-        center_stack.add_ports(viastack_ref.get_ports_list())
-        center_stack.flatten()
-        viastack = center_stack
+            viastack = move(viastack,(viastack.xmax,viastack.ymax))
     return rename_ports_by_orientation(viastack.flatten())
 
 

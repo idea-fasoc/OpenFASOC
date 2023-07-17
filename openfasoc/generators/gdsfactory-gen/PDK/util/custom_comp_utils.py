@@ -5,6 +5,7 @@ from gdsfactory.components.rectangle import rectangle
 from gdsfactory.port import Port
 from typing import Callable, Union, Optional,Iterable
 from decimal import Decimal
+from gdsfactory.functions import transformed
 
 @validate_arguments
 def rename_component_ports(custom_comp: Component, rename_function: Callable[[str, Port], str]) -> Component:
@@ -142,7 +143,7 @@ def evaluate_bbox(custom_comp: Union[Component, ComponentReference], return_deci
 
 
 @validate_arguments
-def move(custom_comp: Union[Port, ComponentReference], offsetxy: Optional[tuple[float,float]] = 0, destination: Optional[tuple[Optional[float],Optional[float]]]=None) -> Union[Port, ComponentReference]:
+def move(custom_comp: Union[Port, ComponentReference, Component], offsetxy: Optional[tuple[float,float]] = 0, destination: Optional[tuple[Optional[float],Optional[float]]]=None) -> Union[Port, ComponentReference, Component]:
 	"""moves custom_comp by offset[0]=x offset, offset[1]=y offset
 	destination (x,y) if not none overrides offset option
 	returns the modified custom_comp
@@ -160,11 +161,16 @@ def move(custom_comp: Union[Port, ComponentReference], offsetxy: Optional[tuple[
 			custom_comp.movex(offsetxy[0]).movey(offsetxy[1])
 		else:
 			custom_comp.movex(xoffset).movey(yoffset)
+	elif isinstance(custom_comp, Component):
+		ref = custom_comp.ref()
+		# this is a recursive call but with type=component reference
+		ref = move(ref, offsetxy, destination)
+		custom_comp = transformed(ref)
 	return custom_comp
 
 
 @validate_arguments
-def movex(custom_comp: Union[Port, ComponentReference], offsetx: Optional[float] = 0, destination: Optional[float]=None) -> Union[Port, ComponentReference]:
+def movex(custom_comp: Union[Port, ComponentReference, Component], offsetx: Optional[float] = 0, destination: Optional[float]=None) -> Union[Port, ComponentReference, Component]:
 	"""moves custom_comp by offsetx in the x direction
 	returns the modified custom_comp
 	"""
@@ -174,7 +180,7 @@ def movex(custom_comp: Union[Port, ComponentReference], offsetx: Optional[float]
 
 
 @validate_arguments
-def movey(custom_comp: Union[Port, ComponentReference], offsety: Optional[float] = 0, destination: Optional[float]=None) -> Union[Port, ComponentReference]:
+def movey(custom_comp: Union[Port, ComponentReference, Component], offsety: Optional[float] = 0, destination: Optional[float]=None) -> Union[Port, ComponentReference, Component]:
 	"""moves custom_comp by offsety in the y direction
 	returns the modified custom_comp
 	"""
