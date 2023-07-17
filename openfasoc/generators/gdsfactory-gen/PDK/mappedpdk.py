@@ -11,7 +11,7 @@ from decimal import Decimal, DefaultContext, setcontext, FloatOperation
 import tempfile
 import subprocess
 from decimal import Decimal
-
+import xml.etree.ElementTree as ET
 
 class MappedPDK(Pdk):
     """Inherits everything from the PDK class but also requires mapping to glayers
@@ -125,7 +125,15 @@ class MappedPDK(Pdk):
         # there is a drc parsing open-source at:
         # https://github.com/google/globalfoundries-pdk-libs-gf180mcu_fd_pr/blob/main/rules/klayout/drc
         # eventually I can return more info on the drc run, but for now just void and view the lyrdb in klayout
-        # return True or False
+        
+        # Open DRC output XML file
+        drc_tree = ET.parse(report_path.resolve())
+        drc_root = drc_tree.getroot()
+        if drc_root.tag != "report-database":
+            raise TypeError("DRC report file is not a valid report-database")
+        # Check if DRC passed
+        drc_error_count = len(drc_root[7])
+        return (drc_error_count == 0)
 
     def has_required_glayers(self, layers_required: list[str]):
         """Raises ValueError if any of the generic layers in layers_required: list[str]
