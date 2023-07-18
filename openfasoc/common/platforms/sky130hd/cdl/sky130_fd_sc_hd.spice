@@ -18436,3 +18436,18 @@ xMN8 net07 IN VGND VNB sky130_fd_pr__nfet_01v8_lvt m=10 mult=1 w=500000u l=15000
 .ends
 
 ******* EOF
+
+* Modified subthreshold inverter cell
+
+.subckt dinv1 Yb Y Ab A Apb Ap VGND VPWR
+X1    t1    Apb    VPWR    VPWR   sky130_fd_pr__pfet_01v8_hvt m=1 mult=1 w=360000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+X2    Y    Yb    t1    t1   sky130_fd_pr__pfet_01v8_hvt m=1 mult=1 w=360000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+X3    t2    Ap    VPWR    VPWR  sky130_fd_pr__pfet_01v8_hvt m=1 mult=1 w=360000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3 
+X4    Yb    Y    t2    t2   sky130_fd_pr__pfet_01v8_hvt m=1 mult=1 w=360000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+X5    Y    Ab    t3    t3   sky130_fd_pr__nfet_01v8 m=1 mult=1 w=180000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+X6    t3    Ab    VGND   VGND  sky130_fd_pr__nfet_01v8 m=1 mult=1 w=180000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+X7    Yb    A    t4    t4  sky130_fd_pr__nfet_01v8 m=1 mult=1 w=180000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+X8    t4    A    VGND    VGND  sky130_fd_pr__nfet_01v8 m=1 mult=1 w=180000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+.ends 
+
+******** EOF
