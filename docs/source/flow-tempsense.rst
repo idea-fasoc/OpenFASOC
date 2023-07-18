@@ -45,20 +45,23 @@ Verilog generation
 Running ``make sky130hd_temp`` (temp for "temperature sensor") executes the `temp-sense-gen.py <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/temp-sense-gen/tools/temp-sense-gen.py>`_ script from temp-sense-gen/tools/. This file takes the input specifications from `test.json <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/temp-sense-gen/test.json>`_ and outputs Verilog files containing the description of the circuit.
 
 .. note::
-  temp-sense-gen.py calls other modules from temp-sense-gen/tools/ during execution. For example, `readparamgen.py <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/temp-sense-gen/tools/readparamgen.py>`_ is in charge of reading test.json, checking for correct user input and choosing the correct circuit elements.
+  temp-sense-gen.py calls other modules from temp-sense-gen/tools/ and generators/common/ during execution. For example, `readparamgen.py <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/temp-sense-gen/tools/readparamgen.py>`_ is in charge of reading test.json, checking for correct user input and choosing the correct circuit elements.
 
-The generator starts from a Verilog template of the temperature sensor circuit, located in `temp-sense-gen/src/ <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/temp-sense-gen/src>`_. The ``.v`` template files have lines marked with ``@@``, which are replaced according to the specifications.
+The generator starts from a Verilog template of the temperature sensor circuit, located in `temp-sense-gen/src/ <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/temp-sense-gen/src>`_. The ``.v`` templates follow `Mako <https://makotemplates.org>`_ syntax. For example, ``${param}`` is replaced with the value of the parameter ``param``.
 
-Example: `counter_generic.v line 31 <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/temp-sense-gen/src/counter_generic.v#L31>`_ is replaced during Verilog generation.
+See `Common Python API <common-python-api.html#verilog-generation-common-verilog-generation>`_ for more information.
+
+Example: In `counter.v line 31 <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/temp-sense-gen/src/counter.v#L32>`_, ``${cell('buf')}`` with the buffer cell which is ``sky130_fd_sc_hd__buf_1`` for sky130hd.
 
 .. code-block:: verilog
-  :emphasize-lines: 3
+  :emphasize-lines: 4
   :linenos:
   :lineno-start: 29
 
   assign done_sens = WAKE_pre &&  doneb;
-	assign done_ref = WAKE && doneb;
-  @@ @np Buf_DONE(.A(done_pre), .nbout(DONE));
+  assign done_ref = WAKE && doneb;
+
+  ${cell('buf')} Buf_DONE(.A(done_pre), .X(DONE));
 
   always @ (*) begin
     case (done_pre)
@@ -87,15 +90,15 @@ OpenROAD Flow takes a design from the temp-sense-gen/flow/design/ directory and 
       └── design
           ├── sky130hd
           │   └── tempsense
-          │       ├── config.mk             <--
+          │       ├── config.mk          <--
           │       └── constraint.sdc
           └── src
               └── tempsense
-                  ├── counter.v             <--
-                  ├── TEMP_ANALOG_hv.nl.v   <--
-                  ├── TEMP_ANALOG_lv.nl.v   <--
-                  ├── TEMP_AUTO_def.v       <--
-                  └── tempsenseInst_error.v <--
+                  ├── counter.v          <--
+                  ├── TEMP_ANALOG_hv.v   <--
+                  ├── TEMP_ANALOG_lv.v   <--
+                  ├── TEMP_AUTO_def.v    <--
+                  └── tempsenseInst.v    <--
 
 For more information on OpenROAD Flow, check their `docs <https://openroad.readthedocs.io/en/latest/user/GettingStarted.html>`_.
 

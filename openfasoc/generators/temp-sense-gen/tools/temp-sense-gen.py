@@ -2,15 +2,17 @@
 
 import json
 import os
-import re
 import shutil
 import subprocess as sp
 import sys
-import time
+import re
 
-import TEMP_netlist
 from readparamgen import args, check_search_done, designName
 from simulation import generate_runs
+
+# TODO: Find a better way to import modules from parent directory
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+from common.verilog_generation import generate_verilog, COMMON_PLATFORMS_PREFIX_MAP
 
 genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)), "../")
 srcDir = genDir + "src/"
@@ -98,45 +100,37 @@ print("#----------------------------------------------------------------------")
 print("# Verilog Generation")
 print("#----------------------------------------------------------------------")
 
+# The directory in which the output Verilog is generated
+verilog_gen_dir=os.path.join('flow', 'design', 'src', 'tempsense')
+generate_verilog(
+    parameters={
+        "design_name": designName,
+        "cell_prefix": COMMON_PLATFORMS_PREFIX_MAP[args.platform],
+        "cell_suffix": "_1",
+        "header_cell": "HEADER" if args.platform == "sky130hd" else "HEADER_hs",
+        "slc_cell": "SLC" if args.platform == "sky130hd" else "SLC_hs",
+        "ninv": ninv,
+        "nhead": nhead
+    },
+    out_dir=verilog_gen_dir
+)
 
-if args.platform == "sky130hd":
-    aux1 = "sky130_fd_sc_hd__nand2_1"
-    aux2 = "sky130_fd_sc_hd__inv_1"
-    aux3 = "sky130_fd_sc_hd__buf_1"
-    aux4 = "sky130_fd_sc_hd__buf_1"
-    aux5 = "HEADER"
-    aux6 = "SLC"
-elif args.platform == "sky130hs":
-    aux1 = "sky130_fd_sc_hs__nand2_1"
-    aux2 = "sky130_fd_sc_hs__inv_1"
-    aux3 = "sky130_fd_sc_hs__buf_1"
-    aux4 = "sky130_fd_sc_hs__buf_1"
-    aux5 = "HEADER_hs"
-    aux6 = "SLC_hs"
-
-ninv = ninv + 1
-TEMP_netlist.gen_temp_netlist(ninv, nhead, aux1, aux2, aux3, aux4, aux5, srcDir)
-
-with open(srcDir + "TEMP_ANALOG_hv.nl.v", "r") as rf:
+with open(os.path.join(verilog_gen_dir, "TEMP_ANALOG_hv.v"), "r") as rf:
     filedata = rf.read()
 header_list = re.findall("HEADER\s+(\w+)\(", filedata)
+
 with open(genDir + "blocks/sky130hd/tempsenseInst_custom_net.txt", "w") as wf:
     wf.write("r_VIN\n")
     for header_cell in header_list:
         wf.write("temp_analog_1." + header_cell + " VIN\n")
 
-with open(srcDir + "TEMP_ANALOG_lv.nl.v", "r") as rf:
+with open(os.path.join(verilog_gen_dir, "TEMP_ANALOG_lv.v"), "r") as rf:
     filedata = rf.read()
 lv_list = re.findall("\nsky130_fd_sc\w*\s+(\w+)\s+\(", filedata)
+
 with open(genDir + "blocks/sky130hd/tempsenseInst_domain_insts.txt", "w") as wf:
     for lv_cell in lv_list:
         wf.write("temp_analog_0." + lv_cell + "\n")
-
-with open(srcDir + "tempsenseInst.v", "r") as rf:
-    filedata = rf.read()
-    filedata = re.sub("module\s*(\w+)\s*\n", "module " + designName + "\n", filedata)
-with open(srcDir + "tempsenseInst.v", "w") as wf:
-    wf.write(filedata)
 
 with open(flowDir + "design/sky130hd/tempsense/config.mk", "r") as rf:
     filedata = rf.read()
@@ -145,20 +139,6 @@ with open(flowDir + "design/sky130hd/tempsense/config.mk", "r") as rf:
     )
 with open(flowDir + "design/sky130hd/tempsense/config.mk", "w") as wf:
     wf.write(filedata)
-
-shutil.copyfile(
-    srcDir + "TEMP_ANALOG_lv.nl.v", flowDir + "design/src/tempsense/TEMP_ANALOG_lv.nl.v"
-)
-shutil.copyfile(
-    srcDir + "TEMP_ANALOG_hv.nl.v", flowDir + "design/src/tempsense/TEMP_ANALOG_hv.nl.v"
-)
-shutil.copyfile(
-    srcDir + "TEMP_AUTO_def.v", flowDir + "design/src/tempsense/TEMP_AUTO_def.v"
-)
-shutil.copyfile(
-    srcDir + "tempsenseInst.v", flowDir + "design/src/tempsense/" + designName + ".v"
-)
-shutil.copyfile(srcDir + "counter.v", flowDir + "design/src/tempsense/counter" + ".v")
 
 print("#----------------------------------------------------------------------")
 print("# Verilog Generated")
@@ -262,7 +242,7 @@ print("#----------------------------------------------------------------------")
 print("# Generating spice netlists for the macro")
 print("#----------------------------------------------------------------------")
 
-stage_var = [int(ninv) - 1]
+stage_var = [int(ninv)]
 header_var = [int(nhead)]
 
 # make a temp list, TODO: get from JSON config

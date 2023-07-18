@@ -28,7 +28,8 @@ module counter#
 	assign done_ref = WAKE && doneb;
 //	BUFH_X4M_A9TR	Buf_DONE(.A(done_pre), .Y(DONE));
 //	BUF_X0P4N_A10P5PP84TR_C14	Buf_DONE(.A(done_pre), .Y(DONE));
-@@ @np Buf_DONE(.A(done_pre), .nbout(DONE));
+
+	${cell('buf')} Buf_DONE(.A(done_pre), .X(DONE));
 	//assign RESET_CLK_REF = ~q1;
 
 	always @ (*) begin

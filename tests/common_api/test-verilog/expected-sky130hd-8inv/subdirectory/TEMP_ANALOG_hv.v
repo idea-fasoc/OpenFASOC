@@ -1,3 +1,5 @@
+
+
 module TEMP_ANALOG_hv
 (
 input CLK_REF,
@@ -26,11 +28,11 @@ counter async_counter_0(
 );
 
 (* keep *)
-% for i in range(nhead):
-${header_cell} a_header_${i}(.VIN(VIN));
-% endfor
+HEADER a_header_0(.VIN(VIN));
+HEADER a_header_1(.VIN(VIN));
+HEADER a_header_2(.VIN(VIN));
 // SLC
-${slc_cell} a_lc_0(.IN(out), .INB(outb), .VOUT(lc_0));
-${cell('buf')} a_buffer_0 (.A(lc_0), .X(lc_out));
+SLC a_lc_0(.IN(out), .INB(outb), .VOUT(lc_0));
+sky130_fd_sc_hd__buf_1 a_buffer_0 (.A(lc_0), .X(lc_out));
 
 endmodule
