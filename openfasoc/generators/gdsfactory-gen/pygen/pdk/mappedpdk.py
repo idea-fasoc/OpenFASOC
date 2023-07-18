@@ -14,7 +14,7 @@ from decimal import Decimal
 import xml.etree.ElementTree as ET
 
 class MappedPDK(Pdk):
-    """Inherits everything from the PDK class but also requires mapping to glayers
+    """Inherits everything from the pdk class but also requires mapping to glayers
     glayers are generic layers which can be returned with get_glayer(name: str)
     has_required_glayers(list[str]) is used to verify all required generic layers are
     present"""
@@ -76,7 +76,7 @@ class MappedPDK(Pdk):
         Also saves detailed results to output_dir_or_file location as lyrdb
         layout can be passed as a file path or gdsfactory component"""
         if not self.klayout_lydrc_file:
-            raise NotImplementedError("no drc script for this PDK")
+            raise NotImplementedError("no drc script for this pdk")
         # find layout gds file path
         tempdir = None
         if isinstance(layout, Component):
@@ -166,7 +166,7 @@ class MappedPDK(Pdk):
 
     # TODO: implement LayerSpec type
     def get_glayer(self, layer: str) -> Layer:
-        """Returns the PDK layer from the generic layer name"""
+        """Returns the pdk layer from the generic layer name"""
         return self.get_layer(self.glayers[layer])
 
     def get_grule(
@@ -208,7 +208,7 @@ class MappedPDK(Pdk):
         grid is the grid size in nm"""
         # input type and value validation
         if not isinstance(gfpdk, Pdk):
-            raise TypeError("from_gf_pdk: gfpdk arg only accepts GDSFactory PDK type")
+            raise TypeError("from_gf_pdk: gfpdk arg only accepts GDSFactory pdk type")
         # create argument dictionary
         passargs = dict()
         # pdk args

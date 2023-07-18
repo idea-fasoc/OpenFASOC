@@ -2,11 +2,11 @@ from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
 from pydantic import validate_arguments
-from PDK.mappedpdk import MappedPDK
+from pdk.mappedpdk import MappedPDK
 from math import floor
 from typing import Optional, Union
-from PDK.util.custom_comp_utils import rename_ports_by_orientation, evaluate_bbox, prec_array, print_ports, to_float, move
-from PDK.util.snap_to_grid import component_snap_to_grid
+from pdk.util.custom_comp_utils import rename_ports_by_orientation, evaluate_bbox, prec_array, print_ports, to_float, move
+from pdk.util.snap_to_grid import component_snap_to_grid
 from decimal import Decimal
 from typing import Literal
 
@@ -248,8 +248,8 @@ def via_array(
 
 
 if __name__ == "__main__":
-    from PDK.util.standard_main import pdk, parser
-    from PDK.util.custom_comp_utils import print_ports
+    from pdk.util.standard_main import pdk, parser
+    from pdk.util.custom_comp_utils import print_ports
     from pathlib import Path
 
     # default behavoir is to run one design and exit

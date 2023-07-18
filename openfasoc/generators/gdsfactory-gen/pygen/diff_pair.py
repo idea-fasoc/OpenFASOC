@@ -6,14 +6,14 @@ from gdsfactory.cell import cell
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
 from fet import nmos, pmos
-from PDK.mappedpdk import MappedPDK
+from pdk.mappedpdk import MappedPDK
 from typing import Optional
 from gdsfactory.routing.route_quad import route_quad
 from gdsfactory.routing.route_sharp import route_sharp
 from c_route import c_route
-from PDK.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, movex, movey, get_orientation, set_orientation, evaluate_bbox, align_comp_to_port
+from pdk.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, movex, movey, get_orientation, set_orientation, evaluate_bbox, align_comp_to_port
 from via_gen import via_stack
-from PDK.util.snap_to_grid import component_snap_to_grid
+from pdk.util.snap_to_grid import component_snap_to_grid
 
 #diffpair << route_sharp(b_topr.ports["multiplier_0_source_E"],viam2m3_ref_tr.ports["bottom_met_W"], width=connect_width, layer=pdk.get_glayer("met2"), path_type="manhattan")
 
@@ -148,7 +148,7 @@ def diff_pair(
 
 
 if __name__ == "__main__":
-	from PDK.util.standard_main import pdk
+	from pdk.util.standard_main import pdk
 	mycomp = diff_pair(pdk,length=1,width=6,fingers=4)
 	mycomp.show()
 	print_ports(mycomp)

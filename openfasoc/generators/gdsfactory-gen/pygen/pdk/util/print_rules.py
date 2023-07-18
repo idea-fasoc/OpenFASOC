@@ -101,7 +101,7 @@ if __name__ == "__main__":
     output = create_ruledeck_python_dictionary_definition(csvtoread)
     print(output)
     if args.code:
-        append_front = """from PDK.mappedpdk import MappedPDK\n
+        append_front = """from pdk.mappedpdk import MappedPDK\n
 grulesobj = dict()
 for glayer in MappedPDK.valid_glayers:
     grulesobj[glayer] = dict((x, None) for x in MappedPDK.valid_glayers)\n

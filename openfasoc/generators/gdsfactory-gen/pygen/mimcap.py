@@ -1,14 +1,14 @@
 from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
-from PDK.mappedpdk import MappedPDK
+from pdk.mappedpdk import MappedPDK
 from typing import Optional
 from via_gen import via_array
-from PDK.util.custom_comp_utils import rename_ports_by_orientation, add_ports_perimeter, prec_array, print_ports, to_decimal, to_float
+from pdk.util.custom_comp_utils import rename_ports_by_orientation, add_ports_perimeter, prec_array, print_ports, to_decimal, to_float
 from pydantic import validate_arguments
 from straight_route import straight_route
 from decimal import ROUND_UP, Decimal
-from PDK.util.snap_to_grid import snap_to_2xgrid
+from pdk.util.snap_to_grid import snap_to_2xgrid
 
 
 @validate_arguments
@@ -98,7 +98,7 @@ def mimcap_array(pdk: MappedPDK, rows: int, columns: int, size: tuple[float,floa
 
 
 if __name__ == "__main__":
-    from PDK.util.standard_main import pdk
+    from pdk.util.standard_main import pdk
 
     mycap = mimcap_array(pdk,1,1)
     mycap.show()

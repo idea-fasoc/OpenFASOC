@@ -2,14 +2,14 @@ from gdsfactory.grid import grid
 from gdsfactory.cell import cell
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
-from PDK.mappedpdk import MappedPDK
+from pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
 from via_gen import via_array, via_stack
 from guardring import tapring
 from pydantic import validate_arguments
-from PDK.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, evaluate_bbox, to_float, to_decimal, prec_array, prec_center
+from pdk.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, evaluate_bbox, to_float, to_decimal, prec_array, prec_center
 from c_route import c_route
-from PDK.util.snap_to_grid import component_snap_to_grid
+from pdk.util.snap_to_grid import component_snap_to_grid
 from decimal import Decimal
 
 
@@ -424,7 +424,7 @@ def pmos(
 
 
 if __name__ == "__main__":
-    from PDK.util.standard_main import pdk
+    from pdk.util.standard_main import pdk
 
     showmult = True
     if showmult:

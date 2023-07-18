@@ -6,8 +6,8 @@ from gdsfactory.generic_tech import get_generic_pdk
 import sky130
 
 gf.config.rich_output()
-PDK = get_generic_pdk()
-PDK.activate()
+pdk = get_generic_pdk()
+pdk.activate()
 
 pwell_drawing = (64, 13)
 dnwell_drawing = (64, 18)

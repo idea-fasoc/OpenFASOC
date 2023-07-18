@@ -1,12 +1,15 @@
-from opamp import opamp
+import sys
+# path to pygen
+sys.path.append('./pygen')
+
 from gdsfactory.read.import_gds import import_gds
-from PDK.util.custom_comp_utils import prec_array, add_ports_perimeter, movey, print_ports, align_comp_to_port
+from pygen.pdk.util.custom_comp_utils import prec_array, add_ports_perimeter, movey, print_ports, align_comp_to_port
 from gdsfactory.component import Component
 from gdsfactory.cell import cell
-from PDK.mappedpdk import MappedPDK
-from opamp import opamp
-from L_route import L_route
-from via_gen import via_array
+from pygen.pdk.mappedpdk import MappedPDK
+from pygen.opamp import opamp
+from pygen.L_route import L_route
+from pygen.via_gen import via_array
 
 
 @cell
@@ -41,7 +44,7 @@ def sky130_opamp_add_pads(sky130pdk: MappedPDK, opamp_in: Component) -> Componen
 	return opamp_wpads
 
 if __name__ == "__main__":
-	from PDK.util.standard_main import pdk
+	from pygen.pdk.util.standard_main import pdk
 	
 	opamp_in = opamp(pdk)
 	opamp_out = sky130_opamp_add_pads(pdk, opamp_in)

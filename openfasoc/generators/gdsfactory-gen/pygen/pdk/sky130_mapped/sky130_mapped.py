@@ -3,10 +3,10 @@ usage: from sky130_mapped import sky130_mapped_pdk
 """
 import sky130
 
-from PDK.mappedpdk import MappedPDK
-from PDK.sky130_mapped.grules import grulesobj
+from pdk.mappedpdk import MappedPDK
+from pdk.sky130_mapped.grules import grulesobj
 from pathlib import Path
-from PDK.sky130_mapped.sky130_add_npc import sky130_add_npc
+from pdk.sky130_mapped.sky130_add_npc import sky130_add_npc
 
 sky130.PDK.layers["capm3"] = (89, 44)
 

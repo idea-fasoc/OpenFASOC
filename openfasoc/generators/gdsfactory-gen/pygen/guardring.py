@@ -1,14 +1,14 @@
-from PDK.mappedpdk import MappedPDK
+from pdk.mappedpdk import MappedPDK
 from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
 from gdsfactory.components.rectangular_ring import rectangular_ring
 from via_gen import via_array, via_stack
 from typing import Optional
-from PDK.util.custom_comp_utils import print_ports, to_decimal, to_float, evaluate_bbox
-from PDK.util.snap_to_grid import component_snap_to_grid
+from pdk.util.custom_comp_utils import print_ports, to_decimal, to_float, evaluate_bbox
+from pdk.util.snap_to_grid import component_snap_to_grid
 from L_route import L_route
-from PDK.util.snap_to_grid import snap_to_2xgrid
+from pdk.util.snap_to_grid import snap_to_2xgrid
 
 
 @cell
@@ -112,7 +112,7 @@ def tapring(
 
 
 if __name__ == "__main__":
-    from PDK.util.standard_main import pdk
+    from pdk.util.standard_main import pdk
 
     mycomp = Component("displacment test")
     tapref = mycomp << tapring(pdk, sdlayer="p+s/d", enclosed_rectangle=(75.9, 31.0))

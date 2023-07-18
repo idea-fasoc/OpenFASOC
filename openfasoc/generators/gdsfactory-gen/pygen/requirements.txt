@@ -1,0 +1,4 @@
+gf180
+pydantic==1.10.11
+sky130
+gdsfactory>=6.114.0

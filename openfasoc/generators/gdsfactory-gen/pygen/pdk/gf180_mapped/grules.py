@@ -1,4 +1,4 @@
-from PDK.mappedpdk import MappedPDK
+from pdk.mappedpdk import MappedPDK
 
 grulesobj = dict()
 for glayer in MappedPDK.valid_glayers:

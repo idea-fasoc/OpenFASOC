@@ -11,11 +11,11 @@
  <shortcut/>
  <show-in-menu>true</show-in-menu>
  <group-name/>
- <menu-path>submenu&gt;end("gf180mcu PDK").end</menu-path>
+ <menu-path>submenu&gt;end("gf180mcu pdk").end</menu-path>
  <interpreter>dsl</interpreter>
  <dsl-interpreter-name>drc-dsl-xml</dsl-interpreter-name>
  <text>
-# Copyright 2022 GlobalFoundries PDK Authors
+# Copyright 2022 GlobalFoundries pdk Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

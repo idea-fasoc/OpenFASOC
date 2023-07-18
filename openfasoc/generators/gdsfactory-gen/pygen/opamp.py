@@ -1,7 +1,7 @@
 from gdsfactory.cell import cell, clear_cache
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
-from PDK.mappedpdk import MappedPDK
+from pdk.mappedpdk import MappedPDK
 from typing import Optional
 from fet import nmos, pmos, multiplier
 from diff_pair import diff_pair
@@ -11,10 +11,10 @@ from L_route import L_route
 from c_route import c_route
 from via_gen import via_stack, via_array
 from gdsfactory.routing.route_quad import route_quad
-from PDK.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, evaluate_bbox, prec_ref_center, movex, movey, set_orientation, to_decimal, to_float, move, align_comp_to_port
+from pdk.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, evaluate_bbox, prec_ref_center, movex, movey, set_orientation, to_decimal, to_float, move, align_comp_to_port
 from sys import exit
 from straight_route import straight_route
-from PDK.util.snap_to_grid import component_snap_to_grid
+from pdk.util.snap_to_grid import component_snap_to_grid
 
 
 @cell
@@ -311,7 +311,7 @@ def opamp(
 
 
 if __name__ == "__main__":
-	from PDK.util.standard_main import pdk
+	from pdk.util.standard_main import pdk
 
 	iterate=False
 # TO TRY:
