@@ -238,7 +238,6 @@ fi
                 exit
         fi
 
-
 if cat /etc/os-release | grep "ubuntu" >> /dev/null
 then
 	apt install qt5-default qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y

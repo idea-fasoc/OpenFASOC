@@ -9,7 +9,6 @@ else:
     drc_filename = "work/"+sys.argv[1]+"/6_final_drc.rpt"
     lvs_filename = "work/"+sys.argv[1]+"/6_final_lvs.rpt"
 
-
 if len(sys.argv) > 1 and sys.argv[1] == "sky130hvl_ldo":
     with open(drc_filename, 'r') as f1, open("../../../.github/scripts/expected_drc_reports/expected_ldo_drc.rpt", 'r') as f2:
         content1 = f1.readlines()

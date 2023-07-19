@@ -10,7 +10,6 @@ import subprocess as sp
 from configure_workspace import *
 from generate_verilog import *
 from simulations import *
-from processing import *
 
 print("#---------------------------------------------------------------------")
 print("# Parsing command line arguments...")
@@ -44,6 +43,7 @@ parser.add_argument(
 )
 parser.add_argument("--clean", action="store_true", help="Clean the workspace.")
 parser.add_argument("--simtype",choices=["postPEX","prePEX"], help="Simulations type prePEX or postPEX")
+parser.add_argument("--pex", help="enable postPEX along with prePEX")
 args = parser.parse_args()
 
 
@@ -99,6 +99,8 @@ print("# LDO - Power Transistor array Size = " + str(arrSize))
 
 # Update the ldo_domain_insts.txt as per power transistor array size
 update_ldo_domain_insts(directories["blocksDir"], arrSize)
+#Update the ldo_place.txt as per power transistor array size
+update_ldo_place_insts(directories["blocksDir"], arrSize)
 # Update connections to VREG
 update_custom_nets(directories["blocksDir"], arrSize)
 
@@ -188,7 +190,7 @@ if args.mode != "verilog" and clean_work_dir:
 
     # prepare simulation scripts, passing prePEX_sim_dir and pex=false to function *_prepare_scripts() runs preprex sims
     # there should be one output file name specified for each cap value. outputs sent to sim_dir_structure directories
-    if args.simtype == "postPEX":
+    if args.simtype == "postPEX" or args.pex == "True":
        if jsonConfig["simTool"] == "ngspice":
            [sim, output_file_names] = ngspice_prepare_scripts(
             head,
@@ -265,46 +267,43 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
     processes = []
     #assert len(output_file_names) == len(cap_list)*len(freq_list)
     if args.mode != "post":
-       if args.simtype == "postPEX":
+       if args.simtype == "postPEX" or args.pex == "True":
+          run_dir = directories["genDir"] + "tools/"
+          vref = user_specs["vin"]
+          iload = user_specs["imax"]
+          odir = os.path.abspath(args.outputDir)
           for s in range (len(sim)):
               p = sp.Popen(sim[s],cwd=postPEX_sim_dir,shell=True)
               processes.append(p)
             
           for p in processes:
-              p.wait()   
-          # perform post processing on simulation results and save figures to work dir
-          raw_files = [(postPEX_sim_dir + ofile) for ofile in output_file_names]
-          raw_to_csv(raw_files,user_specs["vin"],args.outputDir)
-          figures = list()
-          figure_names = list()
-          figure_names.extend(["VREG_output", "VDIF", "VREG_ripple"])
-          figures.extend(fig_VREG_results(raw_files, user_specs["vin"]))
-          figure_names.append("cmp_out")
-          figures.append(fig_comparator_results(raw_files))
-          figure_names.append("active_switches")
-          figures.append(fig_controller_results(raw_files))
-          # save results to png files
-          current_freq_results = args.outputDir + "/" + "output_plots"
-          try:
-             os.mkdir(current_freq_results)
-          except OSError as error:
-              if args.mode != "post":
-                 print(error)
-                 exit(1)
-          assert len(figures) == len(figure_names)
-          for i, figure in enumerate(figures):
-              figure.savefig(current_freq_results + "/" + figure_names[i] + ".png")
-              fig_dc_results(postPEX_sim_dir + "/isweep.raw").savefig(args.outputDir + "/dc.png")
-              max_load = user_specs["imax"]
-              load = max_load*1000
-              fig_load_change_results(postPEX_sim_dir + "/" + str(load) + "mA_output_load_change.raw",load).savefig(args.outputDir + "/load_change.png")
+              p.wait()
+                 
+          p = sp.Popen(["python3","processing.py","--file_path",postPEX_sim_dir,"--vref",str(vref),"--iload",str(iload),"--odir",odir, "--figs", "True", "--simType", "postPEX"],cwd=run_dir)
+          p.wait()
+          
        if args.simtype == "prePEX":
+          run_dir = directories["genDir"] + "tools/"
+          vref = user_specs["vin"]
+          iload = user_specs["imax"]
+          odir = os.path.abspath(args.outputDir)
           for s in range (len(sim)):
               p = sp.Popen(sim[s],cwd=prePEX_sim_dir,shell=True)
               processes.append(p)
             
           for p in processes:
-              p.wait()   
+              p.wait()
+              
+          p = sp.Popen(["python3","processing.py","--file_path",prePEX_sim_dir,"--vref",str(vref),"--iload",str(iload),"--odir",odir, "--figs", "True", "--simType", "prePEX"],cwd=run_dir)
+          p.wait()
+       """
+          for s in range (len(sim)):
+              p = sp.Popen(sim[s],cwd=prePEX_sim_dir,shell=True)
+              processes.append(p)
+            
+          for p in processes:
+              p.wait()
+             
           # perform post processing on simulation results and save figures to work dir
           raw_files = [(prePEX_sim_dir + ofile) for ofile in output_file_names]
           raw_to_csv(raw_files,user_specs["vin"],args.outputDir)
@@ -331,3 +330,4 @@ if args.mode == "full" or args.mode == "sim" or args.mode == "post":
               max_load = user_specs["imax"]
               load = max_load*1000
               fig_load_change_results(prePEX_sim_dir + "/" + str(load) + "mA_output_load_change.raw",load).savefig(args.outputDir + "/load_change.png")
+              """

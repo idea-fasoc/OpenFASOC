@@ -20,4 +20,3 @@ Fundamentally, the DLDO is a closed loop control system with:
 **LDO Block Diagram**
 
 ![plot](./readme_images/LDO_Block_Diagram.png)
-
