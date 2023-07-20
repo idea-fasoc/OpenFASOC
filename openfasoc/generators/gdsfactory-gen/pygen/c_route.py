@@ -184,6 +184,7 @@ def c_route(
 	croute << e2_extension_comp
 	if cwidth:
 		route_ports = [set_port_width(port_,cwidth) for port_ in route_ports]
+	route_ports[0].width = route_ports[1].width = max(route_ports[0].width, route_ports[1].width)
 	cconnection = croute << route_quad(route_ports[0],route_ports[1],layer=pdk.get_glayer(cglayer))
 	for i,port_to_add in enumerate(route_ports):
 		orta = get_orientation(port_to_add.orientation)

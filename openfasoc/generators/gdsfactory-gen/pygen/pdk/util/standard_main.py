@@ -19,6 +19,8 @@ args = parser.parse_known_args()
 
 pdk = None
 
+# WARNING: DO NOT CHANGE standard behavoir (importing sky130 by default)
+
 if args[0].pdk == "gf180":
     from pdk.gf180_mapped import gf180_mapped_pdk
     pdk = gf180_mapped_pdk

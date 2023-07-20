@@ -194,7 +194,7 @@ def opamp(
     pmos_comps << L_route(pdk,pcomps_route_A_drain.ports["con_S"], Aextra_top_connection.ports["e1"],viaoffset=(False,True))
     # connect source of B to drain of 2R
     pcomps_route_B_source_extension = pmos_comps.xmax-max(LRsourcesPorts[-1].center[0],ptop_AB.ports["R_source_E"].center[0])+_max_metal_seperation_ps
-    pmos_comps << c_route(pdk, ptop_AB.ports["R_source_E"], LRdrainsPorts[-1],extension=pcomps_route_B_source_extension,viaoffset=(True,False))
+    mimcap_connection_ref = pmos_comps << c_route(pdk, ptop_AB.ports["R_source_E"], LRdrainsPorts[-1],extension=pcomps_route_B_source_extension,viaoffset=(True,False))
     bottom_pcompB_floating_port = set_orientation(movey(movex(pbottom_AB.ports["L_source_E"].copy(),4*_max_metal_seperation_ps), destination=Aextra_top_connection.ports["e1"].center[1]+Aextra_top_connection.ports["e1"].width+_max_metal_seperation_ps),"S")
     pmos_bsource_2Rdrain_v = pmos_comps << L_route(pdk,pbottom_AB.ports["L_source_E"],bottom_pcompB_floating_port,vglayer="met3")
     pmos_comps << c_route(pdk, LRdrainsPorts[-1], set_orientation(bottom_pcompB_floating_port,"E"),extension=pcomps_route_B_source_extension,viaoffset=(True,False))
@@ -236,8 +236,10 @@ def opamp(
     tapcenter_rect = [(evaluate_bbox(pmos_comps)[0] + 1), (evaluate_bbox(pmos_comps)[1] + 1)]
     topptap = pmos_comps << tapring(pdk, tapcenter_rect, "p+s/d")
     pmos_comps.add_ports(topptap.get_ports_list(),prefix="top_ptap_")
+    pmos_comps.add_ports(mimcap_connection_ref.get_ports_list(),prefix="mimcap_connection_")
     pmos_comps_ref = opamp_top << pmos_comps
     pmos_comps_ref.movey(round(ydim_ncomps + pmos_comps_ref.ymax+8))
+    
     opamp_top.add_ports(pmos_comps_ref.get_ports_list(),prefix="pcomps_")
     # route halfmultp source, drain, and gate together, place vdd pin in the middle
     halfmultp_Lsrcport = opamp_top.ports["pcomps_halfp_l_multiplier_0_source_con_N"]
@@ -297,10 +299,11 @@ def opamp(
     mimcaps_ref.movex(opamp_top.xmax + displace_fact + mim_cap_size[0]/2)
     mimcaps_ref.movey(pmos_comps_ref.ymin + mim_cap_size[1]/2)
     # connect mimcap to gnd
-    gnd_pin_mimcap_route = opamp_top << L_route(pdk,mimcaps_ref.ports["row0_col1_top_met_S"],_cref.ports["con_E"],hwidth=3)
+    opamp_top << c_route(pdk,opamp_top.ports["pcomps_mimcap_connection_con_N"],mimcaps_ref.ports["row"+str(int(mim_cap_rows)-1)+"_col0_bottom_met_N"], extension=_max_metal_seperation_ps, fullbottom=True)
     opamp_top << L_route(pdk, mimcaps_ref.ports["row0_col0_bottom_met_S"], set_orientation(n_to_p_output_route.ports["con_S"],"E"), hwidth=3)
     # return
-    opamp_top.add_ports(gnd_pin_mimcap_route.get_ports_list(), prefix="gnd_pin_")
+    opamp_top.add_ports(_cref.get_ports_list(), prefix="gnd_route_")
+    opamp_top.add_ports(gndpin.get_ports_list(), prefix="gnd_pin_")
     opamp_top.add_ports(vddpin.get_ports_list(), prefix="vdd_pin_")
     opamp_top.add_ports(vbias1.get_ports_list(), prefix="vbias1_pin_")
     opamp_top.add_ports(vbias2.get_ports_list(), prefix="vbias2_pin_")

@@ -6,7 +6,7 @@ from pdk.mappedpdk import MappedPDK
 from math import floor
 from typing import Optional, Union
 from pdk.util.custom_comp_utils import rename_ports_by_orientation, evaluate_bbox, prec_array, print_ports, to_float, move
-from pdk.util.snap_to_grid import component_snap_to_grid
+from pdk.util.snap_to_grid import component_snap_to_grid, snap_to_2xgrid
 from decimal import Decimal
 from typing import Literal
 
@@ -176,6 +176,7 @@ def via_array(
     top_met_...all edges
     bottom_met_...all edges (only if lay_bottom is specified)
     """
+    size = snap_to_2xgrid(size)
     tmpsize = list(size)
     for i in range(2):
         if isinstance(size[i],Union[float,int]):
