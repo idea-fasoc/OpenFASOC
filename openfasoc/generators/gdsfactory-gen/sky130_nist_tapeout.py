@@ -10,12 +10,15 @@ from pygen.pdk.mappedpdk import MappedPDK
 from pygen.opamp import opamp
 from pygen.L_route import L_route
 from pygen.via_gen import via_array
-from pygen.pdk.util.standard_main import pdk
+from pygen.pdk.util.standard_main import pdk, parser
 from gdsfactory.cell import cell, clear_cache
 import numpy as np
 from subprocess import Popen
 from pathlib import Path
 from typing import Union
+from tempfile import TemporaryDirectory
+from shutil import copyfile, copytree
+from multiprocessing import Pool
 
 
 def sky130_opamp_add_pads(opamp_in: Component) -> Component:
@@ -147,6 +150,7 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 	diffpairs = list()
 	if test_mode:
 		diffpairs.append((6,1,4))
+		diffpairs.append((5,1,4))
 	else:
 		for width in [3,6,9]:
 			for length in [0.3,1, 2]:
@@ -198,6 +202,8 @@ def get_big_parameter_list() -> np.array:
 	return
 
 
+
+
 def get_result(filepath: Union[str,Path]):
 	fileabspath = Path(filepath).resolve()
 	with open(fileabspath, "r") as ResultReport:
@@ -220,10 +226,30 @@ def standardize_netlist_subckt_def(netlist: Union[str,Path]):
 		for i,line in enumerate(subckt_lines):
 			if all([hint in line for hint in hints]):
 				subckt_lines[i] = ".subckt opamp minus plus vbias1 vbias2 output vdd gnd\n"
-			if "FLOATING" in line:
+			if "floating" in line.lower():
 				subckt_lines[i] = "\n"
-	with open("opamp_pex.spice", "w") as spice_net:
+	with open(netlist, "w") as spice_net:
 		spice_net.writelines(subckt_lines)
+
+def __run_single_brtfrc(parameters_ele):
+	# generate layout
+	global pdk
+	sky130pdk = pdk
+	params = opamp_parameters_de_serializer(parameters_ele)
+	opamp_v = sky130_add_opamp_labels(opamp(sky130pdk, **params))
+	opamp_v.name = "opamp"
+	# use temp dir
+	with TemporaryDirectory() as tmpdirname:
+		tmp_gds_path = Path(opamp_v.write_gds(gdsdir=tmpdirname)).resolve()
+		copyfile("extract.bash",str(tmpdirname)+"/extract.bash")
+		copyfile("opamp_perf_eval.sp",str(tmpdirname)+"/opamp_perf_eval.sp")
+		copytree("sky130A",str(tmpdirname)+"/sky130A")
+		# extract layout
+		Popen(["bash","extract.bash", tmp_gds_path, opamp_v.name],cwd=tmpdirname).wait()
+		standardize_netlist_subckt_def(str(tmpdirname)+"/opamp_pex.spice")
+		# run sim and store result
+		Popen(["ngspice","-b","opamp_perf_eval.sp"],cwd=tmpdirname).wait()
+		return get_result(str(tmpdirname)+"/output.txt")["UGB"]
 
 def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.array) -> np.array:
 	"""runs the brute force testing of parameters by
@@ -239,37 +265,25 @@ def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.
 	sky130pdk.default_decorator = None
 	sky130pdk.activate()
 	# initialize empty results array
-	results = np.empty(shape=len(parameter_list),dtype=np.float64)
-	# loop and run layout, extraction, sim
-	num_iterations = len(results)
-	index=0
-	while index < num_iterations:
-		# generate layout
-		params = opamp_parameters_de_serializer(parameter_list[index])
-		opamp_v = sky130_add_opamp_labels(opamp(sky130pdk, **params))
-		opamp_v.name = "opamp"
-		opamp_v.write_gds("opamp.gds")
-		# extract layout
-		Popen(["bash","extract.bash", "opamp.gds", opamp_v.name]).wait()
-		standardize_netlist_subckt_def("opamp_pex.spice")
-		# run sim and store result
-		Popen(["ngspice","-b","opamp_perf_eval.sp"]).wait()
-		results[index] = get_result("output.txt")["UGB"]
-		# prepare for next iteration
-		clear_cache()
-		index = index + 1
+	results = None
+	# run layout, extraction, sim
+	with Pool(120) as cores:
+		results = np.array(cores.map(__run_single_brtfrc, parameter_list),np.float64)
 	# undo pdk modification
 	sky130pdk.default_decorator = add_npc_decorator
 	return results
 
 
-def get_training_data(test_mode=True):
+def get_training_data(test_mode=True,):
 	params = get_small_parameter_list(test_mode)
 	results = brute_force_full_layout_and_PEXsim(pdk, params)
 	np.save("training_params.npy",params)
 	np.save("training_results.npy",results)
 
 
+parser.add_argument("--test_mode", "-t", action="store_true", help="runs a short 2 ele test")
+args = parser.parse_args()
+get_training_data(test_mode=args.test_mode)
 #opamp_out = sky130_opamp_add_pads(opamp_in)
 #sky130_add_opamp_labels(opamp_in).show()
 #opamp_out.show()

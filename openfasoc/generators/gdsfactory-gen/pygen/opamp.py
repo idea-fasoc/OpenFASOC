@@ -299,7 +299,8 @@ def opamp(
     mimcaps_ref.movex(opamp_top.xmax + displace_fact + mim_cap_size[0]/2)
     mimcaps_ref.movey(pmos_comps_ref.ymin + mim_cap_size[1]/2)
     # connect mimcap to gnd
-    opamp_top << c_route(pdk,opamp_top.ports["pcomps_mimcap_connection_con_N"],mimcaps_ref.ports["row"+str(int(mim_cap_rows)-1)+"_col0_bottom_met_N"], extension=_max_metal_seperation_ps, fullbottom=True)
+    cref2_extension = _max_metal_seperation_ps + opamp_top.ymax - opamp_top.ports["pcomps_mimcap_connection_con_N"].center[1]
+    opamp_top << c_route(pdk,opamp_top.ports["pcomps_mimcap_connection_con_N"],mimcaps_ref.ports["row"+str(int(mim_cap_rows)-1)+"_col0_bottom_met_N"], extension=cref2_extension, fullbottom=True)
     opamp_top << L_route(pdk, mimcaps_ref.ports["row0_col0_bottom_met_S"], set_orientation(n_to_p_output_route.ports["con_S"],"E"), hwidth=3)
     # return
     opamp_top.add_ports(_cref.get_ports_list(), prefix="gnd_route_")
