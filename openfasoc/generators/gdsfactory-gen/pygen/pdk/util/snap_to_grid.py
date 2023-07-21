@@ -5,7 +5,7 @@ from gdsfactory.pdk import get_grid_size
 from tempfile import TemporaryDirectory
 from pathlib import Path
 from gdsfactory.read.import_gds import import_gds
-from decimal import Decimal
+from decimal import Decimal, ROUND_UP
 from gdsfactory.snap import snap_to_grid
 
 
@@ -45,18 +45,18 @@ def snap_to_2xgrid(dims: Union[list[Union[float,Decimal]], Union[float,Decimal]]
 	dims = a list OR single number specifying the dimensions to snap to grid
 	return_type = return a decimal, float, or the same type that was passed to the function
 	"""
-	return [round(dim,2) for dim in dims]
 	dims = dims if isinstance(dims, Iterable) else [dims]
-	dimtype_in = None
-	nm = 2 * 1000 * int(get_grid_size())
+	dimtype_in = type(dims[0])
+	dims = [Decimal(str(dim)) for dim in dims] # process in decimals
+	grid = 2 * Decimal(str(get_grid_size()))
+	grid = grid if grid else Decimal('0.001')
 	# snap dims to grid
 	snapped_dims = list()
 	for dim in dims:
-		dimtype_in = type(dim)
-		snapped_dims.append(snap_to_grid(float(dim), nm=nm))
+		snapped_dim = grid * (dim / grid).quantize(1, rounding=ROUND_UP)
+		snapped_dims.append(snapped_dim)
 	# convert to correct type
-	if return_type=="decimal" or (return_type=="same" and dimtype_in==Decimal):
-		for i, snapped_dim in enumerate(snapped_dims):
-			snapped_dims[i] = Decimal(str(snapped_dim))
+	if return_type=="float" or (return_type=="same" and dimtype_in==float):
+		snapped_dims = [float(snapped_dim) for snapped_dim in snapped_dims]
 	# correctly return list or single element
 	return snapped_dims[0] if len(snapped_dims)==1 else snapped_dims

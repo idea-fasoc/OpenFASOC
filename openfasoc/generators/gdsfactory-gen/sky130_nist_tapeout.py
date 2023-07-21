@@ -9,6 +9,7 @@ from gdsfactory.component import Component
 from pygen.pdk.mappedpdk import MappedPDK
 from pygen.opamp import opamp
 from pygen.L_route import L_route
+from pygen.straight_route import straight_route
 from pygen.via_gen import via_array
 from pygen.pdk.util.standard_main import pdk, parser
 from gdsfactory.cell import cell, clear_cache
@@ -22,7 +23,7 @@ from multiprocessing import Pool
 
 
 def sky130_opamp_add_pads(opamp_in: Component) -> Component:
-	"""adds the MPW-5 pads to opamp.
+	"""adds the MPW-5 pads and nano pads to opamp.
 	Also adds text labels and pin layers so that extraction is nice
 	"""
 	opamp_wpads = opamp_in.copy()
@@ -31,7 +32,7 @@ def sky130_opamp_add_pads(opamp_in: Component) -> Component:
 	pad = import_gds("sky130_mpw5_pad.gds")
 	pad.name = "mpw5pad"
 	pad = add_ports_perimeter(pad, pdk.get_glayer("met4"),prefix="pad_")
-	pad_array = prec_array(pad, rows=2, columns=4, spacing=(40,120))
+	pad_array = prec_array(pad, rows=2, columns=(4+1), spacing=(40,120))
 	pad_array_ref = pad_array.ref_center()
 	opamp_wpads.add(pad_array_ref)
 	# add via_array to vdd pin
@@ -39,13 +40,13 @@ def sky130_opamp_add_pads(opamp_in: Component) -> Component:
 	via_array_ref = opamp_wpads << vddarray
 	align_comp_to_port(via_array_ref,opamp_wpads.ports["vdd_pin_N"],alignment=('c','b'))
 	# route to the pads
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["minus_pin_W"],pad_array_ref.ports["row1_col0_pad_S"],hwidth=3)
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["plus_pin_W"],pad_array_ref.ports["row0_col0_pad_N"],hwidth=3)
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["vbias2_pin_E"],pad_array_ref.ports["row0_col1_pad_N"],hwidth=3)
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["vbias1_pin_E"],pad_array_ref.ports["row0_col2_pad_N"],hwidth=3)
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["gnd_route_con_E"],pad_array_ref.ports["row1_col3_pad_S"],hwidth=3,vglayer="met5")
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["vdd_pin_N"],pad_array_ref.ports["row1_col1_pad_E"],vwidth=4,vglayer="met5")
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["output_pin_E"],pad_array_ref.ports["row0_col3_pad_N"],hwidth=3,vglayer="met5")
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["minus_pin_W"],pad_array_ref.ports["row1_col1_pad_S"],hwidth=3)
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["plus_pin_W"],pad_array_ref.ports["row0_col1_pad_N"],hwidth=3)
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["vbias2_pin_E"],pad_array_ref.ports["row0_col2_pad_N"],hwidth=3)
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["vbias1_pin_E"],pad_array_ref.ports["row0_col3_pad_N"],hwidth=3)
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["gnd_route_con_E"],pad_array_ref.ports["row1_col4_pad_S"],hwidth=3,vglayer="met5")
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["vdd_pin_N"],pad_array_ref.ports["row1_col2_pad_E"],vwidth=4,vglayer="met5")
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["output_pin_E"],pad_array_ref.ports["row0_col4_pad_N"],hwidth=3,vglayer="met5")
 	# add pin layer and text labels for LVS
 	text_pin_labels = list()
 	met5pin = rectangle(size=(5,5),layer=(72,16), centered=True)
@@ -54,13 +55,29 @@ def sky130_opamp_add_pads(opamp_in: Component) -> Component:
 		pin_w_label.add_label(text=name,layer=(72,5),magnification=4)
 		text_pin_labels.append(pin_w_label)
 	for row in range(2):
-		for col in range(4):
-			if row==1 and col==2:
+		for col_u in range(4):
+			col = col_u + 1# left most are for nano pads
+			if row==1 and col==2+1:
 				continue
 			port_name = "row"+str(row)+"_col"+str(col)+"_pad_S"
 			pad_array_port = pad_array_ref.ports[port_name]
-			pin_ref = opamp_wpads << text_pin_labels[4*row + col]
+			pin_ref = opamp_wpads << text_pin_labels[4*row + col_u]
 			align_comp_to_port(pin_ref,pad_array_port,alignment=('c','t'))
+	# import nano pad and add to opamp
+	nanopad = import_gds("sky130_nano_pad.gds")
+	nanopad.name = "nanopad"
+	nanopad = add_ports_perimeter(nanopad, pdk.get_glayer("met4"),prefix="nanopad_")
+	nanopad_array = prec_array(nanopad, rows=2, columns=2, spacing=(10,10))
+	nanopad_array_ref = nanopad_array.ref_center()
+	opamp_wpads.add(nanopad_array_ref)
+	nanopad_array_ref.movex(opamp_wpads.xmin+nanopad_array.xmax)
+	# route nano pad connections
+	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col0_nanopad_N"],pad_array_ref.ports["row1_col0_pad_S"],width=3)
+	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col0_nanopad_S"],pad_array_ref.ports["row0_col0_pad_N"],width=3)
+	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col1_nanopad_E"],pad_array_ref.ports["row0_col1_pad_N"],width=3)
+	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col1_nanopad_E"],pad_array_ref.ports["row1_col1_pad_S"],width=3)
+	#vddnanopad = opamp_wpads << nanopad
+	#opamp_wpads << nanopad
 	return opamp_wpads.flatten()
 
 
@@ -209,6 +226,8 @@ def get_result(filepath: Union[str,Path]):
 	with open(fileabspath, "r") as ResultReport:
 		RawResult = ResultReport.readline()
 		Columns = RawResult.split(" ")
+	if len(columns)<11:
+		return {"UGB":-123.45,"biasVoltage1":-123.45,"biasVoltage2":-123.45}
 	return {
 		"UGB": Columns[3],
 		"biasVoltage1": Columns[7],
@@ -281,12 +300,13 @@ def get_training_data(test_mode=True,):
 	np.save("training_results.npy",results)
 
 
-parser.add_argument("--test_mode", "-t", action="store_true", help="runs a short 2 ele test")
-args = parser.parse_args()
-get_training_data(test_mode=args.test_mode)
-#opamp_out = sky130_opamp_add_pads(opamp_in)
+#parser.add_argument("--test_mode", "-t", action="store_true", help="runs a short 2 ele test")
+#args = parser.parse_args()
+#get_training_data(test_mode=args.test_mode)
+
+opamp_out = sky130_opamp_add_pads(opamp(pdk))
 #sky130_add_opamp_labels(opamp_in).show()
-#opamp_out.show()
+opamp_out.show()
 
 
 #parameters = np.array()

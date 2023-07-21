@@ -15,6 +15,29 @@ from pdk.util.custom_comp_utils import rename_ports_by_orientation, rename_ports
 from sys import exit
 from straight_route import straight_route
 from pdk.util.snap_to_grid import component_snap_to_grid
+from pydantic import validate_arguments
+
+
+
+
+
+
+
+@validate_arguments
+def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap_rows, ymin: float, n_to_p_output_route) -> Component:
+	max_metalsep = pdk.util_max_metal_seperation()
+	mimcaps_ref = opamp_top << mimcap_array(pdk,mim_cap_rows,2,size=mim_cap_size,rmult=6)
+	displace_fact = max(max_metalsep,pdk.get_grule("capmet")["min_separation"])
+	mimcaps_ref.movex(opamp_top.xmax + displace_fact + mim_cap_size[0]/2)
+	mimcaps_ref.movey(ymin + mim_cap_size[1]/2)
+	# connect mimcap to gnd
+	port1 = opamp_top.ports["pcomps_mimcap_connection_con_N"]
+	port2 = mimcaps_ref.ports["row"+str(int(mim_cap_rows)-1)+"_col0_bottom_met_N"]
+	cref2_extension = max_metalsep + opamp_top.ymax - max(port1.center[1], port2.center[1])
+	opamp_top << c_route(pdk,port1,port2, extension=cref2_extension, fullbottom=True)
+	opamp_top << L_route(pdk, mimcaps_ref.ports["row0_col0_bottom_met_S"], set_orientation(n_to_p_output_route.ports["con_S"],"E"), hwidth=3)
+	return opamp_top
+
 
 
 @cell
@@ -25,7 +48,8 @@ def opamp(
     houtput_bias: Optional[tuple[float, float, int, int]] = (6, 2, 8, 3),
     pamp_hparams: Optional[tuple[float, float, int, int]] = (7, 1, 10, 3),
     mim_cap_size=(12, 12),
-    mim_cap_rows=3
+    mim_cap_rows=3,
+    rmult: int = 2
 ) -> Component:
     """create an opamp, args:
     pdk=pdk to use
@@ -35,7 +59,7 @@ def opamp(
     pamp_hparams = pmos top component amp (width,length,fingers,mults)
     mim_cap_size = width,length of individual mim_cap
     """
-    _max_metal_seperation_ps = max([pdk.get_grule("met"+str(i))["min_separation"] for i in range(1,5)])
+    _max_metal_seperation_ps = pdk.util_max_metal_seperation()
     opamp_top = Component()
     # place nmos components
     # create and center diffpair
@@ -45,6 +69,7 @@ def opamp(
         width=diffpair_params[0],
         length=diffpair_params[1],
         fingers=diffpair_params[2],
+        rmult=rmult
     )
     diffpair_i_.add(prec_ref_center(center_diffpair_comp))
     diffpair_i_.add_ports(center_diffpair_comp.get_ports_list())
@@ -59,7 +84,8 @@ def opamp(
         with_dnwell=False,
         with_substrate_tap=False,
         gate_route_topmet="met3",
-        sd_route_topmet="met3"
+        sd_route_topmet="met3",
+        rmult=rmult
     )
     tailcurrent_ref = diffpair_i_ << tailcurrent_comp
     tailcurrent_ref.movey(
@@ -85,7 +111,8 @@ def opamp(
             with_dnwell=False,
             with_substrate_tap=False,
             with_dummy=dummy,
-            sd_route_left = bool(i)
+            sd_route_left = bool(i),
+            rmult=rmult
         )
         halfMultn_ref = opamp_top << halfMultn
         direction = (-1) ** i
@@ -119,8 +146,8 @@ def opamp(
     shared_gate_comps = Component("pmos_shared_gates")
     #TODO: report as bug
     clear_cache()
-    pcompR = multiplier(pdk, "p+s/d", width=6, length=1, fingers=6, dummy=(False, True))
-    pcompL = multiplier(pdk, "p+s/d", width=6, length=1, fingers=6, dummy=(True, False))
+    pcompR = multiplier(pdk, "p+s/d", width=6, length=1, fingers=6, dummy=(False, True),rmult=rmult)
+    pcompL = multiplier(pdk, "p+s/d", width=6, length=1, fingers=6, dummy=(True, False),rmult=rmult)
     pcomp_AB_spacing = max(2*_max_metal_seperation_ps + 6*pdk.get_grule("met4")["min_width"],pdk.get_grule("p+s/d")["min_separation"])
     _prefL = (shared_gate_comps << pcompL).movex(-1 * pcompL.xmax - pcomp_AB_spacing/2)
     _prefR = (shared_gate_comps << pcompR).movex(-1 * pcompR.xmin + pcomp_AB_spacing/2)
@@ -143,13 +170,13 @@ def opamp(
         if i == -2:
             dummy = [True, False]
             pcenterfourunits = multiplier(
-                pdk, "p+s/d", width=6, length=1, fingers=4, dummy=dummy
+                pdk, "p+s/d", width=6, length=1, fingers=4, dummy=dummy, rmult=rmult
             )
             extra_t = -1 * single_dim
         elif i == 2:
             dummy = [False, True]
             pcenterfourunits = multiplier(
-                pdk, "p+s/d", width=6, length=1, fingers=4, dummy=dummy
+                pdk, "p+s/d", width=6, length=1, fingers=4, dummy=dummy, rmult=rmult
             )
             extra_t = single_dim
         else:
@@ -219,7 +246,8 @@ def opamp(
             with_tie=True,
             dnwell=False,
             with_substrate_tap=False,
-            sd_route_left=bool(direction-1)
+            sd_route_left=bool(direction-1),
+            rmult=rmult
         )
         halfMultp
         halfMultp_ref = pmos_comps << halfMultp
@@ -293,15 +321,8 @@ def opamp(
     # route minus transistor drain to output
     outputvia_diff_pcomps = opamp_top << via_stack(pdk,"met5","met4")
     outputvia_diff_pcomps.movex(opamp_top.ports["centerNcomps_tl_multiplier_0_drain_N"].center[0]).movey(ptop_halfmultp_gate_route.ports["con_E"].center[1])
-    # place mimcaps
-    mimcaps_ref = opamp_top << mimcap_array(pdk,mim_cap_rows,2,size=mim_cap_size,rmult=6)
-    displace_fact = max(_max_metal_seperation_ps,pdk.get_grule("capmet")["min_separation"])
-    mimcaps_ref.movex(opamp_top.xmax + displace_fact + mim_cap_size[0]/2)
-    mimcaps_ref.movey(pmos_comps_ref.ymin + mim_cap_size[1]/2)
-    # connect mimcap to gnd
-    cref2_extension = _max_metal_seperation_ps + opamp_top.ymax - opamp_top.ports["pcomps_mimcap_connection_con_N"].center[1]
-    opamp_top << c_route(pdk,opamp_top.ports["pcomps_mimcap_connection_con_N"],mimcaps_ref.ports["row"+str(int(mim_cap_rows)-1)+"_col0_bottom_met_N"], extension=cref2_extension, fullbottom=True)
-    opamp_top << L_route(pdk, mimcaps_ref.ports["row0_col0_bottom_met_S"], set_orientation(n_to_p_output_route.ports["con_S"],"E"), hwidth=3)
+    # place mimcaps and route
+    opamp_top = __add_mimcap_arr(pdk, opamp_top, mim_cap_size, mim_cap_rows, pmos_comps_ref.ymin, n_to_p_output_route)
     # return
     opamp_top.add_ports(_cref.get_ports_list(), prefix="gnd_route_")
     opamp_top.add_ports(gndpin.get_ports_list(), prefix="gnd_pin_")
@@ -348,7 +369,7 @@ if __name__ == "__main__":
 		for i,comp in enumerate(opamps):
 			comp.write_gds(str(i)+".gds")
 	else:
-		opamp(pdk).show()
+		opamp(pdk, rmult=2).show()
 		
 		
 #[0.7,1,0.02]

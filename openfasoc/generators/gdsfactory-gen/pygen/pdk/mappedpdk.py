@@ -242,3 +242,7 @@ class MappedPDK(Pdk):
         mappedpdk = MappedPDK(**passargs)
         return mappedpdk
 
+    # util methods
+    def util_max_metal_seperation(self) -> float:
+        return max([self.get_grule("met"+str(i))["min_separation"] for i in range(1,5)])
+

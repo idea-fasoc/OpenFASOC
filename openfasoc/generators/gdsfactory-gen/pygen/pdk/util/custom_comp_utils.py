@@ -449,3 +449,4 @@ def prec_ref_center(custom_comp: Union[Component,ComponentReference], return_dec
 	compref = custom_comp if isinstance(custom_comp, ComponentReference) else custom_comp.ref()
 	xcor, ycor = prec_center(compref, False)
 	return compref.movex(xcor).movey(ycor)
+

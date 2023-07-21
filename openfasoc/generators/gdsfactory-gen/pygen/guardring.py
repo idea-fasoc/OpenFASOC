@@ -34,7 +34,7 @@ def tapring(
     Warr_... all ports in left via array
     bl_corner_...all ports in bottom left L route
     """
-    enclosed_rectangle = snap_to_2xgrid(enclosed_rectangle)
+    enclosed_rectangle = snap_to_2xgrid(enclosed_rectangle,return_type="float")
     # check layers, activate pdk, create top cell
     pdk.has_required_glayers(
         [sdlayer, "active_tap", "mcon", horizontal_glayer, vertical_glayer]

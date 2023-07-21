@@ -24,7 +24,8 @@ def diff_pair(
 	fingers: Optional[int] = 4,
 	length: Optional[float] = None,
 	n_or_p_fet: Optional[bool] = True,
-	plus_minus_seperation: Optional[float] = 0
+	plus_minus_seperation: Optional[float] = 0,
+	rmult: int = 1
 ) -> Component:
 	"""create a diffpair with 2 transistors placed in two rows with common centroid place. Sources are shorted
 	width = width of the transistors
@@ -39,12 +40,12 @@ def diff_pair(
 	# create transistors
 	well = None
 	if n_or_p_fet:
-		fet = nmos(pdk, width=width, fingers=fingers,length=length,multipliers=1,with_tie=False,with_dummy=False,with_dnwell=False,with_substrate_tap=False)
+		fet = nmos(pdk, width=width, fingers=fingers,length=length,multipliers=1,with_tie=False,with_dummy=False,with_dnwell=False,with_substrate_tap=False,rmult=rmult)
 		#print_ports(fet)
 		min_spacing_x = pdk.get_grule("n+s/d")["min_separation"] - 2*(fet.xmax - fet.ports["multiplier_0_plusdoped_E"].center[0])
 		well = "pwell"
 	else:
-		fet = pmos(pdk, width=width, fingers=fingers,length=length,multipliers=1,with_tie=False,with_dummy=False,dnwell=False,with_substrate_tap=False)
+		fet = pmos(pdk, width=width, fingers=fingers,length=length,multipliers=1,with_tie=False,with_dummy=False,dnwell=False,with_substrate_tap=False,rmult=rmult)
 		min_spacing_x = pdk.get_grule("p+s/d")["min_separation"] - 2*(fet.xmax - fet.ports["multiplier_0_plusdoped_E"].center[0])
 		well = "nwell"
 	# place transistors
@@ -54,41 +55,42 @@ def diff_pair(
 	gate_route_os = evaluate_bbox(viam2m3)[0] - fet.ports["multiplier_0_gate_W"].width + metal_space
 	min_spacing_y = metal_space + 2*gate_route_os
 	min_spacing_y = min_spacing_y - 2*abs(fet.ports["well_S"].center[1] - fet.ports["multiplier_0_gate_S"].center[1])
-	a_topl = (diffpair << fet).movey(fet.ymax+min_spacing_y/2).movex(0-fet.xmax-min_spacing_x/2)
-	b_topr = (diffpair << fet).movey(fet.ymax+min_spacing_y/2).movex(fet.xmax+min_spacing_x/2)
+	# TODO: fix spacing where you see +-0.5
+	a_topl = (diffpair << fet).movey(fet.ymax+min_spacing_y/2+0.5).movex(0-fet.xmax-min_spacing_x/2)
+	b_topr = (diffpair << fet).movey(fet.ymax+min_spacing_y/2+0.5).movex(fet.xmax+min_spacing_x/2)
 	a_botr = (diffpair << fet)
-	a_botr.mirror_y().movey(0-fet.ymax-min_spacing_y/2).movex(fet.xmax+min_spacing_x/2)
+	a_botr.mirror_y().movey(0-0.5-fet.ymax-min_spacing_y/2).movex(fet.xmax+min_spacing_x/2)
 	b_botl = (diffpair << fet)
-	b_botl.mirror_y().movey(0-fet.ymax-min_spacing_y/2).movex(0-fet.xmax-min_spacing_x/2)
+	b_botl.mirror_y().movey(0-0.5-fet.ymax-min_spacing_y/2).movex(0-fet.xmax-min_spacing_x/2)
 	# create gate route between transistor A mults
-	avia_gate_tl = align_comp_to_port(viam2m3, a_topl.ports["multiplier_0_gate_E"], ('r','b'))
-	diffpair.add(avia_gate_tl)
-	avia_gate_br = align_comp_to_port(viam2m3, a_botr.ports["multiplier_0_gate_W"], ('l','t'))
-	diffpair.add(avia_gate_br)
+	#avia_gate_tl = align_comp_to_port(viam2m3, a_topl.ports["multiplier_0_gate_E"], ('r','b'))
+	#diffpair.add(avia_gate_tl)
+	#avia_gate_br = align_comp_to_port(viam2m3, a_botr.ports["multiplier_0_gate_W"], ('l','t'))
+	#diffpair.add(avia_gate_br)
 	# lay metal spacer
-	min_metal_spacer = rectangle(size=(avia_gate_tl.ports["top_met_S"].width, metal_space), layer=pdk.get_glayer("met3"), centered=True)
-	metal_space_tl = align_comp_to_port(min_metal_spacer, avia_gate_tl.ports["top_met_S"], ('l','b'))
-	diffpair.add(metal_space_tl)
-	metal_space_br = align_comp_to_port(min_metal_spacer, avia_gate_br.ports["top_met_N"], ('r','t'))
-	diffpair.add(metal_space_br)
+	#min_metal_spacer = rectangle(size=(avia_gate_tl.ports["top_met_S"].width, metal_space), layer=pdk.get_glayer("met3"), centered=True)
+	#metal_space_tl = align_comp_to_port(min_metal_spacer, avia_gate_tl.ports["top_met_S"], ('l','b'))
+	#diffpair.add(metal_space_tl)
+	#metal_space_br = align_comp_to_port(min_metal_spacer, avia_gate_br.ports["top_met_N"], ('r','t'))
+	#diffpair.add(metal_space_br)
 	# lay cross metal
-	amet_cross_width = abs(metal_space_br.ports["e3"].center[0] - metal_space_tl.ports["e1"].center[0])
-	amet_cross_hieght = abs(metal_space_tl.ports["e4"].center[1] - metal_space_br.ports["e2"].center[1])
-	amet_gate_cross = rectangle(size=(amet_cross_width, amet_cross_hieght), layer=pdk.get_glayer("met3"), centered=True)
-	cross_metal_gate_a = align_comp_to_port(amet_gate_cross, metal_space_br.ports["e2"], ('l','t'))
-	diffpair.add(cross_metal_gate_a)
+	#amet_cross_width = abs(metal_space_br.ports["e3"].center[0] - metal_space_tl.ports["e1"].center[0])
+	#amet_cross_hieght = abs(metal_space_tl.ports["e4"].center[1] - metal_space_br.ports["e2"].center[1])
+	#amet_gate_cross = rectangle(size=(amet_cross_width, amet_cross_hieght), layer=pdk.get_glayer("met3"), centered=True)
+	#cross_metal_gate_a = align_comp_to_port(amet_gate_cross, metal_space_br.ports["e2"], ('l','t'))
+	#diffpair.add(cross_metal_gate_a)
 	# create gate route between transistor B mults
-	min_metal_spacer_2 = rectangle(size=(avia_gate_tl.ports["top_met_S"].width, gate_route_os), layer=pdk.get_glayer("met2"), centered=True)
+	#min_metal_spacer_2 = rectangle(size=(avia_gate_tl.ports["top_met_S"].width, gate_route_os), layer=pdk.get_glayer("met2"), centered=True)
 	# lay metal spacers
-	metal_space_bl = align_comp_to_port(min_metal_spacer_2, b_botl.ports["multiplier_0_gate_S"], ('r','t'))
-	diffpair.add(metal_space_bl)
-	metal_space_tr = align_comp_to_port(min_metal_spacer_2, b_topr.ports["multiplier_0_gate_S"], ('l','b'))
-	diffpair.add(metal_space_tr)
+	#metal_space_bl = align_comp_to_port(min_metal_spacer_2, b_botl.ports["multiplier_0_gate_S"], ('r','t'))
+	#diffpair.add(metal_space_bl)
+	#metal_space_tr = align_comp_to_port(min_metal_spacer_2, b_topr.ports["multiplier_0_gate_S"], ('l','b'))
+	#diffpair.add(metal_space_tr)
 	# lay cross metal
-	bmet_cross_width = abs(metal_space_tr.ports["e3"].center[0] - metal_space_bl.ports["e1"].center[0])
-	bmet_gate_cross = rectangle(size=(bmet_cross_width, metal_space), layer=pdk.get_glayer("met2"), centered=True)
-	cross_metal_gate_b = align_comp_to_port(bmet_gate_cross, metal_space_tr.ports["e4"], ('l','b'))
-	diffpair.add(cross_metal_gate_b)
+	#bmet_cross_width = abs(metal_space_tr.ports["e3"].center[0] - metal_space_bl.ports["e1"].center[0])
+	#bmet_gate_cross = rectangle(size=(bmet_cross_width, metal_space), layer=pdk.get_glayer("met2"), centered=True)
+	#cross_metal_gate_b = align_comp_to_port(bmet_gate_cross, metal_space_tr.ports["e4"], ('l','b'))
+	#diffpair.add(cross_metal_gate_b)
 	# route sources (short sources)
 	diffpair << route_quad(a_topl.ports["multiplier_0_source_E"], b_topr.ports["multiplier_0_source_W"], layer=pdk.get_glayer("met2"))
 	diffpair << route_quad(b_botl.ports["multiplier_0_source_E"], a_botr.ports["multiplier_0_source_W"], layer=pdk.get_glayer("met2"))
@@ -149,7 +151,7 @@ def diff_pair(
 
 if __name__ == "__main__":
 	from pdk.util.standard_main import pdk
-	mycomp = diff_pair(pdk,length=1,width=6,fingers=4)
+	mycomp = diff_pair(pdk,length=1,width=6,fingers=4,rmult=2)
 	mycomp.show()
 	print_ports(mycomp)
 

@@ -19,11 +19,12 @@ def multiplier(
     sdlayer: str,
     width: Optional[float] = 3,
     fingers: Optional[int] = 1,
-    routing: Optional[bool] = True,
-    dummy: Optional[Union[bool, tuple[bool, bool]]] = True,
+    routing: bool = True,
+    dummy: Union[bool, tuple[bool, bool]] = True,
     length: Optional[float] = None,
     sd_route_topmet: Optional[str] = "met2",
-    gate_route_topmet: Optional[str] = "met2"
+    gate_route_topmet: Optional[str] = "met2",
+    rmult: int = 1
 ) -> Component:
     """Generic poly/sd vias generator
     args:
@@ -32,18 +33,22 @@ def multiplier(
     width = expands the transistor in the y direction
     fingers = introduces additional fingers (sharing s/d) of width=width
     routing = true or false, specfies if sd should be connected
+    rmult = multiplies thickness of routes (int only)
     dummy = true or false add dummy active/plus doped regions
     length = transitor length (if left None defaults to min length)
+    
     ports (one port for each edge):
     gate_... all edges (top met route of gate connection)
     source_...all edges (top met route of source connections)
     drain_...all edges (top met route of drain connections)
+    plusdoped_...all edges (area of p+s/d or n+s/d layer)
     """
     # error checking
     if "+s/d" not in sdlayer:
         raise ValueError("specify + doped region for multiplier")
     if not "met" in sd_route_topmet or not "met" in gate_route_topmet:
         raise ValueError("topmet specified must be metal layer")
+    rmult = 1 if rmult<1 else rmult
     multiplier = Component()
     if fingers == 0:
         return multiplier
@@ -105,7 +110,7 @@ def multiplier(
         sdvia = via_stack(pdk, "met1", sd_route_topmet)
         # TODO: fix poly overhang / met1 separation
         extracted_gates = multiplier.extract([pdk.get_glayer("poly")])
-        gate_route_width = (
+        gate_route_width = rmult * (
             Decimal(str(pdk.get_grule("mcon")["width"]))
             + 2 * Decimal(str(pdk.get_grule("poly", "mcon")["min_enclosure"]))
         )
@@ -113,9 +118,11 @@ def multiplier(
         routedims = [gate_route_length, gate_route_width]
         gate_route = Component("gate route")
         gate_route << rectangle(size=to_float(routedims), layer=pdk.get_glayer("poly"), centered=True)
-        routedims[1] = 2 * Decimal(str(via_stack(pdk, "poly", gate_route_topmet).ymax))
-        va_ref_ = gate_route << via_array(pdk, "poly", gate_route_topmet, size=to_float(routedims))
-        gate_route.add_ports([_p for _p in va_ref_.get_ports_list() if "top_met" in _p.name])
+        routedims[1] = evaluate_bbox(via_stack(pdk, "poly", gate_route_topmet),True)[1]
+        gate_route << via_array(pdk, "poly", gate_route_topmet, size=to_float(routedims))
+        routedims[1] = rmult * routedims[1]
+        gr_ref_ = gate_route << rectangle(layer=pdk.get_glayer(gate_route_topmet),size=to_float(routedims),centered=True)
+        gate_route.add_ports(gr_ref_.get_ports_list())
         gate_route_ref = multiplier << gate_route
         gate_route_ref.movey(float(0-(poly_height + gate_route_width + routing_pfac)/2))
         multiplier.add_ports(gate_route_ref.get_ports_list(), prefix="gate_")
@@ -129,7 +136,7 @@ def multiplier(
             extendm_length = Decimal(str(sdvia.ymax)) + met1_core_size
             if finger % 2:
                 top_met_seperation = Decimal(str(pdk.get_grule(sd_route_topmet)["min_separation"])) + Decimal(str(0.1))
-                extendm_length += 2*Decimal(str(sdvia.ymax)) + top_met_seperation
+                extendm_length += rmult*evaluate_bbox(sdvia,True)[1] + top_met_seperation
                 extendm = multiplier << rectangle(
                     size=to_float((viasize, extendm_length)),
                     layer=pdk.get_glayer("met1"),
@@ -145,7 +152,7 @@ def multiplier(
             extendm_length += sdtop_coords[1] - met1_core_size
             sd_offsets += [extendm_length] if len(sd_offsets) < 2 else []
         mett_ext = multiplier.extract([pdk.get_glayer(sd_route_topmet)])
-        mettroute_dims = (evaluate_bbox(mett_ext,True)[0], 2 * Decimal(str(sdvia.ymax)))
+        mettroute_dims = (evaluate_bbox(mett_ext,True)[0], rmult * 2 * Decimal(str(sdvia.ymax)))
         sd_mett_connect = rectangle(
             layer=pdk.get_glayer(sd_route_topmet), size=to_float(mettroute_dims), centered=True
         )
@@ -193,6 +200,7 @@ def __mult_array_macro(
     sd_route_topmet: Optional[str] = "met2",
     gate_route_topmet: Optional[str] = "met2",
     sd_route_left: Optional[bool] = True,
+    rmult: int = 1
 ) -> Component:
     """create a multiplier array with multiplier_0 at the bottom
     The array is correctly centered"""
@@ -209,7 +217,8 @@ def __mult_array_macro(
         routing=routing,
         length=length,
         sd_route_topmet=sd_route_topmet,
-        gate_route_topmet=gate_route_topmet
+        gate_route_topmet=gate_route_topmet,
+        rmult=rmult
     )
     _max_metal_seperation_ps = max([pdk.get_grule("met"+str(i))["min_separation"] for i in range(1,5)])
     multiplier_separation = (
@@ -273,7 +282,8 @@ def nmos(
     length: Optional[float] = None,
     sd_route_topmet: Optional[str] = "met2",
     gate_route_topmet: Optional[str] = "met2",
-    sd_route_left: Optional[bool] = True
+    sd_route_left: Optional[bool] = True,
+    rmult: int = 1
 ) -> Component:
     """Generic NMOS generator
     width = expands the NMOS in the y direction
@@ -287,7 +297,7 @@ def nmos(
     nfet = Component()
     # create and add multipliers to nfet
     multiplier_arr = __mult_array_macro(
-        pdk, "n+s/d", width, fingers, multipliers, dummy=with_dummy, length=length, sd_route_topmet=sd_route_topmet, gate_route_topmet=gate_route_topmet, sd_route_left=sd_route_left
+        pdk, "n+s/d", width, fingers, multipliers, dummy=with_dummy, length=length, sd_route_topmet=sd_route_topmet, gate_route_topmet=gate_route_topmet, sd_route_left=sd_route_left, rmult=rmult
     )
     multiplier_arr_ref = multiplier_arr.ref()
     nfet.add(multiplier_arr_ref)
@@ -358,7 +368,8 @@ def pmos(
     length: Optional[float] = None,
     sd_route_topmet: Optional[str] = "met2",
     gate_route_topmet: Optional[str] = "met2",
-    sd_route_left: Optional[bool] = True
+    sd_route_left: Optional[bool] = True,
+    rmult: int = 1
 ) -> Component:
     """Generic PMOS generator
     width = expands the PMOS in the y direction
@@ -372,7 +383,7 @@ def pmos(
     pfet = Component()
     # create and add multipliers to nfet
     multiplier_arr = __mult_array_macro(
-        pdk, "p+s/d", width, fingers, multipliers, dummy=with_dummy, length=length, sd_route_topmet=sd_route_topmet, gate_route_topmet=gate_route_topmet, sd_route_left=sd_route_left
+        pdk, "p+s/d", width, fingers, multipliers, dummy=with_dummy, length=length, sd_route_topmet=sd_route_topmet, gate_route_topmet=gate_route_topmet, sd_route_left=sd_route_left, rmult=rmult
     )
     multiplier_arr_ref = multiplier_arr.ref()
     pfet.add(multiplier_arr_ref)
@@ -426,13 +437,15 @@ def pmos(
 if __name__ == "__main__":
     from pdk.util.standard_main import pdk
 
-    showmult = True
+    showmult = False
     if showmult:
-        mycomp = multiplier(pdk, "p+s/d", fingers=8, dummy=True, gate_route_topmet="met4",sd_route_topmet="met3", length=1)
+        mycomp = multiplier(pdk, "p+s/d", fingers=8, dummy=True, gate_route_topmet="met4",sd_route_topmet="met3", length=1, rmult=1)
+        bcomp = multiplier(pdk, "p+s/d", fingers=8, dummy=True, gate_route_topmet="met4",sd_route_topmet="met3", length=1, rmult=2)
+        bcomp.show()
     else:
         #mycomp = pmos(pdk, fingers=8, length=1, multipliers=3, width=6, with_dummy=True)
-        mycomp = pmos(pdk, fingers=8, length=1, multipliers=3, width=6, with_dummy=True)
-        print(*mycomp.get_polygons(),sep="\n")
+        mycomp = pmos(pdk, fingers=8, length=1, multipliers=3, width=6, with_dummy=True,rmult=2)
+        #print(*mycomp.get_polygons(),sep="\n")
         #large = pmos(pdk, fingers=20, length=1, multipliers=5, width=6, with_dummy=True)
         #large.show()
         #mycomp = pmos(pdk, fingers=8, multipliers=2, with_dummy=False, gate_route_topmet="met4",sd_route_topmet="met4")
