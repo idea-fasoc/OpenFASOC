@@ -1,4 +1,4 @@
-module tempsenseInst_error
+module ${design_name}
 (
 	input CLK_REF,
 	input RESET_COUNTERn,

@@ -7,3 +7,4 @@ nbsphinx
 cairosvg
 scipy
 ltspice
+mako
