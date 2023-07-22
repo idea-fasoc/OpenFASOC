@@ -17,8 +17,8 @@ X10 VMN CLK VPWR VPWR sky130_fd_pr__pfet_01v8 w=420000u l=150000u m=2
 .subckt DCDC_XSW_PMOS VPB clk clkb vIN vOUT0 vOUT1
 x0 int_sw0 int_sw1 vIN VPB sky130_fd_pr__pfet_01v8 w=420000u l=150000u m=2
 x1 int_sw1 int_sw0 vIN VPB sky130_fd_pr__pfet_01v8 w=420000u l=150000u m=2
-x2 vOUT0 int_sw0 vIN VPB sky130_fd_pr__pfet_01v8 w=1260e-9 l=150000u m=2
-x3 vOUT1 int_sw1 vIN VPB sky130_fd_pr__pfet_01v8 w=1260e-9 l=150000u m=2
+x2 vOUT0 int_sw0 vIN VPB sky130_fd_pr__pfet_01v8 w=840000u l=150000u m=2
+x3 vOUT1 int_sw1 vIN VPB sky130_fd_pr__pfet_01v8 w=840000u l=150000u m=2
 x4 clkb int_sw0 clkb clkb sky130_fd_pr__pfet_01v8 w=210000u l=210000u m=2
 x5 clk int_sw1 clk clk sky130_fd_pr__pfet_01v8 w=210000u l=210000u m=2
 .ends DCDC_XSW_PMOS
