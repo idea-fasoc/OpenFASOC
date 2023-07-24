@@ -36,21 +36,21 @@ Install all the prerequisites using `dependencies.sh` script provided in the hom
 
 (Or) Please install the following tools by building the tools manually from their code base with the recommended commit ids for a stable functioning of the flow:
 
-  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.413)
+  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.414)
 
-  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.251)
+  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.255)
 
   3. `Klayout <https://github.com/KLayout/klayout>`_ (version:0.28.6-1)
 
       - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
-  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.30+48)
+  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.31+13)
 
 
   5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_6895)
 
-  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.425)
+  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.428)
 
    - open_pdks is required to run drc/lvs check and the simulations
    - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
