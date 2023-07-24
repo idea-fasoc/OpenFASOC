@@ -7,8 +7,8 @@ OpenFASoC
     :target: https://openfasoc.readthedocs.io/en/latest/?badge=latest
 
 
-OpenFASOC is focused on open-source automate analog generation from user specification to GDSII with fully open-sourced tools.
-This project is led by a team of researchers at the University of Michigan is inspired from FASoC whcih sits on proprietary tools. (See more about FaSoC at `website <https://fasoc.engin.umich.edu/>`_)
+OpenFASOC is focused on open-source automated analog generation from user specification to GDSII with fully open-sourced tools.
+This project is led by a team of researchers at the University of Michigan and is inspired by FASoC, which sits on proprietary tools. (See more about FaSoC at `website <https://fasoc.engin.umich.edu/>`_)
 
 
 * **Temperature sensor -**
@@ -34,7 +34,7 @@ Prerequisites
 Install all the prerequisites using `dependencies.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7 and Ubuntu20.
 
 
-(Or) Please install the following tools by building the tools manually from their code base with the recommended commit ids for a stable functioning of the flow:
+(Or) Please install the following tools by building the tools manually from their code base with the recommended commit ids for stable functioning of the flow:
 
   1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.413)
 
