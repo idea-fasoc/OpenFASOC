@@ -29,31 +29,26 @@ Vindc net1 GND 1
 ** Import opamp subcircuit
 .include opamp_pex.spice
 XDUT vin vip bias1 bias2 vo VDD GND opamp
-
 * parameter sweep
-
 ** Run initial analysis
 .save all
 .options savecurrents
 .ac dec 100 1k 10G
-
 .control
 ** Set initial values
 set filetype = ascii
 set appendwrite = 1
-
-let maxGain = -1
+let maxUGB = -1
 let maxBv1 = -1
 let maxBv2 = -1
-
+let savedPhaseMargin = -1
+let savedDCGain = -1
 ** Tune these
 let biasVoltageMin = 0.4
 let biasVoltageMax = 1.6
 let biasVoltageStep = 0.05
-
 let biasVoltage1 = biasVoltageMin
 let biasVoltage2 = biasVoltageMin
-
 ** Sweep bias voltages
 while biasVoltage1 le biasVoltageMax
     ** Alter parameters and reset top-level ckt
@@ -66,11 +61,18 @@ while biasVoltage1 le biasVoltageMax
         run
         ** Find unity-gain bw point
         meas ac ugb_f when vdb(vo)=0
+        ** Measure phase margin
+        let phase = (180/PI)*vp(vo)
+        meas ac pm find phase when vdb(vo)=0
+        ** Measure DC(ish) gain
+        meas ac dcg find vdb(vo) at=1k
         ** Find local maxima
-        if ( ugb_f ge maxGain )
-            let maxGain = ugb_f
+        if ( ugb_f ge maxUGB )
+            let maxUGB = ugb_f
             let maxBv1 = biasVoltage1
             let maxBv2 = biasVoltage2
+            let savedPhaseMargin = pm
+            let savedDCGain = dcg
         end
         let biasVoltage2 = biasVoltage2 + biasVoltageStep
     end
@@ -78,14 +80,11 @@ while biasVoltage1 le biasVoltageMax
     let biasVoltage2 = biasVoltageMin
     let biasVoltage1 = biasVoltage1 + biasVoltageStep
 end
-
 ** Export global maxima
-wrdata output.txt maxGain maxBv1 maxBv2
-
+wrdata output.txt maxUGB maxBv1 maxBv2 savedPhaseMargin savedDCGain
 run
 display
 .endc
-
 .GLOBAL GND
 .GLOBAL VDD
 .end

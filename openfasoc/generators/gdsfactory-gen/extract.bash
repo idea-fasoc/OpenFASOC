@@ -2,6 +2,10 @@
 #export PDK_ROOT=/usr/local/share/pdk/
 export PDK_ROOT=/usr/bin/miniconda3/share/pdk/
 
+# args:
+# first arg = gds file to read
+# second arg = name of top cell in gds file to read
+
 # generate lvs netlist using magic
 magic -rcfile ./sky130A/sky130A.magicrc -noconsole -dnull << EOF
 gds read $1

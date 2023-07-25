@@ -5,12 +5,13 @@ usage: from mappedpdk import MappedPDK
 from gdsfactory.pdk import Pdk
 from gdsfactory.typings import Component, PathType, Layer
 from pydantic import validator, StrictStr, ValidationError
-from typing import ClassVar, Optional, Any
+from typing import ClassVar, Optional, Any, Union, Literal, Iterable
 from pathlib import Path
-from decimal import Decimal, DefaultContext, setcontext, FloatOperation
+from decimal import Decimal, ROUND_UP
 import tempfile
 import subprocess
 from decimal import Decimal
+from pydantic import validate_arguments
 import xml.etree.ElementTree as ET
 
 class MappedPDK(Pdk):
@@ -67,6 +68,7 @@ class MappedPDK(Pdk):
             raise ValueError(".lydrc script: the path given is not a file")
         return lydrc_file_path
 
+    @validate_arguments
     def drc(
         self,
         layout: Component | PathType,
@@ -135,6 +137,7 @@ class MappedPDK(Pdk):
         drc_error_count = len(drc_root[7])
         return (drc_error_count == 0)
 
+    @validate_arguments
     def has_required_glayers(self, layers_required: list[str]):
         """Raises ValueError if any of the generic layers in layers_required: list[str]
         are not mapped to anything in the pdk.glayers dictionary
@@ -146,6 +149,7 @@ class MappedPDK(Pdk):
                 )
             self.validate_layers([self.glayers[layer]])
 
+    @validate_arguments
     def layer_to_glayer(self, layer: tuple[int, int]) -> str:
         """if layer provided corresponds to a glayer, will return a glayer
         else will raise an exception
@@ -165,13 +169,15 @@ class MappedPDK(Pdk):
         return glayer_name
 
     # TODO: implement LayerSpec type
+    @validate_arguments
     def get_glayer(self, layer: str) -> Layer:
         """Returns the pdk layer from the generic layer name"""
         return self.get_layer(self.glayers[layer])
 
+    @validate_arguments
     def get_grule(
-        self, glayer1: str, glayer2: Optional[str] = None
-    ) -> dict[StrictStr, float]:
+        self, glayer1: str, glayer2: Optional[str] = None, return_decimal = False
+    ) -> dict[StrictStr, Union[float,Decimal]]:
         """Returns a dictionary describing the relationship between two layers
         If one layer is specified, returns a dictionary with all intra layer rules"""
         if glayer1 not in MappedPDK.valid_glayers:
@@ -187,11 +193,14 @@ class MappedPDK(Pdk):
         else:
             glayer2 = glayer1
             rules_dict = self.grules.get(glayer1, dict()).get(glayer1)
-        # return and error check
+        # error check, convert type, and return
         if rules_dict is None or rules_dict == {}:
             raise NotImplementedError(
                 "no rules found between " + str(glayer1) + " and " + str(glayer2)
             )
+        for rule in rules_dict:
+            if type(rule) == float and return_decimal:
+                rules_dict[rule] = Decimal(str(rule))
         return rules_dict
 
     @classmethod
@@ -243,6 +252,49 @@ class MappedPDK(Pdk):
         return mappedpdk
 
     # util methods
-    def util_max_metal_seperation(self) -> float:
-        return max([self.get_grule("met"+str(i))["min_separation"] for i in range(1,5)])
+    @validate_arguments
+    def util_max_metal_seperation(self, metal_levels: Union[list[int],list[str], str, int] = range(1,6)) -> float:
+        """returns the maximum of the min_seperation rule for all layers specfied
+        although the name of this function is util_max_metal_seperation, layers do not have to be metals
+        you can specify non metals by using metal_levels=list of glayers
+        if metal_levels is list of int, integers are converted to metal levels
+        if a single int is provided, all metals below and including that int level are considerd
+        by default this function returns the maximum metal seperation of metals1-5
+        """
+        if type(metal_levels)==int:
+            metal_levels = range(1,metal_levels+1)
+        metal_levels = metal_levels if isinstance(metal_levels,Iterable) else [metal_levels]
+        if len(metal_levels)<1:
+            raise ValueError("metal levels cannot be empty list")
+        if type(metal_levels[0])==int:
+            metal_levels = [f"met{i}" for i in metal_levels]
+        sep_rules = list()
+        for met in metal_levels:
+            sep_rules.append(self.get_grule(met)["min_separation"])
+        return max(sep_rules)
+    
+    @validate_arguments
+    def snap_to_2xgrid(self, dims: Union[list[Union[float,Decimal]], Union[float,Decimal]], return_type: Literal["decimal","float","same"]="same") -> Union[list[Union[float,Decimal]], Union[float,Decimal]]:
+        """snap all numbers in dims to double the grid size.
+        This is useful when a generator accepts a size or dimension argument
+        because there is a chance the cell may be centered (resulting in off grid components)
+        args:
+        dims = a list OR single number specifying the dimensions to snap to grid
+        return_type = return a decimal, float, or the same type that was passed to the function
+        """
+        dims = dims if isinstance(dims, Iterable) else [dims]
+        dimtype_in = type(dims[0])
+        dims = [Decimal(str(dim)) for dim in dims] # process in decimals
+        grid = 2 * Decimal(str(self.grid_size))
+        grid = grid if grid else Decimal('0.001')
+        # snap dims to grid
+        snapped_dims = list()
+        for dim in dims:
+            snapped_dim = grid * (dim / grid).quantize(1, rounding=ROUND_UP)
+            snapped_dims.append(snapped_dim)
+        # convert to correct type
+        if return_type=="float" or (return_type=="same" and dimtype_in==float):
+            snapped_dims = [float(snapped_dim) for snapped_dim in snapped_dims]
+        # correctly return list or single element
+        return snapped_dims[0] if len(snapped_dims)==1 else snapped_dims
 

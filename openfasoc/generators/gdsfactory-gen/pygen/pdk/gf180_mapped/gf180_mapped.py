@@ -3,8 +3,8 @@ usage: from gf180_mapped import gf180_mapped_pdk
 """
 
 from gf180.layers import LAYER  # , LAYER_VIEWS
-from pdk.gf180_mapped.grules import grulesobj
-from pdk.mappedpdk import MappedPDK
+from .gf180_mapped.grules import grulesobj
+from .mappedpdk import MappedPDK
 from pathlib import Path
 
 LAYER = LAYER.dict()

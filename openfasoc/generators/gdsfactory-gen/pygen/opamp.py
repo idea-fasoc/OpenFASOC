@@ -1,20 +1,20 @@
 from gdsfactory.cell import cell, clear_cache
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
-from pdk.mappedpdk import MappedPDK
+from . pdk.mappedpdk import MappedPDK
 from typing import Optional
-from fet import nmos, pmos, multiplier
-from diff_pair import diff_pair
-from guardring import tapring
-from mimcap import mimcap_array, mimcap
-from L_route import L_route
-from c_route import c_route
-from via_gen import via_stack, via_array
+from . fet import nmos, pmos, multiplier
+from . diff_pair import diff_pair
+from . guardring import tapring
+from . mimcap import mimcap_array, mimcap
+from . L_route import L_route
+from . c_route import c_route
+from . via_gen import via_stack, via_array
 from gdsfactory.routing.route_quad import route_quad
-from pdk.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, evaluate_bbox, prec_ref_center, movex, movey, set_orientation, to_decimal, to_float, move, align_comp_to_port
+from . pdk.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, evaluate_bbox, prec_ref_center, movex, movey, set_orientation, to_decimal, to_float, move, align_comp_to_port
 from sys import exit
-from straight_route import straight_route
-from pdk.util.snap_to_grid import component_snap_to_grid
+from . straight_route import straight_route
+from . pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 
 
@@ -25,6 +25,7 @@ from pydantic import validate_arguments
 
 @validate_arguments
 def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap_rows, ymin: float, n_to_p_output_route) -> Component:
+	mim_cap_size = pdk.snap_to_2xgrid(mim_cap_size, return_type="float")
 	max_metalsep = pdk.util_max_metal_seperation()
 	mimcaps_ref = opamp_top << mimcap_array(pdk,mim_cap_rows,2,size=mim_cap_size,rmult=6)
 	displace_fact = max(max_metalsep,pdk.get_grule("capmet")["min_separation"])
@@ -35,7 +36,7 @@ def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap
 	port2 = mimcaps_ref.ports["row"+str(int(mim_cap_rows)-1)+"_col0_bottom_met_N"]
 	cref2_extension = max_metalsep + opamp_top.ymax - max(port1.center[1], port2.center[1])
 	opamp_top << c_route(pdk,port1,port2, extension=cref2_extension, fullbottom=True)
-	opamp_top << L_route(pdk, mimcaps_ref.ports["row0_col0_bottom_met_S"], set_orientation(n_to_p_output_route.ports["con_S"],"E"), hwidth=3)
+	opamp_top << L_route(pdk, mimcaps_ref.ports["row0_col0_top_met_S"], set_orientation(n_to_p_output_route.ports["con_S"],"E"), hwidth=3)
 	return opamp_top
 
 
@@ -267,7 +268,6 @@ def opamp(
     pmos_comps.add_ports(mimcap_connection_ref.get_ports_list(),prefix="mimcap_connection_")
     pmos_comps_ref = opamp_top << pmos_comps
     pmos_comps_ref.movey(round(ydim_ncomps + pmos_comps_ref.ymax+8))
-    
     opamp_top.add_ports(pmos_comps_ref.get_ports_list(),prefix="pcomps_")
     # route halfmultp source, drain, and gate together, place vdd pin in the middle
     halfmultp_Lsrcport = opamp_top.ports["pcomps_halfp_l_multiplier_0_source_con_N"]
@@ -336,7 +336,7 @@ def opamp(
 
 
 if __name__ == "__main__":
-	from pdk.util.standard_main import pdk
+	from . pdk.util.standard_main import pdk
 
 	iterate=False
 # TO TRY:
@@ -369,7 +369,16 @@ if __name__ == "__main__":
 		for i,comp in enumerate(opamps):
 			comp.write_gds(str(i)+".gds")
 	else:
-		opamp(pdk, rmult=2).show()
+		opamp(
+			pdk,
+			diffpair_params = (6, 1, 4),
+			diffpair_bias = (6, 2, 4),
+			houtput_bias = (6, 2, 8, 3),
+			pamp_hparams = (7, 1, 10, 3),
+			mim_cap_size = (12, 12),
+			mim_cap_rows = 3,
+			rmult = 2
+		).show()
 		
 		
 #[0.7,1,0.02]

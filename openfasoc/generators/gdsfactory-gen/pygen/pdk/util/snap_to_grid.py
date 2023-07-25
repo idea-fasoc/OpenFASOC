@@ -36,27 +36,3 @@ def component_snap_to_grid(comp: Component, nm: Optional[int]=None) -> Component
 	return comp
 
 
-@validate_arguments
-def snap_to_2xgrid(dims: Union[list[Union[float,Decimal]], Union[float,Decimal]], return_type: Literal["decimal","float","same"]="same") -> Union[list[Union[float,Decimal]], Union[float,Decimal]]:
-	"""snap all numbers in dims to double the grid size.
-	This is useful when a generator accepts a size or dimension argument
-	because there is a chance the cell may be centered (resulting in off grid components)
-	args:
-	dims = a list OR single number specifying the dimensions to snap to grid
-	return_type = return a decimal, float, or the same type that was passed to the function
-	"""
-	dims = dims if isinstance(dims, Iterable) else [dims]
-	dimtype_in = type(dims[0])
-	dims = [Decimal(str(dim)) for dim in dims] # process in decimals
-	grid = 2 * Decimal(str(get_grid_size()))
-	grid = grid if grid else Decimal('0.001')
-	# snap dims to grid
-	snapped_dims = list()
-	for dim in dims:
-		snapped_dim = grid * (dim / grid).quantize(1, rounding=ROUND_UP)
-		snapped_dims.append(snapped_dim)
-	# convert to correct type
-	if return_type=="float" or (return_type=="same" and dimtype_in==float):
-		snapped_dims = [float(snapped_dim) for snapped_dim in snapped_dims]
-	# correctly return list or single element
-	return snapped_dims[0] if len(snapped_dims)==1 else snapped_dims

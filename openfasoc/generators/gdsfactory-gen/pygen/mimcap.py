@@ -1,14 +1,13 @@
 from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
-from pdk.mappedpdk import MappedPDK
+from .pdk.mappedpdk import MappedPDK
 from typing import Optional
-from via_gen import via_array
-from pdk.util.custom_comp_utils import rename_ports_by_orientation, add_ports_perimeter, prec_array, print_ports, to_decimal, to_float
+from .via_gen import via_array
+from .pdk.util.custom_comp_utils import rename_ports_by_orientation, add_ports_perimeter, prec_array, print_ports, to_decimal, to_float
 from pydantic import validate_arguments
-from straight_route import straight_route
+from .straight_route import straight_route
 from decimal import ROUND_UP, Decimal
-from pdk.util.snap_to_grid import snap_to_2xgrid
 
 
 @validate_arguments
@@ -36,7 +35,7 @@ def mimcap(
     top_met_...all edges, this is the metal over the capmet
     bottom_met_...all edges, this is the metal below capmet
     """
-    size = snap_to_2xgrid(size)
+    size = pdk.snap_to_2xgrid(size)
     # error checking and 
     capmettop, capmetbottom = __get_mimcap_layerconstruction_info(pdk)
     # create top component
@@ -98,7 +97,7 @@ def mimcap_array(pdk: MappedPDK, rows: int, columns: int, size: tuple[float,floa
 
 
 if __name__ == "__main__":
-    from pdk.util.standard_main import pdk
+    from .pdk.util.standard_main import pdk
 
     mycap = mimcap_array(pdk,1,1)
     mycap.show()

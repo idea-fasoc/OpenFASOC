@@ -22,10 +22,10 @@ pdk = None
 # WARNING: DO NOT CHANGE standard behavoir (importing sky130 by default)
 
 if args[0].pdk == "gf180":
-    from pdk.gf180_mapped import gf180_mapped_pdk
+    from pygen.pdk.gf180_mapped import gf180_mapped_pdk
     pdk = gf180_mapped_pdk
 else: #default to sky130
-    from pdk.sky130_mapped import sky130_mapped_pdk
+    from pygen.pdk.sky130_mapped import sky130_mapped_pdk
     pdk = sky130_mapped_pdk
 
 pdk.activate()

@@ -2,15 +2,194 @@ from gdsfactory.grid import grid
 from gdsfactory.cell import cell
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
-from pdk.mappedpdk import MappedPDK
+from .pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
-from via_gen import via_array, via_stack
-from guardring import tapring
+from .via_gen import via_array, via_stack
+from .guardring import tapring
 from pydantic import validate_arguments
-from pdk.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, evaluate_bbox, to_float, to_decimal, prec_array, prec_center
-from c_route import c_route
-from pdk.util.snap_to_grid import component_snap_to_grid
+from .pdk.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, evaluate_bbox, to_float, to_decimal, prec_array, prec_center
+from .c_route import c_route
+from .pdk.util.snap_to_grid import component_snap_to_grid
 from decimal import Decimal
+
+
+@validate_arguments
+def __gen_fingers_macro(pdk: MappedPDK,  fingers: int, length: float, width: float, poly_height: float) -> Component:
+	"""internal use: returns an array of fingers"""
+	import pdb; pdb.set_trace()
+	sizing_ref_viastack = via_stack(pdk, "active_diff", "met1")
+	# figure out poly (gate) spacing: s/d metal doesnt overlap transistor, s/d min seperation criteria is met
+	sd_viaxdim = evaluate_bbox(via_stack(pdk, "active_diff", "met1"))[0]
+	poly_spacing = 2 * pdk.get_grule("poly", "mcon")["min_separation"] + pdk.get_grule("mcon")["width"]
+	poly_spacing = max(sd_viaxdim, poly_spacing)
+	met1_minsep = pdk.get_grule("met1")["min_separation"]
+	poly_spacing += met1_minsep if length < met1_minsep else 0
+	# create a single finger
+	finger = Component("finger")
+	finger << rectangle(size=(length, poly_height), layer=pdk.get_glayer("poly"), centered=True)
+	sd_viaarr = via_array(pdk, "active_diff", "met1", size=(sd_viaxdim, width), minus1=True)
+	sd_viaarr_ref = finger << sd_viaarr
+	sd_viaarr_ref.movex((poly_spacing+length) / 2)
+	# create finger array and add to multiplier
+	fingerarray = prec_array(finger, columns=fingers, rows=1, spacing=(poly_spacing, 1))
+	sd_via_ref_left = fingerarray << sd_viaarr
+	sd_via_ref_left.movex(to_float(0-(poly_spacing+length)/2))
+	fingerarray = component_snap_to_grid(fingerarray)
+
+
+@cell
+def multiplier_prototype(
+    pdk: MappedPDK,
+    sdlayer: str,
+    width: Optional[float] = 3,
+    length: Optional[float] = None,
+    fingers: int = 1,
+    routing: bool = True,
+    inter_finger_topmet: str = "met1",
+    dummy: Union[bool, tuple[bool, bool]] = True,
+    sd_route_topmet: str = "met2",
+    gate_route_topmet: str = "met2",
+    rmult: int = 1,
+) -> Component:
+    """Generic poly/sd vias generator
+    args:
+    pdk = pdk to use
+    sdlayer = either p+s/d for pmos or n+s/d for nmos
+    width = expands the transistor in the y direction
+    length = transitor length (if left None defaults to min length)
+    fingers = introduces additional fingers (sharing s/d) of width=width
+    routing = true or false, specfies if sd should be connected
+    inter_finger_topmet = top metal of the via array laid on the source/drain regions
+    ****NOTE: routing metal is layed over the source drain regions regardless of routing option
+    dummy = true or false add dummy active/plus doped regions
+    rmult = multiplies thickness of routes (int only)
+    
+    ports (one port for each edge):
+    gate_... all edges (top met route of gate connection)
+    source_...all edges (top met route of source connections)
+    drain_...all edges (top met route of drain connections)
+    plusdoped_...all edges (area of p+s/d or n+s/d layer)
+    """
+    # error checking
+    if "+s/d" not in sdlayer:
+        raise ValueError("specify + doped region for multiplier")
+    if not "met" in sd_route_topmet or not "met" in gate_route_topmet:
+        raise ValueError("topmet specified must be metal layer")
+    if rmult<1:
+        raise ValueError("routing multiplier must be positive int")
+    if fingers < 1:
+        raise ValueError("number of fingers must be positive int")
+    multiplier = Component()
+    # argument parsing and rule setup
+    min_length = pdk.get_grule("poly")["min_width"]
+    length = min_length if (length or min_length) <= min_length else length
+    length = pdk.snap_to_2xgrid(length)
+    min_width = max(min_length, pdk.get_grule("active_diff")["min_width"])
+    width = min_width if (width or min_width) <= min_width else width
+    width = pdk.snap_to_2xgrid(width)
+    poly_height = width + 2 * pdk.get_grule("poly", "active_diff")["overhang"]
+    
+    # call finger array
+    fingerarray = __gen_fingers_macro(pdk, fingers, length, width, poly_height)
+    
+    fingerarray_ref = multiplier << fingerarray
+    offset = (fingers - 1) * finger_dim / 2
+    fingerarray_ref.movex(to_float(-1 * offset))
+    # create diffusion and +doped region
+    diff_dims = (
+        evaluate_bbox(multiplier)[0]
+        + 2 * pdk.get_grule("mcon", "active_diff")["min_enclosure"],
+        width,
+    )
+    multiplier << rectangle(size=to_float(diff_dims), layer=pdk.get_glayer("active_diff"), centered=True)
+    sd_ovhg = Decimal(str(pdk.get_grule(sdlayer, "active_diff")["min_enclosure"]))
+    sd_ovhg_dims = [dim + 2*sd_ovhg for dim in diff_dims]
+    sdlayer_ref = multiplier << rectangle(layer=pdk.get_glayer(sdlayer), size=to_float(sd_ovhg_dims), centered=True)
+    multiplier.add_ports(sdlayer_ref.get_ports_list(),prefix="plusdoped_")
+    # route all drains/ gates/ sources
+    if routing:
+        if fingers == 1:
+            raise NotImplementedError("fingers=1 not supported for routing")
+        # create sdvia (need dims)
+        sdvia = via_stack(pdk, "met1", sd_route_topmet)
+        # TODO: fix poly overhang / met1 separation
+        extracted_gates = multiplier.extract([pdk.get_glayer("poly")])
+        gate_route_width = rmult * (
+            Decimal(str(pdk.get_grule("mcon")["width"]))
+            + 2 * Decimal(str(pdk.get_grule("poly", "mcon")["min_enclosure"]))
+        )
+        gate_route_length = evaluate_bbox(extracted_gates,True)[0]
+        routedims = [gate_route_length, gate_route_width]
+        gate_route = Component("gate route")
+        gate_route << rectangle(size=to_float(routedims), layer=pdk.get_glayer("poly"), centered=True)
+        routedims[1] = evaluate_bbox(via_stack(pdk, "poly", gate_route_topmet),True)[1]
+        gate_route << via_array(pdk, "poly", gate_route_topmet, size=to_float(routedims))
+        routedims[1] = rmult * routedims[1]
+        gr_ref_ = gate_route << rectangle(layer=pdk.get_glayer(gate_route_topmet),size=to_float(routedims),centered=True)
+        gate_route.add_ports(gr_ref_.get_ports_list())
+        gate_route_ref = multiplier << gate_route
+        gate_route_ref.movey(float(0-(poly_height + gate_route_width + routing_pfac)/2))
+        multiplier.add_ports(gate_route_ref.get_ports_list(), prefix="gate_")
+        # source and drain routing
+        sdtop_coords = [ Decimal(str(fingerarray_ref.xmin)) + sd_viaxdim / 2,
+            Decimal(str(fingerarray_ref.parent.extract([pdk.get_glayer("met1")]).ymax))]
+        sd_offsets = list()
+        for finger in range(fingers + 1):
+            # extend the source drain connection to acamodate via
+            met1_core_size = Decimal(str(sdvia.extract([pdk.get_glayer("met1")]).ymax))
+            extendm_length = Decimal(str(sdvia.ymax)) + met1_core_size
+            if finger % 2:
+                top_met_seperation = Decimal(str(pdk.get_grule(sd_route_topmet)["min_separation"])) + Decimal(str(0.1))
+                extendm_length += rmult*evaluate_bbox(sdvia,True)[1] + top_met_seperation
+                extendm = multiplier << rectangle(
+                    size=to_float((sd_viaxdim, extendm_length)),
+                    layer=pdk.get_glayer("met1"),
+                )
+            else:
+                extendm = multiplier << rectangle(size=to_float((sd_viaxdim, extendm_length)), layer=pdk.get_glayer("met1"))
+            extendm.move(destination=to_float(sdtop_coords)).movex(to_float(0-sd_viaxdim/2))
+            # create the via between s/d connection and s/d route
+            sdvia_ref = multiplier << sdvia
+            sdvia_ref.move(destination=to_float(sdtop_coords))
+            sdvia_ref.movey(to_float(extendm_length - met1_core_size))
+            sdtop_coords[0] += finger_dim
+            extendm_length += sdtop_coords[1] - met1_core_size
+            sd_offsets += [extendm_length] if len(sd_offsets) < 2 else []
+        mett_ext = multiplier.extract([pdk.get_glayer(sd_route_topmet)])
+        mettroute_dims = (evaluate_bbox(mett_ext,True)[0], rmult * 2 * Decimal(str(sdvia.ymax)))
+        sd_mett_connect = rectangle(
+            layer=pdk.get_glayer(sd_route_topmet), size=to_float(mettroute_dims), centered=True
+        )
+        prefix = ["source_", "drain_"]
+        for i, mof in enumerate(sd_offsets):
+            m2ref = (multiplier << sd_mett_connect).movey(to_float(mof))
+            multiplier.add_ports(m2ref.get_ports_list(), prefix=prefix[i])
+    # create dummy regions
+    if isinstance(dummy, bool):
+        dummyl = dummyr = dummy
+    else:
+        dummyl, dummyr = dummy
+    if dummyl or dummyr:
+        dummy = Component("temp dummy region")
+        size = (length, width)
+        dummy << rectangle(
+            layer=pdk.get_glayer("active_diff"), size=to_float(size), centered=True
+        )
+        dummy_space = pdk.get_grule(sdlayer, "active_diff")["min_enclosure"]
+        dummy.add_padding(layers=(pdk.get_glayer(sdlayer),), default=dummy_space)
+        dummy_space = dummy_space + pdk.get_grule(sdlayer)["min_separation"] + float(size[0] / 2)
+        sides = list()
+        if dummyl:
+            sides.append(-1)
+        if dummyr:
+            sides.append(1)
+        for side in sides:
+            dummy_ref = multiplier << dummy
+            dummy_ref.movex(side * (dummy_space + multiplier.xmax))
+    # ensure correct port names and return
+    multiplier = rename_ports_by_list(multiplier, [("source","source_"),("drain","drain_"),("gate","gate_"),("plusdoped","plusdoped_")])
+    return component_snap_to_grid(rename_ports_by_orientation(multiplier))
+
 
 
 @cell
@@ -187,6 +366,8 @@ def multiplier(
     return component_snap_to_grid(rename_ports_by_orientation(multiplier))
 
 
+
+
 @validate_arguments
 def __mult_array_macro(
     pdk: MappedPDK,
@@ -290,8 +471,6 @@ def nmos(
     fingers = introduces additional fingers (sharing source/drain) of width=width
     with_tie = true or false, specfies if a bulk tie is required
     """
-    if width < pdk.get_grule("active_diff")["min_width"]:
-        raise ValueError("transistor min width violated")
     # TODO: glayer checks
     pdk.activate()
     nfet = Component()
@@ -376,8 +555,6 @@ def pmos(
     fingers = introduces additional fingers (sharing source/drain) of width=width
     with_tie = true or false, specfies if a bulk tie is required
     """
-    if width < pdk.get_grule("active_diff")["min_width"]:
-        raise ValueError("transistor min width violated")
     # TODO: glayer checks
     pdk.activate()
     pfet = Component()
@@ -435,7 +612,7 @@ def pmos(
 
 
 if __name__ == "__main__":
-    from pdk.util.standard_main import pdk
+    from .pdk.util.standard_main import pdk
 
     showmult = False
     if showmult:
@@ -444,7 +621,7 @@ if __name__ == "__main__":
         bcomp.show()
     else:
         #mycomp = pmos(pdk, fingers=8, length=1, multipliers=3, width=6, with_dummy=True)
-        mycomp = pmos(pdk, fingers=8, length=1, multipliers=3, width=6, with_dummy=True,rmult=2)
+        mycomp = pmos(pdk, fingers=8, length=0, multipliers=3, width=6, with_dummy=True,rmult=2)
         #print(*mycomp.get_polygons(),sep="\n")
         #large = pmos(pdk, fingers=20, length=1, multipliers=5, width=6, with_dummy=True)
         #large.show()

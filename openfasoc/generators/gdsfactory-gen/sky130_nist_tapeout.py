@@ -16,10 +16,19 @@ from gdsfactory.cell import cell, clear_cache
 import numpy as np
 from subprocess import Popen
 from pathlib import Path
-from typing import Union
+from typing import Union, Optional
 from tempfile import TemporaryDirectory
 from shutil import copyfile, copytree
 from multiprocessing import Pool
+import matplotlib.pyplot as plt
+from scipy.stats import norm
+from scipy.optimize import curve_fit
+from scipy.spatial.distance import pdist, squareform
+import pandas as pd
+import seaborn as sns
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans, AgglomerativeClustering
+from sklearn.metrics import silhouette_score
 
 
 def sky130_opamp_add_pads(opamp_in: Component) -> Component:
@@ -133,8 +142,9 @@ def opamp_parameters_serializer(
 	diffpair_bias: tuple[float, float, int] = (6, 2, 4),
 	houtput_bias: tuple[float, float, int, int] = (6, 2, 8, 3),
 	pamp_hparams: tuple[float, float, int, int] = (7, 1, 10, 3),
-	mim_cap_size=(12, 12),
-	mim_cap_rows=3
+	mim_cap_size: tuple[int,int]=(12, 12),
+	mim_cap_rows: int=3,
+	rmult: int=2
 ) -> np.array:
 	"""converts opamp params into the uniform numpy float format"""
 	return np.array(
@@ -143,14 +153,19 @@ def opamp_parameters_serializer(
 		houtput_bias[0],houtput_bias[1],houtput_bias[2],houtput_bias[3],
 		pamp_hparams[0],pamp_hparams[1],pamp_hparams[2],pamp_hparams[3],
 		mim_cap_size[0],mim_cap_size[1],
-		mim_cap_rows],
+		mim_cap_rows,
+		rmult],
 		dtype=np.float64
 	)
 
-def opamp_parameters_de_serializer(serialized_params: np.array) -> dict:
+def opamp_parameters_de_serializer(serialized_params: Optional[np.array]=None) -> dict:
 	"""converts uniform numpy float format to opamp kwargs"""
-	if not len(serialized_params) == 17:
-		raise ValueError("serialized_params should be a length 15 array")
+	if serialized_params is None:
+		serialized_params = 18*[-987.654321]
+		serialized_params[16] = int(-987.654321)
+		serialized_params[17] = int(-987.654321)
+	if not len(serialized_params) == 18:
+		raise ValueError("serialized_params should be a length 18 array")
 	params_dict = dict()
 	params_dict["diffpair_params"] = tuple(serialized_params[0:3])
 	params_dict["diffpair_bias"] = tuple(serialized_params[3:6])
@@ -158,7 +173,32 @@ def opamp_parameters_de_serializer(serialized_params: np.array) -> dict:
 	params_dict["pamp_hparams"] = tuple(serialized_params[10:14])
 	params_dict["mim_cap_size"] = tuple(serialized_params[14:16])
 	params_dict["mim_cap_rows"] = int(serialized_params[16])
+	params_dict["rmult"] = int(serialized_params[17])
 	return params_dict
+
+def opamp_results_serializer(
+	ugb: float = -987.654321,
+	dcGain: float = -987.654321,
+	phaseMargin: float = -987.654321,
+	biasVoltage1: float = -987.654321,
+	biasVoltage2: float = -987.654321,
+	area: float = -987.654321
+) -> np.array:
+	return np.array([ugb, dcGain, phaseMargin, biasVoltage1, biasVoltage2, area], dtype=np.float64)
+
+def opamp_results_de_serializer(
+	results: np.array
+) -> dict:
+	if not len(serialized_params) == 6:
+		raise ValueError("results should be a length 5 array")
+	results_dict = dict()
+	results_dict["ugb"] = float(serialized_params[0])
+	results_dict["dcGain"] = float(serialized_params[1])
+	results_dict["phaseMargin"] = float(serialized_params[2])
+	results_dict["biasVoltage1"] = float(serialized_params[3])
+	results_dict["biasVoltage2"] = float(serialized_params[4])
+	results_dict["area"] = float(serialized_params[5])
+	return results_dict
 
 
 def get_small_parameter_list(test_mode = False) -> np.array:
@@ -193,46 +233,54 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 					pamp_hparams.append((width,length,fingers,3))
 	# rows of the cap array to try
 	cap_arrays = [2,3]
+	# routing mults to try
+	rmults = [1,2]
 	# ******************************************
 	# create and return the small parameters list
-	short_list_len = len(diffpairs) * len(bias2s) * len(pamp_hparams) * len(cap_arrays)
+	short_list_len = len(diffpairs) * len(bias2s) * len(pamp_hparams) * len(cap_arrays) * len(rmults)
 	short_list = np.empty(shape=(short_list_len,len(opamp_parameters_serializer())),dtype=np.float64)
 	index = 0
 	for diffpair_v in diffpairs:
 		for bias2_v in bias2s:
 			for pamp_o_v in pamp_hparams:
 				for cap_array_v in cap_arrays:
-					tup_to_add = opamp_parameters_serializer(
-						diffpair_params=diffpair_v, 
-						houtput_bias=bias2_v, 
-						mim_cap_rows=cap_array_v, 
-						pamp_hparams=pamp_o_v
-					)
-					short_list[index] = tup_to_add
-					index = index + 1
+					for rmult in rmults:
+						tup_to_add = opamp_parameters_serializer(
+							diffpair_params=diffpair_v, 
+							houtput_bias=bias2_v, 
+							mim_cap_rows=cap_array_v, 
+							pamp_hparams=pamp_o_v,
+							rmult=rmult,
+						)
+						short_list[index] = tup_to_add
+						index = index + 1
 	return short_list
 
 
-def get_big_parameter_list() -> np.array:
-	"""creates a large parameters list intended for the neural network"""
-	raise NotImplementedError("TODO")
-	return
 
-
-
-
-def get_result(filepath: Union[str,Path]):
+def get_sim_results(filepath: Union[str,Path]):
 	fileabspath = Path(filepath).resolve()
 	with open(fileabspath, "r") as ResultReport:
-		RawResult = ResultReport.readline()
-		Columns = RawResult.split(" ")
-	if len(columns)<11:
-		return {"UGB":-123.45,"biasVoltage1":-123.45,"biasVoltage2":-123.45}
-	return {
-		"UGB": Columns[3],
-		"biasVoltage1": Columns[7],
-		"biasVoltage2": Columns[11]
+		RawResult = ResultReport.readlines()[0]
+		Columns = [item for item in RawResult.split() if item]
+	na = -987.654321
+	if len(Columns)<9 or Columns is None:
+		return {"ugb":na,"biasVoltage1":na,"biasVoltage2":na,"phaseMargin":na,"dcGain":na}
+	return_dict = {
+		"ugb": Columns[1],
+		"biasVoltage1": Columns[3],
+		"biasVoltage2": Columns[5],
+		"phaseMargin": Columns[7],
+		"dcGain": Columns[9]
 	}
+	for key, val in return_dict.items():
+		val_flt = na
+		try:
+			val_flt = float(val)
+		except ValueError:
+			val_flt = na
+		return_dict[key] = val_flt
+	return return_dict
 
 def standardize_netlist_subckt_def(netlist: Union[str,Path]):
 	netlist = Path(netlist).resolve()
@@ -250,16 +298,21 @@ def standardize_netlist_subckt_def(netlist: Union[str,Path]):
 	with open(netlist, "w") as spice_net:
 		spice_net.writelines(subckt_lines)
 
-def __run_single_brtfrc(parameters_ele):
+def __run_single_brtfrc(index, parameters_ele):
 	# generate layout
 	global pdk
+	global save_gds_dir
+	destination_gds_copy = save_gds_dir / (str(index)+".gds")
 	sky130pdk = pdk
 	params = opamp_parameters_de_serializer(parameters_ele)
 	opamp_v = sky130_add_opamp_labels(opamp(sky130pdk, **params))
 	opamp_v.name = "opamp"
+	area = float(opamp_v.area())
 	# use temp dir
 	with TemporaryDirectory() as tmpdirname:
 		tmp_gds_path = Path(opamp_v.write_gds(gdsdir=tmpdirname)).resolve()
+		if tmp_gds_path.is_file():
+			destination_gds_copy.write_bytes(tmp_gds_path.read_bytes())
 		copyfile("extract.bash",str(tmpdirname)+"/extract.bash")
 		copyfile("opamp_perf_eval.sp",str(tmpdirname)+"/opamp_perf_eval.sp")
 		copytree("sky130A",str(tmpdirname)+"/sky130A")
@@ -268,7 +321,10 @@ def __run_single_brtfrc(parameters_ele):
 		standardize_netlist_subckt_def(str(tmpdirname)+"/opamp_pex.spice")
 		# run sim and store result
 		Popen(["ngspice","-b","opamp_perf_eval.sp"],cwd=tmpdirname).wait()
-		return get_result(str(tmpdirname)+"/output.txt")["UGB"]
+		result_dict = get_sim_results(str(tmpdirname)+"/output.txt")
+		result_dict["area"] = area
+		results = opamp_results_serializer(**result_dict)
+		return results
 
 def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.array) -> np.array:
 	"""runs the brute force testing of parameters by
@@ -286,8 +342,11 @@ def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.
 	# initialize empty results array
 	results = None
 	# run layout, extraction, sim
+	global save_gds_dir
+	save_gds_dir = Path('./save_gds_by_index').resolve()
+	save_gds_dir.mkdir(parents=True)
 	with Pool(120) as cores:
-		results = np.array(cores.map(__run_single_brtfrc, parameter_list),np.float64)
+		results = np.array(cores.starmap(__run_single_brtfrc, enumerate(parameter_list)),np.float64)
 	# undo pdk modification
 	sky130pdk.default_decorator = add_npc_decorator
 	return results
@@ -300,13 +359,13 @@ def get_training_data(test_mode=True,):
 	np.save("training_results.npy",results)
 
 
-#parser.add_argument("--test_mode", "-t", action="store_true", help="runs a short 2 ele test")
-#args = parser.parse_args()
-#get_training_data(test_mode=args.test_mode)
+parser.add_argument("--test_mode", "-t", action="store_true", help="runs a short 2 ele test")
+args = parser.parse_args()
+get_training_data(test_mode=args.test_mode)
 
-opamp_out = sky130_opamp_add_pads(opamp(pdk))
+#opamp_out = sky130_opamp_add_pads(opamp(pdk))
 #sky130_add_opamp_labels(opamp_in).show()
-opamp_out.show()
+#opamp_out.show()
 
 
 #parameters = np.array()
@@ -316,3 +375,244 @@ opamp_out.show()
 
 
 # generate opamps
+
+
+def save_distwith_best_fit(data, output_file, title="Distribution With Trend", xlabel="Data", ylabel="Distribution"):
+	"""Create a histogram with a line of best fit for the input data and save it as a PNG file.
+	args:
+		data (numpy.array): 1D array containing the simulation metrics.
+		output_file (str): File path to save the generated PNG.
+		bins (int or str): Number of bins for the histogram or 'auto' for automatic binning (default is 'auto').
+		fit_distribution (str): Distribution to fit to the data. Supported options: 'norm' (normal distribution) or 'exponential'.
+	"""
+	# Create the histogram
+	plt.figure()
+	n, bins, patches = plt.hist(data, bins="auto", density=True, alpha=0.7)
+	# Fit a normal distribution to the data
+	mu, sigma = norm.fit(data)
+	best_fit_line = norm.pdf(bins, mu, sigma)
+	distribution_label = 'Normal Distribution'
+	# Add the line of best fit to the plot
+	plt.plot(bins, best_fit_line, 'r-', label=distribution_label)
+	# Add labels and legend
+	plt.xlabel(xlabel)
+	plt.ylabel(ylabel)
+	plt.title(title)
+	plt.legend()
+	# Save the plot as a PNG file
+	plt.savefig(output_file)
+	plt.clf()
+
+def save_pairwise_scatter_plot(data, output_file):
+	"""Create a Pairwise Scatter Plot for the input data and save it as a PNG file.
+	args:
+		data (numpy.array or pandas.DataFrame):
+		output_file (str/path): File path to save the generated PNG.
+	"""
+	# If the data is a NumPy array, convert it to a pandas DataFrame
+	if isinstance(data, np.ndarray):
+		data = pd.DataFrame(data)
+	# Create the Pairwise Scatter Plot
+	sns.pairplot(data)
+	# Save the plot as a PNG file
+	plt.savefig(output_file)
+	plt.close()
+	plt.clf()
+
+def run_pca_and_save_plot(data, output_file):
+	"""Run PCA on the input data and save the PCA plot as a PNG file.
+	args:
+		data (numpy.array or pandas.DataFrame): The 17-dimensional input data for PCA.
+		output_file (str): File path to save the generated PNG.
+	"""
+	# If the data is a pandas DataFrame, convert it to a NumPy array
+	if isinstance(data, pd.DataFrame):
+		data = data.to_numpy()
+	# Perform PCA
+	pca = PCA(n_components=2)  # Reduce to 2 dimensions for visualization
+	pca_result = pca.fit_transform(data)
+	# Create the biplot
+	plt.figure(figsize=(10, 8))
+	plt.scatter(pca_result[:, 0], pca_result[:, 1], alpha=0.7)
+	# Plot feature loadings as arrows
+	feature_vectors = pca.components_.T
+	for i, (x, y) in enumerate(feature_vectors):
+		plt.arrow(0, 0, x, y, color='r', alpha=0.5)
+		plt.text(x, y, f'Feature {i+1}', color='g', ha='center', va='center')
+	# Add labels and title
+	plt.xlabel('Principal Component 1')
+	plt.ylabel('Principal Component 2')
+	plt.title('PCA Biplot')
+	# Save the plot as a PNG file
+	plt.savefig(output_file)
+	plt.close()
+	plt.clf()
+
+def find_optimal_clusters(data, max_clusters=10):
+    if isinstance(data, pd.DataFrame):
+        data = data.to_numpy()
+
+    results = []
+    for num_clusters in range(1, max_clusters + 1):
+        kmeans = KMeans(n_clusters=num_clusters)
+        kmeans.fit(data)
+        inertia = kmeans.inertia_
+        results.append((num_clusters, inertia))
+
+    return results
+
+def elbow_point(x, y):
+    deltas = np.diff(y)
+    elbow_index = np.argmax(deltas < np.mean(deltas))
+    return x[elbow_index]
+
+def create_pca_biplot_with_clusters(data, results, output_file, max_clusters=10):
+    if isinstance(data, pd.DataFrame):
+        data = data.to_numpy()
+    if isinstance(results, pd.Series):
+        results = results.to_numpy()
+    pca = PCA(n_components=2)
+    pca_result = pca.fit_transform(data)
+    cluster_results = find_optimal_clusters(data, max_clusters)
+    num_clusters_values, inertias = zip(*cluster_results)
+    optimal_num_clusters = elbow_point(num_clusters_values, inertias)
+    kmeans = KMeans(n_clusters=int(optimal_num_clusters))
+    cluster_assignments = kmeans.fit_predict(data)
+    plt.figure(figsize=(10, 8))
+    for i in range(int(optimal_num_clusters)):
+        cluster_indices = np.where(cluster_assignments == i)[0]
+        plt.scatter(pca_result[cluster_indices, 0], pca_result[cluster_indices, 1], alpha=0.7, label=f'Cluster {i+1}')
+    # Color the data points based on their result values
+    plt.scatter(pca_result[:, 0], pca_result[:, 1], c=results, cmap='viridis', edgecolor='k', s=80)
+    feature_vectors = pca.components_.T
+    for i, (x, y) in enumerate(feature_vectors):
+        plt.arrow(0, 0, x, y, color='r', alpha=0.5)
+        plt.text(x, y, f'Feature {i+1}', color='g', ha='center', va='center')
+    plt.xlabel('Principal Component 1')
+    plt.ylabel('Principal Component 2')
+    plt.title('PCA Biplot with Clusters')
+    plt.legend()
+    plt.colorbar(label='Results')
+    plt.savefig(output_file)
+    plt.close()
+    plt.clf()
+
+def create_heatmap_with_clusters(parameters, results, output_file, max_clusters=10):
+    if isinstance(parameters, pd.DataFrame):
+        parameters = parameters.to_numpy()
+    if isinstance(results, pd.Series):
+        results = results.to_numpy()
+    # Perform PCA
+    pca = PCA(n_components=2)
+    pca_result = pca.fit_transform(parameters)
+    # Cluster the parameters based on the results using hierarchical clustering
+    results_dist = pdist(results.reshape(-1, 1))  # Pairwise distance between result values
+    results_linkage = squareform(results_dist)  # Convert to a condensed distance matrix
+    clustering = AgglomerativeClustering(n_clusters=max_clusters, affinity='precomputed', linkage='complete')
+    cluster_assignments = clustering.fit_predict(results_linkage)
+    # Create a dictionary to map clusters to their corresponding parameters
+    cluster_param_dict = {}
+    for cluster_id, param_values in zip(cluster_assignments, parameters):
+        if cluster_id not in cluster_param_dict:
+            cluster_param_dict[cluster_id] = []
+        cluster_param_dict[cluster_id].append(param_values)
+    # Calculate the mean parameter values for each cluster
+    cluster_means = [np.mean(cluster_param_dict[cluster_id], axis=0) for cluster_id in range(max_clusters)]
+    # Create the heatmap
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(cluster_means, cmap='YlGnBu', annot=True, fmt='.2f', xticklabels=False,
+                yticklabels=False, cbar_kws={'label': 'Mean Parameter Value'})
+    plt.xlabel('17-Dimensional Parameters')
+    plt.ylabel('Clusters')
+    plt.title('Heatmap with Clusters')
+    plt.savefig(output_file)
+    plt.close()
+    plt.clf()
+
+def find_indices_with_same_other_params(data, parameter_index, other_params_values):
+    mask = np.ones(len(data), dtype=bool)
+    num_params = data.shape[1]
+    for param_idx in range(num_params):
+        if param_idx == parameter_index:
+            continue
+        mask = mask & (data[:, param_idx] == other_params_values[param_idx])
+    return np.where(mask)[0]
+
+def isolate_single_param_scatter(data: np.array, results: np.array, col_to_isolate: int, output_file: str):
+	example_others = data[0, :]
+	indices = find_indices_with_same_other_params(data, col_to_isolate, example_others)
+	x = data[indices, col_to_isolate]
+	y = results[indices]
+	plt.scatter(x, y, marker='o', s=50, label="Data Points")
+	# Fit a quadratic regression model to the data
+	coeffs = np.polyfit(x, y, deg=2)
+	# Generate points for the quadratic trend line
+	quadratic_function = lambda x, a, b, c: a * x**2 + b * x + c
+	trend_line_x = np.linspace(min(x), max(x), 1000)
+	trend_line_y = quadratic_function(trend_line_x, *coeffs)
+	# Plot the quadratic trend line
+	plt.plot(trend_line_x, trend_line_y, color='red', label="Quadratic Trend Line")
+	# label and return
+	plt.xlabel("param vals")
+	plt.ylabel("isolated changes")
+	plt.title("Scatter Plot of 2D Array")
+	plt.legend()
+	plt.grid(True)
+	plt.savefig(output_file)
+	plt.clf()
+
+def extract_stats(
+	params: Union[np.array,str,Path],
+	results: Union[np.array,str,Path],
+) -> None:
+	# reading files, error checks
+	strtopath = lambda strin : Path(strin).resolve() if isinstance(strin,str) else strin
+	pathtoarr = lambda datain : np.load(datain.resolve()) if isinstance(datain,Path) else datain
+	params_dirty = pathtoarr(strtopath(params))
+	results_dirty = pathtoarr(strtopath(results))
+	clean_condition = results_dirty > 0
+	params = params_dirty[clean_condition]
+	results = results_dirty[clean_condition]
+	if len(params)!=len(results):
+		raise ValueError("expect both results and params to be same length")
+	# construct dictionary key=colnames: vals=1D np arrays
+	col_struct = opamp_parameters_de_serializer()
+	colnames_vals = dict()
+	for key, val in col_struct.items():
+		if type(val)==tuple:
+			if len(val)==3:
+				colnames = ["width","length","fingers"]
+			elif len(val)==4:
+				colnames = ["width","length","fingers","multipliers"]
+			elif len(val)==2:
+				colnames = ["width","length"]
+			for colname in colnames:
+				colnames_vals[key+"_"+colname] = "place_holder"
+		elif type(val)==int:
+			colnames_vals[key] = "place_holder"
+	for i, colname in enumerate(colnames_vals):
+		colnames_vals[colname] = params[:, i]
+	# run statistics on distribution of training parameters individually
+	params_stats_hists = Path("./stats/param_stats/hists1D")
+	params_stats_hists.mkdir(parents=True)
+	for colname, val in colnames_vals.items():
+		save_distwith_best_fit(val,str(params_stats_hists)+"/"+colname+".png",'Parameter Distribution',colname,'Normalized trials')
+	param_stats_isolate = Path("./stats/param_stats/isolate")
+	param_stats_isolate.mkdir(parents=True)
+	for i, colname in enumerate(colnames_vals):
+		isolate_single_param_scatter(params,results,i,str(param_stats_isolate)+"/"+colname+".png")
+	# run stats on distribution of training parameters using pair scatter plots
+	params_stats_scatter = Path("./stats/param_stats/scatter")
+	params_stats_scatter.mkdir(parents=True)
+	save_pairwise_scatter_plot(params,str(params_stats_scatter)+"/pairscatter_params.png")
+	# run PCA on training parameters
+	run_pca_and_save_plot(params,str(params_stats_scatter)+"/PCA_params.png")
+	# run statistics on results
+	result_stats_dir = Path("./stats/result_stats")
+	result_stats_dir.mkdir(parents=True)
+	save_distwith_best_fit(results,str(result_stats_dir)+"/result_UGB_dist.png","UGB Distribution","UGB")
+	# run stats on results and data combined
+	comb_stats_dir = Path("./stats/combined")
+	comb_stats_dir.mkdir(parents=True)
+	create_pca_biplot_with_clusters(params,results,str(comb_stats_dir)+"/heatmapresults_params.png")
+	create_heatmap_with_clusters(params,results,str(comb_stats_dir)+"/heatmap_results_clustered.png")

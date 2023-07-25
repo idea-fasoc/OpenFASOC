@@ -40,7 +40,7 @@ def __get_layer_dim(pdk: MappedPDK, glayer: str, mode: Literal["both","above","b
 	"""Returns the required dimension of a routable layer in a via stack
 	glayer is the routable glayer
 	mode is one of [both,below,above]
-	This specfies the vias to consider.
+	This specfies the vias to consider. (layer dims may be made smaller if its possible to ignore top/bottom vias)
 	****enclosure rules of the via above and below are considered by default, via1<->met2<->via2
 	****using below specfier only considers the enclosure rules for the via below, via1<->met2
 	****using above specfier only considers the enclosure rules for the via above, met2<->via2
@@ -76,22 +76,23 @@ def via_stack(
     same_layer_behavior: Literal["lay_nothing","min_square"] = "lay_nothing"
 ) -> Component:
     """produces a single via stack between two layers that are routable (metal, poly, or active)
+    The via_stack produced is always a square (hieght=width)
     
     args:
     pdk: MappedPDK is the pdk to use
     glayer1: str is the glayer to start on
     glayer2: str is the glayer to end on
     ****NOTE it does not matter what order you pass layers
-    fullbottom: if True will lay the bottom layer all over the area of the viastack else makes minimum legal size
+    fullbottom: if True will lay the bottom layer all over the area of the viastack else makes minimum legal size (ignores min area)
     assume_bottom_via: legalize viastack assuming the via underneath bottom met is present, e.g. if bottom met is met3, assume via2 is present
-    fulltop: if True will lay the top layer all over the area of the viastack else makes minimum legal size
+    fulltop: if True will lay the top layer all over the area of the viastack else makes minimum legal size (ignores min area)
     ****NOTE: generator can figure out which layer is top and which is bottom (i.e. met5 is higher than met1)
     same_layer_behavior: sometimes (especially when used in other generators) it is unknown what two layers are specfied
     this option provides the generator with guidance on how to handle a case where same layer is given
     by default, (lay_nothing option) nothing is laid and an empty component is returned
     if min_square is specfied, a square of min_width * min_width is laid
     
-    PORTS, some ports are not layed when it does not make sense (e.g. empty component):
+    ports, some ports are not layed when it does not make sense (e.g. empty component):
     top_met_...all edges
     bottom_via_...all edges
     bottom_met_...all edges
@@ -156,8 +157,9 @@ def via_array(
     pdk: MappedPDK,
     glayer1: str,
     glayer2: str,
-    size: tuple[float,float] = (4.0, 1.0),
+    size: Optional[tuple[float,float]] = None,
     minus1: bool = False,
+    num_vias: Optional[tuple[int,int]] = (1,1),
     lay_bottom: bool = False
 ) -> Component:
     """Fill a region with vias. Will automatically decide num rows and columns
@@ -172,20 +174,22 @@ def via_array(
     ****NOTE: the size will be the dimensions of the top metal
     minus1: if true removes 1 via from rows/cols num vias 
     ****use if you want extra space at the edges of the array
-    ports (one port for each edge):
+    num_vias: number of rows/cols in the via array. Overrides size option
+    
+    ports, some ports are not layed when it does not make sense (e.g. empty component):
     top_met_...all edges
     bottom_met_...all edges (only if lay_bottom is specified)
     """
     size = pdk.snap_to_2xgrid(size)
     tmpsize = list(size)
     for i in range(2):
-        if isinstance(size[i],Union[float,int]):
+        if isinstance(size[i], Union[float,int]):
             tmpsize[i] = Decimal(str(size[i]))
     size = tmpsize
     # setup
-    layer_ordering = __error_check_order_layers(pdk, glayer1, glayer2)
-    level1, level2 = layer_ordering[0]
-    glayer1, glayer2 = layer_ordering[1]
+    ordered_layer_info = __error_check_order_layers(pdk, glayer1, glayer2)
+    level1, level2 = ordered_layer_info[0]
+    glayer1, glayer2 = ordered_layer_info[1]
     viaarray = Component()
     # if same level return empty component
     if level1 == level2:
@@ -217,17 +221,14 @@ def via_array(
     num_vias = [(floor(dim / (viadim + via_spacing)) or 1) for dim in encsize]
     if minus1:
         num_vias = [(dim - 1 if dim > 1 else dim) for dim in num_vias]
-    # create array and add to component
-    temparray = Component("via array")
-    temparray << prec_array(
+    # create array
+    viaarray = prec_array(
         viastack,
         columns=num_vias[0],
         rows=num_vias[1],
         spacing=[viaspacing_full, viaspacing_full],
         absolute_spacing=True
     )
-    # center the array
-    array_ref = viaarray.add(temparray.ref_center())
     # place bottom metal, top metal, add ports, and return
     if lay_bottom:
         if level1:

@@ -1,11 +1,11 @@
 from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.port import Port
-from pdk.mappedpdk import MappedPDK
+from .pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
-from via_gen import via_stack, via_array
+from .via_gen import via_stack, via_array
 from gdsfactory.components.rectangle import rectangle
-from pdk.util.custom_comp_utils import evaluate_bbox, align_comp_to_port, rename_ports_by_orientation, rename_ports_by_list, print_ports, assert_is_manhattan, assert_ports_perpindicular, to_decimal, to_float, prec_ref_center
+from .pdk.util.custom_comp_utils import evaluate_bbox, align_comp_to_port, rename_ports_by_orientation, rename_ports_by_list, print_ports, assert_is_manhattan, assert_ports_perpindicular, to_decimal, to_float, prec_ref_center
 from decimal import Decimal
 
 
@@ -106,7 +106,7 @@ def L_route(
 
 
 if __name__ == "__main__":
-	from pdk.util.standard_main import pdk
+	from .pdk.util.standard_main import pdk
 	
 	routebetweentop = rectangle(layer=pdk.get_glayer("met1"),size=(1,1)).ref()
 	routebetweentop.movey(-4).movex(7)

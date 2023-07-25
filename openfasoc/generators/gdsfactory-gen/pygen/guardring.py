@@ -1,14 +1,13 @@
-from pdk.mappedpdk import MappedPDK
+from .pdk.mappedpdk import MappedPDK
 from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
 from gdsfactory.components.rectangular_ring import rectangular_ring
-from via_gen import via_array, via_stack
+from .via_gen import via_array, via_stack
 from typing import Optional
-from pdk.util.custom_comp_utils import print_ports, to_decimal, to_float, evaluate_bbox
-from pdk.util.snap_to_grid import component_snap_to_grid
-from L_route import L_route
-from pdk.util.snap_to_grid import snap_to_2xgrid
+from .pdk.util.custom_comp_utils import print_ports, to_decimal, to_float, evaluate_bbox
+from .pdk.util.snap_to_grid import component_snap_to_grid
+from .L_route import L_route
 
 
 @cell
@@ -34,7 +33,7 @@ def tapring(
     Warr_... all ports in left via array
     bl_corner_...all ports in bottom left L route
     """
-    enclosed_rectangle = snap_to_2xgrid(enclosed_rectangle,return_type="float")
+    enclosed_rectangle = pdk.snap_to_2xgrid(enclosed_rectangle,return_type="float")
     # check layers, activate pdk, create top cell
     pdk.has_required_glayers(
         [sdlayer, "active_tap", "mcon", horizontal_glayer, vertical_glayer]
@@ -112,7 +111,7 @@ def tapring(
 
 
 if __name__ == "__main__":
-    from pdk.util.standard_main import pdk
+    from .pdk.util.standard_main import pdk
 
     mycomp = Component("displacment test")
     tapref = mycomp << tapring(pdk, sdlayer="p+s/d", enclosed_rectangle=(75.9, 31.0))
