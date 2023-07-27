@@ -1,5 +1,5 @@
 from os import path, makedirs
-from verilog_generation import _generate_file
+from common.verilog_generation import _generate_file
 import subprocess
 
 def run_simulations(
@@ -8,7 +8,8 @@ def run_simulations(
 	template_path: str = path.join("templates", "template.sp"),
 	run_dir: str = "runs",
 	sim_tool: str = "ngspice",
-	num_concurrent_sims: int = 4
+	num_concurrent_sims: int = 4,
+	netlist_path: str = "netlist.sp"
 ) -> None:
 	runs_dir_path = path.join(simulation_dir, run_dir)
 	template = path.join(simulation_dir, template_path)
@@ -26,11 +27,11 @@ def run_simulations(
 
 	num_params = len(parameters_iterator.keys())
 	config_number = 0
-	configs_generated = False
+	configs_generated = num_params == 0
 	while not configs_generated:
 		config_number += 1
 		_generate_configs(
-			run_parameters=_generate_config(parameters_iterator, config_number, sim_tool, template),
+			run_parameters=_generate_config(parameters_iterator, config_number, sim_tool, template, netlist_path),
 			config_number=config_number,
 			runs_dir_path=runs_dir_path,
 			template=template
@@ -82,12 +83,15 @@ def _generate_config(
 	parameters_iterator: dict,
 	config_number: int,
 	sim_tool: str,
-	template: str
+	template: str,
+	netlist_path: str
 ) -> dict:
 	run_parameters = {
 		'run_number': config_number,
 		'sim_tool': sim_tool,
-		'template': template
+		'template': template,
+		'netlist_path': path.abspath(netlist_path),
+		'root_dir': path.abspath('.')
 	}
 
 	for parameter in parameters_iterator.items():
