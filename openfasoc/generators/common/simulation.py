@@ -19,6 +19,85 @@ def run_simulations(
 	if not path.exists(runs_dir_path):
 		makedirs(runs_dir_path)
 
+	config_number = _generate_configs(
+		parameters=parameters,
+		sim_tool=sim_tool,
+		platform=platform,
+		template=template,
+		netlist_path=netlist_path,
+		runs_dir_path=runs_dir_path
+	)
+
+	print(f"Number of configurations: {config_number}")
+	print(f"Number of concurrent simulations: {num_concurrent_sims}")
+
+	_run_simulations(
+		config_number=config_number,
+		num_concurrent_sims=num_concurrent_sims,
+		sim_tool=sim_tool,
+		runs_dir_path=runs_dir_path
+	)
+
+def _run_simulations(
+	config_number: int,
+	num_concurrent_sims: int,
+	sim_tool: str,
+	runs_dir_path: str
+):
+	simulation_state = {
+		'ongoing_sims': 0,
+		'completed_sims': 0
+	}
+
+	def thread_on_exit(state=simulation_state):
+		state['ongoing_sims'] -= 1
+		state['completed_sims'] += 1
+
+	start_time = int(time.time())
+	run_number = 1
+	while simulation_state['completed_sims'] < config_number:
+		if simulation_state['ongoing_sims'] < num_concurrent_sims and run_number <= config_number:
+			_run_config(
+				sim_tool=sim_tool,
+				run_dir=path.join(runs_dir_path, str(run_number)),
+				run_number=run_number,
+				on_exit=thread_on_exit
+			).start()
+
+			simulation_state['ongoing_sims'] += 1
+			run_number += 1
+
+		_print_progress(config_number, simulation_state['completed_sims'], start_time)
+		time.sleep(1)
+
+	_print_progress(config_number, simulation_state['completed_sims'], start_time, end='\n')
+
+def _print_progress(total_runs: int, run_number: int, start_time: int, end: str = '\r'):
+	print(f"Completed {run_number} out of {total_runs} simulations. Elapsed time: {_format_elapsed_time(start_time)}", end=end)
+
+def _format_elapsed_time(start_time: int):
+	elapsed_seconds = int(time.time()) - start_time
+
+	if elapsed_seconds > 60 * 60:
+		hours, minutes = divmod(elapsed_seconds, 60 * 60)
+		minutes, seconds = divmod(minutes, 60)
+		return f"{hours}h {minutes}m {seconds}s"
+
+	elif elapsed_seconds > 60:
+		minutes, seconds = divmod(elapsed_seconds, 60)
+		return f"{minutes}m {seconds}s"
+
+	else:
+		return f"{elapsed_seconds}s"
+
+def _generate_configs(
+	parameters: dict,
+	sim_tool: str,
+	platform: str,
+	template: str,
+	netlist_path: str,
+	runs_dir_path: str
+) -> int:
 	parameters_iterator = {}
 
 	for parameter in parameters.items():
@@ -52,37 +131,7 @@ def run_simulations(
 			if i == num_params - 1 and change_next_param:
 				configs_generated = True
 
-	print(f"Number of configurations: {config_number}")
-	print(f"Number of concurrent simulations: {num_concurrent_sims}")
-
-	# Currently running threads
-	num_threads = 0
-	completed_sims = 0
-	def thread_on_exit(): num_threads -= 1; completed_sims += 1
-
-	start_time = int(time.time())
-	_print_progress(config_number, completed_sims, start_time)
-
-	run_number = 1
-	while completed_sims < config_number:
-		run_dir = path.join(runs_dir_path, str(run_number))
-
-		if num_threads < num_concurrent_sims:
-			_run_config(
-				sim_tool=sim_tool,
-				run_dir=run_dir,
-				run_number=run_number,
-				on_exit=thread_on_exit
-			).start()
-			num_threads += 1
-			run_number += 1
-
-		_print_progress(config_number, completed_sims, start_time)
-		time.sleep(1)
-
-def _print_progress(total_runs: int, run_number: int, start_time: int):
-	print(f"Completed {run_number} out of {total_runs} simulations. Elapsed time: {int(time.time()) - start_time}s", end='\r')
-
+	return config_number
 
 def _generate_config(
 	parameters_iterator: dict,
