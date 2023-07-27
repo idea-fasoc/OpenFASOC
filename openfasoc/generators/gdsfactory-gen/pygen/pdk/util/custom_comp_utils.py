@@ -143,21 +143,29 @@ def evaluate_bbox(custom_comp: Union[Component, ComponentReference], return_deci
 
 
 @validate_arguments
-def move(custom_comp: Union[Port, ComponentReference, Component], offsetxy: Optional[tuple[float,float]] = 0, destination: Optional[tuple[Optional[float],Optional[float]]]=None) -> Union[Port, ComponentReference, Component]:
-	"""moves custom_comp by offset[0]=x offset, offset[1]=y offset
+def move(custom_comp: Union[Port, ComponentReference, Component], offsetxy: tuple[float,float] = (0,0), destination: Optional[tuple[Optional[float],Optional[float]]]=None, layer: Optional[tuple[int,int]]=None) -> Union[Port, ComponentReference, Component]:
+	"""moves custom_comp
+	moves by offset[0]=x offset, offset[1]=y offset
 	destination (x,y) if not none overrides offset option
+	layer if specfied will move based on a layer (only relevant for destination option)
 	returns the modified custom_comp
 	"""
-	#xcenter = custom_comp.xmin + evaluate_bbox(custom_comp)[0]/2 if isinstance(custom_comp, Component) else custom_comp.center[0]
-	#ycenter = custom_comp.ymin + evaluate_bbox(custom_comp)[1]/2 if isinstance(custom_comp, Component) else custom_comp.center[1]
+	if layer and isinstance(custom_comp, Component):
+		custom_comp_ext = custom_comp.extract(layers=[layer,])
+	elif layer and isinstance(custom_comp, ComponentReference):
+		raise NotImplementedError("layer not implemented for comp ref")
+	elif layer and isinstance(custom_comp,Port):
+		raise TypeError("move:layer option for Port does not exist")
+	else:
+		custom_comp_ext = custom_comp
 	if destination is not None:
-		xoffset = destination[0] - custom_comp.center[0] if destination[0] is not None else 0
-		yoffset = destination[1] - custom_comp.center[1] if destination[1] is not None else 0
+		xoffset = destination[0] - custom_comp_ext.center[0] if destination[0] is not None else 0
+		yoffset = destination[1] - custom_comp_ext.center[1] if destination[1] is not None else 0
 	if isinstance(custom_comp, Port):
 		if destination is None:
-			custom_comp.move(offsetxy)
+			custom_comp = custom_comp.move_copy(offsetxy)
 		else:
-			custom_comp.move((xoffset,yoffset))
+			custom_comp = custom_comp.move_copy((xoffset,yoffset))
 	elif isinstance(custom_comp, ComponentReference):
 		if destination is None:
 			custom_comp.movex(offsetxy[0]).movey(offsetxy[1])
@@ -165,30 +173,32 @@ def move(custom_comp: Union[Port, ComponentReference, Component], offsetxy: Opti
 			custom_comp.movex(xoffset).movey(yoffset)
 	elif isinstance(custom_comp, Component):
 		ref = custom_comp.copy().ref()
-		# this is a recursive call but with type=component reference
-		ref = move(ref, offsetxy, destination)
+		if destination is None:
+			ref.movex(offsetxy[0]).movey(offsetxy[1])
+		else:
+			ref.movex(xoffset).movey(yoffset)
 		custom_comp = transformed(ref).copy()
 	return custom_comp
 
 
 @validate_arguments
-def movex(custom_comp: Union[Port, ComponentReference, Component], offsetx: Optional[float] = 0, destination: Optional[float]=None) -> Union[Port, ComponentReference, Component]:
+def movex(custom_comp: Union[Port, ComponentReference, Component], offsetx: Optional[float] = 0, destination: Optional[float]=None, layer: Optional[tuple[int,int]]=None) -> Union[Port, ComponentReference, Component]:
 	"""moves custom_comp by offsetx in the x direction
 	returns the modified custom_comp
 	"""
 	if destination is not None:
 		destination = (destination, None)
-	return move(custom_comp, (offsetx,0),destination)
+	return move(custom_comp, (offsetx,0),destination,layer)
 
 
 @validate_arguments
-def movey(custom_comp: Union[Port, ComponentReference, Component], offsety: Optional[float] = 0, destination: Optional[float]=None) -> Union[Port, ComponentReference, Component]:
+def movey(custom_comp: Union[Port, ComponentReference, Component], offsety: Optional[float] = 0, destination: Optional[float]=None, layer: Optional[tuple[int,int]]=None) -> Union[Port, ComponentReference, Component]:
 	"""moves custom_comp by offsety in the y direction
 	returns the modified custom_comp
 	"""
 	if destination is not None:
 		destination = (None, destination)
-	return move(custom_comp, (0,offsety),destination)
+	return move(custom_comp, (0,offsety),destination,layer)
 
 
 @validate_arguments
@@ -287,20 +297,30 @@ def set_port_width(custom_comp: Port, width: float) -> Port:
 
 
 @validate_arguments
-def align_comp_to_port(custom_comp: Union[Component,ComponentReference], align_to: Port, alignment: Optional[tuple[str,str]] = None) -> ComponentReference:
+def align_comp_to_port(
+	custom_comp: Union[Component,ComponentReference],
+	align_to: Port,
+	alignment: Optional[tuple[Optional[str],Optional[str]]] = None,
+	layer: Optional[tuple[int,int]] = None,
+	rtr_comp_ref = True
+) -> Union[Component,ComponentReference]:
 	"""Returns component reference of component aligned to port as specifed
 	custom_comp = component to align properly
 	align_to = Port to align to
-	***NOTE, if left None, function will align component to outside and center of port (based on port orientation)
-	alignment = tuple(str,str) = (xalign,yalign)
-	****xalign = either l/left or r/right or c/center. component will be flush to right or left side of port or centered
-	****yalgin = either t/top or b/bottom or c/center. top or bottom edge or center of component will align with port top/bottom/center
+	alignment = tuple(str,str) = (xalign,yalign). You can individually specify x/y algin=None and that means do nothing for that dim
+	***NOTE, if left None, function will align component to outside and center of port (based on port orientation), specify (None,None) for real no align
+	****xalign = either l/left or r/right or c/center or None. component will be flush to right or left side of port or centered
+	****yalgin = either t/top or b/bottom or c/center or None. top or bottom edge or center of component will align with port top/bottom/center
+	layer = extract this layer from the component and aligns to this layer. ONLY AVIALABLE FOR Component type
+	rtr_comp_ref = will return a component reference if set true
 	"""
 	if isinstance(custom_comp, Component):
 		try:
 			custom_comp.is_unlocked()
-		except ValueError:
+		except Exception:
 			custom_comp = custom_comp.copy()
+	elif layer:
+		raise NotImplementedError("layer option only avialable for Component type")
 	# error checks and decide orientation if None
 	if alignment is None:
 		if round(align_to.orientation) == 0:# facing east
@@ -318,21 +338,26 @@ def align_comp_to_port(custom_comp: Union[Component,ComponentReference], align_t
 		else:
 			raise ValueError("port must be vertical or horizontal")
 	else:
-		xalign = alignment[0]
-		yalign = alignment[1]
+		xalign = alignment[0] or "none"
+		yalign = alignment[1] or "none"
 	# setup
 	is_EW = bool(round(align_to.orientation + 90) % 180)
 	xalign = xalign.lower()
 	yalign = yalign.lower()
 	if isinstance(custom_comp, Component):
-		comp_ref = custom_comp.ref_center()
-		comp_ref.move(align_to.center)
+		if layer:
+			custom_comp_ext = custom_comp.extract(layers=[layer,])
+		else:
+			custom_comp_ext=custom_comp
 	else:
-		comp_ref = custom_comp
-		move(comp_ref, destination=tuple(align_to.center))
+		custom_comp_ext = custom_comp
+	if xalign!="none":
+		custom_comp = movex(custom_comp, destination=tuple(align_to.center)[0], layer=layer)
+	if yalign!="none":
+		custom_comp = movey(custom_comp, destination=tuple(align_to.center)[1], layer=layer)
 	width = align_to.width
-	xdim = evaluate_bbox(custom_comp)[0]
-	ydim = evaluate_bbox(custom_comp)[1]
+	xdim = evaluate_bbox(custom_comp_ext)[0]
+	ydim = evaluate_bbox(custom_comp_ext)[1]
 	#xalign
 	xmov = 0
 	if "l" in xalign:
@@ -345,10 +370,10 @@ def align_comp_to_port(custom_comp: Union[Component,ComponentReference], align_t
 			xmov = abs((width - xdim)/2)
 		else:
 			xmov = abs(xdim/2)
-	elif "c" in xalign:
+	elif "c" in xalign or "none" in xalign:
 		pass
 	else:
-		raise ValueError("please specify valid x alignment of l/r/c")
+		raise ValueError("please specify valid x alignment of l/r/c/None")
 	# yalign
 	ymov = 0
 	if "t" in yalign:
@@ -361,12 +386,16 @@ def align_comp_to_port(custom_comp: Union[Component,ComponentReference], align_t
 			ymov = -1 * abs(ydim/2)
 		else:
 			ymov = -1 * abs((width - ydim)/2)
-	elif "c" in yalign:
+	elif "c" in yalign or "none" in yalign:
 		pass
 	else:
-		raise ValueError("please specify valid x alignment of l/r/c")
-	# move and return
-	return comp_ref.movex(xmov).movey(ymov)
+		raise ValueError("please specify valid y alignment of t/b/c/None")
+	# move, make correct type, and return
+	custom_comp = move(custom_comp,(xmov,ymov))
+	ref = None
+	if isinstance(custom_comp,Component):
+		ref = custom_comp.ref()
+	return ref or custom_comp
 
 
 @validate_arguments
@@ -440,7 +469,7 @@ def prec_center(custom_comp: Union[Component,ComponentReference], return_decimal
 	return to_float(correctionxy)
 
 @validate_arguments
-def prec_ref_center(custom_comp: Union[Component,ComponentReference], return_decimal: bool=False) -> tuple[Union[float,Decimal],Union[float,Decimal]]:
+def prec_ref_center(custom_comp: Union[Component,ComponentReference]) -> ComponentReference:
 	"""instead of using component.ref_center() to get a ref to center at origin,
 	use this function which will return a centered ref
 	you can then run component.add(prec_ref_center(custom_comp)) to add the reference to your component

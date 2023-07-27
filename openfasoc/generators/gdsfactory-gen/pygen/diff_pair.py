@@ -15,7 +15,6 @@ from .pdk.util.custom_comp_utils import rename_ports_by_orientation, rename_port
 from .via_gen import via_stack
 from .pdk.util.snap_to_grid import component_snap_to_grid
 
-#diffpair << route_sharp(b_topr.ports["multiplier_0_source_E"],viam2m3_ref_tr.ports["bottom_met_W"], width=connect_width, layer=pdk.get_glayer("met2"), path_type="manhattan")
 
 @cell
 def diff_pair(
@@ -62,35 +61,6 @@ def diff_pair(
 	a_botr.mirror_y().movey(0-0.5-fet.ymax-min_spacing_y/2).movex(fet.xmax+min_spacing_x/2)
 	b_botl = (diffpair << fet)
 	b_botl.mirror_y().movey(0-0.5-fet.ymax-min_spacing_y/2).movex(0-fet.xmax-min_spacing_x/2)
-	# create gate route between transistor A mults
-	#avia_gate_tl = align_comp_to_port(viam2m3, a_topl.ports["multiplier_0_gate_E"], ('r','b'))
-	#diffpair.add(avia_gate_tl)
-	#avia_gate_br = align_comp_to_port(viam2m3, a_botr.ports["multiplier_0_gate_W"], ('l','t'))
-	#diffpair.add(avia_gate_br)
-	# lay metal spacer
-	#min_metal_spacer = rectangle(size=(avia_gate_tl.ports["top_met_S"].width, metal_space), layer=pdk.get_glayer("met3"), centered=True)
-	#metal_space_tl = align_comp_to_port(min_metal_spacer, avia_gate_tl.ports["top_met_S"], ('l','b'))
-	#diffpair.add(metal_space_tl)
-	#metal_space_br = align_comp_to_port(min_metal_spacer, avia_gate_br.ports["top_met_N"], ('r','t'))
-	#diffpair.add(metal_space_br)
-	# lay cross metal
-	#amet_cross_width = abs(metal_space_br.ports["e3"].center[0] - metal_space_tl.ports["e1"].center[0])
-	#amet_cross_hieght = abs(metal_space_tl.ports["e4"].center[1] - metal_space_br.ports["e2"].center[1])
-	#amet_gate_cross = rectangle(size=(amet_cross_width, amet_cross_hieght), layer=pdk.get_glayer("met3"), centered=True)
-	#cross_metal_gate_a = align_comp_to_port(amet_gate_cross, metal_space_br.ports["e2"], ('l','t'))
-	#diffpair.add(cross_metal_gate_a)
-	# create gate route between transistor B mults
-	#min_metal_spacer_2 = rectangle(size=(avia_gate_tl.ports["top_met_S"].width, gate_route_os), layer=pdk.get_glayer("met2"), centered=True)
-	# lay metal spacers
-	#metal_space_bl = align_comp_to_port(min_metal_spacer_2, b_botl.ports["multiplier_0_gate_S"], ('r','t'))
-	#diffpair.add(metal_space_bl)
-	#metal_space_tr = align_comp_to_port(min_metal_spacer_2, b_topr.ports["multiplier_0_gate_S"], ('l','b'))
-	#diffpair.add(metal_space_tr)
-	# lay cross metal
-	#bmet_cross_width = abs(metal_space_tr.ports["e3"].center[0] - metal_space_bl.ports["e1"].center[0])
-	#bmet_gate_cross = rectangle(size=(bmet_cross_width, metal_space), layer=pdk.get_glayer("met2"), centered=True)
-	#cross_metal_gate_b = align_comp_to_port(bmet_gate_cross, metal_space_tr.ports["e4"], ('l','b'))
-	#diffpair.add(cross_metal_gate_b)
 	# route sources (short sources)
 	diffpair << route_quad(a_topl.ports["multiplier_0_source_E"], b_topr.ports["multiplier_0_source_W"], layer=pdk.get_glayer("met2"))
 	diffpair << route_quad(b_botl.ports["multiplier_0_source_E"], a_botr.ports["multiplier_0_source_W"], layer=pdk.get_glayer("met2"))

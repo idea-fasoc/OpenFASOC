@@ -5,7 +5,7 @@ from pydantic import validate_arguments
 from .pdk.mappedpdk import MappedPDK
 from math import floor
 from typing import Optional, Union
-from .pdk.util.custom_comp_utils import rename_ports_by_orientation, evaluate_bbox, prec_array, print_ports, to_float, move
+from .pdk.util.custom_comp_utils import rename_ports_by_orientation, evaluate_bbox, prec_array, print_ports, to_float, move, prec_ref_center, to_decimal
 from .pdk.util.snap_to_grid import component_snap_to_grid
 from decimal import Decimal
 from typing import Literal
@@ -40,7 +40,7 @@ def __get_layer_dim(pdk: MappedPDK, glayer: str, mode: Literal["both","above","b
 	"""Returns the required dimension of a routable layer in a via stack
 	glayer is the routable glayer
 	mode is one of [both,below,above]
-	This specfies the vias to consider.
+	This specfies the vias to consider. (layer dims may be made smaller if its possible to ignore top/bottom vias)
 	****enclosure rules of the via above and below are considered by default, via1<->met2<->via2
 	****using below specfier only considers the enclosure rules for the via below, via1<->met2
 	****using above specfier only considers the enclosure rules for the via above, met2<->via2
@@ -64,6 +64,30 @@ def __get_layer_dim(pdk: MappedPDK, glayer: str, mode: Literal["both","above","b
 	return layer_dim
 
 
+@validate_arguments
+def __get_viastack_minseperation(pdk: MappedPDK, viastack: Component, ordered_layer_info) -> tuple[float,float]:
+    """internal use: return abosolute via seperation and top_enclosure (top via to top met enclosure)"""
+    get_sep = lambda _pdk, rule, _lay_, comp : (rule+2*comp.extract(layers=[_pdk.get_glayer(_lay_)]).xmax)
+    level1, level2 = ordered_layer_info[0]
+    glayer1, glayer2 = ordered_layer_info[1]
+    mcon_rule = pdk.get_grule("mcon")["min_separation"]
+    via_spacing = [] if level1 else [get_sep(pdk,mcon_rule,"mcon",viastack)]
+    level1_met = level1 if level1 else level1 + 1
+    top_enclosure = 0
+    for level in range(level1_met, level2):
+        met_glayer = "met" + str(level)
+        via_glayer = "via" + str(level)
+        mrule = pdk.get_grule(met_glayer)["min_separation"]
+        vrule = pdk.get_grule(via_glayer)["min_separation"]
+        via_spacing.append(get_sep(pdk, mrule,met_glayer,viastack))
+        via_spacing.append(get_sep(pdk, vrule,via_glayer,viastack))
+        if level == (level2-1):
+            top_enclosure = pdk.get_grule(glayer2,via_glayer)["min_enclosure"]
+    via_spacing = pdk.snap_to_2xgrid(max(via_spacing),return_type="float")
+    top_enclosure = pdk.snap_to_2xgrid(top_enclosure,return_type="float")
+    return via_spacing, 2*top_enclosure
+
+
 @cell
 def via_stack(
     pdk: MappedPDK,
@@ -76,22 +100,23 @@ def via_stack(
     same_layer_behavior: Literal["lay_nothing","min_square"] = "lay_nothing"
 ) -> Component:
     """produces a single via stack between two layers that are routable (metal, poly, or active)
+    The via_stack produced is always a square (hieght=width)
     
     args:
     pdk: MappedPDK is the pdk to use
     glayer1: str is the glayer to start on
     glayer2: str is the glayer to end on
     ****NOTE it does not matter what order you pass layers
-    fullbottom: if True will lay the bottom layer all over the area of the viastack else makes minimum legal size
+    fullbottom: if True will lay the bottom layer all over the area of the viastack else makes minimum legal size (ignores min area)
     assume_bottom_via: legalize viastack assuming the via underneath bottom met is present, e.g. if bottom met is met3, assume via2 is present
-    fulltop: if True will lay the top layer all over the area of the viastack else makes minimum legal size
+    fulltop: if True will lay the top layer all over the area of the viastack else makes minimum legal size (ignores min area)
     ****NOTE: generator can figure out which layer is top and which is bottom (i.e. met5 is higher than met1)
     same_layer_behavior: sometimes (especially when used in other generators) it is unknown what two layers are specfied
     this option provides the generator with guidance on how to handle a case where same layer is given
     by default, (lay_nothing option) nothing is laid and an empty component is returned
     if min_square is specfied, a square of min_width * min_width is laid
     
-    PORTS, some ports are not layed when it does not make sense (e.g. empty component):
+    ports, some ports are not layed when it does not make sense (e.g. empty component):
     top_met_...all edges
     bottom_via_...all edges
     bottom_met_...all edges
@@ -156,94 +181,82 @@ def via_array(
     pdk: MappedPDK,
     glayer1: str,
     glayer2: str,
-    size: tuple[float,float] = (4.0, 1.0),
+    size: Optional[tuple[Optional[float],Optional[float]]] = None,
     minus1: bool = False,
-    lay_bottom: bool = False
+    num_vias: Optional[tuple[Optional[int],Optional[int]]] = None,
+    lay_bottom: bool = True,
+    fullbottom: bool = False,
+    no_exception: bool = False,
 ) -> Component:
     """Fill a region with vias. Will automatically decide num rows and columns
     args:
     pdk: MappedPDK is the pdk to use
     glayer1: str is the glayer to start on
     glayer2: str is the glayer to end on
-    lay_bottom: bool if true will lay bottom met all over size (by default only lays top met all over size)
+    lay_bottom: bool if true will lay bottom layer (by default only lays top layer)
     ****NOTE it does not matter what order you pass layers
-    ****NOTE will not lay poly or active but will lay metals
+    ****NOTE will lay bottom only over the minimum area required to make legal
     size: tuple is the (width, hieght) of the area to enclose
     ****NOTE: the size will be the dimensions of the top metal
     minus1: if true removes 1 via from rows/cols num vias 
-    ****use if you want extra space at the edges of the array
-    ports (one port for each edge):
+    ****use if you want extra space at the edges of the array, does not apply to num_vias
+    num_vias: number of rows/cols in the via array. Overrides size option
+    ****NOTE: you can specify size for one dim and num_vias for another by setting one element to None 
+    ****NOTE: num_vias overides size option
+    fullbottom: True specifies that the bottom layer should extend over the entire via_array region
+    ****NOTE: fullbottom=True implies lay_bottom and overrides if False
+    no_exception: True specfies that the function should change size such that min size is met
+    
+    ports, some ports are not layed when it does not make sense (e.g. empty component):
     top_met_...all edges
-    bottom_met_...all edges (only if lay_bottom is specified)
+    bottom_lay_...all edges (only if lay_bottom is specified)
+    array_...all ports associated with via array
     """
-    size = pdk.snap_to_2xgrid(size)
-    tmpsize = list(size)
-    for i in range(2):
-        if isinstance(size[i],Union[float,int]):
-            tmpsize[i] = Decimal(str(size[i]))
-    size = tmpsize
     # setup
-    layer_ordering = __error_check_order_layers(pdk, glayer1, glayer2)
-    level1, level2 = layer_ordering[0]
-    glayer1, glayer2 = layer_ordering[1]
+    ordered_layer_info = __error_check_order_layers(pdk, glayer1, glayer2)
+    level1, level2 = ordered_layer_info[0]
+    glayer1, glayer2 = ordered_layer_info[1]
     viaarray = Component()
     # if same level return empty component
     if level1 == level2:
         return viaarray
     # figure out min space between via stacks
-    viastack = via_stack(pdk, glayer1, glayer2).remove_layers(layers=[pdk.get_glayer(glayer2)])
-    via_spacing = [] if level1 else [Decimal(str(pdk.get_grule("mcon")["min_separation"]))]
-    level1_met = level1 if level1 else level1 + 1
-    get_sep = lambda _pdk, rule, _lay_, comp : 2*(rule/2+Decimal(str(comp.extract(layers=[_pdk.get_glayer(_lay_)]).xmax))-Decimal(str(comp.xmax)))
-    outer_enclosure = 0
-    for level in range(level1_met, level2):
-        met_glayer = "met" + str(level)
-        via_glayer = "via" + str(level)
-        mrule = Decimal(str(pdk.get_grule(met_glayer)["min_separation"]))
-        vrule = Decimal(str(pdk.get_grule(via_glayer)["min_separation"]))
-        via_spacing.append(get_sep(pdk, mrule,met_glayer,viastack))
-        via_spacing.append(get_sep(pdk, vrule,via_glayer,viastack))
-        if level == (level2-1):
-            outer_enclosure = Decimal(str(pdk.get_grule(glayer2,via_glayer)["min_enclosure"]))
-    via_spacing = max(via_spacing)
-    # error check size
-    viadim = 2*Decimal(str(viastack.xmax))
-    for i, dim in enumerate(size):
-        if Decimal(str(to_float(viadim))) > Decimal(str(to_float(dim))):
-            raise ValueError(f"via_array,size:dim {i}={dim} less than {viadim}")
-    viaspacing_full = via_spacing + viadim
-    # num_vias[0]=x, num_vias[1]=y
-    encsize = [dim - outer_enclosure for dim in size]
-    num_vias = [(floor(dim / (viadim + via_spacing)) or 1) for dim in encsize]
-    if minus1:
-        num_vias = [(dim - 1 if dim > 1 else dim) for dim in num_vias]
-    # create array and add to component
-    temparray = Component("via array")
-    temparray << prec_array(
-        viastack,
-        columns=num_vias[0],
-        rows=num_vias[1],
-        spacing=[viaspacing_full, viaspacing_full],
-        absolute_spacing=True
-    )
-    # center the array
-    array_ref = viaarray.add(temparray.ref_center())
-    # place bottom metal, top metal, add ports, and return
-    if lay_bottom:
-        if level1:
-            keymetdims = viaarray.extract(layers=[pdk.get_glayer("met"+str(level1_met))]).bbox
-            bheight = 2*keymetdims[1][1]
-            bwidth = 2*keymetdims[1][0]
+    viastack = via_stack(pdk, glayer1, glayer2)
+    viadim = evaluate_bbox(viastack)[0]
+    via_abs_spacing, top_enclosure = __get_viastack_minseperation(pdk, viastack, ordered_layer_info)
+    # error check size and determine num_vias, cnum_vias[0]=x, cnum_vias[1]=y
+    cnum_vias = 2*[None]
+    for i in range(2):
+        if (num_vias[i] if num_vias else False):
+            cnum_vias[i] = num_vias[i]
+        elif (size[i] if size else False):
+            dim = pdk.snap_to_2xgrid(size[i],return_type="float")
+            fltnum = floor((dim - top_enclosure) / (via_abs_spacing)) or 1
+            fltnum = 1 if fltnum < 1 else fltnum
+            cnum_vias[i] = ((fltnum - 1) or 1) if minus1 else fltnum
+            if to_decimal(viadim) > to_decimal(dim) and not no_exception:
+                raise ValueError(f"via_array,size:dim#{i}={dim} < {viadim}")
         else:
-            bviadims = viaarray.extract(layers=[pdk.get_glayer("mcon")]).bbox
-            added_enclosure = 2*pdk.get_grule(glayer1,"mcon")["min_enclosure"]
-            bheight = 2*bviadims[1][1] + added_enclosure
-            bwidth = 2*bviadims[1][0] + added_enclosure
-        b_met_dims = [bwidth, bheight]
-        bref = viaarray << rectangle(size=b_met_dims, layer=pdk.get_glayer(glayer1), centered=True)
-        viaarray.add_ports(bref.get_ports_list(), prefix="bottom_met_")
-    top_met_layer = pdk.get_glayer("met" + str(level2))
-    tref = viaarray << rectangle(size=(float(size[0]),float(size[1])), layer=top_met_layer, centered=True)
+            raise ValueError("give at least 1: num_vias or size for each dim")
+    # create array
+    viaarray_ref = prec_ref_center(prec_array(viastack, columns=cnum_vias[0], rows=cnum_vias[1], spacing=2*[via_abs_spacing],absolute_spacing=True))
+    viaarray.add(viaarray_ref)
+    viaarray.add_ports(viaarray_ref.get_ports_list(),prefix="array_")
+    # find the what should be used as full dims
+    viadims = evaluate_bbox(viaarray)
+    if not size:
+        size = 2*[None]
+    size = [size[i] if size[i] else viadims[i] for i in range(2)]
+    size = [viadims[i] if viadims[i]>size[i] else size[i] for i in range(2)]
+    # place bottom layer and add bot_lay_ ports
+    if lay_bottom or fullbottom:
+        bdims = evaluate_bbox(viaarray.extract(layers=[pdk.get_glayer(glayer1)]))
+        bref = viaarray << rectangle(size=(size if fullbottom else bdims), layer=pdk.get_glayer(glayer1), centered=True)
+        viaarray.add_ports(bref.get_ports_list(), prefix="bottom_lay_")
+    else:
+        viaarray = viaarray.remove_layers(layers=[pdk.get_glayer(glayer1)])
+    # place top met
+    tref = viaarray << rectangle(size=size, layer=pdk.get_glayer(glayer2), centered=True)
     viaarray.add_ports(tref.get_ports_list(), prefix="top_met_")
     return component_snap_to_grid(rename_ports_by_orientation(viaarray))
 

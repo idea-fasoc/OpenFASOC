@@ -11,7 +11,6 @@ from pygen.opamp import opamp
 from pygen.L_route import L_route
 from pygen.straight_route import straight_route
 from pygen.via_gen import via_array
-from pygen.pdk.util.standard_main import pdk, parser
 from gdsfactory.cell import cell, clear_cache
 import numpy as np
 from subprocess import Popen
@@ -29,6 +28,7 @@ import seaborn as sns
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn.metrics import silhouette_score
+import argparse
 
 
 def sky130_opamp_add_pads(opamp_in: Component) -> Component:
@@ -187,19 +187,20 @@ def opamp_results_serializer(
 	return np.array([ugb, dcGain, phaseMargin, biasVoltage1, biasVoltage2, area], dtype=np.float64)
 
 def opamp_results_de_serializer(
-	results: np.array
+	results: Optional[np.array]=None
 ) -> dict:
-	if not len(serialized_params) == 6:
+	if results is None:
+		results = 6*[-987.654321]
+	if not len(results) == 6:
 		raise ValueError("results should be a length 5 array")
 	results_dict = dict()
-	results_dict["ugb"] = float(serialized_params[0])
-	results_dict["dcGain"] = float(serialized_params[1])
-	results_dict["phaseMargin"] = float(serialized_params[2])
-	results_dict["biasVoltage1"] = float(serialized_params[3])
-	results_dict["biasVoltage2"] = float(serialized_params[4])
-	results_dict["area"] = float(serialized_params[5])
+	results_dict["ugb"] = float(results[0])
+	results_dict["dcGain"] = float(results[1])
+	results_dict["phaseMargin"] = float(results[2])
+	results_dict["biasVoltage1"] = float(results[3])
+	results_dict["biasVoltage2"] = float(results[4])
+	results_dict["area"] = float(results[5])
 	return results_dict
-
 
 def get_small_parameter_list(test_mode = False) -> np.array:
 	"""creates small parameter list intended for brute force"""
@@ -359,22 +360,8 @@ def get_training_data(test_mode=True,):
 	np.save("training_results.npy",results)
 
 
-parser.add_argument("--test_mode", "-t", action="store_true", help="runs a short 2 ele test")
-args = parser.parse_args()
-get_training_data(test_mode=args.test_mode)
+#======stats=======
 
-#opamp_out = sky130_opamp_add_pads(opamp(pdk))
-#sky130_add_opamp_labels(opamp_in).show()
-#opamp_out.show()
-
-
-#parameters = np.array()
-#result = array()
-#for i, comp in enumerate(opamps):
-#	comp.write_gds(str(i)+".gds")
-
-
-# generate opamps
 
 
 def save_distwith_best_fit(data, output_file, title="Distribution With Trend", xlabel="Data", ylabel="Distribution"):
@@ -451,14 +438,12 @@ def run_pca_and_save_plot(data, output_file):
 def find_optimal_clusters(data, max_clusters=10):
     if isinstance(data, pd.DataFrame):
         data = data.to_numpy()
-
     results = []
     for num_clusters in range(1, max_clusters + 1):
         kmeans = KMeans(n_clusters=num_clusters)
         kmeans.fit(data)
         inertia = kmeans.inertia_
         results.append((num_clusters, inertia))
-
     return results
 
 def elbow_point(x, y):
@@ -466,7 +451,7 @@ def elbow_point(x, y):
     elbow_index = np.argmax(deltas < np.mean(deltas))
     return x[elbow_index]
 
-def create_pca_biplot_with_clusters(data, results, output_file, max_clusters=10):
+def create_pca_biplot_with_clusters(data, results, output_file, max_clusters=10, results_index: int=0):
     if isinstance(data, pd.DataFrame):
         data = data.to_numpy()
     if isinstance(results, pd.Series):
@@ -483,7 +468,7 @@ def create_pca_biplot_with_clusters(data, results, output_file, max_clusters=10)
         cluster_indices = np.where(cluster_assignments == i)[0]
         plt.scatter(pca_result[cluster_indices, 0], pca_result[cluster_indices, 1], alpha=0.7, label=f'Cluster {i+1}')
     # Color the data points based on their result values
-    plt.scatter(pca_result[:, 0], pca_result[:, 1], c=results, cmap='viridis', edgecolor='k', s=80)
+    plt.scatter(pca_result[:, 0], pca_result[:, 1], c=results[:,results_index], cmap='viridis', edgecolor='k', s=80)
     feature_vectors = pca.components_.T
     for i, (x, y) in enumerate(feature_vectors):
         plt.arrow(0, 0, x, y, color='r', alpha=0.5)
@@ -497,7 +482,7 @@ def create_pca_biplot_with_clusters(data, results, output_file, max_clusters=10)
     plt.close()
     plt.clf()
 
-def create_heatmap_with_clusters(parameters, results, output_file, max_clusters=10):
+def create_heatmap_with_clusters(parameters, results, output_file, max_clusters=10,results_index: int=0):
     if isinstance(parameters, pd.DataFrame):
         parameters = parameters.to_numpy()
     if isinstance(results, pd.Series):
@@ -506,7 +491,7 @@ def create_heatmap_with_clusters(parameters, results, output_file, max_clusters=
     pca = PCA(n_components=2)
     pca_result = pca.fit_transform(parameters)
     # Cluster the parameters based on the results using hierarchical clustering
-    results_dist = pdist(results.reshape(-1, 1))  # Pairwise distance between result values
+    results_dist = pdist(results[:,results_index].reshape(-1, 1))  # Pairwise distance between result values
     results_linkage = squareform(results_dist)  # Convert to a condensed distance matrix
     clustering = AgglomerativeClustering(n_clusters=max_clusters, affinity='precomputed', linkage='complete')
     cluster_assignments = clustering.fit_predict(results_linkage)
@@ -522,9 +507,9 @@ def create_heatmap_with_clusters(parameters, results, output_file, max_clusters=
     plt.figure(figsize=(10, 8))
     sns.heatmap(cluster_means, cmap='YlGnBu', annot=True, fmt='.2f', xticklabels=False,
                 yticklabels=False, cbar_kws={'label': 'Mean Parameter Value'})
-    plt.xlabel('17-Dimensional Parameters')
-    plt.ylabel('Clusters')
-    plt.title('Heatmap with Clusters')
+    plt.xlabel('Parameter Clusters')
+    plt.ylabel('Parameter Clusters')
+    plt.title('Heatmap Clusters')
     plt.savefig(output_file)
     plt.close()
     plt.clf()
@@ -538,28 +523,127 @@ def find_indices_with_same_other_params(data, parameter_index, other_params_valu
         mask = mask & (data[:, param_idx] == other_params_values[param_idx])
     return np.where(mask)[0]
 
-def isolate_single_param_scatter(data: np.array, results: np.array, col_to_isolate: int, output_file: str):
+def single_param_scatter(data: np.array, results: np.array, col_to_isolate: int, output_file: str, isolate: bool=True,results_index: int=0, trend:bool=True):
+	output_file = Path(output_file).resolve()
 	example_others = data[0, :]
-	indices = find_indices_with_same_other_params(data, col_to_isolate, example_others)
-	x = data[indices, col_to_isolate]
-	y = results[indices]
+	if isolate:
+		indices = find_indices_with_same_other_params(data, col_to_isolate, example_others)
+		x = data[indices, col_to_isolate]
+		y = results[:,results_index][indices]
+	else:
+		x = data[:, col_to_isolate]
+		y = results[:,results_index]
 	plt.scatter(x, y, marker='o', s=50, label="Data Points")
 	# Fit a quadratic regression model to the data
 	coeffs = np.polyfit(x, y, deg=2)
 	# Generate points for the quadratic trend line
-	quadratic_function = lambda x, a, b, c: a * x**2 + b * x + c
-	trend_line_x = np.linspace(min(x), max(x), 1000)
-	trend_line_y = quadratic_function(trend_line_x, *coeffs)
-	# Plot the quadratic trend line
-	plt.plot(trend_line_x, trend_line_y, color='red', label="Quadratic Trend Line")
+	if trend:
+		quadratic_function = lambda x, a, b, c: a * x**2 + b * x + c
+		trend_line_x = np.linspace(min(x), max(x), 1000)
+		trend_line_y = quadratic_function(trend_line_x, *coeffs)
+		# Plot the quadratic trend line
+		plt.plot(trend_line_x, trend_line_y, color='red')#, label="Quadratic Trend Line")
 	# label and return
-	plt.xlabel("param vals")
-	plt.ylabel("isolated changes")
-	plt.title("Scatter Plot of 2D Array")
+	plt.xlabel(output_file.stem)
+	plt.ylabel("Normalized Performance Score")
+	plt.title("Performance vs Parameter="+output_file.stem)
 	plt.legend()
 	plt.grid(True)
 	plt.savefig(output_file)
 	plt.clf()
+
+def simple2pt_param_scatter(x: np.array, y: np.array, output_file: str, x_label: str,y_label:str, trend:bool=True):
+	output_file = Path(output_file).resolve()
+	plt.scatter(x, y, marker='o', s=50, label="Data Points")
+	# Fit a quadratic regression model to the data
+	coeffs = np.polyfit(x, y, deg=2)
+	# Generate points for the quadratic trend line
+	if trend:
+		quadratic_function = lambda x, a, b, c: a * x**2 + b * x + c
+		trend_line_x = np.linspace(min(x), max(x), 1000)
+		trend_line_y = quadratic_function(trend_line_x, *coeffs)
+		# Plot the quadratic trend line
+		plt.plot(trend_line_x, trend_line_y, color='red')#, label="Quadratic Trend Line")
+	# label and return
+	plt.xlabel(x_label)
+	plt.ylabel(y_label)
+	plt.title(output_file.stem)
+	plt.legend()
+	plt.grid(True)
+	plt.savefig(output_file)
+	plt.clf()
+
+def find_optimal_num_clusters(data, max_clusters=10):
+    wcss = []
+    for num_clusters in range(1, max_clusters+1):
+        kmeans = KMeans(n_clusters=num_clusters)
+        kmeans.fit(data)
+        wcss.append(kmeans.inertia_)  # Inertia is the WCSS value
+
+    # Find the optimal number of clusters using the elbow method
+    optimal_num_clusters = np.argmin(np.diff(wcss)) + 1
+
+    return optimal_num_clusters
+
+def simple2pt_param_scatter_wautocluster(x, y, output_file, x_label='X Axis', y_label='Y Axis', max_clusters=10):
+    output_file = Path(output_file).resolve()
+    # Create a scatter plot
+    plt.figure(figsize=(8, 6))
+    plt.scatter(x, y, c='blue', label='Data Points', edgecolors='black')
+    # Combine data into a 2D array for clustering
+    data = np.column_stack((x, y))
+    # Find the optimal number of clusters using the elbow method
+    optimal_num_clusters = find_optimal_num_clusters(data, max_clusters)
+    # Perform K-means clustering with the determined number of clusters
+    kmeans = KMeans(n_clusters=optimal_num_clusters)
+    kmeans.fit(data)
+    cluster_centers = kmeans.cluster_centers_
+    cluster_labels = kmeans.labels_
+    # Color code the clusters
+    unique_labels = np.unique(cluster_labels)
+    colors = plt.cm.tab10.colors
+    for i, label in enumerate(unique_labels):
+        cluster_data = data[cluster_labels == label]
+        cluster_center = cluster_centers[label]
+        plt.scatter(cluster_data[:, 0], cluster_data[:, 1], c=colors[i], label=f'Cluster {label}', edgecolors='black')
+        plt.scatter(cluster_center[0], cluster_center[1], marker='x', s=100, c=colors[i], edgecolors='black')
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(output_file.stem)
+    plt.legend()
+    plt.grid(True)
+    # Save the plot as PNG if output_file is provided
+    plt.savefig(output_file, dpi=300, bbox_inches='tight')
+    plt.clf()
+
+
+def simple2pt_param_scatter_wcluster(x, y, output_file, x_label='X Axis', y_label='Y Axis', num_clusters=3):
+    output_file = Path(output_file).resolve()
+    # Create a scatter plot
+    plt.figure(figsize=(8, 6))
+    plt.scatter(x, y, c='blue', label='Data Points', edgecolors='black')
+    # Combine data into a 2D array for clustering
+    data = np.column_stack((x, y))
+    # Perform K-means clustering with the specified number of clusters
+    kmeans = KMeans(n_clusters=num_clusters)
+    cluster_labels = kmeans.fit_predict(data)
+    # Color code the clusters and label each point
+    unique_labels = np.unique(cluster_labels)
+    colors = plt.cm.tab10.colors
+    for i, label in enumerate(unique_labels):
+        cluster_data = data[cluster_labels == label]
+        plt.scatter(cluster_data[:, 0], cluster_data[:, 1], c=colors[i], label=f'Cluster {label}', edgecolors='black')
+        for point in cluster_data:
+            plt.text(point[0], point[1], f'{label}', fontsize=10, ha='center', va='center', color='black')
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(output_file.stem)
+    #plt.legend()
+    plt.grid(True)
+    # Save the plot as PNG if output_file is provided
+    plt.savefig(output_file, dpi=300, bbox_inches='tight')
+    plt.clf()
+
 
 def extract_stats(
 	params: Union[np.array,str,Path],
@@ -570,7 +654,8 @@ def extract_stats(
 	pathtoarr = lambda datain : np.load(datain.resolve()) if isinstance(datain,Path) else datain
 	params_dirty = pathtoarr(strtopath(params))
 	results_dirty = pathtoarr(strtopath(results))
-	clean_condition = results_dirty > 0
+	# clean condition eliminates all failed runs AND negative phase margins
+	clean_condition = np.where(np.all(results_dirty > 0,axis=1)==True)
 	params = params_dirty[clean_condition]
 	results = results_dirty[clean_condition]
 	if len(params)!=len(results):
@@ -592,27 +677,111 @@ def extract_stats(
 			colnames_vals[key] = "place_holder"
 	for i, colname in enumerate(colnames_vals):
 		colnames_vals[colname] = params[:, i]
+	
 	# run statistics on distribution of training parameters individually
 	params_stats_hists = Path("./stats/param_stats/hists1D")
 	params_stats_hists.mkdir(parents=True)
 	for colname, val in colnames_vals.items():
 		save_distwith_best_fit(val,str(params_stats_hists)+"/"+colname+".png",'Parameter Distribution',colname,'Normalized trials')
-	param_stats_isolate = Path("./stats/param_stats/isolate")
-	param_stats_isolate.mkdir(parents=True)
-	for i, colname in enumerate(colnames_vals):
-		isolate_single_param_scatter(params,results,i,str(param_stats_isolate)+"/"+colname+".png")
 	# run stats on distribution of training parameters using pair scatter plots
 	params_stats_scatter = Path("./stats/param_stats/scatter")
 	params_stats_scatter.mkdir(parents=True)
 	save_pairwise_scatter_plot(params,str(params_stats_scatter)+"/pairscatter_params.png")
 	# run PCA on training parameters
 	run_pca_and_save_plot(params,str(params_stats_scatter)+"/PCA_params.png")
+	
 	# run statistics on results
-	result_stats_dir = Path("./stats/result_stats")
+	result_stats_dir = Path("./stats/result_stats/hist1d")
 	result_stats_dir.mkdir(parents=True)
-	save_distwith_best_fit(results,str(result_stats_dir)+"/result_UGB_dist.png","UGB Distribution","UGB")
+	for i,name in enumerate(opamp_results_de_serializer()):
+		save_distwith_best_fit(results[:,i],str(result_stats_dir)+"/result_"+name+"_dist.png",name+" Distribution",name)
+	# plot results against each other
+	result_stats_verses = Path("./stats/result_stats/compare")
+	result_stats_verses.mkdir(parents=True)
+	result_combs=list(opamp_results_de_serializer().keys())
+	result_unqiue_combs=np.array(np.meshgrid(result_combs, result_combs)).T.reshape(-1, 2)
+	for name1, name2 in result_unqiue_combs:
+		if name1==name2:
+			continue
+		index1 = result_combs.index(name1)
+		index2 = result_combs.index(name2)
+		output_name = str(result_stats_verses)+"/"+name1+"_vs_"+name2+".png"
+		simple2pt_param_scatter_wcluster(results[:,index1],results[:,index2],output_name,name1,name2)
+
 	# run stats on results and data combined
 	comb_stats_dir = Path("./stats/combined")
 	comb_stats_dir.mkdir(parents=True)
 	create_pca_biplot_with_clusters(params,results,str(comb_stats_dir)+"/heatmapresults_params.png")
 	create_heatmap_with_clusters(params,results,str(comb_stats_dir)+"/heatmap_results_clustered.png")
+	for i, name in enumerate(opamp_results_de_serializer()):
+		param_stats_isolate = Path("./stats/combined/isolate_params") / name
+		param_stats_isolate.mkdir(parents=True)
+		param_stats_NOisolate = Path("./stats/combined/NONisolated_params") / name
+		param_stats_NOisolate.mkdir(parents=True)
+		for j, colname in enumerate(colnames_vals):
+			single_param_scatter(params,results,j,str(param_stats_isolate)+"/"+colname+".png",results_index=i)
+			single_param_scatter(params,results,j,str(param_stats_NOisolate)+"/"+colname+".png",isolate=False,results_index=i)
+
+
+
+
+
+if __name__ == "__main__":
+	parser = argparse.ArgumentParser(description="sky130 nist tapeout sample, RL generation, and statistics utility.")
+	subparsers = parser.add_subparsers(title="mode", required=True, dest="mode")
+
+	# Subparser for extract_stats mode
+	extract_stats_parser = subparsers.add_parser("extract_stats", help="Run the extract_stats function.")
+	extract_stats_parser.add_argument("-p", "--params", default="training_params.npy", help="File path for params (default: training_params.npy)")
+	extract_stats_parser.add_argument("-r", "--results", default="training_results.npy", help="File path for results (default: training_results.npy)")
+
+	# Subparser for get_training_data mode
+	get_training_data_parser = subparsers.add_parser("get_training_data", help="Run the get_training_data function.")
+	get_training_data_parser.add_argument("-t", "--test-mode", action="store_true", help="Set test_mode to True (default: False)")
+
+	# Subparser for gen_opamp mode
+	gen_opamp_parser = subparsers.add_parser("gen_opamp", help="Run the gen_opamp function.")
+	gen_opamp_parser.add_argument("--diffpair_params", nargs=3, type=float, default=[6, 1, 4], help="diffpair_params (default: 6 1 4)")
+	gen_opamp_parser.add_argument("--diffpair_bias", nargs=3, type=float, default=[6, 2, 4], help="diffpair_bias (default: 6 2 4)")
+	gen_opamp_parser.add_argument("--houtput_bias", nargs=4, type=float, default=[6, 2, 8, 3], help="houtput_bias (default: 6 2 8 3)")
+	gen_opamp_parser.add_argument("--pamp_hparams", nargs=4, type=float, default=[7, 1, 10, 3], help="pamp_hparams (default: 7 1 10 3)")
+	gen_opamp_parser.add_argument("--mim_cap_size", nargs=2, type=int, default=[12, 12], help="mim_cap_size (default: 12 12)")
+	gen_opamp_parser.add_argument("--mim_cap_rows", type=int, default=3, help="mim_cap_rows (default: 3)")
+	gen_opamp_parser.add_argument("--rmult", type=int, default=2, help="rmult (default: 2)")
+	gen_opamp_parser.add_argument("--output_gds", help="Filename for outputing opamp (gen_opamp mode only)")
+	
+	args = parser.parse_args()
+
+	if args.mode=="extract_stats":
+		# Call the extract_stats function with the specified file paths or defaults
+		extract_stats(params=args.params, results=args.results)
+
+	elif args.mode=="get_training_data":
+		# Call the get_training_data function with test_mode flag
+		get_training_data(test_mode=args.test_mode)
+
+	elif args.mode=="gen_opamp":
+		from pygen.pdk.sky130_mapped.sky130_mapped import sky130_mapped_pdk as pdk
+		# Call the opamp function with the parsed arguments
+		diffpair_params = tuple(args.diffpair_params)
+		diffpair_bias = tuple(args.diffpair_bias)
+		houtput_bias = tuple(args.houtput_bias)
+		pamp_hparams = tuple(args.pamp_hparams)
+		mim_cap_size = tuple(args.mim_cap_size)
+		mim_cap_rows = args.mim_cap_rows
+		rmult = args.rmult
+		opamp_comp = opamp(pdk=pdk,
+				diffpair_params=diffpair_params,
+				diffpair_bias=diffpair_bias,
+				houtput_bias=houtput_bias,
+				pamp_hparams=pamp_hparams,
+				mim_cap_size=mim_cap_size,
+				mim_cap_rows=mim_cap_rows,
+				rmult=rmult,
+			)
+		opamp_comp_labels = sky130_add_opamp_labels(opamp_comp)
+		opamp_comp_final = sky130_opamp_add_pads(opamp_comp_labels)
+		opamp_comp_final.show()
+		if args.output_gds:
+			opamp_comp_final.write_gds(args.output_gds)
+

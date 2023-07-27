@@ -72,6 +72,7 @@ def straight_route(
 	# place route and via
 	straightroute = Component()
 	route_ref = align_comp_to_port(route,edge1,alignment=alignment)
+	straightroute.add_ports(route_ref.get_ports_list(),prefix="route_")
 	straightroute.add(route_ref)
 	straightroute.add(align_comp_to_port(out_via,route_ref.ports[viaport_name],alignment=("c","c")))
 	if front_via is not None:

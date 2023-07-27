@@ -20,9 +20,6 @@ from pydantic import validate_arguments
 
 
 
-
-
-
 @validate_arguments
 def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap_rows, ymin: float, n_to_p_output_route) -> Component:
 	mim_cap_size = pdk.snap_to_2xgrid(mim_cap_size, return_type="float")
@@ -38,7 +35,6 @@ def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap
 	opamp_top << c_route(pdk,port1,port2, extension=cref2_extension, fullbottom=True)
 	opamp_top << L_route(pdk, mimcaps_ref.ports["row0_col0_top_met_S"], set_orientation(n_to_p_output_route.ports["con_S"],"E"), hwidth=3)
 	return opamp_top
-
 
 
 @cell
@@ -157,7 +153,7 @@ def opamp(
     shared_gate_comps << route_quad(_prefL.ports["gate_W"], _prefR.ports["gate_E"], layer=pdk.get_glayer("met2"))
     # center
     relative_dim_comp = multiplier(
-        pdk, "p+s/d", width=6, length=1, fingers=4, dummy=False
+        pdk, "p+s/d", width=6, length=1, fingers=4, dummy=False, rmult=rmult
     )
     # TODO: figure out single dim spacing rule then delete both test delete and this
     single_dim = to_decimal(relative_dim_comp.xmax) + to_decimal(0.1)
