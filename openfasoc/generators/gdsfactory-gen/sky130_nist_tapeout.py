@@ -31,6 +31,9 @@ from sklearn.metrics import silhouette_score
 import argparse
 
 
+# ====Build Opamp====
+
+
 def sky130_opamp_add_pads(opamp_in: Component) -> Component:
 	"""adds the MPW-5 pads and nano pads to opamp.
 	Also adds text labels and pin layers so that extraction is nice
@@ -135,6 +138,11 @@ def sky130_add_opamp_labels(opamp_in: Component) -> Component:
 		compref = align_comp_to_port(comp, prt, alignment=('c','b'))
 		opamp_in.add(compref)
 	return opamp_in.flatten()
+
+
+
+# ====Run Training====
+
 
 
 def opamp_parameters_serializer(
@@ -358,6 +366,19 @@ def get_training_data(test_mode=True,):
 	results = brute_force_full_layout_and_PEXsim(pdk, params)
 	np.save("training_params.npy",params)
 	np.save("training_results.npy",results)
+
+
+#util function for pure simulation
+def single_build_and_simulation(parameters: np.array) -> np.array:
+	"""Builds, extract, and simulates a single opamp
+	saves opamp gds in current directory with name 12345678987654321.gds
+	"""
+	global pdk
+	global save_gds_dir
+	pdk = pdk
+	save_gds_dir = Path('./').resolve()
+	index = 12345678987654321
+	return __run_single_brtfrc(index, parameters)
 
 
 #======stats=======
