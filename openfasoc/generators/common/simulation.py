@@ -1,6 +1,8 @@
 from os import path, makedirs
 from common.verilog_generation import _generate_file
+import time
 import subprocess
+import threading
 
 def run_simulations(
 	parameters: dict,
@@ -53,31 +55,34 @@ def run_simulations(
 	print(f"Number of configurations: {config_number}")
 	print(f"Number of concurrent simulations: {num_concurrent_sims}")
 
-	sim_processes: list[subprocess.Popen[bytes]] = []
-	_print_progress(config_number, 0)
-	for i in range(config_number):
+	# Currently running threads
+	num_threads = 0
+	completed_sims = 0
+	def thread_on_exit(): num_threads -= 1; completed_sims += 1
 
-		run_number = i + 1
+	start_time = int(time.time())
+	_print_progress(config_number, completed_sims, start_time)
+
+	run_number = 1
+	while completed_sims < config_number:
 		run_dir = path.join(runs_dir_path, str(run_number))
 
-		sim_processes.append(_run_config(sim_tool, run_dir, run_number))
+		if num_threads < num_concurrent_sims:
+			_run_config(
+				sim_tool=sim_tool,
+				run_dir=run_dir,
+				run_number=run_number,
+				on_exit=thread_on_exit
+			).start()
+			num_threads += 1
+			run_number += 1
 
-		if i % num_concurrent_sims == 0:
-			# Wait for the last n simulations to complete
-			_finish_processes(sim_processes)
+		_print_progress(config_number, completed_sims, start_time)
+		time.sleep(1)
 
-		_print_progress(config_number, 0)
+def _print_progress(total_runs: int, run_number: int, start_time: int):
+	print(f"Completed {run_number} out of {total_runs} simulations. Elapsed time: {int(time.time()) - start_time}s", end='\r')
 
-	_finish_processes(sim_processes)
-	print(f"Completed {config_number} simulations.")
-
-
-def _print_progress(total_runs: int, run_number: int):
-	print(f"Completed {run_number} out of {total_runs} simulations", end='\r')
-
-def _finish_processes(processess: list[subprocess.Popen[bytes]]):
-	while len(processess) > 0:
-		processess.pop().wait()
 
 def _generate_config(
 	parameters_iterator: dict,
@@ -121,11 +126,24 @@ def _generate_configs(
 def _run_config(
 	sim_tool: str,
 	run_dir: str,
-	run_number: int
+	run_number: int,
+	on_exit
+):
+	return threading.Thread(
+		target=_threaded_run,
+		args=(sim_tool, run_dir, run_number, on_exit),
+		daemon=True
+	)
+
+def _threaded_run(
+	sim_tool: str,
+	run_dir: str,
+	run_number: int,
+	on_exit
 ):
 	match sim_tool:
 		case "ngspice":
-			return subprocess.Popen(
+			subprocess.Popen(
 				[
 					"ngspice",
 					"-b",
@@ -134,4 +152,6 @@ def _run_config(
 				],
 				cwd=run_dir,
 				stdout=subprocess.DEVNULL,
-			)
+			).wait()
+
+	on_exit()
