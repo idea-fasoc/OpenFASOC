@@ -190,16 +190,18 @@ def opamp_results_serializer(
 	phaseMargin: float = -987.654321,
 	biasVoltage1: float = -987.654321,
 	biasVoltage2: float = -987.654321,
-	area: float = -987.654321
+	area: float = -987.654321,
+	power: float = -987.654321,
+	noise: float = -987.654321
 ) -> np.array:
-	return np.array([ugb, dcGain, phaseMargin, biasVoltage1, biasVoltage2, area], dtype=np.float64)
+	return np.array([ugb, dcGain, phaseMargin, biasVoltage1, biasVoltage2, area, power, noise], dtype=np.float64)
 
 def opamp_results_de_serializer(
 	results: Optional[np.array]=None
 ) -> dict:
 	if results is None:
-		results = 6*[-987.654321]
-	if not len(results) == 6:
+		results = 8*[-987.654321]
+	if not len(results) == 8:
 		raise ValueError("results should be a length 5 array")
 	results_dict = dict()
 	results_dict["ugb"] = float(results[0])
@@ -208,6 +210,8 @@ def opamp_results_de_serializer(
 	results_dict["biasVoltage1"] = float(results[3])
 	results_dict["biasVoltage2"] = float(results[4])
 	results_dict["area"] = float(results[5])
+	results_dict["power"] = float(results[6])
+	results_dict["noise"] = float(results[7])
 	return results_dict
 
 def get_small_parameter_list(test_mode = False) -> np.array:
