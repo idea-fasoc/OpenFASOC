@@ -1,7 +1,6 @@
 gf180
 sky130
-gdsfactory>=6.114.0
-sklearn
+scikit-learn
 matplotlib
 scipy
 seaborn

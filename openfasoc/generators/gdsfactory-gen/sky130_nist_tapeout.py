@@ -29,6 +29,7 @@ from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn.metrics import silhouette_score
 import argparse
+from pygen.pdk.sky130_mapped import sky130_mapped_pdk as pdk
 
 
 # ====Build Opamp====
@@ -190,16 +191,18 @@ def opamp_results_serializer(
 	phaseMargin: float = -987.654321,
 	biasVoltage1: float = -987.654321,
 	biasVoltage2: float = -987.654321,
-	area: float = -987.654321
+	area: float = -987.654321,
+	power: float = -987.654321,
+	noise: float = -987.654321
 ) -> np.array:
-	return np.array([ugb, dcGain, phaseMargin, biasVoltage1, biasVoltage2, area], dtype=np.float64)
+	return np.array([ugb, dcGain, phaseMargin, biasVoltage1, biasVoltage2, area, power, noise], dtype=np.float64)
 
 def opamp_results_de_serializer(
 	results: Optional[np.array]=None
 ) -> dict:
 	if results is None:
-		results = 6*[-987.654321]
-	if not len(results) == 6:
+		results = 8*[-987.654321]
+	if not len(results) == 8:
 		raise ValueError("results should be a length 5 array")
 	results_dict = dict()
 	results_dict["ugb"] = float(results[0])
@@ -208,6 +211,8 @@ def opamp_results_de_serializer(
 	results_dict["biasVoltage1"] = float(results[3])
 	results_dict["biasVoltage2"] = float(results[4])
 	results_dict["area"] = float(results[5])
+	results_dict["power"] = float(results[6])
+	results_dict["noise"] = float(results[7])
 	return results_dict
 
 def get_small_parameter_list(test_mode = False) -> np.array:
@@ -267,20 +272,34 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 
 
 
-def get_sim_results(filepath: Union[str,Path]):
-	fileabspath = Path(filepath).resolve()
-	with open(fileabspath, "r") as ResultReport:
-		RawResult = ResultReport.readlines()[0]
-		Columns = [item for item in RawResult.split() if item]
+def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath: Union[str,Path]):
+	acabspath = Path(acpath).resolve()
+	dcabspath = Path(dcpath).resolve()
+	noiseabspath = Path(noisepath).resolve()
+	with open(acabspath, "r") as ACReport:
+		RawAC = ACReport.readlines()[0]
+		ACColumns = [item for item in RawAC.split() if item]
+	with open(dcabspath, "r") as DCReport:
+		RawDC = DCReport.readlines()[0]
+		DCColumns = [item for item in RawDC.split() if item]
+	with open(noiseabspath, "r") as NoiseReport:
+		RawNoise = NoiseReport.readlines()[0]
+		NoiseColumns = [item for item in RawNoise.split() if item]
 	na = -987.654321
-	if len(Columns)<9 or Columns is None:
-		return {"ugb":na,"biasVoltage1":na,"biasVoltage2":na,"phaseMargin":na,"dcGain":na}
+	if ACColumns is None or len(ACColumns)<9:
+		return {"ugb":na,"biasVoltage1":na,"biasVoltage2":na,"phaseMargin":na,"dcGain":na,"power":na,"noise":na}
+	if DCColumns is None or len(DCColumns)<2:
+		return {"ugb":na,"biasVoltage1":na,"biasVoltage2":na,"phaseMargin":na,"dcGain":na,"power":na,"noise":na}
+	if NoiseColumns is None or len(NoiseColumns)<2:
+		return {"ugb":na,"biasVoltage1":na,"biasVoltage2":na,"phaseMargin":na,"dcGain":na,"power":na,"noise":na}
 	return_dict = {
-		"ugb": Columns[1],
-		"biasVoltage1": Columns[3],
-		"biasVoltage2": Columns[5],
-		"phaseMargin": Columns[7],
-		"dcGain": Columns[9]
+		"ugb": ACColumns[1],
+		"biasVoltage1": ACColumns[3],
+		"biasVoltage2": ACColumns[5],
+		"phaseMargin": ACColumns[7],
+		"dcGain": ACColumns[9],
+		"power": DCColumns[1],
+		"noise": NoiseColumns[1]
 	}
 	for key, val in return_dict.items():
 		val_flt = na
@@ -307,7 +326,7 @@ def standardize_netlist_subckt_def(netlist: Union[str,Path]):
 	with open(netlist, "w") as spice_net:
 		spice_net.writelines(subckt_lines)
 
-def __run_single_brtfrc(index, parameters_ele):
+def __run_single_brtfrc(index, parameters_ele, output_dir: Optional[Union[str,Path]] = None):
 	# generate layout
 	global pdk
 	global save_gds_dir
@@ -330,9 +349,14 @@ def __run_single_brtfrc(index, parameters_ele):
 		standardize_netlist_subckt_def(str(tmpdirname)+"/opamp_pex.spice")
 		# run sim and store result
 		Popen(["ngspice","-b","opamp_perf_eval.sp"],cwd=tmpdirname).wait()
-		result_dict = get_sim_results(str(tmpdirname)+"/output.txt")
+		result_dict = get_sim_results(str(tmpdirname)+"/result_ac.txt", str(tmpdirname)+"/result_power.txt", str(tmpdirname)+"/result_noise.txt")
 		result_dict["area"] = area
 		results = opamp_results_serializer(**result_dict)
+		if output_dir: 
+			output_dir = Path(output_dir).resolve()
+			if not output_dir.is_dir():
+				raise ValueError("Output directory must be a directory")
+			copytree(str(tmpdirname), str(output_dir)+"/test_output", dirs_exist_ok=True)
 		return results
 
 def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.array) -> np.array:
@@ -369,7 +393,7 @@ def get_training_data(test_mode=True,):
 
 
 #util function for pure simulation
-def single_build_and_simulation(parameters: np.array) -> np.array:
+def single_build_and_simulation(parameters: np.array, output_dir: Optional[Union[str,Path]] = None) -> np.array:
 	"""Builds, extract, and simulates a single opamp
 	saves opamp gds in current directory with name 12345678987654321.gds
 	"""
@@ -378,7 +402,7 @@ def single_build_and_simulation(parameters: np.array) -> np.array:
 	pdk = pdk
 	save_gds_dir = Path('./').resolve()
 	index = 12345678987654321
-	return __run_single_brtfrc(index, parameters)
+	return __run_single_brtfrc(index, parameters, output_dir)
 
 
 #======stats=======
@@ -770,6 +794,10 @@ if __name__ == "__main__":
 	gen_opamp_parser.add_argument("--mim_cap_rows", type=int, default=3, help="mim_cap_rows (default: 3)")
 	gen_opamp_parser.add_argument("--rmult", type=int, default=2, help="rmult (default: 2)")
 	gen_opamp_parser.add_argument("--output_gds", help="Filename for outputing opamp (gen_opamp mode only)")
+
+	# Testing
+	test = subparsers.add_parser("test", help="Test mode")
+	test.add_argument("--output_dir", type=Path, default="./", help="Directory for output GDS file")
 	
 	args = parser.parse_args()
 
@@ -806,3 +834,14 @@ if __name__ == "__main__":
 		if args.output_gds:
 			opamp_comp_final.write_gds(args.output_gds)
 
+	elif args.mode == "test":
+		params = {
+			"diffpair_params": (6, 1, 4),
+			"diffpair_bias": (6, 2, 4),
+			"houtput_bias": (6, 2, 8, 3),
+			"pamp_hparams": (7, 1, 10, 3),
+			"mim_cap_size": (12, 12),
+			"mim_cap_rows": 3,
+			"rmult": 2
+		}
+		single_build_and_simulation(opamp_parameters_serializer(**params), args.output_dir)

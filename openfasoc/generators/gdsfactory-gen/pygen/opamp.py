@@ -194,7 +194,7 @@ def opamp(
     pmos_comps.add_ports(pcomps_2L_2R_sourcevia.get_ports_list(),prefix="2L2Rsrcvia_")
     # short all the gates
     pmos_comps << route_quad(LRgatePorts[0],LRgatePorts[-1],layer=pdk.get_glayer("met2"))
-    ytranslation_pcenter = 2 * pcenterfourunits.ymax + 4*_max_metal_seperation_ps
+    ytranslation_pcenter = 2 * pcenterfourunits.ymax + 5*_max_metal_seperation_ps
     ptop_AB = (pmos_comps << shared_gate_comps).movey(ytranslation_pcenter)
     pbottom_AB = (pmos_comps << shared_gate_comps).movey(-1 * ytranslation_pcenter)
     pmos_comps.add_ports(ptop_AB.get_ports_list(),prefix="ptopAB_")
@@ -219,7 +219,7 @@ def opamp(
     # connect source of B to drain of 2R
     pcomps_route_B_source_extension = pmos_comps.xmax-max(LRsourcesPorts[-1].center[0],ptop_AB.ports["R_source_E"].center[0])+_max_metal_seperation_ps
     mimcap_connection_ref = pmos_comps << c_route(pdk, ptop_AB.ports["R_source_E"], LRdrainsPorts[-1],extension=pcomps_route_B_source_extension,viaoffset=(True,False))
-    bottom_pcompB_floating_port = set_orientation(movey(movex(pbottom_AB.ports["L_source_E"].copy(),4*_max_metal_seperation_ps), destination=Aextra_top_connection.ports["e1"].center[1]+Aextra_top_connection.ports["e1"].width+_max_metal_seperation_ps),"S")
+    bottom_pcompB_floating_port = set_orientation(movey(movex(pbottom_AB.ports["L_source_E"].copy(),5*_max_metal_seperation_ps), destination=Aextra_top_connection.ports["e1"].center[1]+Aextra_top_connection.ports["e1"].width+_max_metal_seperation_ps),"S")
     pmos_bsource_2Rdrain_v = pmos_comps << L_route(pdk,pbottom_AB.ports["L_source_E"],bottom_pcompB_floating_port,vglayer="met3")
     pmos_comps << c_route(pdk, LRdrainsPorts[-1], set_orientation(bottom_pcompB_floating_port,"E"),extension=pcomps_route_B_source_extension,viaoffset=(True,False))
     pmos_bsource_2Rdrain_v_center = via_stack(pdk,"met2","met3",fulltop=True)
@@ -296,7 +296,7 @@ def opamp(
     # vbias1 and vbias2 pins
     vbias1 = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met3"),centered=True)
     vbias1.movey(opamp_top.ymin - _max_metal_seperation_ps - vbias1.ymax)
-    opamp_top << straight_route(pdk, opamp_top.ports["centerNcomps_multiplier_0_gate_S"], vbias1.ports["e2"],width=1,fullbottom=False)
+    opamp_top << straight_route(pdk, vbias1.ports["e2"], opamp_top.ports["centerNcomps_multiplier_0_gate_S"],width=1,fullbottom=False)
     vbias2 = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met3"),centered=True)
     vbias2.movex(opamp_top.xmin-2).movey(opamp_top.ymin+vbias2.ymax)
     opamp_top << L_route(pdk, halfmultn_gate_routeref.ports["con_W"], vbias2.ports["e2"],hwidth=2)

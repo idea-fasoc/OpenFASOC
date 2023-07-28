@@ -274,7 +274,7 @@ class MappedPDK(Pdk):
         return max(sep_rules)
     
     @validate_arguments
-    def snap_to_2xgrid(self, dims: Union[list[Union[float,Decimal]], Union[float,Decimal]], return_type: Literal["decimal","float","same"]="same") -> Union[list[Union[float,Decimal]], Union[float,Decimal]]:
+    def snap_to_2xgrid(self, dims: Union[list[Union[float,Decimal]], Union[float,Decimal]], return_type: Literal["decimal","float","same"]="float") -> Union[list[Union[float,Decimal]], Union[float,Decimal]]:
         """snap all numbers in dims to double the grid size.
         This is useful when a generator accepts a size or dimension argument
         because there is a chance the cell may be centered (resulting in off grid components)
