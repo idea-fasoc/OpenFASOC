@@ -1,5 +1,5 @@
 * opamp_perf_eval.sp
-** OpenFASOC Team 2023
+** OpenFASOC Team, Ryan Wans 2023
 
 ** Define global parameters for altering
 .param b1 = 0.8
@@ -71,7 +71,7 @@ while biasVoltage1 le biasVoltageMax
             let maxUGB = ugb_f
             let maxBv1 = biasVoltage1
             let maxBv2 = biasVoltage2
-            let savedPhaseMargin = pm
+            let savedPhaseMargin = pm % 360
             let savedDCGain = dcg
         end
         let biasVoltage2 = biasVoltage2 + biasVoltageStep
@@ -81,9 +81,25 @@ while biasVoltage1 le biasVoltageMax
     let biasVoltage1 = biasVoltage1 + biasVoltageStep
 end
 ** Export global maxima
-wrdata output.txt maxUGB maxBv1 maxBv2 savedPhaseMargin savedDCGain
+wrdata result_ac.txt maxUGB maxBv1 maxBv2 savedPhaseMargin savedDCGain
+
+** Export power usage of opamp w/ best gain
+alterparam b1 = $&maxBv1
+alterparam b2 = $&maxBv2
+reset
 run
-display
+meas ac maxDraw max i(vsupply)
+let maxPower = maxDraw * 1.8
+wrdata result_power.txt maxPower
+
+** Run noise analysis on opamp w/ best gain
+reset
+noise V(vo) v2 dec 100 1k 10G
+setplot previous
+let integ = integ(onoise_spectrum)
+let totalNoise = sqrt(integ[length(integ)-1])
+wrdata result_noise.txt totalNoise
+
 .endc
 .GLOBAL GND
 .GLOBAL VDD
