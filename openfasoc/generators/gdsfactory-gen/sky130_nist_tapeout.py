@@ -340,7 +340,7 @@ def __run_single_brtfrc(index, parameters_ele):
 		standardize_netlist_subckt_def(str(tmpdirname)+"/opamp_pex.spice")
 		# run sim and store result
 		Popen(["ngspice","-b","opamp_perf_eval.sp"],cwd=tmpdirname).wait()
-		result_dict = get_sim_results(str(tmpdirname)+"/output.txt")
+		result_dict = get_sim_results(str(tmpdirname)+"/result_ac.txt", str(tmpdirname)+"/result_power.txt", str(tmpdirname)+"/result_noise.txt")
 		result_dict["area"] = area
 		results = opamp_results_serializer(**result_dict)
 		return results
