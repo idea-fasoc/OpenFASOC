@@ -12,8 +12,17 @@ def _generate_configs(
 	parameters_iterator = {}
 
 	for parameter in parameters.items():
+		parameter_values = []
+
+		if type(parameter[1]) is dict:
+			parameter_values = parameter[1]['values']
+		elif type(parameter[1]) is list:
+			parameter_values = parameter[1]
+		else:
+			parameter_values = [parameter[1]]
+
 		parameters_iterator[parameter[0]] = {
-			'values': parameter[1]['values'],
+			'values': parameter_values,
 			'i': 0
 		}
 
