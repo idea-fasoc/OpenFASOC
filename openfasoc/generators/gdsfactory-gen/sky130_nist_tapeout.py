@@ -267,20 +267,30 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 
 
 
-def get_sim_results(filepath: Union[str,Path]):
-	fileabspath = Path(filepath).resolve()
-	with open(fileabspath, "r") as ResultReport:
-		RawResult = ResultReport.readlines()[0]
-		Columns = [item for item in RawResult.split() if item]
+def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath: Union[str,Path]):
+	acabspath = Path(acpath).resolve()
+	dcabspath = Path(dcpath).resolve()
+	noiseabspath = Path(noisepath).resolve()
+	with open(acabspath, "r") as ACReport:
+		RawAC = ACReport.readlines()[0]
+		ACColumns = [item for item in RawAC.split() if item]
+	with open(dcabspath, "r") as DCReport:
+		RawDC = DCReport.readlines()[0]
+		DCColumns = [item for item in RawDC.split() if item]
+	with open(noiseabspath, "r") as NoiseReport:
+		RawNoise = NoiseReport.readlines()[0]
+		NoiseColumns = [item for item in RawNoise.split() if item]
 	na = -987.654321
-	if len(Columns)<9 or Columns is None:
-		return {"ugb":na,"biasVoltage1":na,"biasVoltage2":na,"phaseMargin":na,"dcGain":na}
+	if len(ACColumns)<9 or ACColumns is None:
+		return {"ugb":na,"biasVoltage1":na,"biasVoltage2":na,"phaseMargin":na,"dcGain":na,"power":na,"noise":na}
 	return_dict = {
-		"ugb": Columns[1],
-		"biasVoltage1": Columns[3],
-		"biasVoltage2": Columns[5],
-		"phaseMargin": Columns[7],
-		"dcGain": Columns[9]
+		"ugb": ACColumns[1],
+		"biasVoltage1": ACColumns[3],
+		"biasVoltage2": ACColumns[5],
+		"phaseMargin": ACColumns[7],
+		"dcGain": ACColumns[9],
+		"power": DCColumns[3],
+		"noise": NoiseColumns[3]
 	}
 	for key, val in return_dict.items():
 		val_flt = na
