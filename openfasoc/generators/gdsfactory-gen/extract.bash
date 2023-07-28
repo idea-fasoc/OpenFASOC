@@ -1,7 +1,7 @@
 #!/bin/bash
 #export PDK_ROOT=/usr/local/share/pdk/
-# export PDK_ROOT=/usr/bin/miniconda3/share/pdk/
-export PDK_ROOT = /home/rw/work/open_pdks/sky130
+export PDK_ROOT=/usr/bin/miniconda3/share/pdk/
+# export PDK_ROOT = /home/rw/work/open_pdks/sky130
 
 # args:
 # first arg = gds file to read

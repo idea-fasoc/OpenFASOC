@@ -23,11 +23,11 @@ Vindc net1 GND 1
 ** .lib /usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
 ** .include /usr/local/share/pdk/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
 
-.lib /home/rw/work/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130.lib.spice tt
-.include /home/rw/work/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
+** .lib /home/rw/work/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+** .include /home/rw/work/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
 
-** .lib /usr/bin/miniconda3/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
-** .include /usr/bin/miniconda3/share/pdk/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
+.lib /usr/bin/miniconda3/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+.include /usr/bin/miniconda3/share/pdk/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
 
 ** Import opamp subcircuit
 .include opamp_pex.spice
@@ -40,7 +40,6 @@ XDUT vin vip bias1 bias2 vo VDD GND opamp
 .control
 ** Set initial values
 set filetype = ascii
-set appendwrite = 1
 let maxUGB = -1
 let maxBv1 = -1
 let maxBv2 = -1
@@ -49,7 +48,7 @@ let savedDCGain = -1
 ** Tune these
 let biasVoltageMin = 0.4
 let biasVoltageMax = 1.6
-let biasVoltageStep = 0.05
+let biasVoltageStep = 0.1
 let biasVoltage1 = biasVoltageMin
 let biasVoltage2 = biasVoltageMin
 ** Sweep bias voltages
