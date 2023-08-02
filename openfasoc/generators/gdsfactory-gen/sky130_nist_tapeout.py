@@ -310,7 +310,7 @@ def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath:
 		return_dict[key] = val_flt
 	return return_dict
 
-def standardize_netlist_subckt_def(netlist: Union[str,Path]):
+def standardize_netlist_subckt_def(netlist: Union[str,Path], sim_temperature: Optional[float] = float(27)):
 	netlist = Path(netlist).resolve()
 	if not netlist.is_file():
 		raise ValueError("netlist must be file")
@@ -330,6 +330,7 @@ def __run_single_brtfrc(index, parameters_ele, output_dir: Optional[Union[str,Pa
 	# generate layout
 	global pdk
 	global save_gds_dir
+	global SIM_TEMP
 	destination_gds_copy = save_gds_dir / (str(index)+".gds")
 	sky130pdk = pdk
 	params = opamp_parameters_de_serializer(parameters_ele)
@@ -346,7 +347,16 @@ def __run_single_brtfrc(index, parameters_ele, output_dir: Optional[Union[str,Pa
 		copytree("sky130A",str(tmpdirname)+"/sky130A")
 		# extract layout
 		Popen(["bash","extract.bash", tmp_gds_path, opamp_v.name],cwd=tmpdirname).wait()
-		standardize_netlist_subckt_def(str(tmpdirname)+"/opamp_pex.spice")
+		print("Running simulation at temperature: " + str(SIM_TEMP) + "C")
+		spice_lines = list()
+		with open(str(tmpdirname)+"/opamp_perf_eval.sp", "r") as spice_file:
+			spice_lines = spice_file.readlines()
+			print("BEFORE REPL: " + spice_lines[5])
+			spice_lines[5] = spice_lines[5].replace('{@@TEMP}', str(int(SIM_TEMP)))
+			print("AFTER REPL: " + spice_lines[5])
+		with open(str(tmpdirname)+"/opamp_perf_eval.sp", "w") as spice_file:
+			spice_file.writelines(spice_lines)
+		standardize_netlist_subckt_def(str(tmpdirname)+"/opamp_pex.spice", SIM_TEMP)
 		# run sim and store result
 		Popen(["ngspice","-b","opamp_perf_eval.sp"],cwd=tmpdirname).wait()
 		result_dict = get_sim_results(str(tmpdirname)+"/result_ac.txt", str(tmpdirname)+"/result_power.txt", str(tmpdirname)+"/result_noise.txt")
@@ -794,12 +804,18 @@ if __name__ == "__main__":
 	gen_opamp_parser.add_argument("--mim_cap_rows", type=int, default=3, help="mim_cap_rows (default: 3)")
 	gen_opamp_parser.add_argument("--rmult", type=int, default=2, help="rmult (default: 2)")
 	gen_opamp_parser.add_argument("--output_gds", help="Filename for outputing opamp (gen_opamp mode only)")
+	gen_opamp_parser.add_argument("--temp", type=float, default=float(27), help="Simulation temperature")
 
 	# Testing
 	test = subparsers.add_parser("test", help="Test mode")
 	test.add_argument("--output_dir", type=Path, default="./", help="Directory for output GDS file")
+	test.add_argument("--temp", type=float, default=float(27), help="Simulation temperature")
 	
 	args = parser.parse_args()
+
+	# Simulation Temperature
+	global SIM_TEMP
+	SIM_TEMP = args.temp
 
 	if args.mode=="extract_stats":
 		# Call the extract_stats function with the specified file paths or defaults
