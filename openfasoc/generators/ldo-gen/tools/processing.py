@@ -36,7 +36,7 @@ simtype = args.simType
 ext = ('.raw',)
 for files in os.scandir(sim_dir):
     if files.path.endswith(ext) and "cap" in files.name:
-       output_file_names.append(files.name) 
+       output_file_names.append(files.name)
 
 
 def fig_VREG_results(raw_files, vrefspec):

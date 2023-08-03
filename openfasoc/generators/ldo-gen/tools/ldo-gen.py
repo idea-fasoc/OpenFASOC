@@ -1,9 +1,6 @@
 import argparse
-import json
 import math
 import os
-import re
-import shutil
 import sys
 import subprocess as sp
 
@@ -13,7 +10,7 @@ from simulations import *
 
 # TODO: Find a better way to import modules from parent directory
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-from common.verilog_generation import generate_verilog, COMMON_PLATFORMS_PREFIX_MAP
+from common.verilog_generation import generate_verilog
 
 print("#---------------------------------------------------------------------")
 print("# Parsing command line arguments...")
