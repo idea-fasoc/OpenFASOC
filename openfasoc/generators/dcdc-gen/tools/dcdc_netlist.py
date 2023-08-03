@@ -1,7 +1,5 @@
 ##for HSPICE netlist
 import re
-import function
-import os
 import sys
 import math
 

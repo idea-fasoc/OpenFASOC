@@ -1,17 +1,9 @@
 import sys
-import getopt
-import math
 import subprocess as sp
-import fileinput
 import re
 import shutil
-import numpy as np
-import argparse
 import json
-import glob
 
-import operator
-import readparamgen
 from dcdc_netlist import gen_dcdc_netlist_parameters
 from dcdc_simulation import run_dcdc_simulations
 import os
