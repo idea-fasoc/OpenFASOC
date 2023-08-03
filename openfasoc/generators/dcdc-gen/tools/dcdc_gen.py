@@ -13,6 +13,7 @@ import glob
 import operator
 import readparamgen
 from dcdc_netlist import gen_dcdc_netlist_parameters
+from dcdc_simulation import run_dcdc_simulations
 import os
 import time
 
@@ -272,31 +273,12 @@ if args.mode == "macro":
     # sys.exit(1)
     exit()
 
-temp_list = []
-for i in range(0, temp_points + 1):
-    temp_list.append(temp_start + i * temp_step)
-
-generate_runs(
-    genDir, designName, header_var, stage_var, temp_list, jsonConfig, args.platform
+run_dcdc_simulations(
+    platform=args.platform,
+    sim_tool=jsonConfig["simTool"],
+    open_pdks_root=pdk,
+    json_config=jsonConfig
 )
-
-# shutil.copyfile(flowDir + designName + '_pex.spice', runDir + designName + '_pex.spice')
-# shutil.copyfile(genDir + "tools/result.py", runDir + "result.py")
-# shutil.copyfile(genDir + "tools/result_error.py", runDir + "result_error.py")
-
-runDir = simDir + "run/inv{:d}_header{:d}/".format(stage_var[0], header_var[0])
-if os.path.isfile(runDir + "all_result"):
-    shutil.copyfile(runDir + "all_result", genDir + args.outputDir + "/sim_result")
-else:
-    print(runDir + "all_result file is not generated successfully")
-
-
-# with open(spice_netlist, "r") as rf:
-#   filedata = rf.read()
-#   filedata = re.sub("(V[0-9]+)", "*\g<1>", filedata)
-#   filedata = re.sub("\*(R[0-9]+)", "\g<1>", filedata)
-# with open(spice_netlist, "w") as wf:
-#   wf.write(filedata)
 
 print("#----------------------------------------------------------------------")
 print("# Simulation output Generated")

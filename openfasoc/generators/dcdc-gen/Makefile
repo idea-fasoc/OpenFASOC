@@ -11,8 +11,8 @@ sky130hd_dcdc:
 	python3 tools/dcdc_gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode macro
 	python3 tools/parse_rpt.py
 
-# sky130hd_dcdc_full:
-	# python3 tools/dcdc_gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode full
+sky130hd_dcdc_full:
+	python3 tools/dcdc_gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode full
 
 # sky130hs
 sky130hs_dcdc_verilog:
@@ -27,4 +27,5 @@ clean:
 	rm -rf work
 	rm -rf tools/*.pyc tools/__pycache__/
 	rm -rf flow/design/src/dcdc
+	rm -rf simulations/run
 	cd flow && make nuke
