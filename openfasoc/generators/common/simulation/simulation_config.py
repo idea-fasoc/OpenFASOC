@@ -15,9 +15,20 @@ def _generate_configs(
 		parameter_values = []
 
 		if type(parameter[1]) is dict:
-			parameter_values = parameter[1]['values']
+			if 'values' in parameter[1]:
+				parameter_values = parameter[1]['values']
+
+			elif 'start' in parameter[1] and 'end' in parameter[1]:
+				value = parameter[1]['start']
+				step = parameter[1]['step'] if 'step' in parameter[1] else 1
+
+				while value <= parameter[1]['end']:
+					parameter_values.append(value)
+					value += step
+
 		elif type(parameter[1]) is list:
 			parameter_values = parameter[1]
+
 		else:
 			parameter_values = [parameter[1]]
 
