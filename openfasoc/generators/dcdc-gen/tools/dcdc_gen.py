@@ -147,7 +147,6 @@ with open(flowDir + "/design/" + args.platform + "/dcdc/constraint.sdc", "w") as
     file.write(filedata)
 
 # replace designName in flow/design/.../config.mk
-
 with open(flowDir + "design/" + args.platform + "/dcdc/config.mk", "r") as rf:
     filedata = rf.read()
     filedata = re.sub(
@@ -200,7 +199,6 @@ if p.returncode:
     print("[Error] DRC failed. Refer to the report")
     exit(1)
 
-
 print("#----------------------------------------------------------------------")
 print("# DRC finished")
 print("#----------------------------------------------------------------------")
@@ -213,7 +211,6 @@ if p.returncode:
     print("[Error] LVS failed. Refer to the report")
     exit(1)
 
-
 print("#----------------------------------------------------------------------")
 print("# LVS finished")
 print("#----------------------------------------------------------------------")
@@ -221,12 +218,6 @@ print("#----------------------------------------------------------------------")
 if os.path.isdir(args.outputDir):
     shutil.rmtree(genDir + args.outputDir)
 os.mkdir(genDir + args.outputDir)
-
-#  print("genDir + args.outputDir: {}".format(genDir + args.outputDir))
-#  print("flowDir: {}".format(flowDir))
-#  print("args.platform: {}".format(args.platform))
-#  print("designName: {}".format(designName))
-#  subprocess.run(["ls", "-l", flowDir, "results/", args.platform, "/cryo"])
 
 shutil.copyfile(
     flowDir + "results/" + args.platform + "/dcdc/6_final.gds",
@@ -261,7 +252,6 @@ shutil.copyfile(
     genDir + args.outputDir + "/" + args.platform + "/6_final_lvs.rpt",
 )
 
-
 time.sleep(2)
 
 print("#----------------------------------------------------------------------")
@@ -270,7 +260,6 @@ print("#----------------------------------------------------------------------")
 print()
 if args.mode == "macro":
     print("Exiting tool....")
-    # sys.exit(1)
     exit()
 
 run_dcdc_simulations(
