@@ -1,4 +1,4 @@
-from os import path, makedirs
+from os import path, makedirs, rmdir
 from common.verilog_generation import _generate_file
 
 def _generate_configs(
@@ -166,6 +166,9 @@ def _generate_config(
 	run_dir_path = path.join(runs_dir_path, str(config_number))
 
 	if not path.exists(run_dir_path):
+		makedirs(run_dir_path)
+	else:
+		rmdir(run_dir_path)
 		makedirs(run_dir_path)
 
 	open(path.join(run_dir_path, 'parameters.txt'), "w").write(str(run_parameters))
