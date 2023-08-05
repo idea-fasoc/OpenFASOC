@@ -60,7 +60,7 @@ def _run_config(
 	Runs the `run_number`th configuration in the `run_dir` directory.
 
 	Arguments:
-	- `sim_tool` (str): Command for the simulation tool. (Currently only supports `ngspice`)
+	- `sim_tool` (str): Command for the simulation tool.
 	- `run_dir` (str): Path to the directory in which the run configuration exists.
 	- `run_number` (int): The number/index of the run configuration.
 	- `on_exit` (function): An optional function to run when the simulation completes.
@@ -81,7 +81,7 @@ def _threaded_run(
 	"""Runs a particular simulation using `sim_tool` in a `threading.Thread`.
 
 	Arguments:
-	- `sim_tool` (str): Command for the simulation tool. (Currently only supports `ngspice`)
+	- `sim_tool` (str): Command for the simulation tool.
 	- `run_dir` (str): Path to the directory in which the run configuration exists.
 	- `run_number` (int): The number/index of the run configuration.
 	- `on_exit` (function): An optional function to run when the simulation completes.
@@ -99,5 +99,28 @@ def _threaded_run(
 				cwd=run_dir,
 				stdout=subprocess.DEVNULL,
 			).wait()
+		case "xyce":
+			subprocess.Popen(
+				[
+					"xyce",
+					"-l",
+					f"sim_{run_number}.log",
+					f"-o sim_{run_number}",
+					f"sim_{run_number}.sp"
+				],
+				cwd=run_dir,
+				stdout=subprocess.DEVNULL,
+			).wait()
+		case "finesim":
+			subprocess.Popen(
+				[
+					"finesim",
+					f"-o sim_{run_number}",
+					f"-spice sim_{run_number}.sp"
+				],
+				cwd=run_dir,
+				stdout=subprocess.DEVNULL,
+			).wait()
+
 
 	on_exit()
