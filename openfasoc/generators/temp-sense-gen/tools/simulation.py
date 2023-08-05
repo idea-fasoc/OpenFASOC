@@ -44,21 +44,15 @@ def generate_runs(
     for design in designList:
         header = design[0]
         inv = design[1]
-        if prePEX:
-            runDir = "run/prePEX_inv{:d}_header{:d}/".format(inv, header)
-        else:
-            runDir = "run/PEX_inv{:d}_header{:d}/".format(inv, header)
 
+        runDir = "run/{:s}_inv{:d}_header{:d}/".format("prePEX" if prePEX else "PEX", inv, header)
         runDirPath = os.path.join(simDir, runDir)
 
         if os.path.isdir(runDirPath):
             shutil.rmtree(runDirPath, ignore_errors=True)
         os.mkdir(runDirPath)
 
-        if prePEX:
-            srcNetlist = spiceDir + "/" + designName + ".spice"
-        else:
-            srcNetlist = spiceDir + "/" + designName + "_pex.spice"
+        srcNetlist = spiceDir + "/" + designName + (".spice" if prePEX else "_pex.spice")
         dstNetlist = os.path.join(runDirPath, designName + ".spice")
 
         update_netlist(srcNetlist, dstNetlist, jsonConfig["simMode"])
@@ -80,7 +74,6 @@ def generate_runs(
         )
 
         return runDirPath
-
 
 def matchNetlistCell(cell_instantiation):
     """returns true if the input contains as a pin (as a substring) one of the identified cells to remove for partial simulations"""
