@@ -7,7 +7,7 @@ import subprocess as sp
 import sys
 import re
 
-from readparamgen import args, check_search_done, designName
+from readparamgen import args, check_search_done, designName, Tmin, Tmax, Tstep
 from simulation import generate_runs
 
 # TODO: Find a better way to import modules from parent directory
@@ -245,27 +245,19 @@ print("#----------------------------------------------------------------------")
 stage_var = [int(ninv)]
 header_var = [int(nhead)]
 
-# make a temp list, TODO: get from JSON config
-temp_start = -20
-temp_stop = 100
-temp_step = 20
-temp_points = int((temp_stop - temp_start) / temp_step)
-temp_list = []
-for i in range(0, temp_points + 1):
-    temp_list.append(temp_start + i * temp_step)
-
 # run PEX and/or prePEX simulations based on the command line flags
 if args.prepex:
     prepexDir = generate_runs(
-        genDir,
-        designName,
-        header_var,
-        stage_var,
-        temp_list,
-        jsonConfig,
-        args.platform,
-        args.mode,
-        pdk,
+        genDir=genDir,
+        designName=designName,
+        headerList=header_var,
+        invList=stage_var,
+        tempStart=Tmin,
+        tempStop=Tmax,
+        tempStep=Tstep,
+        jsonConfig=jsonConfig,
+        platform=args.platform,
+        pdk=pdk,
         spiceDir=args.outputDir,
         prePEX=True,
     )
@@ -280,15 +272,16 @@ if args.prepex:
 
 if args.pex:
     pexDir = generate_runs(
-        genDir,
-        designName,
-        header_var,
-        stage_var,
-        temp_list,
-        jsonConfig,
-        args.platform,
-        args.mode,
-        pdk,
+        genDir=genDir,
+        designName=designName,
+        headerList=header_var,
+        invList=stage_var,
+        tempStart=Tmin,
+        tempStop=Tmax,
+        tempStep=Tstep,
+        jsonConfig=jsonConfig,
+        platform=args.platform,
+        pdk=pdk,
         spiceDir=args.outputDir,
         prePEX=False,
     )
