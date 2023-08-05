@@ -1,8 +1,6 @@
-import glob
 import os
-import re, math
+import re
 import shutil
-import subprocess as sp
 import sys
 from itertools import product
 

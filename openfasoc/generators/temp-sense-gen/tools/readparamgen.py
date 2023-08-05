@@ -5,7 +5,6 @@ import json
 import os
 import re
 import sys
-import time
 
 import matplotlib.pyplot as plt
 import pandas as pd
