@@ -2,7 +2,7 @@
     "module_name": "tempsenseInst_error",
     "generator": "temp-sense-gen",
     "specifications": {
-    	"temperature": { "min": -20, "max": 100 },
+    	"temperature": { "min": -20, "max": 100, "step": 10 },
     	"power": "",
     	"error": "",
     	"area": "",

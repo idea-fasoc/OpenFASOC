@@ -81,6 +81,7 @@ except KeyError as e:
 try:
     Tempmin = jsonSpec["specifications"]["temperature"]["min"]
     Tempmax = jsonSpec["specifications"]["temperature"]["max"]
+    Tempstep = jsonSpec["specifications"]["temperature"]["step"]
 except KeyError as e:
     print(
         "Error: Bad Input Specfile. 'range o' value is missing under "
@@ -175,6 +176,7 @@ designName = jsonSpec["module_name"]
 
 Tmin = float(jsonSpec["specifications"]["temperature"]["min"])
 Tmax = float(jsonSpec["specifications"]["temperature"]["max"])
+Tstep = float(jsonSpec["specifications"]["temperature"]["step"])
 if (Tmax > 100) or (Tmin < -20):
     print(
         "Error: Supported temperature sensing must be inside the following range [-20 to 100] Celcius"
