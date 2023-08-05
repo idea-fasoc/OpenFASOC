@@ -237,30 +237,29 @@ print("# Macro Generated")
 print("#----------------------------------------------------------------------")
 print()
 
-
-print("#----------------------------------------------------------------------")
-print("# Generating spice netlists for the macro")
-print("#----------------------------------------------------------------------")
-
-stage_var = [int(ninv)]
-header_var = [int(nhead)]
-
-# run PEX and/or prePEX simulations based on the command line flags
-sim_output_dir = generate_runs(
-    genDir=genDir,
-    designName=designName,
-    headerList=header_var,
-    invList=stage_var,
-    tempStart=Tmin,
-    tempStop=Tmax,
-    tempStep=Tstep,
-    jsonConfig=jsonConfig,
-    platform=args.platform,
-    pdk=pdk,
-    spiceDir=args.outputDir,
-    prePEX=args.prepex,
-)
 if args.mode == "full":
+    print("#----------------------------------------------------------------------")
+    print("# Running simulations.")
+    print("#----------------------------------------------------------------------")
+
+    stage_var = [int(ninv)]
+    header_var = [int(nhead)]
+
+    # run PEX and/or prePEX simulations based on the command line flags
+    sim_output_dir = generate_runs(
+        genDir=genDir,
+        designName=designName,
+        headerList=header_var,
+        invList=stage_var,
+        tempStart=Tmin,
+        tempStop=Tmax,
+        tempStep=Tstep,
+        jsonConfig=jsonConfig,
+        platform=args.platform,
+        pdk=pdk,
+        spiceDir=args.outputDir,
+        prePEX=args.prepex,
+    )
     if os.path.isfile(sim_output_dir + "all_result"):
         shutil.copyfile(
             sim_output_dir + "all_result", genDir + args.outputDir + f"/{'prePEX' if args.prepex else 'PEX'}_sim_result"
@@ -268,12 +267,6 @@ if args.mode == "full":
     else:
         print(sim_output_dir + f"{'prePEX' if args.prepex else 'PEX'} all_result file is not generated successfully")
         sys.exit(1)
-
-if args.mode == "full":
-    print("#----------------------------------------------------------------------")
-    print("# Simulation output Generated")
-    print("#----------------------------------------------------------------------")
-
 
 print("Exiting tool....")
 exit()
