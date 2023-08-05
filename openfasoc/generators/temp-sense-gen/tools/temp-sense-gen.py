@@ -246,55 +246,28 @@ stage_var = [int(ninv)]
 header_var = [int(nhead)]
 
 # run PEX and/or prePEX simulations based on the command line flags
-if args.prepex:
-    prepexDir = generate_runs(
-        genDir=genDir,
-        designName=designName,
-        headerList=header_var,
-        invList=stage_var,
-        tempStart=Tmin,
-        tempStop=Tmax,
-        tempStep=Tstep,
-        jsonConfig=jsonConfig,
-        platform=args.platform,
-        pdk=pdk,
-        spiceDir=args.outputDir,
-        prePEX=True,
-    )
-    if args.mode == "full":
-        if os.path.isfile(prepexDir + "all_result"):
-            shutil.copyfile(
-                prepexDir + "all_result", genDir + args.outputDir + "/prePEX_sim_result"
-            )
-        else:
-            print(prepexDir + "prePEX all_result file is not generated successfully")
-            sys.exit(1)
-
-if args.pex:
-    pexDir = generate_runs(
-        genDir=genDir,
-        designName=designName,
-        headerList=header_var,
-        invList=stage_var,
-        tempStart=Tmin,
-        tempStop=Tmax,
-        tempStep=Tstep,
-        jsonConfig=jsonConfig,
-        platform=args.platform,
-        pdk=pdk,
-        spiceDir=args.outputDir,
-        prePEX=False,
-    )
-
-    if args.mode == "full":
-        if os.path.isfile(pexDir + "all_result"):
-            shutil.copyfile(
-                pexDir + "all_result", genDir + args.outputDir + "/PEX_sim_result"
-            )
-        else:
-            print(pexDir + "PEX all_result file is not generated successfully")
-            sys.exit(1)
-
+sim_output_dir = generate_runs(
+    genDir=genDir,
+    designName=designName,
+    headerList=header_var,
+    invList=stage_var,
+    tempStart=Tmin,
+    tempStop=Tmax,
+    tempStep=Tstep,
+    jsonConfig=jsonConfig,
+    platform=args.platform,
+    pdk=pdk,
+    spiceDir=args.outputDir,
+    prePEX=args.prepex,
+)
+if args.mode == "full":
+    if os.path.isfile(sim_output_dir + "all_result"):
+        shutil.copyfile(
+            sim_output_dir + "all_result", genDir + args.outputDir + f"/{'prePEX' if args.prepex else 'PEX'}_sim_result"
+        )
+    else:
+        print(sim_output_dir + f"{'prePEX' if args.prepex else 'PEX'} all_result file is not generated successfully")
+        sys.exit(1)
 
 if args.mode == "full":
     print("#----------------------------------------------------------------------")
