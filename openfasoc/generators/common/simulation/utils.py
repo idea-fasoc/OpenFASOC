@@ -1,9 +1,15 @@
 import time
 
 def _print_progress(total_runs: int, run_number: int, start_time: int, end: str = '\r'):
+	"""Displays the simulation progress.
+
+	Displays the number of simulations completed, total simulations and the time elapsed.
+	"""
 	print(f"Completed {run_number} out of {total_runs} simulations. Elapsed time: {_format_elapsed_time(start_time)}", end=end)
 
 def _format_elapsed_time(start_time: int):
+	"""Formats the elapsed time (in seconds) into hours, minutes, seconds format.
+	"""
 	elapsed_seconds = int(time.time()) - start_time
 
 	if elapsed_seconds > 60 * 60:

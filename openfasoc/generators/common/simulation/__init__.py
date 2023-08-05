@@ -31,7 +31,7 @@ def run_simulations(
 	print(f"Number of concurrent simulations: {num_concurrent_sims}")
 
 	_run_simulations(
-		config_number=config_number,
+		num_configs=config_number,
 		num_concurrent_sims=num_concurrent_sims,
 		sim_tool=sim_tool,
 		runs_dir_path=runs_dir_path

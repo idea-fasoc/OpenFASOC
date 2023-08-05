@@ -5,7 +5,7 @@ import threading
 import subprocess
 
 def _run_simulations(
-	config_number: int,
+	num_configs: int,
 	num_concurrent_sims: int,
 	sim_tool: str,
 	runs_dir_path: str
@@ -21,8 +21,8 @@ def _run_simulations(
 
 	start_time = int(time.time())
 	run_number = 1
-	while simulation_state['completed_sims'] < config_number:
-		if simulation_state['ongoing_sims'] < num_concurrent_sims and run_number <= config_number:
+	while simulation_state['completed_sims'] < num_configs:
+		if simulation_state['ongoing_sims'] < num_concurrent_sims and run_number <= num_configs:
 			_run_config(
 				sim_tool=sim_tool,
 				run_dir=path.join(runs_dir_path, str(run_number)),
@@ -33,10 +33,10 @@ def _run_simulations(
 			simulation_state['ongoing_sims'] += 1
 			run_number += 1
 
-		_print_progress(config_number, simulation_state['completed_sims'], start_time)
+		_print_progress(num_configs, simulation_state['completed_sims'], start_time)
 		time.sleep(1)
 
-	_print_progress(config_number, simulation_state['completed_sims'], start_time, end='\n')
+	_print_progress(num_configs, simulation_state['completed_sims'], start_time, end='\n')
 
 def _run_config(
 	sim_tool: str,

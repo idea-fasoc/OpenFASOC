@@ -9,6 +9,18 @@ def _generate_configs(
 	netlist_path: str,
 	runs_dir_path: str
 ) -> int:
+	"""Generates configurations for the simulations.
+
+	Generates a directory (with name equal to the number of the configuration) for each configuration in the runs directory given by `runs_dir_path`. Each configuration includes a testbench SPICE file (`sim_[run_number].sp`) corresponding to the configuration and a `parameters.txt` file containing the values of each of the parameters in the particular configuration.
+
+	Arguments:
+	- `parameters` (dict): Parameters used to generate the runs.
+	- `sim_tool` (str): Command for the simulation tool. (Currently only supports `ngspice`)
+	- `platform` (str): Platform/PDK.
+	- `template` (str): Path to the SPICE template file for the testbench. (The template is a SPICE file with [Mako](https://makotemplates.org) templating syntax)
+	- `netlist_path` (str): Path to the netlist file used for simulation. (Absolute path to this file will be added as a Mako parameter)
+	- `runs_dir_path` (str): Path to the directory in which the simulation runs will be generated.
+	"""
 	parameters_iterator = {}
 
 	for parameter in parameters.items():
@@ -79,6 +91,17 @@ def _generate_run_parameters(
 	template: str,
 	netlist_path: str
 ) -> dict:
+	"""Generates and returns parameters for a given run.
+
+	Generates and returns the final parameters for a given run from the parameters iterator and the number of the config.
+
+	Arguments:
+	- `parameters_iterator` (dict): A dictionary with keys equal to the parameter name and values of the following format: `{'values': list[str], 'i': int}`. Here values is a list of all the possible values the particular parameter can take and `i` is the value selected for the current config.
+	- `config_number` (str): The number/index of the configuration.
+	- `platform` (str): Platform/PDK.
+	- `template` (str): Path to the SPICE template file for the testbench. (The template is a SPICE file with [Mako](https://makotemplates.org) templating syntax)
+	- `netlist_path` (str): Path to the netlist file used for simulation. (Absolute path to this file will be added as a Mako parameter)
+	"""
 	run_parameters = {
 		'run_number': config_number,
 		'sim_tool': sim_tool,
@@ -99,6 +122,16 @@ def _generate_config(
 	runs_dir_path: str,
 	template: str
 ) -> None:
+	"""Generates the files required for a particular configuration.
+
+	Generates the files (SPICE testbench file and `parameters.txt`) for a particular configuration/run in the directory for the run.
+
+	Arguments:
+	- `run_parameters` (dict): Parameters for the particular run.
+	- `config_number` (str): The number/index of the configuration.
+	- `runs_dir_path` (str): Path to the directory in which the simulation runs will be generated.
+	- `template` (str): Path to the SPICE template file for the testbench. (The template is a SPICE file with [Mako](https://makotemplates.org) templating syntax)
+	"""
 	run_dir_path = path.join(runs_dir_path, str(config_number))
 
 	if not path.exists(run_dir_path):
