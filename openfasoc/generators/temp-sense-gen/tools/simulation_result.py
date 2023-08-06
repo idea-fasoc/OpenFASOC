@@ -34,51 +34,60 @@ def calculate_sim_error(sim_output_lines: list[str]):
 
     for line in sim_output_lines:
         data = line.split()
-        temp_list.append(data[0])
-        period_list.append(data[1])
-        power_list.append(data[2])
+        temp_list.append(float(data[0]))
+        period_list.append(float(data[1]))
+        power_list.append(float(data[2]))
 
     frequency_list = []
-    calculated_temp_list = []
+    data1 = []
 
-    for i, calculated_temp in enumerate(period_list):
-        if calculated_temp == "failed":
-            cal_temp = "failed"
+    for i, x in enumerate(period_list):
+        if x == "failed":
+            x = "failed"
             frequency = "failed"
         else:
-            frequency = 1 / float(calculated_temp)
-            print("temp: %s, \tfrequency: %f" % (temp_list[i], frequency))
+            frequency = 1 / float(x)
+            print("temp: %f, \tfrequency: %f" % (temp_list[i], frequency))
 
-            cal_temp = math.log(1 / float(calculated_temp)) * ((-20 + i * 20) + 273.15) * 0.01
+            x = math.log(1 / float(x)) * (temp_list[i] + 273.15) * 0.01
 
         frequency_list.append(frequency)
-        calculated_temp_list.append(cal_temp)
+        data1.append(x)
 
     try:
-        slope_f = (temp_list[-2] - temp_list[1]) / (calculated_temp_list[-2] - calculated_temp_list[1])
+        slope_f = (temp_list[-2] - temp_list[1]) / (data1[-2] - data1[1])
     except:
         print("Error calculation failed")
         sys.exit(1)
 
     data2 = []
-    for temp in calculated_temp_list:
-        if temp == "failed":
-            calculated_temp = "failed"
+    for data in data1:
+        if data == "failed":
+            x = "failed"
         else:
-            calculated_temp = temp * slope_f
-        data2.append(calculated_temp)
+            x = data * slope_f
+        data2.append(x)
+
+    data3 = []
+    offset = data2[0] - temp_list[0]
+    for val in data2:
+        if val == "failed":
+            val = "failed"
+        else:
+            val = val - offset
+        data3.append(val)
 
     error_list = []
-    error_list.append("Temp Frequency Power Error")
-    for i, calculated_temp in enumerate(data2):
-        if calculated_temp == "failed":
+    for i, x in enumerate(data3):
+        if x == "failed":
             error = "failed"
         else:
-            error = (temp_list[i]) - calculated_temp
+            error = temp_list[i] - x
         error_list.append(error)
 
     error_data: list[str] = []
+    error_data.append("Temp Frequency Power Error")
     for idx, temp in enumerate(temp_list):
-        error_data.append("%s %s %s %s" % (temp, frequency_list[idx], power_list[idx], error_list[idx]))
+        error_data.append(f"{temp} {frequency_list[idx]} {power_list[idx]} {error_list[idx]}")
 
     return error_data
