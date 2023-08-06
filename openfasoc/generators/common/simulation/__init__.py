@@ -11,7 +11,7 @@ def run_simulations(
 	sim_tool: str = "ngspice",
 	num_concurrent_sims: int = 4,
 	netlist_path: str = "netlist.sp"
-) -> None:
+) -> int:
 	"""Runs SPICE simulations.
 
     Generates configurations of all combinations of the given `parameters` and simulates each case. The testbench SPICE file, configuration parameters, and the output for each run are generated in the `simulation_dir/runs_dir` directory.
@@ -64,6 +64,8 @@ def run_simulations(
     - `sim_tool` (str = "sim_tool"): Command for the simulation tool.
     - `num_concurrent_sims` (int = 4): The maximum number of concurrent simulations.
     - `netlist_path` (str = "netlist.sp"): Path to the SPICE netlist of the design to be simulated.
+
+    Returns (int): The number of simulations run.
 	"""
 
 	runs_dir_path = path.join(simulation_dir, runs_dir)
@@ -90,3 +92,5 @@ def run_simulations(
 		sim_tool=sim_tool,
 		runs_dir_path=runs_dir_path
 	)
+
+	return config_number
