@@ -4,6 +4,8 @@ import shutil
 import sys
 from itertools import product
 
+from simulation_result import get_sim_results, calculate_sim_error
+
 # TODO: Find a better way to import modules from parent directory
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from common.simulation import run_simulations
@@ -55,7 +57,7 @@ def generate_runs(
 
         update_netlist(srcNetlist, dstNetlist, jsonConfig["simMode"])
 
-        run_simulations(
+        num_simulations = run_simulations(
             parameters={
                 'temp': {'start': tempStart, 'end': tempStop, 'step': tempStep},
                 'model_file': model_file,
@@ -70,6 +72,19 @@ def generate_runs(
             sim_tool=simTool,
             netlist_path=dstNetlist
         )
+
+        # Calculating simulation results and error
+        with open(os.path.join(runDirPath, 'sim_output'), 'w') as sim_output_file:
+            for i in range(num_simulations):
+                log_file_path = os.path.join(runDirPath, f"{i + 1}", f"sim_{i + 1}.log")
+                sim_results = get_sim_results(open(log_file_path, "r").read())
+
+                sim_output_file.write(f"{sim_results['temp']} {sim_results['period']} {sim_results['power']}\n")
+
+        with open(os.path.join(runDirPath, 'sim_output'), 'r') as sim_output_file:
+            with open(os.path.join(runDirPath, 'all_result'), 'w') as all_result_file:
+                error_data = calculate_sim_error(sim_output_lines=sim_output_file.readlines())
+                all_result_file.write("\n".join(error_data))
 
         return runDirPath
 

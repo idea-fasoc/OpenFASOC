@@ -192,12 +192,6 @@ else:
     os.mkdir(args.outputDir)
     outputDir = args.outputDir
 
-#  print("genDir + args.outputDir: {}".format(genDir + args.outputDir))
-#  print("flowDir: {}".format(flowDir))
-#  print("args.platform: {}".format(args.platform))
-#  print("designName: {}".format(designName))
-#  subprocess.run(["ls", "-l", flowDir, "results/", args.platform, "/tempsense"])
-
 shutil.copyfile(
     flowDir + "results/" + args.platform + "/tempsense/6_final.gds",
     outputDir + "/" + designName + ".gds",
@@ -230,7 +224,6 @@ shutil.copyfile(
     flowDir + "reports/" + args.platform + "/tempsense/6_final_lvs.rpt",
     outputDir + "/6_final_lvs.rpt",
 )
-
 
 print("#----------------------------------------------------------------------")
 print("# Macro Generated")
