@@ -93,7 +93,8 @@ def _threaded_run(
 				[
 					"ngspice",
 					"-b",
-					f"-o sim_{run_number}.log",
+					"-o",
+					f"sim_{run_number}.log",
 					f"sim_{run_number}.sp"
 				],
 				cwd=run_dir,
@@ -105,7 +106,8 @@ def _threaded_run(
 					"xyce",
 					"-l",
 					f"sim_{run_number}.log",
-					f"-o sim_{run_number}",
+					"-o",
+					f"sim_{run_number}",
 					f"sim_{run_number}.sp"
 				],
 				cwd=run_dir,
@@ -115,8 +117,10 @@ def _threaded_run(
 			subprocess.Popen(
 				[
 					"finesim",
-					f"-o sim_{run_number}",
-					f"-spice sim_{run_number}.sp"
+					"-o",
+					f"sim_{run_number}",
+					"-spice",
+					f"sim_{run_number}.sp"
 				],
 				cwd=run_dir,
 				stdout=subprocess.DEVNULL,
