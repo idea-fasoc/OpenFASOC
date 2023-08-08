@@ -53,9 +53,9 @@ Running ``make sky130hvl_ldo`` (ldo for "digital ldo") executes the `ldo-gen.py 
 .. note::
   ldo-gen.py calls other modules from ldo-gen/tools/ during execution. For example, `configure_workspace.py <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/ldo-gen/tools/configure_workspace.py>`_ is in charge of reading test.json, checking for correct user input and choosing the correct circuit elements.
 
-The generator starts from a Verilog template of the ldo circuit, located in `ldo-gen/src/ <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/ldo-gen/src>`_. The ``.v`` template file have a parameter ARRSZ , which updates according to the specifications.
+The generator starts from a Verilog template of the ldo circuit, located in `ldo-gen/src/ <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/ldo-gen/src>`_. The ``.v`` template file have a parameter ``ARRSZ`` , which updates according to the specifications.
 
-Example: `LDO_CONTROLLER_TEMPLATE.v line 5 <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/ldo-gen/src/LDO_CONTROLLER_TEMPLATE.v#L5>`_ changes the value based on number of switches during Verilog generation.
+Example: `LDO_CONTROLLER.v line 5 <https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/ldo-gen/src/LDO_CONTROLLER.v#L5>`_ changes the value based on number of switches during Verilog generation.
 
 
 .. note::
