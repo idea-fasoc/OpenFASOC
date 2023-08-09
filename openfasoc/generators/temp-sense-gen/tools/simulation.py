@@ -17,15 +17,15 @@ def generate_runs(
     designName: str,
     headerList: list[int],
     invList: list[int],
-    tempStart: int,
-    tempStop: int,
-    tempStep: int,
+    tempStart: float,
+    tempStop: float,
+    tempStep: float,
     jsonConfig: dict,
     platform: str,
     pdk: str,
-    spiceDir: str = None,
+    spiceDir: str | None = None,
     prePEX: bool = True,
-):
+) -> str:
     """creates and executes simulations (through run_simulations call)"""
     simDir = genDir + "simulations/"
     platformConfig = jsonConfig["platforms"][platform]
@@ -86,7 +86,7 @@ def generate_runs(
                 error_data = calculate_sim_error(sim_output_lines=sim_output_file.readlines())
                 all_result_file.write("\n".join(error_data))
 
-        return runDirPath
+    return runDirPath
 
 def matchNetlistCell(cell_instantiation):
     """returns true if the input contains as a pin (as a substring) one of the identified cells to remove for partial simulations"""
