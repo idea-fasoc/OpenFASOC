@@ -61,7 +61,7 @@ def run_simulations(
     - `simulation_dir` (str = "simulations"): Path to the directory where the simulation source files are placed and the outputs will be generated.
     - `template_path` (str = "templates/template.sp"): Path to the SPICE template file for the testbench. (The template is a SPICE file with [Mako](https://makotemplates.org) templating syntax)
     - `runs_dir` (str = "runs"): Path to a directory inside the `simulation_dir` directory where the outputs for the simulations will be generated.
-    - `sim_tool` (str = "sim_tool"): Command for the simulation tool.
+    - `sim_tool` (str = "ngspice"): Command for the simulation tool.
     - `num_concurrent_sims` (int = 4): The maximum number of concurrent simulations.
     - `netlist_path` (str = "netlist.sp"): Path to the SPICE netlist of the design to be simulated.
 
