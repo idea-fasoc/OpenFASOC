@@ -34,6 +34,7 @@ Prerequisites
 Install all the prerequisites using `dependencies.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7 and Ubuntu20.
 
 .. code-block:: bash
+
     $ ./get_conda.sh
     $ conda init bash # You will need to restart your shell for changes to have any effect
     $ ./dependencies.sh
