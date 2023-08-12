@@ -32,7 +32,11 @@ Prerequisites
 ****************
 
 Install all the prerequisites using `dependencies.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7 and Ubuntu20.
-
+```
+$ ./get_conda.sh
+$ conda init bash # You will need to restart your shell after this
+$ ./dependencies.sh
+```
 
 (Or) Please install the following tools by building the tools manually from their code base with the recommended commit ids for stable functioning of the flow:
 
