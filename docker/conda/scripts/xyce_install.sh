@@ -26,7 +26,8 @@ then
 	echo "deb https://apt.kitware.com/ubuntu/ jammy main" | tee /etc/apt/sources.list.d/kitware.list
 else 
 	echo "deb https://apt.kitware.com/ubuntu/ focal main" | tee /etc/apt/sources.list.d/kitware.list
-fiapt install -y cmake
+fi
+apt install -y cmake
 
 ###########################################################################
 #Install Trilinos from source
