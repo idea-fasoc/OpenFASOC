@@ -139,25 +139,9 @@ then
 else
     echo "Compatible python version exists: $ma_ver.$mi_ver"
 fi
-# install miniconda3
-if ! [ -x /home/$(logname)/miniconda3 ]
-then
-      wget https://repo.anaconda.com/miniconda/Miniconda3-py37_23.1.0-1-Linux-x86_64.sh \
-    && bash Miniconda3-py37_23.1.0-1-Linux-x86_64.sh -b -p /home/$(logname)/miniconda3/ \
-    && rm -f Miniconda3-py37_23.1.0-1-Linux-x86_64.sh
-else
-    echo "[OpenFASoC] Found miniconda3. Continuing the installation...\n"
-fi
 
 if [ $? == 0 ] && [ -x /home/$(logname)/miniconda3/ ]
 then
-        echo "[OpenFASoC] miniconda3 installed successfully. Continuing the installation...\n"
-        if ! grep -q "/home/$(logname)/miniconda3/bin" /home/$(logname)/.bashrc || ! echo "$PATH" | grep -q "/home/$(logname)/miniconda3/bin"; then
-                echo "" >> /home/$(logname)/.bashrc
-                echo 'export PATH="/home/$(logname)/miniconda3/bin:$PATH"' >> /home/$(logname)/.bashrc
-                echo "[OpenFASoC] miniconda3 added to PATH"
-        fi
-	export PATH=/home/$(logname)/miniconda3/bin:$PATH
 	conda update -y conda
         if [ $? == 0 ];then conda install -c litex-hub --file conda_versions.txt -y ; else echo "[OpenFASoC] Failed to update conda version." ; exit ; fi
         if [ $? == 0 ];then echo "[OpenFASoC] Installed OpenROAD, Yosys, Skywater PDK, Magic and Netgen successfully" ; else echo "[OpenFASoC] Failed to install conda packages" ; exit ; fi
