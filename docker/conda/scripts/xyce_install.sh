@@ -18,8 +18,15 @@ apt-get install libfftw3-dev libsuitesparse-dev libblas-dev liblapack-dev -y
 apt-get install libopenmpi-dev openmpi-bin -y
 
 wget -qO /etc/apt/trusted.gpg.d/kitware-key.asc https://apt.kitware.com/keys/kitware-archive-latest.asc
-echo "deb https://apt.kitware.com/ubuntu/ focal main" | tee /etc/apt/sources.list.d/kitware.list
-apt install -y cmake
+currentver="$(lsb_release -rs)"
+requiredver="22.04"
+
+if [ $currentver == $requiredver ]
+then 
+	echo "deb https://apt.kitware.com/ubuntu/ jammy main" | tee /etc/apt/sources.list.d/kitware.list
+else 
+	echo "deb https://apt.kitware.com/ubuntu/ focal main" | tee /etc/apt/sources.list.d/kitware.list
+fiapt install -y cmake
 
 ###########################################################################
 #Install Trilinos from source
