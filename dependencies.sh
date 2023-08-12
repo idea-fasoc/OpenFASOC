@@ -204,9 +204,9 @@ then
  requiredver="22.04"
  if [ $currentver == $requiredver ]
  then
-  mv compile_linux_ub22_for_ngspice.sh ngspice
+  chmod +x compile_linux_ub22_for_ngspice.sh
+  cp compile_linux_ub22_for_ngspice.sh ngspice
   cd ngspice && sudo ./compile_linux_ub22_for_ngspice.sh
-  mv compile_linux_ub22_for_ngspice.sh ../
  else
   cd ngspice && sudo ./compile_linux.sh
  fi
