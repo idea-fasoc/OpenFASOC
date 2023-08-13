@@ -1,6 +1,10 @@
 * opamp_perf_eval.sp
 ** OpenFASOC Team, Ryan Wans 2023
 
+** IMPORTANT:   Temperature setting is added automatically in the reading
+**              of this file on line 6 as {@@TEMP}. DO NOT OVERRIDE.
+.temp {@@TEMP}
+
 ** Define global parameters for altering
 .param b1 = 0.8
 .param b2 = 0.75
@@ -20,12 +24,16 @@ Vindc net1 GND 1
 .save i(vindc)
 
 ** Import SKY130 libs (this should be replaced with a path relative to some env variable)
+
+** Ali
 ** .lib /usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
 ** .include /usr/local/share/pdk/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
 
-** .lib /home/rw/work/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130.lib.spice tt
-** .include /home/rw/work/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
+** Ryan
+* .lib /home/rw/work/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+* .include /home/rw/work/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
 
+** Actual
 .lib /usr/bin/miniconda3/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
 .include /usr/bin/miniconda3/share/pdk/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
 
