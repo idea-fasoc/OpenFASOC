@@ -207,6 +207,7 @@ class MappedPDK(Pdk):
     def is_routable_glayer(cls, glayer: StrictStr):
         return any(hint in glayer for hint in ["met", "active", "poly"])
 
+    # TODO: implement
     @classmethod
     def from_gf_pdk(
         cls,
@@ -222,29 +223,29 @@ class MappedPDK(Pdk):
         passargs = dict()
         # pdk args
         passargs["name"]=gfpdk.name
-        passargs["cross_sections"]=gfpdk.cross_sections
-        passargs["cells"]=gfpdk.cells
-        passargs["symbols"]=gfpdk.symbols
-        passargs["default_symbol_factory"]=gfpdk.default_symbol_factory
-        passargs["containers"]=gfpdk.containers
-        passargs["base_pdk"]=gfpdk.base_pdk
-        passargs["default_decorator"]=gfpdk.default_decorator
+        #passargs["cross_sections"]=gfpdk.cross_sections
+        #passargs["cells"]=gfpdk.cells
+        #passargs["symbols"]=gfpdk.symbols
+        #passargs["default_symbol_factory"]=gfpdk.default_symbol_factory
+        #passargs["containers"]=gfpdk.containers
+        #passargs["base_pdk"]=gfpdk.base_pdk
+        #passargs["default_decorator"]=gfpdk.default_decorator
         passargs["layers"]=gfpdk.layers
-        passargs["layer_stack"]=gfpdk.layer_stack
+        #passargs["layer_stack"]=gfpdk.layer_stack
         #passargs["layer_views"]=gfpdk.layer_views#??? layer view broken???
-        passargs["layer_transitions"]=gfpdk.layer_transitions
-        passargs["sparameters_path"]=gfpdk.sparameters_path
-        passargs["modes_path"]=gfpdk.modes_path
-        passargs["interconnect_cml_path"]=gfpdk.interconnect_cml_path
-        passargs["warn_off_grid_ports"]=gfpdk.warn_off_grid_ports
-        passargs["constants"]=gfpdk.constants
-        passargs["materials_index"]=gfpdk.materials_index
-        passargs["routing_strategies"]=gfpdk.routing_strategies
-        passargs["circuit_yaml_parser"]=gfpdk.circuit_yaml_parser
-        passargs["gds_write_settings"]=gfpdk.gds_write_settings
-        passargs["oasis_settings"]=gfpdk.oasis_settings
-        passargs["cell_decorator_settings"]=gfpdk.cell_decorator_settings
-        passargs["bend_points_distance"]=gfpdk.bend_points_distance
+#        passargs["layer_transitions"]=gfpdk.layer_transitions
+#        passargs["sparameters_path"]=gfpdk.sparameters_path
+#        passargs["modes_path"]=gfpdk.modes_path
+#        passargs["interconnect_cml_path"]=gfpdk.interconnect_cml_path
+#        passargs["warn_off_grid_ports"]=gfpdk.warn_off_grid_ports
+#        passargs["constants"]=gfpdk.constants
+#        passargs["materials_index"]=gfpdk.materials_index
+#        passargs["routing_strategies"]=gfpdk.routing_strategies
+#        passargs["circuit_yaml_parser"]=gfpdk.circuit_yaml_parser
+#        passargs["gds_write_settings"]=gfpdk.gds_write_settings
+#        passargs["oasis_settings"]=gfpdk.oasis_settings
+#        passargs["cell_decorator_settings"]=gfpdk.cell_decorator_settings
+#        passargs["bend_points_distance"]=gfpdk.bend_points_distance
         # MappedPDK args override existing args
         passargs.update(kwargs)
         # create and return MappedPDK
