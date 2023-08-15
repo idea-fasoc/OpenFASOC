@@ -1,10 +1,6 @@
-import json
 import math
-import re
-
 
 INCLUDE_2_PMOS_ARRSIZE = int(40)
-
 
 # model file contains polynomial coeficients
 # for a polynomial which represents max current "x" vs number of transistors in array "f(x)"
@@ -33,7 +29,6 @@ def update_ldo_domain_insts(blocksDir, arrSize):
         for i in range(arrSize):
             ldo_domain_insts.write("{pt_array_unit\[" + str(i) + "\]}\n")
 
-
 def update_ldo_place_insts(blocksDir, arrSize):
     """Writes arrSize pt unit cell instances to ldo_domain_insts.txt."""
     with open(blocksDir + "/ldo_place.txt", "w") as ldo_place_insts:
@@ -61,29 +56,8 @@ def update_custom_nets(blocksDir, arrSize):
             ldo_domain_insts.write("{pt_array_unit\[" + str(i) + "\]} VREG\n")
 
 
-def generate_LDO_verilog(directories, outputDir, designName, arrSize):
-    """Writes specialized behavioral verilog to output dir and flow dir."""
-    with open(directories["verilogDir"] + "/LDO_TEMPLATE.v", "r") as verilog_template:
-        filedata = verilog_template.read()
-    filedata = re.sub(
-        r"parameter integer ARRSZ = \d+;",
-        r"parameter integer ARRSZ = " + str(arrSize) + ";",
-        filedata,
-    )
-    filedata = re.sub(r"module \S+", r"module " + designName + "(", filedata)
-    if arrSize > INCLUDE_2_PMOS_ARRSIZE:
-        filedata = filedata.replace("//COMMENTPMOS2 ", "", 1)
-    # write verilog src files to output dir and flow dir
-    with open(outputDir + "/" + designName + ".v", "w") as verilog_template:
-        verilog_template.write(filedata)
-    with open(
-        directories["flowDir"] + "/design/src/ldo/" + designName + ".v", "w"
-    ) as verilog_template:
-        verilog_template.write(filedata)
-
-
-def generate_controller_verilog(directories, outputDir, arrSize):
-    """Writes specialized behavioral verilog to output dir and flow dir."""
+def get_ctrl_wd_rst(arrSize):
+    """Returns the value of the ctrlWdRst parameter used in the Verilog source."""
     # Get ctrl word initialization in hex
     ctrlWordHexCntF = int(math.floor(arrSize / 4.0))
     ctrlWordHexCntR = int(arrSize % 4.0)
@@ -93,22 +67,7 @@ def generate_controller_verilog(directories, outputDir, arrSize):
         ctrlWordHex.append("f")
     ctrlWdRst = str(arrSize) + "'" + "".join(ctrlWordHex)
 
-    with open(directories["verilogDir"] + "/LDO_CONTROLLER_TEMPLATE.v", "r") as file:
-        filedata = file.read()
-    filedata = re.sub(
-        r"parameter integer ARRSZ = \d+;",
-        r"parameter integer ARRSZ = " + str(arrSize) + ";",
-        filedata,
-    )
-    filedata = re.sub(
-        r"wire \[ARRSZ-1:0\] ctrl_rst = \S+",
-        r"wire " + "[ARRSZ-1:0] ctrl_rst = " + ctrlWdRst + ";",
-        filedata,
-    )
-    with open(outputDir + "/LDO_CONTROLLER.v", "w") as file:
-        file.write(filedata)
-    with open(directories["flowDir"] + "/design/src/ldo/LDO_CONTROLLER.v", "w") as file:
-        file.write(filedata)
+    return ctrlWdRst
 
 
 def update_area_and_place_density(flowDir, arrSize):

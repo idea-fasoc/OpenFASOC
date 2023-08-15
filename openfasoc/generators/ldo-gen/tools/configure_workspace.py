@@ -1,10 +1,7 @@
 # Utility functions to setup neccessary vars used in LDO-gen
 import subprocess as sp
-import argparse
 import json
-import math
 import os
-import re
 import shutil
 import sys
 import time

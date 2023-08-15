@@ -1,4 +1,4 @@
-module cryoInst
+module ${design_name}
 (
 	input EBL,
 	output OUT

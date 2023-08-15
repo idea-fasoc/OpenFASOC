@@ -76,6 +76,7 @@ clean:
 	-rm -f error_within_x.csv golden_error_opt.csv search_result.csv
 	-rm -rf work
 	-rm -rf tools/*.pyc tools/__pycache__/
+	-rm -rf flow/design/src/ldo
 	-cd flow && make nuke
 	-rm -f blocks/sky130hvl/ldo_custom_net.txt blocks/sky130hvl/ldo_domain_insts.txt
 	-rm -rf ../../common/drc-lvs-check/sky130A
