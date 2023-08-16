@@ -5,7 +5,8 @@ from .pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
 from .via_gen import via_stack, via_array
 from gdsfactory.components.rectangle import rectangle
-from .pdk.util.custom_comp_utils import evaluate_bbox, align_comp_to_port, rename_ports_by_orientation, rename_ports_by_list, print_ports, assert_is_manhattan, assert_ports_perpindicular, to_decimal, to_float, prec_ref_center
+from .pdk.util.comp_utils import evaluate_bbox, align_comp_to_port, to_decimal, to_float, prec_ref_center
+from .pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, print_ports, assert_port_manhattan, assert_ports_perpindicular
 from decimal import Decimal
 
 
@@ -46,7 +47,7 @@ def L_route(
 	****via offset can also be specfied as a tuple(bool,bool): movex? if viaoffset[0] and movey? if viaoffset[1]
 	"""
 	# error checking, TODO: validate layers
-	assert_is_manhattan([edge1,edge2])
+	assert_port_manhattan([edge1,edge2])
 	assert_ports_perpindicular(edge1,edge2)
 	pdk.activate()
 	Lroute = Component()

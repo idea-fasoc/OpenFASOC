@@ -7,7 +7,8 @@ from typing import Optional, Union
 from .via_gen import via_array, via_stack
 from .guardring import tapring
 from pydantic import validate_arguments
-from .pdk.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, evaluate_bbox, to_float, to_decimal, prec_array, prec_center, prec_ref_center, movey, align_comp_to_port
+from .pdk.util.comp_utils import evaluate_bbox, to_float, to_decimal, prec_array, prec_center, prec_ref_center, movey, align_comp_to_port
+from .pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports
 from .c_route import c_route
 from .pdk.util.snap_to_grid import component_snap_to_grid
 from decimal import Decimal

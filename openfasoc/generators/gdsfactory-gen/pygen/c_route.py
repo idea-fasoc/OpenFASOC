@@ -7,7 +7,8 @@ from math import isclose
 from .via_gen import via_stack
 from gdsfactory.routing.route_quad import route_quad
 from gdsfactory.components.rectangle import rectangle
-from .pdk.util.custom_comp_utils import evaluate_bbox, add_ports_perimeter, rename_ports_by_orientation, rename_ports_by_list, print_ports, set_port_width, set_orientation, get_orientation
+from .pdk.util.comp_utils import evaluate_bbox
+from .pdk.util.port_utils import add_ports_perimeter, rename_ports_by_orientation, rename_ports_by_list, print_ports, set_port_width, set_port_orientation, get_orientation
 from pydantic import validate_arguments
 
 
@@ -190,7 +191,7 @@ def c_route(
 		orta = get_orientation(port_to_add.orientation)
 		#orta = "S" if orta=="N" else ("N" if orta=="S" else orta)
 		#orta = "E" if orta=="W" else ("W" if orta=="E" else orta)
-		route_ports[i] = set_orientation(port_to_add, orta)
+		route_ports[i] = set_port_orientation(port_to_add, orta)
 	croute.add_ports(route_ports,prefix="con_")
 	return rename_ports_by_orientation(rename_ports_by_list(croute.flatten(), [("con_","con_")]))
 

@@ -5,7 +5,8 @@ from .pdk.mappedpdk import MappedPDK
 from typing import Optional
 from .via_gen import via_stack, via_array
 from gdsfactory.components.rectangle import rectangle
-from .pdk.util.custom_comp_utils import evaluate_bbox, align_comp_to_port,assert_is_manhattan, set_orientation
+from .pdk.util.comp_utils import evaluate_bbox, align_comp_to_port
+from .pdk.util.port_utils import assert_port_manhattan, set_port_orientation
 
 
 @cell
@@ -46,9 +47,9 @@ def straight_route(
 	if glayer1 != pdk.layer_to_glayer(edge1.layer):
 		front_via = via_stack(pdk,glayer1,pdk.layer_to_glayer(edge1.layer),fullbottom=fullbottom)
 	glayer2 = glayer2 if glayer2 else pdk.layer_to_glayer(edge2.layer)
-	assert_is_manhattan([edge1,edge2])
+	assert_port_manhattan([edge1,edge2])
 	if edge1.orientation == edge2.orientation:
-		edge2 = set_orientation(edge2,edge2.orientation,flip180=True)
+		edge2 = set_port_orientation(edge2,edge2.orientation,flip180=True)
 	pdk.activate()
 	# find extension length and direction
 	edge1_is_EW = bool(round(edge1.orientation + 90) % 180)

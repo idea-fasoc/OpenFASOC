@@ -11,7 +11,8 @@ from typing import Optional
 from gdsfactory.routing.route_quad import route_quad
 from gdsfactory.routing.route_sharp import route_sharp
 from .c_route import c_route
-from .pdk.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, movex, movey, get_orientation, set_orientation, evaluate_bbox, align_comp_to_port
+from .pdk.util.comp_utils import movex, movey, evaluate_bbox, align_comp_to_port
+from .pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, get_orientation, set_port_orientation
 from .via_gen import via_stack
 from .pdk.util.snap_to_grid import component_snap_to_grid
 
@@ -84,8 +85,8 @@ def diff_pair(
 	drain_br_viatm.movey(0-bottom_extension - metal_space - width_drain_route/2 - viam2m3.ymax)
 	diffpair << route_quad(drain_br_viatm.ports["top_met_N"], drain_br_via.ports["top_met_S"], layer=pdk.get_glayer("met3"))
 	diffpair << route_quad(drain_bl_viatm.ports["top_met_N"], drain_bl_via.ports["top_met_S"], layer=pdk.get_glayer("met3"))
-	floating_port_drain_bottom_L = set_orientation(movey(drain_bl_via.ports["bottom_met_W"],0-bottom_extension), get_orientation("E"))
-	floating_port_drain_bottom_R = set_orientation(movey(drain_br_via.ports["bottom_met_E"],0-bottom_extension - metal_space - width_drain_route), get_orientation("W"))
+	floating_port_drain_bottom_L = set_port_orientation(movey(drain_bl_via.ports["bottom_met_W"],0-bottom_extension), get_orientation("E"))
+	floating_port_drain_bottom_R = set_port_orientation(movey(drain_br_via.ports["bottom_met_E"],0-bottom_extension - metal_space - width_drain_route), get_orientation("W"))
 	drain_routeTR_BL = diffpair << c_route(pdk, floating_port_drain_bottom_L, b_topr.ports["multiplier_0_drain_E"],extension=dextension, width1=width_drain_route,width2=width_drain_route)
 	drain_routeTL_BR = diffpair << c_route(pdk, floating_port_drain_bottom_R, a_topl.ports["multiplier_0_drain_W"],extension=dextension, width1=width_drain_route,width2=width_drain_route)
 	# cross gate route top with c_route. bar_minus ABOVE bar_plus
@@ -100,8 +101,8 @@ def diff_pair(
 	bar_minus = (diffpair << bar_comp).movey(diffpair.ymax +bar_comp.ymax + plus_minus_seperation)
 	MINUSgate_routeE = diffpair << c_route(pdk, b_topr.ports["multiplier_0_gate_E"], bar_minus.ports["e3"], extension=get_right_extension(bar_minus))
 	# lay MINUSgate_routeW and PLUSgate_routeE
-	MINUSgate_routeW = diffpair << c_route(pdk, set_orientation(b_botl.ports["multiplier_0_gate_E"],"W"), bar_minus.ports["e1"], extension=get_left_extension(bar_minus))
-	PLUSgate_routeE = diffpair << c_route(pdk, set_orientation(a_botr.ports["multiplier_0_gate_W"],"E"), bar_plus.ports["e3"], extension=get_right_extension(bar_plus))
+	MINUSgate_routeW = diffpair << c_route(pdk, set_port_orientation(b_botl.ports["multiplier_0_gate_E"],"W"), bar_minus.ports["e1"], extension=get_left_extension(bar_minus))
+	PLUSgate_routeE = diffpair << c_route(pdk, set_port_orientation(a_botr.ports["multiplier_0_gate_W"],"E"), bar_plus.ports["e3"], extension=get_right_extension(bar_plus))
 	# correct pwell place, add ports, flatten, and return
 	diffpair.add_ports(a_topl.get_ports_list(),prefix="tl_")
 	diffpair.add_ports(b_topr.get_ports_list(),prefix="tr_")

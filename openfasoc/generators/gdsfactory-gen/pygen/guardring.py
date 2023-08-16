@@ -5,7 +5,8 @@ from gdsfactory.components.rectangle import rectangle
 from gdsfactory.components.rectangular_ring import rectangular_ring
 from .via_gen import via_array, via_stack
 from typing import Optional
-from .pdk.util.custom_comp_utils import print_ports, to_decimal, to_float, evaluate_bbox
+from .pdk.util.comp_utils import to_decimal, to_float, evaluate_bbox
+from .pdk.util.port_utils import print_ports
 from .pdk.util.snap_to_grid import component_snap_to_grid
 from .L_route import L_route
 

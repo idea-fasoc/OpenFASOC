@@ -5,7 +5,8 @@ from pydantic import validate_arguments
 from .pdk.mappedpdk import MappedPDK
 from math import floor
 from typing import Optional, Union
-from .pdk.util.custom_comp_utils import rename_ports_by_orientation, evaluate_bbox, prec_array, print_ports, to_float, move, prec_ref_center, to_decimal
+from .pdk.util.comp_utils import evaluate_bbox, prec_array, to_float, move, prec_ref_center, to_decimal
+from .pdk.util.port_utils import rename_ports_by_orientation, print_ports
 from .pdk.util.snap_to_grid import component_snap_to_grid
 from decimal import Decimal
 from typing import Literal

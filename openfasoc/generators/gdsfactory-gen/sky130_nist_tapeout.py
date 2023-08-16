@@ -4,7 +4,8 @@ sys.path.append('./pygen')
 
 from gdsfactory.read.import_gds import import_gds
 from gdsfactory.components import text_freetype, rectangle
-from pygen.pdk.util.custom_comp_utils import prec_array, add_ports_perimeter, movey, print_ports, align_comp_to_port
+from pygen.pdk.util.comp_utils import prec_array, movey, align_comp_to_port
+from pygen.pdk.util.port_utils import add_ports_perimeter, print_ports
 from gdsfactory.component import Component
 from pygen.pdk.mappedpdk import MappedPDK
 from pygen.opamp import opamp
@@ -803,6 +804,7 @@ if __name__ == "__main__":
 	gen_opamp_parser.add_argument("--mim_cap_size", nargs=2, type=int, default=[12, 12], help="mim_cap_size (default: 12 12)")
 	gen_opamp_parser.add_argument("--mim_cap_rows", type=int, default=3, help="mim_cap_rows (default: 3)")
 	gen_opamp_parser.add_argument("--rmult", type=int, default=2, help="rmult (default: 2)")
+	gen_opamp_parser.add_argument("--add_pads",action="store_true" , help="add pads (gen_opamp mode only)")
 	gen_opamp_parser.add_argument("--output_gds", help="Filename for outputing opamp (gen_opamp mode only)")
 	gen_opamp_parser.add_argument("--temp", type=float, default=float(27), help="Simulation temperature")
 
@@ -844,8 +846,11 @@ if __name__ == "__main__":
 				mim_cap_rows=mim_cap_rows,
 				rmult=rmult,
 			)
-		opamp_comp_labels = sky130_add_opamp_labels(opamp_comp)
-		opamp_comp_final = sky130_opamp_add_pads(opamp_comp_labels)
+		if args.add_pads:
+			opamp_comp_labels = sky130_add_opamp_labels(opamp_comp)
+			opamp_comp_final = sky130_opamp_add_pads(opamp_comp_labels)
+		else:
+			opamp_comp_final = opamp_comp
 		opamp_comp_final.show()
 		if args.output_gds:
 			opamp_comp_final.write_gds(args.output_gds)

@@ -1,20 +1,21 @@
 from gdsfactory.cell import cell, clear_cache
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
-from . pdk.mappedpdk import MappedPDK
+from .pdk.mappedpdk import MappedPDK
 from typing import Optional
-from . fet import nmos, pmos, multiplier
-from . diff_pair import diff_pair
-from . guardring import tapring
-from . mimcap import mimcap_array, mimcap
-from . L_route import L_route
-from . c_route import c_route
-from . via_gen import via_stack, via_array
+from .fet import nmos, pmos, multiplier
+from .diff_pair import diff_pair
+from .guardring import tapring
+from .mimcap import mimcap_array, mimcap
+from .L_route import L_route
+from .c_route import c_route
+from .via_gen import via_stack, via_array
 from gdsfactory.routing.route_quad import route_quad
-from . pdk.util.custom_comp_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, evaluate_bbox, prec_ref_center, movex, movey, set_orientation, to_decimal, to_float, move, align_comp_to_port
+from .pdk.util.comp_utils import evaluate_bbox, prec_ref_center, movex, movey, to_decimal, to_float, move, align_comp_to_port
+from .pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, set_port_orientation
 from sys import exit
-from . straight_route import straight_route
-from . pdk.util.snap_to_grid import component_snap_to_grid
+from .straight_route import straight_route
+from .pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 
 
@@ -33,7 +34,7 @@ def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap
 	port2 = mimcaps_ref.ports["row"+str(int(mim_cap_rows)-1)+"_col0_bottom_met_N"]
 	cref2_extension = max_metalsep + opamp_top.ymax - max(port1.center[1], port2.center[1])
 	opamp_top << c_route(pdk,port1,port2, extension=cref2_extension, fullbottom=True)
-	opamp_top << L_route(pdk, mimcaps_ref.ports["row0_col0_top_met_S"], set_orientation(n_to_p_output_route.ports["con_S"],"E"), hwidth=3)
+	opamp_top << L_route(pdk, mimcaps_ref.ports["row0_col0_top_met_S"], set_port_orientation(n_to_p_output_route.ports["con_S"],"E"), hwidth=3)
 	return opamp_top
 
 
@@ -219,14 +220,15 @@ def opamp(
     # connect source of B to drain of 2R
     pcomps_route_B_source_extension = pmos_comps.xmax-max(LRsourcesPorts[-1].center[0],ptop_AB.ports["R_source_E"].center[0])+_max_metal_seperation_ps
     mimcap_connection_ref = pmos_comps << c_route(pdk, ptop_AB.ports["R_source_E"], LRdrainsPorts[-1],extension=pcomps_route_B_source_extension,viaoffset=(True,False))
-    bottom_pcompB_floating_port = set_orientation(movey(movex(pbottom_AB.ports["L_source_E"].copy(),5*_max_metal_seperation_ps), destination=Aextra_top_connection.ports["e1"].center[1]+Aextra_top_connection.ports["e1"].width+_max_metal_seperation_ps),"S")
+    bottom_pcompB_floating_port = set_port_orientation(movey(movex(pbottom_AB.ports["L_source_E"].copy(),5*_max_metal_seperation_ps), destination=Aextra_top_connection.ports["e1"].center[1]+Aextra_top_connection.ports["e1"].width+_max_metal_seperation_ps),"S")
     pmos_bsource_2Rdrain_v = pmos_comps << L_route(pdk,pbottom_AB.ports["L_source_E"],bottom_pcompB_floating_port,vglayer="met3")
-    pmos_comps << c_route(pdk, LRdrainsPorts[-1], set_orientation(bottom_pcompB_floating_port,"E"),extension=pcomps_route_B_source_extension,viaoffset=(True,False))
+    pmos_comps << c_route(pdk, LRdrainsPorts[-1], set_port_orientation(bottom_pcompB_floating_port,"E"),extension=pcomps_route_B_source_extension,viaoffset=(True,False))
     pmos_bsource_2Rdrain_v_center = via_stack(pdk,"met2","met3",fulltop=True)
     pmos_comps.add(align_comp_to_port(pmos_bsource_2Rdrain_v_center, bottom_pcompB_floating_port,('r','t')))
     # connect drain of B to each other directly over where the diffpair top left drain will be
     pmos_bdrain_diffpair_v = pmos_comps << via_stack(pdk, "met2","met5",fullbottom=True)
-    align_comp_to_port(pmos_bdrain_diffpair_v, movex(pbottom_AB.ports["L_gate_S"].copy(),destination=opamp_top.ports["centerNcomps_tl_multiplier_0_drain_N"].center[0])).movey(0-_max_metal_seperation_ps)
+    pmos_bdrain_diffpair_v = align_comp_to_port(pmos_bdrain_diffpair_v, movex(pbottom_AB.ports["L_gate_S"].copy(),destination=opamp_top.ports["centerNcomps_tl_multiplier_0_drain_N"].center[0]))
+    pmos_bdrain_diffpair_v.movey(0-_max_metal_seperation_ps)
     pcomps_route_B_drain_extension = pmos_comps.xmax-ptop_AB.ports["R_drain_E"].center[0]+_max_metal_seperation_ps
     pmos_comps << c_route(pdk, ptop_AB.ports["R_drain_E"], pmos_bdrain_diffpair_v.ports["bottom_met_E"],extension=pcomps_route_B_drain_extension +_max_metal_seperation_ps)
     pmos_comps << c_route(pdk, pbottom_AB.ports["L_drain_W"], pmos_bdrain_diffpair_v.ports["bottom_met_W"],extension=pcomps_route_B_drain_extension +_max_metal_seperation_ps)
@@ -303,7 +305,7 @@ def opamp(
     # out pin
     output = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met5"),centered=True)
     output.movex(opamp_top.xmax).movey(opamp_top.ymin+output.ymax)
-    opamp_top << L_route(pdk, output.ports["e2"], set_orientation(n_to_p_output_route.ports["con_S"],"E"))
+    opamp_top << L_route(pdk, output.ports["e2"], set_port_orientation(n_to_p_output_route.ports["con_S"],"E"))
     # route + and - pins
     plus_pin = opamp_top << rectangle(size=(5,2),layer=pdk.get_glayer("met4"),centered=True)
     plus_pin.movex(opamp_top.xmin).movey(_max_metal_seperation_ps + plus_pin.ymax + halfmultn_drain_routeref.ports["con_W"].center[1] + halfmultn_drain_routeref.ports["con_W"].width/2)
