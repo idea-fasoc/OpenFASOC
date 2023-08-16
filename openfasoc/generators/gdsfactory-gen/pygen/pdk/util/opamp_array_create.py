@@ -5,7 +5,7 @@ import os
 import math
 from gdsfactory.pdk import Pdk
 from pathlib import Path
-
+from typing import Union
 
 def get_files_with_extension(directory, extension):
 	file_list = []
@@ -15,7 +15,7 @@ def get_files_with_extension(directory, extension):
 	return file_list
 
 
-def write_opamp_matrix(opamps_dir: Union[str,Path]="./"):
+def write_opamp_matrix(opamps_dir: Union[str,Path]="./", xspace=400,yspace=300):
 	"""Use the write_opamp_matrix function to create a matrix of many different opamps
 	reads the different opamps from all gds files in opamps_dir
 	"""
@@ -28,9 +28,11 @@ def write_opamp_matrix(opamps_dir: Union[str,Path]="./"):
 	opamp_comp_list = list()
 
 	for i,filev in enumerate(opamp_files_list):
+		if "big_gds_here" in str(filev):
+			continue
 		tempcomp = import_gds(filev)
 		tempcomp.name = "opamp"+str(i)
-		opamp_comp_list.append()
+		opamp_comp_list.append(tempcomp)
 
 	col_len = round(math.sqrt(len(opamp_comp_list)))
 	col_index = 0
@@ -40,7 +42,7 @@ def write_opamp_matrix(opamps_dir: Union[str,Path]="./"):
 		if opamp_v is None:
 			continue
 		opref = big_comp << opamp_v
-		opref.movex(col_index * 200).movey(row_index*200)
+		opref.movex(col_index * xspace).movey(row_index*yspace)
 		col_index += 1
 		if not col_index % col_len:
 			col_index=0

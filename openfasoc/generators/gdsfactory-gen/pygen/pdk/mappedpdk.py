@@ -42,19 +42,19 @@ class MappedPDK(Pdk):
         "capmet",
     )
 
-    glayers: dict[StrictStr, StrictStr]
+    glayers: dict[StrictStr, Union[StrictStr, tuple[int,int]]]
     # friendly way to implement a graph
     grules: dict[StrictStr, dict[StrictStr, Optional[dict[StrictStr, Any]]]]
     klayout_lydrc_file: Optional[Path] = None
 
     @validator("glayers")
-    def glayers_check_keys(cls, glayers_obj: dict[StrictStr, StrictStr]):
+    def glayers_check_keys(cls, glayers_obj: dict[StrictStr, Union[StrictStr, tuple[int,int]]]):
         """force people to pick glayers from a finite set of string layers that you define
         checks glayers to ensure valid keys,type. Glayers must be passed as dict[str,str]
         if someone tries to pass a glayers dict that has a bad key, throw an error"""
         for glayer, mapped_layer in glayers_obj.items():
-            if (not isinstance(glayer, str)) or (not isinstance(mapped_layer, str)):
-                raise TypeError("glayers should be passed as dict[str, str]")
+            if (not isinstance(glayer, str)) or (not isinstance(mapped_layer, Union[str, tuple])):
+                raise TypeError("glayers should be passed as dict[str, Union[StrictStr, tuple[int,int]]]")
             if glayer not in cls.valid_glayers:
                 raise ValueError(
                     "glayers keys must be one of generic layers listed in class variable valid_glayers"
@@ -147,7 +147,11 @@ class MappedPDK(Pdk):
                 raise ValueError(
                     f"{layer!r} not in self.glayers {list(self.glayers.keys())}"
                 )
-            self.validate_layers([self.glayers[layer]])
+            if isinstance(self.glayers[layer], str):
+                self.validate_layers([self.glayers[layer]])
+            elif not isinstance(self.glayers[layer], tuple):
+                raise TypeError("glayer mapped value should be str or tuple[int,int]")
+
 
     @validate_arguments
     def layer_to_glayer(self, layer: tuple[int, int]) -> str:
@@ -156,23 +160,32 @@ class MappedPDK(Pdk):
         takes layer as a tuple(int,int)"""
         # lambda for finding last matching key in dict from val
         find_last = lambda val, d: [x for x, y in d.items() if y == val].pop()
-        # find glayer verfying presence along the way
-        pdk_real_layers = self.layers.values()
-        if layer in pdk_real_layers:
-            layer_name = find_last(layer, self.layers)
-            if layer_name in self.glayers.values():
-                glayer_name = find_last(layer_name, self.glayers)
+        if layer in self.glayers.values():
+            return find_last(layer)
+        elif self.layers is not None:
+            # find glayer verfying presence along the way
+            pdk_real_layers = self.layers.values()
+            if layer in pdk_real_layers:
+                layer_name = find_last(layer, self.layers)
+                if layer_name in self.glayers.values():
+                    glayer_name = find_last(layer_name, self.glayers)
+                else:
+                    raise ValueError("layer does not correspond to a glayer")
             else:
-                raise ValueError("layer does not correspond to a glayer")
+                raise ValueError("layer is not a layer present in the pdk")
+            return glayer_name
         else:
-            raise ValueError("layer is not a layer present in the pdk")
-        return glayer_name
+            raise ValueError("layer might not be a layer present in the pdk")
 
     # TODO: implement LayerSpec type
     @validate_arguments
     def get_glayer(self, layer: str) -> Layer:
         """Returns the pdk layer from the generic layer name"""
-        return self.get_layer(self.glayers[layer])
+        direct_mapping = self.glayers[layer]
+        if isinstance(direct_mapping, tuple):
+            return direct_mapping
+        else:
+            return self.get_layer(direct_mapping)
 
     @validate_arguments
     def get_grule(
