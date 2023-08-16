@@ -141,6 +141,39 @@ def sky130_add_opamp_labels(opamp_in: Component) -> Component:
 		opamp_in.add(compref)
 	return opamp_in.flatten()
 
+def sky130_add_lvt_layer(opamp_in: Component) -> Component:
+	opamp_in.unlock()
+
+	# define layers
+	lvt_layer = (125,44)
+
+	# define geometry
+	SW_S_edge = opamp_in.ports["pcomps_halfp_l_multiplier_0_plusdoped_S"]
+	SW_W_edge = opamp_in.ports["pcomps_halfp_l_multiplier_0_plusdoped_W"]
+	NE_N_edge = opamp_in.ports["pcomps_halfp_r_multiplier_2_plusdoped_N"]
+	NE_E_edge = opamp_in.ports["pcomps_halfp_r_multiplier_2_plusdoped_E"]
+	SW_S_center = SW_S_edge.center
+	SW_W_center = SW_W_edge.center
+	NE_N_center = NE_N_edge.center
+	NE_E_center = NE_E_edge.center
+	SW_corner = [SW_W_center[0], SW_S_center[1]]
+	NE_corner = [NE_E_center[0], NE_N_center[1]]
+	middle_top_y = opamp_in.ports["pcomps_ptopAB_L_plusdoped_N"].center[1]
+	middle_bottom_y = opamp_in.ports["pcomps_pbottomAB_R_plusdoped_S"].center[1]
+	max_y = max(middle_top_y, NE_corner[1])
+	min_y = min(middle_bottom_y, SW_corner[1])
+	abs_center = (SW_corner[0] + (NE_corner[0] - SW_corner[0])/2, min_y + (max_y - min_y)/2)
+
+	# draw lvt rectangle
+	LVT_rectangle = rectangle(layer=lvt_layer, size=(abs(NE_corner[0] - SW_corner[0]), abs(max_y - min_y)), centered=True)
+	LVT_rectangle_ref = opamp_in << LVT_rectangle
+
+	# align lvt rectangle to the plusdoped_N region
+	LVT_rectangle_ref.move(origin=(0, 0), destination=abs_center)
+	# opamp_in.write_gds("opamp_with_lvt_layer.gds")
+
+	return opamp_in
+
 
 
 # ====Run Training====
@@ -846,6 +879,7 @@ if __name__ == "__main__":
 				mim_cap_rows=mim_cap_rows,
 				rmult=rmult,
 			)
+		opamp_comp = sky130_add_lvt_layer(opamp_comp)
 		if args.add_pads:
 			opamp_comp_labels = sky130_add_opamp_labels(opamp_comp)
 			opamp_comp_final = sky130_opamp_add_pads(opamp_comp_labels)
