@@ -234,7 +234,7 @@ class PortTree:
 	"""
 
 	@validate_arguments
-	def __init__(custom_comp: Union[Component, ComponentReference]) -> dict:
+	def __init__(self, custom_comp: Union[Component, ComponentReference]) -> dict:
 		"""creates the tree structure from the ports where _ represent subdirectories
 		credit -> chatGPT
 		"""
@@ -250,15 +250,15 @@ class PortTree:
 		self.tree = directory_tree
 	
 	@validate_arguments
-	def ls(file_path: str) -> list[str]:
+	def ls(self, file_path: Optional[str] = None) -> list[str]:
 		"""tries to traverse the tree along the given path and prints all subdirectories in a psuedo directory
 		if the path given is not found in the tree, raises KeyError
 		path should not end with _ char
 		"""
-		if len(file_path)==0:
-			return list(self.directory_tree.keys())
-		path_components = path.split('_')
-		current_dir = self.directory_tree
+		if file_path is None or len(file_path)==0:
+			return list(self.tree.keys())
+		path_components = file_path.split('_')
+		current_dir = self.tree
 		for path_component in path_components:
 			if path_component not in current_dir:
 				raise KeyError("Port path was not found")
