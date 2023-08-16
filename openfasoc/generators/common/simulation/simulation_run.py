@@ -87,44 +87,42 @@ def _threaded_run(
 	- `on_exit` (function): An optional function to run when the simulation completes.
 	"""
 
-	match sim_tool:
-		case "ngspice":
-			subprocess.Popen(
-				[
-					"ngspice",
-					"-b",
-					"-o",
-					f"sim_{run_number}.log",
-					f"sim_{run_number}.sp"
-				],
-				cwd=run_dir,
-				stdout=subprocess.DEVNULL,
-			).wait()
-		case "xyce":
-			subprocess.Popen(
-				[
-					"xyce",
-					"-l",
-					f"sim_{run_number}.log",
-					"-o",
-					f"sim_{run_number}",
-					f"sim_{run_number}.sp"
-				],
-				cwd=run_dir,
-				stdout=subprocess.DEVNULL,
-			).wait()
-		case "finesim":
-			subprocess.Popen(
-				[
-					"finesim",
-					"-o",
-					f"sim_{run_number}",
-					"-spice",
-					f"sim_{run_number}.sp"
-				],
-				cwd=run_dir,
-				stdout=subprocess.DEVNULL,
-			).wait()
-
+	if sim_tool == "ngspice":
+		subprocess.Popen(
+			[
+				"ngspice",
+				"-b",
+				"-o",
+				f"sim_{run_number}.log",
+				f"sim_{run_number}.sp"
+			],
+			cwd=run_dir,
+			stdout=subprocess.DEVNULL,
+		).wait()
+	elif sim_tool == "xyce":
+		subprocess.Popen(
+			[
+				"xyce",
+				"-l",
+				f"sim_{run_number}.log",
+				"-o",
+				f"sim_{run_number}",
+				f"sim_{run_number}.sp"
+			],
+			cwd=run_dir,
+			stdout=subprocess.DEVNULL,
+		).wait()
+	elif sim_tool == "finesim":
+		subprocess.Popen(
+			[
+				"finesim",
+				"-o",
+				f"sim_{run_number}",
+				"-spice",
+				f"sim_{run_number}.sp"
+			],
+			cwd=run_dir,
+			stdout=subprocess.DEVNULL,
+		).wait()
 
 	on_exit()
