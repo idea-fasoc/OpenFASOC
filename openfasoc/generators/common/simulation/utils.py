@@ -1,11 +1,11 @@
 import time
 
-def _print_progress(total_runs: int, run_number: int, start_time: int, end: str = '\r'):
+def _print_progress(total_runs: int, completed_sims: int, failed_sims: int, start_time: int, end: str = '\r'):
 	"""Displays the simulation progress.
 
 	Displays the number of simulations completed, total simulations and the time elapsed.
 	"""
-	print(f"Completed {run_number} out of {total_runs} simulations. Elapsed time: {_format_elapsed_time(start_time)}{f'. Average: {_format_elapsed_time(start_time, run_number)} per simulation.' if run_number > 0 else ''}", end=end)
+	print(f"Completed: {completed_sims}. Failed: {failed_sims}. Total: {total_runs}. Elapsed time: {_format_elapsed_time(start_time)}{f'. Average: {_format_elapsed_time(start_time, completed_sims)} per simulation.' if completed_sims > 0 else ''}", end=end)
 
 def _format_elapsed_time(start_time: int, divisor: int = 1):
 	"""Formats the elapsed time (in seconds) into hours, minutes, and seconds format.

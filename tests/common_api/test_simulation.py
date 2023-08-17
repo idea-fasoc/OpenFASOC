@@ -1,6 +1,7 @@
 import sys
 import os
 import re
+import pytest
 from shutil import rmtree
 
 # Add the common API to the path
@@ -47,10 +48,18 @@ def isfloat(num: str):
 	except ValueError:
 		return False
 
-def test_simulations():
+@pytest.fixture(autouse=True)
+def run_before_and_after_tests():
+	"""Cleans the runs directory before and after tests."""
 	if os.path.exists(RUNS_DIR):
 		rmtree(RUNS_DIR)
 
+	yield
+
+	if os.path.exists(RUNS_DIR):
+		rmtree(RUNS_DIR)
+
+def test_simulations():
 	num_runs = run_simulations(
 		parameters=PARAMS,
 		platform = "",
@@ -91,6 +100,3 @@ def test_simulations():
 
 			assert vrms_value != "NOT_FOUND", f"`vrms` value not found in the simulation output for config #{i}"
 			assert irms_value != "NOT_FOUND", f"`irms` value not found in the simulation output for config #{i}"
-
-	if os.path.exists(RUNS_DIR):
-		rmtree(RUNS_DIR)

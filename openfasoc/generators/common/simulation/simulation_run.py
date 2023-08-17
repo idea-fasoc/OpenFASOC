@@ -23,16 +23,22 @@ def _run_simulations(
 
 	simulation_state = {
 		'ongoing_sims': 0,
-		'completed_sims': 0
+		'completed_sims': 0,
+		'failed_sims': 0
 	}
 
-	def thread_on_exit(state=simulation_state):
-		state['ongoing_sims'] -= 1
-		state['completed_sims'] += 1
+	def thread_on_exit(exit_status: int, state=simulation_state):
+		if exit_status == 0:
+			state['ongoing_sims'] -= 1
+			state['completed_sims'] += 1
+		else:
+			state['ongoing_sims'] -= 1
+			state['failed_sims'] += 1
 
 	start_time = int(time.time())
 	run_number = 1
-	while simulation_state['completed_sims'] < num_configs:
+
+	while (simulation_state['completed_sims'] + simulation_state['failed_sims']) < num_configs:
 		if simulation_state['ongoing_sims'] < num_concurrent_sims and run_number <= num_configs:
 			_run_config(
 				sim_tool=sim_tool,
@@ -44,10 +50,10 @@ def _run_simulations(
 			simulation_state['ongoing_sims'] += 1
 			run_number += 1
 
-		_print_progress(num_configs, simulation_state['completed_sims'], start_time)
+		_print_progress(num_configs, simulation_state['completed_sims'], simulation_state['failed_sims'], start_time)
 		time.sleep(1)
 
-	_print_progress(num_configs, simulation_state['completed_sims'], start_time, end='\n')
+	_print_progress(num_configs, simulation_state['completed_sims'], simulation_state['failed_sims'], start_time, end='\n')
 
 def _run_config(
 	sim_tool: str,
@@ -87,42 +93,45 @@ def _threaded_run(
 	- `on_exit` (function): An optional function to run when the simulation completes.
 	"""
 
-	if sim_tool == "ngspice":
-		subprocess.Popen(
-			[
-				"ngspice",
-				"-b",
-				"-o",
-				f"sim_{run_number}.log",
-				f"sim_{run_number}.sp"
-			],
-			cwd=run_dir,
-			stdout=subprocess.DEVNULL,
-		).wait()
-	elif sim_tool == "xyce":
-		subprocess.Popen(
-			[
-				"xyce",
-				"-l",
-				f"sim_{run_number}.log",
-				"-o",
-				f"sim_{run_number}",
-				f"sim_{run_number}.sp"
-			],
-			cwd=run_dir,
-			stdout=subprocess.DEVNULL,
-		).wait()
-	elif sim_tool == "finesim":
-		subprocess.Popen(
-			[
-				"finesim",
-				"-o",
-				f"sim_{run_number}",
-				"-spice",
-				f"sim_{run_number}.sp"
-			],
-			cwd=run_dir,
-			stdout=subprocess.DEVNULL,
-		).wait()
+	try:
+		if sim_tool == "ngspice":
+			subprocess.run(
+				[
+					"ngspice",
+					"-b",
+					"-o",
+					f"sim_{run_number}.log",
+					f"sim_{run_number}.sp"
+				],
+				cwd=run_dir,
+				capture_output=False
+			)
+		elif sim_tool == "xyce":
+			subprocess.run(
+				[
+					"xyce",
+					"-l",
+					f"sim_{run_number}.log",
+					"-o",
+					f"sim_{run_number}",
+					f"sim_{run_number}.sp"
+				],
+				cwd=run_dir,
+				capture_output=False
+			)
+		elif sim_tool == "finesim":
+			subprocess.run(
+				[
+					"finesim",
+					"-o",
+					f"sim_{run_number}",
+					"-spice",
+					f"sim_{run_number}.sp"
+				],
+				cwd=run_dir,
+				capture_output=False
+			)
+	except:
+		return on_exit(1)
 
-	on_exit()
+	on_exit(0)
