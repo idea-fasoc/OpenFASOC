@@ -23,19 +23,24 @@ Vbias1 bias1 GND {b1}
 Vindc net1 GND 1
 .save i(vindc)
 
-** Import SKY130 libs (this should be replaced with a path relative to some env variable)
 
-** Ali
-** .lib /usr/local/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
-** .include /usr/local/share/pdk/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
+** Import SKY130 libs (this should be replaced with a path relative to some env variable)
+* the ones with double * will not be used. The one with only 1 * will be used
 
 ** Ryan
-* .lib /home/rw/work/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130.lib.spice tt
-* .include /home/rw/work/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
+** .lib /home/rw/work/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+**@@stp .include /home/rw/work/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
 
-** Actual
+** GCP machine
 .lib /usr/bin/miniconda3/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
-.include /usr/bin/miniconda3/share/pdk/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
+*@@stp .include /usr/bin/miniconda3/share/pdk/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
+
+
+** Import cryo libs (these are stored in the sky130A folder)
+*@@cryo .include ./sky130A/cryo_models/nshort.spice
+*@@cryo .include ./sky130A/cryo_models/nshortlvth.spice
+*@@cryo .include ./sky130A/cryo_models/pmos.spice
+
 
 ** Import opamp subcircuit
 .include opamp_pex.spice

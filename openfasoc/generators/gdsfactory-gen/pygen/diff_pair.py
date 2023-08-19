@@ -5,16 +5,16 @@
 from gdsfactory.cell import cell
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
-from .fet import nmos, pmos
-from .pdk.mappedpdk import MappedPDK
+from pygen.fet import nmos, pmos
+from pygen.pdk.mappedpdk import MappedPDK
 from typing import Optional
 from gdsfactory.routing.route_quad import route_quad
 from gdsfactory.routing.route_sharp import route_sharp
-from .c_route import c_route
-from .pdk.util.comp_utils import movex, movey, evaluate_bbox, align_comp_to_port
-from .pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, get_orientation, set_port_orientation
-from .via_gen import via_stack
-from .pdk.util.snap_to_grid import component_snap_to_grid
+from pygen.routing.c_route import c_route
+from pygen.pdk.util.comp_utils import movex, movey, evaluate_bbox, align_comp_to_port
+from pygen.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, get_orientation, set_port_orientation
+from pygen.via_gen import via_stack
+from pygen.pdk.util.snap_to_grid import component_snap_to_grid
 
 
 @cell

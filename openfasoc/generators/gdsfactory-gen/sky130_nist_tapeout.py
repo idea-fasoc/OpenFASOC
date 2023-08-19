@@ -16,7 +16,7 @@ from gdsfactory.cell import cell, clear_cache
 import numpy as np
 from subprocess import Popen
 from pathlib import Path
-from typing import Union, Optional
+from typing import Union, Optional, Literal
 from tempfile import TemporaryDirectory
 from shutil import copyfile, copytree
 from multiprocessing import Pool
@@ -31,6 +31,8 @@ from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn.metrics import silhouette_score
 import argparse
 from pygen.pdk.sky130_mapped import sky130_mapped_pdk as pdk
+from itertools import count, repeat
+from pydantic import validate_arguments
 
 
 # ====Build Opamp====
@@ -304,8 +306,6 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 						index = index + 1
 	return short_list
 
-
-
 def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath: Union[str,Path]):
 	acabspath = Path(acpath).resolve()
 	dcabspath = Path(dcpath).resolve()
@@ -344,7 +344,7 @@ def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath:
 		return_dict[key] = val_flt
 	return return_dict
 
-def standardize_netlist_subckt_def(netlist: Union[str,Path], sim_temperature: Optional[float] = float(27)):
+def process_netlist_subckt(netlist: Union[str,Path], sim_model: Literal["normal model", "cryo model"]):
 	netlist = Path(netlist).resolve()
 	if not netlist.is_file():
 		raise ValueError("netlist must be file")
@@ -353,22 +353,36 @@ def standardize_netlist_subckt_def(netlist: Union[str,Path], sim_temperature: Op
 	with open(netlist, "r") as spice_net:
 		subckt_lines = spice_net.readlines()
 		for i,line in enumerate(subckt_lines):
+			line = line.lstrip().lower()
+			if len(line) and line[0]=="M":
+				line[0]="X"
 			if all([hint in line for hint in hints]):
 				subckt_lines[i] = ".subckt opamp minus plus vbias1 vbias2 output vdd gnd\n"
-			if "floating" in line.lower():
+			if "floating" in line:
 				subckt_lines[i] = "\n"
 	with open(netlist, "w") as spice_net:
 		spice_net.writelines(subckt_lines)
 
-def __run_single_brtfrc(index, parameters_ele, output_dir: Optional[Union[str,Path]] = None):
+def process_spice_testbench(testbench: Union[str,Path], temperature_info: tuple[int,str]=(25,"normal model")):
+	testbench = Path(testbench).resolve()
+	if not testbench.is_file():
+		raise ValueError("testbench must be file")
+	with open(testbench, "r") as spice_file:
+		spicetb = spice_file.read()
+		spicetb = spicetb.replace('{@@TEMP}', str(int(temperature_info[0])))
+		if temperature_info[1] == "cryo model":
+			spicetb = spicetb.replace("*@@cryo ","")
+		else:
+			spicetb = spicetb.replace("*@@stp ","")
+	with open(testbench, "w") as spice_file:
+		spice_file.write(spicetb)
+
+def __run_single_brtfrc(pdk, index, parameters_ele, save_gds_dir, temperature_info: tuple[int,str]=(25,"normal model"), output_dir: Optional[Union[str,Path]] = None):
 	# generate layout
-	global pdk
-	global save_gds_dir
-	global SIM_TEMP
 	destination_gds_copy = save_gds_dir / (str(index)+".gds")
 	sky130pdk = pdk
 	params = opamp_parameters_de_serializer(parameters_ele)
-	opamp_v = sky130_add_opamp_labels(opamp(sky130pdk, **params))
+	opamp_v = sky130_add_opamp_labels(sky130_add_lvt_layer(opamp(sky130pdk, **params)))
 	opamp_v.name = "opamp"
 	area = float(opamp_v.area())
 	# use temp dir
@@ -381,29 +395,25 @@ def __run_single_brtfrc(index, parameters_ele, output_dir: Optional[Union[str,Pa
 		copytree("sky130A",str(tmpdirname)+"/sky130A")
 		# extract layout
 		Popen(["bash","extract.bash", tmp_gds_path, opamp_v.name],cwd=tmpdirname).wait()
-		print("Running simulation at temperature: " + str(SIM_TEMP) + "C")
-		spice_lines = list()
-		with open(str(tmpdirname)+"/opamp_perf_eval.sp", "r") as spice_file:
-			spice_lines = spice_file.readlines()
-			print("BEFORE REPL: " + spice_lines[5])
-			spice_lines[5] = spice_lines[5].replace('{@@TEMP}', str(int(SIM_TEMP)))
-			print("AFTER REPL: " + spice_lines[5])
-		with open(str(tmpdirname)+"/opamp_perf_eval.sp", "w") as spice_file:
-			spice_file.writelines(spice_lines)
-		standardize_netlist_subckt_def(str(tmpdirname)+"/opamp_pex.spice", SIM_TEMP)
+		print("Running simulation at temperature: " + str(temperature_info[0]) + "C")
+		process_spice_testbench(str(tmpdirname)+"/opamp_perf_eval.sp",temperature_info=temperature_info)
+		process_netlist_subckt(str(tmpdirname)+"/opamp_pex.spice", temperature_info[1])
 		# run sim and store result
+		import pdb; pdb.set_trace()
 		Popen(["ngspice","-b","opamp_perf_eval.sp"],cwd=tmpdirname).wait()
 		result_dict = get_sim_results(str(tmpdirname)+"/result_ac.txt", str(tmpdirname)+"/result_power.txt", str(tmpdirname)+"/result_noise.txt")
 		result_dict["area"] = area
 		results = opamp_results_serializer(**result_dict)
-		if output_dir: 
+		if output_dir:
 			output_dir = Path(output_dir).resolve()
+			output_dir.mkdir(parents=True, exist_ok=True)
 			if not output_dir.is_dir():
 				raise ValueError("Output directory must be a directory")
 			copytree(str(tmpdirname), str(output_dir)+"/test_output", dirs_exist_ok=True)
 		return results
 
-def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.array) -> np.array:
+
+def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.array, temperature_info: tuple[int,str]=(25,"normal model")) -> np.array:
 	"""runs the brute force testing of parameters by
 	1-constructing the opamp layout specfied by parameters
 	2-extracting the netlist for the opamp
@@ -419,34 +429,45 @@ def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.
 	# initialize empty results array
 	results = None
 	# run layout, extraction, sim
-	global save_gds_dir
 	save_gds_dir = Path('./save_gds_by_index').resolve()
 	save_gds_dir.mkdir(parents=True)
 	with Pool(120) as cores:
-		results = np.array(cores.starmap(__run_single_brtfrc, enumerate(parameter_list)),np.float64)
+		results = np.array(cores.starmap(__run_single_brtfrc, zip(repeat(sky130pdk), count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info))),np.float64)
 	# undo pdk modification
 	sky130pdk.default_decorator = add_npc_decorator
 	return results
 
-
-def get_training_data(test_mode=True,):
+# data gathering main function
+@validate_arguments
+def get_training_data(test_mode: bool=True, temperature_info: tuple[int,str]=(25,"normal model")) -> None:
+	if temperature_info[1] != "normal model" and temperature_info[1] != "cryo model":
+		raise ValueError("model must be one of \"normal model\" or \"cryo model\"")
 	params = get_small_parameter_list(test_mode)
-	results = brute_force_full_layout_and_PEXsim(pdk, params)
+	results = brute_force_full_layout_and_PEXsim(pdk, params, temperature_info)
 	np.save("training_params.npy",params)
 	np.save("training_results.npy",results)
 
 
-#util function for pure simulation
-def single_build_and_simulation(parameters: np.array, output_dir: Optional[Union[str,Path]] = None) -> np.array:
+
+#util function for pure simulation. sky130 is imported automatically
+def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: Optional[Union[str,Path]] = None) -> np.array:
 	"""Builds, extract, and simulates a single opamp
 	saves opamp gds in current directory with name 12345678987654321.gds
 	"""
-	global pdk
-	global save_gds_dir
-	pdk = pdk
+	from pygen.pdk.sky130_mapped import sky130_mapped_pdk as pdk
+	# process temperature info
+	temperature_info = [temp, None]
+	if temperature_info[0] > -20:
+		temperature_info[1] = "normal model"
+	elif temperature_info[0]!=-269:
+		raise ValueError("simulation temperature should be exactly -269C for cryo sim. Below -20C there are no good models for simulation")
+	else:
+		temperature_info[1] = "cryo model"
+	temperature_info = tuple(temperature_info)
+	# run single build
 	save_gds_dir = Path('./').resolve()
 	index = 12345678987654321
-	return __run_single_brtfrc(index, parameters, output_dir)
+	return __run_single_brtfrc(pdk, index, parameters, temperature_info=temperature_info, save_gds_dir=save_gds_dir, output_dir=output_dir)
 
 
 #======stats=======
@@ -827,6 +848,7 @@ if __name__ == "__main__":
 	# Subparser for get_training_data mode
 	get_training_data_parser = subparsers.add_parser("get_training_data", help="Run the get_training_data function.")
 	get_training_data_parser.add_argument("-t", "--test-mode", action="store_true", help="Set test_mode to True (default: False)")
+	get_training_data_parser.add_argument("--temp", type=int, default=int(25), help="Simulation temperature")
 
 	# Subparser for gen_opamp mode
 	gen_opamp_parser = subparsers.add_parser("gen_opamp", help="Run the gen_opamp function.")
@@ -839,18 +861,23 @@ if __name__ == "__main__":
 	gen_opamp_parser.add_argument("--rmult", type=int, default=2, help="rmult (default: 2)")
 	gen_opamp_parser.add_argument("--add_pads",action="store_true" , help="add pads (gen_opamp mode only)")
 	gen_opamp_parser.add_argument("--output_gds", help="Filename for outputing opamp (gen_opamp mode only)")
-	gen_opamp_parser.add_argument("--temp", type=float, default=float(27), help="Simulation temperature")
 
 	# Testing
 	test = subparsers.add_parser("test", help="Test mode")
 	test.add_argument("--output_dir", type=Path, default="./", help="Directory for output GDS file")
-	test.add_argument("--temp", type=float, default=float(27), help="Simulation temperature")
+	test.add_argument("--temp", type=int, default=int(25), help="Simulation temperature")
 	
 	args = parser.parse_args()
 
-	# Simulation Temperature
-	global SIM_TEMP
-	SIM_TEMP = args.temp
+	# Simulation Temperature information
+	temperature_info = [args.temp, None]
+	if temperature_info[0] > -20:
+		temperature_info[1] = "normal model"
+	elif temperature_info[0]!=-269:
+		raise ValueError("simulation temperature should be exactly -269C for cryo sim. Below -20C there are no good models for simulation")
+	else:
+		temperature_info[1] = "cryo model"
+	temperature_info = tuple(temperature_info)
 
 	if args.mode=="extract_stats":
 		# Call the extract_stats function with the specified file paths or defaults
@@ -858,10 +885,9 @@ if __name__ == "__main__":
 
 	elif args.mode=="get_training_data":
 		# Call the get_training_data function with test_mode flag
-		get_training_data(test_mode=args.test_mode)
+		get_training_data(test_mode=args.test_mode, temperature_info=temperature_info)
 
 	elif args.mode=="gen_opamp":
-		from pygen.pdk.sky130_mapped.sky130_mapped import sky130_mapped_pdk as pdk
 		# Call the opamp function with the parsed arguments
 		diffpair_params = tuple(args.diffpair_params)
 		diffpair_bias = tuple(args.diffpair_bias)
@@ -899,4 +925,4 @@ if __name__ == "__main__":
 			"mim_cap_rows": 3,
 			"rmult": 2
 		}
-		single_build_and_simulation(opamp_parameters_serializer(**params), args.output_dir)
+		single_build_and_simulation(opamp_parameters_serializer(**params), temperature_info[0], args.output_dir)

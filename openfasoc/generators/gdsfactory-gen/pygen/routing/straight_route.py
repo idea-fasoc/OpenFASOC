@@ -1,12 +1,12 @@
 from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.port import Port
-from .pdk.mappedpdk import MappedPDK
+from pygen.pdk.mappedpdk import MappedPDK
 from typing import Optional
-from .via_gen import via_stack, via_array
+from pygen.via_gen import via_stack, via_array
 from gdsfactory.components.rectangle import rectangle
-from .pdk.util.comp_utils import evaluate_bbox, align_comp_to_port
-from .pdk.util.port_utils import assert_port_manhattan, set_port_orientation
+from pygen.pdk.util.comp_utils import evaluate_bbox, align_comp_to_port
+from pygen.pdk.util.port_utils import assert_port_manhattan, set_port_orientation
 
 
 @cell
@@ -82,7 +82,7 @@ def straight_route(
 
 
 if __name__ == "__main__":
-	from .pdk.util.standard_main import pdk
+	from pygen.pdk.util.standard_main import pdk
 	
 	routebetweentop = rectangle(layer=pdk.get_glayer("met3"),size=(1,1)).ref()
 	routebetweentop.movex(20).movey(-3)

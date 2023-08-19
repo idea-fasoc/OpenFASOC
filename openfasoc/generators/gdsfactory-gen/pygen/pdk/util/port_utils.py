@@ -4,6 +4,8 @@ from gdsfactory.components.rectangle import rectangle
 from gdsfactory.port import Port
 from typing import Callable, Union, Optional
 from decimal import Decimal
+from pathlib import Path
+import pickle
 
 
 @validate_arguments
@@ -234,7 +236,7 @@ class PortTree:
 	"""
 
 	@validate_arguments
-	def __init__(self, custom_comp: Union[Component, ComponentReference]) -> dict:
+	def __init__(self, custom_comp: Union[Component, ComponentReference]):
 		"""creates the tree structure from the ports where _ represent subdirectories
 		credit -> chatGPT
 		"""
@@ -264,3 +266,20 @@ class PortTree:
 				raise KeyError("Port path was not found")
 			current_dir = current_dir[path_component]
 		return list(current_dir.keys())
+	
+	@validate_arguments
+	def save_to_disk(self, savedir: Union[Path, str]="./"):
+		savedir = Path(savedir).resolve()
+		savedir.mkdir(exist_ok=True,parents=True)
+		if not savedir.is_dir():
+			raise ValueError("no dir named" + str(savedir))
+		with open(savedir / "porttree.pkl", 'wb') as outfile:
+			pickle.dump(self, outfile)
+	
+	@classmethod
+	def read_from_disk(cls, pklfile: Union[Path, str]):
+		pklfile = Path(pklfile).resolve()
+		if not pklfile.is_file():
+			raise ValueError("no file named" + str(pklfile))
+		with open(str(pklfile), 'rb') as infile:
+			return pickle.load(infile)

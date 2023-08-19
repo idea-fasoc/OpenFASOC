@@ -1,21 +1,21 @@
 from gdsfactory.cell import cell, clear_cache
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
-from .pdk.mappedpdk import MappedPDK
+from pygen.pdk.mappedpdk import MappedPDK
 from typing import Optional
-from .fet import nmos, pmos, multiplier
-from .diff_pair import diff_pair
-from .guardring import tapring
-from .mimcap import mimcap_array, mimcap
-from .L_route import L_route
-from .c_route import c_route
-from .via_gen import via_stack, via_array
+from pygen.fet import nmos, pmos, multiplier
+from pygen.diff_pair import diff_pair
+from pygen.guardring import tapring
+from pygen.mimcap import mimcap_array, mimcap
+from pygen.routing.L_route import L_route
+from pygen.routing.c_route import c_route
+from pygen.via_gen import via_stack, via_array
 from gdsfactory.routing.route_quad import route_quad
-from .pdk.util.comp_utils import evaluate_bbox, prec_ref_center, movex, movey, to_decimal, to_float, move, align_comp_to_port
-from .pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, set_port_orientation
+from pygen.pdk.util.comp_utils import evaluate_bbox, prec_ref_center, movex, movey, to_decimal, to_float, move, align_comp_to_port
+from pygen.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, set_port_orientation
 from sys import exit
-from .straight_route import straight_route
-from .pdk.util.snap_to_grid import component_snap_to_grid
+from pygen.routing.straight_route import straight_route
+from pygen.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 
 
@@ -378,21 +378,22 @@ if __name__ == "__main__":
 			rmult = 2
 		).show()
 		
-		
-#[0.7,1,0.02]
-#bias_points = list()
-#for bias1_point in bias1_points:
-#	for bias2_point in bias2_points:
-#		run design
-#		bias_points.append(bias_point)
 
-#best_bias = max(bias_points)
-#0.8
-#0.78,0.82,0.005
 
-"""
-for row in range(4):
-	for col in range(8):
-		ref = mycomp << opamps[8*row+col]
-		ref.movex(150*col).movey(150*row)
-"""
+def benchmark(pdk: MappedPDK, save_file: Optional[str]="./opamp_runtime_second.txt") -> float:
+    """get runtime of opamp in seconds (note running this with sky130 results in longer runtime due to addition of NPC)"""
+    import time
+    start = time.time()
+    opamp(pdk)
+    end = time.time()
+    elapsed_time = end - start
+    print(elapsed_time)
+    if save_file:
+        from pathlib import Path
+        save_file = Path(save_file).resolve()
+        try:
+            with open(save_file,"w") as resultfile:
+                resultfile.write(str(elapsed_time))
+        except Exception:
+            print("benchmark was not able to write to savefile")
+    return elapsed_time

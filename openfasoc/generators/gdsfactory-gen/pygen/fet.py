@@ -2,17 +2,17 @@ from gdsfactory.grid import grid
 from gdsfactory.cell import cell
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
-from .pdk.mappedpdk import MappedPDK
+from pygen.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
-from .via_gen import via_array, via_stack
-from .guardring import tapring
+from pygen.via_gen import via_array, via_stack
+from pygen.guardring import tapring
 from pydantic import validate_arguments
-from .pdk.util.comp_utils import evaluate_bbox, to_float, to_decimal, prec_array, prec_center, prec_ref_center, movey, align_comp_to_port
-from .pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports
-from .c_route import c_route
-from .pdk.util.snap_to_grid import component_snap_to_grid
+from pygen.pdk.util.comp_utils import evaluate_bbox, to_float, to_decimal, prec_array, prec_center, prec_ref_center, movey, align_comp_to_port
+from pygen.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports
+from pygen.routing.c_route import c_route
+from pygen.pdk.util.snap_to_grid import component_snap_to_grid
 from decimal import Decimal
-from .straight_route import straight_route
+from pygen.routing.straight_route import straight_route
 
 
 @validate_arguments
