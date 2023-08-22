@@ -1,0 +1,8 @@
+design/sky130hvl/ldo/config.mk
+logs/
+objects/
+reports/
+results/
+/*.log
+/*.spice
+/*.ext
