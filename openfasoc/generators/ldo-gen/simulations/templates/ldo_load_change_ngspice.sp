@@ -1,19 +1,19 @@
 * VREG and load current Transient
 
 * include from .../sky130A/libs.tech/ngspice/sky130.lib.spice
-.lib '@model_file' @model_corner
+.lib '${model_file}' ${model_corner}
 * include the LDO spice netlist
-.include 'ldo_sim.spice'
+.include '${netlist_path}'
 
 
-xi1 @proper_pin_ordering
+xi1 ${pin_ordering}
 + ldoInst
 
 *Controls
 V0 VSS 0 DC=0
 V1 VDD 0 DC=3.3
 * to be commented if using Analog Vref block
-V2 VREF 0 DC=@VALUE_REF_VOLTAGE
+V2 VREF 0 DC=${vref}
 
 vtrim1 trim1 0 DC=0
 vtrim2 trim2 0 DC=0
@@ -46,7 +46,7 @@ vstd7 std_pt_in_cnt[7] 0 dc 0
 vstd8 std_pt_in_cnt[8] 0 dc 0
 
 *Load change
-V10 VR 0 pwl 0 1800 20u 1800 20.01u @Res_Value
+V10 VR 0 pwl 0 1800 20u 1800 20.01u ${1.2 * vref / max_load}
 R1 VREG 0 R=V(VR)
 C1 VREG VSS 5p
 
@@ -57,13 +57,14 @@ C1 VREG VSS 5p
 
 *Analysis
 .temp 25
-.tran @sim_step @sim_time
+<% sim_end_time = 1.2 * arr_size / 1000000 %>
+.tran ${sim_end_time / 2000} ${sim_end_time}
 
 .control
 run
 
 set filetype=binary
-write @output_raw v(VREG) v(VREF) v(cmp_out) v(clk) v("ctrl_out[0]") v("ctrl_out[1]") v("ctrl_out[2]") v("ctrl_out[3]") v("ctrl_out[4]") v("ctrl_out[5]") v("ctrl_out[6]") v("ctrl_out[7]") v("ctrl_out[8]") i(V1)
+write ${f"{max_load * 1000}mA_output_load_change.raw"} v(VREG) v(VREF) v(cmp_out) v(clk) v("ctrl_out[0]") v("ctrl_out[1]") v("ctrl_out[2]") v("ctrl_out[3]") v("ctrl_out[4]") v("ctrl_out[5]") v("ctrl_out[6]") v("ctrl_out[7]") v("ctrl_out[8]") i(V1)
 
 .endc
 

@@ -1,7 +1,7 @@
 * include from .../sky130A/libs.tech/ngspice/sky130.lib.spice
-.lib '@model_file' @model_corner
+.lib '${model_file}' ${model_corner}
 * include the LDO spice netlist
-.include 'power_array.spice'
+.include '${netlist_path}'
 
 
 xi1 VREG VDD VSS ldoInst
@@ -11,7 +11,7 @@ xi1 VREG VDD VSS ldoInst
 V0 VSS 0 dc 0
 *V1 VDD VSS pwl 0 0 2n 0 2.0001n 3.3
 V1 VDD VSS dc 3.3
-V2 VREF VSS @VALUE_REF_VOLTAGE
+V2 VREF VSS ${vref}
 R1 VREG VSS 1000
 C1 VREG VSS 1n
 
