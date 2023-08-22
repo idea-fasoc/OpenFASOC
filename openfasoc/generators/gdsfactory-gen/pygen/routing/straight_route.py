@@ -1,3 +1,6 @@
+if __name__ == "__main__":
+	import sys
+	sys.path.append("../../")
 from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.port import Port
@@ -17,6 +20,8 @@ def straight_route(
 	glayer1: Optional[str] = None,
 	width: Optional[float] = None,
 	glayer2: Optional[str] = None,
+	via1_alignment: Optional[tuple[str, str]] = None,
+	via2_alignment: Optional[tuple[str, str]] = None,
 	fullbottom: Optional[bool] = False
 ) -> Component:
 	"""extends a route from edge1 until perpindicular with edge2, then places a via
@@ -39,6 +44,9 @@ def straight_route(
 	****If not edge1.layer, a via will be placed
 	glayer2 = defaults to edge2.layer, end layer of the via
 	width = defaults to edge1.width
+	via1_alignment = alignment of the via on edge1
+	via2_alignment = alignment of the via on edge2
+	****defaults to an orientation that is aligned to the orientation of the port.
 	"""
 	#TODO: error checking
 	width = width if width else edge1.width
@@ -72,12 +80,29 @@ def straight_route(
 	out_via = via_stack(pdk,glayer1,glayer2,fullbottom=fullbottom)
 	# place route and via
 	straightroute = Component()
+	edges = [edge1,edge2]
+	for i, edge in enumerate(edges):
+		temp = via1_alignment if i == 0 else via2_alignment
+		if temp is None:
+			if round(edge.orientation) == 0:# facing east
+				temp = ("l", "c")
+			elif round(edge.orientation) == 180:# facing west
+				temp = ("r", "c")
+			elif round(edge.orientation) == 270:# facing south
+				temp = ("c", "t")
+			elif round(edge.orientation) == 90:#facing north
+				temp = ("c", "b")
+			else:
+				raise ValueError("port must be vertical or horizontal")
+		via1_alignment = temp if i == 0 else via1_alignment
+		via2_alignment = temp if i == 1 else via2_alignment
+
 	route_ref = align_comp_to_port(route,edge1,alignment=alignment)
 	straightroute.add_ports(route_ref.get_ports_list(),prefix="route_")
 	straightroute.add(route_ref)
-	straightroute.add(align_comp_to_port(out_via,route_ref.ports[viaport_name],alignment=("c","c")))
+	straightroute.add(align_comp_to_port(out_via,route_ref.ports[viaport_name],layer=pdk.get_glayer(glayer1),alignment=via1_alignment))
 	if front_via is not None:
-		straightroute.add(align_comp_to_port(front_via,edge1,alignment=("c","c")))
+		straightroute.add(align_comp_to_port(front_via,edge1,layer=pdk.get_glayer(glayer2),alignment=via2_alignment))
 	return straightroute.flatten()
 
 
@@ -85,10 +110,10 @@ if __name__ == "__main__":
 	from pygen.pdk.util.standard_main import pdk
 	
 	routebetweentop = rectangle(layer=pdk.get_glayer("met3"),size=(1,1)).ref()
-	routebetweentop.movex(20).movey(-3)
+	routebetweentop.movex(20)
 	routebetweenbottom = rectangle(layer=pdk.get_glayer("met1"), size=(1, 1))
-	mycomp = straight_route(pdk,routebetweentop.ports["e3"],routebetweenbottom.ports["e1"])
+	mycomp = straight_route(pdk,routebetweentop.ports["e1"],routebetweenbottom.ports["e3"])
 	mycomp.unlock()
 	mycomp.add(routebetweentop)
 	mycomp << routebetweenbottom
-	mycomp.flatten().show()
+	mycomp.show()

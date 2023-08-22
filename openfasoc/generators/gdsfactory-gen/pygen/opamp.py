@@ -1,3 +1,6 @@
+if __name__ == "__main__":
+	import sys
+	sys.path.append("../")
 from gdsfactory.cell import cell, clear_cache
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
@@ -334,7 +337,7 @@ def opamp(
 
 
 if __name__ == "__main__":
-	from . pdk.util.standard_main import pdk
+	from pdk.util.standard_main import pdk
 
 	iterate=False
 # TO TRY:
