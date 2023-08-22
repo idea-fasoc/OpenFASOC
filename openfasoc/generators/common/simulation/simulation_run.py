@@ -104,7 +104,7 @@ def _threaded_run(
 					f"sim_{run_number}.sp"
 				],
 				cwd=run_dir,
-				capture_output=False
+				capture_output=True
 			)
 		elif sim_tool == "xyce":
 			subprocess.run(
@@ -117,7 +117,7 @@ def _threaded_run(
 					f"sim_{run_number}.sp"
 				],
 				cwd=run_dir,
-				capture_output=False
+				capture_output=True
 			)
 		elif sim_tool == "finesim":
 			subprocess.run(
@@ -129,7 +129,7 @@ def _threaded_run(
 					f"sim_{run_number}.sp"
 				],
 				cwd=run_dir,
-				capture_output=False
+				capture_output=True
 			)
 	except:
 		return on_exit(1)
