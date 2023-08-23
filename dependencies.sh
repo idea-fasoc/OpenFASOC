@@ -140,31 +140,6 @@ else
     echo "Compatible python version exists: $ma_ver.$mi_ver"
 fi
 
-if [ $? == 0 ] && [ -x /home/$(logname)/miniconda3/ ]
-then
-	conda update -y conda
-        if [ $? == 0 ];then conda install -c litex-hub --file conda_versions.txt -y ; else echo "[OpenFASoC] Failed to update conda version." ; exit ; fi
-        if [ $? == 0 ];then echo "[OpenFASoC] Installed OpenROAD, Yosys, Skywater PDK, Magic and Netgen successfully" ; else echo "[OpenFASoC] Failed to install conda packages" ; exit ; fi
-else
-	echo "[OpenFASoC] Failed to install miniconda. Check above for error messages."
-	exit
-fi
-
-# download packages using pip3 in miniconda3
-export PATH=/home/$(logname)/miniconda3/bin/pip3:$PATH
-if which pip3 >> /dev/null
-then
-        echo "[OpenFASoC] Pip3 exists"
-        pip3 install -r requirements.txt
-        if [ $? == 0 ]; then 
-        echo "[OpenFASoC] Python packages installed successfully."
-        else
-        echo "[OpenFASoC] Python packages could not be installed."
-        fi
-else
-        echo "[OpenFASoC] Pip3 not found in miniconda3."
-fi
-
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null; then
 
@@ -188,8 +163,8 @@ then
  requiredver="22.04"
  if [ $currentver == $requiredver ]
  then
+  mv docker/conda/scripts/compile_linux_ub22_for_ngspice.sh ./ngspice
   chmod +x compile_linux_ub22_for_ngspice.sh
-  cp compile_linux_ub22_for_ngspice.sh ngspice
   cd ngspice && ./compile_linux_ub22_for_ngspice.sh
  else
   cd ngspice && ./compile_linux.sh
