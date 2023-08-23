@@ -164,8 +164,8 @@ then
  if [ $currentver == $requiredver ]
  then
   mv docker/conda/scripts/compile_linux_ub22_for_ngspice.sh ./ngspice
-  chmod +x compile_linux_ub22_for_ngspice.sh
-  cd ngspice && ./compile_linux_ub22_for_ngspice.sh
+   cd ngspice && chmod +x compile_linux_ub22_for_ngspice.sh
+  ./compile_linux_ub22_for_ngspice.sh d
  else
   cd ngspice && ./compile_linux.sh
  fi
