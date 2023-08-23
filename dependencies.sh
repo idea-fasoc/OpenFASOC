@@ -168,21 +168,21 @@ fi
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null; then
 
-        sudo apt-get update -y
-        sudo apt-get install -y autoconf libtool automake make g++ gcc
+	apt-get update -y
+        apt-get install -y autoconf libtool automake make g++ gcc
 
 elif cat /etc/os-release | grep -e "centos" >> /dev/null; then
 
-        sudo yum update -y
+        yum update -y
 
-        sudo yum install -y autoconf libtool automake make gcc gcc-c++
+        yum install -y autoconf libtool automake make gcc gcc-c++
 
 fi
 
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null
 then
- sudo apt install bison flex libx11-dev libx11-6 libxaw7-dev libreadline6-dev autoconf libtool automake -y
+ apt install bison flex libx11-dev libx11-6 libxaw7-dev libreadline6-dev autoconf libtool automake -y
  git clone http://git.code.sf.net/p/ngspice/ngspice
  currentver="$(lsb_release -rs)"
  requiredver="22.04"
@@ -190,9 +190,9 @@ then
  then
   chmod +x compile_linux_ub22_for_ngspice.sh
   cp compile_linux_ub22_for_ngspice.sh ngspice
-  cd ngspice && sudo ./compile_linux_ub22_for_ngspice.sh
+  cd ngspice && ./compile_linux_ub22_for_ngspice.sh
  else
-  cd ngspice && sudo ./compile_linux.sh
+  cd ngspice && ./compile_linux.sh
  fi
 elif cat /etc/os-release | grep "centos" >> /dev/null
 then
@@ -214,7 +214,7 @@ if cat /etc/os-release | grep "ubuntu" >> /dev/null
 then
 	export DEBIAN_FRONTEND=noninteractive
 	cd docker/conda/scripts
-	sudo ./xyce_install.sh
+	./xyce_install.sh
 elif cat /etc/os-release | grep "centos" >> /dev/null
 then
 	cd docker/conda/scripts
@@ -236,22 +236,22 @@ then
  	requiredver="22.04"
  	if [ $currentver == $requiredver ]
  	then
-	 sudo apt install qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y 
+	 apt install qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y 
 	 wget https://www.klayout.org/downloads/Ubuntu-22/klayout_0.28.8-1_amd64.deb
-	 sudo dpkg -i klayout_0.28.8-1_amd64.deb
+	 dpkg -i klayout_0.28.8-1_amd64.deb
 	else 
-	 sudo apt install qt5-default qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y
+	 apt install qt5-default qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y
 	 wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.28.6-1_amd64.deb
-	 sudo dpkg -i klayout_0.28.6-1_amd64.deb
+	 dpkg -i klayout_0.28.6-1_amd64.deb
   	 strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5 #https://stackoverflow.com/questions/63627955/cant-load-shared-library-libqt5core-so-5
 	fi
-	sudo apt install time -y
+	apt install time -y
 	elif cat /etc/os-release | grep -e "centos" >> /dev/null
 then
-	sudo yum install qt5-qtbase-devel qt5-qttools-devel qt5-qtxmlpatterns-devel qt5-qtmultimedia-devel qt5-qtmultimedia-widgets-devel qt5-qtsvg-devel ruby ruby-devel python3-devel zlib-devel time -y
+	yum install qt5-qtbase-devel qt5-qttools-devel qt5-qtxmlpatterns-devel qt5-qtmultimedia-devel qt5-qtmultimedia-widgets-devel qt5-qtsvg-devel ruby ruby-devel python3-devel zlib-devel time -y
 	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.28.6-0.x86_64.rpm
-	sudo rpm -i klayout-0.28.6-0.x86_64.rpm
-	sudo yum install time -y
+	rpm -i klayout-0.28.6-0.x86_64.rpm
+	yum install time -y
   strip --remove-section=.note.ABI-tag /usr/lib64/libQt5Core.so.5
 else
 	echo "[OpenFASoC] Cannot install klayout for other linux distrbutions via this script"
