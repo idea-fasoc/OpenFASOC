@@ -1,7 +1,3 @@
-# 1- create single transistor component
-# 2- create a 4 array of them with top transistors mirrored along xaxis such that gate routes are facing out
-#		separation in the middle should be max of 
-
 from gdsfactory.cell import cell
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
@@ -20,11 +16,11 @@ from pygen.pdk.util.snap_to_grid import component_snap_to_grid
 @cell
 def diff_pair(
 	pdk: MappedPDK,
-	width: Optional[float] = 3,
-	fingers: Optional[int] = 4,
+	width: float = 3,
+	fingers: int = 4,
 	length: Optional[float] = None,
-	n_or_p_fet: Optional[bool] = True,
-	plus_minus_seperation: Optional[float] = 0,
+	n_or_p_fet: bool = True,
+	plus_minus_seperation: float = 0,
 	rmult: int = 1
 ) -> Component:
 	"""create a diffpair with 2 transistors placed in two rows with common centroid place. Sources are shorted

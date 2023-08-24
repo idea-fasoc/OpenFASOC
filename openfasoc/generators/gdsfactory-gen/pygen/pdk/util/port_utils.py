@@ -6,6 +6,7 @@ from typing import Callable, Union, Optional
 from decimal import Decimal
 from pathlib import Path
 import pickle
+from PrettyPrint import PrettyPrintTree
 
 
 @validate_arguments
@@ -230,13 +231,18 @@ def print_ports(custom_comp: Union[Component, ComponentReference], names_only: O
 
 class PortTree:
 	"""PortTree helps a pygen programmer visualize the ports in a component
-	_ should represent a level of hiearchy (much like a directory). think of this like psuedo directories
+	\"_\" should represent a level of hiearchy (much like a directory). think of this like psuedo directories
 	Initialize a PortTree from a Component or ComponentReference
-	then use PortTree.ls to list all ports/subdirectories in a directory
+	then use self.ls to list all ports/subdirectories in a directory
+	you can use self.print to prettyprint a port tree (uses pypi prettyprinttree package)
+
+	You should not need to access the internal dictionary for the tree, but if you do:
+	PortTree internally uses tuple[str, dict] = name:children as the node type
+	since the PortTree is not a node type (PortTree is not a real tree class), the root node is: (self.name, self.tree)
 	"""
 
 	@validate_arguments
-	def __init__(self, custom_comp: Union[Component, ComponentReference]):
+	def __init__(self, custom_comp: Union[Component, ComponentReference], name: Optional[str]=None):
 		"""creates the tree structure from the ports where _ represent subdirectories
 		credit -> chatGPT
 		"""
@@ -250,12 +256,13 @@ class PortTree:
 					current_dir[path_component] = {}
 				current_dir = current_dir[path_component]
 		self.tree = directory_tree
+		self.name = name if name else custom_comp.name
 	
 	@validate_arguments
 	def ls(self, file_path: Optional[str] = None) -> list[str]:
 		"""tries to traverse the tree along the given path and prints all subdirectories in a psuedo directory
 		if the path given is not found in the tree, raises KeyError
-		path should not end with _ char
+		path should not end with \"_\" char
 		"""
 		if file_path is None or len(file_path)==0:
 			return list(self.tree.keys())
@@ -283,3 +290,29 @@ class PortTree:
 			raise ValueError("no file named" + str(pklfile))
 		with open(str(pklfile), 'rb') as infile:
 			return pickle.load(infile)
+	
+	def get_children(self, node: tuple[str, dict]) -> list[tuple[str, dict]]:
+		"""access children of internal tree node (node might be a PortTree)"""
+		node_dict = node[1] if isinstance(node, tuple) else self.tree
+		return node_dict.items()
+		
+	
+	def get_val(self, node: tuple[str, dict]) -> str:
+		"""returns value of a node, (node might be a PortTree)"""
+		return node[0] if isinstance(node, tuple) else self.name
+	
+	def print(self, savetofile: bool=True, depth: Optional[int]=None, **kwargs):
+		"""prints output to terminal directly using prettyprinttree pypi package
+		args:
+		depth = max depth to print. this is a kwarg but since it so common, it should be specfied from depth arg
+		kwargs -> kwargs are prettyprint options passed directly to prettyprint
+		"""
+		depth = int(depth) if depth is not None or depth>0 else -1
+		savetofile_opts = {}
+		if savetofile:
+			savetofile_opts = {"return_instead_of_print":savetofile, "color":None, "border":True}
+		pt = PrettyPrintTree(self.get_children, self.get_val, max_depth=depth, **savetofile_opts, **kwargs)
+		rtrstr = pt(self)
+		if rtrstr:
+			with open("outputtree.txt","w") as outputfile:
+				outputfile.write(rtrstr)

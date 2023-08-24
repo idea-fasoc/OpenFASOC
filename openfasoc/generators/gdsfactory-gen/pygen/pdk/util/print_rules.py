@@ -9,6 +9,7 @@ directions
 
 import csv
 from pathlib import Path
+from pydantic import validate_arguments
 
 
 def split_rule(rule: str) -> tuple:
@@ -81,6 +82,30 @@ def create_ruledeck_python_dictionary_definition(csvtoread: Path):
         last_grp_rules = __str_rules(groupdata, group, glayers)
         output += "\n" if last_grp_rules in output else last_grp_rules
     return output
+
+
+@validate_arguments
+def visualize_ruleset(ruleset: dict):
+    """use networkx to print a visual of the ruleset graph
+    nodes are glayers (strings)
+    edges are rules (tuple[name:value])
+    """
+    import pygraphviz as pgv
+    ruleGraph = pgv.AGraph(strict=False, directed=False, multigraph=True)
+    ruleGraph.add_nodes_from(ruleset.keys())
+    for glayer1 in ruleset.keys():
+        for glayer2 in ruleset[glayer1].keys():
+            for rule, value in ruleset[glayer1][glayer2].items():
+                color="black"
+                if "min_separ" in rule:
+                    color="red"
+                elif "min_enclos" in rule:
+                    color = "blue"
+                elif "width" in rule:
+                    color = "orange"
+                #ruleGraph.add_edge(glayer1,glayer2,label=value,color=color,key=rule)
+                ruleGraph.add_edge(glayer1,glayer2,color=color,key=rule)
+    ruleGraph.draw("test.png",format="png",prog="dot")
 
 
 if __name__ == "__main__":

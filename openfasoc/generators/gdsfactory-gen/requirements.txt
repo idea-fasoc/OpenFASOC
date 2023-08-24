@@ -4,3 +4,5 @@ scikit-learn
 matplotlib
 scipy
 seaborn
+prettyprinttree
+pygraphviz

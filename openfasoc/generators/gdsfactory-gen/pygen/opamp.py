@@ -1,6 +1,3 @@
-if __name__ == "__main__":
-	import sys
-	sys.path.append("../")
 from gdsfactory.cell import cell, clear_cache
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
@@ -41,28 +38,8 @@ def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap
 	return opamp_top
 
 
-@cell
-def opamp(
-    pdk: MappedPDK,
-    diffpair_params: Optional[tuple[float, float, int]] = (6, 1, 4),
-    diffpair_bias: Optional[tuple[float, float, int]] = (6, 2, 4),
-    houtput_bias: Optional[tuple[float, float, int, int]] = (6, 2, 8, 3),
-    pamp_hparams: Optional[tuple[float, float, int, int]] = (7, 1, 10, 3),
-    mim_cap_size=(12, 12),
-    mim_cap_rows=3,
-    rmult: int = 2
-) -> Component:
-    """create an opamp, args:
-    pdk=pdk to use
-    diffpair_params = diffpair (width,length,fingers)
-    diffpair_bias = bias transistor for diffpair nmos (width,length,fingers)
-    houtput_bias = west current mirror (width,length,fingers,mults), two halves
-    pamp_hparams = pmos top component amp (width,length,fingers,mults)
-    mim_cap_size = width,length of individual mim_cap
-    """
-    _max_metal_seperation_ps = pdk.util_max_metal_seperation()
-    opamp_top = Component()
-    # place nmos components
+@validate_arguments
+def __create_diff_pair_and_bias(pdk: MappedPDK, diffpair_params: tuple[float, float, int], diffpair_bias: tuple[float, float, int], rmult: int) -> Component:
     # create and center diffpair
     diffpair_i_ = Component("temp diffpair and current source")
     center_diffpair_comp = diff_pair(
@@ -91,11 +68,37 @@ def opamp(
     tailcurrent_ref = diffpair_i_ << tailcurrent_comp
     tailcurrent_ref.movey(
         -0.5 * (center_diffpair_comp.ymax - center_diffpair_comp.ymin)
-        - abs(tailcurrent_ref.ymax) - _max_metal_seperation_ps
+        - abs(tailcurrent_ref.ymax) - pdk.util_max_metal_seperation()
     )
     diffpair_i_.add_ports(tailcurrent_ref.get_ports_list())
-    # add diff pair and tailcurrent_comp to opamp
-    diffpair_i_ref = prec_ref_center(diffpair_i_)
+    return diffpair_i_
+
+
+@cell
+def opamp(
+    pdk: MappedPDK,
+    diffpair_params: tuple[float, float, int] = (6, 1, 4),
+    diffpair_bias: tuple[float, float, int] = (6, 2, 4),
+    houtput_bias: tuple[float, float, int, int] = (6, 2, 8, 3),
+    pamp_hparams: tuple[float, float, int, int] = (7, 1, 10, 3),
+    mim_cap_size=(12, 12),
+    mim_cap_rows=3,
+    rmult: int = 2
+) -> Component:
+    """create an opamp, args:
+    pdk=pdk to use
+    diffpair_params = diffpair (width,length,fingers)
+    diffpair_bias = bias transistor for diffpair nmos (width,length,fingers)
+    houtput_bias = west current mirror (width,length,fingers,mults), two halves
+    pamp_hparams = pmos top component amp (width,length,fingers,mults)
+    mim_cap_size = width,length of individual mim_cap
+    """
+    _max_metal_seperation_ps = pdk.util_max_metal_seperation()
+    opamp_top = Component()
+    # place nmos components
+    diffpair_and_bias = __create_diff_pair_and_bias(pdk, diffpair_params, diffpair_bias, rmult)
+    # add diff pair and bias block to opamp
+    diffpair_i_ref = prec_ref_center(diffpair_and_bias)
     opamp_top.add(diffpair_i_ref)
     opamp_top.add_ports(diffpair_i_ref.get_ports_list(),prefix="centerNcomps_")
     # create and position current mirror symetrically
@@ -337,7 +340,7 @@ def opamp(
 
 
 if __name__ == "__main__":
-	from pdk.util.standard_main import pdk
+	from . pdk.util.standard_main import pdk
 
 	iterate=False
 # TO TRY:

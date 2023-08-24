@@ -1,6 +1,6 @@
 import sys
 # path to pygen
-sys.path.append('./pygen')
+sys.path.append('../')
 
 from gdsfactory.read.import_gds import import_gds
 from gdsfactory.components import text_freetype, rectangle
@@ -9,8 +9,8 @@ from pygen.pdk.util.port_utils import add_ports_perimeter, print_ports
 from gdsfactory.component import Component
 from pygen.pdk.mappedpdk import MappedPDK
 from pygen.opamp import opamp
-from pygen.L_route import L_route
-from pygen.straight_route import straight_route
+from pygen.routing.L_route import L_route
+from pygen.routing.straight_route import straight_route
 from pygen.via_gen import via_array
 from gdsfactory.cell import cell, clear_cache
 import numpy as np
@@ -344,7 +344,7 @@ def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath:
 		return_dict[key] = val_flt
 	return return_dict
 
-def process_netlist_subckt(netlist: Union[str,Path], sim_model: Literal["normal model", "cryo model"]):
+def process_netlist_subckt(netlist: Union[str,Path], sim_model: Literal["normal model", "cryo model"], cload: float=0.0, noparasitics: bool=False):
 	netlist = Path(netlist).resolve()
 	if not netlist.is_file():
 		raise ValueError("netlist must be file")
@@ -354,12 +354,12 @@ def process_netlist_subckt(netlist: Union[str,Path], sim_model: Literal["normal 
 		subckt_lines = spice_net.readlines()
 		for i,line in enumerate(subckt_lines):
 			line = line.lstrip().lower()
-			if len(line) and line[0]=="M":
+			if "cryo" in sim_model and len(line) and line[0]=="M":
 				line[0]="X"
 			if all([hint in line for hint in hints]):
-				subckt_lines[i] = ".subckt opamp minus plus vbias1 vbias2 output vdd gnd\n"
-			if "floating" in line:
-				subckt_lines[i] = "\n"
+				subckt_lines[i] = ".subckt opamp minus plus vbias1 vbias2 output vdd gnd\nCload output gnd " + str(cload) +"p\n"
+			if "floating" in line or (noparasitics and len(line) and line[0]=="C"):
+				subckt_lines[i] = "* "+ subckt_lines[i]
 	with open(netlist, "w") as spice_net:
 		spice_net.writelines(subckt_lines)
 
@@ -377,7 +377,7 @@ def process_spice_testbench(testbench: Union[str,Path], temperature_info: tuple[
 	with open(testbench, "w") as spice_file:
 		spice_file.write(spicetb)
 
-def __run_single_brtfrc(pdk, index, parameters_ele, save_gds_dir, temperature_info: tuple[int,str]=(25,"normal model"), output_dir: Optional[Union[str,Path]] = None):
+def __run_single_brtfrc(pdk, index, parameters_ele, save_gds_dir, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, output_dir: Optional[Union[str,Path]] = None):
 	# generate layout
 	destination_gds_copy = save_gds_dir / (str(index)+".gds")
 	sky130pdk = pdk
@@ -397,9 +397,8 @@ def __run_single_brtfrc(pdk, index, parameters_ele, save_gds_dir, temperature_in
 		Popen(["bash","extract.bash", tmp_gds_path, opamp_v.name],cwd=tmpdirname).wait()
 		print("Running simulation at temperature: " + str(temperature_info[0]) + "C")
 		process_spice_testbench(str(tmpdirname)+"/opamp_perf_eval.sp",temperature_info=temperature_info)
-		process_netlist_subckt(str(tmpdirname)+"/opamp_pex.spice", temperature_info[1])
+		process_netlist_subckt(str(tmpdirname)+"/opamp_pex.spice", temperature_info[1], cload=cload, noparasitics=noparasitics)
 		# run sim and store result
-		import pdb; pdb.set_trace()
 		Popen(["ngspice","-b","opamp_perf_eval.sp"],cwd=tmpdirname).wait()
 		result_dict = get_sim_results(str(tmpdirname)+"/result_ac.txt", str(tmpdirname)+"/result_power.txt", str(tmpdirname)+"/result_noise.txt")
 		result_dict["area"] = area
@@ -413,7 +412,7 @@ def __run_single_brtfrc(pdk, index, parameters_ele, save_gds_dir, temperature_in
 		return results
 
 
-def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.array, temperature_info: tuple[int,str]=(25,"normal model")) -> np.array:
+def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.array, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False) -> np.array:
 	"""runs the brute force testing of parameters by
 	1-constructing the opamp layout specfied by parameters
 	2-extracting the netlist for the opamp
@@ -432,27 +431,28 @@ def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.
 	save_gds_dir = Path('./save_gds_by_index').resolve()
 	save_gds_dir.mkdir(parents=True)
 	with Pool(120) as cores:
-		results = np.array(cores.starmap(__run_single_brtfrc, zip(repeat(sky130pdk), count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info))),np.float64)
+		results = np.array(cores.starmap(__run_single_brtfrc, zip(repeat(sky130pdk), count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info), repeat(cload), repeat(noparasitics))),np.float64)
 	# undo pdk modification
 	sky130pdk.default_decorator = add_npc_decorator
 	return results
 
 # data gathering main function
 @validate_arguments
-def get_training_data(test_mode: bool=True, temperature_info: tuple[int,str]=(25,"normal model")) -> None:
+def get_training_data(test_mode: bool=True, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False) -> None:
 	if temperature_info[1] != "normal model" and temperature_info[1] != "cryo model":
 		raise ValueError("model must be one of \"normal model\" or \"cryo model\"")
 	params = get_small_parameter_list(test_mode)
-	results = brute_force_full_layout_and_PEXsim(pdk, params, temperature_info)
+	results = brute_force_full_layout_and_PEXsim(pdk, params, temperature_info, cload=cload, noparasitics=noparasitics)
 	np.save("training_params.npy",params)
 	np.save("training_results.npy",results)
 
 
 
 #util function for pure simulation. sky130 is imported automatically
-def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: Optional[Union[str,Path]] = None) -> np.array:
+def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: Optional[Union[str,Path]] = None, cload: float=0.0, noparasitics: bool=False) -> np.array:
 	"""Builds, extract, and simulates a single opamp
 	saves opamp gds in current directory with name 12345678987654321.gds
+	returns -987.654321 for all values IF phase margin < 45
 	"""
 	from pygen.pdk.sky130_mapped import sky130_mapped_pdk as pdk
 	# process temperature info
@@ -467,7 +467,11 @@ def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: 
 	# run single build
 	save_gds_dir = Path('./').resolve()
 	index = 12345678987654321
-	return __run_single_brtfrc(pdk, index, parameters, temperature_info=temperature_info, save_gds_dir=save_gds_dir, output_dir=output_dir)
+	results = __run_single_brtfrc(pdk, index, parameters, temperature_info=temperature_info, save_gds_dir=save_gds_dir, output_dir=output_dir, cload=cload, noparasitics=noparasitics)
+	if results["phaseMargin"] < 45:
+		for key in results:
+			results[key] = -987.654321
+	return results
 
 
 #======stats=======
@@ -849,6 +853,8 @@ if __name__ == "__main__":
 	get_training_data_parser = subparsers.add_parser("get_training_data", help="Run the get_training_data function.")
 	get_training_data_parser.add_argument("-t", "--test-mode", action="store_true", help="Set test_mode to True (default: False)")
 	get_training_data_parser.add_argument("--temp", type=int, default=int(25), help="Simulation temperature")
+	get_training_data_parser.add_argument("--cload", type=float, default=float(0), help="run simulation with load capacitance units=pico Farads")
+	get_training_data_parser.add_argument("--noparasitics",action="store_true",help="specify that parasitics should be removed when simulating")
 
 	# Subparser for gen_opamp mode
 	gen_opamp_parser = subparsers.add_parser("gen_opamp", help="Run the gen_opamp function.")
@@ -866,6 +872,8 @@ if __name__ == "__main__":
 	test = subparsers.add_parser("test", help="Test mode")
 	test.add_argument("--output_dir", type=Path, default="./", help="Directory for output GDS file")
 	test.add_argument("--temp", type=int, default=int(25), help="Simulation temperature")
+	test.add_argument("--cload", type=float, default=float(0), help="run simulation with load capacitance units=pico Farads")
+	test.add_argument("--noparasitics",action="store_true",help="specify that parasitics should be removed when simulating")
 	
 	args = parser.parse_args()
 
@@ -885,7 +893,7 @@ if __name__ == "__main__":
 
 	elif args.mode=="get_training_data":
 		# Call the get_training_data function with test_mode flag
-		get_training_data(test_mode=args.test_mode, temperature_info=temperature_info)
+		get_training_data(test_mode=args.test_mode, temperature_info=temperature_info, cload=args.cload, noparasitics=args.noparasitics)
 
 	elif args.mode=="gen_opamp":
 		# Call the opamp function with the parsed arguments
@@ -925,4 +933,4 @@ if __name__ == "__main__":
 			"mim_cap_rows": 3,
 			"rmult": 2
 		}
-		single_build_and_simulation(opamp_parameters_serializer(**params), temperature_info[0], args.output_dir)
+		single_build_and_simulation(opamp_parameters_serializer(**params), temperature_info[0], args.output_dir, cload=args.cload, noparasitics=args.noparasitics)
