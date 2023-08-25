@@ -3,10 +3,11 @@ from gdsfactory.snap import snap_to_grid
 from gdsfactory.typings import Component, ComponentReference
 from gdsfactory.components.rectangle import rectangle
 from gdsfactory.port import Port
-from typing import Callable, Union, Optional,Iterable
+from typing import Callable, Union, Optional, Iterable
 from decimal import Decimal
 from gdsfactory.functions import transformed
 from gdsfactory.functions import move as __gf_move
+from pygen.pdk.mappedpdk import MappedPDK
 
 
 @validate_arguments
@@ -253,3 +254,34 @@ def prec_ref_center(custom_comp: Union[Component,ComponentReference]) -> Compone
 	xcor, ycor = prec_center(compref, False)
 	return compref.movex(xcor).movey(ycor)
 
+
+
+def get_padding_points_cc(
+	custom_comp: Union[ComponentReference, Component, list],
+	default: float = 50.0,
+	top: Optional[float]=None,
+	bottom: Optional[float]=None,
+	right: Optional[float]=None,
+	left: Optional[float]=None,
+	pdk_for_snap2xgrid: Optional[MappedPDK]=None
+) -> list:
+	"""works like gdsfactory.add_padding.get_padding_points, but also accepts componentReference or bbox
+	additionally, if you optionally pass a pdk it will snap to 2x grid (else just operates like get_padding_points)"""
+	if isinstance(custom_comp, ComponentReference) or isinstance(custom_comp, Component):
+		bbox = custom_comp.bbox
+	else:
+		bbox = custom_comp
+	top = top if top is not None else default
+	bottom = bottom if bottom is not None else default
+	right = right if right is not None else default
+	left = left if left is not None else default
+	ppoints = [
+		[bbox[0][0] - left, bbox[0][1] - bottom],
+		[bbox[1][0] + right, bbox[0][1] - bottom],
+		[bbox[1][0] + right, bbox[1][1] + top],
+		[bbox[0][0] - left, bbox[1][1] + top],
+	]
+	if pdk_for_snap2xgrid is not None:
+		for i, ppoint in enumerate(ppoints):
+			ppoints[i] = pdk_for_snap2xgrid.snap_to_2xgrid(ppoint)
+	return ppoints

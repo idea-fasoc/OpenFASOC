@@ -16,6 +16,7 @@ All functions, classes, etc have a help docustring. See python help() for specif
 		- [Cells and PDK.activate()](#cells-and-pdkactivate)
 		- [Important GDSFactory Notes and Pygen Utilities](#important-gdsfactory-notes-and-pygen-utilities)
 		- [Port Naming Best Practices Guide](#port-naming-best-practices-guide)
+			- [PortTree](#porttree)
 		- [Snap to 2x grid](#snap-to-2x-grid)
 		- [Mimcaps Implementation](#mimcaps-implementation)
 		- [DRC](#drc)
@@ -112,7 +113,7 @@ The GDSFactory API is extremely versatile and there are many useful features. It
 	- Component.add(): add an one of several types to a Component. (more flexible than << operator)
 	- Component.ref()/.ref_center(): return a reference to a component
 
-It is not possible to move Components in GDSFactory. GDSFactory has a Component cache, so moving a component may invalidate the cache, but there are situations where you want to move a component; For these situations, use the pygen [move](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/custom_comp_utils.py#L146), [movex](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/custom_comp_utils.py#L185), [movey](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/custom_comp_utils.py#L195) functions.
+It is not possible to move Components in GDSFactory. GDSFactory has a Component cache, so moving a component may invalidate the cache, but there are situations where you want to move a component; For these situations, use the pygen [move](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/comp_utils.py#L24), [movex](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/comp_utils.py#L63), [movey](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/comp_utils.py#L73) functions.
 
 - Component references are pointers to components. They have many of the same methods as Components with some additions.
 	- ComponentReference.parent: the Component which this component reference points to
@@ -125,14 +126,14 @@ To add a ComponentReference to a Component, you cannot use the insertion operato
 - A port describes a single edge of a polygon. The most useful port attributes are **width, center tuple(x,y), orientation (degrees), and layer of the edge**. 
     - For example, the rectangle cell factory provided in gdsfactory.components.rectangle returns a Component type with the following port names: e1, e2, e3, e4.
     	- e1=West, e2=North, e3=East, e4=South. The default naming scheme of ports in GDSFactory is not descriptive
-    	- use pygen [rename_ports_by_orientation](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/custom_comp_utils.py#L65), [rename_ports_by_list](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/custom_comp_utils.py#L89) functions and see below for port naming best practices guide
-    	- pygen [get_orientation](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/custom_comp_utils.py#L205): returns the letter (N,E,S,W) or degrees of orientation of port.  by default returns the one you do not have. see help.
-    	- pygen [assert_is_manhattan](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/custom_comp_utils.py#L240): assert that a port or list or ports have orientation N, E, S, or W
-    	- pygen [assert_ports_perpindicular](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/custom_comp_utils.py#L251): assert two ports are perpindicular
-    	- pygen [set_orientation](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/custom_comp_utils.py#L262): return new port which is copy of old port but with new orientation
-    	- pygen [set_port_width](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/custom_comp_utils.py#L283): return a new port which is a copy of the old one, but with new width
+    	- use pygen [rename_ports_by_orientation](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/port_utils.py#L67), [rename_ports_by_list](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/port_utils.py#L91) functions and see below for port naming best practices guide
+    	- pygen [get_orientation](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/port_utils.py#L124): returns the letter (N,E,S,W) or degrees of orientation of port.  by default returns the one you do not have. see help.
+    	- pygen [assert_port_manhattan](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/port_utils.py#L159): assert that a port or list or ports have orientation N, E, S, or W
+    	- pygen [assert_ports_perpindicular](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/port_utils.py#L181): assert two ports are perpindicular
+    	- pygen [set_port_orientation](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/port_utils.py#L181): return new port which is copy of old port but with new orientation
+    	- pygen [set_port_width](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/port_utils.py#L202): return a new port which is a copy of the old one, but with new width
 
-A very important utility is [align_comp_to_port](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/custom_comp_utils.py#L300): pass a component or componentReference and a port, and align the component to any edge of the port.
+A very important utility is [align_comp_to_port](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/comp_utils.py#L83): pass a component or componentReference and a port, and align the component to any edge of the port.
 
 ### Port Naming Best Practices Guide
 As previously pointed out, the default naming of ports in GDSFactory is not descriptive. By default gdsfactory.components.rectangle returns ports e1 (West port), e2 (North port), e3 (East port), e4 (South port). Additionally, complicated hiearchies can result in thousands of ports, so organizing ports is a neccessity. The below best practices guide should be used to organize ports
@@ -141,16 +142,23 @@ As previously pointed out, the default naming of ports in GDSFactory is not desc
 `tapring.add_ports(via_array.get_ports_list(),prefix="topviaarray_")`
 	- The port rename functions look for the "\_" syntax. You can NOT use the port rename functions without this syntax.
 - The last 2 characters of a port name should "\_" followed by the orientation (N, E, S, or W)
-	- you can easily achieve this by calling pygen [`rename_ports_by_orientation`](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/custom_comp_utils.py#L42) before returning a component (just the names end with "\_" before calling this function)
+	- you can easily achieve this by calling pygen [`rename_ports_by_orientation`](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/port_utils.py#L67) before returning a component (just the names end with "\_" before calling this function)
 - **USE PORTS**: be sure to correctly add and label ports to components you make because you do not know when they will be used in other cells. 
+
+#### PortTree
+The [PortTree](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/port_utils.py#L232) class is designed to assist in finding ports and understanding port structure. Initialize a PortTree by calling [`PortTree(Component or ComponentReference)`](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/port_utils.py#L245). The PortTree will internally construct a directory tree structure from the Component's ports. You can use [`PortTree.print()`](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/util/port_utils.py#L304) to print this whole structure for a nice figure explaining a Component's ports. See the example print output from a via_stack component below:
+
+**PortTree of a via_stack:**
+![PortTree example](docs/PortTreeExample.png)
+
 ### Snap to 2x grid
-All rules (when creating a MappedPDK) and all user provided float arguments must be snapped to 2*grid size. This is because it is possible to center a component. Centering a component which has a dimension on grid may result in off grid polygons. You can snap floating point values to grid easily by calling `pdk.snap_to_2x_grid()`
+All rules (when creating a MappedPDK) and all user provided float arguments must be snapped to 2*grid size. This is because it is possible to center a component. Centering a component which has a dimension on grid may result in off grid polygons. You can snap floating point values to grid easily by calling `pdk.snap_to_2x_grid()`. You should also take care to snap to 2xgrid whenever you see it is neccessary while writing generator code. For example, most generators which take a size(xdim: float, ydim: float) argument should snap to 2xgrid.
 ### Mimcaps Implementation
 Although many technolgies have 2 or more mimcap options, there is currently only 1 mimcap option supported. When creating a mapped pdk, you specify the cap metal layer as a generic layer, but you specify the metal above and metal below the cap met as part of the DRC rule set for `pdk.get_grule("capmet")`. You can access the metal above capmet with `pdk.get_grule(capmet)["capmettop"]`.
 ### DRC
 If the system has klayout installed and you provide a klayout lydrc script for your MappedPDK, you can run DRC from python by calling pdk.drc(Component or GDS). The return value is a boolean (legal or not legal) and a lyrdb (xml format) file is written describing each DRC error. This file can be opened graphically in klayout with the following syntax `klayout layout.gds -m drc.lyrdb`
 ### LVS, and Labeling Issues
-There are no glayers for labeling or pins, all cells are generated without any labels. You can easily add pins to your component manually after pygen write the gds, or by using ports, you can write a function for adding labels and pins. See [sky130_nist_tapeout example function](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/sky130_nist_tapeout.py#L97). 
+There are no glayers for labeling or pins, all cells are generated without any labels. You can easily add pins to your component manually after pygen write the gds, or by using ports, you can write a function for adding labels and pins. See [sky130_nist_tapeout example function](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/tapeout_and_RL/sky130_nist_tapeout.py#L97). 
 ### Addressing Complicated Requirments with Default Decorators
 A python decorator is a function (the decorator) is a function which is called on another function. It can be used to enhance the features of a function. With GDSFactory Pdk (and MappedPDK objects) you can define a default decorator which runs on any cell factory (cell factories must be decorated with the `@cell` decorator). The default decorator you define runs in addition to the `@cell` decorator. The defined default_decorator should accept as argument a Component and return a Component.  
 This should be used when dealing with PDK specfic requirments that do not fit into the MappedPDK framework. For example, sky130 has a NPC (nitride poly cut) layer which **must** be used wherever licon (local interconnect contact) is laid over poly. It does not make sense to modify MappedPDK to add a generic NPC layer AND modify all cell factories; sky130 is unqiue in this requirment, so modifying MappedPDK/all cell factories would make pygen less generic. Instead, we define a default_decorator [`sky130_add_npc(Component) -> Component`](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/pygen/pdk/sky130_mapped/sky130_add_npc.py). This function uses booleans to add npc anywhere licon is laid over poly (it also joins NPC polygons if they are closer than the NPC min separation rule). Layers and rules in this technology specific function are hard coded because this decorator will only run for sky130 is the active pdk (this is one reason why you must be sure that pdk is activated).

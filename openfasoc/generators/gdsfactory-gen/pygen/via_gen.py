@@ -67,7 +67,7 @@ def __get_layer_dim(pdk: MappedPDK, glayer: str, mode: Literal["both","above","b
 
 @validate_arguments
 def __get_viastack_minseperation(pdk: MappedPDK, viastack: Component, ordered_layer_info) -> tuple[float,float]:
-    """internal use: return abosolute via seperation and top_enclosure (top via to top met enclosure)"""
+    """internal use: return absolute via separation and top_enclosure (top via to top met enclosure)"""
     get_sep = lambda _pdk, rule, _lay_, comp : (rule+2*comp.extract(layers=[_pdk.get_glayer(_lay_)]).xmax)
     level1, level2 = ordered_layer_info[0]
     glayer1, glayer2 = ordered_layer_info[1]
@@ -86,7 +86,7 @@ def __get_viastack_minseperation(pdk: MappedPDK, viastack: Component, ordered_la
             top_enclosure = pdk.get_grule(glayer2,via_glayer)["min_enclosure"]
     via_spacing = pdk.snap_to_2xgrid(max(via_spacing),return_type="float")
     top_enclosure = pdk.snap_to_2xgrid(top_enclosure,return_type="float")
-    return via_spacing, 2*top_enclosure
+    return pdk.snap_to_2xgrid([via_spacing, 2*top_enclosure], return_type="float")
 
 
 @cell
