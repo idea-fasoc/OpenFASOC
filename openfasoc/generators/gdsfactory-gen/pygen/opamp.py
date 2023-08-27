@@ -13,12 +13,11 @@ from pygen.routing.c_route import c_route
 from pygen.via_gen import via_stack, via_array
 from gdsfactory.routing.route_quad import route_quad
 from pygen.pdk.util.comp_utils import evaluate_bbox, prec_ref_center, movex, movey, to_decimal, to_float, move, align_comp_to_port, get_padding_points_cc
-from pygen.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, set_port_orientation
-from sys import exit
+from pygen.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, set_port_orientation, rename_component_ports
 from pygen.routing.straight_route import straight_route
 from pygen.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
-
+from pygen.common.two_transistor_interdigitized import two_nfet_interdigitized
 
 
 
@@ -37,28 +36,36 @@ def __add_diff_pair_and_bias(pdk: MappedPDK, opamp_top: Component, diffpair_para
     diffpair_i_.add(prec_ref_center(center_diffpair_comp))
     diffpair_i_.add_ports(center_diffpair_comp.get_ports_list())
     # create and position tail current source
-    tailcurrent_comp = nmos(
+    cmirror = two_nfet_interdigitized(
         pdk,
         width=diffpair_bias[0],
         length=diffpair_bias[1],
-        fingers=diffpair_bias[2],
-        multipliers=1,
+        numcols=diffpair_bias[2],
         with_tie=False,
-        with_dnwell=False,
         with_substrate_tap=False,
         gate_route_topmet="met3",
         sd_route_topmet="met3",
         rmult=rmult
     )
-    tailcurrent_ref = diffpair_i_ << tailcurrent_comp
+    # cmirror routing
+    metal_sep = pdk.util_max_metal_seperation()
+    gate_short = cmirror << c_route(pdk, cmirror.ports["A_gate_E"],cmirror.ports["B_gate_E"],extension=3*metal_sep,viaoffset=None)
+    cmirror << L_route(pdk, gate_short.ports["con_N"],cmirror.ports["A_drain_E"],viaoffset=False,fullbottom=False)
+    srcshort = cmirror << c_route(pdk, cmirror.ports["A_source_W"],cmirror.ports["B_source_W"],extension=metal_sep,viaoffset=False)
+    cmirror.add_ports(srcshort.get_ports_list(),prefix="purposegndports")
+    # add cmirror
+    tailcurrent_ref = diffpair_i_ << cmirror
     tailcurrent_ref.movey(
         -0.5 * (center_diffpair_comp.ymax - center_diffpair_comp.ymin)
-        - abs(tailcurrent_ref.ymax) - pdk.util_max_metal_seperation()
+        - abs(tailcurrent_ref.ymax) - metal_sep
     )
-    diffpair_i_.add_ports(tailcurrent_ref.get_ports_list())
+    purposegndPort = tailcurrent_ref.ports["purposegndportscon_S"].copy()
+    purposegndPort.name = "ibias_purposegndport"
+    diffpair_i_.add_ports([purposegndPort])
+    diffpair_i_.add_ports(tailcurrent_ref.get_ports_list(), prefix="ibias_")
     diffpair_i_ref = prec_ref_center(diffpair_i_)
     opamp_top.add(diffpair_i_ref)
-    opamp_top.add_ports(diffpair_i_ref.get_ports_list(),prefix="centerNcomps_")
+    opamp_top.add_ports(diffpair_i_ref.get_ports_list(),prefix="diffpair_")
     return opamp_top
 
 @validate_arguments
@@ -82,29 +89,30 @@ def __add_common_source_nbias_transistors(pdk: MappedPDK, opamp_top: Component, 
         halfMultn_ref = opamp_top << halfMultn
         direction = (-1) ** i
         halfMultn_ref.movex(direction * abs(x_dim_center + halfMultn_ref.xmax + pdk.util_max_metal_seperation()))
-        opamp_top.add_ports(halfMultn_ref.get_ports_list(), prefix="nfet_Isrc_"+str(i)+"_")
+        side = "R" if i==0 else "L"
+        opamp_top.add_ports(halfMultn_ref.get_ports_list(), prefix="commonsource_Nbias_"+side+"_")
     return opamp_top
 
 @validate_arguments
 def __route_bottom_ncomps_except_drain_nbias(pdk: MappedPDK, opamp_top: Component, gndpin: Union[Component,ComponentReference], halfmultn_num_mults: int) -> tuple:
     # route tailcurrent_comp
-    opamp_top << c_route(pdk, opamp_top.ports["centerNcomps_multiplier_0_source_W"],gndpin.ports["e1"],width2=3,cglayer="met5",fullbottom=True,cwidth=3*pdk.get_grule("met5")["min_width"])
-    opamp_top << c_route(pdk, opamp_top.ports["centerNcomps_multiplier_0_source_E"],gndpin.ports["e3"],width2=3,cglayer="met5",fullbottom=True,cwidth=3*pdk.get_grule("met5")["min_width"])
+    opamp_top << L_route(pdk, opamp_top.ports["diffpair_ibias_purposegndport"],gndpin.ports["e1"])#width2=3,cglayer="met5",fullbottom=True,cwidth=3*pdk.get_grule("met5")["min_width"])
+    #opamp_top << c_route(pdk, opamp_top.ports["diffpair_multiplier_0_source_E"],gndpin.ports["e3"],width2=3,cglayer="met5",fullbottom=True,cwidth=3*pdk.get_grule("met5")["min_width"])
     # route to gnd the sources of halfMultn
-    _cref = opamp_top << c_route(pdk, opamp_top.ports["nfet_Isrc_0_multiplier_0_source_con_S"], opamp_top.ports["nfet_Isrc_1_multiplier_0_source_con_S"], extension=abs(gndpin.ports["e2"].center[1]-opamp_top.ports["nfet_Isrc_0_multiplier_0_source_con_S"].center[1]),fullbottom=True)
+    _cref = opamp_top << c_route(pdk, opamp_top.ports["commonsource_Nbias_R_multiplier_0_source_con_S"], opamp_top.ports["commonsource_Nbias_L_multiplier_0_source_con_S"], extension=abs(gndpin.ports["e2"].center[1]-opamp_top.ports["commonsource_Nbias_R_multiplier_0_source_con_S"].center[1]),fullbottom=True)
     # connect gates and drains of halfMultn
-    halfMultn_left_gate_port = opamp_top.ports["nfet_Isrc_0_multiplier_"+str(halfmultn_num_mults-2)+"_gate_con_N"]
-    halfMultn_right_gate_port = opamp_top.ports["nfet_Isrc_1_multiplier_"+str(halfmultn_num_mults-2)+"_gate_con_N"]
+    halfMultn_left_gate_port = opamp_top.ports["commonsource_Nbias_R_multiplier_"+str(halfmultn_num_mults-2)+"_gate_con_N"]
+    halfMultn_right_gate_port = opamp_top.ports["commonsource_Nbias_L_multiplier_"+str(halfmultn_num_mults-2)+"_gate_con_N"]
     halfmultn_gate_routeref = opamp_top << c_route(pdk, halfMultn_left_gate_port, halfMultn_right_gate_port, extension=abs(opamp_top.ymax-halfMultn_left_gate_port.center[1])+1,fullbottom=True, viaoffset=(False,False))
-    halfMultn_left_drain_port = opamp_top.ports["nfet_Isrc_0_multiplier_"+str(halfmultn_num_mults-2)+"_drain_con_N"]
-    halfMultn_right_drain_port = opamp_top.ports["nfet_Isrc_1_multiplier_"+str(halfmultn_num_mults-2)+"_drain_con_N"]
+    halfMultn_left_drain_port = opamp_top.ports["commonsource_Nbias_R_multiplier_"+str(halfmultn_num_mults-2)+"_drain_con_N"]
+    halfMultn_right_drain_port = opamp_top.ports["commonsource_Nbias_L_multiplier_"+str(halfmultn_num_mults-2)+"_drain_con_N"]
     halfmultn_drain_routeref = opamp_top << c_route(pdk, halfMultn_left_drain_port, halfMultn_right_drain_port, extension=abs(opamp_top.ymax-halfMultn_left_drain_port.center[1])+1,fullbottom=True)
     # route to gnd the guardring of halfMultn
-    opamp_top << straight_route(pdk,opamp_top.ports["nfet_Isrc_0_tie_S_top_met_S"],movey(gndpin.ports["e1"],evaluate_bbox(gndpin)[1]/4),width=2,glayer1="met3",fullbottom=True)
-    opamp_top << straight_route(pdk,opamp_top.ports["nfet_Isrc_1_tie_S_top_met_S"],movey(gndpin.ports["e3"],evaluate_bbox(gndpin)[1]/4),width=2,glayer1="met3",fullbottom=True)
-    # route source of diffpair to drain of tailcurrent_comp
-    opamp_top << L_route(pdk,opamp_top.ports["centerNcomps_source_routeW_con_N"],opamp_top.ports["centerNcomps_multiplier_0_drain_W"])
-    opamp_top << L_route(pdk,opamp_top.ports["centerNcomps_source_routeE_con_N"],opamp_top.ports["centerNcomps_multiplier_0_drain_E"])
+    opamp_top << straight_route(pdk,opamp_top.ports["commonsource_Nbias_R_tie_S_top_met_S"],movey(gndpin.ports["e1"],evaluate_bbox(gndpin)[1]/4),width=2,glayer1="met3",fullbottom=True)
+    opamp_top << straight_route(pdk,opamp_top.ports["commonsource_Nbias_L_tie_S_top_met_S"],movey(gndpin.ports["e3"],evaluate_bbox(gndpin)[1]/4),width=2,glayer1="met3",fullbottom=True)
+    # route source of diffpair to drain of cmirror
+    opamp_top << L_route(pdk,opamp_top.ports["diffpair_source_routeW_con_N"],opamp_top.ports["diffpair_ibias_B_drain_W"])
+    opamp_top << L_route(pdk,opamp_top.ports["diffpair_source_routeE_con_N"],opamp_top.ports["diffpair_ibias_B_drain_E"])
     return opamp_top, halfmultn_drain_routeref, halfmultn_gate_routeref, _cref
 
 
@@ -229,8 +237,9 @@ def __add_common_source_Pamp_and_finish_pcomps(pdk: MappedPDK, pmos_comps: Compo
         )
         halfMultp_ref = pmos_comps << halfMultp
         halfMultp_ref.movex(direction * abs(x_dim_center + halfMultp_ref.xmax+1))
-        label = "l_" if direction==-1 else "r_"
-        pmos_comps.add_ports(halfMultp_ref.get_ports_list(),prefix="halfp_"+label)
+        label = "L_" if direction==-1 else "R_"
+        # this special marker is used to rename these ports in the opamp to commonsource_Pamp_
+        pmos_comps.add_ports(halfMultp_ref.get_ports_list(),prefix="halfpspecialmarker_"+label)
     # add npadding and add ports
     nwellbbox = pmos_comps.extract(layers=[pdk.get_glayer("poly"),pdk.get_glayer("active_diff"),pdk.get_glayer("active_tap"), pdk.get_glayer("nwell"),pdk.get_glayer("dnwell")]).bbox
     nwellspacing = pdk.get_grule("nwell", "active_tap")["min_enclosure"]
@@ -243,8 +252,10 @@ def __add_common_source_Pamp_and_finish_pcomps(pdk: MappedPDK, pmos_comps: Compo
     return pmos_comps
     
 
+
 @validate_arguments
-def __create_and_route_pins(pdk: MappedPDK,
+def __create_and_route_pins(
+    pdk: MappedPDK,
     opamp_top: Component,
     pmos_comps_ref: ComponentReference,
     halfmultn_drain_routeref: ComponentReference,
@@ -252,8 +263,8 @@ def __create_and_route_pins(pdk: MappedPDK,
 ) -> tuple:
     _max_metal_seperation_ps = pdk.util_max_metal_seperation()
     # route halfmultp source, drain, and gate together, place vdd pin in the middle
-    halfmultp_Lsrcport = opamp_top.ports["pcomps_halfp_l_multiplier_0_source_con_N"]
-    halfmultp_Rsrcport = opamp_top.ports["pcomps_halfp_r_multiplier_0_source_con_N"]
+    halfmultp_Lsrcport = opamp_top.ports["commonsource_Pamp_L_multiplier_0_source_con_N"]
+    halfmultp_Rsrcport = opamp_top.ports["commonsource_Pamp_R_multiplier_0_source_con_N"]
     opamp_top << c_route(pdk, halfmultp_Lsrcport, halfmultp_Rsrcport, extension=opamp_top.ymax-halfmultp_Lsrcport.center[1], fullbottom=True,viaoffset=(False,False))
     # place vdd pin
     vddpin = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met4"),centered=True)
@@ -261,11 +272,11 @@ def __create_and_route_pins(pdk: MappedPDK,
     # route vdd to source of 2L/2R
     opamp_top << straight_route(pdk, opamp_top.ports["pcomps_2L2Rsrcvia_top_met_N"], vddpin.ports["e4"])
     # drain route above vdd pin
-    halfmultp_Ldrainport = opamp_top.ports["pcomps_halfp_l_multiplier_0_drain_con_N"]
-    halfmultp_Rdrainport = opamp_top.ports["pcomps_halfp_r_multiplier_0_drain_con_N"]
+    halfmultp_Ldrainport = opamp_top.ports["commonsource_Pamp_L_multiplier_0_drain_con_N"]
+    halfmultp_Rdrainport = opamp_top.ports["commonsource_Pamp_R_multiplier_0_drain_con_N"]
     halfmultp_drain_routeref = opamp_top << c_route(pdk, halfmultp_Ldrainport, halfmultp_Rdrainport, extension=opamp_top.ymax-halfmultp_Ldrainport.center[1]+pdk.get_grule("met5")["min_separation"], fullbottom=True)
-    halfmultp_Lgateport = opamp_top.ports["pcomps_halfp_l_multiplier_0_gate_con_S"]
-    halfmultp_Rgateport = opamp_top.ports["pcomps_halfp_r_multiplier_0_gate_con_S"]
+    halfmultp_Lgateport = opamp_top.ports["commonsource_Pamp_L_multiplier_0_gate_con_S"]
+    halfmultp_Rgateport = opamp_top.ports["commonsource_Pamp_R_multiplier_0_gate_con_S"]
     ptop_halfmultp_gate_route = opamp_top << c_route(pdk, halfmultp_Lgateport, halfmultp_Rgateport, extension=abs(pmos_comps_ref.ymin-halfmultp_Lgateport.center[1])+pdk.get_grule("met5")["min_separation"],fullbottom=True,viaoffset=(False,False))
     # halfmultn to halfmultp drain to drain route
     extensionL = min(halfmultn_drain_routeref.ports["con_W"].center[0],halfmultp_drain_routeref.ports["con_W"].center[0])
@@ -273,64 +284,141 @@ def __create_and_route_pins(pdk: MappedPDK,
     opamp_top << c_route(pdk, halfmultn_drain_routeref.ports["con_W"], halfmultp_drain_routeref.ports["con_W"],extension=abs(opamp_top.xmin-extensionL)+2,cwidth=2)
     n_to_p_output_route = opamp_top << c_route(pdk, halfmultn_drain_routeref.ports["con_E"], halfmultp_drain_routeref.ports["con_E"],extension=abs(opamp_top.xmax-extensionR)+2,cwidth=2)
     # top nwell taps to vdd, top p substrate taps to gnd
-    opamp_top << L_route(pdk, opamp_top.ports["pcomps_top_ptap_bl_top_met_S"], opamp_top.ports["nfet_Isrc_1_tie_N_top_met_W"],hwidth=2)
-    opamp_top << L_route(pdk, opamp_top.ports["pcomps_top_ptap_br_top_met_S"], opamp_top.ports["nfet_Isrc_0_tie_N_top_met_E"],hwidth=2)
-    L_toptapn_route = opamp_top.ports["pcomps_halfp_l_tie_N_top_met_N"]
-    R_toptapn_route = opamp_top.ports["pcomps_halfp_r_tie_N_top_met_N"]
+    opamp_top << L_route(pdk, opamp_top.ports["pcomps_top_ptap_bl_top_met_S"], opamp_top.ports["commonsource_Nbias_L_tie_N_top_met_W"],hwidth=2)
+    opamp_top << L_route(pdk, opamp_top.ports["pcomps_top_ptap_br_top_met_S"], opamp_top.ports["commonsource_Nbias_R_tie_N_top_met_E"],hwidth=2)
+    L_toptapn_route = opamp_top.ports["commonsource_Pamp_L_tie_N_top_met_N"]
+    R_toptapn_route = opamp_top.ports["commonsource_Pamp_R_tie_N_top_met_N"]
     opamp_top << straight_route(pdk, movex(vddpin.ports["e4"],destination=L_toptapn_route.center[0]), L_toptapn_route, glayer1="met3")
     opamp_top << straight_route(pdk, movex(vddpin.ports["e4"],destination=R_toptapn_route.center[0]), R_toptapn_route, glayer1="met3")
     # vbias1 and vbias2 pins
     vbias1 = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met3"),centered=True)
     vbias1.movey(opamp_top.ymin - _max_metal_seperation_ps - vbias1.ymax)
-    opamp_top << straight_route(pdk, vbias1.ports["e2"], opamp_top.ports["centerNcomps_multiplier_0_gate_S"],width=1,fullbottom=False)
+    opamp_top << straight_route(pdk, vbias1.ports["e2"], opamp_top.ports["diffpair_ibias_B_gate_S"],width=1,fullbottom=False)
     vbias2 = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met3"),centered=True)
     vbias2.movex(opamp_top.xmin-2).movey(opamp_top.ymin+vbias2.ymax)
     opamp_top << L_route(pdk, halfmultn_gate_routeref.ports["con_W"], vbias2.ports["e2"],hwidth=2)
     # out pin
-    output = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met5"),centered=True)
-    output.movex(opamp_top.xmax).movey(opamp_top.ymin+output.ymax)
-    opamp_top << L_route(pdk, output.ports["e2"], set_port_orientation(n_to_p_output_route.ports["con_S"],"E"))
+    #output = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met5"),centered=True)
+    #output.movex(opamp_top.xmax).movey(opamp_top.ymin+output.ymax)
+    #opamp_top << L_route(pdk, output.ports["e2"], set_port_orientation(n_to_p_output_route.ports["con_S"],"E"))
     # route + and - pins
     plus_pin = opamp_top << rectangle(size=(5,2),layer=pdk.get_glayer("met4"),centered=True)
     plus_pin.movex(opamp_top.xmin).movey(_max_metal_seperation_ps + plus_pin.ymax + halfmultn_drain_routeref.ports["con_W"].center[1] + halfmultn_drain_routeref.ports["con_W"].width/2)
-    route_to_pluspin = opamp_top << L_route(pdk, opamp_top.ports["centerNcomps_MINUSgateroute_W_con_N"], plus_pin.ports["e3"])
+    route_to_pluspin = opamp_top << L_route(pdk, opamp_top.ports["diffpair_MINUSgateroute_W_con_N"], plus_pin.ports["e3"])
     minus_pin = opamp_top << rectangle(size=(5,2),layer=pdk.get_glayer("met4"),centered=True)
     minus_pin.movex(opamp_top.xmin + minus_pin.xmax).movey(_max_metal_seperation_ps + plus_pin.ymax + minus_pin.ymax)
-    opamp_top << L_route(pdk, opamp_top.ports["centerNcomps_PLUSgateroute_E_con_N"], minus_pin.ports["e3"])
+    opamp_top << L_route(pdk, opamp_top.ports["diffpair_PLUSgateroute_E_con_N"], minus_pin.ports["e3"])
     # route top center components to diffpair
-    opamp_top << straight_route(pdk,movey(opamp_top.ports["centerNcomps_tr_multiplier_0_drain_N"],0.05), opamp_top.ports["pcomps_pbottomAB_R_gate_S"], glayer1="met5",width=3*pdk.get_grule("met5")["min_width"])
-    opamp_top << straight_route(pdk,movey(opamp_top.ports["centerNcomps_tl_multiplier_0_drain_N"],0.05), opamp_top.ports["pcomps_minusvia_top_met_S"], glayer1="met5",width=3*pdk.get_grule("met5")["min_width"])
+    opamp_top << straight_route(pdk,movey(opamp_top.ports["diffpair_tr_multiplier_0_drain_N"],0.05), opamp_top.ports["pcomps_pbottomAB_R_gate_S"], glayer1="met5",width=3*pdk.get_grule("met5")["min_width"])
+    opamp_top << straight_route(pdk,movey(opamp_top.ports["diffpair_tl_multiplier_0_drain_N"],0.05), opamp_top.ports["pcomps_minusvia_top_met_S"], glayer1="met5",width=3*pdk.get_grule("met5")["min_width"])
     # route minus transistor drain to output
     outputvia_diff_pcomps = opamp_top << via_stack(pdk,"met5","met4")
-    outputvia_diff_pcomps.movex(opamp_top.ports["centerNcomps_tl_multiplier_0_drain_N"].center[0]).movey(ptop_halfmultp_gate_route.ports["con_E"].center[1])
+    outputvia_diff_pcomps.movex(opamp_top.ports["diffpair_tl_multiplier_0_drain_N"].center[0]).movey(ptop_halfmultp_gate_route.ports["con_E"].center[1])
     # add pin ports
     opamp_top.add_ports(vddpin.get_ports_list(), prefix="pin_vdd_")
-    opamp_top.add_ports(vbias1.get_ports_list(), prefix="pin_vbias1")
+    opamp_top.add_ports(vbias1.get_ports_list(), prefix="pin_vbias1_")
     opamp_top.add_ports(vbias2.get_ports_list(), prefix="pin_vbias2_")
     opamp_top.add_ports(plus_pin.get_ports_list(), prefix="pin_plus_")
     opamp_top.add_ports(minus_pin.get_ports_list(), prefix="pin_minus_")
-    opamp_top.add_ports(output.get_ports_list(), prefix="pin_output_")
+    #opamp_top.add_ports(output.get_ports_list(), prefix="pin_output_")
     return opamp_top, n_to_p_output_route
 
 
 
 @validate_arguments
 def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap_rows, ymin: float, n_to_p_output_route) -> Component:
-	mim_cap_size = pdk.snap_to_2xgrid(mim_cap_size, return_type="float")
-	max_metalsep = pdk.util_max_metal_seperation()
-	mimcaps_ref = opamp_top << mimcap_array(pdk,mim_cap_rows,2,size=mim_cap_size,rmult=6)
-	displace_fact = max(max_metalsep,pdk.get_grule("capmet")["min_separation"])
-	mimcaps_ref.movex(pdk.snap_to_2xgrid(opamp_top.xmax + displace_fact + mim_cap_size[0]/2))
-	mimcaps_ref.movey(pdk.snap_to_2xgrid(ymin + mim_cap_size[1]/2))
-	# connect mimcap to gnd
-	port1 = opamp_top.ports["pcomps_mimcap_connection_con_N"]
-	port2 = mimcaps_ref.ports["row"+str(int(mim_cap_rows)-1)+"_col0_bottom_met_N"]
-	cref2_extension = max_metalsep + opamp_top.ymax - max(port1.center[1], port2.center[1])
-	opamp_top << c_route(pdk,port1,port2, extension=cref2_extension, fullbottom=True)
-	opamp_top << L_route(pdk, mimcaps_ref.ports["row0_col0_top_met_S"], set_port_orientation(n_to_p_output_route.ports["con_S"],"E"), hwidth=3)
-	return opamp_top
+    mim_cap_size = pdk.snap_to_2xgrid(mim_cap_size, return_type="float")
+    max_metalsep = pdk.util_max_metal_seperation()
+    mimcaps_ref = opamp_top << mimcap_array(pdk,mim_cap_rows,2,size=mim_cap_size,rmult=6)
+    displace_fact = max(max_metalsep,pdk.get_grule("capmet")["min_separation"])
+    mimcaps_ref.movex(pdk.snap_to_2xgrid(opamp_top.xmax + displace_fact + mim_cap_size[0]/2))
+    mimcaps_ref.movey(pdk.snap_to_2xgrid(ymin + mim_cap_size[1]/2))
+    # connect mimcap to gnd
+    port1 = opamp_top.ports["pcomps_mimcap_connection_con_N"]
+    port2 = mimcaps_ref.ports["row"+str(int(mim_cap_rows)-1)+"_col0_bottom_met_N"]
+    cref2_extension = max_metalsep + opamp_top.ymax - max(port1.center[1], port2.center[1])
+    opamp_top << c_route(pdk,port1,port2, extension=cref2_extension, fullbottom=True)
+    opamp_top << L_route(pdk, mimcaps_ref.ports["row0_col0_top_met_S"], set_port_orientation(n_to_p_output_route.ports["con_S"],"E"), hwidth=3)
+    opamp_top.add_ports(mimcaps_ref.get_ports_list(),prefix="mimcap_")
+    return opamp_top
 
 
+
+
+@validate_arguments
+def __add_output_stage(
+    pdk: MappedPDK,
+    opamp_top: Component,
+    amplifierParams: tuple[float, float, int],
+    biasParams: list,
+    rmult: int,
+    n_to_p_output_route: Union[Component, ComponentReference]
+) -> Component:
+    '''add output stage to opamp_top, args:
+    pdk = pdk to use
+    opamp_top = component to add output stage to
+    amplifierParams = [width,length,fingers,mults] for amplifying FET
+    biasParams = [width,length,fingers,mults] for bias FET
+    '''
+    # Instantiate output amplifier
+    amp_fet_ref = opamp_top << nmos(
+	    pdk,
+	    width=amplifierParams[0],
+        length=amplifierParams[1],
+        fingers=amplifierParams[2],
+        multipliers=1,
+        sd_route_topmet="met3",
+        gate_route_topmet="met3",
+        rmult=rmult,
+        with_dnwell=False
+    )
+    # Instantiate bias FET
+    cmirror_ibias = opamp_top << two_nfet_interdigitized(
+        pdk,
+        numcols=biasParams[2],
+        width=biasParams[0],
+        length=biasParams[1],
+        fingers=1,
+        gate_route_topmet="met3",
+        sd_route_topmet="met3",
+        rmult=rmult
+    )
+    metal_sep = pdk.util_max_metal_seperation()
+    # Locate output stage relative position
+    # x-coordinate: Center of SW capacitor in array
+    # y-coordinate: Top of NMOS blocks
+    x_cord = opamp_top.ports["mimcap_row0_col0_bottom_met_S"].center[0]
+    y_cord = opamp_top.ports["commonsource_Nbias_R_tie_tr_top_met_N"].center[1]
+    dims = evaluate_bbox(amp_fet_ref)
+    center = [x_cord + dims[0]/2, y_cord - dims[1]/2]
+    amp_fet_ref.move(center)
+    amp_fet_ref.movey(pdk.get_grule("active_tap", "p+s/d")["min_enclosure"])
+    dims = evaluate_bbox(cmirror_ibias)
+    cmirror_ibias.movex(amp_fet_ref.xmin + dims[0]/2)
+    cmirror_ibias.movey(amp_fet_ref.ymin - dims[1]/2 - metal_sep)
+    # route input of output_stage to output of previous stage
+    opamp_top << L_route(pdk, n_to_p_output_route.ports["con_S"], amp_fet_ref.ports["multiplier_0_gate_W"])
+    # route drain of amplifier to vdd
+    opamp_top << L_route(pdk, opamp_top.ports["commonsource_Pamp_R_tie_bl_top_met_W"], amp_fet_ref.ports["multiplier_0_drain_N"],hwidth=2)
+    # route drain of cmirror to source of amplifier
+    opamp_top << c_route(pdk, cmirror_ibias.ports["B_drain_E"],amp_fet_ref.ports["multiplier_0_source_E"],extension=metal_sep)
+    # route cmirror: A gate, B gate and A drain together. Then A source and B source to ground
+    gate_short = opamp_top << c_route(pdk, cmirror_ibias.ports["A_gate_E"],cmirror_ibias.ports["B_gate_E"],extension=3*metal_sep,viaoffset=None)
+    opamp_top << L_route(pdk, gate_short.ports["con_N"],cmirror_ibias.ports["A_drain_E"],viaoffset=False,fullbottom=False)
+    srcshort = opamp_top << c_route(pdk, cmirror_ibias.ports["A_source_W"],cmirror_ibias.ports["B_source_W"],extension=metal_sep)
+    opamp_top << straight_route(pdk, srcshort.ports["con_N"], cmirror_ibias.ports["welltie_N_top_met_S"])
+    # Route all tap rings together and ground them
+    opamp_top << straight_route(pdk, amp_fet_ref.ports["tie_N_top_met_N"],amp_fet_ref.ports["guardring_N_top_met_S"],width=2)
+    opamp_top << straight_route(pdk, cmirror_ibias.ports["welltie_N_top_met_N"],cmirror_ibias.ports["substratetap_N_top_met_S"],width=2)
+    opamp_top << straight_route(pdk, amp_fet_ref.ports["guardring_bl_top_met_S"],cmirror_ibias.ports["substratetap_tr_top_met_N"])
+    opamp_top << straight_route(pdk, amp_fet_ref.ports["guardring_tl_top_met_W"], opamp_top.ports["commonsource_Nbias_R_tie_tr_top_met_E"])
+    # add ports and return
+    psuedo_out_port = movex(cmirror_ibias.ports["A_gate_E"].copy(),6*metal_sep)
+    output_pin = opamp_top << straight_route(pdk, cmirror_ibias.ports["A_gate_E"], psuedo_out_port)
+    opamp_top.add_ports(amp_fet_ref.get_ports_list(),prefix="outputstage_amp_")
+    opamp_top.add_ports(cmirror_ibias.get_ports_list(),prefix="outputstage_bias_")
+    opamp_top.add_ports(output_pin.get_ports_list(),prefix="pin_output_")
+    return opamp_top
 
 
 @cell
@@ -340,6 +428,7 @@ def opamp(
     diffpair_bias: tuple[float, float, int] = (6, 2, 4),
     half_common_source_nbias: tuple[float, float, int, int] = (6, 2, 8, 3),
     pamp_hparams: tuple[float, float, int, int] = (7, 1, 10, 3),
+    output_stage_amp_params: tuple[float, float, int] = (5, 1, 16),
     mim_cap_size=(12, 12),
     mim_cap_rows=3,
     rmult: int = 2
@@ -350,7 +439,10 @@ def opamp(
     diffpair_bias = bias transistor for diffpair nmos (width,length,fingers)
     half_common_source_nbias = west current mirror (width,length,fingers,mults), two halves
     pamp_hparams = pmos top component amp (width,length,fingers,mults)
+    output_stage_amp_params = output amplifier transistor params (width, length, fingers)
     mim_cap_size = width,length of individual mim_cap
+    mim_cap_rows = number of rows in the mimcap array (always 2 cols)
+    rmult = routing multiplier (larger = wider routes)
     """
     _max_metal_seperation_ps = pdk.util_max_metal_seperation()
     opamp_top = Component()
@@ -373,19 +465,23 @@ def opamp(
     clear_cache()
     pmos_comps, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts = __create_sharedgatecomps(pdk, rmult)
     clear_cache()
-    pmos_comps = __route_sharedgatecomps(pdk, pmos_comps, opamp_top.ports["centerNcomps_tl_multiplier_0_drain_N"].center[0], ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts)
+    pmos_comps = __route_sharedgatecomps(pdk, pmos_comps, opamp_top.ports["diffpair_tl_multiplier_0_drain_N"].center[0], ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts)
     clear_cache()
     pmos_comps = __add_common_source_Pamp_and_finish_pcomps(pdk, pmos_comps, pamp_hparams, rmult)
     ydim_ncomps = opamp_top.ymax
     pmos_comps_ref = opamp_top << pmos_comps
     pmos_comps_ref.movey(round(ydim_ncomps + pmos_comps_ref.ymax+8))
     opamp_top.add_ports(pmos_comps_ref.get_ports_list(),prefix="pcomps_")
+    rename_func = lambda name_, port_ : name_.replace("pcomps_halfpspecialmarker","commonsource_Pamp") if name_.startswith("pcomps_halfpspecialmarker") else name_
+    opamp_top = rename_component_ports(opamp_top, rename_function=rename_func)
     # create pins and route
     clear_cache()
     opamp_top, n_to_p_output_route = __create_and_route_pins(pdk, opamp_top, pmos_comps_ref, halfmultn_drain_routeref, halfmultn_gate_routeref)
     # place mimcaps and route
     clear_cache()
     opamp_top = __add_mimcap_arr(pdk, opamp_top, mim_cap_size, mim_cap_rows, pmos_comps_ref.ymin, n_to_p_output_route)
+    # add output amplfier stage
+    opamp_top = __add_output_stage(pdk, opamp_top, output_stage_amp_params, [6,2,4], rmult, n_to_p_output_route)
     # return
     opamp_top.add_ports(_cref.get_ports_list(), prefix="gnd_route_")
     return rename_ports_by_orientation(component_snap_to_grid(opamp_top))
@@ -395,7 +491,7 @@ if __name__ == "__main__":
 	from . pdk.util.standard_main import pdk
 
 	iterate=False
-# TO TRY:
+    # TO TRY:
 	#pdk = pdk to use
 	#diffpair_params = diffpair (width,length,fingers)
 	#diffpair_bias = bias transistor for diffpair nmos (width,length,fingers)
@@ -438,7 +534,7 @@ if __name__ == "__main__":
 		
 
 
-def benchmark(pdk: MappedPDK, save_file: Optional[str]="./opamp_runtime_second.txt") -> float:
+def benchmark(pdk: MappedPDK, save_file: Optional[str]="./oPamp_Runtime_second.txt") -> float:
     """get runtime of opamp in seconds (note running this with sky130 results in longer runtime due to addition of NPC)"""
     import time
     start = time.time()

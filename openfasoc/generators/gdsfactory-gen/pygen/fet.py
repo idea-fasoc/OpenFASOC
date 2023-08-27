@@ -50,11 +50,12 @@ def __gen_fingers_macro(pdk: MappedPDK, rmult: int, fingers: int, length: float,
     multiplier = rename_ports_by_orientation(centered_farray)
     diff_extra_enc = 2 * pdk.get_grule("mcon", "active_diff")["min_enclosure"]
     diff_dims =(diff_extra_enc + evaluate_bbox(multiplier)[0], width)
-    multiplier << rectangle(size=diff_dims,layer=pdk.get_glayer("active_diff"),centered=True)
+    diff = multiplier << rectangle(size=diff_dims,layer=pdk.get_glayer("active_diff"),centered=True)
     sd_diff_ovhg = pdk.get_grule(sdlayer, "active_diff")["min_enclosure"]
     sdlayer_dims = [dim + sd_diff_ovhg for dim in diff_dims]
     sdlayer_ref = multiplier << rectangle(size=sdlayer_dims, layer=pdk.get_glayer(sdlayer),centered=True)
     multiplier.add_ports(sdlayer_ref.get_ports_list(),prefix="plusdoped_")
+    multiplier.add_ports(diff.get_ports_list(),prefix="diff_")
     return component_snap_to_grid(rename_ports_by_orientation(multiplier))
 
 
@@ -73,7 +74,9 @@ def multiplier(
     rmult: Optional[int]=None,
     sd_rmult: int = 1,
     gate_rmult: int=1,
-    interfinger_rmult: int=1
+    interfinger_rmult: int=1,
+    sd_route_extension: float = 0,
+    gate_route_extension: float = 0,
 ) -> Component:
     """Generic poly/sd vias generator
     args:
@@ -89,12 +92,16 @@ def multiplier(
     sd_rmult = multiplies thickness of sd metal (int only)
     gate_rmult = multiplies gate by adding rows to the gate via array (int only)
     interfinger_rmult = multiplies thickness of source/drain routes between the gates (int only)
+    sd_route_extension = float, how far extra to extend the source/drain connections (default=0)
+    gate_route_extension = float, how far extra to extend the gate connection (default=0)
     
-    ports (one port for each edge), source is below drain:
+    ports (one port for each edge), 
+    ****NOTE: source is below drain:
     gate_... all edges (top met route of gate connection)
     source_...all edges (top met route of source connections)
     drain_...all edges (top met route of drain connections)
     plusdoped_...all edges (area of p+s/d or n+s/d layer)
+    diff_...all edges (diffusion region)
     rowx_coly_...all ports associated with finger array include gate_... and array_ (array includes all ports of the viastacks in the array)
     leftsd_...all ports associated with the left most via array
     """
@@ -137,7 +144,7 @@ def multiplier(
             big_extension = sdroute_minsep + sdmet_hieght/2 + sdmet_hieght
             sdvia_extension = big_extension if finger % 2 else sdmet_hieght/2
             sdvia_ref = align_comp_to_port(sdvia,diff_top_port,alignment=('c','t'))
-            multiplier.add(sdvia_ref.movey(sdvia_extension))
+            multiplier.add(sdvia_ref.movey(pdk.snap_to_2xgrid(sdvia_extension + sd_route_extension)))
             multiplier << straight_route(pdk, diff_top_port, sdvia_ref.ports["bottom_met_N"])
             sdvia_ports += [sdvia_ref.ports["top_met_W"], sdvia_ref.ports["top_met_E"]]
             # get the next port (break before this if last iteration because port D.N.E. and num gates=fingers)
@@ -147,7 +154,7 @@ def multiplier(
             # route gates
             gate_S_port = multiplier.ports[f"row0_col{finger}_gate_S"]
             metal_seperation = pdk.util_max_metal_seperation()
-            psuedo_Ngateroute = movey(gate_S_port.copy(),0-metal_seperation)
+            psuedo_Ngateroute = movey(gate_S_port.copy(),0-metal_seperation-gate_route_extension)
             multiplier << straight_route(pdk,gate_S_port,psuedo_Ngateroute)
         # place route met: gate
         gate_width = gate_S_port.center[0] - multiplier.ports["row0_col0_gate_S"].center[0] + gate_S_port.width

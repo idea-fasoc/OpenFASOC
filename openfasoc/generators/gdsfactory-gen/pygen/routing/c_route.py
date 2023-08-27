@@ -54,7 +54,7 @@ def c_route(
 	- True offsets via towards the other via
 	- False offsets via away from the other via
 	- None means center (no offset)
-	***NOTE: viaoffset pushes both vias towards each other slightly
+	****NOTE: viaoffset pushes both vias towards each other slightly
 	"""
 	# error checking and figure out args
 	if round(edge1.orientation) % 90 or round(edge2.orientation) % 90:

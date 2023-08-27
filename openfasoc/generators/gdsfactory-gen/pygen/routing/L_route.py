@@ -19,7 +19,8 @@ def L_route(
 	hwidth: Optional[float] = None,
 	hglayer: Optional[str] = None,
 	vglayer: Optional[str] = None,
-	viaoffset: Optional[Union[tuple[bool,bool],bool]]=True
+	viaoffset: Optional[Union[tuple[bool,bool],bool]]=True,
+	fullbottom: bool = True
 ) -> Component:
 	"""creates a L shaped route between two Ports.
 	
@@ -45,6 +46,7 @@ def L_route(
 	vglayer = glayer for horizontal route. Defaults to the layer of the edge oriented E/W
 	viaoffset = push the via away from both edges so that inside corner aligns with via corner
 	****via offset can also be specfied as a tuple(bool,bool): movex? if viaoffset[0] and movey? if viaoffset[1]
+	fullbottom = fullbottom option for via
 	"""
 	# error checking, TODO: validate layers
 	assert_port_manhattan([edge1,edge2])
@@ -83,7 +85,7 @@ def L_route(
 	vconnect_ref = align_comp_to_port(vconnect, hport, halign)
 	Lroute.add(vconnect_ref)
 	# create and place via (decide between via stack and via array)
-	hv_via = via_stack(pdk, hglayer, vglayer,fullbottom=True,fulltop=True)
+	hv_via = via_stack(pdk, hglayer, vglayer,fullbottom=fullbottom,fulltop=True)
 	hv_via_dims = evaluate_bbox(hv_via,True)
 	use_stack = hv_via_dims[0] > hwidth or hv_via_dims[1] > vwidth
 	if not use_stack:

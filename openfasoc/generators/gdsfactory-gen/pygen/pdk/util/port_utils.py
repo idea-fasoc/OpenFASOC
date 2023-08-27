@@ -301,17 +301,23 @@ class PortTree:
 		"""returns value of a node, (node might be a PortTree)"""
 		return node[0] if isinstance(node, tuple) else self.name
 	
-	def print(self, savetofile: bool=True, depth: Optional[int]=None, **kwargs):
+	def print(self, savetofile: bool=True, default_opts: bool=True, depth: Optional[int]=None, **kwargs):
 		"""prints output to terminal directly using prettyprinttree pypi package
 		args:
 		depth = max depth to print. this is a kwarg but since it so common, it should be specfied from depth arg
-		kwargs -> kwargs are prettyprint options passed directly to prettyprint
+		savetofile = saves print output to a txt file rather than printing to terminal (easier to view, but without nice formatting)
+		default_opts = bool=True results in using pygen recommended default print arguments
+		kwargs -> kwargs are prettyprint options passed directly to prettyprint.
+		****NOTE: kwargs override all other options
 		"""
-		depth = int(depth) if depth is not None or depth>0 else -1
-		savetofile_opts = {}
+		depth = int(depth) if (depth is not None and depth>0) else -1
+		extra_kwargs = {}
+		if default_opts:
+			extra_kwargs.update({"default_orientation": True})
 		if savetofile:
-			savetofile_opts = {"return_instead_of_print":savetofile, "color":None, "border":True}
-		pt = PrettyPrintTree(self.get_children, self.get_val, max_depth=depth, **savetofile_opts, **kwargs)
+			extra_kwargs.update({"return_instead_of_print":savetofile, "color":None, "border":True, "default_orientation": True})
+		extra_kwargs.update(kwargs)
+		pt = PrettyPrintTree(self.get_children, self.get_val, max_depth=depth, **extra_kwargs)
 		rtrstr = pt(self)
 		if rtrstr:
 			with open("outputtree.txt","w") as outputfile:

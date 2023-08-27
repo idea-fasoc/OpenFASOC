@@ -3,7 +3,7 @@ from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
 from pygen.fet import nmos, pmos
 from pygen.pdk.mappedpdk import MappedPDK
-from typing import Optional
+from typing import Optional, Union
 from gdsfactory.routing.route_quad import route_quad
 from gdsfactory.routing.route_sharp import route_sharp
 from pygen.routing.c_route import c_route
@@ -21,7 +21,8 @@ def diff_pair(
 	length: Optional[float] = None,
 	n_or_p_fet: bool = True,
 	plus_minus_seperation: float = 0,
-	rmult: int = 1
+	rmult: int = 1,
+	dummy: Union[bool, tuple[bool, bool]] = True
 ) -> Component:
 	"""create a diffpair with 2 transistors placed in two rows with common centroid place. Sources are shorted
 	width = width of the transistors
@@ -35,29 +36,32 @@ def diff_pair(
 	diffpair = Component()
 	# create transistors
 	well = None
+	if isinstance(dummy, bool):
+		dummy = (dummy, dummy)
 	if n_or_p_fet:
-		fet = nmos(pdk, width=width, fingers=fingers,length=length,multipliers=1,with_tie=False,with_dummy=False,with_dnwell=False,with_substrate_tap=False,rmult=rmult)
-		#print_ports(fet)
-		min_spacing_x = pdk.get_grule("n+s/d")["min_separation"] - 2*(fet.xmax - fet.ports["multiplier_0_plusdoped_E"].center[0])
+		fetL = nmos(pdk, width=width, fingers=fingers,length=length,multipliers=1,with_tie=False,with_dummy=(dummy[0], False),with_dnwell=False,with_substrate_tap=False,rmult=rmult)
+		fetR = nmos(pdk, width=width, fingers=fingers,length=length,multipliers=1,with_tie=False,with_dummy=(False,dummy[1]),with_dnwell=False,with_substrate_tap=False,rmult=rmult)
+		min_spacing_x = pdk.get_grule("n+s/d")["min_separation"] - 2*(fetL.xmax - fetL.ports["multiplier_0_plusdoped_E"].center[0])
 		well = "pwell"
 	else:
-		fet = pmos(pdk, width=width, fingers=fingers,length=length,multipliers=1,with_tie=False,with_dummy=False,dnwell=False,with_substrate_tap=False,rmult=rmult)
-		min_spacing_x = pdk.get_grule("p+s/d")["min_separation"] - 2*(fet.xmax - fet.ports["multiplier_0_plusdoped_E"].center[0])
+		fetL = pmos(pdk, width=width, fingers=fingers,length=length,multipliers=1,with_tie=False,with_dummy=(dummy[0], False),dnwell=False,with_substrate_tap=False,rmult=rmult)
+		fetR = pmos(pdk, width=width, fingers=fingers,length=length,multipliers=1,with_tie=False,with_dummy=(False,dummy[1]),dnwell=False,with_substrate_tap=False,rmult=rmult)
+		min_spacing_x = pdk.get_grule("p+s/d")["min_separation"] - 2*(fetL.xmax - fetL.ports["multiplier_0_plusdoped_E"].center[0])
 		well = "nwell"
 	# place transistors
 	viam2m3 = via_stack(pdk,"met2","met3",centered=True)
 	metal_min_dim = max(pdk.get_grule("met2")["min_width"],pdk.get_grule("met3")["min_width"])
 	metal_space = max(pdk.get_grule("met2")["min_separation"],pdk.get_grule("met3")["min_separation"],metal_min_dim)
-	gate_route_os = evaluate_bbox(viam2m3)[0] - fet.ports["multiplier_0_gate_W"].width + metal_space
+	gate_route_os = evaluate_bbox(viam2m3)[0] - fetL.ports["multiplier_0_gate_W"].width + metal_space
 	min_spacing_y = metal_space + 2*gate_route_os
-	min_spacing_y = min_spacing_y - 2*abs(fet.ports["well_S"].center[1] - fet.ports["multiplier_0_gate_S"].center[1])
+	min_spacing_y = min_spacing_y - 2*abs(fetL.ports["well_S"].center[1] - fetL.ports["multiplier_0_gate_S"].center[1])
 	# TODO: fix spacing where you see +-0.5
-	a_topl = (diffpair << fet).movey(fet.ymax+min_spacing_y/2+0.5).movex(0-fet.xmax-min_spacing_x/2)
-	b_topr = (diffpair << fet).movey(fet.ymax+min_spacing_y/2+0.5).movex(fet.xmax+min_spacing_x/2)
-	a_botr = (diffpair << fet)
-	a_botr.mirror_y().movey(0-0.5-fet.ymax-min_spacing_y/2).movex(fet.xmax+min_spacing_x/2)
-	b_botl = (diffpair << fet)
-	b_botl.mirror_y().movey(0-0.5-fet.ymax-min_spacing_y/2).movex(0-fet.xmax-min_spacing_x/2)
+	a_topl = (diffpair << fetL).movey(fetL.ymax+min_spacing_y/2+0.5).movex(0-fetL.xmax-min_spacing_x/2)
+	b_topr = (diffpair << fetR).movey(fetR.ymax+min_spacing_y/2+0.5).movex(fetL.xmax+min_spacing_x/2)
+	a_botr = (diffpair << fetR)
+	a_botr.mirror_y().movey(0-0.5-fetL.ymax-min_spacing_y/2).movex(fetL.xmax+min_spacing_x/2)
+	b_botl = (diffpair << fetL)
+	b_botl.mirror_y().movey(0-0.5-fetR.ymax-min_spacing_y/2).movex(0-fetL.xmax-min_spacing_x/2)
 	# route sources (short sources)
 	diffpair << route_quad(a_topl.ports["multiplier_0_source_E"], b_topr.ports["multiplier_0_source_W"], layer=pdk.get_glayer("met2"))
 	diffpair << route_quad(b_botl.ports["multiplier_0_source_E"], a_botr.ports["multiplier_0_source_W"], layer=pdk.get_glayer("met2"))

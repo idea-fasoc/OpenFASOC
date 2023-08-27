@@ -47,6 +47,9 @@ def straight_route(
 	via1_alignment = alignment of the via on edge1
 	via2_alignment = alignment of the via on edge2
 	****defaults to an orientation that is aligned to the orientation of the port.
+	
+	Ports:
+	route_...all edges of the rectangle path
 	"""
 	#TODO: error checking
 	width = width if width else edge1.width
@@ -77,7 +80,7 @@ def straight_route(
 		size = (width,abs(extension))
 	# create route and via
 	route = rectangle(layer=pdk.get_glayer(glayer1),size=size,centered=True)
-	out_via = via_stack(pdk,glayer1,glayer2,fullbottom=fullbottom)
+	out_via = via_stack(pdk,glayer1,glayer2,fullbottom=fullbottom) if glayer1 != glayer2 else None
 	# place route and via
 	straightroute = Component()
 	edges = [edge1,edge2]
@@ -100,7 +103,8 @@ def straight_route(
 	route_ref = align_comp_to_port(route,edge1,alignment=alignment)
 	straightroute.add_ports(route_ref.get_ports_list(),prefix="route_")
 	straightroute.add(route_ref)
-	straightroute.add(align_comp_to_port(out_via,route_ref.ports[viaport_name],layer=pdk.get_glayer(glayer1),alignment=via1_alignment))
+	if out_via is not None:
+		straightroute.add(align_comp_to_port(out_via,route_ref.ports[viaport_name],layer=pdk.get_glayer(glayer2),alignment=via1_alignment))
 	if front_via is not None:
 		straightroute.add(align_comp_to_port(front_via,edge1,layer=pdk.get_glayer(glayer2),alignment=via2_alignment))
 	return straightroute.flatten()
