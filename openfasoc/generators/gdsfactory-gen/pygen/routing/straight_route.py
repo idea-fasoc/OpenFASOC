@@ -21,7 +21,9 @@ def straight_route(
 	width: Optional[float] = None,
 	glayer2: Optional[str] = None,
 	via1_alignment: Optional[tuple[str, str]] = None,
+	via1_alignment_layer: Optional[str] = None,
 	via2_alignment: Optional[tuple[str, str]] = None,
+	via2_alignment_layer: Optional[str] = None,
 	fullbottom: Optional[bool] = False
 ) -> Component:
 	"""extends a route from edge1 until perpindicular with edge2, then places a via
@@ -83,8 +85,7 @@ def straight_route(
 	out_via = via_stack(pdk,glayer1,glayer2,fullbottom=fullbottom) if glayer1 != glayer2 else None
 	# place route and via
 	straightroute = Component()
-	edges = [edge1,edge2]
-	for i, edge in enumerate(edges):
+	for i, edge in enumerate([edge1,edge2]):
 		temp = via1_alignment if i == 0 else via2_alignment
 		if temp is None:
 			if round(edge.orientation) == 0:# facing east
@@ -99,14 +100,15 @@ def straight_route(
 				raise ValueError("port must be vertical or horizontal")
 		via1_alignment = temp if i == 0 else via1_alignment
 		via2_alignment = temp if i == 1 else via2_alignment
-
 	route_ref = align_comp_to_port(route,edge1,alignment=alignment)
 	straightroute.add_ports(route_ref.get_ports_list(),prefix="route_")
 	straightroute.add(route_ref)
 	if out_via is not None:
-		straightroute.add(align_comp_to_port(out_via,route_ref.ports[viaport_name],layer=pdk.get_glayer(glayer2),alignment=via1_alignment))
+		alignlayer2 = pdk.get_glayer(glayer1) if via2_alignment_layer is None else pdk.get_glayer(via2_alignment_layer)
+		straightroute.add(align_comp_to_port(out_via,route_ref.ports[viaport_name],layer=alignlayer2,alignment=via2_alignment))
 	if front_via is not None:
-		straightroute.add(align_comp_to_port(front_via,edge1,layer=pdk.get_glayer(glayer2),alignment=via2_alignment))
+		alignlayer1 = pdk.get_glayer(glayer1) if via1_alignment_layer is None else pdk.get_glayer(via1_alignment_layer)
+		straightroute.add(align_comp_to_port(front_via,edge1,layer=alignlayer1,alignment=via1_alignment))
 	return straightroute.flatten()
 
 
