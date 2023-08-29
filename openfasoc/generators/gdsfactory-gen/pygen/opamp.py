@@ -454,12 +454,16 @@ def __add_output_stage(
     opamp_top << straight_route(pdk, cmirror_ibias.ports["welltie_N_top_met_N"],cmirror_ibias.ports["substratetap_N_top_met_S"],width=2)
     opamp_top << straight_route(pdk, amp_fet_ref.ports["guardring_bl_top_met_S"],cmirror_ibias.ports["substratetap_tr_top_met_N"])
     opamp_top << straight_route(pdk, amp_fet_ref.ports["guardring_tl_top_met_W"], opamp_top.ports["commonsource_cmirror_output_R_tie_tr_top_met_E"])
-    # add ports and return
-    psuedo_out_port = movex(cmirror_ibias.ports["A_gate_E"].copy(),6*metal_sep)
-    output_pin = opamp_top << straight_route(pdk, cmirror_ibias.ports["A_gate_E"], psuedo_out_port)
+    # add ports, add bias/output pin, and return
+    psuedo_out_port = movex(amp_fet_ref.ports["multiplier_0_source_E"].copy(),6*metal_sep)
+    output_pin = opamp_top << straight_route(pdk, amp_fet_ref.ports["multiplier_0_source_E"], psuedo_out_port)
     opamp_top.add_ports(amp_fet_ref.get_ports_list(),prefix="outputstage_amp_")
     opamp_top.add_ports(cmirror_ibias.get_ports_list(),prefix="outputstage_bias_")
     opamp_top.add_ports(output_pin.get_ports_list(),prefix="pin_output_")
+    bias_pin = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met3"),centered=True)
+    bias_pin.movex(cmirror_ibias.center[0]).movey(cmirror_ibias.ports["B_gate_S"].center[1]-bias_pin.ymax-5*metal_sep)
+    opamp_top << straight_route(pdk, bias_pin.ports["e2"], cmirror_ibias.ports["B_gate_S"],width=1)
+    opamp_top.add_ports(bias_pin.get_ports_list(),prefix="pin_outputibias_")
     return opamp_top
 
 
@@ -468,9 +472,10 @@ def opamp(
     pdk: MappedPDK,
     diffpair_params: tuple[float, float, int] = (6, 1, 4),
     diffpair_bias: tuple[float, float, int] = (6, 2, 4),
-    half_common_source_nbias: tuple[float, float, int, int] = (6, 2, 8, 2),
-    pamp_hparams: tuple[float, float, int, int] = (7, 1, 10, 3),
-    output_stage_amp_params: tuple[float, float, int] = (5, 1, 16),
+    half_common_source_params: tuple[float, float, int, int] = (7, 1, 10, 3),
+    half_common_source_bias: tuple[float, float, int, int] = (6, 2, 8, 2),
+    output_stage_params: tuple[float, float, int] = (5, 1, 16),
+    output_stage_bias: tuple[float, float, int] = (6, 2, 4),
     mim_cap_size=(12, 12),
     mim_cap_rows=3,
     rmult: int = 2
@@ -478,10 +483,12 @@ def opamp(
     """create an opamp, args:
     pdk=pdk to use
     diffpair_params = diffpair (width,length,fingers)
-    diffpair_bias = bias transistor for diffpair nmos (width,length,fingers)
-    half_common_source_nbias = west current mirror (width,length,fingers,mults), two halves
-    pamp_hparams = pmos top component amp (width,length,fingers,mults)
+    diffpair_bias = bias transistor for diffpair nmos (width,length,fingers). The ref and output of the cmirror are identical
+    half_common_source_params = pmos top component amp (width,length,fingers,mults)
+    half_common_source_bias = bottom L/R large nmos current mirror (width,length,fingers,mults). The ref of the cmirror always has 1 multplier.
+    ****NOTE: change the multiplier option to change the relative sizing of the current mirror ref/output
     output_stage_amp_params = output amplifier transistor params (width, length, fingers)
+    output_stage_bias = output amplifier current mirror params (width, length, fingers). The ref and output of the cmirror are identical
     mim_cap_size = width,length of individual mim_cap
     mim_cap_rows = number of rows in the mimcap array (always 2 cols)
     rmult = routing multiplier (larger = wider routes)
@@ -493,14 +500,14 @@ def opamp(
     diffpair_and_bias = __add_diff_pair_and_bias(pdk, opamp_top, diffpair_params, diffpair_bias, rmult)
     # create and position each half of the nmos bias transistor for the common source stage symetrically
     clear_cache()
-    opamp_top = __add_common_source_nbias_transistors(pdk, opamp_top, half_common_source_nbias, rmult)
+    opamp_top = __add_common_source_nbias_transistors(pdk, opamp_top, half_common_source_bias, rmult)
     opamp_top.add_padding(layers=(pdk.get_glayer("pwell"),),default=0)
     # add ground pin
     gndpin = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met4"),centered=True)
     gndpin.movey(opamp_top.ymin-pdk.util_max_metal_seperation()-gndpin.ymax)
     # route bottom ncomps except drain of nbias (still need to place common source pmos amp)
     clear_cache()
-    opamp_top, halfmultn_drain_routeref, halfmultn_gate_routeref, _cref = __route_bottom_ncomps_except_drain_nbias(pdk, opamp_top, gndpin, half_common_source_nbias[3])
+    opamp_top, halfmultn_drain_routeref, halfmultn_gate_routeref, _cref = __route_bottom_ncomps_except_drain_nbias(pdk, opamp_top, gndpin, half_common_source_bias[3])
     opamp_top.add_ports(gndpin.get_ports_list(), prefix="pin_gnd_")
     # place pmos components
     #TODO: report as bug
@@ -509,7 +516,7 @@ def opamp(
     clear_cache()
     pmos_comps = __route_sharedgatecomps(pdk, pmos_comps, opamp_top.ports["diffpair_tl_multiplier_0_drain_N"].center[0], ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts)
     clear_cache()
-    pmos_comps = __add_common_source_Pamp_and_finish_pcomps(pdk, pmos_comps, pamp_hparams, rmult)
+    pmos_comps = __add_common_source_Pamp_and_finish_pcomps(pdk, pmos_comps, half_common_source_params, rmult)
     ydim_ncomps = opamp_top.ymax
     pmos_comps_ref = opamp_top << pmos_comps
     pmos_comps_ref.movey(round(ydim_ncomps + pmos_comps_ref.ymax+8))
@@ -523,7 +530,7 @@ def opamp(
     clear_cache()
     opamp_top = __add_mimcap_arr(pdk, opamp_top, mim_cap_size, mim_cap_rows, pmos_comps_ref.ymin, n_to_p_output_route)
     # add output amplfier stage
-    opamp_top = __add_output_stage(pdk, opamp_top, output_stage_amp_params, [6,2,4], rmult, n_to_p_output_route)
+    opamp_top = __add_output_stage(pdk, opamp_top, output_stage_params, output_stage_bias, rmult, n_to_p_output_route)
     # return
     opamp_top.add_ports(_cref.get_ports_list(), prefix="gnd_route_")
     return rename_ports_by_orientation(component_snap_to_grid(opamp_top))

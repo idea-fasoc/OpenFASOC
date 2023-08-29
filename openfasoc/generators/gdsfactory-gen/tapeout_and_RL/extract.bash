@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Ali 
-#export PDK_ROOT=/usr/local/share/pdk/
-
 # Actual
 export PDK_ROOT=/usr/bin/miniconda3/share/pdk/
 

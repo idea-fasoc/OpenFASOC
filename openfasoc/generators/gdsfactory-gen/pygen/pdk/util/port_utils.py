@@ -301,7 +301,7 @@ class PortTree:
 		"""returns value of a node, (node might be a PortTree)"""
 		return node[0] if isinstance(node, tuple) else self.name
 	
-	def print(self, savetofile: bool=True, default_opts: bool=True, depth: Optional[int]=None, **kwargs):
+	def print(self, savetofile: bool=True, default_opts: bool=True, depth: Optional[int]=None, outfile_name: Optional[str]=None, **kwargs):
 		"""prints output to terminal directly using prettyprinttree pypi package
 		args:
 		depth = max depth to print. this is a kwarg but since it so common, it should be specfied from depth arg
@@ -320,5 +320,47 @@ class PortTree:
 		pt = PrettyPrintTree(self.get_children, self.get_val, max_depth=depth, **extra_kwargs)
 		rtrstr = pt(self)
 		if rtrstr:
-			with open("outputtree.txt","w") as outputfile:
+			outfile_name = "outputtree.txt" if outfile_name is None else outfile_name
+			with open(outfile_name,"w") as outputfile:
 				outputfile.write(rtrstr)
+
+
+def print_port_tree_all_cells() -> list:
+	"""print the PortTree for most of the pygen cells and save as a text file.
+	returns a list of components
+	"""
+	from pygen.via_gen import via_stack, via_array
+	from pygen.opamp import opamp
+	from pygen.mimcap import mimcap
+	from pygen.mimcap import mimcap_array
+	from pygen.guardring import tapring
+	from pygen.fet import multiplier, nmos, pmos
+	from pygen.diff_pair import diff_pair
+	from pygen.routing.straight_route import straight_route
+	from pygen.routing.c_route import c_route
+	from pygen.routing.L_route import L_route
+	from pygen.pdk.sky130_mapped import sky130_mapped_pdk as pdk
+	from gdsfactory.port import Port
+	print("saving via_stack, via_array, opamp, mimcap, mimcap_array, tapring, multiplier, nmos, pmos, diff_pair, straight_route, c_route, L_route Ports to txt files")
+	celllist = list()
+	celllist.append(["via_stack",via_stack(pdk, "active_diff","met5")])
+	celllist.append(["viaarray", via_array(pdk, "active_diff","met5", num_vias=(2,3))])
+	celllist.append(["mimcap",mimcap(pdk)])
+	celllist.append(["mimcap_array",mimcap_array(pdk, 2, 3)])
+	celllist.append(["tapring",tapring(pdk)])
+	celllist.append(["multiplier",multiplier(pdk,"n+s/d")])
+	celllist.append(["nmos", nmos(pdk,fingers=2,multipliers=2)])
+	celllist.append(["pmos", pmos(pdk,fingers=2,multipliers=2)])
+	celllist.append(["diff_pair",diff_pair(pdk)])
+	psuedo_porta = Port("bottom",90,(0,0),2,layer=pdk.get_glayer("met2"))
+	psuedo_portb = Port("top",0,(5,10),2.5,layer=pdk.get_glayer("met5"))
+	psuedo_porta = Port("right",90,(10,10),2,layer=pdk.get_glayer("met2"))
+	celllist.append(["straight_route",straight_route(pdk,psuedo_porta,psuedo_portb)])
+	celllist.append(["L_route",L_route(pdk, psuedo_porta, psuedo_portb)])
+	celllist.append(["c_route",c_route(pdk, psuedo_porta, psuedo_porta,extension=2)])
+	celllist.append(["opamp",opamp(pdk)])
+	for name, py_cell in celllist:
+		from pygen import __version__ as pygenvinfo
+		pygenv = str(pygenvinfo)
+		PortTree(py_cell,name=name).print(depth=5,outfile_name=name+"_v"+pygenv+"_tree.txt",default_orientation=True)
+	return celllist
