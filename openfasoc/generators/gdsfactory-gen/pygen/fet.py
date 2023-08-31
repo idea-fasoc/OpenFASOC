@@ -144,7 +144,7 @@ def multiplier(
             big_extension = sdroute_minsep + sdmet_hieght/2 + sdmet_hieght
             sdvia_extension = big_extension if finger % 2 else sdmet_hieght/2
             sdvia_ref = align_comp_to_port(sdvia,diff_top_port,alignment=('c','t'))
-            multiplier.add(sdvia_ref.movey(pdk.snap_to_2xgrid(sdvia_extension + sd_route_extension)))
+            multiplier.add(sdvia_ref.movey(sdvia_extension + pdk.snap_to_2xgrid(sd_route_extension)))
             multiplier << straight_route(pdk, diff_top_port, sdvia_ref.ports["bottom_met_N"])
             sdvia_ports += [sdvia_ref.ports["top_met_W"], sdvia_ref.ports["top_met_E"]]
             # get the next port (break before this if last iteration because port D.N.E. and num gates=fingers)
@@ -155,6 +155,7 @@ def multiplier(
             gate_S_port = multiplier.ports[f"row0_col{finger}_gate_S"]
             metal_seperation = pdk.util_max_metal_seperation()
             psuedo_Ngateroute = movey(gate_S_port.copy(),0-metal_seperation-gate_route_extension)
+            psuedo_Ngateroute.y = pdk.snap_to_2xgrid(psuedo_Ngateroute.y)
             multiplier << straight_route(pdk,gate_S_port,psuedo_Ngateroute)
         # place route met: gate
         gate_width = gate_S_port.center[0] - multiplier.ports["row0_col0_gate_S"].center[0] + gate_S_port.width

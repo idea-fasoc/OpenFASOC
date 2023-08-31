@@ -244,14 +244,18 @@ def prec_center(custom_comp: Union[Component,ComponentReference], return_decimal
 	return to_float(correctionxy)
 
 @validate_arguments
-def prec_ref_center(custom_comp: Union[Component,ComponentReference]) -> ComponentReference:
+def prec_ref_center(custom_comp: Union[Component,ComponentReference], destination: Optional[tuple[float,float]]=None) -> ComponentReference:
 	"""instead of using component.ref_center() to get a ref to center at origin,
 	use this function which will return a centered ref
 	you can then run component.add(prec_ref_center(custom_comp)) to add the reference to your component
+	you can optionally specify a destination = tuple(x,y), by default, the destination is 0,0
 	returns component reference
 	"""
 	compref = custom_comp if isinstance(custom_comp, ComponentReference) else custom_comp.ref()
 	xcor, ycor = prec_center(compref, False)
+	if destination is not None:
+		xcor += destination[0]
+		ycor += destination[1]
 	return compref.movex(xcor).movey(ycor)
 
 

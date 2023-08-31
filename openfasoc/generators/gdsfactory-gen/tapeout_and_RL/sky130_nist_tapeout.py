@@ -396,7 +396,7 @@ def process_spice_testbench(testbench: Union[str,Path], temperature_info: tuple[
 	with open(testbench, "w") as spice_file:
 		spice_file.write(spicetb)
 
-def __run_single_brtfrc(pdk, index, parameters_ele, save_gds_dir, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, output_dir: Optional[Union[str,Path]] = None):
+def __run_single_brtfrc(pdk, index, parameters_ele, save_gds_dir, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, output_dir: Optional[Union[int,str,Path]] = None):
 	# generate layout
 	destination_gds_copy = save_gds_dir / (str(index)+".gds")
 	sky130pdk = pdk
@@ -419,11 +419,18 @@ def __run_single_brtfrc(pdk, index, parameters_ele, save_gds_dir, temperature_in
 		process_netlist_subckt(str(tmpdirname)+"/opamp_pex.spice", temperature_info[1], cload=cload, noparasitics=noparasitics)
 		# run sim and store result
 		Popen(["ngspice","-b","opamp_perf_eval.sp"],cwd=tmpdirname).wait()
-		result_dict = get_sim_results(str(tmpdirname)+"/result_ac.txt", str(tmpdirname)+"/result_power.txt", str(tmpdirname)+"/result_noise.txt")
+		ac_file = str(tmpdirname)+"/result_ac.txt"
+		power_file = str(tmpdirname)+"/result_power.txt"
+		noise_file = str(tmpdirname)+"/result_noise.txt"
+		result_dict = get_sim_results(ac_file, power_file, noise_file)
 		result_dict["area"] = area
 		results = opamp_results_serializer(**result_dict)
 		if output_dir:
-			output_dir = Path(output_dir).resolve()
+			if isinstance(output_dir, int):
+				output_dir = save_gds_dir / (str(output_dir)+"_dir")
+				output_dir = Path(output_dir).resolve()
+			else:
+				output_dir = Path(output_dir).resolve()
 			output_dir.mkdir(parents=True, exist_ok=True)
 			if not output_dir.is_dir():
 				raise ValueError("Output directory must be a directory")
@@ -431,12 +438,12 @@ def __run_single_brtfrc(pdk, index, parameters_ele, save_gds_dir, temperature_in
 		return results
 
 
-def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.array, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False) -> np.array:
+def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.array, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, saverawsims: bool=False) -> np.array:
 	"""runs the brute force testing of parameters by
 	1-constructing the opamp layout specfied by parameters
 	2-extracting the netlist for the opamp
 	3-running simulations on the opamp
-	returns the ugb of the opamps
+	returns the results from opamp simulations as nparray
 	"""
 	if sky130pdk.name != "sky130":
 		raise ValueError("this is for sky130 only")
@@ -450,17 +457,22 @@ def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.
 	save_gds_dir = Path('./save_gds_by_index').resolve()
 	save_gds_dir.mkdir(parents=True)
 	with Pool(120) as cores:
-		results = np.array(cores.starmap(__run_single_brtfrc, zip(repeat(sky130pdk), count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info), repeat(cload), repeat(noparasitics))),np.float64)
+		if saverawsims:
+			results = np.array(cores.starmap(__run_single_brtfrc, zip(repeat(sky130pdk), count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info), repeat(cload), repeat(noparasitics), count(0))),np.float64)
+		else:
+			results = np.array(cores.starmap(__run_single_brtfrc, zip(repeat(sky130pdk), count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info), repeat(cload), repeat(noparasitics))),np.float64)
 	# undo pdk modification
 	sky130pdk.default_decorator = add_npc_decorator
 	return results
 
 # data gathering main function
-@validate_arguments
-def get_training_data(test_mode: bool=True, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False) -> None:
+def get_training_data(test_mode: bool=True, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, parameter_array: Optional[np.array]=None) -> None:
 	if temperature_info[1] != "normal model" and temperature_info[1] != "cryo model":
 		raise ValueError("model must be one of \"normal model\" or \"cryo model\"")
-	params = get_small_parameter_list(test_mode)
+	if parameter_array is None:
+		params = get_small_parameter_list(test_mode)
+	else:
+		params = parameter_array
 	results = brute_force_full_layout_and_PEXsim(pdk, params, temperature_info, cload=cload, noparasitics=noparasitics)
 	np.save("training_params.npy",params)
 	np.save("training_results.npy",results)
@@ -875,6 +887,8 @@ if __name__ == "__main__":
 	get_training_data_parser.add_argument("--temp", type=int, default=int(25), help="Simulation temperature")
 	get_training_data_parser.add_argument("--cload", type=float, default=float(0), help="run simulation with load capacitance units=pico Farads")
 	get_training_data_parser.add_argument("--noparasitics",action="store_true",help="specify that parasitics should be removed when simulating")
+	get_training_data_parser.add_argument("--nparray",default=None,help="overrides the test parameters and takes the ones you provide (file path to .npy file)")
+	get_training_data_parser.add_argument("--saverawsims",action="store_true",help="specify that the raw simulation directories should be saved (default saved under save_gds_by_index/...)")
 
 	# Subparser for gen_opamp mode
 	gen_opamp_parser = subparsers.add_parser("gen_opamp", help="Run the gen_opamp function. optional parameters for transistors are width,length,fingers,mults")
@@ -900,14 +914,15 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	# Simulation Temperature information
-	temperature_info = [args.temp, None]
-	if temperature_info[0] > -20:
-		temperature_info[1] = "normal model"
-	elif temperature_info[0]!=-269:
-		raise ValueError("simulation temperature should be exactly -269C for cryo sim. Below -20C there are no good models for simulation")
-	else:
-		temperature_info[1] = "cryo model"
-	temperature_info = tuple(temperature_info)
+	if vars(args).get("temp") is not None:
+		temperature_info = [args.temp, None]
+		if temperature_info[0] > -20:
+			temperature_info[1] = "normal model"
+		elif temperature_info[0]!=-269:
+			raise ValueError("simulation temperature should be exactly -269C for cryo sim. Below -20C there are no good models for simulation")
+		else:
+			temperature_info[1] = "cryo model"
+		temperature_info = tuple(temperature_info)
 
 	if args.mode=="extract_stats":
 		# Call the extract_stats function with the specified file paths or defaults
@@ -915,7 +930,11 @@ if __name__ == "__main__":
 
 	elif args.mode=="get_training_data":
 		# Call the get_training_data function with test_mode flag
-		get_training_data(test_mode=args.test_mode, temperature_info=temperature_info, cload=args.cload, noparasitics=args.noparasitics)
+		if args.nparray is not None:
+			parameter_array = Path(args.nparray).resolve()
+			assert(parameter_array.is_file())
+			parameter_array = np.load(parameter_array)
+		get_training_data(test_mode=args.test_mode, temperature_info=temperature_info, cload=args.cload, noparasitics=args.noparasitics, parameter_array=parameter_array, saverawsims=args.saverawsims)
 
 	elif args.mode=="gen_opamp":
 		# Call the opamp function with the parsed arguments
@@ -925,7 +944,7 @@ if __name__ == "__main__":
 				half_common_source_bias=tuple(args.half_common_source_bias),
 				half_common_source_params=tuple(args.half_common_source_params),
 				output_stage_params = tuple(args.output_stage_params),
-				output_stage_bias = tuple(args,output_stage_bias),
+				output_stage_bias = tuple(args.output_stage_bias),
 				mim_cap_size=tuple(args.mim_cap_size),
 				mim_cap_rows=args.mim_cap_rows,
 				rmult=args.rmult,

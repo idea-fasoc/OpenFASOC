@@ -6,8 +6,9 @@
 .temp {@@TEMP}
 
 ** Define global parameters for altering
-.param b1 = 0.8
-.param b2 = 0.75
+.param bdp = 5u
+.param bcs = 5u
+.param bo = 5u
 
 ** Define netlist
 Vsupply VDD GND 1.8
@@ -16,10 +17,14 @@ V2 vin net1 AC 0.5
 .save i(v2)
 V3 vip net1 AC -0.5
 .save i(v3)
-Vbias2 bias2 GND {b2}
-.save i(vbias2)
-Vbias1 bias1 GND {b1}
-.save i(vbias1)
+
+* bias currents
+Ibiasdp biasdpn GND {bdp}
+*.save i(vbias2)
+Ibiascs biascsn GND {bcs}
+*.save i(vbias1)
+Ibiaso biason GND {bo}
+
 Vindc net1 GND 1
 .save i(vindc)
 
@@ -41,10 +46,9 @@ Vindc net1 GND 1
 *@@cryo .include ./sky130A/cryo_models/nshortlvth.spice
 *@@cryo .include ./sky130A/cryo_models/pmos.spice
 
-
 ** Import opamp subcircuit
 .include opamp_pex.spice
-XDUT vin vip bias1 bias2 vo VDD GND opamp
+XDUT vo VDD vip vin biascsn biason biasdpn GND opamp
 * parameter sweep
 ** Run initial analysis
 .save all
@@ -54,53 +58,65 @@ XDUT vin vip bias1 bias2 vo VDD GND opamp
 ** Set initial values
 set filetype = ascii
 let maxUGB = -1
-let maxBv1 = -1
-let maxBv2 = -1
+let maxBics = -1
+let maxBidp = -1
 let savedPhaseMargin = -1
 let savedDCGain = -1
 ** Tune these
-let biasVoltageMin = 0.4
-let biasVoltageMax = 1.6
-let biasVoltageStep = 0.1
-let biasVoltage1 = biasVoltageMin
-let biasVoltage2 = biasVoltageMin
+let biasCurrentMin = 5u
+let biasCurrentMax = 100u
+let biasCurrentStep = 10u
+let biasCurrent_cs = biasCurrentMin
+let biasCurrent_dp = biasCurrentMin
+let biasCurrent_o = biasCurrentMin
+* print loop number so user gets an idea of progress / time remaining
+let absolute_counter = 0
 ** Sweep bias voltages
-while biasVoltage1 le biasVoltageMax
+while biasCurrent_cs le biasCurrentMax
     ** Alter parameters and reset top-level ckt
-    alterparam b1 = $&biasVoltage1
+    alterparam bcs = $&biasCurrent_cs
     reset
-    while biasVoltage2 le biasVoltageMax
-        alterparam b2 = $&biasVoltage2
+    while biasCurrent_dp le biasCurrentMax
+        alterparam bdp = $&biasCurrent_dp
         reset
-        ** Run analysis
-        run
-        ** Find unity-gain bw point
-        meas ac ugb_f when vdb(vo)=0
-        ** Measure phase margin
-        let phase = (180/PI)*vp(vo)
-        meas ac pm find phase when vdb(vo)=0
-        ** Measure DC(ish) gain
-        meas ac dcg find vdb(vo) at=1k
-        ** Find local maxima
-        if ( ugb_f ge maxUGB )
-            let maxUGB = ugb_f
-            let maxBv1 = biasVoltage1
-            let maxBv2 = biasVoltage2
-            let savedPhaseMargin = pm % 360
-            let savedDCGain = dcg
+        while biasCurrent_o le biasCurrentMax
+            ** Run analysis
+            run
+            ** Find unity-gain bw point
+            meas ac ugb_f when vdb(vo)=0
+            ** Measure phase margin
+            let phase = (180/PI)*vp(vo)
+            meas ac pm find phase when vdb(vo)=0
+            ** Measure DC(ish) gain
+            meas ac dcg find vdb(vo) at=1k
+            ** Find local maxima
+            if ( ugb_f ge maxUGB )
+                let maxUGB = ugb_f
+                let maxBics = biasCurrent_cs
+                let maxBidp = biasCurrent_dp
+                let savedPhaseMargin = pm % 360
+                let savedDCGain = dcg
+            end
+            * print loop number
+            echo "loop number: $&absolute_counter"
+            let absolute_counter = absolute_counter + 1
+            * increment output bias current
+            let biasCurrent_o = biasCurrent_o + biasCurrentStep
         end
-        let biasVoltage2 = biasVoltage2 + biasVoltageStep
+        ** Reset biasCurrent_o for next value of biasCurrent_dp
+        let biasCurrent_o = biasCurrentMin
+        let biasCurrent_dp = biasCurrent_dp + biasCurrentStep
     end
-    ** Reset counter for bv2 loop
-    let biasVoltage2 = biasVoltageMin
-    let biasVoltage1 = biasVoltage1 + biasVoltageStep
+    ** Reset biasCurrent_dp for next value of biasCurrent_cs
+    let biasCurrent_dp = biasCurrentMin
+    let biasCurrent_cs = biasCurrent_cs + biasCurrentStep
 end
 ** Export global maxima
-wrdata result_ac.txt maxUGB maxBv1 maxBv2 savedPhaseMargin savedDCGain
+wrdata result_ac.txt maxUGB maxBics maxBidp savedPhaseMargin savedDCGain
 
 ** Export power usage of opamp w/ best gain
-alterparam b1 = $&maxBv1
-alterparam b2 = $&maxBv2
+alterparam bcs = $&maxBics
+alterparam bdp = $&maxBidp
 reset
 run
 meas ac maxDraw max i(vsupply)

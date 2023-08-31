@@ -99,8 +99,8 @@ def __add_common_source_nbias_transistors(pdk: MappedPDK, opamp_top: Component, 
             sd_route_left = bool(i),
             rmult=rmult
         )
-        cmirrorref_ref = cmirrorref.ref_center()
-        cmirrorout_ref = cmirror_output.ref_center()
+        cmirrorref_ref = prec_ref_center(cmirrorref)
+        cmirrorout_ref = prec_ref_center(cmirror_output)
         # xtranslation
         direction = (-1) ** i
         xtranslationO = direction * abs(x_dim_center + cmirrorout_ref.xmax + pdk.util_max_metal_seperation())
@@ -288,7 +288,7 @@ def __add_common_source_Pamp_and_finish_pcomps(pdk: MappedPDK, pmos_comps: Compo
     nwell_points = get_padding_points_cc(nwellbbox, default=nwellspacing, pdk_for_snap2xgrid=pdk)
     pmos_comps.add_polygon(nwell_points, layer=pdk.get_glayer("nwell"))
     tapcenter_rect = [(evaluate_bbox(pmos_comps)[0] + 1), (evaluate_bbox(pmos_comps)[1] + 1)]
-    topptap = tapring(pdk, tapcenter_rect, "p+s/d").ref_center(position=pmos_comps.center)
+    topptap = prec_ref_center(tapring(pdk, tapcenter_rect, "p+s/d"),destination=pmos_comps.center)
     pmos_comps.add(topptap)
     pmos_comps.add_ports(topptap.get_ports_list(),prefix="top_ptap_")
     return pmos_comps
@@ -429,7 +429,8 @@ def __add_output_stage(
     # Locate output stage relative position
     # x-coordinate: Center of SW capacitor in array
     # y-coordinate: Top of NMOS blocks
-    x_cord = opamp_top.ports["mimcap_row0_col0_bottom_met_S"].center[0]
+    xref_port = opamp_top.ports["mimcap_row0_col0_bottom_met_S"]
+    x_cord = xref_port.center[0] - xref_port.width/2
     y_cord = opamp_top.ports["commonsource_cmirror_output_R_tie_tr_top_met_N"].center[1]
     dims = evaluate_bbox(amp_fet_ref)
     center = [x_cord + dims[0]/2, y_cord - dims[1]/2]

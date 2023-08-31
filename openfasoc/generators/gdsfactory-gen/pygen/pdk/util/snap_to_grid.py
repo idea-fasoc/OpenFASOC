@@ -16,7 +16,9 @@ def component_snap_to_grid(comp: Component, nm: Optional[int]=None) -> Component
 	NOTE this function will flatten the component
 	nm the grid to snap to, defaults to active pdk grid size"""
 	# flatten the component
+	name = comp.name
 	comp = comp.flatten()
+	comp.name = name
 	# figure out nm
 	if nm is None:
 		nm = int(get_grid_size() * 1000)

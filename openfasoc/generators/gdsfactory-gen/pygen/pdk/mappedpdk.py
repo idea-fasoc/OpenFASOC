@@ -285,22 +285,24 @@ class MappedPDK(Pdk):
         sep_rules = list()
         for met in metal_levels:
             sep_rules.append(self.get_grule(met)["min_separation"])
-        return max(sep_rules)
+        return self.snap_to_2xgrid(max(sep_rules))
     
     @validate_arguments
-    def snap_to_2xgrid(self, dims: Union[list[Union[float,Decimal]], Union[float,Decimal]], return_type: Literal["decimal","float","same"]="float") -> Union[list[Union[float,Decimal]], Union[float,Decimal]]:
+    def snap_to_2xgrid(self, dims: Union[list[Union[float,Decimal]], Union[float,Decimal]], return_type: Literal["decimal","float","same"]="float", snap4: bool=False) -> Union[list[Union[float,Decimal]], Union[float,Decimal]]:
         """snap all numbers in dims to double the grid size.
         This is useful when a generator accepts a size or dimension argument
         because there is a chance the cell may be centered (resulting in off grid components)
         args:
         dims = a list OR single number specifying the dimensions to snap to grid
         return_type = return a decimal, float, or the same type that was passed to the function
+        snap4: snap to 4xgrid (Defualt false)
         """
         dims = dims if isinstance(dims, Iterable) else [dims]
         dimtype_in = type(dims[0])
         dims = [Decimal(str(dim)) for dim in dims] # process in decimals
         grid = 2 * Decimal(str(self.grid_size))
         grid = grid if grid else Decimal('0.001')
+        grid = 2*grid if snap4 else grid
         # snap dims to grid
         snapped_dims = list()
         for dim in dims:

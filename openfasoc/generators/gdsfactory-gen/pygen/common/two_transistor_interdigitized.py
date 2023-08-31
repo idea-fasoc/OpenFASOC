@@ -5,11 +5,15 @@ from pygen.fet import nmos, pmos, multiplier
 from pygen.pdk.util.comp_utils import evaluate_bbox
 from typing import Literal, Union
 from pygen.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list
+from pygen.pdk.util.comp_utils import prec_ref_center
 from pygen.routing.straight_route import straight_route
 from gdsfactory.functions import transformed
 from pygen.guardring import tapring
 from pygen.pdk.util.port_utils import add_ports_perimeter
+from gdsfactory.cell import clear_cache
 
+
+#from pygen.common.two_transistor_interdigitized import two_nfet_interdigitized; from pygen.pdk.sky130_mapped import sky130_mapped_pdk as pdk; biasParams=[6,2,4]; rmult=2
 
 @validate_arguments
 def two_transistor_interdigitized(pdk: MappedPDK,
@@ -43,14 +47,15 @@ def two_transistor_interdigitized(pdk: MappedPDK,
     center_devA = multiplier(**kwargs)
     devB_sd_extension = pdk.util_max_metal_seperation() + abs(center_devA.ports["drain_N"].center[1]-center_devA.ports["diff_N"].center[1])
     devB_gate_extension = pdk.util_max_metal_seperation() + abs(center_devA.ports["row0_col0_gate_S"].center[1]-center_devA.ports["gate_S"].center[1])
-    kwargs["sd_route_extension"] = devB_sd_extension
-    kwargs["gate_route_extension"] = devB_gate_extension
+    kwargs["sd_route_extension"] = pdk.snap_to_2xgrid(devB_sd_extension)
+    kwargs["gate_route_extension"] = pdk.snap_to_2xgrid(devB_gate_extension)
     center_devB = multiplier(**kwargs)
     kwargs["dummy"] = (False,True) if dummy[1] else False
     rightmost_devB = multiplier(**kwargs)
     # place devices
     idplace = Component()
     dims = evaluate_bbox(center_devA)
+    xdisp = pdk.snap_to_2xgrid(dims[0]+pdk.get_grule("active_diff")["min_separation"])
     refs = list()
     for i in range(2*numcols):
         if i==0:
@@ -61,10 +66,11 @@ def two_transistor_interdigitized(pdk: MappedPDK,
             refs.append(idplace << center_devB)
         else: # not i%2 == i is even (so device A)
             refs.append(idplace << center_devA)
-        refs[-1].movex(i*(dims[0]+pdk.get_grule("active_diff")["min_separation"]))
+        refs[-1].movex(i*(xdisp))
         devletter = "B" if i%2 else "A"
         prefix=devletter+"_"+str(int(i/2))+"_"
         idplace.add_ports(refs[-1].get_ports_list(), prefix=prefix)
+    #issue somehwere before line 89
     # merge s/d layer for all transistors
     idplace << straight_route(pdk, refs[0].ports["plusdoped_W"],refs[-1].ports["plusdoped_E"])
     # create s/d/gate connections extending over entire row
@@ -78,7 +84,7 @@ def two_transistor_interdigitized(pdk: MappedPDK,
     prefixes = ["A_source","B_source","A_drain","B_drain","A_gate","B_gate"]
     for i, ref in enumerate([A_src, B_src, A_drain, B_drain, A_gate, B_gate]):
         idplace.add_ports(ref.get_ports_list(),prefix=prefixes[i])
-    idplace = transformed(idplace.ref_center())
+    idplace = transformed(prec_ref_center(idplace))
     idplace.unlock()
     return idplace
 
