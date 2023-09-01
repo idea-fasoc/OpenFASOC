@@ -400,7 +400,9 @@ def process_spice_testbench(testbench: Union[str,Path], temperature_info: tuple[
 	with open(testbench, "w") as spice_file:
 		spice_file.write(spicetb)
 
-def __run_single_brtfrc(pdk, index, parameters_ele, save_gds_dir, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, output_dir: Optional[Union[int,str,Path]] = None):
+def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, output_dir: Optional[Union[int,str,Path]] = None):
+	# pass pdk as global var to avoid pickling issues
+	global pdk
 	# generate layout
 	destination_gds_copy = save_gds_dir / (str(index)+".gds")
 	sky130pdk = pdk
@@ -464,24 +466,27 @@ def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.
 	# run layout, extraction, sim
 	save_gds_dir = Path('./save_gds_by_index').resolve()
 	save_gds_dir.mkdir(parents=True)
+	# pass pdk as global var to avoid pickling issues
+	global pdk
+	pdk = sky130pdk
 	with Pool(120) as cores:
 		if saverawsims:
-			results = np.array(cores.starmap(__run_single_brtfrc, zip(repeat(sky130pdk), count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info), repeat(cload), repeat(noparasitics), count(0))),np.float64)
+			results = np.array(cores.starmap(__run_single_brtfrc, zip(count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info), repeat(cload), repeat(noparasitics), count(0))),np.float64)
 		else:
-			results = np.array(cores.starmap(__run_single_brtfrc, zip(repeat(sky130pdk), count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info), repeat(cload), repeat(noparasitics))),np.float64)
+			results = np.array(cores.starmap(__run_single_brtfrc, zip(count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info), repeat(cload), repeat(noparasitics))),np.float64)
 	# undo pdk modification
 	sky130pdk.default_decorator = add_npc_decorator
 	return results
 
 # data gathering main function
-def get_training_data(test_mode: bool=True, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, parameter_array: Optional[np.array]=None) -> None:
+def get_training_data(test_mode: bool=True, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, parameter_array: Optional[np.array]=None, saverawsims=False) -> None:
 	if temperature_info[1] != "normal model" and temperature_info[1] != "cryo model":
 		raise ValueError("model must be one of \"normal model\" or \"cryo model\"")
 	if parameter_array is None:
 		params = get_small_parameter_list(test_mode)
 	else:
 		params = parameter_array
-	results = brute_force_full_layout_and_PEXsim(pdk, params, temperature_info, cload=cload, noparasitics=noparasitics)
+	results = brute_force_full_layout_and_PEXsim(pdk, params, temperature_info, cload=cload, noparasitics=noparasitics,saverawsims=saverawsims)
 	np.save("training_params.npy",params)
 	np.save("training_results.npy",results)
 
@@ -493,7 +498,7 @@ def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: 
 	saves opamp gds in current directory with name 12345678987654321.gds
 	returns -987.654321 for all values IF phase margin < 45
 	"""
-	from pygen.pdk.sky130_mapped import sky130_mapped_pdk as pdk
+	from pygen.pdk.sky130_mapped import sky130_mapped_pdk
 	# process temperature info
 	temperature_info = [temp, None]
 	if temperature_info[0] > -20:
@@ -506,7 +511,10 @@ def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: 
 	# run single build
 	save_gds_dir = Path('./').resolve()
 	index = 12345678987654321
-	results = __run_single_brtfrc(pdk, index, parameters, temperature_info=temperature_info, save_gds_dir=save_gds_dir, output_dir=output_dir, cload=cload, noparasitics=noparasitics)
+	# pass pdk as global var to avoid pickling issues
+	global pdk
+	pdk = sky130_mapped_pdk
+	results = __run_single_brtfrc(index, parameters, temperature_info=temperature_info, save_gds_dir=save_gds_dir, output_dir=output_dir, cload=cload, noparasitics=noparasitics)
 	results = opamp_results_de_serializer(results)
 	if results["phaseMargin"] < 45:
 		for key in results:
@@ -938,6 +946,7 @@ if __name__ == "__main__":
 
 	elif args.mode=="get_training_data":
 		# Call the get_training_data function with test_mode flag
+		parameter_array = None
 		if args.nparray is not None:
 			parameter_array = Path(args.nparray).resolve()
 			assert(parameter_array.is_file())

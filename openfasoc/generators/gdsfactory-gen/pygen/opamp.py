@@ -288,7 +288,7 @@ def __add_common_source_Pamp_and_finish_pcomps(pdk: MappedPDK, pmos_comps: Compo
     nwell_points = get_padding_points_cc(nwellbbox, default=nwellspacing, pdk_for_snap2xgrid=pdk)
     pmos_comps.add_polygon(nwell_points, layer=pdk.get_glayer("nwell"))
     tapcenter_rect = [(evaluate_bbox(pmos_comps)[0] + 1), (evaluate_bbox(pmos_comps)[1] + 1)]
-    topptap = prec_ref_center(tapring(pdk, tapcenter_rect, "p+s/d"),destination=pmos_comps.center)
+    topptap = prec_ref_center(tapring(pdk, tapcenter_rect, "p+s/d"),destination=tuple(pmos_comps.center))
     pmos_comps.add(topptap)
     pmos_comps.add_ports(topptap.get_ports_list(),prefix="top_ptap_")
     return pmos_comps
