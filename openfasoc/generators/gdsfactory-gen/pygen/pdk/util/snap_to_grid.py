@@ -32,7 +32,8 @@ def component_snap_to_grid(comp: Component, nm: Optional[int]=None) -> Component
 	save_name = comp.name
 	with TemporaryDirectory() as tmpdirname:
 		tmp_gds_path = Path(comp.write_gds(gdsdir=tmpdirname)).resolve()
-		comp = import_gds(gdspath=tmp_gds_path).copy()
+		comp = import_gds(gdspath=tmp_gds_path)
+		comp.unlock()
 	comp.add_ports(save_ports)
 	comp.name = save_name
 	return comp

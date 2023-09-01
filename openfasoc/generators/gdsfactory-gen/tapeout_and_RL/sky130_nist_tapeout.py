@@ -242,30 +242,32 @@ def opamp_results_serializer(
 	ugb: float = -987.654321,
 	dcGain: float = -987.654321,
 	phaseMargin: float = -987.654321,
-	biasVoltage1: float = -987.654321,
-	biasVoltage2: float = -987.654321,
+	Ibias_diffpair: float = -987.654321,
+	Ibias_commonsource: float = -987.654321,
+	Ibias_output: float = -987.654321,
 	area: float = -987.654321,
 	power: float = -987.654321,
 	noise: float = -987.654321
 ) -> np.array:
-	return np.array([ugb, dcGain, phaseMargin, biasVoltage1, biasVoltage2, area, power, noise], dtype=np.float64)
+	return np.array([ugb, dcGain, phaseMargin, Ibias_diffpair, Ibias_commonsource, Ibias_output, area, power, noise], dtype=np.float64)
 
 def opamp_results_de_serializer(
 	results: Optional[np.array]=None
 ) -> dict:
 	if results is None:
-		results = 8*[-987.654321]
-	if not len(results) == 8:
-		raise ValueError("results should be a length 5 array")
+		results = 9*[-987.654321]
+	if not len(results) == 9:
+		raise ValueError("results should be a length 9 array")
 	results_dict = dict()
 	results_dict["ugb"] = float(results[0])
 	results_dict["dcGain"] = float(results[1])
 	results_dict["phaseMargin"] = float(results[2])
-	results_dict["biasVoltage1"] = float(results[3])
-	results_dict["biasVoltage2"] = float(results[4])
-	results_dict["area"] = float(results[5])
-	results_dict["power"] = float(results[6])
-	results_dict["noise"] = float(results[7])
+	results_dict["Ibias_diffpair"] = float(results[3])
+	results_dict["Ibias_commonsource"] = float(results[4])
+	results_dict["Ibias_output"] = float(results[5])
+	results_dict["area"] = float(results[6])
+	results_dict["power"] = float(results[7])
+	results_dict["noise"] = float(results[8])
 	return results_dict
 
 def get_small_parameter_list(test_mode = False) -> np.array:
@@ -342,10 +344,11 @@ def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath:
 	nonoiseresults = NoiseColumns is None or len(NoiseColumns)<2
 	return_dict = {
 		"ugb": na if noACresults else ACColumns[1],
-		"biasVoltage1": na if noACresults else ACColumns[3],
-		"biasVoltage2": na if noACresults else ACColumns[5],
-		"phaseMargin": na if noACresults else ACColumns[7],
-		"dcGain": na if noACresults else ACColumns[9],
+		"Ibias_diffpair": na if noACresults else ACColumns[3],
+		"Ibias_commonsource": na if noACresults else ACColumns[5],
+		"Ibias_output": na if noACresults else ACColumns[7],
+		"phaseMargin": na if noACresults else ACColumns[9],
+		"dcGain": na if noACresults else ACColumns[11],
 		"power": na if noDCresults else DCColumns[1],
 		"noise": na if nonoiseresults else NoiseColumns[1]
 	}
@@ -406,35 +409,39 @@ def __run_single_brtfrc(pdk, index, parameters_ele, save_gds_dir, temperature_in
 	area = float(opamp_v.area())
 	# use temp dir
 	with TemporaryDirectory() as tmpdirname:
-		tmp_gds_path = Path(opamp_v.write_gds(gdsdir=tmpdirname)).resolve()
-		if tmp_gds_path.is_file():
-			destination_gds_copy.write_bytes(tmp_gds_path.read_bytes())
-		copyfile("extract.bash",str(tmpdirname)+"/extract.bash")
-		copyfile("opamp_perf_eval.sp",str(tmpdirname)+"/opamp_perf_eval.sp")
-		copytree("sky130A",str(tmpdirname)+"/sky130A")
-		# extract layout
-		Popen(["bash","extract.bash", tmp_gds_path, opamp_v.name],cwd=tmpdirname).wait()
-		print("Running simulation at temperature: " + str(temperature_info[0]) + "C")
-		process_spice_testbench(str(tmpdirname)+"/opamp_perf_eval.sp",temperature_info=temperature_info)
-		process_netlist_subckt(str(tmpdirname)+"/opamp_pex.spice", temperature_info[1], cload=cload, noparasitics=noparasitics)
-		# run sim and store result
-		Popen(["ngspice","-b","opamp_perf_eval.sp"],cwd=tmpdirname).wait()
-		ac_file = str(tmpdirname)+"/result_ac.txt"
-		power_file = str(tmpdirname)+"/result_power.txt"
-		noise_file = str(tmpdirname)+"/result_noise.txt"
-		result_dict = get_sim_results(ac_file, power_file, noise_file)
-		result_dict["area"] = area
-		results = opamp_results_serializer(**result_dict)
-		if output_dir:
-			if isinstance(output_dir, int):
-				output_dir = save_gds_dir / (str(output_dir)+"_dir")
-				output_dir = Path(output_dir).resolve()
-			else:
-				output_dir = Path(output_dir).resolve()
-			output_dir.mkdir(parents=True, exist_ok=True)
-			if not output_dir.is_dir():
-				raise ValueError("Output directory must be a directory")
-			copytree(str(tmpdirname), str(output_dir)+"/test_output", dirs_exist_ok=True)
+		results=None
+		try:
+			tmp_gds_path = Path(opamp_v.write_gds(gdsdir=tmpdirname)).resolve()
+			if tmp_gds_path.is_file():
+				destination_gds_copy.write_bytes(tmp_gds_path.read_bytes())
+			copyfile("extract.bash",str(tmpdirname)+"/extract.bash")
+			copyfile("opamp_perf_eval.sp",str(tmpdirname)+"/opamp_perf_eval.sp")
+			copytree("sky130A",str(tmpdirname)+"/sky130A")
+			# extract layout
+			Popen(["bash","extract.bash", tmp_gds_path, opamp_v.name],cwd=tmpdirname).wait()
+			print("Running simulation at temperature: " + str(temperature_info[0]) + "C")
+			process_spice_testbench(str(tmpdirname)+"/opamp_perf_eval.sp",temperature_info=temperature_info)
+			process_netlist_subckt(str(tmpdirname)+"/opamp_pex.spice", temperature_info[1], cload=cload, noparasitics=noparasitics)
+			# run sim and store result
+			Popen(["ngspice","-b","opamp_perf_eval.sp"],cwd=tmpdirname).wait()
+			ac_file = str(tmpdirname)+"/result_ac.txt"
+			power_file = str(tmpdirname)+"/result_power.txt"
+			noise_file = str(tmpdirname)+"/result_noise.txt"
+			result_dict = get_sim_results(ac_file, power_file, noise_file)
+			result_dict["area"] = area
+			results = opamp_results_serializer(**result_dict)
+			if output_dir:
+				if isinstance(output_dir, int):
+					output_dir = save_gds_dir / (str(output_dir)+"_dir")
+					output_dir = Path(output_dir).resolve()
+				else:
+					output_dir = Path(output_dir).resolve()
+				output_dir.mkdir(parents=True, exist_ok=True)
+				if not output_dir.is_dir():
+					raise ValueError("Output directory must be a directory")
+				copytree(str(tmpdirname), str(output_dir)+"/test_output", dirs_exist_ok=True)
+		except Exception:
+			results = opamp_results_serializer()
 		return results
 
 
@@ -480,7 +487,7 @@ def get_training_data(test_mode: bool=True, temperature_info: tuple[int,str]=(25
 
 
 #util function for pure simulation. sky130 is imported automatically
-def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: Optional[Union[str,Path]] = None, cload: float=0.0, noparasitics: bool=False) -> np.array:
+def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: Optional[Union[str,Path]] = None, cload: float=0.0, noparasitics: bool=False) -> dict:
 	"""Builds, extract, and simulates a single opamp
 	saves opamp gds in current directory with name 12345678987654321.gds
 	returns -987.654321 for all values IF phase margin < 45
@@ -971,4 +978,5 @@ if __name__ == "__main__":
 			"mim_cap_rows": 3,
 			"rmult": 2
 		}
-		single_build_and_simulation(opamp_parameters_serializer(**params), temperature_info[0], args.output_dir, cload=args.cload, noparasitics=args.noparasitics)
+		results = single_build_and_simulation(opamp_parameters_serializer(**params), temperature_info[0], args.output_dir, cload=args.cload, noparasitics=args.noparasitics)
+		print(results)

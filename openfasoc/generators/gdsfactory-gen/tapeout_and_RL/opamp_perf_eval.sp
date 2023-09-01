@@ -2,32 +2,29 @@
 ** OpenFASOC Team, Ryan Wans 2023
 
 ** IMPORTANT:   Temperature setting is added automatically in the reading
-**              of this file on line 6 as {@@TEMP}. DO NOT OVERRIDE.
+**              of this file on line 6 as 25. DO NOT OVERRIDE.
 .temp {@@TEMP}
 
+.save all
 ** Define global parameters for altering
 .param bdp = 5u
 .param bcs = 5u
-.param bo = 5u
+.param bo  = 5u
 
 ** Define netlist
 Vsupply VDD GND 1.8
-.save i(vsupply)
+Vindc net1 GND 0.9
 V2 vin net1 AC 0.5
-.save i(v2)
 V3 vip net1 AC -0.5
+.save i(vindc)
+.save i(vsupply)
+.save i(v2)
 .save i(v3)
 
 * bias currents
-Ibiasdp biasdpn GND {bdp}
-*.save i(vbias2)
-Ibiascs biascsn GND {bcs}
-*.save i(vbias1)
-Ibiaso biason GND {bo}
-
-Vindc net1 GND 1
-.save i(vindc)
-
+Ibiasdp VDD biasdpn  {bdp}
+Ibiascs VDD biascsn  {bcs}
+Ibiaso  VDD biason   {bo}
 
 ** Import SKY130 libs (this should be replaced with a path relative to some env variable)
 * the ones with double * will not be used. The one with only 1 * will be used
@@ -60,27 +57,38 @@ set filetype = ascii
 let maxUGB = -1
 let maxBics = -1
 let maxBidp = -1
+let maxBio = -1
 let savedPhaseMargin = -1
 let savedDCGain = -1
-** Tune these
-let biasCurrentMin = 5u
-let biasCurrentMax = 100u
-let biasCurrentStep = 10u
-let biasCurrent_cs = biasCurrentMin
-let biasCurrent_dp = biasCurrentMin
-let biasCurrent_o = biasCurrentMin
-* print loop number so user gets an idea of progress / time remaining
+
+let bias_dp_Min  = 30u
+let bias_dp_Max  = 170u
+let bias_dp_Step = 15u
+let bias_cs_Min  = 80u
+let bias_cs_Max  = 150u
+let bias_cs_Step = 10u
+let bias_o_Min   = 100u
+let bias_o_Max   = 500u
+let bias_o_Step  = 60u
+let bias_dp = bias_dp_Min
+let bias_cs = bias_cs_Min
+let bias_o  = bias_o_Min
+
 let absolute_counter = 0
+
 ** Sweep bias voltages
-while biasCurrent_cs le biasCurrentMax
-    ** Alter parameters and reset top-level ckt
-    alterparam bcs = $&biasCurrent_cs
-    reset
-    while biasCurrent_dp le biasCurrentMax
-        alterparam bdp = $&biasCurrent_dp
-        reset
-        while biasCurrent_o le biasCurrentMax
-            ** Run analysis
+while bias_cs le bias_cs_Max
+    while bias_dp le bias_dp_Max
+        while bias_o le bias_o_Max
+            reset
+            alter ibiascs = $&bias_cs
+            alter ibiasdp = $&bias_dp
+            alter ibiaso  = $&bias_o
+            echo  "-- Run # $&absolute_counter -- "
+            echo "CS:   $&bias_cs"
+            echo "Diff: $&bias_dp"
+            echo "Out:  $&bias_o"
+        
             run
             ** Find unity-gain bw point
             meas ac ugb_f when vdb(vo)=0
@@ -92,31 +100,31 @@ while biasCurrent_cs le biasCurrentMax
             ** Find local maxima
             if ( ugb_f ge maxUGB )
                 let maxUGB = ugb_f
-                let maxBics = biasCurrent_cs
-                let maxBidp = biasCurrent_dp
+                let maxBics = bias_cs
+                let maxBidp = bias_dp
+                let maxBio = bias_o
                 let savedPhaseMargin = pm % 360
                 let savedDCGain = dcg
             end
-            * print loop number
-            echo "loop number: $&absolute_counter"
+
             let absolute_counter = absolute_counter + 1
-            * increment output bias current
-            let biasCurrent_o = biasCurrent_o + biasCurrentStep
+            let bias_o = bias_o + bias_o_Step
         end
         ** Reset biasCurrent_o for next value of biasCurrent_dp
-        let biasCurrent_o = biasCurrentMin
-        let biasCurrent_dp = biasCurrent_dp + biasCurrentStep
+        let bias_o = bias_o_Min
+        let bias_dp = bias_dp + bias_dp_Step
     end
     ** Reset biasCurrent_dp for next value of biasCurrent_cs
-    let biasCurrent_dp = biasCurrentMin
-    let biasCurrent_cs = biasCurrent_cs + biasCurrentStep
+    let bias_dp = bias_dp_Min
+    let bias_cs = bias_cs + bias_cs_Step
 end
 ** Export global maxima
-wrdata result_ac.txt maxUGB maxBics maxBidp savedPhaseMargin savedDCGain
+wrdata result_ac.txt maxUGB maxBidp maxBics maxBio savedPhaseMargin savedDCGain
 
 ** Export power usage of opamp w/ best gain
 alterparam bcs = $&maxBics
 alterparam bdp = $&maxBidp
+alterparam bo = $&maxBio
 reset
 run
 meas ac maxDraw max i(vsupply)
