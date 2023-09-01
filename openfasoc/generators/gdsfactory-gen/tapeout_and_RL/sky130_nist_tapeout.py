@@ -279,7 +279,7 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 		diffpairs.append((5,1,4))
 	else:
 		for width in [3,6,9]:
-			for length in [0.3,1, 2]:
+			for length in [1, 2]:
 				for fingers in [2,4,6]:
 					diffpairs.append((width,length,fingers))
 	# all bias2 (output amp bias) transistors
@@ -289,7 +289,7 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 	else:
 		for width in [6]:
 			for length in [1]:
-				for fingers in [2,4,6]:
+				for fingers in [4,6]:
 					for mults in [1,2,3]:
 						bias2s.append((width,length,fingers,mults))
 	# all output pmos transistors
