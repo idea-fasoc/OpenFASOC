@@ -280,30 +280,31 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 	else:
 		for width in [3,6,9]:
 			for length in [0.3,1, 2]:
-				for fingers in [2,6]:
+				for fingers in [2,4,6]:
 					diffpairs.append((width,length,fingers))
 	# all bias2 (output amp bias) transistors
 	bias2s = list()
 	if test_mode:
 		bias2s.append((6,1,4,3))
 	else:
-		for width in [3,6,9]:
+		for width in [6]:
 			for length in [1]:
-				for fingers in [2,6]:
-					bias2s.append((width,length,fingers,3))
+				for fingers in [2,4,6]:
+					for mults in [1,2,3]:
+						bias2s.append((width,length,fingers,mults))
 	# all output pmos transistors
 	pamp_hparams = list()
 	if test_mode:
 		pamp_hparams.append((7,1,8,3))
 	else:
-		for width in [4,7,10]:
-			for length in [0.3,1,2]:
-				for fingers in [6,14]:
+		for width in [7,4]:
+			for length in [1,2]:
+				for fingers in [8,14]:
 					pamp_hparams.append((width,length,fingers,3))
 	# rows of the cap array to try
-	cap_arrays = [2,3]
+	cap_arrays = [1,2,3]
 	# routing mults to try
-	rmults = [1,2]
+	rmults = [2]
 	# ******************************************
 	# create and return the small parameters list
 	short_list_len = len(diffpairs) * len(bias2s) * len(pamp_hparams) * len(cap_arrays) * len(rmults)
