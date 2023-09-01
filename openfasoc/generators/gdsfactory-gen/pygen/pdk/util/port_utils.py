@@ -228,7 +228,6 @@ def print_ports(custom_comp: Union[Component, ComponentReference], names_only: O
             print()
 
 
-
 class PortTree:
 	"""PortTree helps a pygen programmer visualize the ports in a component
 	\"_\" should represent a level of hiearchy (much like a directory). think of this like psuedo directories

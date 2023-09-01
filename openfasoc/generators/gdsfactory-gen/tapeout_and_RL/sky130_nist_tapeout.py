@@ -407,13 +407,13 @@ def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: t
 	destination_gds_copy = save_gds_dir / (str(index)+".gds")
 	sky130pdk = pdk
 	params = opamp_parameters_de_serializer(parameters_ele)
-	opamp_v = sky130_add_opamp_labels(sky130_add_lvt_layer(opamp(sky130pdk, **params)))
-	opamp_v.name = "opamp"
-	area = float(opamp_v.area())
-	# use temp dir
-	with TemporaryDirectory() as tmpdirname:
-		results=None
-		try:
+	try:
+		opamp_v = sky130_add_opamp_labels(sky130_add_lvt_layer(opamp(sky130pdk, **params)))
+		opamp_v.name = "opamp"
+		area = float(opamp_v.area())
+		# use temp dir
+		with TemporaryDirectory() as tmpdirname:
+			results=None
 			tmp_gds_path = Path(opamp_v.write_gds(gdsdir=tmpdirname)).resolve()
 			if tmp_gds_path.is_file():
 				destination_gds_copy.write_bytes(tmp_gds_path.read_bytes())
@@ -435,7 +435,7 @@ def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: t
 			results = opamp_results_serializer(**result_dict)
 			if output_dir:
 				if isinstance(output_dir, int):
-					output_dir = save_gds_dir / (str(output_dir)+"_dir")
+					output_dir = save_gds_dir / ("dir_"+str(output_dir))
 					output_dir = Path(output_dir).resolve()
 				else:
 					output_dir = Path(output_dir).resolve()
@@ -443,9 +443,11 @@ def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: t
 				if not output_dir.is_dir():
 					raise ValueError("Output directory must be a directory")
 				copytree(str(tmpdirname), str(output_dir)+"/test_output", dirs_exist_ok=True)
-		except Exception:
-			results = opamp_results_serializer()
-		return results
+	except Exception as e_LorA:
+		results = opamp_results_serializer()
+		with open('get_training_data_ERRORS.log', 'a') as errlog:
+			errlog.write("\nopamp run "+str(index)+" with the following params failed: \n"+str(params))
+	return results
 
 
 def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.array, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, saverawsims: bool=False) -> np.array:
