@@ -61,15 +61,21 @@ let maxBio = -1
 let savedPhaseMargin = -1
 let savedDCGain = -1
 
+* dp and cs bias log step
+let linear_step_until = 100u
+let linear_step_default = 20u
 let bias_dp_Min  = 10u
-let bias_dp_Max  = 300u
-let bias_dp_Step = 12u
+let bias_dp_Max  = 2000u
+let bias_dp_logStep = 1.2
 let bias_cs_Min  = 70u
-let bias_cs_Max  = 500u
-let bias_cs_Step = 16u
+let bias_cs_Max  = 2000u
+let bias_cs_logStep = 1.12
+
+* output bias linear step
 let bias_o_Min   = 93.5u
 let bias_o_Max   = 94u
 let bias_o_Step  = 2u
+
 let bias_dp = bias_dp_Min
 let bias_cs = bias_cs_Min
 let bias_o  = bias_o_Min
@@ -112,11 +118,19 @@ while bias_cs le bias_cs_Max
         end
         ** Reset biasCurrent_o for next value of biasCurrent_dp
         let bias_o = bias_o_Min
-        let bias_dp = bias_dp + bias_dp_Step
+        if ( linear_step_until ge bias_dp )
+            let bias_dp = bias_dp + linear_step_default
+        else
+            let bias_dp = bias_dp * bias_dp_logStep
+        end
     end
     ** Reset biasCurrent_dp for next value of biasCurrent_cs
     let bias_dp = bias_dp_Min
-    let bias_cs = bias_cs + bias_cs_Step
+    if ( linear_step_until ge bias_cs )
+        let bias_cs = bias_cs + linear_step_default
+    else
+        let bias_cs = bias_cs * bias_cs_logStep
+    end
 end
 ** Export global maxima
 wrdata result_ac.txt maxUGB maxBidp maxBics maxBio savedPhaseMargin savedDCGain

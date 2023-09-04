@@ -295,7 +295,7 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 		for width in [6]:
 			for length in [1,2]:
 				for fingers in [4,6]:
-					for mults in [1,2,3]:
+					for mults in [2,3]:
 						bias2s.append((width,length,fingers,mults))
 	# all output pmos transistors
 	pamp_hparams = list()
@@ -340,15 +340,27 @@ def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath:
 	acabspath = Path(acpath).resolve()
 	dcabspath = Path(dcpath).resolve()
 	noiseabspath = Path(noisepath).resolve()
-	with open(acabspath, "r") as ACReport:
-		RawAC = ACReport.readlines()[0]
-		ACColumns = [item for item in RawAC.split() if item]
-	with open(dcabspath, "r") as DCReport:
-		RawDC = DCReport.readlines()[0]
-		DCColumns = [item for item in RawDC.split() if item]
-	with open(noiseabspath, "r") as NoiseReport:
-		RawNoise = NoiseReport.readlines()[0]
-		NoiseColumns = [item for item in RawNoise.split() if item]
+	ACColumns = None
+	DCColumns = None
+	NoiseColumns = None
+	try:
+		with open(acabspath, "r") as ACReport:
+			RawAC = ACReport.readlines()[0]
+			ACColumns = [item for item in RawAC.split() if item]
+	except Exception:
+		pass
+	try:
+		with open(dcabspath, "r") as DCReport:
+			RawDC = DCReport.readlines()[0]
+			DCColumns = [item for item in RawDC.split() if item]
+	except Exception:
+		pass
+	try:
+		with open(noiseabspath, "r") as NoiseReport:
+			RawNoise = NoiseReport.readlines()[0]
+			NoiseColumns = [item for item in RawNoise.split() if item]
+	except Exception:
+		pass
 	na = -987.654321
 	noACresults = ACColumns is None or len(ACColumns)<9
 	noDCresults = DCColumns is None or len(DCColumns)<2
@@ -443,7 +455,7 @@ def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: t
 			result_dict = get_sim_results(ac_file, power_file, noise_file)
 			result_dict["area"] = area
 			results = opamp_results_serializer(**result_dict)
-			if output_dir:
+			if output_dir is not None:
 				if isinstance(output_dir, int):
 					output_dir = save_gds_dir / ("dir_"+str(output_dir))
 					output_dir = Path(output_dir).resolve()
@@ -901,6 +913,9 @@ def extract_stats(
 
 
 if __name__ == "__main__":
+	import time
+	start_watch = time.time()
+
 	parser = argparse.ArgumentParser(description="sky130 nist tapeout sample, RL generation, and statistics utility.")
 	subparsers = parser.add_subparsers(title="mode", required=True, dest="mode")
 
@@ -915,7 +930,7 @@ if __name__ == "__main__":
 	get_training_data_parser.add_argument("--temp", type=int, default=int(25), help="Simulation temperature")
 	get_training_data_parser.add_argument("--cload", type=float, default=float(0), help="run simulation with load capacitance units=pico Farads")
 	get_training_data_parser.add_argument("--noparasitics",action="store_true",help="specify that parasitics should be removed when simulating")
-	get_training_data_parser.add_argument("--nparray",default=None,help="overrides the test parameters and takes the ones you provide (file path to .npy file)")
+	get_training_data_parser.add_argument("--nparray",default=None,help="overrides the test parameters and takes the ones you provide (file path to .npy file).\n\tMUST HAVE LEN > 1")
 	get_training_data_parser.add_argument("--saverawsims",action="store_true",help="specify that the raw simulation directories should be saved (default saved under save_gds_by_index/...)")
 
 	# Subparser for gen_opamp mode
@@ -943,13 +958,13 @@ if __name__ == "__main__":
 	create_opamp_matrix_parser = subparsers.add_parser("create_opamp_matrix", help="create a matrix of opamps")
 	create_opamp_matrix_parser.add_argument("-p", "--params", default="training_params.npy", help="File path for params (default: training_params.npy)")
 	create_opamp_matrix_parser.add_argument("-r", "--results", default="training_results.npy", help="File path for results (default: training_results.npy)")
-	specfilehelp = "File path for a specfile. The specfile is a txt file where each line represents indices to extract\n"
-	specfilehelp += "\tthe first word in each line is taken as a name (everything before the first space)"
-	specfilehelp += "\teverything after the first space should be a list of integer indices. The list should be space seperated (with no chars denoting start or end)"
-	specfilehelp += "\tonly place a new line at the end of the list. lines are read as a single spec"
-	specfilehelp += "\tleaving this field empty indicates all opamps should be placed in the array"
+	specfilehelp = "File path for a specfile. The specfile is a txt file where each line represents indices to extract.  "
+	specfilehelp += "The first word in each line is taken as a name (everything before the first space).  "
+	specfilehelp += "Everything after the first space should be a list of integer indices. The list should be space seperated (with no chars denoting start or end).  "
+	specfilehelp += "Only place a new line at the end of the list. Lines are read as a single spec.  "
+	specfilehelp += "Leaving this field empty indicates all opamps should be placed in the array.  "
 	create_opamp_matrix_parser.add_argument("--specfile", type=Path, help=specfilehelp)
-	create_opamp_matrix_parser.add_argument("--opamp_dir",default="./save_gds_by_index",help="optionally point to a path, program looks for \{index\}.gds")
+	create_opamp_matrix_parser.add_argument("--opamp_dir",default="./save_gds_by_index",help="optionally point to a directory, program looks for 'index'.gds")
 
 	args = parser.parse_args()
 
@@ -1017,3 +1032,6 @@ if __name__ == "__main__":
 
 	elif args.mode =="create_opamp_matrix":
 		raise NotImplementedError("create_opamp_matrix mode is not yet implemented")
+	
+	end_watch = time.time()
+	print("\ntotal runtime was "+str((end_watch-start_watch)/3600) + " hours\n")

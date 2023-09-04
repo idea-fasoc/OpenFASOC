@@ -489,7 +489,7 @@ def opamp(
     diffpair_params = diffpair (width,length,fingers)
     diffpair_bias = bias transistor for diffpair nmos (width,length,fingers). The ref and output of the cmirror are identical
     half_common_source_params = pmos top component amp (width,length,fingers,mults)
-    half_common_source_bias = bottom L/R large nmos current mirror (width,length,fingers,mults). The ref of the cmirror always has 1 multplier.
+    half_common_source_bias = bottom L/R large nmos current mirror (width,length,fingers,mults). The ref of the cmirror always has 1 multplier. multiplier must be >=2
     ****NOTE: change the multiplier option to change the relative sizing of the current mirror ref/output
     output_stage_amp_params = output amplifier transistor params (width, length, fingers)
     output_stage_bias = output amplifier current mirror params (width, length, fingers). The ref and output of the cmirror are identical
@@ -497,6 +497,10 @@ def opamp(
     mim_cap_rows = number of rows in the mimcap array (always 2 cols)
     rmult = routing multiplier (larger = wider routes)
     """
+    # error checks
+    if half_common_source_bias[3] < 2:
+        raise ValueError("half_common_source_bias num multiplier must be >= 2")
+    # create opamp top component
     _max_metal_seperation_ps = pdk.util_max_metal_seperation()
     opamp_top = Component()
     # place nmos components
