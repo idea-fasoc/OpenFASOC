@@ -380,8 +380,11 @@ def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap
     port2 = mimcaps_ref.ports["row"+str(int(mim_cap_rows)-1)+"_col0_bottom_met_N"]
     cref2_extension = max_metalsep + opamp_top.ymax - max(port1.center[1], port2.center[1])
     opamp_top << c_route(pdk,port1,port2, extension=cref2_extension, fullbottom=True)
-    opamp_top << L_route(pdk, mimcaps_ref.ports["row0_col0_top_met_S"], set_port_orientation(n_to_p_output_route.ports["con_S"],"E"), hwidth=3)
+    intermediate_output = set_port_orientation(n_to_p_output_route.ports["con_S"],"E")
+    opamp_top << L_route(pdk, mimcaps_ref.ports["row0_col0_top_met_S"], intermediate_output, hwidth=3)
     opamp_top.add_ports(mimcaps_ref.get_ports_list(),prefix="mimcap_")
+    # add the cs output as a port
+    opamp_top.add_port(name="commonsource_output_E", port=intermediate_output)
     return opamp_top
 
 
@@ -520,7 +523,7 @@ def opamp(
     pmos_comps = __add_common_source_Pamp_and_finish_pcomps(pdk, pmos_comps, half_common_source_params, rmult)
     ydim_ncomps = opamp_top.ymax
     pmos_comps_ref = opamp_top << pmos_comps
-    pmos_comps_ref.movey(round(ydim_ncomps + pmos_comps_ref.ymax+8))
+    pmos_comps_ref.movey(round(ydim_ncomps + pmos_comps_ref.ymax+10))
     opamp_top.add_ports(pmos_comps_ref.get_ports_list(),prefix="pcomps_")
     rename_func = lambda name_, port_ : name_.replace("pcomps_halfpspecialmarker","commonsource_Pamp") if name_.startswith("pcomps_halfpspecialmarker") else name_
     opamp_top = rename_component_ports(opamp_top, rename_function=rename_func)

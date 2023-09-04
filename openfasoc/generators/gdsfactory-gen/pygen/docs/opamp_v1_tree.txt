@@ -160,10 +160,13 @@
         │          └[source]┤
         │                   └[routeE]─[con]
         │
-        │                              ┌[R]
-        │                        ┌[ref]┤
-        │                        │     └[L]
-        │              ┌[cmirror]┤
+        │
+        │              ┌[output]-[E]
+        │              │
+        │              │               ┌[R]
+        │              │         ┌[ref]┤
+        │              │         │     └[L]
+        │              ├[cmirror]┤
         │              │         │        ┌[R]
         │              │         └[output]┤
         │              │                  └[L]

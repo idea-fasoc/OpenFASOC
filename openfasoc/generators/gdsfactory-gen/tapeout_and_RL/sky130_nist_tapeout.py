@@ -4,7 +4,7 @@ sys.path.append('../')
 
 from gdsfactory.read.import_gds import import_gds
 from gdsfactory.components import text_freetype, rectangle
-from pygen.pdk.util.comp_utils import prec_array, movey, align_comp_to_port
+from pygen.pdk.util.comp_utils import prec_array, movey, align_comp_to_port, prec_ref_center
 from pygen.pdk.util.port_utils import add_ports_perimeter, print_ports
 from gdsfactory.component import Component
 from pygen.pdk.mappedpdk import MappedPDK
@@ -33,16 +33,15 @@ from sklearn.metrics import silhouette_score
 import argparse
 from pygen.pdk.sky130_mapped import sky130_mapped_pdk as pdk
 from itertools import count, repeat
-from pydantic import validate_arguments
 
 
 # ====Build Opamp====
 
 
-def sky130_opamp_add_pads(opamp_in: Component) -> Component:
+def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	"""adds the MPW-5 pads and nano pads to opamp.
 	Also adds text labels and pin layers so that extraction is nice
-	this function should not be used with sky130_add_opamp_labels
+	this function does not need to be used with sky130_add_opamp_labels
 	"""
 	opamp_wpads = opamp_in.copy()
 	opamp_wpads = movey(opamp_wpads, destination=0)
@@ -51,7 +50,7 @@ def sky130_opamp_add_pads(opamp_in: Component) -> Component:
 	pad.name = "mpw5pad"
 	pad = add_ports_perimeter(pad, pdk.get_glayer("met4"),prefix="pad_")
 	pad_array = prec_array(pad, rows=2, columns=(4+1), spacing=(40,120))
-	pad_array_ref = pad_array.ref_center()
+	pad_array_ref = prec_ref_center(pad_array)
 	opamp_wpads.add(pad_array_ref)
 	# add via_array to vdd pin
 	vddarray = via_array(pdk, "met4","met5",size=(opamp_wpads.ports["pin_vdd_N"].width,opamp_wpads.ports["pin_vdd_E"].width))
@@ -93,14 +92,20 @@ def sky130_opamp_add_pads(opamp_in: Component) -> Component:
 	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col0_nanopad_S"],pad_array_ref.ports["row0_col0_pad_N"],width=3)
 	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col1_nanopad_E"],pad_array_ref.ports["row0_col1_pad_N"],width=3)
 	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col1_nanopad_E"],pad_array_ref.ports["row1_col1_pad_S"],width=3)
-	#vddnanopad = opamp_wpads << nanopad
+	# add the extra pad for the CS output
+	cspadref = comp << pad
+	cspadref.movex(240).movey(80)
+	comp << L_route(pdk, cspadref.ports["pad_S"], comp.ports["commonsource_output_E"],hwidth=3, glayer1="met5",glayer2="met5")
 	#opamp_wpads << nanopad
-	return opamp_wpads.flatten()
+	if flatten:
+		return opamp_wpads.flatten()
+	else:
+		return opamp_wpads
 
 
 def sky130_add_opamp_labels(opamp_in: Component) -> Component:
 	"""adds opamp labels for extraction, without adding pads
-	this functions should not be used with sky130_add_opamp_pads
+	this function does not need to be used with sky130_add_opamp_pads
 	"""
 	opamp_in.unlock()
 	# define layers
@@ -278,7 +283,7 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 		diffpairs.append((6,1,4))
 		diffpairs.append((5,1,4))
 	else:
-		for width in [3,6,9]:
+		for width in [6,9]:
 			for length in [1, 2]:
 				for fingers in [2,4,6]:
 					diffpairs.append((width,length,fingers))
@@ -288,7 +293,7 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 		bias2s.append((6,1,4,3))
 	else:
 		for width in [6]:
-			for length in [1]:
+			for length in [1,2]:
 				for fingers in [4,6]:
 					for mults in [1,2,3]:
 						bias2s.append((width,length,fingers,mults))
@@ -302,12 +307,13 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 				for fingers in [8,14]:
 					pamp_hparams.append((width,length,fingers,3))
 	# rows of the cap array to try
-	cap_arrays = [1,2,3]
+	cap_arrays = [1,2]
 	# routing mults to try
 	rmults = [2]
 	# ******************************************
 	# create and return the small parameters list
 	short_list_len = len(diffpairs) * len(bias2s) * len(pamp_hparams) * len(cap_arrays) * len(rmults)
+	short_list_len += 2 if test_mode else 0
 	short_list = np.empty(shape=(short_list_len,len(opamp_parameters_serializer())),dtype=np.float64)
 	index = 0
 	for diffpair_v in diffpairs:
@@ -324,6 +330,10 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 						)
 						short_list[index] = tup_to_add
 						index = index + 1
+	# if test_mode create a failed attempt (to test error handling)
+	if test_mode:
+		short_list[index] = opamp_parameters_serializer(mim_cap_rows=-1)
+		short_list[index+1] = opamp_parameters_serializer(mim_cap_rows=0)
 	return short_list
 
 def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath: Union[str,Path]):
@@ -929,6 +939,18 @@ if __name__ == "__main__":
 	test.add_argument("--cload", type=float, default=float(0), help="run simulation with load capacitance units=pico Farads")
 	test.add_argument("--noparasitics",action="store_true",help="specify that parasitics should be removed when simulating")
 	
+	# Subparser for create_opamp_matrix mode
+	create_opamp_matrix_parser = subparsers.add_parser("create_opamp_matrix", help="create a matrix of opamps")
+	create_opamp_matrix_parser.add_argument("-p", "--params", default="training_params.npy", help="File path for params (default: training_params.npy)")
+	create_opamp_matrix_parser.add_argument("-r", "--results", default="training_results.npy", help="File path for results (default: training_results.npy)")
+	specfilehelp = "File path for a specfile. The specfile is a txt file where each line represents indices to extract\n"
+	specfilehelp += "\tthe first word in each line is taken as a name (everything before the first space)"
+	specfilehelp += "\teverything after the first space should be a list of integer indices. The list should be space seperated (with no chars denoting start or end)"
+	specfilehelp += "\tonly place a new line at the end of the list. lines are read as a single spec"
+	specfilehelp += "\tleaving this field empty indicates all opamps should be placed in the array"
+	create_opamp_matrix_parser.add_argument("--specfile", type=Path, help=specfilehelp)
+	create_opamp_matrix_parser.add_argument("--opamp_dir",default="./save_gds_by_index",help="optionally point to a path, program looks for \{index\}.gds")
+
 	args = parser.parse_args()
 
 	# Simulation Temperature information
@@ -992,3 +1014,6 @@ if __name__ == "__main__":
 		}
 		results = single_build_and_simulation(opamp_parameters_serializer(**params), temperature_info[0], args.output_dir, cload=args.cload, noparasitics=args.noparasitics)
 		print(results)
+
+	elif args.mode =="create_opamp_matrix":
+		raise NotImplementedError("create_opamp_matrix mode is not yet implemented")
