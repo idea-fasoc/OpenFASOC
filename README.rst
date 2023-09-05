@@ -73,6 +73,7 @@ Upgrading
 To upgrade packages used by the generators, the dependencies.sh script must be run, which can be found in the home folder of the cloned repository. 
 
 .. code-block:: bash
+
     $ sudo ./dependencies.sh # Enter 'u' on being prompted for install or upgrade
 
 Design Generation
