@@ -64,13 +64,13 @@ let savedthreedbBW = -1
 
 * dp and cs bias log step
 let linear_step_until = 100u
-let linear_step_default = 20u
+let linear_step_default = 16u
 let bias_dp_Min  = 10u
-let bias_dp_Max  = 2000u
-let bias_dp_logStep = 1.2
-let bias_cs_Min  = 70u
-let bias_cs_Max  = 2000u
-let bias_cs_logStep = 1.12
+let bias_dp_Max  = 400u
+let bias_dp_logStep = 1.08
+let bias_cs_Min  = 10u
+let bias_cs_Max  = 300u
+let bias_cs_logStep = 1.08
 
 * output bias linear step
 let bias_o_Min   = 93.5u
