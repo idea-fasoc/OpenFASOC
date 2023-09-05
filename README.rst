@@ -76,6 +76,18 @@ To upgrade packages used by the generators, the dependencies.sh script must be r
 
     $ sudo ./dependencies.sh # Enter 'u' on being prompted for install or upgrade
 
+Testing Installation
+****************
+To test your installation, run the following commands from the home folder of the cloned repository - 
+
+.. code-block:: bash
+
+    $ cd openfasoc/generators/temp-sense-gen
+    $ make sky130hd_temp
+
+This will run the Makefile for the temperature sensor generator (the functionality of which is explained in the Generators section). 
+The installation has finished succesfully if the make process exits without errors.
+
 Design Generation
 ********************
 
