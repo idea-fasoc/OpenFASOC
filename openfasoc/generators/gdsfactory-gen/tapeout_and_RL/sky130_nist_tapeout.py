@@ -93,9 +93,9 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col1_nanopad_E"],pad_array_ref.ports["row0_col1_pad_N"],width=3)
 	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col1_nanopad_E"],pad_array_ref.ports["row1_col1_pad_S"],width=3)
 	# add the extra pad for the CS output
-	cspadref = comp << pad
+	cspadref = opamp_wpads << pad
 	cspadref.movex(240).movey(80)
-	comp << L_route(pdk, cspadref.ports["pad_S"], comp.ports["commonsource_output_E"],hwidth=3, glayer1="met5",glayer2="met5")
+	opamp_wpads << L_route(pdk, cspadref.ports["pad_S"], opamp_wpads.ports["commonsource_output_E"],hwidth=3, hglayer="met5",vglayer="met5")
 	#opamp_wpads << nanopad
 	if flatten:
 		return opamp_wpads.flatten()
@@ -121,38 +121,43 @@ def sky130_add_opamp_labels(opamp_in: Component) -> Component:
 	# gnd
 	gndlabel = rectangle(layer=met3_pin,size=(1,1),centered=True).copy()
 	gndlabel.add_label(text="gnd",layer=met3_label)
-	move_info.append((gndlabel,opamp_in.ports["pin_gnd_N"]))
+	move_info.append((gndlabel,opamp_in.ports["pin_gnd_N"],None))
 	#diffpairibias
 	ibias1label = rectangle(layer=met2_pin,size=(1,1),centered=True).copy()
 	ibias1label.add_label(text="diffpairibias",layer=met2_label)
-	move_info.append((ibias1label,opamp_in.ports["pin_diffpairibias_N"]))
+	move_info.append((ibias1label,opamp_in.ports["pin_diffpairibias_N"],None))
 	#outputibias
 	ibias3label = rectangle(layer=met2_pin,size=(1,1),centered=True).copy()
 	ibias3label.add_label(text="outputibias",layer=met2_label)
-	move_info.append((ibias3label,opamp_in.ports["pin_outputibias_N"]))
+	move_info.append((ibias3label,opamp_in.ports["pin_outputibias_N"],None))
 	# commonsourceibias
 	ibias2label = rectangle(layer=met4_pin,size=(1,1),centered=True).copy()
 	ibias2label.add_label(text="commonsourceibias",layer=met4_label)
-	move_info.append((ibias2label,opamp_in.ports["pin_commonsourceibias_N"]))
+	move_info.append((ibias2label,opamp_in.ports["pin_commonsourceibias_N"],None))
 	#minus
 	minuslabel = rectangle(layer=met3_pin,size=(1,1),centered=True).copy()
 	minuslabel.add_label(text="minus",layer=met3_label)
-	move_info.append((minuslabel,opamp_in.ports["pin_minus_N"]))
+	move_info.append((minuslabel,opamp_in.ports["pin_minus_N"],None))
 	#-plus
 	pluslabel = rectangle(layer=met3_pin,size=(1,1),centered=True).copy()
 	pluslabel.add_label(text="plus",layer=met3_label)
-	move_info.append((pluslabel,opamp_in.ports["pin_plus_N"]))
+	move_info.append((pluslabel,opamp_in.ports["pin_plus_N"],None))
 	#vdd
 	vddlabel = rectangle(layer=met3_pin,size=(1,1),centered=True).copy()
 	vddlabel.add_label(text="vdd",layer=met3_label)
-	move_info.append((vddlabel,opamp_in.ports["pin_vdd_N"]))
-	# output
+	move_info.append((vddlabel,opamp_in.ports["pin_vdd_N"],None))
+	# output (3rd stage)
 	outputlabel = rectangle(layer=met2_pin,size=(1,1),centered=True).copy()
 	outputlabel.add_label(text="output",layer=met2_label)
-	move_info.append((outputlabel,opamp_in.ports["pin_output_route_N"]))
+	move_info.append((outputlabel,opamp_in.ports["pin_output_route_N"],None))
+	# output (2nd stage)
+	outputlabel = rectangle(layer=met4_pin,size=(0.2,0.2),centered=True).copy()
+	outputlabel.add_label(text="CSoutput",layer=met4_label)
+	move_info.append((outputlabel,opamp_in.ports["commonsource_output_E"],('l','c')))
 	# move everything to position
-	for comp, prt in move_info:
-		compref = align_comp_to_port(comp, prt, alignment=('c','b'))
+	for comp, prt, alignment in move_info:
+		alignment = ('c','b') if alignment is None else alignment
+		compref = align_comp_to_port(comp, prt, alignment=alignment)
 		opamp_in.add(compref)
 	return opamp_in.flatten()
 
@@ -252,17 +257,19 @@ def opamp_results_serializer(
 	Ibias_output: float = -987.654321,
 	area: float = -987.654321,
 	power: float = -987.654321,
-	noise: float = -987.654321
+	noise: float = -987.654321,
+	bw_3db: float = -987.654321,
 ) -> np.array:
-	return np.array([ugb, dcGain, phaseMargin, Ibias_diffpair, Ibias_commonsource, Ibias_output, area, power, noise], dtype=np.float64)
+	return np.array([ugb, dcGain, phaseMargin, Ibias_diffpair, Ibias_commonsource, Ibias_output, area, power, noise, bw_3db], dtype=np.float64)
 
 def opamp_results_de_serializer(
 	results: Optional[np.array]=None
 ) -> dict:
+	results_length_const = 10
 	if results is None:
-		results = 9*[-987.654321]
-	if not len(results) == 9:
-		raise ValueError("results should be a length 9 array")
+		results = results_length_const*[-987.654321]
+	if not len(results) == results_length_const:
+		raise ValueError("results should be a length "+str(results_length_const)+" array")
 	results_dict = dict()
 	results_dict["ugb"] = float(results[0])
 	results_dict["dcGain"] = float(results[1])
@@ -273,6 +280,7 @@ def opamp_results_de_serializer(
 	results_dict["area"] = float(results[6])
 	results_dict["power"] = float(results[7])
 	results_dict["noise"] = float(results[8])
+	results_dict["bw_3db"] = float(results[9])
 	return results_dict
 
 def get_small_parameter_list(test_mode = False) -> np.array:
@@ -283,8 +291,8 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 		diffpairs.append((6,1,4))
 		diffpairs.append((5,1,4))
 	else:
-		for width in [6,9]:
-			for length in [1, 2]:
+		for width in [6]:
+			for length in [0.5, 1]:
 				for fingers in [2,4,6]:
 					diffpairs.append((width,length,fingers))
 	# all bias2 (output amp bias) transistors
@@ -293,8 +301,8 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 		bias2s.append((6,1,4,3))
 	else:
 		for width in [6]:
-			for length in [1,2]:
-				for fingers in [4,6]:
+			for length in [1,2,3]:
+				for fingers in [4]:
 					for mults in [2,3]:
 						bias2s.append((width,length,fingers,mults))
 	# all output pmos transistors
@@ -302,17 +310,26 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 	if test_mode:
 		pamp_hparams.append((7,1,8,3))
 	else:
-		for width in [7,4]:
-			for length in [1,2]:
-				for fingers in [8,14]:
+		for width in [7,4,10]:
+			for length in [0.5,1]:
+				for fingers in [8]:
 					pamp_hparams.append((width,length,fingers,3))
+	# diffpair bias cmirror
+	diffpair_cmirrors = list()
+	if test_mode:
+		pass
+	else:
+		for width in [6]:
+			for length in [2,3]:
+				for fingers in [4]:
+					diffpair_cmirrors.append((width,length,fingers))
 	# rows of the cap array to try
 	cap_arrays = [1,2]
 	# routing mults to try
 	rmults = [2]
 	# ******************************************
 	# create and return the small parameters list
-	short_list_len = len(diffpairs) * len(bias2s) * len(pamp_hparams) * len(cap_arrays) * len(rmults)
+	short_list_len = len(diffpairs) * len(bias2s) * len(pamp_hparams) * len(cap_arrays) * len(rmults) * len(diffpair_cmirrors)
 	short_list_len += 2 if test_mode else 0
 	short_list = np.empty(shape=(short_list_len,len(opamp_parameters_serializer())),dtype=np.float64)
 	index = 0
@@ -321,19 +338,26 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 			for pamp_o_v in pamp_hparams:
 				for cap_array_v in cap_arrays:
 					for rmult in rmults:
-						tup_to_add = opamp_parameters_serializer(
-							diffpair_params=diffpair_v, 
-							half_common_source_bias=bias2_v, 
-							mim_cap_rows=cap_array_v, 
-							half_common_source_params=pamp_o_v,
-							rmult=rmult,
-						)
-						short_list[index] = tup_to_add
-						index = index + 1
+						for diffpair_cmirror_v in diffpair_cmirrors:
+							tup_to_add = opamp_parameters_serializer(
+								diffpair_params=diffpair_v, 
+								half_common_source_bias=bias2_v, 
+								mim_cap_rows=cap_array_v, 
+								half_common_source_params=pamp_o_v,
+								rmult=rmult,
+								diffpair_bias=diffpair_cmirror_v,
+							)
+							short_list[index] = tup_to_add
+							index = index + 1
 	# if test_mode create a failed attempt (to test error handling)
 	if test_mode:
 		short_list[index] = opamp_parameters_serializer(mim_cap_rows=-1)
 		short_list[index+1] = opamp_parameters_serializer(mim_cap_rows=0)
+	global _GET_PARAM_SET_LENGTH_
+	if _GET_PARAM_SET_LENGTH_:
+		print("created parameter set of length: "+str(len(short_list)))
+		import sys
+		sys.exit()
 	return short_list
 
 def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath: Union[str,Path]):
@@ -362,9 +386,9 @@ def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath:
 	except Exception:
 		pass
 	na = -987.654321
-	noACresults = ACColumns is None or len(ACColumns)<9
-	noDCresults = DCColumns is None or len(DCColumns)<2
-	nonoiseresults = NoiseColumns is None or len(NoiseColumns)<2
+	noACresults = (ACColumns is None) or len(ACColumns)<13
+	noDCresults = (DCColumns is None) or len(DCColumns)<2
+	nonoiseresults = (NoiseColumns is None) or len(NoiseColumns)<2
 	return_dict = {
 		"ugb": na if noACresults else ACColumns[1],
 		"Ibias_diffpair": na if noACresults else ACColumns[3],
@@ -372,6 +396,7 @@ def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath:
 		"Ibias_output": na if noACresults else ACColumns[7],
 		"phaseMargin": na if noACresults else ACColumns[9],
 		"dcGain": na if noACresults else ACColumns[11],
+		"bw_3db": na if noACresults else ACColumns[13],
 		"power": na if noDCresults else DCColumns[1],
 		"noise": na if nonoiseresults else NoiseColumns[1]
 	}
@@ -385,6 +410,7 @@ def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath:
 	return return_dict
 
 def process_netlist_subckt(netlist: Union[str,Path], sim_model: Literal["normal model", "cryo model"], cload: float=0.0, noparasitics: bool=False):
+	global _TAKE_OUTPUT_AT_SECOND_STAGE_
 	netlist = Path(netlist).resolve()
 	if not netlist.is_file():
 		raise ValueError("netlist must be file")
@@ -402,7 +428,11 @@ def process_netlist_subckt(netlist: Union[str,Path], sim_model: Literal["normal 
 			if "cryo" in sim_model and len(line) and line[0]=="M":
 				subckt_lines[i][0]="X"
 			if all([hint in line for hint in hints]):
-				subckt_lines[i] = ".subckt opamp output vdd plus minus commonsourceibias outputibias diffpairibias gnd\nCload output gnd " + str(cload) +"p\n"
+				if _TAKE_OUTPUT_AT_SECOND_STAGE_:
+					headerstr = ".subckt opamp CSoutput vdd plus minus commonsourceibias outputibias diffpairibias gnd output"
+				else:
+					headerstr = ".subckt opamp output vdd plus minus commonsourceibias outputibias diffpairibias gnd CSoutput"
+				subckt_lines[i] = headerstr+"\nCload output gnd " + str(cload) +"p\n"
 			if "floating" in line or (noparasitics and len(line) and line[0]=="C"):
 				subckt_lines[i] = "* "+ subckt_lines[i]
 	with open(netlist, "w") as spice_net:
@@ -932,6 +962,8 @@ if __name__ == "__main__":
 	get_training_data_parser.add_argument("--noparasitics",action="store_true",help="specify that parasitics should be removed when simulating")
 	get_training_data_parser.add_argument("--nparray",default=None,help="overrides the test parameters and takes the ones you provide (file path to .npy file).\n\tMUST HAVE LEN > 1")
 	get_training_data_parser.add_argument("--saverawsims",action="store_true",help="specify that the raw simulation directories should be saved (default saved under save_gds_by_index/...)")
+	get_training_data_parser.add_argument("--get_tset_len",action="store_true",help="print the length of the default parameter set and quit")
+	get_training_data_parser.add_argument("--output_second_stage",action="store_true",help="measure relevant sim metrics at the output of the second stage rather than output of third stage")
 
 	# Subparser for gen_opamp mode
 	gen_opamp_parser = subparsers.add_parser("gen_opamp", help="Run the gen_opamp function. optional parameters for transistors are width,length,fingers,mults")
@@ -953,6 +985,7 @@ if __name__ == "__main__":
 	test.add_argument("--temp", type=int, default=int(25), help="Simulation temperature")
 	test.add_argument("--cload", type=float, default=float(0), help="run simulation with load capacitance units=pico Farads")
 	test.add_argument("--noparasitics",action="store_true",help="specify that parasitics should be removed when simulating")
+	test.add_argument("--output_second_stage",action="store_true",help="measure relevant sim metrics at the output of the second stage rather than output of third stage")
 	
 	# Subparser for create_opamp_matrix mode
 	create_opamp_matrix_parser = subparsers.add_parser("create_opamp_matrix", help="create a matrix of opamps")
@@ -967,6 +1000,11 @@ if __name__ == "__main__":
 	create_opamp_matrix_parser.add_argument("--opamp_dir",default="./save_gds_by_index",help="optionally point to a directory, program looks for 'index'.gds")
 
 	args = parser.parse_args()
+
+	global _GET_PARAM_SET_LENGTH_
+	global _TAKE_OUTPUT_AT_SECOND_STAGE_
+	_GET_PARAM_SET_LENGTH_ = False
+	_TAKE_OUTPUT_AT_SECOND_STAGE_ = False
 
 	# Simulation Temperature information
 	if vars(args).get("temp") is not None:
@@ -984,6 +1022,10 @@ if __name__ == "__main__":
 		extract_stats(params=args.params, results=args.results)
 
 	elif args.mode=="get_training_data":
+		if args.get_tset_len:
+			_GET_PARAM_SET_LENGTH_ = True
+		if args.output_second_stage:
+			_TAKE_OUTPUT_AT_SECOND_STAGE_ = True
 		# Call the get_training_data function with test_mode flag
 		parameter_array = None
 		if args.nparray is not None:
@@ -1016,6 +1058,8 @@ if __name__ == "__main__":
 			opamp_comp_final.write_gds(args.output_gds)
 
 	elif args.mode == "test":
+		if args.output_second_stage:
+			_TAKE_OUTPUT_AT_SECOND_STAGE_ = True
 		params = {
 			"diffpair_params": (6, 1, 4),
 			"diffpair_bias": (6, 2, 4),

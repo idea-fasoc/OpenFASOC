@@ -45,7 +45,7 @@ Ibiaso  VDD biason   {bo}
 
 ** Import opamp subcircuit
 .include opamp_pex.spice
-XDUT vo VDD vip vin biascsn biason biasdpn GND opamp
+XDUT vo VDD vip vin biascsn biason biasdpn GND csoutputnetNC opamp
 * parameter sweep
 ** Run initial analysis
 .save all
@@ -60,6 +60,7 @@ let maxBidp = -1
 let maxBio = -1
 let savedPhaseMargin = -1
 let savedDCGain = -1
+let savedthreedbBW = -1
 
 * dp and cs bias log step
 let linear_step_until = 100u
@@ -103,6 +104,9 @@ while bias_cs le bias_cs_Max
             meas ac pm find phase when vdb(vo)=0
             ** Measure DC(ish) gain
             meas ac dcg find vdb(vo) at=1k
+            ** Measure 3db BW
+            let threedbabsgain = dcg - 3
+            meas ac threedb when vdb(vo)=threedbabsgain FALL=1
             ** Find local maxima
             if ( ugb_f ge maxUGB )
                 let maxUGB = ugb_f
@@ -111,6 +115,7 @@ while bias_cs le bias_cs_Max
                 let maxBio = bias_o
                 let savedPhaseMargin = pm % 360
                 let savedDCGain = dcg
+                let savedthreedbBW = threedb
             end
 
             let absolute_counter = absolute_counter + 1
@@ -133,7 +138,7 @@ while bias_cs le bias_cs_Max
     end
 end
 ** Export global maxima
-wrdata result_ac.txt maxUGB maxBidp maxBics maxBio savedPhaseMargin savedDCGain
+wrdata result_ac.txt maxUGB maxBidp maxBics maxBio savedPhaseMargin savedDCGain savedthreedbBW
 
 ** Export power usage of opamp w/ best gain
 alterparam bcs = $&maxBics
@@ -141,6 +146,7 @@ alterparam bdp = $&maxBidp
 alterparam bo = $&maxBio
 reset
 run
+
 meas ac maxDraw max i(vsupply)
 let maxPower = maxDraw * 1.8
 wrdata result_power.txt maxPower
