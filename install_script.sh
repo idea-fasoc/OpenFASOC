@@ -3,7 +3,6 @@
 sudo apt install gcc g++
 
 mv docker/conda/scripts/get_conda.sh .
-mv docker/conda/scripts/dependencies.sh .
 
 chmod +x get_conda.sh
 chmod +x dependencies.sh
