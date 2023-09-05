@@ -31,13 +31,12 @@ This project is led by a team of researchers at the University of Michigan and i
 Prerequisites
 ****************
 
-Install all the prerequisites using `dependencies.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7 and Ubuntu20.
+Install all the prerequisites using `install_script.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7, Ubuntu 20.04 LTS and Ubuntu 22.04 LTS.
 
 .. code-block:: bash
 
-    $ ./get_conda.sh
-    $ conda init bash # You will need to restart your shell for changes to have any effect
-    $ ./dependencies.sh
+    $ chmod +x install_script.sh
+    $ ./install_script.sh
 
 (Or) Please install the following tools by building the tools manually from their code base with the recommended commit ids for stable functioning of the flow:
 
@@ -69,6 +68,12 @@ Install all the prerequisites using `dependencies.sh` script provided in the hom
    - Python 3.7 is used in this generator.
    - All the required tools need to be loaded into the environment before running this generator.
 
+Upgrading
+****************
+To upgrade packages used by the generators, the dependencies.sh script must be run, which can be found in the home folder of the cloned repository. 
+.. code-block:: bash
+
+    $ sudo ./dependencies.sh # Enter 'u' on being prompted for install or upgrade
 
 Design Generation
 ********************
