@@ -1,5 +1,6 @@
 * opamp_perf_eval.sp
 ** OpenFASOC Team, Ryan Wans 2023
+.param mc_mm_switch=0
 
 ** IMPORTANT:   Temperature setting is added automatically in the reading
 **              of this file on line 6 as 25. DO NOT OVERRIDE.
@@ -140,16 +141,17 @@ end
 ** Export global maxima
 wrdata result_ac.txt maxUGB maxBidp maxBics maxBio savedPhaseMargin savedDCGain savedthreedbBW
 
-** Export power usage of opamp w/ best gain
+** Export power usage of correctly biased opamp
 alterparam bcs = $&maxBics
 alterparam bdp = $&maxBidp
 alterparam bo = $&maxBio
 reset
-run
 
-meas ac maxDraw max i(vsupply)
-let maxPower = maxDraw * 1.8
-wrdata result_power.txt maxPower
+op
+let estimated_output_1to1_ref = @Ibiaso[current]*1.8
+let ptotal_exact = -i(vsupply)*1.8
+let estimated_two_stagepwr = ptotal_exact - estimated_output_1to1_ref
+wrdata result_power.txt ptotal_exact estimated_two_stagepwr
 
 ** Run noise analysis on opamp w/ best gain
 reset

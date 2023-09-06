@@ -35,6 +35,12 @@ from pygen.pdk.sky130_mapped import sky130_mapped_pdk as pdk
 from itertools import count, repeat
 
 
+global _GET_PARAM_SET_LENGTH_
+global _TAKE_OUTPUT_AT_SECOND_STAGE_
+_GET_PARAM_SET_LENGTH_ = False
+_TAKE_OUTPUT_AT_SECOND_STAGE_ = False
+
+
 # ====Build Opamp====
 
 
@@ -259,13 +265,14 @@ def opamp_results_serializer(
 	power: float = -987.654321,
 	noise: float = -987.654321,
 	bw_3db: float = -987.654321,
+	power_twostage: float = -987.654321
 ) -> np.array:
-	return np.array([ugb, dcGain, phaseMargin, Ibias_diffpair, Ibias_commonsource, Ibias_output, area, power, noise, bw_3db], dtype=np.float64)
+	return np.array([ugb, dcGain, phaseMargin, Ibias_diffpair, Ibias_commonsource, Ibias_output, area, power, noise, bw_3db, power_twostage], dtype=np.float64)
 
 def opamp_results_de_serializer(
 	results: Optional[np.array]=None
 ) -> dict:
-	results_length_const = 10
+	results_length_const = 11
 	if results is None:
 		results = results_length_const*[-987.654321]
 	if not len(results) == results_length_const:
@@ -281,6 +288,7 @@ def opamp_results_de_serializer(
 	results_dict["power"] = float(results[7])
 	results_dict["noise"] = float(results[8])
 	results_dict["bw_3db"] = float(results[9])
+	results_dict["power_twostage"] = float(results[10])
 	return results_dict
 
 def get_small_parameter_list(test_mode = False) -> np.array:
@@ -387,7 +395,7 @@ def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath:
 		pass
 	na = -987.654321
 	noACresults = (ACColumns is None) or len(ACColumns)<13
-	noDCresults = (DCColumns is None) or len(DCColumns)<2
+	noDCresults = (DCColumns is None) or len(DCColumns)<4
 	nonoiseresults = (NoiseColumns is None) or len(NoiseColumns)<2
 	return_dict = {
 		"ugb": na if noACresults else ACColumns[1],
@@ -398,7 +406,8 @@ def get_sim_results(acpath: Union[str,Path], dcpath: Union[str,Path], noisepath:
 		"dcGain": na if noACresults else ACColumns[11],
 		"bw_3db": na if noACresults else ACColumns[13],
 		"power": na if noDCresults else DCColumns[1],
-		"noise": na if nonoiseresults else NoiseColumns[1]
+		"noise": na if nonoiseresults else NoiseColumns[1],
+		"power_twostage": na if noDCresults else DCColumns[3],
 	}
 	for key, val in return_dict.items():
 		val_flt = na
@@ -1000,11 +1009,6 @@ if __name__ == "__main__":
 	create_opamp_matrix_parser.add_argument("--opamp_dir",default="./save_gds_by_index",help="optionally point to a directory, program looks for 'index'.gds")
 
 	args = parser.parse_args()
-
-	global _GET_PARAM_SET_LENGTH_
-	global _TAKE_OUTPUT_AT_SECOND_STAGE_
-	_GET_PARAM_SET_LENGTH_ = False
-	_TAKE_OUTPUT_AT_SECOND_STAGE_ = False
 
 	# Simulation Temperature information
 	if vars(args).get("temp") is not None:
