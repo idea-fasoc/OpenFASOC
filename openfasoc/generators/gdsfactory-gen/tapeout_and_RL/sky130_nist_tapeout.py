@@ -299,9 +299,9 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 		diffpairs.append((6,1,4))
 		diffpairs.append((5,1,4))
 	else:
-		for width in [6]:
-			for length in [0.5, 1]:
-				for fingers in [2,4,6]:
+		for width in [2,6]:
+			for length in [0.5, 1, 2]:
+				for fingers in [2,4]:
 					diffpairs.append((width,length,fingers))
 	# all bias2 (output amp bias) transistors
 	bias2s = list()
@@ -309,7 +309,7 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 		bias2s.append((6,1,4,3))
 	else:
 		for width in [6]:
-			for length in [1,2,3]:
+			for length in [1,2]:
 				for fingers in [4]:
 					for mults in [2,3]:
 						bias2s.append((width,length,fingers,mults))
@@ -318,9 +318,9 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 	if test_mode:
 		pamp_hparams.append((7,1,8,3))
 	else:
-		for width in [7,4,10]:
-			for length in [0.5,1]:
-				for fingers in [8]:
+		for width in [7,4]:
+			for length in [0.5,1,2]:
+				for fingers in [8,4,2]:
 					pamp_hparams.append((width,length,fingers,3))
 	# diffpair bias cmirror
 	diffpair_cmirrors = list()
@@ -328,7 +328,7 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 		pass
 	else:
 		for width in [6]:
-			for length in [2,3]:
+			for length in [2]:
 				for fingers in [4]:
 					diffpair_cmirrors.append((width,length,fingers))
 	# rows of the cap array to try

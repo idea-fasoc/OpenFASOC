@@ -55,6 +55,7 @@ XDUT vo VDD vip vin biascsn biason biasdpn GND csoutputnetNC opamp
 .control
 ** Set initial values
 set filetype = ascii
+let maxFOM = -1
 let maxUGB = -1
 let maxBics = -1
 let maxBidp = -1
@@ -64,14 +65,14 @@ let savedDCGain = -1
 let savedthreedbBW = -1
 
 * dp and cs bias log step
-let linear_step_until = 100u
-let linear_step_default = 16u
+let linear_step_until = 60u
+let linear_step_default = 7u
 let bias_dp_Min  = 10u
 let bias_dp_Max  = 400u
-let bias_dp_logStep = 1.08
+let bias_dp_logStep = 1.1
 let bias_cs_Min  = 10u
 let bias_cs_Max  = 300u
-let bias_cs_logStep = 1.08
+let bias_cs_logStep = 1.1
 
 * output bias linear step
 let bias_o_Min   = 93.5u
@@ -108,8 +109,10 @@ while bias_cs le bias_cs_Max
             ** Measure 3db BW
             let threedbabsgain = dcg - 3
             meas ac threedb when vdb(vo)=threedbabsgain FALL=1
-            ** Find local maxima
-            if ( ugb_f ge maxUGB )
+            ** if FOM is better than previous max save results
+            let FOM = ugb_f / (bias_cs + bias_dp)
+            if ( FOM ge maxFOM )
+                let maxFOM = FOM
                 let maxUGB = ugb_f
                 let maxBics = bias_cs
                 let maxBidp = bias_dp
