@@ -1,3 +1,11 @@
+"""A common simulation used in OpenFASOC generators.
+
+Sweeps all combinations of given parameters and runs parallel SPICE simulations with different configurations based on the parameters.
+
+Exported functions:
+- `run_simulations()`
+"""
+
 from os import path, makedirs
 from common.simulation.simulation_config import _generate_configs
 from common.simulation.simulation_run import _run_simulations

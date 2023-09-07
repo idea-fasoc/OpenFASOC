@@ -1,3 +1,14 @@
+"""Utility functions for the simulation common module.
+
+Functions for displaying the simulation progress and formatting the output are exported.
+
+Exported functions:
+- `_print_progress()`
+- `_format_elapsed_time()`
+
+See individual functions for further documentation.
+"""
+
 import time
 
 def _print_progress(total_runs: int, completed_sims: int, failed_sims: int, start_time: int, end: str = '\r'):

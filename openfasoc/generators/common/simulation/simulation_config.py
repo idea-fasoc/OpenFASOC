@@ -1,3 +1,17 @@
+"""Sweeps all combinations of given parameters and generates the configurations.
+
+This module is part of the simulation common module. Functions for generating final SPICE files from a template are exported.
+
+Configurations are generated from a template SPICE file that follows the [Mako](https://makotemplates.org) syntax. All possible combinations of the input parameters are swept. The final SPICE files are generated from the template by inserting the parameter combinations. Each file is called a "config" or "configuration."
+
+Exported functions:
+- `_generate_configs()`
+- `_generate_run_parameters()`
+- `_generate_config()`
+
+See individual functions for further documentation.
+"""
+
 from os import path, makedirs
 from shutil import rmtree
 from common.verilog_generation import _generate_file
