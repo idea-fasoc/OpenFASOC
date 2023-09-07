@@ -10,6 +10,10 @@ import cryo_netlist
 import simulation
 from readparamgen import args, designName
 
+# TODO: Find a better way to import modules from parent directory
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+from common.verilog_generation import generate_verilog, COMMON_PLATFORMS_PREFIX_MAP
+
 genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)), "../")
 srcDir = genDir + "src/"
 flowDir = genDir + "flow/"
@@ -29,12 +33,15 @@ if args.clean:
     p.wait()
 
 if args.platform == "sky130hd":
+    spice_file = "sky130_fd_sc_hd.spice"
     p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hd.spice"])
     p.wait()
 elif args.platform == "sky130hs":
+    spice_file = "sky130_fd_sc_hs.spice"
     p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hs.spice"])
     p.wait()
 elif args.platform == "sky130hvl":
+    spice_file = "sky130_fd_sc_hvl.spice"
     p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hvl.spice"])
     p.wait()
 elif args.platform == "sky130osu12Ths":
@@ -118,66 +125,20 @@ print("#----------------------------------------------------------------------")
 print("# Verilog Generation")
 print("#----------------------------------------------------------------------")
 
+platform_prefix = COMMON_PLATFORMS_PREFIX_MAP[args.platform]
+pdk_lib_name = platform_prefix.split("__")[0]
 
-if args.platform == "sky130hd":
-    aux1 = "sky130_fd_sc_hd__nand2_1"
-    aux2 = "sky130_fd_sc_hd__inv_1"
-
-elif args.platform == "sky130hs":
-    aux1 = "sky130_fd_sc_hs__nand2_1"
-    aux2 = "sky130_fd_sc_hs__inv_1"
-
-elif args.platform == "sky130hvl":
-    aux1 = "sky130_fd_sc_hvl__nand2_1"
-    aux2 = "sky130_fd_sc_hvl__inv_1"
-
-elif args.platform == "sky130osu12Ths":
-    aux1 = "sky130_osu_sc_12T_hs__nand2_1"
-    aux2 = "sky130_osu_sc_12T_hs__inv_1"
-
-elif args.platform == "sky130osu12Tms":
-    aux1 = "sky130_osu_sc_12T_ms__nand2_1"
-    aux2 = "sky130_osu_sc_12T_ms__inv_1"
-
-elif args.platform == "sky130osu12Tls":
-    aux1 = "sky130_osu_sc_12T_ls__nand2_1"
-    aux2 = "sky130_osu_sc_12T_ls__inv_1"
-
-elif args.platform == "sky130osu15Ths":
-    aux1 = "sky130_osu_sc_15T_hs__nand2_1"
-    aux2 = "sky130_osu_sc_15T_hs__inv_1"
-
-elif args.platform == "sky130osu15Tms":
-    aux1 = "sky130_osu_sc_15T_ms__nand2_1"
-    aux2 = "sky130_osu_sc_15T_ms__inv_1"
-
-elif args.platform == "sky130osu15Tls":
-    aux1 = "sky130_osu_sc_15T_ls__nand2_1"
-    aux2 = "sky130_osu_sc_15T_ls__inv_1"
-
-elif args.platform == "sky130osu18Ths":
-    aux1 = "sky130_osu_sc_18T_hs__nand2_1"
-    aux2 = "sky130_osu_sc_18T_hs__inv_1"
-
-elif args.platform == "sky130osu18Tms":
-    aux1 = "sky130_osu_sc_18T_ms__nand2_1"
-    aux2 = "sky130_osu_sc_18T_ms__inv_1"
-
-elif args.platform == "sky130osu18Tls":
-    aux1 = "sky130_osu_sc_18T_ls__nand2_1"
-    aux2 = "sky130_osu_sc_18T_ls__inv_1"
-
-pdk_lib_name = aux1.split("__")[0]
-
-ninv = ninv + 1
-
-cryo_netlist.gen_cryo_netlist(ninv, aux1, aux2, srcDir)
-
-with open(srcDir + "cryoInst.v", "r") as rf:
-    filedata = rf.read()
-    filedata = re.sub("module\s*(\w+)\s*\n", "module " + designName + "\n", filedata)
-with open(srcDir + "cryoInst.v", "w") as wf:
-    wf.write(filedata)
+# The directory in which the output Verilog is generated
+verilog_gen_dir=os.path.join('flow', 'design', 'src', 'cryo')
+generate_verilog(
+    parameters={
+        "design_name": designName,
+        "cell_prefix": platform_prefix,
+        "cell_suffix": "_1",
+        "ninv": ninv
+    },
+    out_dir=verilog_gen_dir
+)
 
 # note that this python overwrites config.mk
 with open(flowDir + "design/" + args.platform + "/cryo/config.mk", "r") as rf:
@@ -187,10 +148,6 @@ with open(flowDir + "design/" + args.platform + "/cryo/config.mk", "r") as rf:
     )
 with open(flowDir + "design/" + args.platform + "/cryo/config.mk", "w") as wf:
     wf.write(filedata)
-
-shutil.copyfile(srcDir + "cryo_ro.nl.v", flowDir + "design/src/cryo/cryo_ro.nl.v")
-shutil.copyfile(srcDir + "cryoInst.v", flowDir + "design/src/cryo/" + designName + ".v")
-shutil.copyfile(srcDir + "divider.v", flowDir + "design/src/cryo/divider" + ".v")
 
 print("#----------------------------------------------------------------------")
 print("# Verilog Generated")
@@ -204,7 +161,9 @@ print("#----------------------------------------------------------------------")
 print("# Run Synthesis and APR")
 print("#----------------------------------------------------------------------")
 # make with different deisgn config
-p = sp.Popen(["make", "PLATFORM_ARG=" + args.platform], cwd=flowDir)
+p = sp.Popen(
+    ["make", "PLATFORM_ARG=" + args.platform, "SPICE_FILE=" + spice_file], cwd=flowDir
+)
 p.wait()
 
 
@@ -214,7 +173,10 @@ print("#----------------------------------------------------------------------")
 
 time.sleep(2)
 
-p = sp.Popen(["make", "magic_drc", "PLATFORM_ARG=" + args.platform], cwd=flowDir)
+p = sp.Popen(
+    ["make", "magic_drc", "PLATFORM_ARG=" + args.platform, "SPICE_FILE=" + spice_file],
+    cwd=flowDir,
+)
 p.wait()
 
 print("#----------------------------------------------------------------------")
@@ -223,7 +185,10 @@ print("#----------------------------------------------------------------------")
 
 time.sleep(2)
 
-p = sp.Popen(["make", "netgen_lvs"], cwd=flowDir)
+p = sp.Popen(
+    ["make", "netgen_lvs", "PLATFORM_ARG=" + args.platform, "SPICE_FILE=" + spice_file],
+    cwd=flowDir,
+)
 p.wait()
 
 
@@ -263,16 +228,31 @@ shutil.copyfile(
     genDir + args.outputDir + "/" + args.platform + "/" + designName + ".cdl",
 )
 shutil.copyfile(
+    flowDir
+    + "objects/"
+    + args.platform
+    + "/cryo/netgen_lvs/spice/"
+    + designName
+    + ".spice",
     flowDir + designName + ".spice",
-    genDir + args.outputDir + "/" + args.platform + "/" + designName + ".spice",
 )
 shutil.copyfile(
+    flowDir
+    + "objects/"
+    + args.platform
+    + "/cryo/netgen_lvs/spice/"
+    + designName
+    + "_pex.spice",
     flowDir + designName + "_pex.spice",
-    genDir + args.outputDir + "/" + args.platform + "/" + designName + "_pex.spice",
 )
 shutil.copyfile(
+    flowDir
+    + "objects/"
+    + args.platform
+    + "/cryo/netgen_lvs/spice/"
+    + designName
+    + "_sim.spice",
     flowDir + designName + "_sim.spice",
-    genDir + args.outputDir + "/" + args.platform + "/" + designName + "_sim.spice",
 )
 shutil.copyfile(
     flowDir + "reports/" + args.platform + "/cryo/6_final_drc.rpt",
@@ -299,14 +279,27 @@ p.wait()
 p = sp.Popen(["yum", "install", "-y", "libXaw"])
 p.wait()
 
-pdks_path = "/shared/OpenLane/pdks/"
+pdks_path = "/usr/bin/miniconda3/share/pdk/"
 
-simulation.run_cryo_sim(
-    simDir,
-    pdks_path + "sky130A/libs.tech/ngspice/sky130.lib.spice",
-    "./../work/" + args.platform + "/" + designName + "_sim.spice",
-    "./../" + platformDir + "cdl/" + pdk_lib_name + ".spice",
-)
+if args.prepex:
+    simulation.run_cryo_sim(
+        simDir,
+        pdks_path + "sky130A/libs.tech/ngspice/sky130.lib.spice",
+        "./../" + flowDir + designName + "_sim.spice",
+        "./../" + platformDir + "cdl/" + pdk_lib_name + ".spice",
+        args.platform,
+        prepex=True,
+    )
+
+if args.pex:
+    simulation.run_cryo_sim(
+        simDir,
+        pdks_path + "sky130A/libs.tech/ngspice/sky130.lib.spice",
+        "./../" + flowDir + designName + "_pex.spice",
+        "./../" + platformDir + "cdl/" + pdk_lib_name + ".spice",
+        args.platform,
+        prepex=False,
+    )
 
 print("#----------------------------------------------------------------------")
 print("# Simulation output Generated")

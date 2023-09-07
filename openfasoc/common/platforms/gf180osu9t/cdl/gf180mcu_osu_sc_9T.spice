@@ -1525,5 +1525,45 @@ X11 a_42_19 A VSS VSS nmos_3p3 w=17 l=6
 
 ** hspice subcircuit dictionary
 
+******* Adding new Auxiliary cells *******
+
+.option scale=0.05u
+
+.subckt dinv1 Yb Y Ab A Apb Ap
+X1    t1    Apb    VDD    VDD  pmos_3p3 W=34 L=6 
+X2    Y    Yb    t1    t1   pmos_3p3  W=34 L=6
+X3    t2    Ap    VDD    VDD  pmos_3p3 W=34 L=6
+X4    Yb    Y    t2    t2   pmos_3p3  W=34 L=6
+X5    Y    Ab    t3    t3   nmos_3p3  W=17  L=6 
+X6    t3    Ab    VSS   VSS  nmos_3p3 W=17  L=6  
+X7    Yb    A    t4    t4  nmos_3p3  W=17  L=6 
+X8    t4    A    VSS    VSS  nmos_3p3  W=17  L=6 
+.ends 
+
+.option scale=0.05u
+
+.subckt HEADER VGND VIN VNB VPWR
+X0 VPWR VGND net7 VNB nmos_3p3 W=17  L=6
+X1 net7 VGND VPWR VNB nmos_3p3 W=17  L=6
+X2 VPWR VGND net7 VNB nmos_3p3 W=17  L=6
+X3 net7 VGND VPWR VNB nmos_3p3 W=17  L=6
+X4 net7 VGND VIN VNB nmos_3p3 W=17  L=6
+X5 VIN VGND net7 VNB nmos_3p3 W=17  L=6
+X6 net7 VGND VIN VNB nmos_3p3 W=17  L=6
+X7 VIN VGND net7 VNB nmos_3p3 W=17  L=6
+.ends
+
+.option scale=0.05u
+
+.subckt SLC IN INB VOUT VGND VNB VPWR VPB
+X0 net02 net07 VPWR VPB pmos_3p3 W=34 L=6
+X1 net03 net03 net02 VPB pmos_3p3 W=34 L=6
+X3 net06 net03 VPWR VPB pmos_3p3 W=34 L=6
+X4 net07 net07 net06 VPB pmos_3p3 W=34 L=6
+X6 VOUT net06 VPWR VPB pmos_3p3 W=34 L=6
+X4 VOUT net07 VGND VNB nmos_3p3 W=17  L=6
+X0 net03 INB VGND VNB nmos_3p3 W=17  L=6
+X8 net07 IN VGND VNB nmos_3p3 W=17  L=6
+.ends
 
 ******* EOF

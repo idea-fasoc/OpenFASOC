@@ -20,11 +20,11 @@ First, ``cd`` into a directory of your choice and clone the OpenFASoC repository
 
   git clone https://github.com/idea-fasoc/openfasoc
 
-Now go to the home location of this repository (where the README.rst file is located) and run `sudo ./dependencies.sh`. This will install the latest version of all Python libraries, tools (OpenROAD, Yosys, Magic, Netgen, KLayout and Ngspice) **via Conda packages** and skywater-pdk as required by OpenFASoC. It will also set the ``PDK_ROOT`` environment variable to the pdk data location.
+Now go to the home location of this repository (where the README.rst file is located) and run `sudo ./dependencies.sh`. This will install the necessary version of all Python libraries, tools (OpenROAD, Yosys, Magic, Netgen) and skywater-pdk as required by OpenFASoC **via Conda packages**. It will also set the ``PDK_ROOT`` environment variable to the pdk data location.
 
 .. warning::
 
-  The ``dependencies.sh`` script supports Ubuntu and CentOS. In RHEL 7 and 8, the script will install all dependencies except KLayout, which has to be installed manually.
+  The ``dependencies.sh`` script supports Ubuntu and CentOS (except simulators). In RHEL 7 and 8, the script will install all required conda packages but not Simulators (ngspice and Xyce) and KLayout, which has to be installed manually.
 
 .. note::
 
@@ -153,16 +153,16 @@ Below is an example of options for the temp-sense generator:
     $ cd openfasoc/generators/temp-sense-gen/
     $ make
     ==============================================================
-     ___  _____ ______ _   _ _____  _     ____   ___   ____
-    / _ \|  _  \| ____| \ | |  ___|/ \   / ___| / _ \ / ___|
-   | | | | |_) ||  _| |  \| | |_  / _ \  \___ \| | | | |
-   | |_| |  __/ | |___| |\  |  _|/ ___ \  ___) | |_| | |___
-    \___/|_|    |_____|_| \_|_| /_/   \_\|____/ \___/ \____|
+      ___  _____ ______ _   _ _____  _     ____   ___   ____
+      / _ \|  _  \| ____| \ | |  ___|/ \   / ___| / _ \ / ___|
+    | | | | |_) ||  _| |  \| | |_  / _ \  \___ \| | | | |
+    | |_| |  __/ | |___| |\  |  _|/ ___ \  ___) | |_| | |___
+      \___/|_|    |_____|_| \_|_| /_/   \_\|____/ \___/ \____|
 
     ===============================================================
-    OpenFASOC is focused on open-source automate analog generation
+    OpenFASOC is focused on open source automated analog generation
     from user specification to GDSII with fully open-sourced tools.
-    This project is led by a team of researchers at the University of Michigan is inspired from FASOC which sits on proprietary tools
+    This project is led by a team of researchers at the University of Michigan and is inspired from FASOC
     For more info, visit https://fasoc.engin.umich.edu/
 
     IP: Temperature Sensor
@@ -170,17 +170,18 @@ Below is an example of options for the temp-sense generator:
     Supported Library: sky130hd
 
     Targets supported:
-    1. make sky130hd_temp
-        >> This will create the macro for the thermal sensor, creates the lef/def/gds files and performs lvs/drc checks. It won't run simulations.
-    2. make sky130hd_temp_verilog
+    1. make sky130hd_temp_verilog
         >> This will create the verilog file for the thermal sensor IP. It doesn't create a macro, won't create lef/def/gds files and won't run simulations
-    3. make sky130hd_temp_full
-        >> This will create the macro for the thermal sensor, creates the lef/def/gds files, performs lvs/drc checks and also runs simulations.
-        >> [Warning] Currently, this target is in alpha phase
+    2. make sky130hd_temp [ninv=<num>] [nhead=<num>]
+        >> This will create the macro for the thermal sensor, creates the lef/def/gds/spice netlist files and performs lvs/drc checks. But this won't run simulations.
+    3. make sky130hd_temp_full [ninv=<num>] [nhead=<num>] [sim=pex]
+        >> This will create the macro for the thermal sensor, creates the lef/def/gds/spice netlist files, performs lvs/drc checks and also runs simulations.
+        >> Note: Only Pre-PEX simulations are performed, by default, under this target. To perform Post-PEX simulations as well, set sim to 'pex' as shown in the target definition
     4. make clean
         >> This will clean all files generated during the run inside the run/, flow/ and work/ directories
     5. make help
         >> Displays this message
+
 
     $ make sky130hd_temp
 

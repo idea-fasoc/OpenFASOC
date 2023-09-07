@@ -33,7 +33,7 @@ export BLACKBOX_V_FILE = ../../../common/platforms/$(PLATFORM)/sky130_fd_sc_hvl.
 # This can be found in the technology lef
 export PLACE_SITE = unithv
 
-#export PLACE_DENSITY = 0.30
+export PLACE_DENSITY ?= 0.30
 
 
 export TECH_LEF = ../../../common/platforms/$(PLATFORM)/lef/sky130_fd_sc_hvl.tlef
@@ -116,9 +116,11 @@ export IO_PLACER_H = met3
 export IO_PLACER_V = met2
 
 # keep with gf
-#export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 1
-#export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 0
+##################new changes
 
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 1
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 0
+#####################
 # Define fill cells
 export FILL_CELLS = sky130_fd_sc_hvl__fill_1 sky130_fd_sc_hvl__fill_2 sky130_fd_sc_hvl__fill_4 sky130_fd_sc_hvl__fill_8
 

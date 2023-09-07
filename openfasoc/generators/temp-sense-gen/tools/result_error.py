@@ -41,7 +41,13 @@ for i, val in enumerate(data0):
     data1.append(val_cal)
 
 data2 = []
-slope_f = 80 / (data1[len(data1) - 2] - data1[1])
+
+try:
+    slope_f = 80 / (data1[len(data1) - 2] - data1[1])
+except:
+    print("Error calculation failed")
+    sys.exit(0)
+
 for k in data1:
     if k == "failed":
         val = "failed"

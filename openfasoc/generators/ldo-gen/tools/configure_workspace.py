@@ -1,10 +1,7 @@
 # Utility functions to setup neccessary vars used in LDO-gen
 import subprocess as sp
-import argparse
 import json
-import math
 import os
-import re
 import shutil
 import sys
 import time
@@ -228,9 +225,9 @@ def get_config(genmode, genDir):
         sys.exit(1)
     # check that simTool is supported
     if genmode != "verilog":
-        if jsonConfig["simTool"] != "ngspice":
-            print("Error: Only support simulator 'ngspice' as of now")
-            sys.exit(1)
+        if jsonConfig["simTool"] != "ngspice" and jsonConfig["simTool"] != "Xyce":
+            print("Error: Only support simulator 'ngspice' and 'Xyce' as of now")
+            # sys.exit(1)
     return jsonConfig
 
 

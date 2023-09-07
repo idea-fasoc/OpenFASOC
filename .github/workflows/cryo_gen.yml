@@ -1,0 +1,38 @@
+name: Cryo Generator Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  cryoGenerator:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [sky130hd, sky130hs, sky130hvl]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Test ${{ matrix.platform }} Cryo Gen
+        env:
+                IMAGE_NAME: msaligane/openfasoc:stable
+        run: |
+          cd $GITHUB_WORKSPACE
+          touch file.log
+          docker run --rm \
+            -v $PWD:$PWD\
+            -w $PWD\
+            $IMAGE_NAME\
+            bash -c "\
+              cp ./.github/scripts/parse_rpt.py ./openfasoc/generators/cryo-gen/. &&\
+              pip3 install -r requirements.txt &&\
+              cd ./openfasoc/generators/cryo-gen &&\
+              make ${{ matrix.platform }}_cryo &&\
+              python3 parse_rpt.py ${{ matrix.platform }}
+            "| tee -a file.log
+            if grep "^Error" file.log; then exit 1; else exit 0; fi

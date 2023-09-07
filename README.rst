@@ -7,8 +7,8 @@ OpenFASoC
     :target: https://openfasoc.readthedocs.io/en/latest/?badge=latest
 
 
-OpenFASOC is focused on open-source automate analog generation from user specification to GDSII with fully open-sourced tools.
-This project is led by a team of researchers at the University of Michigan is inspired from FASoC whcih sits on proprietary tools. (See more about FaSoC at `website <https://fasoc.engin.umich.edu/>`_)
+OpenFASOC is focused on open-source automated analog generation from user specification to GDSII with fully open-sourced tools.
+This project is led by a team of researchers at the University of Michigan and is inspired by FASoC, which sits on proprietary tools. (See more about FaSoC at `website <https://fasoc.engin.umich.edu/>`_)
 
 
 * **Temperature sensor -**
@@ -25,11 +25,8 @@ This project is led by a team of researchers at the University of Michigan is in
     .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ldo_sky130hvl.yml/badge.svg
         :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/ldo_sky130hvl.yml
 
-    .. .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/verify_latest_tools_versions.yml/badge.svg
-    ..     :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/verify_latest_tools_versions.yml
-
     .. image:: https://colab.research.google.com/assets/colab-badge.svg
-        :target: https://colab.research.google.com/github/alibillalhammoud/OpenFASOC/blob/main/docs/source/notebooks/ldo-gen/LDO_notebook.ipynb
+        :target: https://colab.research.google.com/github/idea-fasoc/OpenFASOC/blob/main/docs/source/notebooks/ldo-gen/LDO_notebook.ipynb
 
 Prerequisites
 ****************
@@ -37,26 +34,30 @@ Prerequisites
 Install all the prerequisites using `dependencies.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7 and Ubuntu20.
 
 
-(Or) Please install the following tools by building the tools manually from their code base with the recommended commit ids for a stable functioning of the flow:
+(Or) Please install the following tools by building the tools manually from their code base with the recommended commit ids for stable functioning of the flow:
 
-  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.356)
+  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.416)
 
-  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.244)
+  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.255)
 
-  3. `Klayout <https://github.com/KLayout/klayout>`_ (version:0.28.2-1)
+  3. `Klayout <https://github.com/KLayout/klayout>`_ (version:0.28.6-1)
 
       - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
-  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.23+3)
+  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.31+16)
 
 
-  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_6760)
+  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_6895)
 
-  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.378)
+  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.429)
 
    - open_pdks is required to run drc/lvs check and the simulations
    - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
+
+  7. `Xyce <https://github.com/Xyce/Xyce>`_ (version: 7.6)
+
+   - Once the Xyce installation is complete, please make sure to add Xyce binary to $PATH environment variable.
 
   **Other notice:**
 
