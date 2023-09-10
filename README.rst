@@ -31,12 +31,11 @@ This project is led by a team of researchers at the University of Michigan and i
 Prerequisites
 ****************
 
-Install all the prerequisites using `install_script.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7, Ubuntu 20.04 LTS and Ubuntu 22.04 LTS.
+Install all the prerequisites using `dependencies.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7, Ubuntu 20.04 LTS and Ubuntu 22.04 LTS.
 
 .. code-block:: bash
 
-    $ chmod +x install_script.sh
-    $ ./install_script.sh
+    $ sudo ./dependencies.sh
 
 (Or) Please install the following tools by building the tools manually from their code base with the recommended commit ids for stable functioning of the flow:
 
@@ -74,7 +73,7 @@ To upgrade packages used by the generators, the dependencies.sh script must be r
 
 .. code-block:: bash
 
-    $ sudo ./dependencies.sh # Enter 'u' on being prompted for install or upgrade
+    $ sudo ./dependencies.sh # Enter 'u' on being prompted to commence upgrade
 
 Testing Installation
 ****************
