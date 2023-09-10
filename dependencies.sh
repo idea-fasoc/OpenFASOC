@@ -140,7 +140,6 @@ else
     echo "Compatible python version exists: $ma_ver.$mi_ver"
 fi
 
-
 if cat /etc/os-release | grep "ubuntu" >> /dev/null; then
 
 	apt-get update -y
@@ -154,6 +153,60 @@ elif cat /etc/os-release | grep -e "centos" >> /dev/null; then
 
 fi
 
+# install miniconda3
+if ! [ -x /home/$(logname)/miniconda3 ]
+then
+      wget https://repo.anaconda.com/miniconda/Miniconda3-py37_23.1.0-1-Linux-x86_64.sh \
+    && bash Miniconda3-py37_23.1.0-1-Linux-x86_64.sh -b -p /home/$(logname)/miniconda3/ \
+    && rm -f Miniconda3-py37_23.1.0-1-Linux-x86_64.sh
+else
+    echo "[OpenFASoC] Found miniconda3. Continuing the installation...\n"
+fi
+
+if [ $? == 0 ] && [ -x /home/$(logname)/miniconda3/ ]
+then
+        echo "[OpenFASoC] miniconda3 installed successfully. Continuing the installation...\n"
+        if ! grep -q "/home/$(logname)/miniconda3/bin" /home/$(logname)/.bashrc || ! echo "$PATH" | grep -q "/home/$(logname)/miniconda3/bin"; then
+                echo "" >> /home/$(logname)/.bashrc
+                echo 'export PATH="/home/$(logname)/miniconda3/bin:$PATH"' >> /home/$(logname)/.bashrc
+                echo "[OpenFASoC] miniconda3 added to PATH"
+        fi
+	export PATH=/home/$(logname)/miniconda3/bin:$PATH
+else
+	echo "[OpenFASoC] Failed to install miniconda. Check above for error messages."
+	exit
+fi
+
+source /home/$(logname)/miniconda3/etc/profile.d/conda.sh
+
+if [ $? == 0 ] && [ -x /home/$(logname)/miniconda3/ ]
+then
+	conda update -y conda
+        if [ $? == 0 ];then conda install -c litex-hub --file conda_versions.txt -y ; else echo "[OpenFASoC] Failed to update conda version." ; exit ; fi
+        if [ $? == 0 ];then echo "[OpenFASoC] Installed OpenROAD, Yosys, Skywater PDK, Magic and Netgen successfully" ; else echo "[OpenFASoC] Failed to install conda packages" ; exit ; fi
+else
+	echo "[OpenFASoC] Failed to install miniconda. Check above for error messages."
+	exit
+fi
+
+
+# download packages using pip3 in miniconda3
+export PATH=/home/$(logname)/miniconda3/bin/pip3:$PATH
+
+if which pip3 >> /dev/null
+then
+        echo "[OpenFASoC] Pip3 exists"
+        pip3 install -r requirements.txt
+        if [ $? == 0 ]; then 
+        echo "[OpenFASoC] Python packages installed successfully."
+        else
+        echo "[OpenFASoC] Python packages could not be installed."
+        fi
+else
+        echo "[OpenFASoC] Pip3 not found in miniconda3."
+fi
+
+source ~/.bashrc
 
 if cat /etc/os-release | grep "ubuntu" >> /dev/null
 then
@@ -171,7 +224,7 @@ then
  fi
 elif cat /etc/os-release | grep "centos" >> /dev/null
 then
- sudo yum install bison flex libX11-devel libX11 libXaw-devel readline-devel autoconf libtool automake -y
+ yum install bison flex libX11-devel libX11 libXaw-devel readline-devel autoconf libtool automake -y
  git clone http://git.code.sf.net/p/ngspice/ngspice
  cd ngspice && ./compile_linux.sh
 fi
@@ -249,6 +302,8 @@ then
                 echo 'export PDK_ROOT=/home/$(logname)/miniconda3/share/pdk/' >> /home/$(logname)/.bashrc
         fi
         export PDK_ROOT=/home/$(logname)/miniconda3/share/pdk/
+        source ~/.bashrc
+        
         echo "[OpenFASoC] PDK_ROOT is set to /home/$(logname)/miniconda3/share/pdk/. If this variable is empty, try setting PDK_ROOT variable to /home/$(logname)/miniconda3/share/pdk/"
 else
         echo "[OpenFASoC] PDK not installed"
