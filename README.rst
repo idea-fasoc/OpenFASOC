@@ -31,7 +31,7 @@ This project is led by a team of researchers at the University of Michigan and i
 Prerequisites
 ****************
 
-Install all the prerequisites using `dependencies.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7, Ubuntu 20.04 LTS and Ubuntu 22.04 LTS.
+Install all the prerequisites using the `dependencies.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7, Ubuntu 20.04 LTS and Ubuntu 22.04 LTS.
 
 .. code-block:: bash
 
@@ -69,7 +69,7 @@ Install all the prerequisites using `dependencies.sh` script provided in the hom
 
 Upgrading
 ****************
-To upgrade packages used by the generators, the dependencies.sh script must be run, which can be found in the home folder of the cloned repository. 
+To upgrade packages used by the generators, the dependencies.sh script must be run (which can be found in the home folder of the cloned repository). 
 
 .. code-block:: bash
 
