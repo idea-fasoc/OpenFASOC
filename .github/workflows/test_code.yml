@@ -4,6 +4,13 @@ name: Lint and Test
 
 on:
   pull_request:
+    paths:
+      - 'openfasoc/common/**'
+      - 'openfasoc/generators/common/**'
+      - 'openfasoc/generators/common/cryo-gen/**'
+      - 'tests/**'
+      - 'requirements.txt'
+      - 'pytest.ini'
   push:
   schedule:
     - cron: 0 2 * * * # run at 2 AM UTC
