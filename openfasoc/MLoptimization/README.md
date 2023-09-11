@@ -41,6 +41,4 @@ The evaluation result will be saved to the ../generators/gdsfactory-gen/.
 ## Results
 Please note that results vary greatly based on random seed and spec generation (both for testing and validation). An example spec file is provided that was used to generate the results below. 
 
-<img src=image1.png width="425"> 
-<img src=image2.png width="425"> 
-<img src=image1.png width="500">
+<img src=image1.png width="425"> <img src=image2.png width="425"> 
