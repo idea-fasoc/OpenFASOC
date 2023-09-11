@@ -265,20 +265,20 @@ then
  	if [ $currentver == $requiredver ]
  	then
 	 apt install qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y 
-	 wget https://www.klayout.org/downloads/Ubuntu-22/klayout_0.28.8-1_amd64.deb
-	 dpkg -i klayout_0.28.8-1_amd64.deb
+	 wget https://www.klayout.org/downloads/Ubuntu-22/klayout_0.28.11-1_amd64.deb
+	 dpkg -i klayout_0.28.11-1_amd64.deb
 	else 
 	 apt install qt5-default qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y
-	 wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.28.6-1_amd64.deb
-	 dpkg -i klayout_0.28.6-1_amd64.deb
+	 wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.28.11-1_amd64.deb
+	 dpkg -i klayout_0.28.11-1_amd64.deb
   	 strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5 #https://stackoverflow.com/questions/63627955/cant-load-shared-library-libqt5core-so-5
 	fi
 	apt install time -y
 	elif cat /etc/os-release | grep -e "centos" >> /dev/null
 then
 	yum install qt5-qtbase-devel qt5-qttools-devel qt5-qtxmlpatterns-devel qt5-qtmultimedia-devel qt5-qtmultimedia-widgets-devel qt5-qtsvg-devel ruby ruby-devel python3-devel zlib-devel time -y
-	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.28.6-0.x86_64.rpm
-	rpm -i klayout-0.28.6-0.x86_64.rpm
+	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.28.11-0.x86_64.rpm
+	rpm -i klayout-0.28.11-0.x86_64.rpm
 	yum install time -y
   strip --remove-section=.note.ABI-tag /usr/lib64/libQt5Core.so.5
 else
