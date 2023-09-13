@@ -30,8 +30,7 @@ Ibiaso  VDD biason   {bo}
 ** Import SKY130 libs (this should be replaced with a path relative to some env variable)
 * the ones with double * will not be used. The one with only 1 * will be used
 
-** Ryan
-** .lib /home/rw/work/open_pdks/sky130/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+** example not used
 **@@stp .include /home/rw/work/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
 
 ** GCP machine

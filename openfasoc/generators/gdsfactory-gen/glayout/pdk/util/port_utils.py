@@ -229,7 +229,7 @@ def print_ports(custom_comp: Union[Component, ComponentReference], names_only: O
 
 
 class PortTree:
-	"""PortTree helps a pygen programmer visualize the ports in a component
+	"""PortTree helps a glayout programmer visualize the ports in a component
 	\"_\" should represent a level of hiearchy (much like a directory). think of this like psuedo directories
 	Initialize a PortTree from a Component or ComponentReference
 	then use self.ls to list all ports/subdirectories in a directory
@@ -305,7 +305,7 @@ class PortTree:
 		args:
 		depth = max depth to print. this is a kwarg but since it so common, it should be specfied from depth arg
 		savetofile = saves print output to a txt file rather than printing to terminal (easier to view, but without nice formatting)
-		default_opts = bool=True results in using pygen recommended default print arguments
+		default_opts = bool=True results in using glayout recommended default print arguments
 		kwargs -> kwargs are prettyprint options passed directly to prettyprint.
 		****NOTE: kwargs override all other options
 		"""
@@ -325,20 +325,20 @@ class PortTree:
 
 
 def print_port_tree_all_cells() -> list:
-	"""print the PortTree for most of the pygen cells and save as a text file.
+	"""print the PortTree for most of the glayout cells and save as a text file.
 	returns a list of components
 	"""
-	from pygen.via_gen import via_stack, via_array
-	from pygen.opamp import opamp
-	from pygen.mimcap import mimcap
-	from pygen.mimcap import mimcap_array
-	from pygen.guardring import tapring
-	from pygen.fet import multiplier, nmos, pmos
-	from pygen.diff_pair import diff_pair
-	from pygen.routing.straight_route import straight_route
-	from pygen.routing.c_route import c_route
-	from pygen.routing.L_route import L_route
-	from pygen.pdk.sky130_mapped import sky130_mapped_pdk as pdk
+	from glayout.via_gen import via_stack, via_array
+	from glayout.opamp import opamp
+	from glayout.mimcap import mimcap
+	from glayout.mimcap import mimcap_array
+	from glayout.guardring import tapring
+	from glayout.fet import multiplier, nmos, pmos
+	from glayout.diff_pair import diff_pair
+	from glayout.routing.straight_route import straight_route
+	from glayout.routing.c_route import c_route
+	from glayout.routing.L_route import L_route
+	from glayout.pdk.sky130_mapped import sky130_mapped_pdk as pdk
 	from gdsfactory.port import Port
 	print("saving via_stack, via_array, opamp, mimcap, mimcap_array, tapring, multiplier, nmos, pmos, diff_pair, straight_route, c_route, L_route Ports to txt files")
 	celllist = list()
@@ -359,7 +359,7 @@ def print_port_tree_all_cells() -> list:
 	celllist.append(["c_route",c_route(pdk, psuedo_porta, psuedo_porta,extension=2)])
 	celllist.append(["opamp",opamp(pdk)])
 	for name, py_cell in celllist:
-		from pygen import __version__ as pygenvinfo
-		pygenv = str(pygenvinfo)
-		PortTree(py_cell,name=name).print(depth=5,outfile_name=name+"_v"+pygenv+"_tree.txt",default_orientation=True)
+		from glayout import __version__ as glayoutvinfo
+		glayoutv = str(glayoutvinfo)
+		PortTree(py_cell,name=name).print(depth=5,outfile_name=name+"_v"+glayoutv+"_tree.txt",default_orientation=True)
 	return celllist

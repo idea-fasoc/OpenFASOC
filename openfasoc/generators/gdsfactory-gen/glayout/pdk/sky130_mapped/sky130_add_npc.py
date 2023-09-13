@@ -3,42 +3,6 @@ from gdsfactory.polygon import Polygon
 from gdsfactory.geometry.boolean import boolean
 
 
-# slightly slower version
-#def sky130_add_npc(comp: Component) -> Component:
-#	licon_comp = comp.extract(layers=[(66,44)])
-#	poly_comp = comp.extract(layers=[(66,20)])
-#	if len(licon_comp.get_polygons()) < 2 and len(poly_comp.get_polygons()) < 2:
-#		return comp
-#	liconANDpoly = boolean(licon_comp, poly_comp, layer=(1,2), operation="and")
-#	licon_polygons = liconANDpoly.get_polygons(as_array=False)
-#	# iterate through all licon and create extra space top right / extra space bottom left
-#	npc_toprightextra = Component()
-#	npc_bottomleftextra = Component()
-#	for licon_polygon in licon_polygons:
-#		bbox = licon_polygon.bounding_box()
-#		licon_polygonxmin = bbox[0][0]
-#		licon_polygonymin = bbox[0][1]
-#		licon_polygonxmax = bbox[1][0]
-#		licon_polygonymax = bbox[1][1]
-#		padding_points_toprightextra = [
-#			[licon_polygonxmin - 0.1, licon_polygonymin - 0.1],
-#			[licon_polygonxmax + 0.37, licon_polygonymin - 0.1],
-#			[licon_polygonxmax + 0.37, licon_polygonymax + 0.37],
-#			[licon_polygonxmin - 0.1, licon_polygonymax + 0.37],
-#		]
-#		padding_points_bottomleftextra = [
-#			[licon_polygonxmin - 0.37, licon_polygonymin - 0.37],
-#			[licon_polygonxmax + 0.1, licon_polygonymin - 0.37],
-#			[licon_polygonxmax + 0.1, licon_polygonymax + 0.1],
-#			[licon_polygonxmin - 0.37, licon_polygonymax + 0.1],
-#		]
-#		npc_toprightextra._add(Polygon(padding_points_toprightextra, layer=(1,3)))
-#		npc_bottomleftextra._add(Polygon(padding_points_bottomleftextra, layer=(1,3)))
-#	# the npc layer (correctly merged is the combination of both this layers AND)
-#	NPCcomp = boolean(npc_toprightextra, npc_bottomleftextra, layer=(95,20), operation="and")
-#	comp.add(NPCcomp.get_polygons(as_array=False))
-#	return comp
-
 def sky130_add_npc(comp: Component) -> Component:
 	"""To keep with the generic generator structure,
 	we do NOT add nitride poly cut layer in the generic generators (npc is specfic to sky130).

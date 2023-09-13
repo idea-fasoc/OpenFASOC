@@ -1,22 +1,23 @@
-from pygen.pdk.mappedpdk import MappedPDK
+from glayout.pdk.mappedpdk import MappedPDK
 from pydantic import validate_arguments
 from gdsfactory.component import Component
-from pygen.fet import nmos, pmos, multiplier
-from pygen.pdk.util.comp_utils import evaluate_bbox
+from glayout.fet import nmos, pmos, multiplier
+from glayout.pdk.util.comp_utils import evaluate_bbox
 from typing import Literal, Union
-from pygen.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list
-from pygen.pdk.util.comp_utils import prec_ref_center
-from pygen.routing.straight_route import straight_route
+from glayout.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list
+from glayout.pdk.util.comp_utils import prec_ref_center
+from glayout.routing.straight_route import straight_route
 from gdsfactory.functions import transformed
-from pygen.guardring import tapring
-from pygen.pdk.util.port_utils import add_ports_perimeter
+from glayout.guardring import tapring
+from glayout.pdk.util.port_utils import add_ports_perimeter
 from gdsfactory.cell import clear_cache
 
 
-#from pygen.common.two_transistor_interdigitized import two_nfet_interdigitized; from pygen.pdk.sky130_mapped import sky130_mapped_pdk as pdk; biasParams=[6,2,4]; rmult=2
+#from glayout.common.two_transistor_interdigitized import two_nfet_interdigitized; from glayout.pdk.sky130_mapped import sky130_mapped_pdk as pdk; biasParams=[6,2,4]; rmult=2
 
 @validate_arguments
-def two_transistor_interdigitized(pdk: MappedPDK,
+def two_transistor_interdigitized(
+    pdk: MappedPDK,
     numcols: int,
     deviceA_and_B: Literal["nfet", "pfet"],
     dummy: Union[bool, tuple[bool, bool]] = True,
@@ -31,7 +32,7 @@ def two_transistor_interdigitized(pdk: MappedPDK,
     deviceA_and_B = the device to place for both transistors (either nfet or pfet)
     dummy = place dummy at the edges of the interdigitized place (true by default). you can specify tuple to place only on one side
     kwargs = key word arguments for device. 
-    ****NOTE: These are the same as pygen.fet.multiplier arguments EXCLUDING dummy, sd_route_extension, and pdk options
+    ****NOTE: These are the same as glayout.fet.multiplier arguments EXCLUDING dummy, sd_route_extension, and pdk options
     """
     if isinstance(dummy, bool):
         dummy = (dummy, dummy)
@@ -90,7 +91,8 @@ def two_transistor_interdigitized(pdk: MappedPDK,
 
 
 @validate_arguments
-def two_nfet_interdigitized(pdk: MappedPDK,
+def two_nfet_interdigitized(
+    pdk: MappedPDK,
     numcols: int,
     dummy: Union[bool, tuple[bool, bool]] = True,
     with_substrate_tap: bool = True,
@@ -104,7 +106,7 @@ def two_nfet_interdigitized(pdk: MappedPDK,
     numcols = a single col is actually one col for both nfets (so AB). 2 cols = ABAB ... so on
     dummy = place dummy at the edges of the interdigitized place (true by default). you can specify tuple to place only on one side
     kwargs = key word arguments for multiplier. 
-    ****NOTE: These are the same as pygen.fet.multiplier arguments EXCLUDING dummy, sd_route_extension, and pdk options
+    ****NOTE: These are the same as glayout.fet.multiplier arguments EXCLUDING dummy, sd_route_extension, and pdk options
     """
     base_multiplier = two_transistor_interdigitized(pdk, numcols, "nfet", dummy, **kwargs)
     # tie

@@ -3,9 +3,6 @@
 # Actual
 export PDK_ROOT=/usr/bin/miniconda3/share/pdk/
 
-# Ryan
-# export PDK_ROOT = /home/rw/work/open_pdks/sky130
-
 # args:
 # first arg = gds file to read
 # second arg = name of top cell in gds file to read

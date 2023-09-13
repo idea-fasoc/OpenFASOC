@@ -2,12 +2,12 @@ from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
 from pydantic import validate_arguments
-from pygen.pdk.mappedpdk import MappedPDK
+from glayout.pdk.mappedpdk import MappedPDK
 from math import floor
 from typing import Optional, Union
-from pygen.pdk.util.comp_utils import evaluate_bbox, prec_array, to_float, move, prec_ref_center, to_decimal
-from pygen.pdk.util.port_utils import rename_ports_by_orientation, print_ports
-from pygen.pdk.util.snap_to_grid import component_snap_to_grid
+from glayout.pdk.util.comp_utils import evaluate_bbox, prec_array, to_float, move, prec_ref_center, to_decimal
+from glayout.pdk.util.port_utils import rename_ports_by_orientation, print_ports
+from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from decimal import Decimal
 from typing import Literal
 

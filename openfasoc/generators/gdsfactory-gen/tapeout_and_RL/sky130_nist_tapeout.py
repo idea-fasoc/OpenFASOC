@@ -1,23 +1,23 @@
 import sys
-# path to pygen
+# path to glayout
 sys.path.append('../')
 
 from gdsfactory.read.import_gds import import_gds
 from gdsfactory.components import text_freetype, rectangle
-from pygen.pdk.util.comp_utils import prec_array, movey, align_comp_to_port, prec_ref_center
-from pygen.pdk.util.port_utils import add_ports_perimeter, print_ports
+from glayout.pdk.util.comp_utils import prec_array, movey, align_comp_to_port, prec_ref_center
+from glayout.pdk.util.port_utils import add_ports_perimeter, print_ports
 from gdsfactory.component import Component
-from pygen.pdk.mappedpdk import MappedPDK
-from pygen.opamp import opamp
-from pygen.routing.L_route import L_route
-from pygen.routing.straight_route import straight_route
-from pygen.routing.c_route import c_route
-from pygen.via_gen import via_array
+from glayout.pdk.mappedpdk import MappedPDK
+from glayout.opamp import opamp
+from glayout.routing.L_route import L_route
+from glayout.routing.straight_route import straight_route
+from glayout.routing.c_route import c_route
+from glayout.via_gen import via_array
 from gdsfactory.cell import cell, clear_cache
 import numpy as np
 from subprocess import Popen
 from pathlib import Path
-from typing import Union, Optional, Literal
+from typing import Union, Optional, Literal, Iterable
 from tempfile import TemporaryDirectory
 from shutil import copyfile, copytree
 from multiprocessing import Pool
@@ -31,8 +31,10 @@ from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn.metrics import silhouette_score
 import argparse
-from pygen.pdk.sky130_mapped import sky130_mapped_pdk as pdk
+from glayout.pdk.sky130_mapped import sky130_mapped_pdk as pdk
 from itertools import count, repeat
+from glayout.pdk.util.snap_to_grid import component_snap_to_grid
+from glayout.pdk.util.opamp_array_create import write_opamp_matrix
 
 
 global _GET_PARAM_SET_LENGTH_
@@ -52,7 +54,7 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	opamp_wpads = opamp_in.copy()
 	opamp_wpads = movey(opamp_wpads, destination=0)
 	# create pad array and add to opamp
-	pad = import_gds("sky130_mpw5_pad.gds")
+	pad = import_gds("pads/sky130_mpw5_pad.gds")
 	pad.name = "mpw5pad"
 	pad = add_ports_perimeter(pad, pdk.get_glayer("met4"),prefix="pad_")
 	pad_array = prec_array(pad, rows=2, columns=(4+1), spacing=(40,120))
@@ -86,7 +88,7 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 			pin_ref = opamp_wpads << text_pin_labels[4*row + col_u]
 			align_comp_to_port(pin_ref,pad_array_port,alignment=('c','t'))
 	# import nano pad and add to opamp
-	nanopad = import_gds("sky130_nano_pad.gds")
+	nanopad = import_gds("pads/sky130_nano_pad.gds")
 	nanopad.name = "nanopad"
 	nanopad = add_ports_perimeter(nanopad, pdk.get_glayer("met4"),prefix="nanopad_")
 	nanopad_array = prec_array(nanopad, rows=2, columns=2, spacing=(10,10))
@@ -561,7 +563,7 @@ def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: 
 	saves opamp gds in current directory with name 12345678987654321.gds
 	returns -987.654321 for all values IF phase margin < 45
 	"""
-	from pygen.pdk.sky130_mapped import sky130_mapped_pdk
+	from glayout.pdk.sky130_mapped import sky130_mapped_pdk
 	# process temperature info
 	temperature_info = [temp, None]
 	if temperature_info[0] > -20:
@@ -585,7 +587,11 @@ def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: 
 	return results
 
 
-#======stats=======
+
+
+# ================ stats ==================
+
+
 
 
 
@@ -951,6 +957,51 @@ def extract_stats(
 
 
 
+# ================ create opamp matrix ==================
+
+
+
+def create_opamp_matrix(save_dir_name: str, params: np.array, results: Optional[np.array] = None, indices: Optional[list]=None):
+	"""create opamps with pads from the np array of opamp parameters 
+	args:
+	save_dir_name = name of directory to save gds array and text description into
+	params = 2d list-like container (list, np.array, tuple, etc.) where each row is in the same form as opamp_parameters_serializer
+	results = (Optional) 2d list-like container (list, np.array, tuple, etc.) where each row is in the same form as opamp_results_serializer
+	****NOTE: if results is not specfied, the stats.txt will not list the sim results for each opamp
+	indices = (Optional) an iterable of integers where each integer represent an index into the params and results lists
+	"""
+	# arg setup
+	current_setting = pdk.cell_decorator_settings.cache
+	pdk.cell_decorator_settings.cache = False
+	comps = list()
+	if indices is None:
+		indices = range(len(params))
+	# dir setup
+	save_dir = Path(save_dir_name).resolve()
+	save_dir.mkdir(parents=True,exist_ok=True)
+	# run opamps
+	for index in indices:
+		# create opamp
+		comp = sky130_opamp_add_pads(opamp(pdk, **opamp_parameters_de_serializer(params[index])), flatten=False)
+		comp = component_snap_to_grid(comp)
+		comp.name = "opamp_" + str(index)
+		# append to list
+		comps.append(comp)
+		clear_cache()
+		with open(str(save_dir)+"/stats.txt","a") as resfile:
+			strtowrite = "\n-------------------------\nopamp_"+str(index)
+			strtowrite += "\nparams = " + str(opamp_parameters_de_serializer(params[index]))
+			if results is not None:
+				strtowrite += "\n\nresults = " + str(opamp_results_de_serializer(results[index]))
+			strtowrite += "\n\n\n"
+			resfile.write(strtowrite)
+	write_opamp_matrix(comps, write_name = str(save_dir) + "/opamp_matrix.gds", xspace=600)
+	pdk.cell_decorator_settings.cache = current_setting
+
+
+
+
+
 if __name__ == "__main__":
 	import time
 	start_watch = time.time()
@@ -988,7 +1039,7 @@ if __name__ == "__main__":
 	gen_opamp_parser.add_argument("--add_pads",action="store_true" , help="add pads (gen_opamp mode only)")
 	gen_opamp_parser.add_argument("--output_gds", help="Filename for outputing opamp (gen_opamp mode only)")
 
-	# Testing
+	# subparse for testing mode (create opamp and run sims)
 	test = subparsers.add_parser("test", help="Test mode")
 	test.add_argument("--output_dir", type=Path, default="./", help="Directory for output GDS file")
 	test.add_argument("--temp", type=int, default=int(25), help="Simulation temperature")
@@ -998,15 +1049,10 @@ if __name__ == "__main__":
 	
 	# Subparser for create_opamp_matrix mode
 	create_opamp_matrix_parser = subparsers.add_parser("create_opamp_matrix", help="create a matrix of opamps")
-	create_opamp_matrix_parser.add_argument("-p", "--params", default="training_params.npy", help="File path for params (default: training_params.npy)")
-	create_opamp_matrix_parser.add_argument("-r", "--results", default="training_results.npy", help="File path for results (default: training_results.npy)")
-	specfilehelp = "File path for a specfile. The specfile is a txt file where each line represents indices to extract.  "
-	specfilehelp += "The first word in each line is taken as a name (everything before the first space).  "
-	specfilehelp += "Everything after the first space should be a list of integer indices. The list should be space seperated (with no chars denoting start or end).  "
-	specfilehelp += "Only place a new line at the end of the list. Lines are read as a single spec.  "
-	specfilehelp += "Leaving this field empty indicates all opamps should be placed in the array.  "
-	create_opamp_matrix_parser.add_argument("--specfile", type=Path, help=specfilehelp)
-	create_opamp_matrix_parser.add_argument("--opamp_dir",default="./save_gds_by_index",help="optionally point to a directory, program looks for 'index'.gds")
+	create_opamp_matrix_parser.add_argument("-p", "--params", default="params.npy", help="File path for params (default: params.npy)")
+	create_opamp_matrix_parser.add_argument("-r", "--results", help="Optional File path for results")
+	create_opamp_matrix_parser.add_argument("--indices", type=int, nargs="+", help="list of int indices to pick from the opamp param.npy and add to the matrix (default: the entire params list)")
+	create_opamp_matrix_parser.add_argument("--output_dir", type=Path, default="./opampmatrix", help="Directory for output files (default: ./opampmatrix)")
 
 	args = parser.parse_args()
 
@@ -1079,7 +1125,16 @@ if __name__ == "__main__":
 		print(results)
 
 	elif args.mode =="create_opamp_matrix":
-		raise NotImplementedError("create_opamp_matrix mode is not yet implemented")
+		params = Path(args.params).resolve()
+		params = np.load(str(params))
+		results = Path(args.results).resolve() if args.results else None
+		results = np.load(str(results)) if results else None
+		if args.indices is not None:
+			indices = args.indices if isinstance(args.indices, Iterable) else [args.indices]
+		else:
+			indices = None
+		create_opamp_matrix(args.output_dir,params,results,indices)
+		
 	
 	end_watch = time.time()
 	print("\ntotal runtime was "+str((end_watch-start_watch)/3600) + " hours\n")

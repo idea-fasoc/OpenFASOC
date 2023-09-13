@@ -1,9 +1,9 @@
-from pygen.pdk.mappedpdk import MappedPDK
+from glayout.pdk.mappedpdk import MappedPDK
 from pydantic import validate_arguments
 from gdsfactory.component import Component
 from typing import Callable
-from pygen.fet import nmos, pmos
-from pygen.pdk.util.comp_utils import evaluate_bbox
+from glayout.fet import nmos, pmos
+from glayout.pdk.util.comp_utils import evaluate_bbox
 
 @validate_arguments
 def two_transistor_place(pdk: MappedPDK, pattern: str, deviceA: tuple[Callable, dict], deviceB: tuple[Callable, dict]) -> Component:
