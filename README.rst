@@ -31,8 +31,11 @@ This project is led by a team of researchers at the University of Michigan and i
 Prerequisites
 ****************
 
-Install all the prerequisites using `dependencies.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7 and Ubuntu20.
+Install all the prerequisites using the `dependencies.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7, Ubuntu 20.04 LTS and Ubuntu 22.04 LTS.
 
+.. code-block:: bash
+
+    $ sudo ./dependencies.sh
 
 (Or) Please install the following tools by building the tools manually from their code base with the recommended commit ids for stable functioning of the flow:
 
@@ -64,6 +67,25 @@ Install all the prerequisites using `dependencies.sh` script provided in the hom
    - Python 3.7 is used in this generator.
    - All the required tools need to be loaded into the environment before running this generator.
 
+Upgrading
+****************
+To upgrade packages used by the generators, the dependencies.sh script must be run (which can be found in the home folder of the cloned repository). 
+
+.. code-block:: bash
+
+    $ sudo ./dependencies.sh # Enter 'u' on being prompted to commence upgrade
+
+Testing Installation
+****************
+To test your installation, run the following commands from the home folder of the cloned repository - 
+
+.. code-block:: bash
+
+    $ cd openfasoc/generators/temp-sense-gen
+    $ make sky130hd_temp
+
+This will run the Makefile for the temperature sensor generator (the functionality of which is explained in the Generators section). 
+The installation has finished succesfully if the make process exits without errors.
 
 Design Generation
 ********************

@@ -5,6 +5,10 @@ on:
     branches:
     - main
   pull_request:
+    paths:
+      - 'openfasoc/common/**'
+      - 'openfasoc/generators/common/**'
+      - 'openfasoc/generators/common/ldo-gen/**'
   workflow_dispatch:
 
 jobs:
