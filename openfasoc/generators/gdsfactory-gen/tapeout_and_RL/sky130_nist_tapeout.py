@@ -54,10 +54,10 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	opamp_wpads = opamp_in.copy()
 	opamp_wpads = movey(opamp_wpads, destination=0)
 	# create pad array and add to opamp
-	pad = import_gds("pads/sky130_mpw5_pad.gds")
-	pad.name = "mpw5pad"
+	pad = import_gds("pads/pad_60um_flat.gds")
+	pad.name = "NISTpad"
 	pad = add_ports_perimeter(pad, pdk.get_glayer("met4"),prefix="pad_")
-	pad_array = prec_array(pad, rows=2, columns=(4+1), spacing=(40,120))
+	pad_array = prec_array(pad, rows=2, columns=(4+1), spacing=(20,120))
 	pad_array_ref = prec_ref_center(pad_array)
 	opamp_wpads.add(pad_array_ref)
 	# add via_array to vdd pin
@@ -102,7 +102,7 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col1_nanopad_E"],pad_array_ref.ports["row1_col1_pad_S"],width=3)
 	# add the extra pad for the CS output
 	cspadref = opamp_wpads << pad
-	cspadref.movex(240).movey(80)
+	cspadref.movex(240).movey(90)
 	opamp_wpads << L_route(pdk, cspadref.ports["pad_S"], opamp_wpads.ports["commonsource_output_E"],hwidth=3, hglayer="met5",vglayer="met5")
 	#opamp_wpads << nanopad
 	if flatten:
@@ -1039,6 +1039,10 @@ if __name__ == "__main__":
 	gen_opamp_parser.add_argument("--add_pads",action="store_true" , help="add pads (gen_opamp mode only)")
 	gen_opamp_parser.add_argument("--output_gds", help="Filename for outputing opamp (gen_opamp mode only)")
 
+	# subparser for gen_opamps mode
+	gen_opamps_parser = subparsers.add_parser("gen_opamps", help="generates the opamps returned in the small parameters list but only saves GDS and does not add pads. always outputs to ./outputrawopamps")
+	gen_opamps_parser.add_argument("--pdk", help="specify sky130 or gf180 pdk")
+
 	# subparse for testing mode (create opamp and run sims)
 	test = subparsers.add_parser("test", help="Test mode")
 	test.add_argument("--output_dir", type=Path, default="./", help="Directory for output GDS file")
@@ -1135,6 +1139,24 @@ if __name__ == "__main__":
 			indices = None
 		create_opamp_matrix(args.output_dir,params,results,indices)
 		
+	
+	elif args.mode == "gen_opamps":
+		global usepdk
+		if args.pdk[0].lower()=="g":
+			from glayout.pdk.gf180_mapped import gf180_mapped_pdk
+			usepdk = gf180_mapped_pdk
+		else:
+			usepdk = pdk
+		output_path = Path("./outputrawopamps").resolve()
+		output_path.mkdir()
+		def create_func(argnparray, indx: int):
+			global usepdk
+			comp = opamp(usepdk,**opamp_parameters_de_serializer(argnparray))
+			comp.write_gds("./outputrawopamps/amp"+str(indx)+".gds")
+		
+		argnparray = get_small_parameter_list()
+		with Pool(120) as cores:
+			cores.starmap(create_func, zip(argnparray,count(0)))
 	
 	end_watch = time.time()
 	print("\ntotal runtime was "+str((end_watch-start_watch)/3600) + " hours\n")
