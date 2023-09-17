@@ -8,3 +8,6 @@
 [submodule "common/platforms"]
 	path = common/platforms
 	url = https://github.com/idea-fasoc/platforms
+[submodule "openfasoc/common/platforms"]
+	path = openfasoc/common/platforms
+	url = https://github.com/idea-fasoc/platforms
