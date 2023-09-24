@@ -74,18 +74,20 @@ def rename_ports_by_orientation(custom_comp: Component) -> Component:
 
 
 class rename_ports_by_list__call: 
-    def __init__(self, replace_list: list[tuple[str,str]] = []): 
-        self.replace_list = dict(replace_list)
-        self.replace_history = dict.fromkeys(self.replace_list.keys())
-        for keyword in self.replace_history:
-            self.replace_history[keyword] = 0
-    @validate_arguments
-    def __call__(self, old_name: str, pobj: Port) -> str:
-        for keyword, newname in self.replace_list.items():
-            if keyword in old_name:
-                self.replace_history[keyword] += 1
-                return newname + str(self.replace_history[keyword])
-        return old_name
+	def __init__(self, replace_list: list[tuple[str,str]] = []): 
+		self.replace_list = dict(replace_list)
+		self.replace_history = dict.fromkeys(self.replace_list.keys())
+		for keyword in self.replace_history:
+			self.replace_history[keyword] = 0
+	@validate_arguments
+	def __call__(self, old_name: str, pobj: Port) -> str:
+		for keyword, newname in self.replace_list.items():
+			if keyword in old_name:
+				inst_id = self.replace_history[keyword]
+				replace_name = newname + str(inst_id if inst_id else "")
+				self.replace_history[keyword] += 1
+				return replace_name
+		return old_name
 
 @validate_arguments
 def rename_ports_by_list(custom_comp: Component, replace_list: list[tuple[str,str]]) -> Component:
@@ -121,7 +123,7 @@ def add_ports_perimeter(custom_comp: Component, layer: tuple[int, int], prefix: 
 
 
 @validate_arguments
-def get_orientation(orientation: Union[int,float,str], int_only: Optional[bool]=False) -> Union[float,int,str]:
+def get_orientation(orientation: Union[int,float,str], int_only: bool=False) -> Union[float,int,str]:
 	"""returns the angle corresponding to port orientation
 	orientation must contain N/n,E/e,S/s,W/w
 	e.g. all the follwing are valid:

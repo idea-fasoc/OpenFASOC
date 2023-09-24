@@ -7,9 +7,10 @@ from math import isclose
 from glayout.via_gen import via_stack
 from gdsfactory.routing.route_quad import route_quad
 from gdsfactory.components.rectangle import rectangle
-from glayout.pdk.util.comp_utils import evaluate_bbox
+from glayout.pdk.util.comp_utils import evaluate_bbox, get_primitive_rectangle
 from glayout.pdk.util.port_utils import add_ports_perimeter, rename_ports_by_orientation, rename_ports_by_list, print_ports, set_port_width, set_port_orientation, get_orientation
 from pydantic import validate_arguments
+from gdsfactory.snap import snap_to_grid
 
 
 @validate_arguments
@@ -56,6 +57,7 @@ def c_route(
 	- None means center (no offset)
 	****NOTE: viaoffset pushes both vias towards each other slightly
 	"""
+	extension = snap_to_grid(extension)
 	# error checking and figure out args
 	if round(edge1.orientation) % 90 or round(edge2.orientation) % 90:
 		raise ValueError("Ports must be vertical or horizontal")
@@ -79,16 +81,16 @@ def c_route(
 	viastack1 = via_stack(pdk,e1glayer,cglayer,fullbottom=fullbottom,assume_bottom_via=True)
 	viastack2 = via_stack(pdk,e2glayer,cglayer,fullbottom=fullbottom,assume_bottom_via=True)
 	if e1glayer == e2glayer:
-		__fill_empty_viastack__macro(pdk,e1glayer,size=(width1,width2))
+		pass
 	elif e1glayer == cglayer:
 		viastack1 = __fill_empty_viastack__macro(pdk,e1glayer,size=evaluate_bbox(viastack2))
 	elif e2glayer == cglayer:
 		viastack2 = __fill_empty_viastack__macro(pdk,e2glayer,size=evaluate_bbox(viastack1))
 	# find extension
-	e1_length = extension + evaluate_bbox(viastack1)[0]
-	e2_length = extension + evaluate_bbox(viastack2)[0]
-	xdiff = abs(edge1.center[0] - edge2.center[0])
-	ydiff = abs(edge1.center[1] - edge2.center[1])
+	e1_length = snap_to_grid(extension + evaluate_bbox(viastack1)[0])
+	e2_length = snap_to_grid(extension + evaluate_bbox(viastack2)[0])
+	xdiff = snap_to_grid(abs(edge1.center[0] - edge2.center[0]))
+	ydiff = snap_to_grid(abs(edge1.center[1] - edge2.center[1]))
 	if not isclose(edge1.center[0],edge2.center[0]):
 		if round(edge1.orientation) == 0:# facing east
 			if edge1.center[0] > edge2.center[0]:
@@ -117,8 +119,8 @@ def c_route(
 	box_dims = [(e1_length, width1),(e2_length, width2)]
 	if round(edge1.orientation) == 90 or round(edge1.orientation) == 270:
 		box_dims = [(width1, e1_length),(width2, e2_length)]
-	rect_c1 = rectangle(size=box_dims[0], layer=pdk.get_glayer(e1glayer),centered=True).copy()
-	rect_c2 = rectangle(size=box_dims[1], layer=pdk.get_glayer(e2glayer),centered=True).copy()
+	rect_c1 = get_primitive_rectangle(size=box_dims[0], layer=pdk.get_glayer(e1glayer))
+	rect_c2 = get_primitive_rectangle(size=box_dims[1], layer=pdk.get_glayer(e2glayer))
 	rect_c1 = rename_ports_by_orientation(rename_ports_by_list(rect_c1,[("e","e_")]))
 	rect_c2 = rename_ports_by_orientation(rename_ports_by_list(rect_c2,[("e","e_")]))
 	e1_extension = e1_extension_comp << rect_c1
@@ -126,24 +128,28 @@ def c_route(
 	e1_extension.move(destination=edge1.center)
 	e2_extension.move(destination=edge2.center)
 	if round(edge1.orientation) == 0:# facing east
-		e1_extension.movex(evaluate_bbox(e1_extension)[0]/2)
-		e2_extension.movex(evaluate_bbox(e2_extension)[0]/2)
-	elif round(edge1.orientation) == 180:# facing west
-		e1_extension.movex(0-evaluate_bbox(e1_extension)[0]/2)
-		e2_extension.movex(0-evaluate_bbox(e2_extension)[0]/2)
-	elif round(edge1.orientation) == 270:# facing south
 		e1_extension.movey(0-evaluate_bbox(e1_extension)[1]/2)
 		e2_extension.movey(0-evaluate_bbox(e2_extension)[1]/2)
+	elif round(edge1.orientation) == 180:# facing west
+		e1_extension.movex(0-evaluate_bbox(e1_extension)[0])
+		e2_extension.movex(0-evaluate_bbox(e2_extension)[0])
+		e1_extension.movey(0-evaluate_bbox(e1_extension)[1]/2)
+		e2_extension.movey(0-evaluate_bbox(e2_extension)[1]/2)
+	elif round(edge1.orientation) == 270:# facing south
+		e1_extension.movex(0-evaluate_bbox(e1_extension)[0]/2)
+		e2_extension.movex(0-evaluate_bbox(e2_extension)[0]/2)
+		e1_extension.movey(0-evaluate_bbox(e1_extension)[1])
+		e2_extension.movey(0-evaluate_bbox(e2_extension)[1])
 	else:#facing north
-		e1_extension.movey(evaluate_bbox(e1_extension)[1]/2)
-		e2_extension.movey(evaluate_bbox(e2_extension)[1]/2)
+		e1_extension.movex(0-evaluate_bbox(e1_extension)[0]/2)
+		e2_extension.movex(0-evaluate_bbox(e2_extension)[0]/2)
 	# place viastacks
 	e1_extension_comp.add_ports(e1_extension.get_ports_list())
 	e2_extension_comp.add_ports(e2_extension.get_ports_list())
 	me1 = e1_extension_comp << viastack1
 	me2 = e2_extension_comp << viastack2
 	route_ports = [None,None]
-	via_flush = abs((width1 - evaluate_bbox(viastack1)[0])/2) if viaoffset else 0
+	via_flush = snap_to_grid(abs((width1 - evaluate_bbox(viastack1)[0])/2) if viaoffset else 0)
 	via_flush1 = via_flush if viaoffset[0] else 0-via_flush
 	via_flush1 = 0 if viaoffset[0] is None else via_flush1
 	via_flush2 = via_flush if viaoffset[1] else 0-via_flush
@@ -198,9 +204,9 @@ def c_route(
 if __name__ == "__main__":
 	from glayout.pdk.util.standard_main import pdk
 	
-	routebetweentop = copy(rectangle(layer=pdk.get_glayer("met1"))).ref()
+	routebetweentop = copy(get_primitive_rectangle(layer=pdk.get_glayer("met1"))).ref()
 	routebetweentop.movey(10)
-	routebetweenbottom = rectangle(layer=pdk.get_glayer("met1"))
+	routebetweenbottom = get_primitive_rectangle(layer=pdk.get_glayer("met1"))
 	mycomp = c_route(pdk,routebetweentop.ports["e3"],routebetweenbottom.ports["e3"])
 	mycomp.unlock()
 	mycomp.add(routebetweentop)

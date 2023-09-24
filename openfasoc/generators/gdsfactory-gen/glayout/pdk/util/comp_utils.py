@@ -8,6 +8,8 @@ from decimal import Decimal
 from gdsfactory.functions import transformed
 from gdsfactory.functions import move as __gf_move
 from glayout.pdk.mappedpdk import MappedPDK
+from gdstk import rectangle as primitive_rectangle
+from .port_utils import add_ports_perimeter, rename_ports_by_list
 
 
 @validate_arguments
@@ -289,3 +291,18 @@ def get_padding_points_cc(
 		for i, ppoint in enumerate(ppoints):
 			ppoints[i] = pdk_for_snap2xgrid.snap_to_2xgrid(ppoint)
 	return ppoints
+
+
+
+def get_primitive_rectangle(size: tuple[float,float]=(5,3), layer: tuple[int,int]=(0,0)):
+	"""creates a rectangle component which snaps point to grid (does not snap to 2x grid)
+	has same behavoir as gdsfactory.components.rectangle but doesnt allow centering (would snap to grid)
+	"""
+	temprect = Component()
+	temprect.add_polygon(primitive_rectangle((0,0),size,*layer))
+	temprect = rename_ports_by_list(add_ports_perimeter(temprect,layer=layer,prefix="route_"),[("W","e1"),("N","e2"),("E","e3"),("S","e4")])
+	#rect = Component()
+	#clogic_ref = prec_ref_center(temprect) if centered else temprect.ref()
+	#rect.add(clogic_ref)
+	#rect.add_ports(clogic_ref.ports)
+	return temprect.flatten()

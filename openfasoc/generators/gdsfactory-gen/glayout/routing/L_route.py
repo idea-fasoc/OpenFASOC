@@ -4,8 +4,7 @@ from gdsfactory.port import Port
 from glayout.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
 from glayout.via_gen import via_stack, via_array
-from gdsfactory.components.rectangle import rectangle
-from glayout.pdk.util.comp_utils import evaluate_bbox, align_comp_to_port, to_decimal, to_float, prec_ref_center
+from glayout.pdk.util.comp_utils import evaluate_bbox, align_comp_to_port, to_decimal, to_float, prec_ref_center, get_primitive_rectangle
 from glayout.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, print_ports, assert_port_manhattan, assert_ports_perpindicular
 from decimal import Decimal
 
@@ -74,8 +73,8 @@ def L_route(
 	hdim = abs(hdim_center) + hwidth/2
 	vdim = abs(vdim_center) + vwidth/2
 	# create and place vertical and horizontal connections
-	hconnect = rectangle(size=to_float((hdim,vwidth)),layer=pdk.get_glayer(hglayer))
-	vconnect = rectangle(size=to_float((hwidth,vdim)),layer=pdk.get_glayer(vglayer))
+	hconnect = get_primitive_rectangle(size=to_float((hdim,vwidth)),layer=pdk.get_glayer(hglayer))
+	vconnect = get_primitive_rectangle(size=to_float((hwidth,vdim)),layer=pdk.get_glayer(vglayer))
 	#xalign
 	valign = ("l","c") if hdim_center > 0 else ("r","c")
 	halign = ("c","b") if vdim_center > 0 else ("c","t")
@@ -111,9 +110,9 @@ def L_route(
 if __name__ == "__main__":
 	from glayout.pdk.util.standard_main import pdk
 	
-	routebetweentop = rectangle(layer=pdk.get_glayer("met1"),size=(1,1)).ref()
+	routebetweentop = get_primitive_rectangle(layer=pdk.get_glayer("met1"),size=(1,1)).ref()
 	routebetweentop.movey(-4).movex(7)
-	routebetweenbottom = rectangle(layer=pdk.get_glayer("met1"), size=(1, 0.5))
+	routebetweenbottom = get_primitive_rectangle(layer=pdk.get_glayer("met1"), size=(1, 0.5))
 	mycomp = L_route(pdk,routebetweentop.ports["e4"],routebetweenbottom.ports["e1"])
 	mycomp.unlock()
 	mycomp.add(routebetweentop)

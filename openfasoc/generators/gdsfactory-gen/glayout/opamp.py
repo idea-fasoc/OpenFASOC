@@ -178,7 +178,7 @@ def __create_sharedgatecomps(pdk: MappedPDK, rmult: int) -> tuple:
         pdk, "p+s/d", width=6, length=1, fingers=4, dummy=False, rmult=rmult
     )
     # TODO: figure out single dim spacing rule then delete both test delete and this
-    single_dim = to_decimal(relative_dim_comp.xmax) + to_decimal(0.1)
+    single_dim = to_decimal(relative_dim_comp.xmax) + to_decimal(0.11)
     LRplusdopedPorts = list()
     LRgatePorts = list()
     LRdrainsPorts = list()
@@ -200,7 +200,7 @@ def __create_sharedgatecomps(pdk: MappedPDK, rmult: int) -> tuple:
             extra_t = single_dim
         else:
             pcenterfourunits = relative_dim_comp
-        pref_ = (shared_gate_comps << pcenterfourunits).movex(to_float(i * single_dim + extra_t))
+        pref_ = (shared_gate_comps << pcenterfourunits).movex(pdk.snap_to_2xgrid(to_float(i * single_dim + extra_t)))
         LRplusdopedPorts += [pref_.ports["plusdoped_W"] , pref_.ports["plusdoped_E"]]
         LRgatePorts += [pref_.ports["gate_W"],pref_.ports["gate_E"]]
         LRdrainsPorts += [pref_.ports["source_W"],pref_.ports["source_E"]]
@@ -227,7 +227,7 @@ def __route_sharedgatecomps(pdk: MappedPDK, shared_gate_comps, via_location, pto
     shared_gate_comps.add_ports(ptop_AB.get_ports_list(),prefix="ptopAB_")
     shared_gate_comps.add_ports(pbottom_AB.get_ports_list(),prefix="pbottomAB_")
     # short all gates of shared_gate_comps
-    pcenter_gate_route_extension = shared_gate_comps.xmax - min(ptop_AB.ports["R_gate_E"].center[0], LRgatePorts[-1].center[0]) - pdk.get_grule("active_diff")["min_width"]
+    pcenter_gate_route_extension = pdk.snap_to_2xgrid(shared_gate_comps.xmax - min(ptop_AB.ports["R_gate_E"].center[0], LRgatePorts[-1].center[0]) - pdk.get_grule("active_diff")["min_width"])
     pcenter_l_croute = shared_gate_comps << c_route(pdk, ptop_AB.ports["L_gate_W"], pbottom_AB.ports["L_gate_W"],extension=pcenter_gate_route_extension)
     pcenter_r_croute = shared_gate_comps << c_route(pdk, ptop_AB.ports["R_gate_E"], pbottom_AB.ports["R_gate_E"],extension=pcenter_gate_route_extension)
     shared_gate_comps << straight_route(pdk, LRgatePorts[0], pcenter_l_croute.ports["con_N"])
@@ -512,7 +512,7 @@ def opamp(
     opamp_top.add_padding(layers=(pdk.get_glayer("pwell"),),default=0)
     # add ground pin
     gndpin = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met4"),centered=True)
-    gndpin.movey(opamp_top.ymin-pdk.util_max_metal_seperation()-gndpin.ymax)
+    gndpin.movey(pdk.snap_to_2xgrid(opamp_top.ymin-pdk.util_max_metal_seperation()-gndpin.ymax))
     # route bottom ncomps except drain of nbias (still need to place common source pmos amp)
     clear_cache()
     opamp_top, halfmultn_drain_routeref, halfmultn_gate_routeref, _cref = __route_bottom_ncomps_except_drain_nbias(pdk, opamp_top, gndpin, half_common_source_bias[3])

@@ -9,7 +9,8 @@ from typing import Optional
 from glayout.via_gen import via_stack, via_array
 from gdsfactory.components.rectangle import rectangle
 from glayout.pdk.util.comp_utils import evaluate_bbox, align_comp_to_port
-from glayout.pdk.util.port_utils import assert_port_manhattan, set_port_orientation
+from glayout.pdk.util.port_utils import assert_port_manhattan, set_port_orientation, add_ports_perimeter
+from gdstk import rectangle as primitive_rectangle
 
 
 @cell
@@ -70,18 +71,20 @@ def straight_route(
 		startx = edge1.center[0]
 		endx = edge2.center[0]
 		extension = endx-startx
-		viaport_name = "e3" if extension > 0 else "e1"
+		viaport_name = "route_E" if extension > 0 else "route_W"
 		alignment = ("r","c") if extension > 0 else ("l","c")
 		size = (abs(extension),width)
 	else:
 		starty = edge1.center[1]
 		endy = edge2.center[1]
 		extension = endy-starty
-		viaport_name = "e2" if extension > 0 else "e4"
+		viaport_name = "route_N" if extension > 0 else "route_S"
 		alignment = ("c","t") if extension > 0 else ("c","b")
 		size = (width,abs(extension))
 	# create route and via
-	route = rectangle(layer=pdk.get_glayer(glayer1),size=size,centered=True)
+	route = Component()
+	route.add_polygon(primitive_rectangle((0,0),size,*pdk.get_glayer(glayer1)))
+	add_ports_perimeter(route,layer=pdk.get_glayer(glayer1),prefix="route_")
 	out_via = via_stack(pdk,glayer1,glayer2,fullbottom=fullbottom) if glayer1 != glayer2 else None
 	# place route and via
 	straightroute = Component()
@@ -101,7 +104,7 @@ def straight_route(
 		via1_alignment = temp if i == 0 else via1_alignment
 		via2_alignment = temp if i == 1 else via2_alignment
 	route_ref = align_comp_to_port(route,edge1,alignment=alignment)
-	straightroute.add_ports(route_ref.get_ports_list(),prefix="route_")
+	straightroute.add_ports(route_ref.get_ports_list())
 	straightroute.add(route_ref)
 	if out_via is not None:
 		alignlayer2 = pdk.get_glayer(glayer1) if via2_alignment_layer is None else pdk.get_glayer(via2_alignment_layer)
