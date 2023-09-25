@@ -1,0 +1,83 @@
+                                     ┌[row0]
+                                     │
+                                     ├[row1]
+                                     │
+                             ┌[array]┼[row2]
+                             │       │
+                      ┌[col0]┤       ├[row3]
+                      │      │       │
+                      │      │       └[row4]
+                      │      │
+                      │      ├[bottom]─[met]
+                      │      │
+                      │      └[top]─[met]
+                      │
+                      │              ┌[row0]
+                      │              │
+                      │              ├[row1]
+                      │              │
+                      │      ┌[array]┼[row2]
+                      │      │       │
+               ┌[row0]┼[col1]┤       ├[row3]
+               │      │      │       │
+               │      │      │       └[row4]
+               │      │      │
+               │      │      ├[bottom]─[met]
+               │      │      │
+               │      │      └[top]─[met]
+               │      │
+               │      │              ┌[row0]
+               │      │              │
+               │      │              ├[row1]
+               │      │              │
+               │      │      ┌[array]┼[row2]
+               │      │      │       │
+               │      └[col2]┤       ├[row3]
+               │             │       │
+               │             │       └[row4]
+               │             │
+               │             ├[bottom]─[met]
+               │             │
+               │             └[top]─[met]
+-[mimcap_array]┤
+               │                     ┌[row0]
+               │                     │
+               │                     ├[row1]
+               │                     │
+               │             ┌[array]┼[row2]
+               │             │       │
+               │      ┌[col0]┤       ├[row3]
+               │      │      │       │
+               │      │      │       └[row4]
+               │      │      │
+               │      │      ├[bottom]─[met]
+               │      │      │
+               │      │      └[top]─[met]
+               │      │
+               │      │              ┌[row0]
+               │      │              │
+               │      │              ├[row1]
+               │      │              │
+               │      │      ┌[array]┼[row2]
+               │      │      │       │
+               └[row1]┼[col1]┤       ├[row3]
+                      │      │       │
+                      │      │       └[row4]
+                      │      │
+                      │      ├[bottom]─[met]
+                      │      │
+                      │      └[top]─[met]
+                      │
+                      │              ┌[row0]
+                      │              │
+                      │              ├[row1]
+                      │              │
+                      │      ┌[array]┼[row2]
+                      │      │       │
+                      └[col2]┤       ├[row3]
+                             │       │
+                             │       └[row4]
+                             │
+                             ├[bottom]─[met]
+                             │
+                             └[top]─[met]

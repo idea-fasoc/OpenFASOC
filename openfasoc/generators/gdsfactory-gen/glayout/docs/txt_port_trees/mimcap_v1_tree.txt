@@ -1,0 +1,115 @@
+                        ┌[W]
+                        │
+                        ├[N]
+         ┌[bottom]─[met]┤
+         │              ├[E]
+         │              │
+         │              └[S]
+         │
+         │                     ┌[bottom]
+         │              ┌[col0]┤
+         │              │      └[top]
+         │              │
+         │              │      ┌[bottom]
+         │              ├[col1]┤
+         │              │      └[top]
+         │              │
+         │              │      ┌[bottom]
+         │       ┌[row0]┼[col2]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       │      ├[col3]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       │      └[col4]┤
+         │       │             └[top]
+         │       │
+         │       │             ┌[bottom]
+         │       │      ┌[col0]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       │      ├[col1]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       ├[row1]┼[col2]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       │      ├[col3]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       │      └[col4]┤
+         │       │             └[top]
+         │       │
+         │       │             ┌[bottom]
+         │       │      ┌[col0]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       │      ├[col1]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+-[mimcap]┼[array]┼[row2]┼[col2]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       │      ├[col3]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       │      └[col4]┤
+         │       │             └[top]
+         │       │
+         │       │             ┌[bottom]
+         │       │      ┌[col0]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       │      ├[col1]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       ├[row3]┼[col2]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       │      ├[col3]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       │      └[col4]┤
+         │       │             └[top]
+         │       │
+         │       │             ┌[bottom]
+         │       │      ┌[col0]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       │      ├[col1]┤
+         │       │      │      └[top]
+         │       │      │
+         │       │      │      ┌[bottom]
+         │       └[row4]┼[col2]┤
+         │              │      └[top]
+         │              │
+         │              │      ┌[bottom]
+         │              ├[col3]┤
+         │              │      └[top]
+         │              │
+         │              │      ┌[bottom]
+         │              └[col4]┤
+         │                     └[top]
+         │
+         │           ┌[W]
+         │           │
+         │           ├[N]
+         └[top]─[met]┤
+                     ├[E]
+                     │
+                     └[S]

@@ -1,0 +1,111 @@
+                                  ┌[drain]
+                                  │
+                                  ├[source]
+                                  │
+                                  ├[row0]
+                                  │
+                 ┌[multiplier]─[0]┼[leftsd]
+                 │                │
+                 │                ├[plusdoped]
+            ┌[bl]┤                │
+            │    │                ├[diff]
+            │    │                │
+            │    │                └[gate]
+            │    │
+            │    │      ┌[W]
+            │    │      │
+            │    └[well]┼[S]
+            │           │
+            │           └[E]
+            │
+            │                     ┌[drain]
+            │                     │
+            │                     ├[source]
+            │                     │
+            │                     ├[row0]
+            │                     │
+            │    ┌[multiplier]─[0]┼[leftsd]
+            │    │                │
+            │    │                ├[plusdoped]
+            ├[br]┤                │
+            │    │                ├[diff]
+            │    │                │
+            │    │                └[gate]
+            │    │
+            │    │      ┌[W]
+            │    │      │
+            │    └[well]┼[S]
+            │           │
+            │           └[E]
+            │
+            │                     ┌[gate]
+            │                     │
+            │                     ├[row0]
+            │                     │
+            │                     ├[leftsd]
+            │                     │
+            │    ┌[multiplier]─[0]┼[plusdoped]
+            │    │                │
+            │    │                ├[diff]
+            │    │                │
+            ├[tl]┤                ├[source]
+            │    │                │
+            │    │                └[drain]
+            │    │
+            │    │      ┌[W]
+-[diff_pair]┤    │      │
+            │    │      ├[N]
+            │    └[well]┤
+            │           ├[E]
+            │           │
+            │           └[S]
+            │
+            │                     ┌[gate]
+            │                     │
+            │                     ├[row0]
+            │                     │
+            │                     ├[leftsd]
+            │                     │
+            │    ┌[multiplier]─[0]┼[plusdoped]
+            │    │                │
+            │    │                ├[diff]
+            │    │                │
+            ├[tr]┤                ├[source]
+            │    │                │
+            │    │                └[drain]
+            │    │
+            │    │      ┌[W]
+            │    │      │
+            │    │      ├[N]
+            │    └[well]┤
+            │           ├[E]
+            │           │
+            │           └[S]
+            │
+            │                          ┌[N]
+            │                ┌[W]─[con]┤
+            │                │         └[S]
+            ├[MINUSgateroute]┤
+            │                │         ┌[N]
+            │                └[E]─[con]┤
+            │                          └[S]
+            │
+            │                         ┌[N]
+            │               ┌[W]─[con]┤
+            │               │         └[S]
+            ├[PLUSgateroute]┤
+            │               │         ┌[N]
+            │               └[E]─[con]┤
+            │                         └[S]
+            │
+            │       ┌[routeTL]─[BR]─[con]
+            ├[drain]┤
+            │       └[routeTR]─[BL]─[con]
+            │
+            │                       ┌[N]
+            │        ┌[routeW]─[con]┤
+            │        │              └[S]
+            └[source]┤
+                     │              ┌[N]
+                     └[routeE]─[con]┤
+                                    └[S]

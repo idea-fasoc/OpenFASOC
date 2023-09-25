@@ -18,7 +18,7 @@ update:
 
 # # Target for cleaning up generated files
 # clean:
-# 	# Command to clean up generated files goes here, but 
+# 	# Command to clean up generated files goes here, but
 # 	# currently this makefile does not generate new files in the first place
 
 # # Target for cleaning up and reinstalling dependencies
