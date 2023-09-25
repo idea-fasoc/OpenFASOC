@@ -7,7 +7,7 @@ import subprocess as sp
 import sys
 import re
 
-from readparamgen import args, check_search_done, designName
+from readparamgen import args, check_search_done, designName, Tmin, Tmax, Tstep
 from simulation import generate_runs
 
 # TODO: Find a better way to import modules from parent directory
@@ -192,12 +192,6 @@ else:
     os.mkdir(args.outputDir)
     outputDir = args.outputDir
 
-#  print("genDir + args.outputDir: {}".format(genDir + args.outputDir))
-#  print("flowDir: {}".format(flowDir))
-#  print("args.platform: {}".format(args.platform))
-#  print("designName: {}".format(designName))
-#  subprocess.run(["ls", "-l", flowDir, "results/", args.platform, "/tempsense"])
-
 shutil.copyfile(
     flowDir + "results/" + args.platform + "/tempsense/6_final.gds",
     outputDir + "/" + designName + ".gds",
@@ -231,83 +225,41 @@ shutil.copyfile(
     outputDir + "/6_final_lvs.rpt",
 )
 
-
 print("#----------------------------------------------------------------------")
 print("# Macro Generated")
 print("#----------------------------------------------------------------------")
 print()
 
-
-print("#----------------------------------------------------------------------")
-print("# Generating spice netlists for the macro")
-print("#----------------------------------------------------------------------")
-
-stage_var = [int(ninv)]
-header_var = [int(nhead)]
-
-# make a temp list, TODO: get from JSON config
-temp_start = -20
-temp_stop = 100
-temp_step = 20
-temp_points = int((temp_stop - temp_start) / temp_step)
-temp_list = []
-for i in range(0, temp_points + 1):
-    temp_list.append(temp_start + i * temp_step)
-
-# run PEX and/or prePEX simulations based on the command line flags
-if args.prepex:
-    prepexDir = generate_runs(
-        genDir,
-        designName,
-        header_var,
-        stage_var,
-        temp_list,
-        jsonConfig,
-        args.platform,
-        args.mode,
-        pdk,
-        spiceDir=args.outputDir,
-        prePEX=True,
-    )
-    if args.mode == "full":
-        if os.path.isfile(prepexDir + "all_result"):
-            shutil.copyfile(
-                prepexDir + "all_result", genDir + args.outputDir + "/prePEX_sim_result"
-            )
-        else:
-            print(prepexDir + "prePEX all_result file is not generated successfully")
-            sys.exit(1)
-
-if args.pex:
-    pexDir = generate_runs(
-        genDir,
-        designName,
-        header_var,
-        stage_var,
-        temp_list,
-        jsonConfig,
-        args.platform,
-        args.mode,
-        pdk,
-        spiceDir=args.outputDir,
-        prePEX=False,
-    )
-
-    if args.mode == "full":
-        if os.path.isfile(pexDir + "all_result"):
-            shutil.copyfile(
-                pexDir + "all_result", genDir + args.outputDir + "/PEX_sim_result"
-            )
-        else:
-            print(pexDir + "PEX all_result file is not generated successfully")
-            sys.exit(1)
-
-
 if args.mode == "full":
     print("#----------------------------------------------------------------------")
-    print("# Simulation output Generated")
+    print("# Running simulations.")
     print("#----------------------------------------------------------------------")
 
+    stage_var = [int(ninv)]
+    header_var = [int(nhead)]
+
+    # run PEX and/or prePEX simulations based on the command line flags
+    sim_output_dir = generate_runs(
+        genDir=genDir,
+        designName=designName,
+        headerList=header_var,
+        invList=stage_var,
+        tempStart=Tmin,
+        tempStop=Tmax,
+        tempStep=Tstep,
+        jsonConfig=jsonConfig,
+        platform=args.platform,
+        pdk=pdk,
+        spiceDir=args.outputDir,
+        prePEX=args.prepex,
+    )
+    if os.path.isfile(sim_output_dir + "all_result"):
+        shutil.copyfile(
+            sim_output_dir + "all_result", genDir + args.outputDir + f"/{'prePEX' if args.prepex else 'PEX'}_sim_result"
+        )
+    else:
+        print(sim_output_dir + f"{'prePEX' if args.prepex else 'PEX'} all_result file is not generated successfully")
+        sys.exit(1)
 
 print("Exiting tool....")
 exit()
