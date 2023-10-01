@@ -9,6 +9,7 @@ on:
       - 'openfasoc/common/**'
       - 'openfasoc/generators/common/**'
       - 'openfasoc/generators/common/ldo-gen/**'
+      - 'openfasoc/generators/ldo-gen/**'
   workflow_dispatch:
 
 jobs:

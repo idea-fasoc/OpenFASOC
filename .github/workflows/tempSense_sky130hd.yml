@@ -9,6 +9,7 @@ on:
       - 'openfasoc/common/**'
       - 'openfasoc/generators/common/**'
       - 'openfasoc/generators/common/temp-sense-gen/**'
+      - 'openfasoc/generators/temp-sense-gen/**'
   workflow_dispatch:
 
 jobs:
