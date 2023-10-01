@@ -19,11 +19,11 @@
 +    method=gear
 +    measdgt=10
 
-.lib '@model_file' @model_corner
-.include '@netlist'
+.lib '${model_file}' ${model_corner}
+.include '${netlist_path}'
 
-.param temp_var = @temp
-.param vvdd = @voltage
+.param temp_var = ${temp}
+.param vvdd = ${nominal_voltage}
 .param sim_end = 800m/exp(0.04*temp_var)
 
 *@modelingxi1 en out VDD VIN VSS TEMP_sensor
@@ -33,7 +33,7 @@
 *@verification+ DOUT[19] DOUT[1] DOUT[20] DOUT[21] DOUT[22] DOUT[23] DOUT[2]
 *@verification+ DOUT[3] DOUT[4] DOUT[5] DOUT[6] DOUT[7] DOUT[8] DOUT[9] RESET_COUNTERn
 *@verification+ SEL_CONV_TIME[0] SEL_CONV_TIME[1] SEL_CONV_TIME[2] SEL_CONV_TIME[3]
-*@verification+ VDD VIN VSS en lc_out out outb tempsenseInst
+*@verification+ VDD VIN VSS en lc_out out outb ${design_name}
 
 vCLK_REF                  CLK_REF                  0                  pulse		0 'vvdd' 12u 1n 1n '4/32768' '8/32768'
 vRESET_COUNTERn           RESET_COUNTERn           0                  pwl		0 0 5u 0 '5u+1n' 'vvdd'

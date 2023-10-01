@@ -1,13 +1,13 @@
-#!/bin/bash 
+#!/bin/bash
 
-printf "Function: \nIf this script runs smoothly, all necessary dependencies for OpenFASoC will be 
-downloaded at once. If you've already downloaded all dependencies with this script, 
+printf "Function: \nIf this script runs smoothly, all necessary dependencies for OpenFASoC will be
+downloaded at once. If you've already downloaded all dependencies with this script,
 you can run this script again to update the installed dependencies.\n
-Basic Requirements (not exhaustive): 
+Basic Requirements (not exhaustive):
 (1) Python 3.6 or higher is required.
 (2) Intel x86 architecture is required, as this script will use Conda to download several
 Python packages for which versions compatible with ARM architecture currently do not
-exist for installation in Conda's package repository. If your machine does not run 
+exist for installation in Conda's package repository. If your machine does not run
 on Intel x86 architecture, this script will likely not work.
 (3) CentOS and Ubuntu are the only operating systems this script has been verified to work on.
 We cannot guarantee successful compilation on other systems.\n\n"
@@ -16,12 +16,12 @@ proceed_confirmed=false
 update_confirmed=false
 while ! $proceed_confirmed
 do
-        echo "[OpenFASoC] Do you wish to proceed with the installation? 
+        echo "[OpenFASoC] Do you wish to proceed with the installation?
 [y] Yes. Install for the first time.
 [u] Yes. Update already-installed dependencies.
-[n] No. Exit this script." 
+[n] No. Exit this script."
         read -p "Select the desired option: " selection
-        if [ "$selection" == "y" ] || [ "$selection" == "Y" ]; then 
+        if [ "$selection" == "y" ] || [ "$selection" == "Y" ]; then
         echo "Beginning installation..."; proceed_confirmed=true
         elif [ "$selection" == "n" ] || [ "$selection" == "N" ]; then
         echo "Quitting script."; exit
@@ -45,10 +45,10 @@ if $update_confirmed; then
         if [ $? == 0 ]
         then
         printf "\n\n[OpenFASoC] Conda updated successfully with: conda update conda -y."
-        else 
+        else
         printf "\n\n[OpenFASoC] Failed to update Conda using: conda update conda -y."
         printf "[OpenFASoC] Attempting instead to update Conda using: install -c anaconda conda -y"
-        conda install -c anaconda conda -y; if [ $? == 0 ]; then 
+        conda install -c anaconda conda -y; if [ $? == 0 ]; then
         printf "\n\n[OpenFASoC] Conda updated successfully with: install -c anaconda conda -y"
         else
         printf "\n\n[OpenFASoC] Conda could not be updated."; fi
@@ -57,9 +57,9 @@ if $update_confirmed; then
         update_successful=true
         printf "\n\n[OpenFASoC] Attempting to update packages using: conda update --all -y \n"
         conda update --all -y
-        if [ $? == 0 ]; then 
+        if [ $? == 0 ]; then
         printf "[OpenFASoC] Packages updated successfully with: conda update --all -y"
-        else 
+        else
         printf "\n\n[OpenFASoC] Failed to update packages using: conda update --all -y."
         printf "Attempting instead to install core packages individually..."
         conda install -c litex-hub magic -y; if [ $? != 0 ]; then update_successful=false; echo "magic could not be updated"; fi
@@ -73,15 +73,15 @@ if $update_confirmed; then
         # echo "Updating ngspice..."
         # cd ngspice
         # git pull
-        # ./compile_linux.sh 
+        # ./compile_linux.sh
         # if [ $? == 0 ]; then
         # ngspice_updated=true
         # echo "ngspice updated successfully."
-        # else 
+        # else
         # echo "nspice could not be updated."
         # fi
         # cd ..
-        
+
         # cd ./docker/conda/scripts/Xyce
         # echo "Updating xyce..."
         # SRCDIR=$PWD/Trilinos-trilinos-release-12-12-1
@@ -101,7 +101,7 @@ if $update_confirmed; then
         # make install
         #         if [ $? == 0 ]; then
         # echo "xyce updated successfully."
-        # else 
+        # else
         # echo "xyce could not be updated."
         # fi
 
@@ -197,7 +197,7 @@ if which pip3 >> /dev/null
 then
         echo "[OpenFASoC] Pip3 exists"
         pip3 install -r requirements.txt
-        if [ $? == 0 ]; then 
+        if [ $? == 0 ]; then
         echo "[OpenFASoC] Python packages installed successfully."
         else
         echo "[OpenFASoC] Python packages could not be installed."

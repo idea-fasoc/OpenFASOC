@@ -1,32 +1,33 @@
-import glob
 import os
-import re, math
+import re
 import shutil
-import subprocess as sp
 import sys
 from itertools import product
 
-import TEMP_netlist
+from simulation_result import get_sim_results, calculate_sim_error
+
+# TODO: Find a better way to import modules from parent directory
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+from common.simulation import run_simulations
 
 # note netlist type is either prePEX or postPEX
 # function returns the location of simulations
 def generate_runs(
-    genDir,
-    designName,
-    headerList,
-    invList,
-    tempList,
-    jsonConfig,
-    platform,
-    mode,
-    pdk,
-    modeling=False,
-    spiceDir=None,
-    prePEX=True,
-):
+    genDir: str,
+    designName: str,
+    headerList: list[int],
+    invList: list[int],
+    tempStart: float,
+    tempStop: float,
+    tempStep: float,
+    jsonConfig: dict,
+    platform: str,
+    pdk: str,
+    spiceDir: str | None = None,
+    prePEX: bool = True,
+) -> str:
     """creates and executes simulations (through run_simulations call)"""
     simDir = genDir + "simulations/"
-    flowDir = genDir + "flow/"
     platformConfig = jsonConfig["platforms"][platform]
     simTool = jsonConfig["simTool"]
     model_file = pdk + "/libs.tech/ngspice/sky130.lib.spice"
@@ -34,121 +35,58 @@ def generate_runs(
     if not spiceDir:
         spiceDir = genDir + "/work"
 
-    platformSpice = glob.glob(
-        genDir + "../../common/platforms/%s/cdl/*.spice" % (platform)
-    )
-
     designList = list(product(headerList, invList))
 
     if not os.path.isdir(simDir + "run/"):
         os.mkdir(simDir + "run/")
 
-    # Update simulation testbench, depending on platform config and if running modeling
-    with open(simDir + "templates/tempsenseInst_%s.sp" % (simTool), "r") as rf:
-        simTestbench = rf.read()
-        simTestbench = re.sub("@model_file", model_file, simTestbench)
-        simTestbench = re.sub(
-            "@model_corner", platformConfig["model_corner"], simTestbench
-        )
-        simTestbench = re.sub(
-            "@voltage", str(platformConfig["nominal_voltage"]), simTestbench
-        )
-
-    if not modeling:
-        simTestbench = re.sub("\*@verification", "", simTestbench)
-        if jsonConfig["simMode"] == "full":
-            simTestbench = re.sub("\*@full", "", simTestbench)
-        elif jsonConfig["simMode"] == "partial":
-            simTestbench = re.sub("\*@partial", "", simTestbench)
-        else:
-            print("simulation mode - " + jsonConfig["simMode"] + "is not supported")
-            sys.exit(1)
-    else:
-        simTestbench = re.sub("\*@modeling", "", simTestbench)
-        simTestbench = re.sub("\*@partial", "", simTestbench)
-
     # Iterate over runs
     for design in designList:
         header = design[0]
         inv = design[1]
-        if prePEX:
-            runDir = simDir + "run/prePEX_inv{:d}_header{:d}/".format(inv, header)
-        else:
-            runDir = simDir + "run/PEX_inv{:d}_header{:d}/".format(inv, header)
 
-        if os.path.isdir(runDir):
-            shutil.rmtree(runDir, ignore_errors=True)
-        os.mkdir(runDir)
+        runDir = "run/{:s}_inv{:d}_header{:d}/".format("prePEX" if prePEX else "PEX", inv, header)
+        runDirPath = os.path.join(simDir, runDir)
 
-        shutil.copyfile(genDir + "tools/result.py", runDir + "result.py")
-        shutil.copyfile(genDir + "tools/result_error.py", runDir + "result_error.py")
+        if os.path.isdir(runDirPath):
+            shutil.rmtree(runDirPath, ignore_errors=True)
+        os.mkdir(runDirPath)
 
-        if modeling:
-            srcNetlist = genDir + "tools/TEMP_sensor_template.sp"
-            dstNetlist = runDir + "TEMP_sensor_inv%d_header%d.spice" % (inv, header)
-            simTestbench = re.sub(
-                "@netlist",
-                os.path.abspath(
-                    runDir + "TEMP_sensor_inv%d_header%d.spice" % (inv, header)
-                ),
-                simTestbench,
-            )
-            TEMP_netlist.gen_modeling_netlist(srcNetlist, dstNetlist, inv, header)
-            with open(dstNetlist, "r") as rf:
-                filedata = rf.read()
-            for spice in platformSpice:
-                filedata = ".INCLUDE '%s'\n" % os.path.abspath(spice) + filedata
-            with open(dstNetlist, "w") as wf:
-                filedata = wf.write(filedata)
-        else:
-            if prePEX:
-                srcNetlist = spiceDir + "/" + designName + ".spice"
-            else:
-                srcNetlist = spiceDir + "/" + designName + "_pex.spice"
-            dstNetlist = runDir + designName + ".spice"
-            simTestbench = re.sub(
-                "@netlist",
-                os.path.abspath(runDir + designName + ".spice"),
-                simTestbench,
-            )
-            update_netlist(srcNetlist, dstNetlist, jsonConfig["simMode"])
+        srcNetlist = spiceDir + "/" + designName + (".spice" if prePEX else "_pex.spice")
+        dstNetlist = os.path.join(runDirPath, designName + ".spice")
 
-        for temp in tempList:
-            w_file = open(runDir + "/%s_sim_%d.sp" % (designName, temp), "w")
-            wfdata = re.sub("@temp", str(temp), simTestbench)
-            wfdata = re.sub("@design_nickname", designName, wfdata)
-            if jsonConfig["simTool"] == "xyce":
-                sim_end = round(math.pow(10, -3) * 800 / math.exp(0.04 * temp), 4)
-                wfdata = re.sub("@sim_end", str(sim_end), wfdata)
-            w_file.write(wfdata)
-            w_file.close()
+        update_netlist(srcNetlist, dstNetlist, jsonConfig["simMode"])
 
-        # runs simulation only if mode is set to "full"
-        if mode == "full":
-            print(
-                "#----------------------------------------------------------------------"
-            )
-            print("# Running {0} Simulations".format("prePEX" if prePEX else "PEX"))
-            print(
-                "#----------------------------------------------------------------------"
-            )
+        num_simulations = run_simulations(
+            parameters={
+                'temp': {'start': tempStart, 'end': tempStop, 'step': tempStep},
+                'model_file': model_file,
+                'model_corner': platformConfig['model_corner'],
+                'nominal_voltage': platformConfig['nominal_voltage'],
+                'design_name': designName
+            },
+            platform=platform,
+            simulation_dir=simDir,
+            template_path=os.path.join("templates", f"tempsenseInst_{simTool}.sp"),
+            runs_dir=runDir,
+            sim_tool=simTool,
+            netlist_path=dstNetlist
+        )
 
-            run_simulations(
-                runDir,
-                designName,
-                tempList,
-                jsonConfig["simTool"],
-                jsonConfig["simMode"],
-            )
-        else:
-            print(
-                "spice netlists created for different temperatures to run the {0} simulations".format(
-                    "prePEX" if prePEX else "PEX"
-                )
-            )
+        # Calculating simulation results and error
+        with open(os.path.join(runDirPath, 'sim_output'), 'w') as sim_output_file:
+            for i in range(num_simulations):
+                log_file_path = os.path.join(runDirPath, f"{i + 1}", f"sim_{i + 1}.log")
+                sim_results = get_sim_results(open(log_file_path, "r").read())
 
-        return runDir
+                sim_output_file.write(f"{sim_results['temp']} {sim_results['period']} {sim_results['power']}\n")
 
+        with open(os.path.join(runDirPath, 'sim_output'), 'r') as sim_output_file:
+            with open(os.path.join(runDirPath, 'all_result'), 'w') as all_result_file:
+                error_data = calculate_sim_error(sim_output_lines=sim_output_file.readlines())
+                all_result_file.write("\n".join(error_data))
+
+    return runDirPath
 
 def matchNetlistCell(cell_instantiation):
     """returns true if the input contains as a pin (as a substring) one of the identified cells to remove for partial simulations"""
@@ -232,174 +170,3 @@ def update_netlist(srcNetlist, dstNetlist, simMode):
         netlist = netlist.replace(toplevel_pinout.split(" ", 2)[2], standardized_pinout)
     with open(dstNetlist, "w") as wf:
         wf.write(netlist)
-
-
-def run_simulations(runDir, designName, temp_list, simTool, simMode) -> None:
-    if simTool == "finesim":
-        with open(runDir + "run_sim", "w") as wf:
-            for temp in temp_list:
-                wf.write(
-                    "finesim -spice %s_sim_%d.sp -o %s_sim_%d &\n"
-                    % (designName, temp, designName, temp)
-                )
-
-        with open(runDir + "cal_result", "w") as wf:
-            for temp in temp_list:
-                wf.write(
-                    "python result.py --tool finesim --inputFile %s_sim_%d.log\n"
-                    % (designName, temp)
-                )
-            wf.write("python result_error.py --mode %s\n" % (simMode))
-
-        processes = []
-        for temp in temp_list:
-            p = sp.Popen(
-                [
-                    "finesim",
-                    "-spice",
-                    "%s_sim_%d.sp" % (designName, temp),
-                    "-o",
-                    "%s_sim_%d" % (designName, temp),
-                ],
-                cwd=runDir,
-            )
-            processes.append(p)
-
-        for p in processes:
-            p.wait()
-
-        for temp in temp_list:
-            if not os.path.isfile(runDir + "%s_sim_%d.log" % (designName, temp)):
-                print(
-                    "simulation output: %s_sim_%d.log is not generated"
-                    % (designName, temp)
-                )
-                sys.exit(1)
-            p = sp.Popen(
-                [
-                    "python",
-                    "result.py",
-                    "--tool",
-                    "finesim",
-                    "--inputFile",
-                    "%s_sim_%d.log" % (designName, temp),
-                ],
-                cwd=runDir,
-            )
-            p.wait()
-
-        p = sp.Popen(["python", "result_error.py", "--mode", simMode], cwd=runDir)
-        p.wait()
-
-    elif simTool == "ngspice":
-        with open(runDir + "run_sim", "w") as wf:
-            for temp in temp_list:
-                wf.write(
-                    "ngspice -b -o %s_sim_%d.log %s_sim_%d.sp\n"
-                    % (designName, temp, designName, temp)
-                )
-
-        with open(runDir + "cal_result", "w") as wf:
-            for temp in temp_list:
-                wf.write(
-                    "python result.py --tool ngspice --inputFile %s_sim_%d.log\n"
-                    % (designName, temp)
-                )
-            wf.write("python result_error.py --mode %s\n" % (simMode))
-
-        processes = []
-        for temp in temp_list:
-            p = sp.Popen(
-                [
-                    "ngspice",
-                    "-b",
-                    "-o",
-                    "%s_sim_%d.log" % (designName, temp),
-                    "%s_sim_%d.sp" % (designName, temp),
-                ],
-                cwd=runDir,
-            )
-            processes.append(p)
-
-        for p in processes:
-            p.wait()
-
-        for temp in temp_list:
-            if not os.path.isfile(runDir + "%s_sim_%d.log" % (designName, temp)):
-                print(
-                    "simulation output: %s_sim_%d.log is not generated"
-                    % (designName, temp)
-                )
-                sys.exit(1)
-            p = sp.Popen(
-                [
-                    "python",
-                    "result.py",
-                    "--tool",
-                    "ngspice",
-                    "--inputFile",
-                    "%s_sim_%d.log" % (designName, temp),
-                ],
-                cwd=runDir,
-            )
-            p.wait()
-
-        p = sp.Popen(["python", "result_error.py", "--mode", simMode], cwd=runDir)
-        p.wait()
-
-    elif simTool == "xyce":
-        with open(runDir + "run_sim", "w") as wf:
-            for temp in temp_list:
-                wf.write(
-                    "xyce -l %s_sim_%d.log -o %s_sim_%d %s_sim_%d.sp\n"
-                    % (designName, temp, designName, temp, designName, temp)
-                )
-
-        with open(runDir + "cal_result", "w") as wf:
-            for temp in temp_list:
-                wf.write(
-                    "python result.py --tool xyce --inputFile %s_sim_%d.mt0\n"
-                    % (designName, temp)
-                )
-            wf.write("python result_error.py --mode %s\n" % (simMode))
-
-        processes = []
-        for temp in temp_list:
-            p = sp.Popen(
-                [
-                    "/opt/xyce/xyce_serial/bin/Xyce",
-                    "-l",
-                    "%s_sim_%d.log" % (designName, temp),
-                    "-o",
-                    "%s_sim_%d" % (designName, temp),
-                    "%s_sim_%d.sp" % (designName, temp),
-                ],
-                cwd=runDir,
-            )
-            processes.append(p)
-
-        for p in processes:
-            p.wait()
-
-        for temp in temp_list:
-            if not os.path.isfile(runDir + "%s_sim_%d.mt0" % (designName, temp)):
-                print(
-                    "simulation output: %s_sim_%d.mt0 is not generated"
-                    % (designName, temp)
-                )
-                sys.exit(1)
-            p = sp.Popen(
-                [
-                    "python",
-                    "result.py",
-                    "--tool",
-                    "xyce",
-                    "--inputFile",
-                    "%s_sim_%d.mt0" % (designName, temp),
-                ],
-                cwd=runDir,
-            )
-            p.wait()
-
-        p = sp.Popen(["python", "result_error.py", "--mode", simMode], cwd=runDir)
-        p.wait()

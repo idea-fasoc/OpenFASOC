@@ -1,0 +1,19 @@
+                                ┌[bottom]
+          ┌[array]─[row0]─[col0]┤
+          │                     └[top]
+          │
+          │              ┌[W]
+          │              │
+          │              ├[N]
+          ├[bottom]─[lay]┤
+          │              ├[E]
+-[L_route]┤              │
+          │              └[S]
+          │
+          │           ┌[W]
+          │           │
+          │           ├[N]
+          └[top]─[met]┤
+                      ├[E]
+                      │
+                      └[S]
