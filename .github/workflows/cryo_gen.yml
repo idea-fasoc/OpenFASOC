@@ -40,5 +40,5 @@ jobs:
               make ${{ matrix.platform }}_cryo &&\
               python3 parse_rpt.py ${{ matrix.platform }}
             "| tee -a file.log
-            if [[ $? == 0 ]]; then exit 1; fi
+            if [ $? -ne 0 ]; then exit 1; fi
             if grep "^Error" file.log; then exit 1; else exit 0; fi
