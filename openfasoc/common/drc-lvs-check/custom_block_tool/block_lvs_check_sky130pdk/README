@@ -1,0 +1,49 @@
+-------------------------------------------------------------
+Autor: elonjia
+Change date: 5/18/2022
+-------------------------------------------------------------
+This file is for checking your custom block LVS using sky130A PDK
+-------------------------------------------------------------
+
+Pay attention:
+1. Just check the one signal cdl file
+
+2. the name of block in gds & cdl/sp file must be same
+
+3. the cdl file must use 'x' as prefix for the mos/capacitor as declaration identifies
+
+4. there are two mode to check your lvs: top-level mode / subckt mode for doing LVS check -> reference run_lvspex.sh file content
+
+5. for multi-finger gds -> sometimes need to use m=2...(or other number) to identify your multi-finger MOS transistor in cdl
+
+6. all cdl/sp file need to write using capital letters.
+-------------------------------------------------------------
+
+How to use it to do LVS check for your custom block?
+Go to the makefile, change to your gds file path, cdl/sp file path, blockname, PDK path
+
+---------run the lvs check----------------------------------
+
+use command: make
+
+the lvs report in RESULT_LVS directory.
+---------clean the run---------------------------------------
+
+use command: make clean
+
+-------------------------------------------------------------
+What the file means?
+
+ORIGINAL_CDL: your original file copy from your cdl path
+
+EXTRACT_CDL: the cdl file extract from your gds for lvs check
+
+EXTRACT_PEX: the pex file extract from your gds
+
+EXTRACT_SIM: the sim file extract from your gds
+
+FLATTEN_GDS: the gds file at the flatten state
+
+RESULT_LVS: the lvs report file for your LVS check
+
+---------------------------------------------------------------
