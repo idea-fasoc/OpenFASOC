@@ -4,7 +4,7 @@ printf "Function: \nIf this script runs smoothly, all necessary dependencies for
 downloaded at once. If you've already downloaded all dependencies with this script,
 you can run this script again to update the installed dependencies.\n
 Basic Requirements (not exhaustive):
-(1) Python 3.6 or higher is required.
+(1) Python 3.8 or higher is required.
 (2) Intel x86 architecture is required, as this script will use Conda to download several
 Python packages for which versions compatible with ARM architecture currently do not
 exist for installation in Conda's package repository. If your machine does not run
@@ -128,13 +128,13 @@ mi_ver=$(python3 -c"import sys; print(str(sys.version_info.minor))")
 
 if [ "$ma_ver" -lt 3 ]
 then
-    echo "[Warning] python version less than 3.* . Not compatible. You atleast need version above or equal to 3.7."
-    sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
+    echo "[Warning] python version less than 3.* . Not compatible. You atleast need version above or equal to 3.8."
+#     sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
     echo "[Warning] Skipping installing the gdsfactory python package because of that error. Continuing installation..."
-elif [ "$mi_ver" -lt 6 ]
+elif [ "$mi_ver" -lt 8 ]
 then
-    echo "[Warning] python version less than 3.6 . Not compatible. You atleast need version above or equal to 3.7."
-    sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
+    echo "[Warning] python version less than 3.8 . Not compatible. You atleast need version above or equal to 3.8."
+#     sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
     echo "[Warning] Skipping installing the gdsfactory python package because of that error. Continuing installation..."
 else
     echo "Compatible python version exists: $ma_ver.$mi_ver"
@@ -156,9 +156,9 @@ fi
 # install miniconda3
 if ! [ -x /home/$(logname)/miniconda3 ]
 then
-      wget https://repo.anaconda.com/miniconda/Miniconda3-py37_23.1.0-1-Linux-x86_64.sh \
-    && bash Miniconda3-py37_23.1.0-1-Linux-x86_64.sh -b -p /home/$(logname)/miniconda3/ \
-    && rm -f Miniconda3-py37_23.1.0-1-Linux-x86_64.sh
+      wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+    && bash ./Miniconda3-latest-Linux-x86_64.sh -b -p /home/$(logname)/miniconda3 \
+    && rm ./Miniconda3-latest-Linux-x86_64.sh
 else
     echo "[OpenFASoC] Found miniconda3. Continuing the installation...\n"
 fi
@@ -181,7 +181,8 @@ source /home/$(logname)/miniconda3/etc/profile.d/conda.sh
 
 if [ $? == 0 ] && [ -x /home/$(logname)/miniconda3/ ]
 then
-	conda update -y conda
+	conda update -y conda --all
+        conda install python=3.10 -c anaconda
         if [ $? == 0 ];then conda install -c litex-hub --file conda_versions.txt -y ; else echo "[OpenFASoC] Failed to update conda version." ; exit ; fi
         if [ $? == 0 ];then echo "[OpenFASoC] Installed OpenROAD, Yosys, Skywater PDK, Magic and Netgen successfully" ; else echo "[OpenFASoC] Failed to install conda packages" ; exit ; fi
 else

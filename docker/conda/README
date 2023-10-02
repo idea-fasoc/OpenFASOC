@@ -1,0 +1,7 @@
+The Dockerfile present inside this directory builds an image with all OpenFASoC dependencies (EDA tools and PDK) at their latest versions. This is used as an environment for testing generators upon updates.
+
+Two images are built with tags "stable" and "alpha". 
+- "alpha" tagged image has the latest available tools installed in it. This image is later used to verify the generators
+- "stable" tag image is created when specified generators are working with the "alpha" tagged image. At the same time, conda package versions and the original tool specific versions are extracted and stored in `conda_versions.txt` and `versions.txt` respectively. In the end, these versions are written to the `readme.rst` file. 
+
+All scripts that are used in the second part of this check are kept in the `/scripts` directory and all the required packages over the plain `ubuntu:22` image are stored in `packages.txt`
