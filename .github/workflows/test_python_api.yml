@@ -20,7 +20,7 @@ jobs:
     strategy:
       max-parallel: 12
       matrix:
-        python-version: [3.8, 3.9, 3.10]
+        python-version: [3.8, 3.9, '3.10'] # https://github.com/actions/setup-python/issues/160#issuecomment-724485470
         os: [ubuntu-latest]
 
     steps:
