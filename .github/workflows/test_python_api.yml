@@ -20,7 +20,7 @@ jobs:
     strategy:
       max-parallel: 12
       matrix:
-        python-version: [3.8, 3.9, '3.10'] # https://github.com/actions/setup-python/issues/160#issuecomment-724485470
+        python-version: ["3.8", "3.9", "3.10"]
         os: [ubuntu-latest]
 
     steps:
@@ -36,6 +36,7 @@ jobs:
           sudo apt install -y ngspice
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install pytest
           # pip install .
       - name: Test with pytest
         run: pytest
