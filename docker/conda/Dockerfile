@@ -19,6 +19,7 @@ RUN conda install python=3.10 \
                     openroad \
                     ngspice \ 
                     -c litex-hub \
+                    -c conda-forge \
                     -c anaconda \
                     -y
 ENV PDK_ROOT=/usr/bin/miniconda3/share/pdk/
