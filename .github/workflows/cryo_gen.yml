@@ -8,7 +8,6 @@ on:
     paths:
       - 'openfasoc/common/**'
       - 'openfasoc/generators/common/**'
-      - 'openfasoc/generators/common/cryo-gen/**'
       - 'openfasoc/generators/cryo-gen/**'
   workflow_dispatch:
 
