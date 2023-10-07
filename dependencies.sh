@@ -143,13 +143,13 @@ fi
 if cat /etc/os-release | grep "ubuntu" >> /dev/null; then
 
 	apt-get update -y
-        apt-get install -y autoconf libtool automake make g++ gcc
+        apt-get install -y autoconf libtool libfmt-dev automake make g++ gcc
 
 elif cat /etc/os-release | grep -e "centos" >> /dev/null; then
 
         yum update -y
 
-        yum install -y autoconf libtool automake make gcc gcc-c++
+        yum install -y autoconf libtool libfmt-dev automake make gcc gcc-c++
 
 fi
 
