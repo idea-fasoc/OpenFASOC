@@ -5,7 +5,6 @@ automake
 g++
 qtbase5-dev
 qttools5-dev
-libfmt-dev
 libqt5xmlpatterns5-dev
 qtmultimedia5-dev
 libqt5multimediawidgets5
