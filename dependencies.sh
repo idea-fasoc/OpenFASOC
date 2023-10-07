@@ -62,11 +62,11 @@ if $update_confirmed; then
         else
         printf "\n\n[OpenFASoC] Failed to update packages using: conda update --all -y."
         printf "Attempting instead to install core packages individually..."
-        conda install -c litex-hub magic -y; if [ $? != 0 ]; then update_successful=false; echo "magic could not be updated"; fi
-        conda install -c litex-hub netgen -y; if [ $? != 0 ]; then update_successful=false; echo "netgen could not be updated"; fi
-        conda install -c litex-hub open_pdks.sky130a -y; if [ $? != 0 ]; then update_successful=false; echo "open_pdks could not be updated"; fi
-        conda install -c litex-hub openroad -y; if [ $? != 0 ]; then update_successful=false; echo "openroad could not be updated"; fi
-        conda install -c litex-hub yosys -y; if [ $? != 0 ]; then update_successful=false; echo "yosys could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub magic -y; if [ $? != 0 ]; then update_successful=false; echo "magic could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub netgen -y; if [ $? != 0 ]; then update_successful=false; echo "netgen could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub open_pdks.sky130a -y; if [ $? != 0 ]; then update_successful=false; echo "open_pdks could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub openroad -y; if [ $? != 0 ]; then update_successful=false; echo "openroad could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub yosys -y; if [ $? != 0 ]; then update_successful=false; echo "yosys could not be updated"; fi
         fi
 
         # ngspice_updated=false
@@ -183,7 +183,7 @@ if [ $? == 0 ] && [ -x /home/$(logname)/miniconda3/ ]
 then
 	conda update -y conda --all
         conda install python=3.10 -c anaconda -c conda-forge -c litex-hub
-        if [ $? == 0 ];then conda install -c anaconda -c conda-forge -c litex-hub magic netgen open_pdks.sky130a openroad yosys ; else echo "[OpenFASoC] Failed to update conda version." ; exit ; fi
+        if [ $? == 0 ];then conda install -c anaconda -c conda-forge -c litex-hub --file conda_versions.txt -y ; else echo "[OpenFASoC] Failed to update conda version." ; exit ; fi
         if [ $? == 0 ];then echo "[OpenFASoC] Installed OpenROAD, Yosys, Skywater PDK, Magic and Netgen successfully" ; else echo "[OpenFASoC] Failed to install conda packages" ; exit ; fi
 else
 	echo "[OpenFASoC] Failed to install miniconda. Check above for error messages."
