@@ -144,11 +144,13 @@ if args.mode != "verilog" and clean_work_dir:
     print("#----------------------------------------------------------------------")
     print("# Run Synthesis and APR")
     print("#----------------------------------------------------------------------")
-    p = sp.Popen(["make", "finish"], cwd=directories["flowDir"])
+    cmd = ["make", "finish"]
+    p = sp.Popen(cmd, cwd=directories["flowDir"])
     p.wait()
-    if p.returncode:
-        print("[Error] Place and Route failed. Refer to the log file")
-        exit(1)
+    if p.returncode != 0:
+        print("[ERROR]: Command '" + ' '.join(cmd) +\
+         "' exited with non-zero return code: " + str(p.returncode))
+        sys.exit(p.returncode)
 
     print("#----------------------------------------------------------------------")
     print("# Run DRC")
@@ -163,11 +165,13 @@ if args.mode != "verilog" and clean_work_dir:
     print("#----------------------------------------------------------------------")
     print("# Run LVS")
     print("#----------------------------------------------------------------------")
-    p = sp.Popen(["make", "netgen_lvs"], cwd=directories["flowDir"])
+    cmd = ["make", "netgen_lvs"]
+    p = sp.Popen(cmd, cwd=directories["flowDir"])
     p.wait()
-    if p.returncode:
-        print("[Error] LVS failed. Refer to the report")
-        exit(1)
+    if p.returncode != 0:
+        print("[ERROR]: Command '" + ' '.join(cmd) +\
+         "' exited with non-zero return code: " + str(p.returncode))
+        sys.exit(p.returncode)
 
     print("#----------------------------------------------------------------------")
     print("# LVS and DRC finished successfully")
