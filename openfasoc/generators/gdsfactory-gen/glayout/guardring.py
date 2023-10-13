@@ -15,9 +15,10 @@ from glayout.routing.L_route import L_route
 def tapring(
     pdk: MappedPDK,
     enclosed_rectangle=(2.0, 4.0),
-    sdlayer: Optional[str] = "p+s/d",
-    horizontal_glayer: Optional[str] = "met2",
-    vertical_glayer: Optional[str] = "met1",
+    sdlayer: str = "p+s/d",
+    horizontal_glayer: str = "met2",
+    vertical_glayer: str = "met1",
+    sides: tuple[bool,bool,bool,bool] = (True,True,True,True)
 ) -> Component:
     """ptapring produce a p substrate / pwell tap rectanglular ring
     This ring will legally enclose a rectangular shape
@@ -27,6 +28,7 @@ def tapring(
     ****NOTE: the enclosed_rectangle will be the enclosed dimensions of active_tap
     horizontal_glayer: string=met2, layer used over the ring horizontally
     vertical_glayer: string=met1, layer used over the ring vertically
+    sides: instead of creating the ring on all sides, only create it on the specified sides (W,N,E,S)
     ports:
     Narr_... all ports in top via array
     Sarr_... all ports in bottom via array
@@ -90,21 +92,35 @@ def tapring(
     )
     # add via arrs
     refs_prefixes = list()
-    metal_ref_n = ptapring << horizontal_arr
-    metal_ref_e = ptapring << vertical_arr
-    metal_ref_s = ptapring << horizontal_arr
-    metal_ref_w = ptapring << vertical_arr
-    metal_ref_n.movey(round(0.5 * (enclosed_rectangle[1] + tap_width),4))
-    metal_ref_e.movex(round(0.5 * (enclosed_rectangle[0] + tap_width),4))
-    metal_ref_s.movey(round(-0.5 * (enclosed_rectangle[1] + tap_width),4))
-    metal_ref_w.movex(round(-0.5 * (enclosed_rectangle[0] + tap_width),4))
-    refs_prefixes += [(metal_ref_n,"N_"), (metal_ref_e,"E_"), (metal_ref_s,"S_"), (metal_ref_w,"W_")]
+    if sides[1]:
+        metal_ref_n = ptapring << horizontal_arr
+        metal_ref_n.movey(round(0.5 * (enclosed_rectangle[1] + tap_width),4))
+        refs_prefixes.append((metal_ref_n,"N_"))
+    if sides[2]:
+        metal_ref_e = ptapring << vertical_arr
+        metal_ref_e.movex(round(0.5 * (enclosed_rectangle[0] + tap_width),4))
+        refs_prefixes.append((metal_ref_e,"E_"))
+    if sides[3]:
+        metal_ref_s = ptapring << horizontal_arr
+        metal_ref_s.movey(round(-0.5 * (enclosed_rectangle[1] + tap_width),4))
+        refs_prefixes.append((metal_ref_s,"S_"))
+    if sides[0]:
+        metal_ref_w = ptapring << vertical_arr
+        metal_ref_w.movex(round(-0.5 * (enclosed_rectangle[0] + tap_width),4))
+        refs_prefixes.append((metal_ref_w,"W_"))
     # connect vertices
-    tlvia = ptapring << L_route(pdk, metal_ref_n.ports["top_met_W"], metal_ref_w.ports["top_met_N"])
-    trvia = ptapring << L_route(pdk, metal_ref_n.ports["top_met_E"], metal_ref_e.ports["top_met_N"])
-    blvia = ptapring << L_route(pdk, metal_ref_s.ports["top_met_W"], metal_ref_w.ports["top_met_S"])
-    brvia = ptapring << L_route(pdk, metal_ref_s.ports["top_met_E"], metal_ref_e.ports["top_met_S"])
-    refs_prefixes += [(tlvia,"tl_"),(trvia,"tr_"),(blvia,"bl_"),(brvia,"br_")]
+    if sides[1] and sides[0]:
+        tlvia = ptapring << L_route(pdk, metal_ref_n.ports["top_met_W"], metal_ref_w.ports["top_met_N"])
+        refs_prefixes += [(tlvia,"tl_")]
+    if sides[1] and sides[2]:
+        trvia = ptapring << L_route(pdk, metal_ref_n.ports["top_met_E"], metal_ref_e.ports["top_met_N"])
+        refs_prefixes += [(trvia,"tr_")]
+    if sides[3] and sides[0]:
+        blvia = ptapring << L_route(pdk, metal_ref_s.ports["top_met_W"], metal_ref_w.ports["top_met_S"])
+        refs_prefixes += [(blvia,"bl_")]
+    if sides[3] and sides[2]:
+        brvia = ptapring << L_route(pdk, metal_ref_s.ports["top_met_E"], metal_ref_e.ports["top_met_S"])
+        refs_prefixes += [(brvia,"br_")]
     # add ports, flatten and return
     for ref_, prefix in refs_prefixes:
         ptapring.add_ports(ref_.get_ports_list(),prefix=prefix)

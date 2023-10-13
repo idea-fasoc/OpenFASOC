@@ -102,24 +102,22 @@ def rename_ports_by_list(custom_comp: Component, replace_list: list[tuple[str,st
 
 @validate_arguments
 def add_ports_perimeter(custom_comp: Component, layer: tuple[int, int], prefix: Optional[str] = "_") -> Component:
-    """adds ports to the outside perimeter of a cell
-    custom_comp = component to add ports to (returns the modified component)
-    layer = will extract this layer and take it as the bbox, ports will also be on this layer
-    prefix = prefix to add to the port names. Adds an underscore by default
-    """
-    if "_" not in prefix:
-        raise ValueError("you need underscore char in prefix")
-    compbbox = custom_comp.extract(layers=(layer,)).bbox
-    width = compbbox[1][0] - compbbox[0][0]
-    height = compbbox[1][1] - compbbox[0][1]
-    size = (width, height)
-    temp = Component()
-    swref = temp << rectangle(layer=layer,size=size)
-    swref.move(destination=(custom_comp.bbox[0]))
-    temp.add_ports(swref.get_ports_list(),prefix=prefix)
-    temp = rename_ports_by_orientation(temp)
-    custom_comp.add_ports(temp.get_ports_list())
-    return custom_comp
+	"""adds ports to the outside perimeter of a cell
+	custom_comp = component to add ports to (returns the modified component)
+	layer = will extract this layer and take it as the bbox, ports will also be on this layer
+	prefix = prefix to add to the port names. Adds an underscore by default
+	returns ports named by orientation
+	"""
+	if "_" not in prefix:
+		raise ValueError("you need underscore char in prefix")
+	compbbox = custom_comp.extract(layers=(layer,)).bbox
+	width = compbbox[1][0] - compbbox[0][0]
+	height = compbbox[1][1] - compbbox[0][1]
+	custom_comp.add_port(name=prefix+"W",width=height,orientation=180,center=(compbbox[0][0],compbbox[0][1]+height/2),layer=layer,port_type="electrical")
+	custom_comp.add_port(name=prefix+"N",width=width,orientation=90,center=(compbbox[0][0]+width/2,compbbox[1][1]),layer=layer,port_type="electrical")
+	custom_comp.add_port(name=prefix+"E",width=height,orientation=0,center=(compbbox[1][0],compbbox[0][1]+height/2),layer=layer,port_type="electrical")
+	custom_comp.add_port(name=prefix+"S",width=width,orientation=270,center=(compbbox[0][0]+width/2,compbbox[0][1]),layer=layer,port_type="electrical")
+	return custom_comp
 
 
 @validate_arguments

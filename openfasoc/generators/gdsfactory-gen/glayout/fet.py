@@ -52,7 +52,7 @@ def __gen_fingers_macro(pdk: MappedPDK, rmult: int, fingers: int, length: float,
     diff_dims =(diff_extra_enc + evaluate_bbox(multiplier)[0], width)
     diff = multiplier << rectangle(size=diff_dims,layer=pdk.get_glayer("active_diff"),centered=True)
     sd_diff_ovhg = pdk.get_grule(sdlayer, "active_diff")["min_enclosure"]
-    sdlayer_dims = [dim + sd_diff_ovhg for dim in diff_dims]
+    sdlayer_dims = [dim + 2*sd_diff_ovhg for dim in diff_dims]
     sdlayer_ref = multiplier << rectangle(size=sdlayer_dims, layer=pdk.get_glayer(sdlayer),centered=True)
     multiplier.add_ports(sdlayer_ref.get_ports_list(),prefix="plusdoped_")
     multiplier.add_ports(diff.get_ports_list(),prefix="diff_")
@@ -77,6 +77,7 @@ def multiplier(
     interfinger_rmult: int=1,
     sd_route_extension: float = 0,
     gate_route_extension: float = 0,
+    dummy_with_poly: bool=False
 ) -> Component:
     """Generic poly/sd vias generator
     args:
@@ -180,9 +181,12 @@ def multiplier(
         dummyl, dummyr = dummy
     if dummyl or dummyr:
         dummy = Component("temp dummy region")
-        size = (length, width)
+        size = to_float([length, width])
+        if dummy_with_poly:
+            size[0] += 2*pdk.get_grule("active_diff","poly")["overhang"]
+            dummy << rectangle(layer=pdk.get_glayer("poly"),size=[length,width+2*pdk.get_grule("active_diff","poly")["overhang"]],centered=True)
         dummy << rectangle(
-            layer=pdk.get_glayer("active_diff"), size=to_float(size), centered=True
+            layer=pdk.get_glayer("active_diff"), size=size, centered=True
         )
         dummy_space = pdk.get_grule(sdlayer, "active_diff")["min_enclosure"]
         dummy.add_padding(layers=(pdk.get_glayer(sdlayer),), default=dummy_space)

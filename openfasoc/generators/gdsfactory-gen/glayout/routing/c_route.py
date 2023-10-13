@@ -57,7 +57,7 @@ def c_route(
 	- None means center (no offset)
 	****NOTE: viaoffset pushes both vias towards each other slightly
 	"""
-	extension = snap_to_grid(extension)
+	extension = pdk.snap_to_2xgrid(extension)
 	# error checking and figure out args
 	if round(edge1.orientation) % 90 or round(edge2.orientation) % 90:
 		raise ValueError("Ports must be vertical or horizontal")
@@ -123,6 +123,7 @@ def c_route(
 	rect_c2 = get_primitive_rectangle(size=box_dims[1], layer=pdk.get_glayer(e2glayer))
 	rect_c1 = rename_ports_by_orientation(rename_ports_by_list(rect_c1,[("e","e_")]))
 	rect_c2 = rename_ports_by_orientation(rename_ports_by_list(rect_c2,[("e","e_")]))
+	# TODO: make sure ports match bbox
 	e1_extension = e1_extension_comp << rect_c1
 	e2_extension = e2_extension_comp << rect_c2
 	e1_extension.move(destination=edge1.center)

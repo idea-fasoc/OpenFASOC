@@ -10,6 +10,7 @@ from glayout.routing.c_route import c_route
 from glayout.pdk.util.comp_utils import movex, movey, evaluate_bbox, align_comp_to_port
 from glayout.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, get_orientation, set_port_orientation
 from glayout.via_gen import via_stack
+from glayout.guardring import tapring
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 
 
@@ -22,7 +23,8 @@ def diff_pair(
 	n_or_p_fet: bool = True,
 	plus_minus_seperation: float = 0,
 	rmult: int = 1,
-	dummy: Union[bool, tuple[bool, bool]] = True
+	dummy: Union[bool, tuple[bool, bool]] = True,
+	substrate_tap: bool=True
 ) -> Component:
 	"""create a diffpair with 2 transistors placed in two rows with common centroid place. Sources are shorted
 	width = width of the transistors
@@ -30,6 +32,7 @@ def diff_pair(
 	length = length of the transistors, None or 0 means use min length
 	short_source = if true connects source of both transistors
 	n_or_p_fet = if true the diffpair is made of nfets else it is made of pfets
+	substrate_tap: if true place a tapring around the diffpair (connects on met1)
 	"""
 	# TODO: error checking
 	pdk.activate()
@@ -62,6 +65,10 @@ def diff_pair(
 	a_botr.mirror_y().movey(0-0.5-fetL.ymax-min_spacing_y/2).movex(fetL.xmax+min_spacing_x/2)
 	b_botl = (diffpair << fetL)
 	b_botl.mirror_y().movey(0-0.5-fetR.ymax-min_spacing_y/2).movex(0-fetL.xmax-min_spacing_x/2)
+	# if substrate tap place substrate tap
+	if substrate_tap:
+		tapref = diffpair << tapring(pdk,evaluate_bbox(diffpair,padding=1),horizontal_glayer="met1")
+		diffpair.add_ports(tapref.get_ports_list(),prefix="tap_")
 	# route sources (short sources)
 	diffpair << route_quad(a_topl.ports["multiplier_0_source_E"], b_topr.ports["multiplier_0_source_W"], layer=pdk.get_glayer("met2"))
 	diffpair << route_quad(b_botl.ports["multiplier_0_source_E"], a_botr.ports["multiplier_0_source_W"], layer=pdk.get_glayer("met2"))

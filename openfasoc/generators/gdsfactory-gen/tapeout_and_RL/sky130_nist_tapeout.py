@@ -76,7 +76,7 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	# add pin layer and text labels for LVS
 	text_pin_labels = list()
 	met5pin = rectangle(size=(5,5),layer=(72,16), centered=True)
-	for name in ["plus","diffpairibias","gnd","commonsourceibias","minus","vdd","output","outputibias"]:
+	for name in ["minus","diffpairibias","gnd","commonsourceibias","plus","vdd","output","outputibias"]:
 		pin_w_label = met5pin.copy()
 		pin_w_label.add_label(text=name,layer=(72,5),magnification=4)
 		text_pin_labels.append(pin_w_label)
@@ -212,24 +212,26 @@ def sky130_add_lvt_layer(opamp_in: Component) -> Component:
 
 
 def opamp_parameters_serializer(
-	diffpair_params: tuple[float, float, int] = (6, 1, 4),
+	half_diffpair_params: tuple[float, float, int] = (6, 1, 4),
     diffpair_bias: tuple[float, float, int] = (6, 2, 4),
     half_common_source_params: tuple[float, float, int, int] = (7, 1, 10, 3),
     half_common_source_bias: tuple[float, float, int, int] = (6, 2, 8, 2),
     output_stage_params: tuple[float, float, int] = (5, 1, 16),
     output_stage_bias: tuple[float, float, int] = (6, 2, 4),
+	half_pload: tuple[float,float,int] = (6,1,6),
     mim_cap_size=(12, 12),
     mim_cap_rows=3,
     rmult: int = 2
 ) -> np.array:
 	"""converts opamp params into the uniform numpy float format"""
 	return np.array(
-		[diffpair_params[0],diffpair_params[1],diffpair_params[2],
+		[half_diffpair_params[0],half_diffpair_params[1],half_diffpair_params[2],
 		diffpair_bias[0],diffpair_bias[1],diffpair_bias[2],
 		half_common_source_params[0],half_common_source_params[1],half_common_source_params[2],half_common_source_params[3],
 		half_common_source_bias[0],half_common_source_bias[1],half_common_source_bias[2],half_common_source_bias[3],
 		output_stage_params[0],output_stage_params[1],output_stage_params[2],
 		output_stage_bias[0],output_stage_bias[1],output_stage_bias[2],
+		half_pload[0],half_pload[1],half_pload[2],
 		mim_cap_size[0],mim_cap_size[1],
 		mim_cap_rows,
 		rmult],
@@ -239,21 +241,22 @@ def opamp_parameters_serializer(
 def opamp_parameters_de_serializer(serialized_params: Optional[np.array]=None) -> dict:
 	"""converts uniform numpy float format to opamp kwargs"""
 	if serialized_params is None:
-		serialized_params = 24*[-987.654321]
+		serialized_params = 27*[-987.654321]
 		serialized_params[16] = int(-987.654321)
 		serialized_params[17] = int(-987.654321)
-	if not len(serialized_params) == 24:
-		raise ValueError("serialized_params should be a length 24 array")
+	if not len(serialized_params) == 27:
+		raise ValueError("serialized_params should be a length 27 array")
 	params_dict = dict()
-	params_dict["diffpair_params"] = tuple(serialized_params[0:3])
+	params_dict["half_diffpair_params"] = tuple(serialized_params[0:3])
 	params_dict["diffpair_bias"] = tuple(serialized_params[3:6])
 	params_dict["half_common_source_params"] = tuple(serialized_params[6:10])
 	params_dict["half_common_source_bias"] = tuple(serialized_params[10:14])
 	params_dict["output_stage_params"] = tuple(serialized_params[14:17])
 	params_dict["output_stage_bias"] = tuple(serialized_params[17:20])
-	params_dict["mim_cap_size"] = tuple(serialized_params[20:22])
-	params_dict["mim_cap_rows"] = int(serialized_params[22])
-	params_dict["rmult"] = int(serialized_params[23])
+	params_dict["mim_cap_size"] = tuple(serialized_params[20:23])
+	params_dict["mim_cap_size"] = tuple(serialized_params[23:25])
+	params_dict["mim_cap_rows"] = int(serialized_params[25])
+	params_dict["rmult"] = int(serialized_params[26])
 	return params_dict
 
 def opamp_results_serializer(

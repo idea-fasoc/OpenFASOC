@@ -161,7 +161,7 @@ class MappedPDK(Pdk):
         # lambda for finding last matching key in dict from val
         find_last = lambda val, d: [x for x, y in d.items() if y == val].pop()
         if layer in self.glayers.values():
-            return find_last(layer)
+            return find_last(layer, self.glayers)
         elif self.layers is not None:
             # find glayer verfying presence along the way
             pdk_real_layers = self.layers.values()

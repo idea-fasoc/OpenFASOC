@@ -23,14 +23,14 @@ from glayout.common.two_transistor_interdigitized import two_nfet_interdigitized
 
 
 @validate_arguments
-def __add_diff_pair_and_bias(pdk: MappedPDK, opamp_top: Component, diffpair_params: tuple[float, float, int], diffpair_bias: tuple[float, float, int], rmult: int) -> Component:
+def __add_diff_pair_and_bias(pdk: MappedPDK, opamp_top: Component, half_diffpair_params: tuple[float, float, int], diffpair_bias: tuple[float, float, int], rmult: int) -> Component:
     # create and center diffpair
     diffpair_i_ = Component("temp diffpair and current source")
     center_diffpair_comp = diff_pair(
         pdk,
-        width=diffpair_params[0],
-        length=diffpair_params[1],
-        fingers=diffpair_params[2],
+        width=half_diffpair_params[0],
+        length=half_diffpair_params[1],
+        fingers=half_diffpair_params[2],
         rmult=rmult
     )
     diffpair_i_.add(prec_ref_center(center_diffpair_comp))
@@ -124,6 +124,9 @@ def __add_common_source_nbias_transistors(pdk: MappedPDK, opamp_top: Component, 
 def __route_bottom_ncomps_except_drain_nbias(pdk: MappedPDK, opamp_top: Component, gndpin: Union[Component,ComponentReference], halfmultn_num_mults: int) -> tuple:
     # route diff pair cmirror
     opamp_top << L_route(pdk, opamp_top.ports["diffpair_ibias_purposegndport"],gndpin.ports["e1"])
+    # gnd diff pair substrate tap
+    opamp_top << straight_route(pdk, opamp_top.ports["diffpair_tap_W_top_met_E"], opamp_top.ports["commonsource_cmirror_output_L_tie_E_top_met_W"],width=1)
+    opamp_top << straight_route(pdk, opamp_top.ports["diffpair_tap_E_top_met_W"], opamp_top.ports["commonsource_cmirror_output_R_tie_W_top_met_E"],width=1)
     # common source
     # route to gnd the sources of cmirror
     _cref = opamp_top << c_route(pdk, opamp_top.ports["commonsource_cmirror_output_R_multiplier_0_source_con_S"], opamp_top.ports["commonsource_cmirror_output_L_multiplier_0_source_con_S"], extension=abs(gndpin.ports["e2"].center[1]-opamp_top.ports["commonsource_cmirror_output_R_multiplier_0_source_con_S"].center[1]),fullbottom=True)
@@ -160,13 +163,18 @@ def __route_bottom_ncomps_except_drain_nbias(pdk: MappedPDK, opamp_top: Componen
 
 
 @validate_arguments
-def __create_sharedgatecomps(pdk: MappedPDK, rmult: int) -> tuple:
+def __create_sharedgatecomps(pdk: MappedPDK, rmult: int, half_pload: tuple[float,float,int]) -> tuple:
     # add diffpair current mirror loads (this is a pmos current mirror split into 2 for better matching/compensation)
     shared_gate_comps = Component("shared gate components")
     # create the 2*2 multiplier transistors (placed twice later)
     twomultpcomps = Component("2 multiplier shared gate comps")
-    pcompR = multiplier(pdk, "p+s/d", width=6, length=1, fingers=6, dummy=(False, True),rmult=rmult)
-    pcompL = multiplier(pdk, "p+s/d", width=6, length=1, fingers=6, dummy=(True, False),rmult=rmult)
+    pcompR = multiplier(pdk, "p+s/d", width=half_pload[0], length=half_pload[1], fingers=half_pload[2], dummy=True,rmult=rmult).copy()
+    tapref = pcompR << tapring(pdk, evaluate_bbox(pcompR,padding=0.3+pdk.get_grule("n+s/d", "active_tap")["min_enclosure"]),"n+s/d","met1","met1")
+    pcompR.add_padding(layers=(pdk.get_glayer("nwell"),), default=pdk.get_grule("active_tap", "nwell")["min_enclosure"])
+    pcompR.add_ports(tapref.get_ports_list(),prefix="welltap_")
+    pcompL = pcompR.copy()
+    #pcompL = multiplier(pdk, "p+s/d", width=half_pload[0], length=half_pload[1], fingers=half_pload[2], dummy=False,rmult=rmult).copy()
+    #pcompL << tapring(pdk, evaluate_bbox(pcompL,padding=0.3+pdk.get_grule("n+s/d", "active_tap")["min_enclosure"]),"n+s/d","met1","met1")
     pcomp_AB_spacing = max(2*pdk.util_max_metal_seperation() + 6*pdk.get_grule("met4")["min_width"],pdk.get_grule("p+s/d")["min_separation"])
     _prefL = (twomultpcomps << pcompL).movex(-1 * pcompL.xmax - pcomp_AB_spacing/2)
     _prefR = (twomultpcomps << pcompR).movex(-1 * pcompR.xmin + pcomp_AB_spacing/2)
@@ -175,10 +183,10 @@ def __create_sharedgatecomps(pdk: MappedPDK, rmult: int) -> tuple:
     twomultpcomps << route_quad(_prefL.ports["gate_W"], _prefR.ports["gate_E"], layer=pdk.get_glayer("met2"))
     # center
     relative_dim_comp = multiplier(
-        pdk, "p+s/d", width=6, length=1, fingers=4, dummy=False, rmult=rmult
+        pdk, "p+s/d", width=half_pload[0], length=half_pload[1], fingers=4, dummy=False, rmult=rmult
     )
     # TODO: figure out single dim spacing rule then delete both test delete and this
-    single_dim = to_decimal(relative_dim_comp.xmax) + to_decimal(0.11)
+    single_dim = to_decimal(relative_dim_comp.xmax) + to_decimal(0.11) + to_decimal(half_pload[1])/2
     LRplusdopedPorts = list()
     LRgatePorts = list()
     LRdrainsPorts = list()
@@ -189,18 +197,19 @@ def __create_sharedgatecomps(pdk: MappedPDK, rmult: int) -> tuple:
         if i == -2:
             dummy = [True, False]
             pcenterfourunits = multiplier(
-                pdk, "p+s/d", width=6, length=1, fingers=4, dummy=dummy, rmult=rmult
+                pdk, "p+s/d", width=half_pload[0], length=half_pload[1], fingers=4, dummy=dummy, rmult=rmult
             )
             extra_t = -1 * single_dim
         elif i == 2:
             dummy = [False, True]
             pcenterfourunits = multiplier(
-                pdk, "p+s/d", width=6, length=1, fingers=4, dummy=dummy, rmult=rmult
+                pdk, "p+s/d", width=half_pload[0], length=half_pload[1], fingers=4, dummy=dummy, rmult=rmult
             )
             extra_t = single_dim
         else:
             pcenterfourunits = relative_dim_comp
-        pref_ = (shared_gate_comps << pcenterfourunits).movex(pdk.snap_to_2xgrid(to_float(i * single_dim + extra_t)))
+        pref_ = prec_ref_center(pcenterfourunits).movex(pdk.snap_to_2xgrid(to_float(i * single_dim + extra_t)))
+        shared_gate_comps.add(pref_)
         LRplusdopedPorts += [pref_.ports["plusdoped_W"] , pref_.ports["plusdoped_E"]]
         LRgatePorts += [pref_.ports["gate_W"],pref_.ports["gate_E"]]
         LRdrainsPorts += [pref_.ports["source_W"],pref_.ports["source_E"]]
@@ -248,6 +257,7 @@ def __route_sharedgatecomps(pdk: MappedPDK, shared_gate_comps, via_location, pto
     mimcap_connection_ref = shared_gate_comps << c_route(pdk, ptop_AB.ports["R_source_E"], LRdrainsPorts[-1],extension=pcomps_route_B_source_extension,viaoffset=(True,False))
     bottom_pcompB_floating_port = set_port_orientation(movey(movex(pbottom_AB.ports["L_source_E"].copy(),5*_max_metal_seperation_ps), destination=Aextra_top_connection.ports["e1"].center[1]+Aextra_top_connection.ports["e1"].width+_max_metal_seperation_ps),"S")
     pmos_bsource_2Rdrain_v = shared_gate_comps << L_route(pdk,pbottom_AB.ports["L_source_E"],bottom_pcompB_floating_port,vglayer="met3")
+    # TODO: fix the extension thing when the poly is true
     shared_gate_comps << c_route(pdk, LRdrainsPorts[-1], set_port_orientation(bottom_pcompB_floating_port,"E"),extension=pcomps_route_B_source_extension,viaoffset=(True,False))
     pmos_bsource_2Rdrain_v_center = via_stack(pdk,"met2","met3",fulltop=True)
     shared_gate_comps.add(align_comp_to_port(pmos_bsource_2Rdrain_v_center, bottom_pcompB_floating_port,('r','t')))
@@ -291,6 +301,11 @@ def __add_common_source_Pamp_and_finish_pcomps(pdk: MappedPDK, pmos_comps: Compo
     topptap = prec_ref_center(tapring(pdk, tapcenter_rect, "p+s/d"),destination=tuple(pmos_comps.center))
     pmos_comps.add(topptap)
     pmos_comps.add_ports(topptap.get_ports_list(),prefix="top_ptap_")
+    # ground taprings of the center components
+    pmos_comps << straight_route(pdk, pmos_comps.ports["ptopAB_L_welltap_W_top_met_W"],pmos_comps.ports["halfpspecialmarker_L_tie_E_top_met_N"],width=2,glayer1="met2",via1_alignment=('c','c'),fullbottom=True)
+    pmos_comps << straight_route(pdk, pmos_comps.ports["ptopAB_R_welltap_E_top_met_E"],pmos_comps.ports["halfpspecialmarker_R_tie_W_top_met_N"],width=2,glayer1="met2",via1_alignment=('c','c'),fullbottom=True)
+    pmos_comps << straight_route(pdk, pmos_comps.ports["pbottomAB_L_welltap_W_top_met_W"],pmos_comps.ports["halfpspecialmarker_L_tie_E_top_met_W"],width=2,glayer1="met2",via1_alignment=('c','c'),via2_alignment=('c','c'),fullbottom=True)
+    pmos_comps << straight_route(pdk, pmos_comps.ports["pbottomAB_R_welltap_E_top_met_E"],pmos_comps.ports["halfpspecialmarker_R_tie_W_top_met_E"],width=2,glayer1="met2",via1_alignment=('c','c'),via2_alignment=('c','c'),fullbottom=True)
     return pmos_comps
     
 
@@ -330,8 +345,8 @@ def __create_and_route_pins(
     opamp_top << L_route(pdk, opamp_top.ports["pcomps_top_ptap_br_top_met_S"], opamp_top.ports["commonsource_cmirror_output_R_tie_N_top_met_E"],hwidth=2)
     L_toptapn_route = opamp_top.ports["commonsource_Pamp_L_tie_N_top_met_N"]
     R_toptapn_route = opamp_top.ports["commonsource_Pamp_R_tie_N_top_met_N"]
-    opamp_top << straight_route(pdk, movex(vddpin.ports["e4"],destination=L_toptapn_route.center[0]), L_toptapn_route, glayer1="met3")
-    opamp_top << straight_route(pdk, movex(vddpin.ports["e4"],destination=R_toptapn_route.center[0]), R_toptapn_route, glayer1="met3")
+    opamp_top << straight_route(pdk, movex(vddpin.ports["e4"],destination=L_toptapn_route.center[0]), L_toptapn_route, glayer1="met3",fullbottom=True)
+    opamp_top << straight_route(pdk, movex(vddpin.ports["e4"],destination=R_toptapn_route.center[0]), R_toptapn_route, glayer1="met3",fullbottom=True)
     # bias pins for first two stages
     vbias1 = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met3"),centered=True)
     vbias1.movey(opamp_top.ymin - _max_metal_seperation_ps - vbias1.ymax)
@@ -343,13 +358,26 @@ def __create_and_route_pins(
     #output = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met5"),centered=True)
     #output.movex(opamp_top.xmax).movey(opamp_top.ymin+output.ymax)
     #opamp_top << L_route(pdk, output.ports["e2"], set_port_orientation(n_to_p_output_route.ports["con_S"],"E"))
-    # route + and - pins
-    plus_pin = opamp_top << rectangle(size=(5,2),layer=pdk.get_glayer("met4"),centered=True)
-    plus_pin.movex(opamp_top.xmin).movey(_max_metal_seperation_ps + plus_pin.ymax + halfmultn_drain_routeref.ports["con_W"].center[1] + halfmultn_drain_routeref.ports["con_W"].width/2)
-    route_to_pluspin = opamp_top << L_route(pdk, opamp_top.ports["diffpair_MINUSgateroute_W_con_N"], plus_pin.ports["e3"])
-    minus_pin = opamp_top << rectangle(size=(5,2),layer=pdk.get_glayer("met4"),centered=True)
-    minus_pin.movex(opamp_top.xmin + minus_pin.xmax).movey(_max_metal_seperation_ps + plus_pin.ymax + minus_pin.ymax)
-    opamp_top << L_route(pdk, opamp_top.ports["diffpair_PLUSgateroute_E_con_N"], minus_pin.ports["e3"])
+    # route + and - pins (being careful about antenna violations)
+    minusi_pin = opamp_top << rectangle(size=(5,2),layer=pdk.get_glayer("met4"),centered=True)
+    minusi_pin.movex(opamp_top.xmin).movey(_max_metal_seperation_ps + minusi_pin.ymax + halfmultn_drain_routeref.ports["con_W"].center[1] + halfmultn_drain_routeref.ports["con_W"].width/2)
+    iport_antenna1 = movex(minusi_pin.ports["e3"],destination=opamp_top.ports["diffpair_MINUSgateroute_W_con_N"].center[0]-9*_max_metal_seperation_ps)
+    opamp_top << L_route(pdk, opamp_top.ports["diffpair_MINUSgateroute_W_con_N"],iport_antenna1)
+    iport_antenna2 = movex(iport_antenna1,offsetx=-9*_max_metal_seperation_ps)
+    opamp_top << straight_route(pdk, iport_antenna1, iport_antenna2,glayer1="met3",glayer2="met3",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
+    iport_antenna2.layer=pdk.get_glayer("met3")
+    opamp_top << straight_route(pdk, iport_antenna2, minusi_pin.ports["e3"],glayer1="met4",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
+    
+    plusi_pin = opamp_top << rectangle(size=(5,2),layer=pdk.get_glayer("met4"),centered=True)
+    plusi_pin.movex(opamp_top.xmin + plusi_pin.xmax).movey(_max_metal_seperation_ps + minusi_pin.ymax + plusi_pin.ymax)
+    iport_antenna1 = movex(plusi_pin.ports["e3"],destination=opamp_top.ports["diffpair_PLUSgateroute_E_con_N"].center[0]-9*_max_metal_seperation_ps)
+    opamp_top << L_route(pdk, opamp_top.ports["diffpair_PLUSgateroute_E_con_N"],iport_antenna1)
+    iport_antenna2 = movex(iport_antenna1,offsetx=-9*_max_metal_seperation_ps)
+    opamp_top << straight_route(pdk, iport_antenna1, iport_antenna2, glayer1="met3",glayer2="met3",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
+    iport_antenna2.layer=pdk.get_glayer("met3")
+    opamp_top << straight_route(pdk, iport_antenna2, plusi_pin.ports["e3"],glayer1="met4",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
+
+    #opamp_top << L_route(pdk, opamp_top.ports["diffpair_PLUSgateroute_E_con_N"], plusi_pin.ports["e3"])
     # route top center components to diffpair
     opamp_top << straight_route(pdk,opamp_top.ports["diffpair_tr_multiplier_0_drain_N"], opamp_top.ports["pcomps_pbottomAB_R_gate_S"], glayer1="met5",width=3*pdk.get_grule("met5")["min_width"],via1_alignment_layer="met2",via1_alignment=('c','c'))
     opamp_top << straight_route(pdk,opamp_top.ports["diffpair_tl_multiplier_0_drain_N"], opamp_top.ports["pcomps_minusvia_top_met_S"], glayer1="met5",width=3*pdk.get_grule("met5")["min_width"],via1_alignment_layer="met2",via1_alignment=('c','c'))
@@ -360,8 +388,8 @@ def __create_and_route_pins(
     opamp_top.add_ports(vddpin.get_ports_list(), prefix="pin_vdd_")
     opamp_top.add_ports(vbias1.get_ports_list(), prefix="pin_diffpairibias_")
     opamp_top.add_ports(vbias2.get_ports_list(), prefix="pin_commonsourceibias_")
-    opamp_top.add_ports(plus_pin.get_ports_list(), prefix="pin_plus_")
-    opamp_top.add_ports(minus_pin.get_ports_list(), prefix="pin_minus_")
+    opamp_top.add_ports(minusi_pin.get_ports_list(), prefix="pin_minus_")
+    opamp_top.add_ports(plusi_pin.get_ports_list(), prefix="pin_plus_")
     #opamp_top.add_ports(output.get_ports_list(), prefix="pin_output_")
     return opamp_top, n_to_p_output_route
 
@@ -415,7 +443,8 @@ def __add_output_stage(
         sd_route_topmet="met3",
         gate_route_topmet="met3",
         rmult=rmult,
-        with_dnwell=False
+        with_dnwell=False,
+        with_tie=False
     )
     # Instantiate bias FET
     cmirror_ibias = opamp_top << two_nfet_interdigitized(
@@ -426,7 +455,8 @@ def __add_output_stage(
         fingers=1,
         gate_route_topmet="met3",
         sd_route_topmet="met3",
-        rmult=rmult
+        rmult=rmult,
+        with_substrate_tap=False
     )
     metal_sep = pdk.util_max_metal_seperation()
     # Locate output stage relative position
@@ -454,9 +484,7 @@ def __add_output_stage(
     srcshort = opamp_top << c_route(pdk, cmirror_ibias.ports["A_source_W"],cmirror_ibias.ports["B_source_W"],extension=metal_sep)
     opamp_top << straight_route(pdk, srcshort.ports["con_N"], cmirror_ibias.ports["welltie_N_top_met_S"],via2_alignment_layer="met2")
     # Route all tap rings together and ground them
-    opamp_top << straight_route(pdk, amp_fet_ref.ports["tie_N_top_met_N"],amp_fet_ref.ports["guardring_N_top_met_S"],width=2)
-    opamp_top << straight_route(pdk, cmirror_ibias.ports["welltie_N_top_met_N"],cmirror_ibias.ports["substratetap_N_top_met_S"],width=2)
-    opamp_top << straight_route(pdk, amp_fet_ref.ports["guardring_bl_top_met_S"],cmirror_ibias.ports["substratetap_tr_top_met_N"])
+    opamp_top << straight_route(pdk, cmirror_ibias.ports["welltie_N_top_met_N"],amp_fet_ref.ports["guardring_S_top_met_S"],width=2)
     opamp_top << straight_route(pdk, amp_fet_ref.ports["guardring_tl_top_met_W"], opamp_top.ports["commonsource_cmirror_output_R_tie_tr_top_met_E"])
     # add ports, add bias/output pin, and return
     psuedo_out_port = movex(amp_fet_ref.ports["multiplier_0_source_E"].copy(),6*metal_sep)
@@ -471,22 +499,24 @@ def __add_output_stage(
     return opamp_top
 
 
+
 @cell
 def opamp(
     pdk: MappedPDK,
-    diffpair_params: tuple[float, float, int] = (6, 1, 4),
+    half_diffpair_params: tuple[float, float, int] = (6, 1, 4),
     diffpair_bias: tuple[float, float, int] = (6, 2, 4),
     half_common_source_params: tuple[float, float, int, int] = (7, 1, 10, 3),
     half_common_source_bias: tuple[float, float, int, int] = (6, 2, 8, 2),
     output_stage_params: tuple[float, float, int] = (5, 1, 16),
     output_stage_bias: tuple[float, float, int] = (6, 2, 4),
+    half_pload: tuple[float,float,int] = (6,1,6),
     mim_cap_size=(12, 12),
     mim_cap_rows=3,
     rmult: int = 2
 ) -> Component:
     """create an opamp, args:
     pdk=pdk to use
-    diffpair_params = diffpair (width,length,fingers)
+    half_diffpair_params = diffpair (width,length,fingers)
     diffpair_bias = bias transistor for diffpair nmos (width,length,fingers). The ref and output of the cmirror are identical
     half_common_source_params = pmos top component amp (width,length,fingers,mults)
     half_common_source_bias = bottom L/R large nmos current mirror (width,length,fingers,mults). The ref of the cmirror always has 1 multplier. multiplier must be >=2
@@ -505,7 +535,7 @@ def opamp(
     opamp_top = Component()
     # place nmos components
     clear_cache()
-    diffpair_and_bias = __add_diff_pair_and_bias(pdk, opamp_top, diffpair_params, diffpair_bias, rmult)
+    diffpair_and_bias = __add_diff_pair_and_bias(pdk, opamp_top, half_diffpair_params, diffpair_bias, rmult)
     # create and position each half of the nmos bias transistor for the common source stage symetrically
     clear_cache()
     opamp_top = __add_common_source_nbias_transistors(pdk, opamp_top, half_common_source_bias, rmult)
@@ -520,7 +550,7 @@ def opamp(
     # place pmos components
     #TODO: report as bug
     clear_cache()
-    pmos_comps, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts = __create_sharedgatecomps(pdk, rmult)
+    pmos_comps, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts = __create_sharedgatecomps(pdk, rmult,half_pload)
     clear_cache()
     pmos_comps = __route_sharedgatecomps(pdk, pmos_comps, opamp_top.ports["diffpair_tl_multiplier_0_drain_N"].center[0], ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts)
     clear_cache()
@@ -544,51 +574,6 @@ def opamp(
     return rename_ports_by_orientation(component_snap_to_grid(opamp_top))
 
 
-if __name__ == "__main__":
-	from . pdk.util.standard_main import pdk
-
-	iterate=False
-    # TO TRY:
-	#pdk = pdk to use
-	#diffpair_params = diffpair (width,length,fingers)
-	#diffpair_bias = bias transistor for diffpair nmos (width,length,fingers)
-	#half_common_source_nbias = west current mirror (width,length,fingers,mults), two halves
-	#pamp_hparams = pmos top component amp (width,length,fingers,mults)
-	#mim_cap_size = width,length of individual mim_cap
-	if iterate: # 486 versions
-		# construct all diffpairs to try
-		diffpairs = list()
-		for width in [4,6,8]:
-			for length in [0,1]:
-				for fingers in [3,4,5]:
-					diffpairs.append((width,length,fingers))
-		# construct all bias1 (diffpair bias) transistors to try
-		bias1s = list()
-		for width in [4,6,8]:
-			for length in [1,2,4]:
-				for fingers in [3,4,5]:
-					bias1s.append((width,length,fingers))
-		cap_arrays = [1,3]
-		opamps = list()
-		for diffpair_v in diffpairs:
-			for bias1_v in bias1s:
-				for cap_array_v in cap_arrays:
-					comp = opamp(pdk,diffpair_params=diffpair_v,diffpair_bias=bias1_v,mim_cap_rows=cap_array_v)
-					opamps.append(comp)
-		for i,comp in enumerate(opamps):
-			comp.write_gds(str(i)+".gds")
-	else:
-		opamp(
-			pdk,
-			diffpair_params = (6, 1, 4),
-			diffpair_bias = (6, 2, 4),
-			half_common_source_nbias = (6, 2, 8, 3),
-			pamp_hparams = (7, 1, 10, 3),
-			mim_cap_size = (12, 12),
-			mim_cap_rows = 3,
-			rmult = 2
-		).show()
-		
 
 
 def benchmark(pdk: MappedPDK, save_file: Optional[str]="./oPamp_Runtime_second.txt") -> float:
