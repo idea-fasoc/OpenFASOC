@@ -88,3 +88,124 @@ Constants
 1. ``COMMON_PLATFORMS_PREFIX_MAP``
 
     This is a dictionary of common platforms (currently sky130) and their cell naming prefixes. See the ``cell()`` def in the ``generate_verilog()`` function for more information on how to use it.
+
+2. Simulation (``common.simulation``)
+#####################################################
+This module exports functions used to simulate SPICE testbenches with multiple parameters.
+
+This module supports the use of `Mako <https://www.makotemplates.org/>`_ templating library to insert parameters into SPICE templates.
+
+Functions
+^^^^^^^^^
+1. ``run_simulations(parameters: dict, platform: str, simulation_dir: str, template_path: str, runs_dir: str, sim_tool: str, num_concurrent_sims: int, netlist_path: str) -> int``
+
+    Generates configurations of all combinations of the given ``parameters`` and runs simulations for each case. The testbench SPICE file, configuration parameters, and the ouptut for each run are generated in ``{simulation_dir}/{runs_dir}``.
+
+    The testbench SPICE file given by ``template_path`` follows the `Mako <https://makotemplates.org>`_ templating syntax. Use the ``${parameter}`` syntax for inserting parameters in the file. The following parameters are automatically inserted during each run.
+
+    - ``run_number`` (int): The number/index of the run/configuration.
+    - ``sim_tool`` (str): Command for the simulation tool used.
+    - ``platform`` (str): The platform/PDK.
+    - ``template`` (str): Path to the SPICE testbench template.
+    - ``netlist_path`` (str): Absolute path to the SPICE netlist of the design to be simulated.
+
+    Example SPICE template: (From the `Temperature Sensor Generator <flow-tempsense.html>`_)
+        .. code-block:: spice
+
+            .lib '${model_file}' ${model_corner}
+            .include '${netlist_path}'
+
+            .param temp_var = ${temp}
+            .param vvdd = 1.8
+            .param sim_end = '800m/exp(0.04*temp_var)'
+
+    Each configuration is run/simulated in a directory in the ``runs_dir``. Each run directory contains the final SPICE testbench with the parameters inserted, a ``parameters.txt`` file containing the values of each parameter, and the output log file.
+
+    ``parameters`` is a dict with keys corresponding to the parameter's name and the values of one of the following types.
+
+    1. A constant value.
+    The value of this parameter will be the same for every configuration/run.
+        .. code-block:: python
+
+            {'param': 'value'}
+
+    2. Array of integer/float/string constants.
+    Each of the values in the array will be swept.
+        .. code-block:: python
+
+            {'param': [1, 2, 3, 8]}
+            # OR
+            {
+                'param': {
+                    'values': [1, 2, 3, 8]
+                }
+            }
+
+    3. Increments.
+    All values starting from ``start`` (included) and ending at ``end`` (included if it is ``start + n * step``) will be swept with a step of ``step``. The default value for ``step`` is ``1``.
+        .. code-block:: python
+
+            {'param': {
+                'start': 10,
+                'end': 50,
+                'step': 10
+            }}
+            # param will take values 10, 20, 30, 40, 50
+
+    Example parameters:
+        .. code-block:: python
+
+            # Runs 10 total simulations
+            # Sweeps through all temperatures from 10 to 100 (both included) with increments of 10.
+            example1 = {
+                'temp': {'start': 10, 'end': 100, 'step': 10}
+            }
+
+            # Runs 9 total simulations
+            # Sweeps through all the 3 input voltages as well as all the 3 temperatures
+            example2 = {
+                'input_voltage': [1, 2, 3],
+                'temp': [20, 30, 40]
+            }
+
+            # Runs 4 total simulations
+            # Duty cycle and aux_spice_path remain the same in all simulations
+            # input_voltage is swept
+            example3 = {
+                'duty_cycle': 10,
+                'aux_spice_path': 'auxcell.cdl',
+                'input_voltage': [1, 2, 3]
+            }
+
+    See the generators' Python files in ``tools/`` for more examples.
+
+    Arguments:
+        - ``parameters`` (dict): Dictionary of parameters. Explained above.
+        - ``platform`` (str): Platform/PDK. (eg: ``sky130hd```)
+        - ``simulation_dir`` (str): Path to the directory where the simulation source files are placed and the outputs will be generated. (Default: ``simulations``)
+        - ``template_path`` (str): Path to the SPICE template file for the testbench. (Default: ``templates/template.sp``)
+        - ``runs_dir`` (str): Path to a directory inside the ``simulation_dir`` directory where the outputs for the simulations will be generated. (Default: ``runs``)
+        - ``sim_tool`` (str): Command for the simulation tool. ``ngspice``, ``xyce``, and ``finesim`` are supported. (Default: ``ngspice``)
+        - ``num_concurrent_sims`` (int): The maximum number of concurrent simulations. (Default: ``4``)
+        - ``netlist_path`` (str): Path to the SPICE netlist inside the ``simulation_dir`` of the design to be simulated. (Default: ``netlist.sp``)
+
+    **Returns (int)**: The total number of simulations run.
+
+    Overall example: (From the `Temperature Sensor Generator <flow-tempsense.html>`_)
+        .. code-block:: python
+
+            run_simulations(
+                parameters={
+                    'temp': {'start': tempStart, 'end': tempStop, 'step': tempStep},
+                    'model_file': model_file,
+                    'model_corner': platformConfig['model_corner'],
+                    'nominal_voltage': platformConfig['nominal_voltage'],
+                    'design_name': designName
+                },
+                platform="sky130hd",
+                simulation_dir="simulations",
+                template_path=os.path.join("templates", f"tempsenseInst_{simTool}.sp"),
+                runs_dir=f"run/prePEX_inv{num_inv}_header{num_header}/",
+                sim_tool=simTool,
+                netlist_path=dstNetlist
+            )

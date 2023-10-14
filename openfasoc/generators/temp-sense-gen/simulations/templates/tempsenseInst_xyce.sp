@@ -1,7 +1,7 @@
 
 *.OPTION sim_la
 .OPTION autostop
-.OPTION temp = @temp
+.OPTION temp = ${temp}
 *.OPTION
 *+    artist=2
 *+    ingold=2
@@ -19,21 +19,21 @@
 *+    method=gear
 *+    measdgt=10
 
-.lib '@model_file' @model_corner
-.include '@netlist'
+.lib '${model_file}' ${model_corner}
+.include '${netlist_path}'
 
-.param temp_var = @temp
+.param temp_var = ${temp}
 .param vvdd = 1.8
 
 * sim_end = 800m/exp(0.04*temp_var)
-* .param sim_end = @sim_end
+* .param sim_end = ${sim_end}
 
 xi1 CLK_REF DONE DOUT[0] DOUT[10] DOUT[11]
 + DOUT[12] DOUT[13] DOUT[14] DOUT[15] DOUT[16] DOUT[17] DOUT[18]
 + DOUT[19] DOUT[1] DOUT[20] DOUT[21] DOUT[22] DOUT[23] DOUT[2]
 + DOUT[3] DOUT[4] DOUT[5] DOUT[6] DOUT[7] DOUT[8] DOUT[9] RESET_COUNTERn
 + SEL_CONV_TIME[0] SEL_CONV_TIME[1] SEL_CONV_TIME[2] SEL_CONV_TIME[3]
-+ en lc_out out outb VDD VSS @design_nickname
++ en lc_out out outb VDD VSS ${design_name}
 
 vCLK_REF                  CLK_REF                  0                  pulse		0 'vvdd' 12u 1n 1n '4/32768' '8/32768'
 vRESET_COUNTERn           RESET_COUNTERn           0                  pwl		0 0 5u 0 '5u+1n' 'vvdd'
@@ -48,7 +48,7 @@ vVSS                      VSS                      0                  dc        
 
 c0 lc_out 0 1f
 
-.TRAN 10n @sim_end
+.TRAN 10n ${sim_end}
 
 .meas   tran period TRIG when v(lc_out)=1.0 td=10p rise=2
 +           TARG when v(lc_out)=1.0 td=10p rise=3

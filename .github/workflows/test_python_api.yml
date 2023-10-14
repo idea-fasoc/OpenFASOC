@@ -1,0 +1,42 @@
+---
+name: Lint and Test Python API
+# https://docs.github.com/en/free-pro-team@latest/actions/guides/building-and-testing-python
+
+on:
+  pull_request:
+    paths:
+      - 'openfasoc/common/**'
+      - 'openfasoc/generators/common/**'
+      - 'tests/**'
+      - 'requirements.txt'
+      - 'pytest.ini'
+  push:
+  schedule:
+    - cron: 0 2 * * * # run at 2 AM UTC
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 12
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Cancel Workflow Action
+        uses: styfle/cancel-workflow-action@0.9.1
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          sudo apt install -y ngspice
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+          # pip install .
+      - name: Test with pytest
+        run: pytest

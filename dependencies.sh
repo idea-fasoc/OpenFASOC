@@ -1,13 +1,13 @@
-#!/bin/bash 
+#!/bin/bash
 
-printf "Function: \nIf this script runs smoothly, all necessary dependencies for OpenFASoC will be 
-downloaded at once. If you've already downloaded all dependencies with this script, 
+printf "Function: \nIf this script runs smoothly, all necessary dependencies for OpenFASoC will be
+downloaded at once. If you've already downloaded all dependencies with this script,
 you can run this script again to update the installed dependencies.\n
-Basic Requirements (not exhaustive): 
-(1) Python 3.6 or higher is required.
+Basic Requirements (not exhaustive):
+(1) Python 3.8 or higher is required.
 (2) Intel x86 architecture is required, as this script will use Conda to download several
 Python packages for which versions compatible with ARM architecture currently do not
-exist for installation in Conda's package repository. If your machine does not run 
+exist for installation in Conda's package repository. If your machine does not run
 on Intel x86 architecture, this script will likely not work.
 (3) CentOS and Ubuntu are the only operating systems this script has been verified to work on.
 We cannot guarantee successful compilation on other systems.\n\n"
@@ -16,12 +16,12 @@ proceed_confirmed=false
 update_confirmed=false
 while ! $proceed_confirmed
 do
-        echo "[OpenFASoC] Do you wish to proceed with the installation? 
+        echo "[OpenFASoC] Do you wish to proceed with the installation?
 [y] Yes. Install for the first time.
 [u] Yes. Update already-installed dependencies.
-[n] No. Exit this script." 
+[n] No. Exit this script."
         read -p "Select the desired option: " selection
-        if [ "$selection" == "y" ] || [ "$selection" == "Y" ]; then 
+        if [ "$selection" == "y" ] || [ "$selection" == "Y" ]; then
         echo "Beginning installation..."; proceed_confirmed=true
         elif [ "$selection" == "n" ] || [ "$selection" == "N" ]; then
         echo "Quitting script."; exit
@@ -45,10 +45,10 @@ if $update_confirmed; then
         if [ $? == 0 ]
         then
         printf "\n\n[OpenFASoC] Conda updated successfully with: conda update conda -y."
-        else 
+        else
         printf "\n\n[OpenFASoC] Failed to update Conda using: conda update conda -y."
         printf "[OpenFASoC] Attempting instead to update Conda using: install -c anaconda conda -y"
-        conda install -c anaconda conda -y; if [ $? == 0 ]; then 
+        conda install -c anaconda conda -y; if [ $? == 0 ]; then
         printf "\n\n[OpenFASoC] Conda updated successfully with: install -c anaconda conda -y"
         else
         printf "\n\n[OpenFASoC] Conda could not be updated."; fi
@@ -57,31 +57,31 @@ if $update_confirmed; then
         update_successful=true
         printf "\n\n[OpenFASoC] Attempting to update packages using: conda update --all -y \n"
         conda update --all -y
-        if [ $? == 0 ]; then 
+        if [ $? == 0 ]; then
         printf "[OpenFASoC] Packages updated successfully with: conda update --all -y"
-        else 
+        else
         printf "\n\n[OpenFASoC] Failed to update packages using: conda update --all -y."
         printf "Attempting instead to install core packages individually..."
-        conda install -c litex-hub magic -y; if [ $? != 0 ]; then update_successful=false; echo "magic could not be updated"; fi
-        conda install -c litex-hub netgen -y; if [ $? != 0 ]; then update_successful=false; echo "netgen could not be updated"; fi
-        conda install -c litex-hub open_pdks.sky130a -y; if [ $? != 0 ]; then update_successful=false; echo "open_pdks could not be updated"; fi
-        conda install -c litex-hub openroad -y; if [ $? != 0 ]; then update_successful=false; echo "openroad could not be updated"; fi
-        conda install -c litex-hub yosys -y; if [ $? != 0 ]; then update_successful=false; echo "yosys could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub magic -y; if [ $? != 0 ]; then update_successful=false; echo "magic could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub netgen -y; if [ $? != 0 ]; then update_successful=false; echo "netgen could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub open_pdks.sky130a -y; if [ $? != 0 ]; then update_successful=false; echo "open_pdks could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub openroad -y; if [ $? != 0 ]; then update_successful=false; echo "openroad could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub yosys -y; if [ $? != 0 ]; then update_successful=false; echo "yosys could not be updated"; fi
         fi
 
         # ngspice_updated=false
         # echo "Updating ngspice..."
         # cd ngspice
         # git pull
-        # ./compile_linux.sh 
+        # ./compile_linux.sh
         # if [ $? == 0 ]; then
         # ngspice_updated=true
         # echo "ngspice updated successfully."
-        # else 
+        # else
         # echo "nspice could not be updated."
         # fi
         # cd ..
-        
+
         # cd ./docker/conda/scripts/Xyce
         # echo "Updating xyce..."
         # SRCDIR=$PWD/Trilinos-trilinos-release-12-12-1
@@ -101,7 +101,7 @@ if $update_confirmed; then
         # make install
         #         if [ $? == 0 ]; then
         # echo "xyce updated successfully."
-        # else 
+        # else
         # echo "xyce could not be updated."
         # fi
 
@@ -128,13 +128,13 @@ mi_ver=$(python3 -c"import sys; print(str(sys.version_info.minor))")
 
 if [ "$ma_ver" -lt 3 ]
 then
-    echo "[Warning] python version less than 3.* . Not compatible. You atleast need version above or equal to 3.7."
-    sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
+    echo "[Warning] python version less than 3.* . Not compatible. You atleast need version above or equal to 3.8."
+#     sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
     echo "[Warning] Skipping installing the gdsfactory python package because of that error. Continuing installation..."
-elif [ "$mi_ver" -lt 6 ]
+elif [ "$mi_ver" -lt 8 ]
 then
-    echo "[Warning] python version less than 3.6 . Not compatible. You atleast need version above or equal to 3.7."
-    sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
+    echo "[Warning] python version less than 3.8 . Not compatible. You atleast need version above or equal to 3.8."
+#     sed -i 's/gdsfactory==5.1.1/#gdsfactory==5.1.1/g' requirements.txt
     echo "[Warning] Skipping installing the gdsfactory python package because of that error. Continuing installation..."
 else
     echo "Compatible python version exists: $ma_ver.$mi_ver"
@@ -143,22 +143,22 @@ fi
 if cat /etc/os-release | grep "ubuntu" >> /dev/null; then
 
 	apt-get update -y
-        apt-get install -y autoconf libtool automake make g++ gcc
+        apt-get install -y autoconf libtool libfmt-dev automake make g++ gcc
 
 elif cat /etc/os-release | grep -e "centos" >> /dev/null; then
 
         yum update -y
 
-        yum install -y autoconf libtool automake make gcc gcc-c++
+        yum install -y autoconf libtool libfmt-dev automake make gcc gcc-c++
 
 fi
 
 # install miniconda3
 if ! [ -x /home/$(logname)/miniconda3 ]
 then
-      wget https://repo.anaconda.com/miniconda/Miniconda3-py37_23.1.0-1-Linux-x86_64.sh \
-    && bash Miniconda3-py37_23.1.0-1-Linux-x86_64.sh -b -p /home/$(logname)/miniconda3/ \
-    && rm -f Miniconda3-py37_23.1.0-1-Linux-x86_64.sh
+      wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+    && bash ./Miniconda3-latest-Linux-x86_64.sh -b -p /home/$(logname)/miniconda3 \
+    && rm ./Miniconda3-latest-Linux-x86_64.sh
 else
     echo "[OpenFASoC] Found miniconda3. Continuing the installation...\n"
 fi
@@ -181,8 +181,9 @@ source /home/$(logname)/miniconda3/etc/profile.d/conda.sh
 
 if [ $? == 0 ] && [ -x /home/$(logname)/miniconda3/ ]
 then
-	conda update -y conda
-        if [ $? == 0 ];then conda install -c litex-hub --file conda_versions.txt -y ; else echo "[OpenFASoC] Failed to update conda version." ; exit ; fi
+	conda update -y conda --all
+        conda install python=3.10 -c anaconda -c conda-forge -c litex-hub
+        if [ $? == 0 ];then conda install -c anaconda -c conda-forge -c litex-hub --file conda_versions.txt -y ; else echo "[OpenFASoC] Failed to update conda version." ; exit ; fi
         if [ $? == 0 ];then echo "[OpenFASoC] Installed OpenROAD, Yosys, Skywater PDK, Magic and Netgen successfully" ; else echo "[OpenFASoC] Failed to install conda packages" ; exit ; fi
 else
 	echo "[OpenFASoC] Failed to install miniconda. Check above for error messages."
@@ -197,7 +198,7 @@ if which pip3 >> /dev/null
 then
         echo "[OpenFASoC] Pip3 exists"
         pip3 install -r requirements.txt
-        if [ $? == 0 ]; then 
+        if [ $? == 0 ]; then
         echo "[OpenFASoC] Python packages installed successfully."
         else
         echo "[OpenFASoC] Python packages could not be installed."
@@ -265,20 +266,20 @@ then
  	if [ $currentver == $requiredver ]
  	then
 	 apt install qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y 
-	 wget https://www.klayout.org/downloads/Ubuntu-22/klayout_0.28.11-1_amd64.deb
-	 dpkg -i klayout_0.28.11-1_amd64.deb
+	 wget https://www.klayout.org/downloads/Ubuntu-22/klayout_0.28.12-1_amd64.deb
+	 dpkg -i klayout_0.28.12-1_amd64.deb
 	else 
 	 apt install qt5-default qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y
-	 wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.28.11-1_amd64.deb
-	 dpkg -i klayout_0.28.11-1_amd64.deb
+	 wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.28.12-1_amd64.deb
+	 dpkg -i klayout_0.28.12-1_amd64.deb
   	 strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5 #https://stackoverflow.com/questions/63627955/cant-load-shared-library-libqt5core-so-5
 	fi
 	apt install time -y
 	elif cat /etc/os-release | grep -e "centos" >> /dev/null
 then
 	yum install qt5-qtbase-devel qt5-qttools-devel qt5-qtxmlpatterns-devel qt5-qtmultimedia-devel qt5-qtmultimedia-widgets-devel qt5-qtsvg-devel ruby ruby-devel python3-devel zlib-devel time -y
-	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.28.11-0.x86_64.rpm
-	rpm -i klayout-0.28.11-0.x86_64.rpm
+	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.28.12-0.x86_64.rpm
+	rpm -i klayout-0.28.12-0.x86_64.rpm
 	yum install time -y
   strip --remove-section=.note.ABI-tag /usr/lib64/libQt5Core.so.5
 else

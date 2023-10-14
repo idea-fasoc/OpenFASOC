@@ -1,0 +1,39 @@
+                                 ┌[bottom]
+                          ┌[col0]┤
+                          │      └[top]
+                   ┌[row0]┤
+                   │      │      ┌[bottom]
+                   │      └[col1]┤
+                   │             └[top]
+                   │
+                   │             ┌[bottom]
+                   │      ┌[col0]┤
+                   │      │      └[top]
+           ┌[array]┼[row1]┤
+           │       │      │      ┌[bottom]
+           │       │      └[col1]┤
+           │       │             └[top]
+           │       │
+           │       │             ┌[bottom]
+           │       │      ┌[col0]┤
+           │       │      │      └[top]
+-[viaarray]┤       └[row2]┤
+           │              │      ┌[bottom]
+           │              └[col1]┤
+           │                     └[top]
+           │
+           │              ┌[W]
+           │              │
+           │              ├[N]
+           ├[bottom]─[lay]┤
+           │              ├[E]
+           │              │
+           │              └[S]
+           │
+           │           ┌[W]
+           │           │
+           │           ├[N]
+           └[top]─[met]┤
+                       ├[E]
+                       │
+                       └[S]
