@@ -2,7 +2,10 @@ import sys
 
 sys.stdout.flush()
 
-if len(sys.argv) == 1 or sys.argv[1] == "sky130hvl_ldo":
+if (len(sys.argv) > 1) and (sys.argv[1] == "sky130hd_cryo"):
+    drc_filename = "flow/reports/sky130hd/cryo/6_final_drc.rpt"
+    lvs_filename = "flow/reports/sky130hd/cyro/6_final_lvs.rpt"
+else if (len(sys.argv) == 1) or (sys.argv[1] == "sky130hvl_ldo"):
     drc_filename = "work/6_final_drc.rpt"
     lvs_filename = "work/6_final_lvs.rpt"
 else:
@@ -17,24 +20,36 @@ if (len(sys.argv) > 1) and ((sys.argv[1] == "sky130hvl_ldo") or (sys.argv[1] == 
             print("DRC is clean!")
         else:
             raise ValueError("DRC failed!")
-        
 elif sum(1 for line in open(drc_filename)) > 3:
     raise ValueError("DRC failed!")
 else:
     print("DRC is clean!")
 
-
-with open(lvs_filename) as f:
-    f1 = f.read()
-
-    if "failed" in f1:
+if sys.argv[1] == "sky130hd_cryo":
+    lvs_line = subprocess.check_output(["tail", "-1", lvs_filename]).decode(
+        sys.stdout.encoding
+    )
+    regex = r"failed"
+    match = re.search(regex, lvs_line)
+    
+    if match != None:
         raise ValueError("LVS failed!")
     else:
         print("LVS is clean!")
+else:        
+    with open(lvs_filename) as f:
+        f1 = f.read()
+    
+        if "failed" in f1:
+            raise ValueError("LVS failed!")
+        else:
+            print("LVS is clean!")
 
 if ((sys.argv[1] == "sky130hvl_ldo") or (sys.argv[1] == "sky130hvl_ldo_full")) and (sys.argv[1] != "sky130hd_cryo"):
+    print("Generator check is clean!")
+else:
     with open('test.json', 'r') as file:
-        data = json.load(file)
+    data = json.load(file)
     print('Found .json config file...')
 
     module_name = data.get("module_name", "default")
@@ -54,5 +69,4 @@ if ((sys.argv[1] == "sky130hvl_ldo") or (sys.argv[1] == "sky130hvl_ldo_full")) a
         if os.path.exists(file) == 0:
             raise ValueError(file + " does not exist!")
     print("Found generated .csv files!")
-
-print("Generator check is clean!")
+    print("Generator check is clean!")
