@@ -2,7 +2,7 @@ import re
 import subprocess
 import sys
 
-drc_filename = "flow/reports/sky130hd/cyro/6_final_drc.rpt"
+drc_filename = "flow/reports/sky130hd/cryo/6_final_drc.rpt"
 num_lines = sum(1 for line in open(drc_filename))
 
 if num_lines > 3:
@@ -10,7 +10,7 @@ if num_lines > 3:
 else:
     print("DRC is clean!")
 
-lvs_filename = "flow/reports/sky130hd/cyro/6_final_lvs.rpt"
+lvs_filename = "flow/reports/sky130hd/cryo/6_final_lvs.rpt"
 lvs_line = subprocess.check_output(["tail", "-1", lvs_filename]).decode(
     sys.stdout.encoding
 )
