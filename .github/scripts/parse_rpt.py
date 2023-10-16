@@ -9,7 +9,7 @@ else:
     drc_filename = "work/"+sys.argv[1]+"/6_final_drc.rpt"
     lvs_filename = "work/"+sys.argv[1]+"/6_final_lvs.rpt"
 
-if len(sys.argv) > 1 and sys.argv[1] == "sky130hvl_ldo":
+if (len(sys.argv) > 1) and ((sys.argv[1] == "sky130hvl_ldo") or (sys.argv[1] == "sky130hvl_ldo_full")):
     with open(drc_filename, 'r') as f1, open("../../../.github/scripts/expected_drc_reports/expected_ldo_drc.rpt", 'r') as f2:
         content1 = f1.readlines()
         content2 = f2.readlines()
@@ -32,7 +32,7 @@ with open(lvs_filename) as f:
     else:
         print("LVS is clean!")
 
-if sys.argv[1] != "sky130hvl_ldo":
+if ((sys.argv[1] == "sky130hvl_ldo") or (sys.argv[1] == "sky130hvl_ldo_full")) and (sys.argv[1] != "sky130hd_cryo"):
     with open('test.json', 'r') as file:
         data = json.load(file)
     print('Found .json config file...')
