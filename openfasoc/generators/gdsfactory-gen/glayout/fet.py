@@ -77,7 +77,7 @@ def multiplier(
     interfinger_rmult: int=1,
     sd_route_extension: float = 0,
     gate_route_extension: float = 0,
-    dummy_with_poly: bool=False
+    dummy_with_poly: bool=True
 ) -> Component:
     """Generic poly/sd vias generator
     args:

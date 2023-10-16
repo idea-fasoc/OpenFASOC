@@ -65,8 +65,8 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	via_array_ref = opamp_wpads << vddarray
 	align_comp_to_port(via_array_ref,opamp_wpads.ports["pin_vdd_N"],alignment=('c','b'))
 	# route to the pads
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_minus_W"],pad_array_ref.ports["row1_col1_pad_S"],hwidth=3)
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_plus_W"],pad_array_ref.ports["row0_col1_pad_N"],hwidth=3)
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_plus_W"],pad_array_ref.ports["row1_col1_pad_S"],hwidth=3)
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_minus_W"],pad_array_ref.ports["row0_col1_pad_N"],hwidth=3)
 	opamp_wpads << straight_route(pdk, pad_array_ref.ports["row1_col2_pad_S"],opamp_wpads.ports["pin_vdd_S"], width=4,glayer1="met5")
 	opamp_wpads << straight_route(pdk, opamp_wpads.ports["pin_diffpairibias_S"],pad_array_ref.ports["row0_col2_pad_N"])
 	opamp_wpads << L_route(pdk, opamp_wpads.ports["gnd_route_con_E"],pad_array_ref.ports["row0_col3_pad_N"], vglayer="met4",hwidth=3)
@@ -191,7 +191,7 @@ def sky130_add_lvt_layer(opamp_in: Component) -> Component:
 	min_y = min(middle_bottom_y, SW_corner[1])
 	abs_center = (SW_corner[0] + (NE_corner[0] - SW_corner[0])/2, min_y + (max_y - min_y)/2)
 	# draw lvt rectangle
-	LVT_rectangle = rectangle(layer=lvt_layer, size=(abs(NE_corner[0] - SW_corner[0]), abs(max_y - min_y)), centered=True)
+	LVT_rectangle = rectangle(layer=lvt_layer, size=(abs(NE_corner[0] - SW_corner[0]), abs(max_y - min_y)+0.36), centered=True)
 	LVT_rectangle_ref = opamp_in << LVT_rectangle
 	# align lvt rectangle to the plusdoped_N region
 	LVT_rectangle_ref.move(origin=(0, 0), destination=abs_center)
@@ -199,7 +199,7 @@ def sky130_add_lvt_layer(opamp_in: Component) -> Component:
 	outputW = opamp_in.ports["outputstage_amp_multiplier_0_plusdoped_W"]
 	outputE = opamp_in.ports["outputstage_amp_multiplier_0_plusdoped_E"]
 	width = abs(outputE.center[0]-outputW.center[0])
-	hieght = outputW.width
+	hieght = outputW.width+0.36
 	center = (outputW.center[0] + width/2, outputW.center[1])
 	lvtref = opamp_in << rectangle(size=(width,hieght),layer=lvt_layer,centered=True)
 	lvtref.move(destination=center)
@@ -1030,7 +1030,7 @@ if __name__ == "__main__":
 
 	# Subparser for gen_opamp mode
 	gen_opamp_parser = subparsers.add_parser("gen_opamp", help="Run the gen_opamp function. optional parameters for transistors are width,length,fingers,mults")
-	gen_opamp_parser.add_argument("--diffpair_params", nargs=3, type=float, default=[6, 1, 4], help="diffpair_params (default: 6 1 4)")
+	gen_opamp_parser.add_argument("--half_diffpair_params", nargs=3, type=float, default=[6, 1, 4], help="half_diffpair_params (default: 6 1 4)")
 	gen_opamp_parser.add_argument("--diffpair_bias", nargs=3, type=float, default=[6, 2, 4], help="diffpair_bias (default: 6 2 4)")
 	gen_opamp_parser.add_argument("--half_common_source_params", nargs=4, type=float, default=[7, 1, 10, 3], help="half_common_source_params (default: 7 1 10 3)")
 	gen_opamp_parser.add_argument("--half_common_source_bias", nargs=4, type=float, default=[6, 2, 8, 2], help="half_common_source_bias (default: 6 2 8 3)")
@@ -1094,7 +1094,7 @@ if __name__ == "__main__":
 	elif args.mode=="gen_opamp":
 		# Call the opamp function with the parsed arguments
 		opamp_comp = opamp(pdk=pdk,
-				diffpair_params=tuple(args.diffpair_params),
+				half_diffpair_params=tuple(args.half_diffpair_params),
 				diffpair_bias=tuple(args.diffpair_bias),
 				half_common_source_bias=tuple(args.half_common_source_bias),
 				half_common_source_params=tuple(args.half_common_source_params),
@@ -1118,7 +1118,7 @@ if __name__ == "__main__":
 		if args.output_second_stage:
 			_TAKE_OUTPUT_AT_SECOND_STAGE_ = True
 		params = {
-			"diffpair_params": (6, 1, 4),
+			"half_diffpair_params": (6, 1, 4),
 			"diffpair_bias": (6, 2, 4),
 			"half_common_source_bias": (6, 2, 8, 3),
 			"half_common_source_params": (7, 1, 10, 3),

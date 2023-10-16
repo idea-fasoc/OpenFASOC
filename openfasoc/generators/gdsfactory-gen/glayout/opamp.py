@@ -33,8 +33,9 @@ def __add_diff_pair_and_bias(pdk: MappedPDK, opamp_top: Component, half_diffpair
         fingers=half_diffpair_params[2],
         rmult=rmult
     )
-    diffpair_i_.add(prec_ref_center(center_diffpair_comp))
-    diffpair_i_.add_ports(center_diffpair_comp.get_ports_list())
+    diffpair_centered_ref = prec_ref_center(center_diffpair_comp)
+    diffpair_i_.add(diffpair_centered_ref)
+    diffpair_i_.add_ports(diffpair_centered_ref.get_ports_list())
     # create and position tail current source
     cmirror = two_nfet_interdigitized(
         pdk,
@@ -257,7 +258,9 @@ def __route_sharedgatecomps(pdk: MappedPDK, shared_gate_comps, via_location, pto
     mimcap_connection_ref = shared_gate_comps << c_route(pdk, ptop_AB.ports["R_source_E"], LRdrainsPorts[-1],extension=pcomps_route_B_source_extension,viaoffset=(True,False))
     bottom_pcompB_floating_port = set_port_orientation(movey(movex(pbottom_AB.ports["L_source_E"].copy(),5*_max_metal_seperation_ps), destination=Aextra_top_connection.ports["e1"].center[1]+Aextra_top_connection.ports["e1"].width+_max_metal_seperation_ps),"S")
     pmos_bsource_2Rdrain_v = shared_gate_comps << L_route(pdk,pbottom_AB.ports["L_source_E"],bottom_pcompB_floating_port,vglayer="met3")
-    # TODO: fix the extension thing when the poly is true
+    # fix the extension when the top row of transistors extends farther than the middle row
+    if LRdrainsPorts[-1].center[0] < ptop_AB.ports["R_source_E"].center[0]:
+        pcomps_route_B_source_extension += ptop_AB.ports["R_source_E"].center[0] - LRdrainsPorts[-1].center[0]
     shared_gate_comps << c_route(pdk, LRdrainsPorts[-1], set_port_orientation(bottom_pcompB_floating_port,"E"),extension=pcomps_route_B_source_extension,viaoffset=(True,False))
     pmos_bsource_2Rdrain_v_center = via_stack(pdk,"met2","met3",fulltop=True)
     shared_gate_comps.add(align_comp_to_port(pmos_bsource_2Rdrain_v_center, bottom_pcompB_floating_port,('r','t')))
@@ -354,10 +357,6 @@ def __create_and_route_pins(
     vbias2 = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met5"),centered=True)
     vbias2.movex(1+opamp_top.xmax+evaluate_bbox(vbias2)[0]+pdk.util_max_metal_seperation()).movey(opamp_top.ymin+vbias2.ymax)
     opamp_top << L_route(pdk, halfmultn_gate_routeref.ports["con_E"], vbias2.ports["e2"],hwidth=2)
-    # out pin
-    #output = opamp_top << rectangle(size=(5,3),layer=pdk.get_glayer("met5"),centered=True)
-    #output.movex(opamp_top.xmax).movey(opamp_top.ymin+output.ymax)
-    #opamp_top << L_route(pdk, output.ports["e2"], set_port_orientation(n_to_p_output_route.ports["con_S"],"E"))
     # route + and - pins (being careful about antenna violations)
     minusi_pin = opamp_top << rectangle(size=(5,2),layer=pdk.get_glayer("met4"),centered=True)
     minusi_pin.movex(opamp_top.xmin).movey(_max_metal_seperation_ps + minusi_pin.ymax + halfmultn_drain_routeref.ports["con_W"].center[1] + halfmultn_drain_routeref.ports["con_W"].width/2)
@@ -367,7 +366,6 @@ def __create_and_route_pins(
     opamp_top << straight_route(pdk, iport_antenna1, iport_antenna2,glayer1="met3",glayer2="met3",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
     iport_antenna2.layer=pdk.get_glayer("met3")
     opamp_top << straight_route(pdk, iport_antenna2, minusi_pin.ports["e3"],glayer1="met4",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
-    
     plusi_pin = opamp_top << rectangle(size=(5,2),layer=pdk.get_glayer("met4"),centered=True)
     plusi_pin.movex(opamp_top.xmin + plusi_pin.xmax).movey(_max_metal_seperation_ps + minusi_pin.ymax + plusi_pin.ymax)
     iport_antenna1 = movex(plusi_pin.ports["e3"],destination=opamp_top.ports["diffpair_PLUSgateroute_E_con_N"].center[0]-9*_max_metal_seperation_ps)
@@ -376,8 +374,6 @@ def __create_and_route_pins(
     opamp_top << straight_route(pdk, iport_antenna1, iport_antenna2, glayer1="met3",glayer2="met3",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
     iport_antenna2.layer=pdk.get_glayer("met3")
     opamp_top << straight_route(pdk, iport_antenna2, plusi_pin.ports["e3"],glayer1="met4",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
-
-    #opamp_top << L_route(pdk, opamp_top.ports["diffpair_PLUSgateroute_E_con_N"], plusi_pin.ports["e3"])
     # route top center components to diffpair
     opamp_top << straight_route(pdk,opamp_top.ports["diffpair_tr_multiplier_0_drain_N"], opamp_top.ports["pcomps_pbottomAB_R_gate_S"], glayer1="met5",width=3*pdk.get_grule("met5")["min_width"],via1_alignment_layer="met2",via1_alignment=('c','c'))
     opamp_top << straight_route(pdk,opamp_top.ports["diffpair_tl_multiplier_0_drain_N"], opamp_top.ports["pcomps_minusvia_top_met_S"], glayer1="met5",width=3*pdk.get_grule("met5")["min_width"],via1_alignment_layer="met2",via1_alignment=('c','c'))

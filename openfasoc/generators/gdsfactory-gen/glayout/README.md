@@ -1,29 +1,37 @@
 All functions, classes, etc have a help docustring. See python help() for specific questions
 
+- [Installation](#installation)
 - [Glayout](#glayout)
-	- [MappedPDK](#mappedpdk)
-		- [Generic Layers](#generic-layers)
-		- [Generic Rule Guide](#generic-rule-guide)
-		- [Creating a MappedPDK](#creating-a-mappedpdk)
-	- [PDK Agnostic Layout, Basics](#pdk-agnostic-layout-basics)
-		- [Via Stack Generator](#via-stack-generator)
-		- [Routing](#routing)
-		- [PDK Agnostic Hierarchical Cells](#pdk-agnostic-hierarchical-cells)
-			- [Example 1: via\_array](#example-1-via_array)
-			- [Example 2: tapring](#example-2-tapring)
-			- [Example 3: fet](#example-3-fet)
-	- [Advanced Topics](#advanced-topics)
-		- [Cells and PDK.activate()](#cells-and-pdkactivate)
-		- [Important GDSFactory Notes and Glayout Utilities](#important-gdsfactory-notes-and-glayout-utilities)
-		- [Port Naming Best Practices Guide](#port-naming-best-practices-guide)
-			- [PortTree](#porttree)
-		- [Snap to 2x grid](#snap-to-2x-grid)
-		- [Mimcaps Implementation](#mimcaps-implementation)
-		- [DRC](#drc)
-		- [LVS, and Labeling Issues](#lvs-and-labeling-issues)
-		- [Addressing Complicated Requirments with Default Decorators](#addressing-complicated-requirments-with-default-decorators)
-	- [API overview](#api-overview)
+  - [MappedPDK](#mappedpdk)
+    - [Generic Layers](#generic-layers)
+    - [Generic Rule Guide](#generic-rule-guide)
+    - [Creating a MappedPDK](#creating-a-mappedpdk)
+  - [PDK Agnostic Layout, Basics](#pdk-agnostic-layout-basics)
+    - [Via Stack Generator](#via-stack-generator)
+    - [Routing](#routing)
+    - [PDK Agnostic Hierarchical Cells](#pdk-agnostic-hierarchical-cells)
+      - [Example 1: via\_array](#example-1-via_array)
+      - [Example 2: tapring](#example-2-tapring)
+      - [Example 3: fet](#example-3-fet)
+  - [Advanced Topics](#advanced-topics)
+    - [Cells and PDK.activate()](#cells-and-pdkactivate)
+    - [Important GDSFactory Notes and Glayout Utilities](#important-gdsfactory-notes-and-glayout-utilities)
+    - [Port Naming Best Practices Guide](#port-naming-best-practices-guide)
+      - [PortTree](#porttree)
+    - [Snap to 2x grid](#snap-to-2x-grid)
+    - [Mimcaps Implementation](#mimcaps-implementation)
+    - [DRC](#drc)
+    - [LVS, and Labeling Issues](#lvs-and-labeling-issues)
+    - [Addressing Complicated Requirments with Default Decorators](#addressing-complicated-requirments-with-default-decorators)
+  - [API overview](#api-overview)
 
+# Installation
+You must be running python3.10 or later. 
+- Run `python3 -m pip install -r requirements.txt` in the gdsfactory-gen directory
+- open Klayout
+  - go to Tools -> Manage Packages
+  - under "Install New Packages" search for "klive"
+  - install klive and when promoted, select "run macros"
 
 # Glayout
 Glayout is a layout automation tool which generates DRC clean circuit layouts for any technology implementing the Glayout framework. Glayout is implemented as an easy-to-install python package. All required Glayout dependencies are available on pypi and are installed automatically from pypi when downloading OpenFASOC. Glayout (being a generic layout automation tool) does not require an installed pdk (just a MappedPDK description, explained below). Glayout is composed of 2 main parts: the generic pdk framework and the circuit generators.  

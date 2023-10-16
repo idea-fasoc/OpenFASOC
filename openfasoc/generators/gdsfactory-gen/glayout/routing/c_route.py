@@ -57,7 +57,6 @@ def c_route(
 	- None means center (no offset)
 	****NOTE: viaoffset pushes both vias towards each other slightly
 	"""
-	extension = pdk.snap_to_2xgrid(extension)
 	# error checking and figure out args
 	if round(edge1.orientation) % 90 or round(edge2.orientation) % 90:
 		raise ValueError("Ports must be vertical or horizontal")
@@ -76,6 +75,7 @@ def c_route(
 		viaoffset = (True,True) if viaoffset else (False,False)
 	pdk.has_required_glayers([e1glayer,e2glayer,cglayer])
 	pdk.activate()
+	extension = snap_to_grid(extension)
 	# create route
 	croute = Component()
 	viastack1 = via_stack(pdk,e1glayer,cglayer,fullbottom=fullbottom,assume_bottom_via=True)
@@ -196,8 +196,6 @@ def c_route(
 	cconnection = croute << route_quad(route_ports[0],route_ports[1],layer=pdk.get_glayer(cglayer))
 	for i,port_to_add in enumerate(route_ports):
 		orta = get_orientation(port_to_add.orientation)
-		#orta = "S" if orta=="N" else ("N" if orta=="S" else orta)
-		#orta = "E" if orta=="W" else ("W" if orta=="E" else orta)
 		route_ports[i] = set_port_orientation(port_to_add, orta)
 	croute.add_ports(route_ports,prefix="con_")
 	return rename_ports_by_orientation(rename_ports_by_list(croute.flatten(), [("con_","con_")]))
