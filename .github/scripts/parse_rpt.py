@@ -1,11 +1,13 @@
 import sys
+import json
+import os
 
 sys.stdout.flush()
 
 if (len(sys.argv) > 1) and (sys.argv[1] == "sky130hd_cryo"):
     drc_filename = "flow/reports/sky130hd/cryo/6_final_drc.rpt"
     lvs_filename = "flow/reports/sky130hd/cyro/6_final_lvs.rpt"
-else if (len(sys.argv) == 1) or (sys.argv[1] == "sky130hvl_ldo"):
+elif (len(sys.argv) == 1) or (sys.argv[1] == "sky130hvl_ldo"):
     drc_filename = "work/6_final_drc.rpt"
     lvs_filename = "work/6_final_lvs.rpt"
 else:
@@ -25,7 +27,7 @@ elif sum(1 for line in open(drc_filename)) > 3:
 else:
     print("DRC is clean!")
 
-if sys.argv[1] == "sky130hd_cryo":
+if (len(sys.argv) > 1) and (sys.argv[1] == "sky130hd_cryo"):
     lvs_line = subprocess.check_output(["tail", "-1", lvs_filename]).decode(
         sys.stdout.encoding
     )
@@ -45,11 +47,11 @@ else:
         else:
             print("LVS is clean!")
 
-if ((sys.argv[1] == "sky130hvl_ldo") or (sys.argv[1] == "sky130hvl_ldo_full")) and (sys.argv[1] != "sky130hd_cryo"):
+if ((len(sys.argv) > 1) and ((sys.argv[1] == "sky130hvl_ldo") or (sys.argv[1] == "sky130hvl_ldo_full"))) or ((len(sys.argv) > 1) and (sys.argv[1] == "sky130hd_cryo")):
     print("Generator check is clean!")
 else:
     with open('test.json', 'r') as file:
-    data = json.load(file)
+    	data = json.load(file)
     print('Found .json config file...')
 
     module_name = data.get("module_name", "default")
