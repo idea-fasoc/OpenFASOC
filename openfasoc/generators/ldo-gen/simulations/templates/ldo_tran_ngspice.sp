@@ -1,19 +1,19 @@
 * VREG and load current Transient
 
 * include from .../sky130A/libs.tech/ngspice/sky130.lib.spice
-.lib '@model_file' @model_corner
+.lib '${model_file}' ${model_corner}
 * include the LDO spice netlist
-.include 'ldo_sim.spice'
+.include '${netlist_path}'
 
 
-xi1 @proper_pin_ordering
+xi1 ${pin_ordering}
 + ldoInst
 
 *Controls
 V0 VSS 0 DC=0
 V1 VDD 0 DC=3.3
 * to be commented if using Analog Vref block
-V2 VREF 0 DC=@VALUE_REF_VOLTAGE
+V2 VREF 0 DC=${vref}
 
 vtrim1 trim1 0 DC=0
 vtrim2 trim2 0 DC=0
@@ -28,7 +28,7 @@ vtrim10 trim10 0 DC=0
 
 *With ideal VRef block
 *change here if want to change clock frequency
-V3 clk VSS pulse 0 3.3 0 1n 1n @duty_cycle @clk_period
+V3 clk VSS pulse 0 3.3 0 1n 1n ${0.5 / freq} ${1 / freq}
 
 V4 reset 0 pwl 0 3.3 10n 3.3 10.1n 0
 
@@ -45,10 +45,10 @@ vstd6 std_pt_in_cnt[6] 0 dc 0
 vstd7 std_pt_in_cnt[7] 0 dc 0
 vstd8 std_pt_in_cnt[8] 0 dc 0
 
-R1 VREG VSS @Res_Value
+R1 VREG VSS ${1.2 * vref / max_load}
 *Resistance 3600 --> 0.5 mA for 1.8 V reference voltage. R to be adjusted according to Iload and output voltage.
 
-C1 VREG VSS @Cap_Value
+C1 VREG VSS ${cap}
 
 *.options savecurrents
 .option wnflag=1
@@ -56,13 +56,14 @@ C1 VREG VSS @Cap_Value
 .ic v(VREG) = 0 v(clk)=0 v(reset)=3.3
 *Analysis
 .temp 25
-.tran @sim_step @sim_time
+<% sim_end_time = 1.2 * arr_size / freq %>
+.tran ${sim_end_time / 2000} ${sim_end_time}
 
 .control
 run
 
 set filetype=binary
-write @output_raw v(VREG) v(VREF) v(cmp_out) v(clk) v("ctrl_out[0]") v("ctrl_out[1]") v("ctrl_out[2]") v("ctrl_out[3]") v("ctrl_out[4]") v("ctrl_out[5]") v("ctrl_out[6]") v("ctrl_out[7]") v("ctrl_out[8]")
+write ${f"{max_load * 1000}mA_{freq}Hz_{cap}_cap_output.raw"} v(VREG) v(VREF) v(cmp_out) v(clk) v("ctrl_out[0]") v("ctrl_out[1]") v("ctrl_out[2]") v("ctrl_out[3]") v("ctrl_out[4]") v("ctrl_out[5]") v("ctrl_out[6]") v("ctrl_out[7]") v("ctrl_out[8]")
 
 .endc
 

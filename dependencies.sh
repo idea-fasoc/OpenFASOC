@@ -62,11 +62,11 @@ if $update_confirmed; then
         else
         printf "\n\n[OpenFASoC] Failed to update packages using: conda update --all -y."
         printf "Attempting instead to install core packages individually..."
-        conda install -c litex-hub magic -y; if [ $? != 0 ]; then update_successful=false; echo "magic could not be updated"; fi
-        conda install -c litex-hub netgen -y; if [ $? != 0 ]; then update_successful=false; echo "netgen could not be updated"; fi
-        conda install -c litex-hub open_pdks.sky130a -y; if [ $? != 0 ]; then update_successful=false; echo "open_pdks could not be updated"; fi
-        conda install -c litex-hub openroad -y; if [ $? != 0 ]; then update_successful=false; echo "openroad could not be updated"; fi
-        conda install -c litex-hub yosys -y; if [ $? != 0 ]; then update_successful=false; echo "yosys could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub magic -y; if [ $? != 0 ]; then update_successful=false; echo "magic could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub netgen -y; if [ $? != 0 ]; then update_successful=false; echo "netgen could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub open_pdks.sky130a -y; if [ $? != 0 ]; then update_successful=false; echo "open_pdks could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub openroad -y; if [ $? != 0 ]; then update_successful=false; echo "openroad could not be updated"; fi
+        conda install -c anaconda -c conda-forge -c litex-hub yosys -y; if [ $? != 0 ]; then update_successful=false; echo "yosys could not be updated"; fi
         fi
 
         # ngspice_updated=false
@@ -143,13 +143,13 @@ fi
 if cat /etc/os-release | grep "ubuntu" >> /dev/null; then
 
 	apt-get update -y
-        apt-get install -y autoconf libtool automake make g++ gcc
+        apt-get install -y autoconf libtool libfmt-dev automake make g++ gcc
 
 elif cat /etc/os-release | grep -e "centos" >> /dev/null; then
 
         yum update -y
 
-        yum install -y autoconf libtool automake make gcc gcc-c++
+        yum install -y autoconf libtool libfmt-dev automake make gcc gcc-c++
 
 fi
 
@@ -182,8 +182,8 @@ source /home/$(logname)/miniconda3/etc/profile.d/conda.sh
 if [ $? == 0 ] && [ -x /home/$(logname)/miniconda3/ ]
 then
 	conda update -y conda --all
-        conda install python=3.10 -c anaconda
-        if [ $? == 0 ];then conda install -c litex-hub --file conda_versions.txt -y ; else echo "[OpenFASoC] Failed to update conda version." ; exit ; fi
+        conda install python=3.10 -c anaconda -c conda-forge -c litex-hub
+        if [ $? == 0 ];then conda install -c anaconda -c conda-forge -c litex-hub --file conda_versions.txt -y ; else echo "[OpenFASoC] Failed to update conda version." ; exit ; fi
         if [ $? == 0 ];then echo "[OpenFASoC] Installed OpenROAD, Yosys, Skywater PDK, Magic and Netgen successfully" ; else echo "[OpenFASoC] Failed to install conda packages" ; exit ; fi
 else
 	echo "[OpenFASoC] Failed to install miniconda. Check above for error messages."
@@ -266,20 +266,20 @@ then
  	if [ $currentver == $requiredver ]
  	then
 	 apt install qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y 
-	 wget https://www.klayout.org/downloads/Ubuntu-22/klayout_0.28.11-1_amd64.deb
-	 dpkg -i klayout_0.28.11-1_amd64.deb
+	 wget https://www.klayout.org/downloads/Ubuntu-22/klayout_0.28.12-1_amd64.deb
+	 dpkg -i klayout_0.28.12-1_amd64.deb
 	else 
 	 apt install qt5-default qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev ruby ruby-dev python3-dev libz-dev build-essential -y
-	 wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.28.11-1_amd64.deb
-	 dpkg -i klayout_0.28.11-1_amd64.deb
+	 wget https://www.klayout.org/downloads/Ubuntu-20/klayout_0.28.12-1_amd64.deb
+	 dpkg -i klayout_0.28.12-1_amd64.deb
   	 strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5 #https://stackoverflow.com/questions/63627955/cant-load-shared-library-libqt5core-so-5
 	fi
 	apt install time -y
 	elif cat /etc/os-release | grep -e "centos" >> /dev/null
 then
 	yum install qt5-qtbase-devel qt5-qttools-devel qt5-qtxmlpatterns-devel qt5-qtmultimedia-devel qt5-qtmultimedia-widgets-devel qt5-qtsvg-devel ruby ruby-devel python3-devel zlib-devel time -y
-	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.28.11-0.x86_64.rpm
-	rpm -i klayout-0.28.11-0.x86_64.rpm
+	wget https://www.klayout.org/downloads/CentOS_7/klayout-0.28.12-0.x86_64.rpm
+	rpm -i klayout-0.28.12-0.x86_64.rpm
 	yum install time -y
   strip --remove-section=.note.ABI-tag /usr/lib64/libQt5Core.so.5
 else

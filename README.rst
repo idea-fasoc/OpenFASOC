@@ -41,21 +41,21 @@ For more info on getting-started, please refer to ["Getting Started" section ](h
 
 Below are the tool requirements along with their currently support versions that are updated regularly upon testing againsts the generators.
 
-  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.416)
+  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.427)
 
-  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.255)
+  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.258)
 
-  3. `Klayout <https://github.com/KLayout/klayout>`_ (version:0.28.6-1)
+  3. `Klayout <https://github.com/KLayout/klayout>`_ (version:0.28.12-1)
 
       - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
-  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.31+16)
+  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.33+6)
 
 
-  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_6895)
+  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_10145)
 
-  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.429)
+  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.442)
 
    - open_pdks is required to run drc/lvs check and the simulations
    - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
