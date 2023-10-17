@@ -19,6 +19,13 @@ jobs:
         platform: [sky130hd, sky130hs, sky130hvl]
 
     steps:
+      - name: Remove unnecessary files
+        run: |
+          du . -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          du . -h
+
       - name: Checkout repo
         uses: actions/checkout@v2
 
