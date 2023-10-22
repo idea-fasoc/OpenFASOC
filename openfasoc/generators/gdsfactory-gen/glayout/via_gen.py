@@ -188,6 +188,7 @@ def via_array(
     lay_bottom: bool = True,
     fullbottom: bool = False,
     no_exception: bool = False,
+    lay_every_layer: bool = False
 ) -> Component:
     """Fill a region with vias. Will automatically decide num rows and columns
     args:
@@ -207,6 +208,8 @@ def via_array(
     fullbottom: True specifies that the bottom layer should extend over the entire via_array region
     ****NOTE: fullbottom=True implies lay_bottom and overrides if False
     no_exception: True specfies that the function should change size such that min size is met
+    lay_every_layer: True specifies that every layer between glayer1 and glayer2 should be layed in full (not just the vias).
+    ****NOTE: this implies lay_bottom
     
     ports, some ports are not layed when it does not make sense (e.g. empty component):
     top_met_...all edges
@@ -250,7 +253,7 @@ def via_array(
     size = [size[i] if size[i] else viadims[i] for i in range(2)]
     size = [viadims[i] if viadims[i]>size[i] else size[i] for i in range(2)]
     # place bottom layer and add bot_lay_ ports
-    if lay_bottom or fullbottom:
+    if lay_bottom or fullbottom or lay_every_layer:
         bdims = evaluate_bbox(viaarray.extract(layers=[pdk.get_glayer(glayer1)]))
         bref = viaarray << rectangle(size=(size if fullbottom else bdims), layer=pdk.get_glayer(glayer1), centered=True)
         viaarray.add_ports(bref.get_ports_list(), prefix="bottom_lay_")
@@ -259,6 +262,11 @@ def via_array(
     # place top met
     tref = viaarray << rectangle(size=size, layer=pdk.get_glayer(glayer2), centered=True)
     viaarray.add_ports(tref.get_ports_list(), prefix="top_met_")
+    # place every layer in between if lay_every_layer
+    if lay_every_layer:
+        for i in range(level1+1,level2):
+            bdims = evaluate_bbox(viaarray.extract(layers=[pdk.get_glayer(f"met{i}")]))
+            viaarray << rectangle(size=bdims, layer=pdk.get_glayer(f"met{i}"), centered=True)
     return component_snap_to_grid(rename_ports_by_orientation(viaarray))
 
 

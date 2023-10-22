@@ -69,7 +69,7 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_minus_W"],pad_array_ref.ports["row0_col1_pad_N"],hwidth=3)
 	opamp_wpads << straight_route(pdk, pad_array_ref.ports["row1_col2_pad_S"],opamp_wpads.ports["pin_vdd_S"], width=4,glayer1="met5")
 	opamp_wpads << straight_route(pdk, opamp_wpads.ports["pin_diffpairibias_S"],pad_array_ref.ports["row0_col2_pad_N"])
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["gnd_route_con_E"],pad_array_ref.ports["row0_col3_pad_N"], vglayer="met4",hwidth=3)
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_gnd_E"],pad_array_ref.ports["row0_col3_pad_N"], vglayer="met4",hwidth=3)
 	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_commonsourceibias_E"],pad_array_ref.ports["row0_col4_pad_N"],hwidth=3)
 	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_outputibias_E"],pad_array_ref.ports["row1_col4_pad_S"], hwidth=3)
 	opamp_wpads << c_route(pdk, opamp_wpads.ports["pin_output_route_E"],pad_array_ref.ports["row1_col3_pad_E"], extension=1, cglayer="met3", cwidth=4)
@@ -176,9 +176,9 @@ def sky130_add_lvt_layer(opamp_in: Component) -> Component:
 	lvt_layer = (125,44)
 	# define geometry over pmos components and add lvt
 	SW_S_edge = opamp_in.ports["commonsource_Pamp_L_multiplier_0_plusdoped_S"]
-	SW_W_edge = opamp_in.ports["commonsource_Pamp_L_multiplier_0_plusdoped_W"]
+	SW_W_edge = opamp_in.ports["commonsource_Pamp_L_multiplier_0_dummy_L_plusdoped_W"]
 	NE_N_edge = opamp_in.ports["commonsource_Pamp_R_multiplier_2_plusdoped_N"]
-	NE_E_edge = opamp_in.ports["commonsource_Pamp_R_multiplier_2_plusdoped_E"]
+	NE_E_edge = opamp_in.ports["commonsource_Pamp_R_multiplier_2_dummy_R_plusdoped_E"]
 	SW_S_center = SW_S_edge.center
 	SW_W_center = SW_W_edge.center
 	NE_N_center = NE_N_edge.center
@@ -196,8 +196,8 @@ def sky130_add_lvt_layer(opamp_in: Component) -> Component:
 	# align lvt rectangle to the plusdoped_N region
 	LVT_rectangle_ref.move(origin=(0, 0), destination=abs_center)
 	# define geometry over output amplfier and add lvt
-	outputW = opamp_in.ports["outputstage_amp_multiplier_0_plusdoped_W"]
-	outputE = opamp_in.ports["outputstage_amp_multiplier_0_plusdoped_E"]
+	outputW = opamp_in.ports["outputstage_amp_multiplier_0_dummy_L_plusdoped_W"]
+	outputE = opamp_in.ports["outputstage_amp_multiplier_0_dummy_R_plusdoped_E"]
 	width = abs(outputE.center[0]-outputW.center[0])
 	hieght = outputW.width+0.36
 	center = (outputW.center[0] + width/2, outputW.center[1])
@@ -304,9 +304,9 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 		diffpairs.append((6,1,4))
 		diffpairs.append((5,1,4))
 	else:
-		for width in [2,6]:
-			for length in [0.5, 1, 2]:
-				for fingers in [2,4]:
+		for width in [2,4,6]:
+			for length in [0.5, 1]:
+				for fingers in [2,4,6,8]:
 					diffpairs.append((width,length,fingers))
 	# all bias2 (output amp bias) transistors
 	bias2s = list()
@@ -314,17 +314,26 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 		bias2s.append((6,1,4,3))
 	else:
 		for width in [6]:
-			for length in [1,2]:
-				for fingers in [4]:
+			for length in [2]:
+				for fingers in [4,6]:
 					for mults in [2,3]:
 						bias2s.append((width,length,fingers,mults))
+	# all pmos first stage load transistors
+	half_pload = list()
+	if test_mode:
+		half_pload.append((6,1,6))
+	else:
+		for width in [4,6]:
+			for length in [0.5,1]:
+				for fingers in [4,6,8]:
+					half_pload.append((width,length,fingers))
 	# all output pmos transistors
 	pamp_hparams = list()
 	if test_mode:
 		pamp_hparams.append((7,1,8,3))
 	else:
 		for width in [7,4]:
-			for length in [0.5,1,2]:
+			for length in [0.5,1]:
 				for fingers in [8,4,2]:
 					pamp_hparams.append((width,length,fingers,3))
 	# diffpair bias cmirror
@@ -334,15 +343,15 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 	else:
 		for width in [6]:
 			for length in [2]:
-				for fingers in [4]:
+				for fingers in [3]:
 					diffpair_cmirrors.append((width,length,fingers))
 	# rows of the cap array to try
-	cap_arrays = [1,2]
+	cap_arrays = [3]
 	# routing mults to try
 	rmults = [2]
 	# ******************************************
 	# create and return the small parameters list
-	short_list_len = len(diffpairs) * len(bias2s) * len(pamp_hparams) * len(cap_arrays) * len(rmults) * len(diffpair_cmirrors)
+	short_list_len = len(diffpairs) * len(bias2s) * len(pamp_hparams) * len(cap_arrays) * len(rmults) * len(diffpair_cmirrors) * len(half_pload)
 	short_list_len += 2 if test_mode else 0
 	short_list = np.empty(shape=(short_list_len,len(opamp_parameters_serializer())),dtype=np.float64)
 	index = 0
@@ -439,15 +448,19 @@ def process_netlist_subckt(netlist: Union[str,Path], sim_model: Literal["normal 
 				subckt_lines[i] = line.rstrip("+") + " " + subckt_lines[i+1] + "\n"
 				subckt_lines[i+1] = ""
 				line = subckt_lines[i]
-			if "cryo" in sim_model and len(line) and line[0]=="M":
-				subckt_lines[i][0]="X"
+			if "cryo" in sim_model and len(line)>1:
+				subckt_lines[i] = subckt_lines[i].replace("sky130_fd_pr__nfet_01v8_lvt","nshortlvth")
+				subckt_lines[i] = subckt_lines[i].replace("sky130_fd_pr__pfet_01v8_lvt","pshort")
+				subckt_lines[i] = subckt_lines[i].replace("sky130_fd_pr__nfet_01v8","nshort")
+				if ("nshort" in subckt_lines[i]) or ("pshort" in subckt_lines[i]) or ("nshortlvth" in subckt_lines[i]):
+					subckt_lines[i] = "M" + subckt_lines[i][1:]
 			if all([hint in line for hint in hints]):
 				if _TAKE_OUTPUT_AT_SECOND_STAGE_:
 					headerstr = ".subckt opamp CSoutput vdd plus minus commonsourceibias outputibias diffpairibias gnd output"
 				else:
 					headerstr = ".subckt opamp output vdd plus minus commonsourceibias outputibias diffpairibias gnd CSoutput"
 				subckt_lines[i] = headerstr+"\nCload output gnd " + str(cload) +"p\n"
-			if "floating" in line or (noparasitics and len(line) and line[0]=="C"):
+			if ("floating" in line) or (noparasitics and len(line) and line[0]=="C"):
 				subckt_lines[i] = "* "+ subckt_lines[i]
 	with open(netlist, "w") as spice_net:
 		spice_net.writelines(subckt_lines)
@@ -1120,8 +1133,8 @@ if __name__ == "__main__":
 		params = {
 			"half_diffpair_params": (6, 1, 4),
 			"diffpair_bias": (6, 2, 4),
-			"half_common_source_bias": (6, 2, 8, 3),
-			"half_common_source_params": (7, 1, 10, 3),
+			"half_common_source_params": (7.2, 1, 10, 3),
+			"half_common_source_bias": (8, 2, 12, 3),
 			"output_stage_params": (5, 1, 16),
 			"output_stage_bias": (6, 2, 4),
 			"mim_cap_size": (12, 12),

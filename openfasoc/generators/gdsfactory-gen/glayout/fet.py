@@ -10,6 +10,7 @@ from pydantic import validate_arguments
 from glayout.pdk.util.comp_utils import evaluate_bbox, to_float, to_decimal, prec_array, prec_center, prec_ref_center, movey, align_comp_to_port
 from glayout.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports
 from glayout.routing.c_route import c_route
+from glayout.routing.L_route import L_route
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from decimal import Decimal
 from glayout.routing.straight_route import straight_route
@@ -77,7 +78,7 @@ def multiplier(
     interfinger_rmult: int=1,
     sd_route_extension: float = 0,
     gate_route_extension: float = 0,
-    dummy_with_poly: bool=True
+    dummy_routes: bool=True
 ) -> Component:
     """Generic poly/sd vias generator
     args:
@@ -95,6 +96,7 @@ def multiplier(
     interfinger_rmult = multiplies thickness of source/drain routes between the gates (int only)
     sd_route_extension = float, how far extra to extend the source/drain connections (default=0)
     gate_route_extension = float, how far extra to extend the gate connection (default=0)
+    dummy_routes: bool default=True, if true add add vias and short dummy poly,source,drain
     
     ports (one port for each edge), 
     ****NOTE: source is below drain:
@@ -105,6 +107,7 @@ def multiplier(
     diff_...all edges (diffusion region)
     rowx_coly_...all ports associated with finger array include gate_... and array_ (array includes all ports of the viastacks in the array)
     leftsd_...all ports associated with the left most via array
+    dummy_L,R_N,E,S,W ports if dummy_routes=True
     """
     # error checking
     if "+s/d" not in sdlayer:
@@ -180,25 +183,22 @@ def multiplier(
     else:
         dummyl, dummyr = dummy
     if dummyl or dummyr:
-        dummy = Component("temp dummy region")
-        size = to_float([length, width])
-        if dummy_with_poly:
-            size[0] += 2*pdk.get_grule("active_diff","poly")["overhang"]
-            dummy << rectangle(layer=pdk.get_glayer("poly"),size=[length,width+2*pdk.get_grule("active_diff","poly")["overhang"]],centered=True)
-        dummy << rectangle(
-            layer=pdk.get_glayer("active_diff"), size=size, centered=True
-        )
-        dummy_space = pdk.get_grule(sdlayer, "active_diff")["min_enclosure"]
-        dummy.add_padding(layers=(pdk.get_glayer(sdlayer),), default=dummy_space)
-        dummy_space = dummy_space + pdk.get_grule(sdlayer)["min_separation"] + float(size[0] / 2)
+        dummy = __gen_fingers_macro(pdk,rmult=interfinger_rmult,fingers=1,length=length,width=width,poly_height=poly_height,sdlayer=sdlayer)
+        dummyvia = dummy << via_stack(pdk,"poly","met1",fullbottom=True)
+        align_comp_to_port(dummyvia,dummy.ports["row0_col0_gate_S"],layer=pdk.get_glayer("poly"))
+        dummy << L_route(pdk,dummyvia.ports["top_met_W"],dummy.ports["leftsd_top_met_S"])
+        dummy << L_route(pdk,dummyvia.ports["top_met_E"],dummy.ports["row0_col0_rightsd_top_met_S"])
+        dummy.add_ports(dummyvia.get_ports_list(),prefix="gsdcon_")
+        dummy_space = pdk.get_grule(sdlayer)["min_separation"] + dummy.xmax
         sides = list()
         if dummyl:
-            sides.append(-1)
+            sides.append((-1,"dummy_L_"))
         if dummyr:
-            sides.append(1)
-        for side in sides:
+            sides.append((1,"dummy_R_"))
+        for side, name in sides:
             dummy_ref = multiplier << dummy
             dummy_ref.movex(side * (dummy_space + multiplier.xmax))
+            multiplier.add_ports(dummy_ref.get_ports_list(),prefix=name)
     # ensure correct port names and return
     return component_snap_to_grid(rename_ports_by_orientation(multiplier))
 
@@ -218,7 +218,8 @@ def __mult_array_macro(
     sd_route_left: Optional[bool] = True,
     sd_rmult: int = 1,
     gate_rmult: int=1,
-    interfinger_rmult: int=1
+    interfinger_rmult: int=1,
+    dummy_routes: bool=True
 ) -> Component:
     """create a multiplier array with multiplier_0 at the bottom
     The array is correctly centered
@@ -239,7 +240,8 @@ def __mult_array_macro(
         gate_route_topmet=gate_route_topmet,
         sd_rmult=sd_rmult,
         gate_rmult=gate_rmult,
-        interfinger_rmult=interfinger_rmult
+        interfinger_rmult=interfinger_rmult,
+        dummy_routes=dummy_routes
     )
     _max_metal_seperation_ps = max([pdk.get_grule("met"+str(i))["min_separation"] for i in range(1,5)])
     multiplier_separation = (
@@ -307,26 +309,32 @@ def nmos(
     rmult: Optional[int] = None,
     sd_rmult: int=1,
     gate_rmult: int=1,
-    interfinger_rmult: int=1
+    interfinger_rmult: int=1,
+    tie_layers: tuple[str,str] = ("met2","met1"),
+    substrate_tap_layers: tuple[str,str] = ("met2","met1"),
+    dummy_routes: bool=True
 ) -> Component:
     """Generic NMOS generator
-    pdk = mapped pdk to use
-    width = expands the NMOS in the y direction
-    fingers = introduces additional fingers (sharing source/drain) of width=width
-    multipliers = number of multipliers (a multiplier is a row of fingers)
-    with_tie = true or false, specfies if a bulk tie is required
-    with_dummy = tuple(bool,bool) or bool specifying both sides dummy or neither side dummy
+    pdk: mapped pdk to use
+    width: expands the NMOS in the y direction
+    fingers: introduces additional fingers (sharing source/drain) of width=width
+    multipliers: number of multipliers (a multiplier is a row of fingers)
+    with_tie: true or false, specfies if a bulk tie is required
+    with_dummy: tuple(bool,bool) or bool specifying both sides dummy or neither side dummy
     ****using the tuple option, you can specify a single side dummy such as true,false
-    with_dnwell = bool use dnwell (multi well)
-    with_substrate_tap = add substrate tap on the very outside perimeter of nmos
-    length = if None or below min_length will default to min_length
-    sd_route_topmet = specify top metal glayer for the source/drain route
-    gate_route_topmet = specify top metal glayer for the gate route
-    sd_route_left = specify if the source/drain inter-multiplier routes should be on the left side or right side (if false)
-    rmult = if not None overrides all other multiplier options to provide a simple routing multiplier (int only)
-    sd_rmult = mulitplies the thickness of the source drain route (int only)
-    gate_rmult = add additional via rows to the gate route via array (int only)
-    interfinger_rmult = multiplies the thickness of the metal routes between the fingers (int only)
+    with_dnwell: bool use dnwell (multi well)
+    with_substrate_tap: add substrate tap on the very outside perimeter of nmos
+    length: if None or below min_length will default to min_length
+    sd_route_topmet: specify top metal glayer for the source/drain route
+    gate_route_topmet: specify top metal glayer for the gate route
+    sd_route_left: specify if the source/drain inter-multiplier routes should be on the left side or right side (if false)
+    rmult: if not None overrides all other multiplier options to provide a simple routing multiplier (int only)
+    sd_rmult: mulitplies the thickness of the source drain route (int only)
+    gate_rmult: add additional via rows to the gate route via array (int only)
+    interfinger_rmult: multiplies the thickness of the metal routes between the fingers (int only)
+    tie_layers: tuple[str,str] specifying (horizontal glayer, vertical glayer) or well tie ring. default=("met2","met1")
+    substrate_tap_layers: tuple[str,str] specifying (horizontal glayer, vertical glayer) or substrate tap ring. default=("met2","met1")
+    dummy_routes: bool default=True, if true add add vias and short dummy poly,source,drain
     """
     # TODO: glayer checks
     pdk.activate()
@@ -351,7 +359,8 @@ def nmos(
         sd_route_left=sd_route_left,
         sd_rmult=sd_rmult,
         gate_rmult=gate_rmult,
-        interfinger_rmult=interfinger_rmult
+        interfinger_rmult=interfinger_rmult,
+        dummy_routes=dummy_routes
     )
     multiplier_arr_ref = multiplier_arr.ref()
     nfet.add(multiplier_arr_ref)
@@ -359,8 +368,7 @@ def nmos(
     # add tie if tie
     if with_tie:
         tap_separation = max(
-            pdk.get_grule("met2")["min_separation"],
-            pdk.get_grule("met1")["min_separation"],
+            pdk.util_max_metal_seperation(),
             pdk.get_grule("active_diff", "active_tap")["min_separation"],
         )
         tap_separation += pdk.get_grule("p+s/d", "active_tap")["min_enclosure"]
@@ -372,10 +380,16 @@ def nmos(
             pdk,
             enclosed_rectangle=tap_encloses,
             sdlayer="p+s/d",
-            horizontal_glayer="met2",
-            vertical_glayer="met1",
+            horizontal_glayer=tie_layers[0],
+            vertical_glayer=tie_layers[1],
         )
         nfet.add_ports(tiering_ref.get_ports_list(), prefix="tie_")
+        for row in range(multipliers):
+            for dummyside,tieside in [("L","W"),("R","E")]:
+                try:
+                    nfet<<straight_route(pdk,nfet.ports[f"multiplier_{row}_dummy_{dummyside}_gsdcon_top_met_W"],nfet.ports[f"tie_{tieside}_top_met_{tieside}"],glayer2="met1")
+                except KeyError:
+                    pass
     # add pwell
     nfet.add_padding(
         layers=(pdk.get_glayer("pwell"),),
@@ -401,8 +415,8 @@ def nmos(
             pdk,
             enclosed_rectangle=substrate_tap_encloses,
             sdlayer="p+s/d",
-            horizontal_glayer="met2",
-            vertical_glayer="met1",
+            horizontal_glayer=substrate_tap_layers[0],
+            vertical_glayer=substrate_tap_layers[1],
         )
         tapring_ref = nfet << ringtoadd
         nfet.add_ports(tapring_ref.get_ports_list(),prefix="guardring_")
@@ -426,26 +440,32 @@ def pmos(
     rmult: Optional[int] = None,
     sd_rmult: int=1,
     gate_rmult: int=1,
-    interfinger_rmult: int=1
+    interfinger_rmult: int=1,
+    tie_layers: tuple[str,str] = ("met2","met1"),
+    substrate_tap_layers: tuple[str,str] = ("met2","met1"),
+    dummy_routes: bool=True
 ) -> Component:
     """Generic PMOS generator
-    pdk = mapped pdk to use
-    width = expands the PMOS in the y direction
-    fingers = introduces additional fingers (sharing source/drain) of width=width
-    multipliers = number of multipliers (a multiplier is a row of fingers)
-    with_tie = true or false, specfies if a bulk tie is required
-    dnwell = bool use dnwell if True, or use nwell if False
-    with_dummy = tuple(bool,bool) or bool specifying both sides dummy or neither side dummy
+    pdk: mapped pdk to use
+    width: expands the PMOS in the y direction
+    fingers: introduces additional fingers (sharing source/drain) of width=width
+    multipliers: number of multipliers (a multiplier is a row of fingers)
+    with_tie: true or false, specfies if a bulk tie is required
+    dnwell: bool use dnwell if True, or use nwell if False
+    with_dummy: tuple(bool,bool) or bool specifying both sides dummy or neither side dummy
     ****using the tuple option, you can specify a single side dummy such as true,false
-    with_substrate_tap = add substrate tap on the very outside perimeter of pmos
-    length = if None or below min_length will default to min_length
-    sd_route_topmet = specify top metal glayer for the source/drain route
-    gate_route_topmet = specify top metal glayer for the gate route
-    sd_route_left = specify if the source/drain inter-multiplier routes should be on the left side or right side (if false)
-    rmult = if not None overrides all other multiplier options to provide a simple routing multiplier (int only)
-    sd_rmult = mulitplies the thickness of the source drain route (int only)
-    gate_rmult = add additional via rows to the gate route via array (int only)
-    interfinger_rmult = multiplies the thickness of the metal routes between the fingers (int only)
+    with_substrate_tap: add substrate tap on the very outside perimeter of pmos
+    length: if None or below min_length will default to min_length
+    sd_route_topmet: specify top metal glayer for the source/drain route
+    gate_route_topmet: specify top metal glayer for the gate route
+    sd_route_left: specify if the source/drain inter-multiplier routes should be on the left side or right side (if false)
+    rmult: if not None overrides all other multiplier options to provide a simple routing multiplier (int only)
+    sd_rmult: mulitplies the thickness of the source drain route (int only)
+    gate_rmult: add additional via rows to the gate route via array (int only)
+    interfinger_rmult: multiplies the thickness of the metal routes between the fingers (int only)
+    tie_layers: tuple[str,str] specifying (horizontal glayer, vertical glayer) or well tie ring. default=("met2","met1")
+    substrate_tap_layers: tuple[str,str] specifying (horizontal glayer, vertical glayer) or substrate tap ring. default=("met2","met1")
+    dummy_routes: bool default=True, if true add add vias and short dummy poly,source,drain
     """
     # TODO: glayer checks
     pdk.activate()
@@ -470,7 +490,8 @@ def pmos(
         sd_route_left=sd_route_left,
         gate_rmult=gate_rmult,
         interfinger_rmult=interfinger_rmult,
-        sd_rmult=sd_rmult
+        sd_rmult=sd_rmult,
+        dummy_routes=dummy_routes
     )
     multiplier_arr_ref = multiplier_arr.ref()
     pfet.add(multiplier_arr_ref)
@@ -491,10 +512,16 @@ def pmos(
             pdk,
             enclosed_rectangle=tap_encloses,
             sdlayer="n+s/d",
-            horizontal_glayer="met2",
-            vertical_glayer="met1",
+            horizontal_glayer=tie_layers[0],
+            vertical_glayer=tie_layers[1],
         )
         pfet.add_ports(tapring_ref.get_ports_list(),prefix="tie_")
+        for row in range(multipliers):
+            for dummyside,tieside in [("L","W"),("R","E")]:
+                try:
+                    pfet<<straight_route(pdk,pfet.ports[f"multiplier_{row}_dummy_{dummyside}_gsdcon_top_met_W"],pfet.ports[f"tie_{tieside}_top_met_{tieside}"],glayer2="met1")
+                except KeyError:
+                    pass
     # add nwell
     nwell_glayer = "dnwell" if dnwell else "nwell"
     pfet.add_padding(
@@ -515,8 +542,8 @@ def pmos(
             pdk,
             enclosed_rectangle=substrate_tap_encloses,
             sdlayer="p+s/d",
-            horizontal_glayer="met2",
-            vertical_glayer="met1",
+            horizontal_glayer=substrate_tap_layers[0],
+            vertical_glayer=substrate_tap_layers[1],
         )
     return rename_ports_by_orientation(pfet).flatten()
 

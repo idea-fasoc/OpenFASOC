@@ -97,6 +97,7 @@ def two_nfet_interdigitized(
     dummy: Union[bool, tuple[bool, bool]] = True,
     with_substrate_tap: bool = True,
     with_tie: bool = True,
+    tie_layers: tuple[str,str]=("met2","met1"),
     **kwargs
 ) -> Component:
     """Currently only supports two of the same nfet instances. does NOT support multipliers (currently)
@@ -107,13 +108,13 @@ def two_nfet_interdigitized(
     dummy = place dummy at the edges of the interdigitized place (true by default). you can specify tuple to place only on one side
     kwargs = key word arguments for multiplier. 
     ****NOTE: These are the same as glayout.fet.multiplier arguments EXCLUDING dummy, sd_route_extension, and pdk options
+    tie_layers: tuple[str,str] specifying (horizontal glayer, vertical glayer) or well tie ring. default=("met2","met1")
     """
     base_multiplier = two_transistor_interdigitized(pdk, numcols, "nfet", dummy, **kwargs)
     # tie
     if with_tie:
         tap_separation = max(
-            pdk.get_grule("met2")["min_separation"],
-            pdk.get_grule("met1")["min_separation"],
+            pdk.util_max_metal_seperation(),
             pdk.get_grule("active_diff", "active_tap")["min_separation"],
         )
         tap_separation += pdk.get_grule("p+s/d", "active_tap")["min_enclosure"]
@@ -125,10 +126,18 @@ def two_nfet_interdigitized(
             pdk,
             enclosed_rectangle=tap_encloses,
             sdlayer="p+s/d",
-            horizontal_glayer="met2",
-            vertical_glayer="met1",
+            horizontal_glayer=tie_layers[0],
+            vertical_glayer=tie_layers[1],
         )
         base_multiplier.add_ports(tiering_ref.get_ports_list(), prefix="welltie_")
+        try:
+            base_multiplier<<straight_route(pdk,base_multiplier.ports["A_0_dummy_L_gsdcon_top_met_W"],base_multiplier.ports["welltie_W_top_met_W"],glayer2="met1")
+        except KeyError:
+            pass
+        try:
+            base_multiplier<<straight_route(pdk,base_multiplier.ports[f"B_{numcols-1}_dummy_R_gsdcon_top_met_E"],base_multiplier.ports["welltie_E_top_met_E"],glayer2="met1")
+        except KeyError:
+            pass
     # add pwell
     base_multiplier.add_padding(
         layers=(pdk.get_glayer("pwell"),),

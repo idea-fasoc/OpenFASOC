@@ -80,6 +80,7 @@ def tapring(
         horizontal_glayer,
         (arr_size_horizontal, via_width_horizontal),
         minus1=True,
+        lay_every_layer=True
     )
     via_width_vertical = evaluate_bbox(via_stack(pdk, "active_tap", vertical_glayer))[1]
     arr_size_vertical = enclosed_rectangle[1]
@@ -89,6 +90,7 @@ def tapring(
         vertical_glayer,
         (via_width_vertical, arr_size_vertical),
         minus1=True,
+        lay_every_layer=True
     )
     # add via arrs
     refs_prefixes = list()

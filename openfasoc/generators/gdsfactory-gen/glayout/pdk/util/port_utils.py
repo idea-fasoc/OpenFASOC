@@ -43,7 +43,7 @@ def rename_component_ports(custom_comp: Component, rename_function: Callable[[st
 @validate_arguments
 def rename_ports_by_orientation__call(old_name: str, pobj: Port) -> str:
 	"""internal implementation of port orientation rename"""
-	if not "_" in old_name:
+	if not "_" in old_name and not any(old_name==edge for edge in ["e1","e2","e3","e4"]):
 		raise ValueError("portname must contain underscore \"_\" " + old_name)
 	# get new suffix (port orientation)
 	new_suffix = None
@@ -57,6 +57,9 @@ def rename_ports_by_orientation__call(old_name: str, pobj: Port) -> str:
 		new_suffix = "W"
 	else:
 		new_suffix = "S"
+	# handle special case where no underscore and name is e1/2/3/4
+	if any(old_name==edge for edge in ["e1","e2","e3","e4"]):
+		return new_suffix
 	# construct new name
 	old_str_split = old_name.rsplit("_", 1)
 	old_str_split[1] = new_suffix
@@ -66,7 +69,7 @@ def rename_ports_by_orientation__call(old_name: str, pobj: Port) -> str:
 @validate_arguments
 def rename_ports_by_orientation(custom_comp: Component) -> Component:
     """replaces the last part of the port name 
-    (after the last underscore) with a direction
+    (after the last underscore, unless name is e1/2/3/4) with a direction
     direction is one of N,E,S,W
     returns the modified component
     """
