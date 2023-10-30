@@ -18,7 +18,7 @@ if (len(sys.argv) > 1) and ((sys.argv[1] == "sky130hvl_ldo") or (sys.argv[1] == 
     with open(drc_filename, 'r') as f1, open("../../../.github/scripts/expected_drc_reports/expected_ldo_drc.rpt", 'r') as f2:
         content1 = f1.readlines()
         content2 = f2.readlines()
-        if content1 == content1:
+        if content1 == content2:
             print("DRC is clean!")
         else:
             raise ValueError("DRC failed!")
