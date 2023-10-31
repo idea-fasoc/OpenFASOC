@@ -57,7 +57,7 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	pad = import_gds("pads/pad_60um_flat.gds")
 	pad.name = "NISTpad"
 	pad = add_ports_perimeter(pad, pdk.get_glayer("met4"),prefix="pad_")
-	pad_array = prec_array(pad, rows=2, columns=(4+1), spacing=(20,120))
+	pad_array = prec_array(pad, rows=2, columns=(4+1), spacing=(40,120))
 	pad_array_ref = prec_ref_center(pad_array)
 	opamp_wpads.add(pad_array_ref)
 	# add via_array to vdd pin
@@ -65,8 +65,9 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	via_array_ref = opamp_wpads << vddarray
 	align_comp_to_port(via_array_ref,opamp_wpads.ports["pin_vdd_N"],alignment=('c','b'))
 	# route to the pads
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_plus_W"],pad_array_ref.ports["row1_col1_pad_S"],hwidth=3)
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_minus_W"],pad_array_ref.ports["row0_col1_pad_N"],hwidth=3)
+	leftroutelayer="met4"
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_plus_W"],pad_array_ref.ports["row1_col1_pad_S"], hwidth=3, vglayer=leftroutelayer)
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_minus_W"],pad_array_ref.ports["row0_col1_pad_N"],hwidth=3, vglayer=leftroutelayer)
 	opamp_wpads << straight_route(pdk, pad_array_ref.ports["row1_col2_pad_S"],opamp_wpads.ports["pin_vdd_S"], width=4,glayer1="met5")
 	opamp_wpads << straight_route(pdk, opamp_wpads.ports["pin_diffpairibias_S"],pad_array_ref.ports["row0_col2_pad_N"])
 	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_gnd_E"],pad_array_ref.ports["row0_col3_pad_N"], vglayer="met4",hwidth=3)
@@ -90,19 +91,19 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	# import nano pad and add to opamp
 	nanopad = import_gds("pads/sky130_nano_pad.gds")
 	nanopad.name = "nanopad"
-	nanopad = add_ports_perimeter(nanopad, pdk.get_glayer("met4"),prefix="nanopad_")
+	nanopad = add_ports_perimeter(nanopad, pdk.get_glayer(leftroutelayer),prefix="nanopad_")
 	nanopad_array = prec_array(nanopad, rows=2, columns=2, spacing=(10,10))
 	nanopad_array_ref = nanopad_array.ref_center()
 	opamp_wpads.add(nanopad_array_ref)
 	nanopad_array_ref.movex(opamp_wpads.xmin+nanopad_array.xmax)
 	# route nano pad connections
-	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col0_nanopad_N"],pad_array_ref.ports["row1_col0_pad_S"],width=3)
-	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col0_nanopad_S"],pad_array_ref.ports["row0_col0_pad_N"],width=3)
-	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col1_nanopad_E"],pad_array_ref.ports["row0_col1_pad_N"],width=3)
-	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col1_nanopad_E"],pad_array_ref.ports["row1_col1_pad_S"],width=3)
+	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col0_nanopad_N"],pad_array_ref.ports["row1_col0_pad_S"],width=3,glayer2=leftroutelayer)
+	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col0_nanopad_S"],pad_array_ref.ports["row0_col0_pad_N"],width=3,glayer2=leftroutelayer)
+	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col1_nanopad_E"],pad_array_ref.ports["row0_col1_pad_N"],width=3,glayer2=leftroutelayer)
+	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col1_nanopad_E"],pad_array_ref.ports["row1_col1_pad_S"],width=3,glayer2=leftroutelayer)
 	# add the extra pad for the CS output
 	cspadref = opamp_wpads << pad
-	cspadref.movex(240).movey(90)
+	cspadref.movex(300).movey(90)
 	opamp_wpads << L_route(pdk, cspadref.ports["pad_S"], opamp_wpads.ports["commonsource_output_E"],hwidth=3, hglayer="met5",vglayer="met5")
 	#opamp_wpads << nanopad
 	if flatten:
@@ -143,12 +144,12 @@ def sky130_add_opamp_labels(opamp_in: Component) -> Component:
 	ibias2label.add_label(text="commonsourceibias",layer=met4_label)
 	move_info.append((ibias2label,opamp_in.ports["pin_commonsourceibias_N"],None))
 	#minus
-	minuslabel = rectangle(layer=met3_pin,size=(1,1),centered=True).copy()
-	minuslabel.add_label(text="minus",layer=met3_label)
+	minuslabel = rectangle(layer=met2_pin,size=(1,1),centered=True).copy()
+	minuslabel.add_label(text="minus",layer=met2_label)
 	move_info.append((minuslabel,opamp_in.ports["pin_minus_N"],None))
 	#-plus
-	pluslabel = rectangle(layer=met3_pin,size=(1,1),centered=True).copy()
-	pluslabel.add_label(text="plus",layer=met3_label)
+	pluslabel = rectangle(layer=met2_pin,size=(1,1),centered=True).copy()
+	pluslabel.add_label(text="plus",layer=met2_label)
 	move_info.append((pluslabel,opamp_in.ports["pin_plus_N"],None))
 	#vdd
 	vddlabel = rectangle(layer=met3_pin,size=(1,1),centered=True).copy()
@@ -171,6 +172,9 @@ def sky130_add_opamp_labels(opamp_in: Component) -> Component:
 
 
 def sky130_add_lvt_layer(opamp_in: Component) -> Component:
+	global __NO_LVT_GLOBAL_
+	if __NO_LVT_GLOBAL_:
+		return opamp_in
 	opamp_in.unlock()
 	# define layers
 	lvt_layer = (125,44)
@@ -304,18 +308,18 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 		diffpairs.append((6,1,4))
 		diffpairs.append((5,1,4))
 	else:
-		for width in [2,4,6]:
-			for length in [0.5, 1]:
-				for fingers in [2,4,6,8]:
+		for width in [7]:
+			for length in [0.5,0.7, 0.9]:
+				for fingers in [8,10,12]:
 					diffpairs.append((width,length,fingers))
 	# all bias2 (output amp bias) transistors
 	bias2s = list()
 	if test_mode:
 		bias2s.append((6,1,4,3))
 	else:
-		for width in [6]:
-			for length in [2]:
-				for fingers in [4,6]:
+		for width in [7]:
+			for length in [1]:
+				for fingers in [12,16,20]:
 					for mults in [2,3]:
 						bias2s.append((width,length,fingers,mults))
 	# all pmos first stage load transistors
@@ -323,27 +327,27 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 	if test_mode:
 		half_pload.append((6,1,6))
 	else:
-		for width in [4,6]:
-			for length in [0.5,1]:
-				for fingers in [4,6,8]:
+		for width in [9]:
+			for length in [0.5]:
+				for fingers in [6,8,10,12]:
 					half_pload.append((width,length,fingers))
 	# all output pmos transistors
 	pamp_hparams = list()
 	if test_mode:
 		pamp_hparams.append((7,1,8,3))
 	else:
-		for width in [7,4]:
-			for length in [0.5,1]:
-				for fingers in [8,4,2]:
+		for width in [8]:
+			for length in [0.5]:
+				for fingers in [8,12,16,20]:
 					pamp_hparams.append((width,length,fingers,3))
 	# diffpair bias cmirror
 	diffpair_cmirrors = list()
 	if test_mode:
 		pass
 	else:
-		for width in [6]:
-			for length in [2]:
-				for fingers in [3]:
+		for width in [7]:
+			for length in [1]:
+				for fingers in [8,10]:
 					diffpair_cmirrors.append((width,length,fingers))
 	# rows of the cap array to try
 	cap_arrays = [3]
@@ -361,16 +365,18 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 				for cap_array_v in cap_arrays:
 					for rmult in rmults:
 						for diffpair_cmirror_v in diffpair_cmirrors:
-							tup_to_add = opamp_parameters_serializer(
-								diffpair_params=diffpair_v, 
-								half_common_source_bias=bias2_v, 
-								mim_cap_rows=cap_array_v, 
-								half_common_source_params=pamp_o_v,
-								rmult=rmult,
-								diffpair_bias=diffpair_cmirror_v,
-							)
-							short_list[index] = tup_to_add
-							index = index + 1
+							for halfpld in half_pload:
+								tup_to_add = opamp_parameters_serializer(
+									half_pload=halfpld,
+									half_diffpair_params=diffpair_v, 
+									half_common_source_bias=bias2_v, 
+									mim_cap_rows=cap_array_v, 
+									half_common_source_params=pamp_o_v,
+									rmult=rmult,
+									diffpair_bias=diffpair_cmirror_v,
+								)
+								short_list[index] = tup_to_add
+								index = index + 1
 	# if test_mode create a failed attempt (to test error handling)
 	if test_mode:
 		short_list[index] = opamp_parameters_serializer(mim_cap_rows=-1)
@@ -998,7 +1004,7 @@ def create_opamp_matrix(save_dir_name: str, params: np.array, results: Optional[
 	# run opamps
 	for index in indices:
 		# create opamp
-		comp = sky130_opamp_add_pads(opamp(pdk, **opamp_parameters_de_serializer(params[index])), flatten=False)
+		comp = sky130_opamp_add_pads(sky130_add_lvt_layer(opamp(pdk, **opamp_parameters_de_serializer(params[index]))), flatten=False)
 		comp = component_snap_to_grid(comp)
 		comp.name = "opamp_" + str(index)
 		# append to list
@@ -1076,6 +1082,8 @@ if __name__ == "__main__":
 
 	args = parser.parse_args()
 
+	global __NO_LVT_GLOBAL_
+	__NO_LVT_GLOBAL_ = True
 	# Simulation Temperature information
 	if vars(args).get("temp") is not None:
 		temperature_info = [args.temp, None]
@@ -1130,17 +1138,29 @@ if __name__ == "__main__":
 	elif args.mode == "test":
 		if args.output_second_stage:
 			_TAKE_OUTPUT_AT_SECOND_STAGE_ = True
+#		params = {
+#			"half_diffpair_params": (6, 1, 4),
+#			"diffpair_bias": (6, 2, 4),
+#			"half_common_source_params": (7.2, 1, 10, 3),
+#			"half_common_source_bias": (8, 2, 12, 3),
+#			"output_stage_params": (5, 1, 16),
+#			"output_stage_bias": (6, 2, 4),
+#			"mim_cap_size": (12, 12),
+#			"mim_cap_rows": 3,
+#			"rmult": 2
+#		}
 		params = {
-			"half_diffpair_params": (6, 1, 4),
+			"half_diffpair_params": (7, 2, 6),
 			"diffpair_bias": (6, 2, 4),
-			"half_common_source_params": (7.2, 1, 10, 3),
-			"half_common_source_bias": (8, 2, 12, 3),
+			"half_common_source_params": (7, 1, 17, 3),
+			"half_common_source_bias": (6, 2, 6, 3),
 			"output_stage_params": (5, 1, 16),
 			"output_stage_bias": (6, 2, 4),
 			"mim_cap_size": (12, 12),
 			"mim_cap_rows": 3,
 			"rmult": 2
 		}
+		__NO_LVT_GLOBAL_ = True
 		results = single_build_and_simulation(opamp_parameters_serializer(**params), temperature_info[0], args.output_dir, cload=args.cload, noparasitics=args.noparasitics)
 		print(results)
 

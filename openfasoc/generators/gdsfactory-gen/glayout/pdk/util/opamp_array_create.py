@@ -17,7 +17,7 @@ def get_files_with_extension(directory, extension):
 
 
 @validate_arguments
-def write_opamp_matrix(opamps_dir: Union[str,Path,list]="./", xspace: float=400,yspace: float=300, rtr_comp: bool=False, write_name: str="big_gds_here.gds"):
+def write_opamp_matrix(opamps_dir: Union[str,Path,list]="./", xspace: float=400,yspace: float=280, rtr_comp: bool=False, write_name: str="big_gds_here.gds"):
 	"""Use the write_opamp_matrix function to create a matrix of many different opamps
 	reads the different opamps from all gds files in opamps_dir
 	args:

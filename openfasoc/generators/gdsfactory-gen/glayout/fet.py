@@ -17,7 +17,7 @@ from glayout.routing.straight_route import straight_route
 
 
 @validate_arguments
-def __gen_fingers_macro(pdk: MappedPDK, rmult: int, fingers: int, length: float, width: float, poly_height: float, sdlayer: str) -> Component:
+def __gen_fingers_macro(pdk: MappedPDK, rmult: int, fingers: int, length: float, width: float, poly_height: float, sdlayer: str, inter_finger_topmet: str) -> Component:
     """internal use: returns an array of fingers"""
     length = pdk.snap_to_2xgrid(length)
     width = pdk.snap_to_2xgrid(width)
@@ -32,7 +32,9 @@ def __gen_fingers_macro(pdk: MappedPDK, rmult: int, fingers: int, length: float,
     # create a single finger
     finger = Component("finger")
     gate = finger << rectangle(size=(length, poly_height), layer=pdk.get_glayer("poly"), centered=True)
-    sd_viaarr = via_array(pdk, "active_diff", "met1", size=(sd_viaxdim, width), minus1=True, lay_bottom=False)
+    sd_viaarr = via_array(pdk, "active_diff", "met1", size=(sd_viaxdim, width), minus1=True, lay_bottom=False).copy()
+    interfinger_correction = via_array(pdk,"met1",inter_finger_topmet, size=(sd_viaxdim, width),lay_every_layer=True)
+    sd_viaarr << interfinger_correction
     sd_viaarr_ref = finger << sd_viaarr
     sd_viaarr_ref.movex((poly_spacing+length) / 2)
     finger.add_ports(gate.get_ports_list(),prefix="gate_")
@@ -68,7 +70,7 @@ def multiplier(
     length: Optional[float] = None,
     fingers: int = 1,
     routing: bool = True,
-    inter_finger_topmet: str = "met1",
+    inter_finger_topmet: str = "met2",
     dummy: Union[bool, tuple[bool, bool]] = True,
     sd_route_topmet: str = "met2",
     gate_route_topmet: str = "met2",
@@ -133,7 +135,7 @@ def multiplier(
     width = pdk.snap_to_2xgrid(width)
     poly_height = width + 2 * pdk.get_grule("poly", "active_diff")["overhang"]
     # call finger array    
-    multiplier = __gen_fingers_macro(pdk, interfinger_rmult, fingers, length, width, poly_height, sdlayer)
+    multiplier = __gen_fingers_macro(pdk, interfinger_rmult, fingers, length, width, poly_height, sdlayer, inter_finger_topmet)
     # route all drains/ gates/ sources
     if routing:
         # place vias, then straight route from top port to via-botmet_N
@@ -183,7 +185,7 @@ def multiplier(
     else:
         dummyl, dummyr = dummy
     if dummyl or dummyr:
-        dummy = __gen_fingers_macro(pdk,rmult=interfinger_rmult,fingers=1,length=length,width=width,poly_height=poly_height,sdlayer=sdlayer)
+        dummy = __gen_fingers_macro(pdk,rmult=interfinger_rmult,fingers=1,length=length,width=width,poly_height=poly_height,sdlayer=sdlayer,inter_finger_topmet="met1")
         dummyvia = dummy << via_stack(pdk,"poly","met1",fullbottom=True)
         align_comp_to_port(dummyvia,dummy.ports["row0_col0_gate_S"],layer=pdk.get_glayer("poly"))
         dummy << L_route(pdk,dummyvia.ports["top_met_W"],dummy.ports["leftsd_top_met_S"])

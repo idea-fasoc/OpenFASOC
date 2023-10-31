@@ -23,7 +23,7 @@ from glayout.common.two_transistor_interdigitized import two_nfet_interdigitized
 
 
 @validate_arguments
-def __add_diff_pair_and_bias(pdk: MappedPDK, opamp_top: Component, half_diffpair_params: tuple[float, float, int], diffpair_bias: tuple[float, float, int], rmult: int) -> Component:
+def __add_diff_pair_and_bias(pdk: MappedPDK, opamp_top: Component, half_diffpair_params: tuple[float, float, int], diffpair_bias: tuple[float, float, int], rmult: int, with_antenna_diode_on_diffinputs: int) -> Component:
     # create and center diffpair
     diffpair_i_ = Component("temp diffpair and current source")
     center_diffpair_comp = diff_pair(
@@ -33,9 +33,28 @@ def __add_diff_pair_and_bias(pdk: MappedPDK, opamp_top: Component, half_diffpair
         fingers=half_diffpair_params[2],
         rmult=rmult
     )
+    # add antenna diodes if that option was specified
     diffpair_centered_ref = prec_ref_center(center_diffpair_comp)
     diffpair_i_.add(diffpair_centered_ref)
     diffpair_i_.add_ports(diffpair_centered_ref.get_ports_list())
+    if with_antenna_diode_on_diffinputs:
+        antenna_diode_comp = nmos(pdk,1,with_antenna_diode_on_diffinputs,1,with_dummy=False,with_tie=False,with_substrate_tap=False,with_dnwell=False,length=0.5,sd_route_topmet="met2",gate_route_topmet="met1").copy()
+        antenna_diode_comp << straight_route(pdk, antenna_diode_comp.ports["multiplier_0_row0_col0_rightsd_top_met_S"],antenna_diode_comp.ports["multiplier_0_gate_N"])
+        antenna_diode_refL = diffpair_i_ << antenna_diode_comp
+        antenna_diode_refR = diffpair_i_ << antenna_diode_comp
+        align_comp_to_port(antenna_diode_refL, diffpair_i_.ports["MINUSgateroute_W_con_N"], ('r','t'))
+        antenna_diode_refL.movex(pdk.util_max_metal_seperation())
+        align_comp_to_port(antenna_diode_refR, diffpair_i_.ports["MINUSgateroute_E_con_N"], ('L','t'))
+        antenna_diode_refR.movex(0-pdk.util_max_metal_seperation())
+        # route the antenna diodes to gnd and 
+        Lgndcon = diffpair_i_.ports["tap_W_top_met_N"]
+        Lgndcon.layer = pdk.get_glayer("met1")
+        Rgndcon = diffpair_i_.ports["tap_E_top_met_N"]
+        Rgndcon.layer = pdk.get_glayer("met1")
+        diffpair_i_ << L_route(pdk, antenna_diode_refL.ports["multiplier_0_gate_E"],Lgndcon)
+        diffpair_i_ << L_route(pdk, antenna_diode_refR.ports["multiplier_0_gate_W"],Rgndcon)
+        diffpair_i_ << straight_route(pdk, antenna_diode_refL.ports["multiplier_0_source_W"],diffpair_i_.ports["MINUSgateroute_W_con_N"])
+        diffpair_i_ << straight_route(pdk, antenna_diode_refR.ports["multiplier_0_source_W"],diffpair_i_.ports["PLUSgateroute_E_con_N"])
     # create and position tail current source
     cmirror = two_nfet_interdigitized(
         pdk,
@@ -57,10 +76,10 @@ def __add_diff_pair_and_bias(pdk: MappedPDK, opamp_top: Component, half_diffpair
     cmirror.add_ports(srcshort.get_ports_list(),prefix="purposegndports")
     # add cmirror
     tailcurrent_ref = diffpair_i_ << cmirror
-    tailcurrent_ref.movey(
+    tailcurrent_ref.movey(pdk.snap_to_2xgrid(
         -0.5 * (center_diffpair_comp.ymax - center_diffpair_comp.ymin)
         - abs(tailcurrent_ref.ymax) - metal_sep
-    )
+    ))
     purposegndPort = tailcurrent_ref.ports["purposegndportscon_S"].copy()
     purposegndPort.name = "ibias_purposegndport"
     diffpair_i_.add_ports([purposegndPort])
@@ -373,22 +392,22 @@ def __create_and_route_pins(
     vbias2.movex(1+opamp_top.xmax+evaluate_bbox(vbias2)[0]+pdk.util_max_metal_seperation()).movey(opamp_top.ymin+vbias2.ymax)
     opamp_top << L_route(pdk, halfmultn_gate_routeref.ports["con_E"], vbias2.ports["e2"],hwidth=2)
     # route + and - pins (being careful about antenna violations)
-    minusi_pin = opamp_top << rectangle(size=(5,2),layer=pdk.get_glayer("met4"),centered=True)
+    minusi_pin = opamp_top << rectangle(size=(5,2),layer=pdk.get_glayer("met3"),centered=True)
     minusi_pin.movex(opamp_top.xmin).movey(_max_metal_seperation_ps + minusi_pin.ymax + halfmultn_drain_routeref.ports["con_W"].center[1] + halfmultn_drain_routeref.ports["con_W"].width/2)
     iport_antenna1 = movex(minusi_pin.ports["e3"],destination=opamp_top.ports["diffpair_MINUSgateroute_W_con_N"].center[0]-9*_max_metal_seperation_ps)
     opamp_top << L_route(pdk, opamp_top.ports["diffpair_MINUSgateroute_W_con_N"],iport_antenna1)
     iport_antenna2 = movex(iport_antenna1,offsetx=-9*_max_metal_seperation_ps)
-    opamp_top << straight_route(pdk, iport_antenna1, iport_antenna2,glayer1="met3",glayer2="met3",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
-    iport_antenna2.layer=pdk.get_glayer("met3")
-    opamp_top << straight_route(pdk, iport_antenna2, minusi_pin.ports["e3"],glayer1="met4",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
-    plusi_pin = opamp_top << rectangle(size=(5,2),layer=pdk.get_glayer("met4"),centered=True)
+    opamp_top << straight_route(pdk, iport_antenna1, iport_antenna2,glayer1="met4",glayer2="met4",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
+    iport_antenna2.layer=pdk.get_glayer("met4")
+    opamp_top << straight_route(pdk, iport_antenna2, minusi_pin.ports["e3"],glayer1="met3",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
+    plusi_pin = opamp_top << rectangle(size=(5,2),layer=pdk.get_glayer("met3"),centered=True)
     plusi_pin.movex(opamp_top.xmin + plusi_pin.xmax).movey(_max_metal_seperation_ps + minusi_pin.ymax + plusi_pin.ymax)
     iport_antenna1 = movex(plusi_pin.ports["e3"],destination=opamp_top.ports["diffpair_PLUSgateroute_E_con_N"].center[0]-9*_max_metal_seperation_ps)
     opamp_top << L_route(pdk, opamp_top.ports["diffpair_PLUSgateroute_E_con_N"],iport_antenna1)
     iport_antenna2 = movex(iport_antenna1,offsetx=-9*_max_metal_seperation_ps)
-    opamp_top << straight_route(pdk, iport_antenna1, iport_antenna2, glayer1="met3",glayer2="met3",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
-    iport_antenna2.layer=pdk.get_glayer("met3")
-    opamp_top << straight_route(pdk, iport_antenna2, plusi_pin.ports["e3"],glayer1="met4",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
+    opamp_top << straight_route(pdk, iport_antenna1, iport_antenna2, glayer1="met4",glayer2="met4",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
+    iport_antenna2.layer=pdk.get_glayer("met4")
+    opamp_top << straight_route(pdk, iport_antenna2, plusi_pin.ports["e3"],glayer1="met3",via2_alignment=('c','c'),via1_alignment=('c','c'),fullbottom=True)
     # route top center components to diffpair
     opamp_top << straight_route(pdk,opamp_top.ports["diffpair_tr_multiplier_0_drain_N"], opamp_top.ports["pcomps_pbottomAB_R_gate_S"], glayer1="met5",width=3*pdk.get_grule("met5")["min_width"],via1_alignment_layer="met2",via1_alignment=('c','c'))
     opamp_top << straight_route(pdk,opamp_top.ports["diffpair_tl_multiplier_0_drain_N"], opamp_top.ports["pcomps_minusvia_top_met_S"], glayer1="met5",width=3*pdk.get_grule("met5")["min_width"],via1_alignment_layer="met2",via1_alignment=('c','c'))
@@ -529,23 +548,29 @@ def opamp(
     half_pload: tuple[float,float,int] = (6,1,6),
     mim_cap_size=(12, 12),
     mim_cap_rows=3,
-    rmult: int = 2
+    rmult: int = 2,
+    with_antenna_diode_on_diffinputs: int=5
 ) -> Component:
-    """create an opamp, args:
-    pdk=pdk to use
-    half_diffpair_params = diffpair (width,length,fingers)
-    diffpair_bias = bias transistor for diffpair nmos (width,length,fingers). The ref and output of the cmirror are identical
-    half_common_source_params = pmos top component amp (width,length,fingers,mults)
-    half_common_source_bias = bottom L/R large nmos current mirror (width,length,fingers,mults). The ref of the cmirror always has 1 multplier. multiplier must be >=2
+    """
+    create a two stage opamp with an output buffer, args->
+    pdk: pdk to use
+    half_diffpair_params: diffpair (width,length,fingers)
+    diffpair_bias: bias transistor for diffpair nmos (width,length,fingers). The ref and output of the cmirror are identical
+    half_common_source_params: pmos top component amp (width,length,fingers,mults)
+    half_common_source_bias: bottom L/R large nmos current mirror (width,length,fingers,mults). The ref of the cmirror always has 1 multplier. multiplier must be >=2
     ****NOTE: change the multiplier option to change the relative sizing of the current mirror ref/output
-    output_stage_amp_params = output amplifier transistor params (width, length, fingers)
-    output_stage_bias = output amplifier current mirror params (width, length, fingers). The ref and output of the cmirror are identical
-    half_pload = all 4 pmos load transistors of first stage (width,length,...). The last element in the tuple is the fingers of the bottom two pmos.
-    mim_cap_size = width,length of individual mim_cap
-    mim_cap_rows = number of rows in the mimcap array (always 2 cols)
-    rmult = routing multiplier (larger = wider routes)
+    output_stage_amp_params: output amplifier transistor params (width, length, fingers)
+    output_stage_bias: output amplifier current mirror params (width, length, fingers). The ref and output of the cmirror are identical
+    half_pload: all 4 pmos load transistors of first stage (width,length,...). The last element in the tuple is the fingers of the bottom two pmos.
+    mim_cap_size: width,length of individual mim_cap
+    mim_cap_rows: number of rows in the mimcap array (always 2 cols)
+    rmult: routing multiplier (larger = wider routes)
+    with_antenna_diode_on_diffinputs: adds antenna diodes with_antenna_diode_on_diffinputs*(1um/0.5um) on the positive and negative inputs to the opamp
+    ****NOTE: these inputs are especially susceptible to antenna violation when using smaller sizing
     """
     # error checks
+    if with_antenna_diode_on_diffinputs!=0 and with_antenna_diode_on_diffinputs<2:
+        raise ValueError("number of antenna diodes should be at least 2 (or 0 to specify no diodes)")
     if half_common_source_bias[3] < 2:
         raise ValueError("half_common_source_bias num multiplier must be >= 2")
     # create opamp top component
@@ -553,7 +578,7 @@ def opamp(
     opamp_top = Component()
     # place nmos components
     clear_cache()
-    diffpair_and_bias = __add_diff_pair_and_bias(pdk, opamp_top, half_diffpair_params, diffpair_bias, rmult)
+    diffpair_and_bias = __add_diff_pair_and_bias(pdk, opamp_top, half_diffpair_params, diffpair_bias, rmult, with_antenna_diode_on_diffinputs)
     # create and position each half of the nmos bias transistor for the common source stage symetrically
     clear_cache()
     opamp_top = __add_common_source_nbias_transistors(pdk, opamp_top, half_common_source_bias, rmult)
