@@ -33,7 +33,7 @@ def __gen_fingers_macro(pdk: MappedPDK, rmult: int, fingers: int, length: float,
     finger = Component("finger")
     gate = finger << rectangle(size=(length, poly_height), layer=pdk.get_glayer("poly"), centered=True)
     sd_viaarr = via_array(pdk, "active_diff", "met1", size=(sd_viaxdim, width), minus1=True, lay_bottom=False).copy()
-    interfinger_correction = via_array(pdk,"met1",inter_finger_topmet, size=(sd_viaxdim, width),lay_every_layer=True)
+    interfinger_correction = via_array(pdk,"met1",inter_finger_topmet, size=(None, width),lay_every_layer=True, num_vias=(1,None))
     sd_viaarr << interfinger_correction
     sd_viaarr_ref = finger << sd_viaarr
     sd_viaarr_ref.movex((poly_spacing+length) / 2)
