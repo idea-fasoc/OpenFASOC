@@ -15,6 +15,13 @@ jobs:
   sky130hd_temp:
     runs-on: ubuntu-latest
     steps:
+      - name: Remove unnecessary files
+        run: |
+          du . -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          du . -h
+
       - name: Checkout repo
         uses: actions/checkout@v2
 
