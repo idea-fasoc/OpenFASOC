@@ -28,6 +28,11 @@ This project is led by a team of researchers at the University of Michigan and i
     .. image:: https://colab.research.google.com/assets/colab-badge.svg
         :target: https://colab.research.google.com/github/idea-fasoc/OpenFASOC/blob/main/docs/source/notebooks/ldo-gen/LDO_notebook.ipynb
 
+* **Cryogenic -**
+    .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/cryo-gen.yml/badge.svg
+        :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/cryo-gen.yml
+
+
 Getting Started
 ****************
 
