@@ -30,7 +30,7 @@ This project is led by a team of researchers at the University of Michigan and i
 
 * **Cryogenic -**
     .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/cryo-gen.yml/badge.svg
-        :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/cryo-gen.yml
+        :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/cryo_gen.yml
 
 
 Getting Started
