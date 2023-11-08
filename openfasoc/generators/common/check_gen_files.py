@@ -15,10 +15,23 @@ def check_gen_files():
         raise ValueError("work directory does not exist!")
     else:
         filename = work_dir + module_name
-        for file in (filename + ".gds", filename + ".spice", filename + ".v", filename + ".def", filename + "_pex.spice", filename + ".sdc"):
-            if (os.path.exists(file) == 0):
-                raise ValueError(file + " does not exist!")
+        extension_file_path = "../common/check_gen_extensions"
 
+        if os.path.exists(extension_file_path):
+            with open(extension_file_path) as f:
+                
+                for extension in f:
+                    file = "".join([filename, extension.strip()])
+                    if (os.path.exists(file) == 0):
+                        raise ValueError(file + " does not exist!")
+        else: 
+            print("checking flow results with possibly stale list of extensions...")
+            extensions = [".sdc", ".gds", ".def", ".spice", ".v", "_pex.spice"]
+            for extension in extensions:
+                    file = "".join([filename, extension])
+                    
+                    if (os.path.exists(file) == 0):
+                        raise ValueError(file + " does not exist!")
     # print("Found necessary work result files!")
 
     for file in ("error_within_x.csv", "golden_error_opt.csv", "search_result.csv"):
