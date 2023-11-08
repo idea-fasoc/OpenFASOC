@@ -24,10 +24,7 @@ with open(lvs_filename) as f:
 
 json_filename = "test.json"
 
-if os.path.exists(json_filename):
-    if check_gen_files():
+if check_gen_files(json_filename, (len(sys.argv) == 1)):
         print("Flow check is clean!")
-    else:
-        print("Flow check failed!")
 else:
-    raise ValueError(".json config file not found!")
+    print("Flow check failed!")

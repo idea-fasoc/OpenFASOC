@@ -52,15 +52,9 @@ else:
         else:
             print("LVS is clean!")
 
-if ((len(sys.argv) > 1) and ((sys.argv[1] == "sky130hvl_ldo") or (sys.argv[1] == "sky130hvl_ldo_full"))) or ((len(sys.argv) > 1) and (sys.argv[1] == "sky130hd_cryo")):
-    print("Flow check is clean!")
-else:
-    json_filename = "test.json"
+json_filename = "test.json"
 
-    if os.path.exists(json_filename):
-        if check_gen_files():
-            print("Flow check is clean!")
-        else:
-            print("Flow check failed!")
-    else:
-        raise ValueError(".json config file not found!")
+if check_gen_files(json_filename, (len(sys.argv) == 1)):
+        print("Flow check is clean!")
+else:
+    print("Flow check failed!")

@@ -1,8 +1,8 @@
 import json
 import os
 
-def check_gen_files():
-    with open('test.json', 'r') as file:
+def check_gen_files(json_filename, is_tempsense) -> int:
+    with open(json_filename) as file:
         data = json.load(file)
     
     # print('Found .json config file...')
@@ -33,10 +33,10 @@ def check_gen_files():
                     if (os.path.exists(file) == 0):
                         raise ValueError(file + " does not exist!")
     # print("Found necessary work result files!")
-
-    for file in ("error_within_x.csv", "golden_error_opt.csv", "search_result.csv"):
-        if os.path.exists(file) == 0:
-            raise ValueError(file + " does not exist!")
+    if (is_tempsense):
+        for file in ("error_within_x.csv", "golden_error_opt.csv", "search_result.csv"):
+            if os.path.exists(file) == 0:
+                raise ValueError(file + " does not exist!")
     
     #print("Found generated .csv files!")
     return 1
