@@ -26,12 +26,18 @@ objDir = flowDir + "objects/" + args.platform + "/tempsense/"
 # ------------------------------------------------------------------------------
 # Clean the workspace
 # ------------------------------------------------------------------------------
-print("#----------------------------------------------------------------------")
-print("# Cleaning the workspace...")
-print("#----------------------------------------------------------------------")
+
+print("#----------------------------------------------------------------------", flush=True)
+print("# Cleaning the workspace...", flush=True)
+print("#----------------------------------------------------------------------", flush=True)
+
 if args.clean:
-    p = sp.Popen(["make", "clean_all"], cwd=genDir)
+    cmd = ["make", "clean_all"]
+    p = sp.Popen(cmd, cwd=genDir)
     p.wait()
+    if p.returncode != 0:
+        print("[ERROR]: Command '" + ' '.join(cmd) + "' exited with non-zero return code: " + str(p.returncode))
+        sys.exit(p.returncode)
 
 p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hd.spice"])
 p.wait()
@@ -67,7 +73,7 @@ else:
     if not os.path.isdir(sky130A_path):
         os.mkdir(sky130A_path)
     try:
-        sp.Popen(
+    	p = sp.Popen(
             [
                 "sed -i 's/set PDKPATH \".*/set PDKPATH $env(PDK_ROOT)\/sky130A/' $PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
             ],
@@ -146,37 +152,43 @@ print("#----------------------------------------------------------------------")
 print()
 if args.mode == "verilog":
     print("Exiting tool....")
-    exit()
+    sys.exit(0)
 
 print("#----------------------------------------------------------------------")
 print("# Run Synthesis and APR")
 print("#----------------------------------------------------------------------")
 
-p = sp.Popen(["make", "finish"], cwd=flowDir)
+cmd = ["make", "finish"]
+p = sp.Popen(cmd, cwd=flowDir)
 p.wait()
-if p.returncode:
-    print("[Error] Place and Route failed. Refer to the log file")
-    exit(1)
+if p.returncode != 0:
+    print("[ERROR]: Command '" + ' '.join(cmd) +\
+     "' exited with non-zero return code: " + str(p.returncode))
+    sys.exit(p.returncode)
 
 print("#----------------------------------------------------------------------")
 print("# Place and Route finished")
 print("#----------------------------------------------------------------------")
 
-p = sp.Popen(["make", "magic_drc"], cwd=flowDir)
+cmd = ["make", "magic_drc"]
+p = sp.Popen(cmd, cwd=flowDir)
 p.wait()
-if p.returncode:
-    print("[Error] DRC failed. Refer to the report")
-    exit(1)
+if p.returncode != 0:
+    print("[ERROR]: Command '" + ' '.join(cmd) + \
+     "' exited with non-zero return code: " + str(p.returncode))
+    sys.exit(p.returncode)
 
 print("#----------------------------------------------------------------------")
 print("# DRC finished")
 print("#----------------------------------------------------------------------")
 
-p = sp.Popen(["make", "netgen_lvs"], cwd=flowDir)
+cmd = ["make", "netgen_lvs"]
+p = sp.Popen(cmd, cwd=flowDir)
 p.wait()
-if p.returncode:
-    print("[Error] LVS failed. Refer to the report")
-    exit(1)
+if p.returncode != 0:
+    print("[ERROR]: Command '" + ' '.join(cmd) + \
+     "' exited with non-zero return code: " + str(p.returncode))
+    sys.exit(p.returncode)
 
 print("#----------------------------------------------------------------------")
 print("# LVS finished")
@@ -262,4 +274,4 @@ if args.mode == "full":
         sys.exit(1)
 
 print("Exiting tool....")
-exit()
+sys.exit(0)

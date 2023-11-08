@@ -103,12 +103,13 @@ else:
     if not os.path.isdir(sky130A_path):
         os.mkdir(sky130A_path)
     try:
-        sp.Popen(
-            [
-                "sed -i 's/set PDKPATH \".*/set PDKPATH $env(PDK_ROOT)\/sky130A/' $PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
-            ],
-            shell=True,
-        ).wait()
+        cmd = ["sed -i 's/set PDKPATH \".*/set PDKPATH $env(PDK_ROOT)\/sky130A/' $PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"]
+        p = sp.Popen(cmd, shell=True)
+        p.wait()
+        if p.returncode != 0:
+    	    print("[ERROR]: Command '" + ' '.join(cmd) + \
+    	    "' exited with non-zero return code: " + str(p.returncode))
+    	    sys.exit(p.returncode)
     except:
         pass
     shutil.copy2(os.path.join(pdk, "libs.tech/magic/sky130A.magicrc"), sky130A_path)
@@ -155,17 +156,21 @@ print("#----------------------------------------------------------------------")
 print()
 if args.mode == "verilog":
     print("Exiting tool....")
-    exit()
+    sys.exit(0)
 
 print("#----------------------------------------------------------------------")
 print("# Run Synthesis and APR")
 print("#----------------------------------------------------------------------")
 # make with different deisgn config
+
+cmd = ["make", "PLATFORM_ARG=" + args.platform, "SPICE_FILE=" + spice_file]
 p = sp.Popen(
-    ["make", "PLATFORM_ARG=" + args.platform, "SPICE_FILE=" + spice_file], cwd=flowDir
+    cmd, cwd=flowDir
 )
 p.wait()
-
+if(p.returncode != 0):
+    print("[ERROR]: Command '" + ' '.join(cmd) + "' exited with non-zero return code: " + str(p.returncode))
+    sys.exit(p.returncode)
 
 print("#----------------------------------------------------------------------")
 print("# Place and Route finished")
@@ -173,11 +178,15 @@ print("#----------------------------------------------------------------------")
 
 time.sleep(2)
 
+cmd = ["make", "magic_drc", "PLATFORM_ARG=" + args.platform, "SPICE_FILE=" + spice_file]
 p = sp.Popen(
-    ["make", "magic_drc", "PLATFORM_ARG=" + args.platform, "SPICE_FILE=" + spice_file],
+    cmd,
     cwd=flowDir,
 )
 p.wait()
+if(p.returncode != 0):
+    print("[ERROR]: Command '" + ' '.join(cmd) + "' exited with non-zero return code: " + str(p.returncode))
+    sys.exit(p.returncode)
 
 print("#----------------------------------------------------------------------")
 print("# DRC finished")
@@ -185,12 +194,15 @@ print("#----------------------------------------------------------------------")
 
 time.sleep(2)
 
+cmd = ["make", "netgen_lvs", "PLATFORM_ARG=" + args.platform, "SPICE_FILE=" + spice_file]
 p = sp.Popen(
-    ["make", "netgen_lvs", "PLATFORM_ARG=" + args.platform, "SPICE_FILE=" + spice_file],
+    cmd,
     cwd=flowDir,
 )
 p.wait()
-
+if(p.returncode != 0):
+    print("[ERROR]: Command '"  + ' '.join(cmd) + "' exited with non-zero return code: " + str(p.returncode))
+    sys.exit(p.returncode)
 
 print("#----------------------------------------------------------------------")
 print("# LVS finished")
@@ -274,11 +286,20 @@ if args.mode == "macro":
     print("Exiting tool....")
     exit()
 
-p = sp.Popen(["yum", "install", "-y", "libXaw-devel"])
+cmd = ["yum", "install", "-y", "libXaw-devel"]
+p = sp.Popen(cmd)
 p.wait()
-p = sp.Popen(["yum", "install", "-y", "libXaw"])
-p.wait()
+if p.returncode != 0:
+    print("Command '"  + ' '.join(cmd) + "' exited with non-zero return code: " + str(p.returncode))
+    sys.exit(p.returncode)
 
+cmd = ["yum", "install", "-y", "libXaw"]
+p = sp.Popen(cmd)
+p.wait()
+if p.returncode != 0:
+    print("Command '"  + ' '.join(cmd) + "' exited with non-zero return code: " + str(p.returncode))
+    sys.exit(p.returncode)
+    
 pdks_path = "/usr/bin/miniconda3/share/pdk/"
 
 if args.prepex:
