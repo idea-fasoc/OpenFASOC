@@ -1,5 +1,5 @@
-magic==8.3.442_0_g22ea7a9
+magic==8.3.445_0_g8445f3e
 netgen==1.5.262_0_gc1ed4ce
-open_pdks.sky130a==1.0.455_1_ge0f692f
+open_pdks.sky130a==1.0.286_0_g52af776
 openroad==2.0_10905_ge89829335
-yosys==0.34_60_g1260766d9
+yosys==0.35_7_g63cec22a0
