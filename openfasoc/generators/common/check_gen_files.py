@@ -15,7 +15,7 @@ def check_gen_files():
         raise ValueError("work directory does not exist!")
     else:
         filename = work_dir + module_name
-        extension_file_path = "../common/check_gen_extensions"
+        extension_file_path = "./tools/check_gen_extensions"
 
         if os.path.exists(extension_file_path):
             with open(extension_file_path) as f:
