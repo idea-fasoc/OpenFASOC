@@ -1,5 +1,7 @@
-import json
-import os 
+import os, sys 
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+from common.check_gen_files import check_gen_files
 
 drc_filename = "flow/reports/sky130hd/tempsense/6_final_drc.rpt"
 num_lines = sum(1 for line in open(drc_filename))
@@ -19,26 +21,13 @@ with open(lvs_filename) as f:
         raise ValueError("LVS failed!")
     else:
         print("LVS is clean!")
-        
-with open('test.json', 'r') as file:
-    data = json.load(file)
-print('Found .json config file...')
 
-module_name = data.get("module_name", "default")
+json_filename = "test.json"
 
-work_dir = "./work/"
-
-if (os.path.exists(work_dir) == 0):
-    raise ValueError("work directory does not exist!")
+if os.path.exists(json_filename):
+    if check_gen_files():
+        print("Flow check is clean!")
+    else:
+        print("Flow check failed!")
 else:
-    filename = work_dir + module_name
-    for file in (filename + ".gds", filename + ".spice", filename + ".v", filename + ".def", filename + "_pex.spice", filename + ".sdc"):
-        if (os.path.exists(file) == 0):
-            raise ValueError(file + " does not exist!")
-print("Found necessary work result files!")
-
-for file in ("error_within_x.csv", "golden_error_opt.csv", "search_result.csv"):
-    if os.path.exists(file) == 0:
-        raise ValueError(file + " does not exist!")
-print("Found generated .csv files!")
-print("Generator check is clean!")
+    raise ValueError(".json config file not found!")
