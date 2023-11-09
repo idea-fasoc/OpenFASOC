@@ -5,7 +5,7 @@ from gymnasium.spaces import Discrete
 from gymnasium.wrappers import EnvCompatibility
 from ray.rllib.env.wrappers.multi_agent_env_compatibility import MultiAgentEnvCompatibility
 from sky130_nist_tapeout import single_build_and_simulation
-sky130_nist_tapeout.path.append('../generators/gdsfactory-gen/')
+sky130_nist_tapeout.path.append('../generators/gdsfactory-gen/tapeout_and_RL')
 import numpy as np
 import random
 import psutil
@@ -53,7 +53,7 @@ class Envir(gym.Env):
         # design specs
         if self.generalize == True:
             if self.valid == False:
-                specs = yaml.safe_load(Path('new_spec_1.yaml').read_text())
+                specs = yaml.safe_load(Path('train1.yaml').read_text())
             else:
                 specs = inputspec
                 print(inputspec)
@@ -74,16 +74,20 @@ class Envir(gym.Env):
 
         # param array
         params = {
-                  "diffpair_params0" : [3, 9.6, 0.6],
-                  "diffpair_params1" : [0.3, 2.17, 0.17],
-                  "diffpair_params2" : [2, 7, 1],
-                  "houtput_bias0" : [3, 9.6, 0.6],
-                  "houtput_bias2" : [2, 7, 1],
-                  "pamp_hparams0" : [4, 10.6, 0.6],
-                  "pamp_hparams1" : [0.3, 2.1, 0.1],
-                  "pamp_hparams2" : [6, 15, 1],
-                  "mim_cap_rows" : [2, 4, 1],
-                  "rmult" : [1, 3, 1],
+                  "diffpair_params0" : [1, 8, 1],       
+                  "diffpair_params1" : [0.5, 2.1, 0.1],   
+                  "diffpair_params2" : [1, 5, 1],
+                  "Diffpair_bias0" : [1, 8, 1],
+                  "Diffpair_bias1" : [1, 4.5, 0.5],
+                  "Diffpair_bias2" : [3, 13, 1],
+                  "pamp_hparams0" : [1, 8, 1], 
+                  "pamp_hparams1" : [0.5, 2.1, 0.1], 
+                  "pamp_hparams2" : [3, 13, 1],
+                  "bias0" : [1, 8, 1], 
+                  "bias1" : [0.5, 2.1, 0.1], 
+                  "bias2" : [3, 13, 1],
+                  "bias3" : [2, 4, 1],
+                  "mim_cap_rows" : [1, 4, 1],
                   }
         self.params = []
         self.params_id = list(params.keys())
@@ -150,7 +154,8 @@ class Envir(gym.Env):
         #initialize current parameters
         #self.cur_params_idx = np.array([3.0, 0.3, 2.0, 6.0, 2.0, 4.0, 3.0,1.0,2.0,3.0,4.0,0.3,6.0,3.0, 12.0, 12.0, 2.0, 1.0])
         # self.cur_params_idx = np.array([10, 4, 10, 10, 10, 10, 0, 0, 0, 0])
-        self.cur_params_idx = np.array([10, 10, 4, 5, 0, 5, 7, 0, 1, 1])
+        self.cur_params_idx = np.array([1, 5, 3, 5, 2, 1, 6, 0, 5, 5, 1, 1, 1, 0])
+        # param array
         self.cur_specs = self.update(self.cur_params_idx)
         cur_spec_norm = self.lookup(self.cur_specs, self.global_g)
         reward = self.reward(self.cur_specs, self.specs_ideal)
@@ -178,7 +183,7 @@ class Envir(gym.Env):
         reward = self.reward(self.cur_specs, self.specs_ideal)
         terminated = False
         #f = open("newnew_5.txt", "a")
-        f = open("newnewnew_eval_3.txt", "a")
+        f = open("record2.txt", "a")
         #incentivize reaching goal state
         if(prevreward >= 2.0 and reward < 2.0):
             terminated = True
@@ -260,16 +265,16 @@ class Envir(gym.Env):
 
         #run param vals and simulate
         #cur_specs = OrderedDict(sorted(self.sim_env.create_design_and_simulate(param_val[0])[1].items(), key=lambda k:k[0]))
-        inputparam = np.array([0.0, 0.0, 0.0, 6.0, 2.0, 4.0, 0.0, 1.0, 0.0, 3.0, 0.0, 0.0, 0.0, 3.0, 12.0, 12.0, 0.0, 0.0])
+        inputparam = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 5.0, 1.0, 16.0, 6.0, 2.0, 4.0, 12.0, 12.0, 0.0, 2.0])
         inputparam[0:3] = params[0:3]
-        inputparam[6] = params[3]
-        inputparam[8] = params[4]
-        inputparam[10:13] = params[5:8]
-        inputparam[16:18] = params[8:10]
-        result = single_build_and_simulation(inputparam)
+        inputparam[3:6] = params[3:6]
+        inputparam[6:9] = params[6:9]
+        inputparam[10:14] = params[9:13]
+        inputparam[22] = params[13]
+        result = single_build_and_simulation(inputparam,-269)
         specs = np.array([0.0 , 0.0])
-        specs[0] = result[0]
-        specs[1] = result[0]/result[6]
+        specs[0] = result["ugb"]
+        specs[1] = result["ugb"]/result["power"]
         cur_specs = specs
 
         return cur_specs
