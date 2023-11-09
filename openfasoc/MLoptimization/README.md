@@ -42,5 +42,5 @@ The evaluation result will be saved to the ../generators/gdsfactory-gen/.
 Please note that results vary greatly based on random seed and spec generation (both for testing and validation). An example spec file is provided that was used to generate the results below. 
 
 <p float="left">
-  <img src="image1.png" width="400" /> <img src="image2.png" width="400" /> 
+  <img src="mean_reward_versus_step.png" width="400" /> 
 </p>
