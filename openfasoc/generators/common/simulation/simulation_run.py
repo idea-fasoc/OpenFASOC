@@ -34,6 +34,8 @@ def _run_simulations(
     - `num_concurrent_sims` (int): The maximum number of concurrent simulations.
     - `sim_tool` (str): Path to the directory in which the simulation runs will be generated.
     - `runs_dir_path` (str): Path to the directory in which the simulation runs will be generated.
+
+    Returns: `simulation_state`, the number of ongoing, completed and failed sims.
 	"""
 
 	simulation_state = {
@@ -67,11 +69,9 @@ def _run_simulations(
 
 		_print_progress(num_configs, simulation_state['completed_sims'], simulation_state['failed_sims'], start_time)
 		time.sleep(1)
-		
-	# to dump the simulation state (completed, failed, ongoing) to an output file for later use
-	json.dump(simulation_state, open("work/sim_state_file.txt",'w'))
 	
 	_print_progress(num_configs, simulation_state['completed_sims'], simulation_state['failed_sims'], start_time, end='\n')
+	return simulation_state
 
 def _run_config(
 	sim_tool: str,
