@@ -5,7 +5,6 @@ import ray.tune as tune
 from ray.rllib.algorithms.ppo import PPO
 from run_training import Envir
 from sky130_nist_tapeout import single_build_and_simulation
-sky130_nist_tapeout.path.append('../generators/gdsfactory-gen/')
 
 import argparse
 #
@@ -34,14 +33,9 @@ config_train = {
 #If checkpoint fails for any reason, training can be restored
 trials = tune.run(
     "PPO", #You can replace this string with ppo.PPOTrainer if you want / have customized it
-    name="brandnewBound_1", # The name can be different.
-    stop={"episode_reward_mean": 12, "training_iteration": 15},
+    name="new_train_with_new_params_3", # The name can be different.
+    stop={"episode_reward_mean": 12, "training_iteration": 12},
     checkpoint_freq=1,
     config=config_train,
-    #restore="/home/wentian/ray_results/brandnewBound/PPO_Envir_cc8be_00000_0_2023-08-16_01-11-16/checkpoint_000002",
-    #restore="/home/wentian/ray_results/brandnewBound/PPO_Envir_f6236_00000_0_2023-08-16_04-40-01/checkpoint_000003",
-    #restore="/home/wentian/ray_results/brandnewBound/PPO_Envir_4615a_00000_0_2023-08-16_06-58-15/checkpoint_000006"
-    #restore="/home/wentian/ray_results/brandnewBound/PPO_Envir_d8b02_00000_0_2023-08-17_02-07-41/checkpoint_000012",
-    restore="/home/wentian/ray_results/brandnewBound_1/PPO_Envir_d6a0f_00000_0_2023-08-18_05-19-43/checkpoint_000012",
 )
 #
