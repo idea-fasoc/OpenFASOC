@@ -1,0 +1,7 @@
+                         ┌[e1]
+                         │
+                         ├[e2]
+-[straight_route]─[route]┤
+                         ├[e3]
+                         │
+                         └[e4]

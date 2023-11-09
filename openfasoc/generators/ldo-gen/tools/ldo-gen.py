@@ -11,6 +11,7 @@ from simulations import *
 # TODO: Find a better way to import modules from parent directory
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from common.verilog_generation import generate_verilog
+from common.simulation import run_simulations
 
 print("#---------------------------------------------------------------------")
 print("# Parsing command line arguments...")
@@ -43,7 +44,11 @@ parser.add_argument(
     "--arr_size_in", help="Debug option to manually set power arr size."
 )
 parser.add_argument("--clean", action="store_true", help="Clean the workspace.")
-parser.add_argument("--simtype",choices=["postPEX","prePEX"], help="Simulations type prePEX or postPEX")
+parser.add_argument(
+    "--simtype",
+    choices=["postPEX", "prePEX"],
+    help="Simulations type prePEX or postPEX",
+)
 parser.add_argument("--pex", help="enable postPEX along with prePEX")
 args = parser.parse_args()
 
@@ -100,7 +105,7 @@ print("# LDO - Power Transistor array Size = " + str(arrSize))
 
 # Update the ldo_domain_insts.txt as per power transistor array size
 update_ldo_domain_insts(directories["blocksDir"], arrSize)
-#Update the ldo_place.txt as per power transistor array size
+# Update the ldo_place.txt as per power transistor array size
 update_ldo_place_insts(directories["blocksDir"], arrSize)
 # Update connections to VREG
 update_custom_nets(directories["blocksDir"], arrSize)
@@ -139,11 +144,13 @@ if args.mode != "verilog" and clean_work_dir:
     print("#----------------------------------------------------------------------")
     print("# Run Synthesis and APR")
     print("#----------------------------------------------------------------------")
-    p = sp.Popen(["make", "finish"], cwd=directories["flowDir"])
+    cmd = ["make", "finish"]
+    p = sp.Popen(cmd, cwd=directories["flowDir"])
     p.wait()
-    if p.returncode:
-        print("[Error] Place and Route failed. Refer to the log file")
-        exit(1)
+    if p.returncode != 0:
+        print("[ERROR]: Command '" + ' '.join(cmd) +\
+         "' exited with non-zero return code: " + str(p.returncode))
+        sys.exit(p.returncode)
 
     print("#----------------------------------------------------------------------")
     print("# Run DRC")
@@ -158,37 +165,47 @@ if args.mode != "verilog" and clean_work_dir:
     print("#----------------------------------------------------------------------")
     print("# Run LVS")
     print("#----------------------------------------------------------------------")
-    p = sp.Popen(["make", "netgen_lvs"], cwd=directories["flowDir"])
+    cmd = ["make", "netgen_lvs"]
+    p = sp.Popen(cmd, cwd=directories["flowDir"])
     p.wait()
-    if p.returncode:
-        print("[Error] LVS failed. Refer to the report")
-        exit(1)
+    if p.returncode != 0:
+        print("[ERROR]: Command '" + ' '.join(cmd) +\
+         "' exited with non-zero return code: " + str(p.returncode))
+        sys.exit(p.returncode)
 
     print("#----------------------------------------------------------------------")
     print("# LVS and DRC finished successfully")
     print("#----------------------------------------------------------------------")
 
+if args.mode == "full":
     # function defined in configure_workspace.py
     copy_outputs(directories, args.outputDir, args.platform, user_specs["designName"])
 
     # simulations are ran for the following configurations:
     cap_list = ["1p", "5p"]  # additional capacitance at node VREG
     freq_list = [0.1 * 10**6, 1 * 10**6, 10 * 10**6]  # clock frequency
+    vref = user_specs["vin"]
+    max_load = user_specs["imax"]
+
+    is_pex = args.simtype == "postPEX" or args.pex == "True"
 
     # prepare sim directories and copy files
     # sim_dir_structure is a dictionary containing the tree file path structure of both prepex/pex directories
     [prePEX_sim_dir, postPEX_sim_dir] = create_sim_dirs(
         arrSize, directories["simDir"], args.mode
     )
+
     # create sim netlists (return as strings)
     spice_dir = directories["flowDir"] + "/objects/sky130hvl/ldo/base/netgen_lvs/spice/"
     rawPEXPath = spice_dir + user_specs["designName"] + "_pex.spice"
     rawSynthPath = spice_dir + user_specs["designName"] + ".spice"
+
     [processedPEXnetlist, head] = process_PEX_netlist(
-        rawPEXPath, jsonConfig["simTool"],user_specs["designName"]
+        rawPEXPath, jsonConfig["simTool"], user_specs["designName"]
     )
     processedSynthNetlist = process_prePEX_netlist(rawSynthPath)
     powerArrayNetlist = process_power_array_netlist(rawSynthPath)
+
     # create list of netlists (wheretocopy, filename, stringdata) then write to their respective locations
     netlists = list()
     netlists.append(tuple((postPEX_sim_dir, "ldo_sim.spice", processedPEXnetlist)))
@@ -199,146 +216,65 @@ if args.mode != "verilog" and clean_work_dir:
         with open(netlist[0] + "/" + netlist[1], "w") as simfile:
             simfile.write(netlist[2])
 
-    # prepare simulation scripts, passing prePEX_sim_dir and pex=false to function *_prepare_scripts() runs preprex sims
-    # there should be one output file name specified for each cap value. outputs sent to sim_dir_structure directories
-    if args.simtype == "postPEX" or args.pex == "True":
-       if jsonConfig["simTool"] == "ngspice":
-           [sim, output_file_names] = ngspice_prepare_scripts(
-            head,
-            cap_list,
-            directories["simDir"] + "/templates/",
-            postPEX_sim_dir,
-            user_specs,
-            arrSize,
-            pdk_path,
-            freq_list,
-            "tt",
-            pex=True
-        )
-       elif jsonConfig["simTool"] == "Xyce":
-             [sim, output_file_names] = xyce_prepare_scripts(
-              head,
-              cap_list,
-              directories["simDir"] + "/templates/",
-              postPEX_sim_dir,
-              user_specs,
-              arrSize,
-              pdk_path,
-              freq_list,
-              "tt",
-              pex=True
-        )
-       else:
-            print("simtool not supported")
-            exit(1)
-
-    if args.simtype == "prePEX":
-       if jsonConfig["simTool"] == "ngspice":
-           [sim, output_file_names] = ngspice_prepare_scripts(
-            head,
-            cap_list,
-            directories["simDir"] + "/templates/",
-            prePEX_sim_dir,
-            user_specs,
-            arrSize,
-            pdk_path,
-            freq_list,
-            "tt",
-            pex=False
-        )
-       elif jsonConfig["simTool"] == "Xyce":
-             [sim, output_file_names] = xyce_prepare_scripts(
-              head,
-              cap_list,
-              directories["simDir"] + "/templates/",
-              prePEX_sim_dir,
-              user_specs,
-              arrSize,
-              pdk_path,
-              freq_list,
-              "tt",
-              pex=False
-        )
-       else:
-            print("simtool not supported")
-            exit(1)
-
     print("#----------------------------------------------------------------------")
     print("# Spice netlists created successfully")
     print("#----------------------------------------------------------------------")
 
-# ------------------------------------------------------------------------------
-# run simulations
-# ------------------------------------------------------------------------------
-if args.mode == "full" or args.mode == "sim" or args.mode == "post":
+    # transient simulations
     print("#----------------------------------------------------------------------")
-    print("# Running Simulations")
+    print("Running transient simulations.")
     print("#----------------------------------------------------------------------")
-    # run sims
-    processes = []
-    #assert len(output_file_names) == len(cap_list)*len(freq_list)
-    if args.mode != "post":
-       if args.simtype == "postPEX" or args.pex == "True":
-          run_dir = directories["genDir"] + "tools/"
-          vref = user_specs["vin"]
-          iload = user_specs["imax"]
-          odir = os.path.abspath(args.outputDir)
-          for s in range (len(sim)):
-              p = sp.Popen(sim[s],cwd=postPEX_sim_dir,shell=True)
-              processes.append(p)
+    run_simulations(
+        parameters={
+            'model_file': os.path.join(pdk_path, 'libs.tech', 'ngspice', 'sky130.lib.spice'),
+            'model_corner': 'tt',
+            'vref': vref,
+            'max_load': max_load,
+            'pin_ordering': head if is_pex else prePEX_SPICE_HEADER_GLOBAL_V,
+            'arr_size': arrSize,
+            'freq': freq_list,
+            'cap': cap_list
+        },
+        platform=args.platform,
+        runs_dir=os.path.join(postPEX_sim_dir if is_pex else prePEX_sim_dir, 'runs', 'tran'),
+        template_path=os.path.join('templates', f"ldo_tran_{jsonConfig['simTool']}.sp"),
+        sim_tool=jsonConfig['simTool'],
+        netlist_path=os.path.join(postPEX_sim_dir if is_pex else prePEX_sim_dir, 'ldo_sim.spice')
+    )
 
-          for p in processes:
-              p.wait()
+    # load change simulations
+    print("#----------------------------------------------------------------------")
+    print("Running load change simulations.")
+    print("#----------------------------------------------------------------------")
+    run_simulations(
+        parameters={
+            'model_file': os.path.join(pdk_path, 'libs.tech', 'ngspice', 'sky130.lib.spice'),
+            'model_corner': 'tt',
+            'vref': vref,
+            'max_load': max_load,
+            'pin_ordering': head if is_pex else prePEX_SPICE_HEADER_GLOBAL_V,
+            'arr_size': arrSize
+        },
+        platform=args.platform,
+        runs_dir=os.path.join(postPEX_sim_dir if is_pex else prePEX_sim_dir, 'runs', 'load_change'),
+        template_path=os.path.join('templates', f"ldo_load_change_{jsonConfig['simTool']}.sp"),
+        sim_tool=jsonConfig['simTool'],
+        netlist_path=os.path.join(postPEX_sim_dir if is_pex else prePEX_sim_dir, 'ldo_sim.spice')
+    )
 
-          p = sp.Popen(["python3","processing.py","--file_path",postPEX_sim_dir,"--vref",str(vref),"--iload",str(iload),"--odir",odir, "--figs", "True", "--simType", "postPEX"],cwd=run_dir)
-          p.wait()
-
-       if args.simtype == "prePEX":
-          run_dir = directories["genDir"] + "tools/"
-          vref = user_specs["vin"]
-          iload = user_specs["imax"]
-          odir = os.path.abspath(args.outputDir)
-          for s in range (len(sim)):
-              p = sp.Popen(sim[s],cwd=prePEX_sim_dir,shell=True)
-              processes.append(p)
-
-          for p in processes:
-              p.wait()
-
-          p = sp.Popen(["python3","processing.py","--file_path",prePEX_sim_dir,"--vref",str(vref),"--iload",str(iload),"--odir",odir, "--figs", "True", "--simType", "prePEX"],cwd=run_dir)
-          p.wait()
-       """
-          for s in range (len(sim)):
-              p = sp.Popen(sim[s],cwd=prePEX_sim_dir,shell=True)
-              processes.append(p)
-
-          for p in processes:
-              p.wait()
-
-          # perform post processing on simulation results and save figures to work dir
-          raw_files = [(prePEX_sim_dir + ofile) for ofile in output_file_names]
-          raw_to_csv(raw_files,user_specs["vin"],args.outputDir)
-          figures = list()
-          figure_names = list()
-          figure_names.extend(["VREG_output", "VDIF", "VREG_ripple"])
-          figures.extend(fig_VREG_results(raw_files, user_specs["vin"]))
-          figure_names.append("cmp_out")
-          figures.append(fig_comparator_results(raw_files))
-          figure_names.append("active_switches")
-          figures.append(fig_controller_results(raw_files))
-          # save results to png files
-          current_freq_results = args.outputDir + "/" + "output_plots"
-          try:
-             os.mkdir(current_freq_results)
-          except OSError as error:
-              if args.mode != "post":
-                 print(error)
-                 exit(1)
-          assert len(figures) == len(figure_names)
-          for i, figure in enumerate(figures):
-              figure.savefig(current_freq_results + "/" + figure_names[i] + ".png")
-              fig_dc_results(prePEX_sim_dir + "/isweep.raw").savefig(args.outputDir + "/dc.png")
-              max_load = user_specs["imax"]
-              load = max_load*1000
-              fig_load_change_results(prePEX_sim_dir + "/" + str(load) + "mA_output_load_change.raw",load).savefig(args.outputDir + "/load_change.png")
-              """
+    # power array simulations
+    print("#----------------------------------------------------------------------")
+    print("Running power array simulations.")
+    print("#----------------------------------------------------------------------")
+    run_simulations(
+        parameters={
+            'model_file': os.path.join(pdk_path, 'libs.tech', 'ngspice', 'sky130.lib.spice'),
+            'model_corner': 'tt',
+            'vref': vref
+        },
+        platform=args.platform,
+        runs_dir=os.path.join(postPEX_sim_dir if is_pex else prePEX_sim_dir, 'runs', 'pwarrs'),
+        template_path=os.path.join('templates', f"pwrarr_sweep_{jsonConfig['simTool']}.sp"),
+        sim_tool=jsonConfig['simTool'],
+        netlist_path=os.path.join(postPEX_sim_dir if is_pex else prePEX_sim_dir, 'power_array.spice')
+    )

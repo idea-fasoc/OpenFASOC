@@ -7,7 +7,7 @@ import subprocess as sp
 import sys
 import re
 
-from readparamgen import args, check_search_done, designName
+from readparamgen import args, check_search_done, designName, Tmin, Tmax, Tstep
 from simulation import generate_runs
 
 # TODO: Find a better way to import modules from parent directory
@@ -26,12 +26,18 @@ objDir = flowDir + "objects/" + args.platform + "/tempsense/"
 # ------------------------------------------------------------------------------
 # Clean the workspace
 # ------------------------------------------------------------------------------
-print("#----------------------------------------------------------------------")
-print("# Cleaning the workspace...")
-print("#----------------------------------------------------------------------")
+
+print("#----------------------------------------------------------------------", flush=True)
+print("# Cleaning the workspace...", flush=True)
+print("#----------------------------------------------------------------------", flush=True)
+
 if args.clean:
-    p = sp.Popen(["make", "clean_all"], cwd=genDir)
+    cmd = ["make", "clean_all"]
+    p = sp.Popen(cmd, cwd=genDir)
     p.wait()
+    if p.returncode != 0:
+        print("[ERROR]: Command '" + ' '.join(cmd) + "' exited with non-zero return code: " + str(p.returncode))
+        sys.exit(p.returncode)
 
 p = sp.Popen(["git", "checkout", platformDir + "cdl/sky130_fd_sc_hd.spice"])
 p.wait()
@@ -67,7 +73,7 @@ else:
     if not os.path.isdir(sky130A_path):
         os.mkdir(sky130A_path)
     try:
-        sp.Popen(
+    	p = sp.Popen(
             [
                 "sed -i 's/set PDKPATH \".*/set PDKPATH $env(PDK_ROOT)\/sky130A/' $PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
             ],
@@ -146,37 +152,43 @@ print("#----------------------------------------------------------------------")
 print()
 if args.mode == "verilog":
     print("Exiting tool....")
-    exit()
+    sys.exit(0)
 
 print("#----------------------------------------------------------------------")
 print("# Run Synthesis and APR")
 print("#----------------------------------------------------------------------")
 
-p = sp.Popen(["make", "finish"], cwd=flowDir)
+cmd = ["make", "finish"]
+p = sp.Popen(cmd, cwd=flowDir)
 p.wait()
-if p.returncode:
-    print("[Error] Place and Route failed. Refer to the log file")
-    exit(1)
+if p.returncode != 0:
+    print("[ERROR]: Command '" + ' '.join(cmd) +\
+     "' exited with non-zero return code: " + str(p.returncode))
+    sys.exit(p.returncode)
 
 print("#----------------------------------------------------------------------")
 print("# Place and Route finished")
 print("#----------------------------------------------------------------------")
 
-p = sp.Popen(["make", "magic_drc"], cwd=flowDir)
+cmd = ["make", "magic_drc"]
+p = sp.Popen(cmd, cwd=flowDir)
 p.wait()
-if p.returncode:
-    print("[Error] DRC failed. Refer to the report")
-    exit(1)
+if p.returncode != 0:
+    print("[ERROR]: Command '" + ' '.join(cmd) + \
+     "' exited with non-zero return code: " + str(p.returncode))
+    sys.exit(p.returncode)
 
 print("#----------------------------------------------------------------------")
 print("# DRC finished")
 print("#----------------------------------------------------------------------")
 
-p = sp.Popen(["make", "netgen_lvs"], cwd=flowDir)
+cmd = ["make", "netgen_lvs"]
+p = sp.Popen(cmd, cwd=flowDir)
 p.wait()
-if p.returncode:
-    print("[Error] LVS failed. Refer to the report")
-    exit(1)
+if p.returncode != 0:
+    print("[ERROR]: Command '" + ' '.join(cmd) + \
+     "' exited with non-zero return code: " + str(p.returncode))
+    sys.exit(p.returncode)
 
 print("#----------------------------------------------------------------------")
 print("# LVS finished")
@@ -191,12 +203,6 @@ if not args.outputDir.startswith("/"):
 else:
     os.mkdir(args.outputDir)
     outputDir = args.outputDir
-
-#  print("genDir + args.outputDir: {}".format(genDir + args.outputDir))
-#  print("flowDir: {}".format(flowDir))
-#  print("args.platform: {}".format(args.platform))
-#  print("designName: {}".format(designName))
-#  subprocess.run(["ls", "-l", flowDir, "results/", args.platform, "/tempsense"])
 
 shutil.copyfile(
     flowDir + "results/" + args.platform + "/tempsense/6_final.gds",
@@ -231,83 +237,41 @@ shutil.copyfile(
     outputDir + "/6_final_lvs.rpt",
 )
 
-
 print("#----------------------------------------------------------------------")
 print("# Macro Generated")
 print("#----------------------------------------------------------------------")
 print()
 
-
-print("#----------------------------------------------------------------------")
-print("# Generating spice netlists for the macro")
-print("#----------------------------------------------------------------------")
-
-stage_var = [int(ninv)]
-header_var = [int(nhead)]
-
-# make a temp list, TODO: get from JSON config
-temp_start = -20
-temp_stop = 100
-temp_step = 20
-temp_points = int((temp_stop - temp_start) / temp_step)
-temp_list = []
-for i in range(0, temp_points + 1):
-    temp_list.append(temp_start + i * temp_step)
-
-# run PEX and/or prePEX simulations based on the command line flags
-if args.prepex:
-    prepexDir = generate_runs(
-        genDir,
-        designName,
-        header_var,
-        stage_var,
-        temp_list,
-        jsonConfig,
-        args.platform,
-        args.mode,
-        pdk,
-        spiceDir=args.outputDir,
-        prePEX=True,
-    )
-    if args.mode == "full":
-        if os.path.isfile(prepexDir + "all_result"):
-            shutil.copyfile(
-                prepexDir + "all_result", genDir + args.outputDir + "/prePEX_sim_result"
-            )
-        else:
-            print(prepexDir + "prePEX all_result file is not generated successfully")
-            sys.exit(1)
-
-if args.pex:
-    pexDir = generate_runs(
-        genDir,
-        designName,
-        header_var,
-        stage_var,
-        temp_list,
-        jsonConfig,
-        args.platform,
-        args.mode,
-        pdk,
-        spiceDir=args.outputDir,
-        prePEX=False,
-    )
-
-    if args.mode == "full":
-        if os.path.isfile(pexDir + "all_result"):
-            shutil.copyfile(
-                pexDir + "all_result", genDir + args.outputDir + "/PEX_sim_result"
-            )
-        else:
-            print(pexDir + "PEX all_result file is not generated successfully")
-            sys.exit(1)
-
-
 if args.mode == "full":
     print("#----------------------------------------------------------------------")
-    print("# Simulation output Generated")
+    print("# Running simulations.")
     print("#----------------------------------------------------------------------")
 
+    stage_var = [int(ninv)]
+    header_var = [int(nhead)]
+
+    # run PEX and/or prePEX simulations based on the command line flags
+    sim_output_dir = generate_runs(
+        genDir=genDir,
+        designName=designName,
+        headerList=header_var,
+        invList=stage_var,
+        tempStart=Tmin,
+        tempStop=Tmax,
+        tempStep=Tstep,
+        jsonConfig=jsonConfig,
+        platform=args.platform,
+        pdk=pdk,
+        spiceDir=args.outputDir,
+        prePEX=args.prepex,
+    )
+    if os.path.isfile(sim_output_dir + "all_result"):
+        shutil.copyfile(
+            sim_output_dir + "all_result", genDir + args.outputDir + f"/{'prePEX' if args.prepex else 'PEX'}_sim_result"
+        )
+    else:
+        print(sim_output_dir + f"{'prePEX' if args.prepex else 'PEX'} all_result file is not generated successfully")
+        sys.exit(1)
 
 print("Exiting tool....")
-exit()
+sys.exit(0)
