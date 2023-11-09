@@ -55,7 +55,7 @@ Below are the tool requirements along with their currently support versions that
       - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
-  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.35+0)
+  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.35+7)
 
 
   5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_10905)
