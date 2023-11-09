@@ -67,11 +67,6 @@ class Envir(gym.Env):
         self.fixed_goal_idx = -1
         self.num_os = len(list(self.specs.values())[0])
 
-        # [10, 0, 0, 0, 0, 0, 0, 0, 10, 0, 5, 0, 10, 0, 0, 0, 0, 10]
-        #[10, 4, 10,  0, 0, 0, 10, 0, 10,  0, 10, 0,  0, 0, 0, 0, 0, 0]
-        #[9.  2.  6.  6. 2. 4. 9.  1. 2.   3. 10. 0.3 6. 3. 12. 12. 2. 1.]
-        #[9.  1.  6.  6. 2. 4. 9.  1. 6.   3. 10. 0.3 6. 3. 12. 12. 2. 1. ]
-
         # param array
         params = {
                   "diffpair_params0" : [1, 8, 1],       
@@ -95,11 +90,6 @@ class Envir(gym.Env):
         for value in params.values():
             param_vec = np.arange(value[0], value[1], value[2])
             self.params.append(param_vec)
-
-        #params = data
-        #self.params = data
-        #self.params_id = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18']
-
 
         #initialize sim environment
         self.action_meaning = [-1,0,1]
@@ -152,8 +142,6 @@ class Envir(gym.Env):
         self.specs_ideal_norm = self.lookup(self.specs_ideal, self.global_g)
 
         #initialize current parameters
-        #self.cur_params_idx = np.array([3.0, 0.3, 2.0, 6.0, 2.0, 4.0, 3.0,1.0,2.0,3.0,4.0,0.3,6.0,3.0, 12.0, 12.0, 2.0, 1.0])
-        # self.cur_params_idx = np.array([10, 4, 10, 10, 10, 10, 0, 0, 0, 0])
         self.cur_params_idx = np.array([1, 5, 3, 5, 2, 1, 6, 0, 5, 5, 1, 1, 1, 0])
         # param array
         self.cur_specs = self.update(self.cur_params_idx)
@@ -167,9 +155,8 @@ class Envir(gym.Env):
     def step(self, action):
         """
         :param action: is vector with elements between 0 and 1 mapped to the index of the corresponding parameter
-        :return:
+        :return:cur observations & reward
         """
-
         #Take action that RL agent returns to change current params
         prevreward = self.reward(self.cur_specs, self.specs_ideal)
         action = list(np.reshape(np.array(action),(np.array(action).shape[0],)))
