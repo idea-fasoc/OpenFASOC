@@ -7,9 +7,12 @@ from common.check_gen_files import check_gen_files
 
 sys.stdout.flush()
 
-if (len(sys.argv) > 1) and (sys.argv[1] == "sky130hd_cryo"):
-    drc_filename = "flow/reports/sky130hd/cryo/6_final_drc.rpt"
-    lvs_filename = "flow/reports/sky130hd/cyro/6_final_lvs.rpt"
+dir_path = r'flow/reports'
+lib = os.listdir(dir_path)
+
+if (len(sys.argv) > 1) and (sys.argv[1] == str(lib[0])):
+    drc_filename = "flow/reports/" + sys.argv[1] + "/cryo/6_final_drc.rpt"
+    lvs_filename = "flow/reports/" + sys.argv[1] + "/cryo/6_final_lvs.rpt"
 elif (len(sys.argv) == 1) or (sys.argv[1] == "sky130hvl_ldo"):
     drc_filename = "work/6_final_drc.rpt"
     lvs_filename = "work/6_final_lvs.rpt"
@@ -17,8 +20,7 @@ else:
     drc_filename = "work/"+sys.argv[1]+"/6_final_drc.rpt"
     lvs_filename = "work/"+sys.argv[1]+"/6_final_lvs.rpt"
 
-# using full because sims disabled for LDO for now
-if (len(sys.argv) > 1) and ((sys.argv[1] == "sky130hvl_ldo") or (sys.argv[1] == "sky130hvl_ldo_full")):
+if (len(sys.argv) > 1) and (sys.argv[1] == "sky130hvl_ldo"):
     with open(drc_filename, 'r') as f1, open("../../../.github/scripts/expected_drc_reports/expected_ldo_drc.rpt", 'r') as f2:
         content1 = f1.readlines()
         content2 = f2.readlines()
@@ -32,7 +34,7 @@ else:
     print("DRC is clean!")
 
 # cryo LVS check 
-if (len(sys.argv) > 1) and (sys.argv[1] == "sky130hd_cryo"):
+if (len(sys.argv) > 1) and (sys.argv[1] == str(lib[0])):
     lvs_line = subprocess.check_output(["tail", "-1", lvs_filename]).decode(
         sys.stdout.encoding
     )
