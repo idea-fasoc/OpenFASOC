@@ -19,7 +19,7 @@ time
 git
 bison
 flex
-libX11-devel
-libX11
-libXaw-devel
-readline-devel
+libx11-dev
+libx11-6
+libxaw7-dev
+libreadline6-dev
