@@ -48,7 +48,7 @@ def isfloat(num: str):
 	except ValueError:
 		return False
 
-@pytest.fixture(autouse=False)
+@pytest.fixture(autouse=True)
 def run_before_and_after_tests():
 	"""Cleans the runs directory before and after tests."""
 	if os.path.exists(RUNS_DIR):
