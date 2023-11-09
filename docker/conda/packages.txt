@@ -17,3 +17,9 @@ libz-dev
 build-essential
 time
 git
+bison
+flex
+libX11-devel
+libX11
+libXaw-devel
+readline-devel
