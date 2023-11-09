@@ -29,3 +29,7 @@ RUN dpkg -i klayout_0.28.12-1_amd64.deb
 RUN strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5
 
 COPY ./scripts /scripts
+
+RUN git clone http://git.code.sf.net/p/ngspice/ngspice && \
+    cd ngspice && \
+    ./compile_linux.sh
