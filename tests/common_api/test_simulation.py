@@ -10,7 +10,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'openfasoc',
 
 from common.simulation import run_simulations
 
-TEST_SIMULATION_DIR = os.path.join(os.path.dirname(__file__), 'work')
+TEST_SIMULATION_DIR = os.path.join(os.path.dirname(__file__), 'test-simulation')
 EXPECTED_CONFIGS_DIR = os.path.join(TEST_SIMULATION_DIR, 'expected')
 RUNS_DIR = os.path.join(TEST_SIMULATION_DIR, 'runs')
 
