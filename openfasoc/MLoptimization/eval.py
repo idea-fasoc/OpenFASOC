@@ -5,7 +5,8 @@ import ray
 import ray.tune as tune
 from ray.rllib.algorithms.ppo import PPO
 from run_training import Envir
-from ../generators/gdsfactory-gen/tapeout_and_RL/sky130_nist_tapeout import single_build_and_simulation
+from sky130_nist_tapeout import single_build_and_simulation
+sky130_nist_tapeout.path.append('../generators/gdsfactory-gen/tapeout_and_RL')
 import pickle
 import yaml
 from pathlib import Path
