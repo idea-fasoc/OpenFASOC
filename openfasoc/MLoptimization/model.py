@@ -16,14 +16,8 @@ ray.init(num_cpus=33, num_gpus=0,include_dashboard=True, ignore_reinit_error=Tru
 
 #configures training of the agent with associated hyperparameters
 config_train = {
-            #"sample_batch_size": 200,
             "env": Envir,
             "train_batch_size": 1000,
-            #"sgd_minibatch_size": 1200,
-            #"num_sgd_iter": 3,
-            #"lr":1e-3,
-            #"vf_loss_coeff": 0.5,
-            #"rollout_fragment_length":  63,
             "model":{"fcnet_hiddens": [64, 64]},
             "num_workers": 32,
             "env_config":{"generalize":True, "run_valid":False, "horizon":20},
@@ -38,4 +32,4 @@ trials = tune.run(
     checkpoint_freq=1,
     config=config_train,
 )
-#
+
