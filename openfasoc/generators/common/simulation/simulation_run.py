@@ -15,6 +15,7 @@ See individual functions for further documentation.
 from os import path
 from common.simulation.utils import _print_progress
 import time
+import json
 import threading
 import subprocess
 
@@ -66,7 +67,10 @@ def _run_simulations(
 
 		_print_progress(num_configs, simulation_state['completed_sims'], simulation_state['failed_sims'], start_time)
 		time.sleep(1)
-
+		
+	# to dump the simulation state (completed, failed, ongoing) to an output file for later use
+	json.dump(simulation_state, open("work/sim_state_file.txt",'w'))
+	
 	_print_progress(num_configs, simulation_state['completed_sims'], simulation_state['failed_sims'], start_time, end='\n')
 
 def _run_config(
