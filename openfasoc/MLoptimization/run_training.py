@@ -46,20 +46,13 @@ class Envir(gym.Env):
         #self.result = result
         self.epi_steps = 0
 
-        specs = {}
-        print("num valid isssssssssssssssssssssss:" + str(self.horizon))
-        if(self.valid):
-            print("hahahahahahaahahahahahahahahahaahah")
         # design specs
         if self.generalize == True:
             if self.valid == False:
                 specs = yaml.safe_load(Path('train1.yaml').read_text())
             else:
                 specs = inputspec
-                print(inputspec)
-                print("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-
-
+                
         self.specs = specs
 
         self.specs_ideal = []
