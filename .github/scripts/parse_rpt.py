@@ -100,7 +100,10 @@ else:
             print("LVS is clean!")
 
 ## Result File Check
-json_filename = "test.json"
+if _generator_is['sky130hvl_ldo']:
+   json_filename = "spec.json"
+else:
+   json_filename = "test.json"
 
 if check_gen_files(json_filename, _generator_is, cryo_library):
         print("Flow check is clean!")
