@@ -33,6 +33,7 @@ from common.check_gen_files import check_gen_files
 
 sys.stdout.flush()
 
+cryo_library = ""
 _generator_is = {
     'sky130hvl_ldo': 0, 
     'sky130hd_temp': 0, 
