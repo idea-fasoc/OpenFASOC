@@ -33,7 +33,7 @@ with open(lvs_filename) as f:
     else:
         print("LVS is clean!")
 
-if len(sys.argv) > 1 and sys.argv[1] == "sky130hd_temp_full":
+if len(sys.argv) == 1 and sys.argv[1] == "sky130hd_temp_full":
     result_filename = "work/prePEX_sim_result" # might remove from check or need to implement different logic later if sim outputs change due to downstream changes
     sim_state_filename = "work/sim_state_file.txt"
 
@@ -59,6 +59,6 @@ if len(sys.argv) > 1 and sys.argv[1] == "sky130hd_temp_full":
         if os.path.exists(log_file) and os.path.exists(log_file) and os.path.exists(spice_file):
             pass
         else:
-            raise ValueError("Simulations failed: required of run folders do not exist!")
+            raise ValueError("Simulations failed: required files do not exist in sim run folders!")
     
     print("Simulations are clean!")
