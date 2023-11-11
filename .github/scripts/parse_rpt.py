@@ -10,10 +10,7 @@ sys.stdout.flush()
 dir_path = r'flow/reports'
 lib = os.listdir(dir_path)
 
-if (len(sys.argv) > 1) and (sys.argv[1] == str(lib[0])):
-    drc_filename = "flow/reports/" + sys.argv[1] + "/cryo/6_final_drc.rpt"
-    lvs_filename = "flow/reports/" + sys.argv[1] + "/cryo/6_final_lvs.rpt"
-elif (len(sys.argv) == 1) or (sys.argv[1] == "sky130hvl_ldo"):
+if (len(sys.argv) == 1) or (sys.argv[1] == "sky130hvl_ldo"):
     drc_filename = "work/6_final_drc.rpt"
     lvs_filename = "work/6_final_lvs.rpt"
 else:
