@@ -68,7 +68,7 @@ def _run_simulations(
 
 		_print_progress(num_configs, simulation_state['completed_sims'], simulation_state['failed_sims'], start_time)
 		time.sleep(1)
-	
+
 	_print_progress(num_configs, simulation_state['completed_sims'], simulation_state['failed_sims'], start_time, end='\n')
 	return simulation_state
 
