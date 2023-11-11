@@ -46,7 +46,7 @@ For more info on getting-started, please refer to ["Getting Started" section ](h
 
 Below are the tool requirements along with their currently support versions that are updated regularly upon testing againsts the generators.
 
-  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.445)
+  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.446)
 
   2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.262)
 
