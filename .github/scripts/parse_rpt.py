@@ -57,7 +57,7 @@ if _generator_is['sky130XX_cryo']:
 if _generator_is['sky130hd_temp'] or _generator_is['sky130hvl_ldo']:
     drc_filename = "work/6_final_drc.rpt"
     lvs_filename = "work/6_final_lvs.rpt"
-elif sys.argv[1] == cryo_library:
+elif len(sys.argv) > 1 and sys.argv[1] == cryo_library:
     drc_filename = "flow/reports/" + sys.argv[1] + "/cryo/6_final_drc.rpt"
     lvs_filename = "flow/reports/" + sys.argv[1] + "/cryo/6_final_lvs.rpt"
 
@@ -79,7 +79,7 @@ else:
 
 
 ##  LVS Check
-if sys.argv[1] == cryo_library:    
+if len(sys.argv) > 1 and sys.argv[1] == cryo_library:    
     lvs_line = subprocess.check_output(["tail", "-1", lvs_filename]).decode(
         sys.stdout.encoding
     )
