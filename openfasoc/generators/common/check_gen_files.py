@@ -1,7 +1,7 @@
 import json
 import os
 
-def check_gen_files(json_filename, is_tempsense) -> int:
+def check_gen_files(json_filename, _generator_is, cryo_library) -> int:
     with open(json_filename) as file:
         data = json.load(file)
     
@@ -9,7 +9,10 @@ def check_gen_files(json_filename, is_tempsense) -> int:
 
     module_name = data.get("module_name", "default")
 
-    work_dir = "./work/"
+    if _generator_is['sky130XX_cryo']:
+        work_dir = "./work/" + cryo_library + "/"
+    else:
+        work_dir = "./work/"
 
     if (os.path.exists(work_dir) == 0):
         raise ValueError("work directory does not exist!")
@@ -33,7 +36,7 @@ def check_gen_files(json_filename, is_tempsense) -> int:
                     if (os.path.exists(file) == 0):
                         raise ValueError(file + " does not exist!")
     # print("Found necessary work result files!")
-    if (is_tempsense):
+    if _generator_is['sky130hd_temp']:
         for file in ("error_within_x.csv", "golden_error_opt.csv", "search_result.csv"):
             if os.path.exists(file) == 0:
                 raise ValueError(file + " does not exist!")
