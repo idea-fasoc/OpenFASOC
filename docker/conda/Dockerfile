@@ -17,7 +17,6 @@ RUN conda install python=3.10 \
                     magic \
                     netgen \
                     openroad \
-                    ngspice \ 
                     -c litex-hub \
                     -c conda-forge \
                     -c anaconda \
