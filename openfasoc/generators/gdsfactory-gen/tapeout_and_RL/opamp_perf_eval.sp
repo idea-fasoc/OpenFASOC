@@ -34,8 +34,8 @@ Ibiaso  VDD biason   {bo}
 **@@stp .include /home/rw/work/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
 
 ** GCP machine
-.lib /usr/bin/miniconda3/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
-*@@stp .include /usr/bin/miniconda3/share/pdk/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
+.lib @@PDK_ROOT/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+*@@stp .include @@PDK_ROOT/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
 
 
 ** Import cryo libs (these are stored in the sky130A folder)

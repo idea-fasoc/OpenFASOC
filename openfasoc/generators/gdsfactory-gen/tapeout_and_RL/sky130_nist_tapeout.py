@@ -39,9 +39,12 @@ from glayout.pdk.util.opamp_array_create import write_opamp_matrix
 
 global _GET_PARAM_SET_LENGTH_
 global _TAKE_OUTPUT_AT_SECOND_STAGE_
+global PDK_ROOT
+global __NO_LVT_GLOBAL_
+__NO_LVT_GLOBAL_ = False
 _GET_PARAM_SET_LENGTH_ = False
 _TAKE_OUTPUT_AT_SECOND_STAGE_ = False
-
+PDK_ROOT = "/usr/bin/miniconda3/share/pdk/"
 
 # ====Build Opamp====
 
@@ -442,7 +445,7 @@ def process_netlist_subckt(netlist: Union[str,Path], sim_model: Literal["normal 
 	global _TAKE_OUTPUT_AT_SECOND_STAGE_
 	netlist = Path(netlist).resolve()
 	if not netlist.is_file():
-		raise ValueError("netlist must be file")
+		raise ValueError("netlist is not a valid file")
 	hints = [".subckt","output","plus","minus","vdd","gnd","commonsourceibias","outputibias"]
 	subckt_lines = list()
 	with open(netlist, "r") as spice_net:
@@ -472,12 +475,18 @@ def process_netlist_subckt(netlist: Union[str,Path], sim_model: Literal["normal 
 		spice_net.writelines(subckt_lines)
 
 def process_spice_testbench(testbench: Union[str,Path], temperature_info: tuple[int,str]=(25,"normal model")):
+	global PDK_ROOT
+	PDK_ROOT = Path(PDK_ROOT).resolve()
 	testbench = Path(testbench).resolve()
 	if not testbench.is_file():
 		raise ValueError("testbench must be file")
+	if not PDK_ROOT.is_dir():
+		raise ValueError("PDK_ROOT is not a valid directory")
+	PDK_ROOT = str(PDK_ROOT)
 	with open(testbench, "r") as spice_file:
 		spicetb = spice_file.read()
 		spicetb = spicetb.replace('{@@TEMP}', str(int(temperature_info[0])))
+		spicetb = spicetb.replace("@@PDK_ROOT", PDK_ROOT)
 		if temperature_info[1] == "cryo model":
 			spicetb = spicetb.replace("*@@cryo ","")
 		else:
@@ -488,6 +497,7 @@ def process_spice_testbench(testbench: Union[str,Path], temperature_info: tuple[
 def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, output_dir: Optional[Union[int,str,Path]] = None):
 	# pass pdk as global var to avoid pickling issues
 	global pdk
+	global PDK_ROOT
 	# generate layout
 	destination_gds_copy = save_gds_dir / (str(index)+".gds")
 	sky130pdk = pdk
@@ -502,7 +512,14 @@ def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: t
 			tmp_gds_path = Path(opamp_v.write_gds(gdsdir=tmpdirname)).resolve()
 			if tmp_gds_path.is_file():
 				destination_gds_copy.write_bytes(tmp_gds_path.read_bytes())
-			copyfile("extract.bash",str(tmpdirname)+"/extract.bash")
+			extractbash_template=str()
+			#import pdb; pdb.set_trace()
+			with open("extract.bash.template","r") as extraction_script:
+				extractbash_template = extraction_script.read()
+				extractbash_template = extractbash_template.replace("@@PDK_ROOT",PDK_ROOT)
+			with open(str(tmpdirname)+"/extract.bash","w") as extraction_script:
+				extraction_script.write(extractbash_template)
+			#copyfile("extract.bash",str(tmpdirname)+"/extract.bash")
 			copyfile("opamp_perf_eval.sp",str(tmpdirname)+"/opamp_perf_eval.sp")
 			copytree("sky130A",str(tmpdirname)+"/sky130A")
 			# extract layout
@@ -1029,6 +1046,7 @@ if __name__ == "__main__":
 	start_watch = time.time()
 
 	parser = argparse.ArgumentParser(description="sky130 nist tapeout sample, RL generation, and statistics utility.")
+	
 	subparsers = parser.add_subparsers(title="mode", required=True, dest="mode")
 
 	# Subparser for extract_stats mode
@@ -1080,10 +1098,19 @@ if __name__ == "__main__":
 	create_opamp_matrix_parser.add_argument("--indices", type=int, nargs="+", help="list of int indices to pick from the opamp param.npy and add to the matrix (default: the entire params list)")
 	create_opamp_matrix_parser.add_argument("--output_dir", type=Path, default="./opampmatrix", help="Directory for output files (default: ./opampmatrix)")
 
+	for prsr in [get_training_data_parser,gen_opamp_parser,test,create_opamp_matrix_parser]:
+		prsr.add_argument("--no_lvt",action="store_true",help="do not place any low threshold voltage transistors.")
+		prsr.add_argument("--PDK_ROOT",type=Path,default="/usr/bin/miniconda3/share/pdk/",help="path to the sky130 PDK library")
+	
 	args = parser.parse_args()
 
-	global __NO_LVT_GLOBAL_
-	__NO_LVT_GLOBAL_ = True
+	if args.mode in ["get_training_data","test","gen_opamps","create_opamp_matrix"]:
+		__NO_LVT_GLOBAL_ = args.no_lvt
+		PDK_ROOT = Path(args.PDK_ROOT).resolve()
+		if not(PDK_ROOT.is_dir()):
+			raise ValueError("PDK_ROOT is not a valid directory\n")
+		PDK_ROOT = str(PDK_ROOT)
+	
 	# Simulation Temperature information
 	if vars(args).get("temp") is not None:
 		temperature_info = [args.temp, None]
@@ -1138,29 +1165,17 @@ if __name__ == "__main__":
 	elif args.mode == "test":
 		if args.output_second_stage:
 			_TAKE_OUTPUT_AT_SECOND_STAGE_ = True
-#		params = {
-#			"half_diffpair_params": (6, 1, 4),
-#			"diffpair_bias": (6, 2, 4),
-#			"half_common_source_params": (7.2, 1, 10, 3),
-#			"half_common_source_bias": (8, 2, 12, 3),
-#			"output_stage_params": (5, 1, 16),
-#			"output_stage_bias": (6, 2, 4),
-#			"mim_cap_size": (12, 12),
-#			"mim_cap_rows": 3,
-#			"rmult": 2
-#		}
 		params = {
-			"half_diffpair_params": (7, 2, 6),
+			"half_diffpair_params": (6, 1, 4),
 			"diffpair_bias": (6, 2, 4),
-			"half_common_source_params": (7, 1, 17, 3),
-			"half_common_source_bias": (6, 2, 6, 3),
+			"half_common_source_params": (7.2, 1, 10, 3),
+			"half_common_source_bias": (8, 2, 12, 3),
 			"output_stage_params": (5, 1, 16),
 			"output_stage_bias": (6, 2, 4),
 			"mim_cap_size": (12, 12),
 			"mim_cap_rows": 3,
 			"rmult": 2
 		}
-		__NO_LVT_GLOBAL_ = True
 		results = single_build_and_simulation(opamp_parameters_serializer(**params), temperature_info[0], args.output_dir, cload=args.cload, noparasitics=args.noparasitics)
 		print(results)
 
