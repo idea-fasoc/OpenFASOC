@@ -1,3 +1,22 @@
+"""
+This script is used to check for the presence of the required non-report files that each generator creates. It gets
+the module_name (str) from the .json file present in the generator top-level folder.
+
+Args:
+    json_filename (str): String containing the name of the .json filename for each generator
+    _generator_is (dict): Dictionary containing key-value pairs that signify which generator's flow results are being checked
+    cryo_library (str): String containing which cryo-gen library (sky130hs, sky130hd, sky130hvl) is being checked for
+Uses: 
+    work_dir (str): String containing the directory in which to check files
+    data (str): String containing data from the .json file
+    module_name (str): String containing the name of module that the check is being done for (eg. tempsenseInst_error)
+    extension_file_path (str): Contains the extensions of the files which each generator produces for the flows
+Returns: 
+    1: if all checks are successful
+Raises:
+    ValueError: If any of the various checks go wrong (.csv file checks for temp-sense, flow generated files for all generators)
+"""
+
 import json
 import os
 
