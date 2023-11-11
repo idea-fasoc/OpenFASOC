@@ -15,7 +15,6 @@ See individual functions for further documentation.
 from os import path
 from common.simulation.utils import _print_progress
 import time
-import json
 import threading
 import subprocess
 
