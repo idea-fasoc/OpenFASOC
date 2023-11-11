@@ -1,4 +1,4 @@
-magic==8.3.445_0_g8445f3e
+magic==8.3.445_3_g7db77d4
 netgen==1.5.262_0_gc1ed4ce
 open_pdks.sky130a==1.0.286_0_g52af776
 openroad==2.0_10905_ge89829335
