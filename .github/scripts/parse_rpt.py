@@ -14,7 +14,7 @@ if (len(sys.argv) == 1) or (sys.argv[1] == "sky130hvl_ldo"):
     # temp-sense-gen and ldo-gen
     drc_filename = "work/6_final_drc.rpt"
     lvs_filename = "work/6_final_lvs.rpt"
-elif (len(sys.argv) > 1) and (sys.argv[1] == str(lib[0]): 
+elif (len(sys.argv) > 1) and (sys.argv[1] == str(lib[0])):
     # cryo
     drc_filename = "flow/reports/" + sys.argv[1] + "/cryo/6_final_drc.rpt"
     lvs_filename = "flow/reports/" + sys.argv[1] + "/cryo/6_final_lvs.rpt"
