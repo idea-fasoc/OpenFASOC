@@ -9,7 +9,7 @@ from glayout.pdk.util.port_utils import rename_ports_by_orientation, add_ports_p
 from pydantic import validate_arguments
 from glayout.routing.straight_route import straight_route
 from decimal import ROUND_UP, Decimal
-
+from glayout.spice.netlist import Netlist
 
 @validate_arguments
 def __get_mimcap_layerconstruction_info(pdk: MappedPDK) -> tuple[str,str]:
@@ -22,6 +22,17 @@ def __get_mimcap_layerconstruction_info(pdk: MappedPDK) -> tuple[str,str]:
 	pdk.activate()
 	return capmettop, capmetbottom
 
+class __mimcap_netlist(Netlist):
+	nodes = ['V1', 'V2']
+
+	def __init__(self, pdk: MappedPDK, size: tuple[float, float] = (5, 5)):
+		super().__init__(pdk, 'MIMCap', {}, [])
+
+		self.source_netlist = f"""
+.subckt MIMCAP V1 V2
+C1 V1 V2 ${pdk.models['mimcap']} l={size[0]} w={size[1]}
+.ends MIMCAP
+		"""
 
 @cell
 def mimcap(
@@ -37,7 +48,7 @@ def mimcap(
     bottom_met_...all edges, this is the metal below capmet
     """
     size = pdk.snap_to_2xgrid(size)
-    # error checking and 
+    # error checking and
     capmettop, capmetbottom = __get_mimcap_layerconstruction_info(pdk)
     # create top component
     mim_cap = Component()
@@ -50,8 +61,13 @@ def mimcap(
     # flatten and create ports
     mim_cap = add_ports_perimeter(mim_cap, layer=pdk.get_glayer(capmetbottom), prefix="bottom_met_")
     mim_cap.add_ports(top_met_ref.get_ports_list())
-    return rename_ports_by_orientation(mim_cap).flatten()
 
+    component = rename_ports_by_orientation(mim_cap).flatten()
+
+    # netlist generation
+    component.info['netlist'] = __mimcap_netlist(pdk, size)
+
+    return component
 
 @cell
 def mimcap_array(pdk: MappedPDK, rows: int, columns: int, size: tuple[float,float] = (5.0,5.0), rmult: Optional[int]=1) -> Component:
