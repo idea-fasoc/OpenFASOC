@@ -46,7 +46,7 @@ For more info on getting-started, please refer to ["Getting Started" section ](h
 
 Below are the tool requirements along with their currently support versions that are updated regularly upon testing againsts the generators.
 
-  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.445)
+  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.447)
 
   2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.262)
 
@@ -60,7 +60,7 @@ Below are the tool requirements along with their currently support versions that
 
   5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_10905)
 
-  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.286)
+  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.457)
 
    - open_pdks is required to run drc/lvs check and the simulations
    - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
