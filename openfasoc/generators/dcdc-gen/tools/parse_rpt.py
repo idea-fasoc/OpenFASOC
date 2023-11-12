@@ -22,4 +22,4 @@ if match != None:
     raise ValueError("LVS failed!")
 else:
     print("LVS is clean!")
-print("Generator check is clean")
+print("Generator check is clean!")

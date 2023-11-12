@@ -5,5 +5,4 @@ if num_lines > 3:
     raise ValueError("DRC failed!")
 else:
     print("DRC is clean!")
-
 print("Generator check is clean!")
