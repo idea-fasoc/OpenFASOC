@@ -169,24 +169,30 @@ class Netlist:
 
 		return netlist_index
 
-	def generate_source_netlist_params(self) -> dict:
-		"""Generates the [Mako](https://makotemplates.org) parameters to be inserted in the source SPICE netlist."""
-		return self.parameters
+	def generate_source_netlist_params(self, circuit_name: Optional[str] = None) -> dict:
+		"""Generates the parameters to be inserted in the source SPICE netlist. Uses the Python template string format."""
+		return {
+			'circuit_name': circuit_name if circuit_name != None else self.circuit_name,
+			'nodes': ' '.join(self.nodes),
+			**self.parameters
+		}
 
-	def __generate_self_subcircuit(self) -> str:
+	def __generate_self_subcircuit(self, prefix: str = '', suffix: str = '') -> str:
 		"""Generates the top-level SPICE subcircuit directive.
 		The name of the subcircuit is set by `self.circuit_name`.
 		"""
+		generated_circuit_name = f"{prefix}{self.circuit_name}{suffix}"
+
 		if self.source_netlist != "":
-			return self.source_netlist
+			return self.source_netlist.format(**self.generate_source_netlist_params(generated_circuit_name))
 
 		elif len(self.sub_netlists) > 0:
-			main_circuit = f".subckt {self.circuit_name} {' '.join(self.nodes)}\n"
+			main_circuit = f".subckt {generated_circuit_name} {' '.join(self.nodes)}\n"
 
 			for i, netlist in enumerate(self.sub_netlists):
 				main_circuit += netlist.generate_instance(i, self.netlist_connections[i]) + "\n"
 
-			main_circuit += f".ends {self.circuit_name}"
+			main_circuit += f".ends {generated_circuit_name}"
 
 			return main_circuit
 
@@ -197,7 +203,8 @@ class Netlist:
 		"""Generates a list of all the unique SPICE subcircuits directives used in the netlist."""
 		subcircuits = set()
 
-		for netlist in self.sub_netlists:
+		for i, netlist in enumerate(self.sub_netlists):
+			netlist.circuit_name = f"{self.circuit_name}_{i}_{netlist.circuit_name}"
 			subcircuits.update(netlist.get_subcircuits_list())
 
 		if not sub_netlists_only: subcircuits.add(self.__generate_self_subcircuit())

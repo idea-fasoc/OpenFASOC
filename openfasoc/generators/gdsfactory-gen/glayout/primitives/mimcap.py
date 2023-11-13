@@ -54,12 +54,18 @@ def mimcap(
 
     # netlist generation
     component.info['netlist'] = Netlist(
-		source_netlist=f"""
-.subckt MIMCAP V1 V2
-C1 V1 V2 ${pdk.models['mimcap']} l={size[0]} w={size[1]}
-.ends MIMCAP
+		circuit_name="MIMCap",
+		nodes = ['V1', 'V2'],
+		source_netlist="""
+.subckt {circuit_name} {nodes}
+C1 V1 V2 {model} l={length} w={width}
+.ends {circuit_name}
 		""",
-		nodes = ['V1', 'V2']
+		parameters={
+			'model': pdk.models['mimcap'],
+			'length': size[0],
+			'width': size[1]
+		}
 	)
 
     return component

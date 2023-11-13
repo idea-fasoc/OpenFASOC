@@ -434,15 +434,27 @@ def nmos(
     else:
         dummy_tuple = with_dummy
 
+    nmos_netlist=""".subckt {circuit_name} {nodes}
+M1 D G S B {model} l={length} w={width} m={mult}"""
+
+    if dummy_tuple[0]:
+        nmos_netlist += "\nM2 B B B B {model} l={length} w={width} m={dummy_mult}"
+    if dummy_tuple[1]:
+        nmos_netlist += "\nM3 B B B B {model} l={length} w={width} m={dummy_mult}"
+
+    nmos_netlist += "\n.ends {circuit_name}"
+
     component.info['netlist'] = Netlist(
-        source_netlist=f"""
-.subckt NMOS D G S B
-{f"M1 B B B B {pdk.models['nfet']} l={length} w={width} m={multipliers}" if dummy_tuple[0] else ""}
-M2 D G S B {pdk.models['nfet']} l={length} w={width} m={fingers * multipliers}
-{f"M3 B B B B {pdk.models['nfet']} l={length} w={width} m={multipliers}" if dummy_tuple[1] else ""}
-.ends NMOS
-        """,
-        nodes=['D', 'G', 'S', 'B']
+        circuit_name="NMOS",
+        nodes=['D', 'G', 'S', 'B'],
+        source_netlist=nmos_netlist,
+        parameters={
+            'model': pdk.models['nfet'],
+            'length': length,
+            'width': width,
+            'mult': fingers * multipliers,
+            'dummy_mult': multipliers
+        }
     )
 
     return component
@@ -580,15 +592,27 @@ def pmos(
     else:
         dummy_tuple = with_dummy
 
+    pmos_netlist=""".subckt {circuit_name} {nodes}
+M1 D G S B {model} l={length} w={width} m={mult}"""
+
+    if dummy_tuple[0]:
+        pmos_netlist += "\nM2 B B B B {model} l={length} w={width} m={dummy_mult}"
+    if dummy_tuple[1]:
+        pmos_netlist += "\nM3 B B B B {model} l={length} w={width} m={dummy_mult}"
+
+    pmos_netlist += "\n.ends {circuit_name}"
+
     component.info['netlist'] = Netlist(
-        source_netlist=f"""
-.subckt PMOS D G S B
-{f"M1 B B B B {pdk.models['pfet']} l={length} w={width} m={multipliers}" if dummy_tuple[0] else ""}
-M2 D G S B {pdk.models['pfet']} l={length} w={width} m={fingers * multipliers}
-{f"M3 B B B B {pdk.models['pfet']} l={length} w={width} m={multipliers}" if dummy_tuple[1] else ""}
-.ends PMOS
-        """,
-        nodes=['D', 'G', 'S', 'B']
+        circuit_name="PMOS",
+        nodes=['D', 'G', 'S', 'B'],
+        source_netlist=pmos_netlist,
+        parameters={
+            'model': pdk.models['pfet'],
+            'length': length,
+            'width': width,
+            'mult': fingers * multipliers,
+            'dummy_mult': multipliers
+        }
     )
 
     return component
