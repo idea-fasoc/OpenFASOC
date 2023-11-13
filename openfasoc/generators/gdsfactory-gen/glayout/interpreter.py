@@ -2,10 +2,10 @@ import argparse
 import inspect
 import fileinput
 import io
+import sys
 from pathlib import Path
 from typing import Optional, Callable, Literal
 from gdsfactory import Component
-from pydantic import validate_arguments
 # import primitives
 from glayout.primitives.fet import nmos, pmos, multiplier
 from glayout.primitives.guardring import tapring
@@ -47,12 +47,14 @@ place an nfet with width 5 and length 7
 # helper functions
 ########################################
 
-def prompt_from_list(prompt_list) -> int:
+def prompt_from_list(prompt_list, convo) -> int:
 	for i,prompt_item in enumerate(prompt_list):
-		print_and_process(str(i)+". "+str(prompt_item))
-	choosen_index = int(input("enter the number corresponding to the desired input_and_process: "))
+		convo.print_and_update_session(str(i)+". "+str(prompt_item))
+	convo.print_and_update_session("enter the number corresponding to the desired input_and_process:",False)
+	choosen_index = int(convo.inputstream.readline().strip().strip("\n"))
 	while(choosen_index>=len(prompt_list)):
-		choosen_index = input("choosen_index out of range please try again: ")
+		convo.print_and_update_session("choosen_index out of range please try again:",False)
+		choosen_index = input(convo.inputstream.readline().strip().strip("\n"))
 	return choosen_index
 
 #TODO finish implement
@@ -123,33 +125,34 @@ class Session:
 	# supported pdks must be of mapped pdk type
 	supported_pdks = {0:"gf180",1:"sky130"}
 
-	@validate_arguments
 	def __init__(self, inputstream: io.IOBase, outputstream: io.IOBase):
 		"""initialize a conversation and greet the user"""
 		# init PDK, and io streams
 		self.inputstream = inputstream
 		self.outputstream = outputstream
 		self.PDK = None
+		# initialize metadata
+		self.components = dict()
+		self.variables = dict()
+		self.conversation_prompts = list()
+		self.conversation_responses = list()
 		# greet the user and load pdk
 		self.print_and_update_session("Hello!")
 		self.__load_pdk()
 		self.print_and_update_session("What would you like to create today?")
 		self.print_and_update_session("Please provide a name for the Component you want to create")
-		name = inputstream.readline("remember, this will be the name of your top level component: ")
+		self.print_and_update_session("remember, this will be the name of your top level component: ",False)
+		name = inputstream.readline()
 		self.print_and_update_session("now, lets go through all the steps to create " + name)
 		# init the rest of the data
 		self.code = GlayoutCode(name,self.PDK.name)
 		self.toplevel_comp = Component(name=name)
-		self.components = dict()
-		self.variables = dict()
-		self.conversation_prompts = list()
-		self.conversation_responses = list()
 	
 	def __load_pdk(self):
 		# prompt for supportpdk
-		self.print_and_process("please specify a PDK to get started. The supported PDKs include:)")
-		pdk_index = prompt_from_list(cls.supported_pdks.values())
-		pdk_name = cls.supported_pdks.get(pdk_index)
+		self.print_and_update_session("please specify a PDK to get started. The supported PDKs include:)")
+		pdk_index = prompt_from_list(Session.supported_pdks.values(),self)
+		pdk_name = Session.supported_pdks.get(pdk_index)
 		if pdk_name == "gf180":
 			from glayout.pdk.gf180_mapped import gf180_mapped_pdk
 			self.PDK = gf180_mapped_pdk
@@ -191,9 +194,9 @@ class Session:
 	
 	# TODO finish implement
 	def __place(self, response: str):
-		generators = [(i,fnc.__name__) for i,fnc in enumerate(cls.generators)]
+		generators = [(i,fnc.__name__) for i,fnc in enumerate(Session.generators)]
 		generators = [generator for generator in generators if generator[1] in response]
-		generator_fncs = [cls.generators[i] for i,fncname in generators]
+		generator_fncs = [Session.generators[i] for i,fncname in generators]
 		# loop over all generators. Each generator represents a task that must be completed
 		func_calls = list()
 		for generator in generator_fncs:
@@ -209,9 +212,6 @@ class Session:
 				else:# value was provided
 					pass
 
-
-			
-		
 
 
 
