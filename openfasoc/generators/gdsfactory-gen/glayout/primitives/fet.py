@@ -427,9 +427,10 @@ def nmos(
     component = rename_ports_by_orientation(nfet).flatten()
 
     # add spice netlist
-    dummy_tuple = (True, True)
     if with_dummy == False:
         dummy_tuple = (False, False)
+    elif with_dummy == True:
+        dummy_tuple = (True, True)
     else:
         dummy_tuple = with_dummy
 
@@ -572,9 +573,10 @@ def pmos(
     component =  rename_ports_by_orientation(pfet).flatten()
 
     # add spice netlist
-    dummy_tuple = (True, True)
     if with_dummy == False:
         dummy_tuple = (False, False)
+    elif with_dummy == True:
+        dummy_tuple = (True, True)
     else:
         dummy_tuple = with_dummy
 
