@@ -39,26 +39,32 @@ class Netlist:
 	parameters: dict = {}
 	"""Dictionary of the high-level parameters."""
 
-	def __init__(self, circuit_name: str, source_netlist: str = '', nodes: list[str] = [], parameters: dict = {}, sub_netlists: list['Netlist'] = []):
+	def __init__(self, source_netlist: str = '', nodes: list[str] = [], circuit_name: Union[str, None] = None, parameters: dict = {}, sub_netlists: list['Netlist'] = []):
 		"""Initializes a Netlist object.
 
 		Override to load sub-netlists and parameters on initialization.
 		"""
 		self.parameters = {**self.parameters, **parameters}
-		self.circuit_name = circuit_name
 
 		self.sub_netlists = []
 		self.netlist_connections = []
 		self.source_netlist = source_netlist
 		self.nodes = nodes
 
+		if circuit_name != None:
+			self.circuit_name = circuit_name
+		else:
+			self.circuit_name = self.extract_subckt_name(self.source_netlist)
+
 		self.add_netlists(sub_netlists)
 
-	def extract_subckt_name(self, netlist: str):
+	def extract_subckt_name(self, netlist: str) -> str:
 		"""Extracts the subcircuit name from the source SPICE."""
 		for line in netlist.split('\n'):
 			if line.count('subckt') != 0:
 				return line.split(' ')[1]
+
+		return 'Netlist'
 
 	def generate_instance(self, name: str, nodes: list[str]) -> str:
 		"""Generates an instance of the netlist subcircuit.

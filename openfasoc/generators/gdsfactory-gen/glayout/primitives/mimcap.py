@@ -54,8 +54,7 @@ def mimcap(
 
     # netlist generation
     component.info['netlist'] = Netlist(
-		'MIMCap',
-		source_netlist = f"""
+		source_netlist=f"""
 .subckt MIMCAP V1 V2
 C1 V1 V2 ${pdk.models['mimcap']} l={size[0]} w={size[1]}
 .ends MIMCAP
