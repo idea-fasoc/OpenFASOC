@@ -61,8 +61,8 @@ class MappedPDK(Pdk):
     @validator("models")
     def models_check(cls, models_obj: dict[StrictStr, StrictStr]):
         for model in models_obj.keys():
-            if not model in ["nmos","pmos","mimcap"]:
-                raise ValueError("specify nmos, pmos, or mimcap models only")
+            if not model in ["nfet","pfet","mimcap"]:
+                raise ValueError(f"specify nfet, pfet, or mimcap models only")
         return models_obj
 
     @validator("glayers")
