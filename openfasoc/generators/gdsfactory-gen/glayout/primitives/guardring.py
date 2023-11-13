@@ -3,7 +3,7 @@ from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
 from gdsfactory.components.rectangular_ring import rectangular_ring
-from glayout.via_gen import via_array, via_stack
+from glayout.primitives.via_gen import via_array, via_stack
 from typing import Optional
 from glayout.pdk.util.comp_utils import to_decimal, to_float, evaluate_bbox
 from glayout.pdk.util.port_utils import print_ports
@@ -129,10 +129,4 @@ def tapring(
     return component_snap_to_grid(ptapring)
 
 
-if __name__ == "__main__":
-    from .pdk.util.standard_main import pdk
 
-    mycomp = Component("displacment test")
-    tapref = mycomp << tapring(pdk, sdlayer="p+s/d", enclosed_rectangle=(75.9, 31.0))
-    #tapref.movey(100.105)
-    mycomp.show()

@@ -1,12 +1,9 @@
-if __name__ == "__main__":
-	import sys
-	sys.path.append("../../")
 from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.port import Port
 from glayout.pdk.mappedpdk import MappedPDK
 from typing import Optional
-from glayout.via_gen import via_stack, via_array
+from glayout.primitives.via_gen import via_stack, via_array
 from gdsfactory.components.rectangle import rectangle
 from glayout.pdk.util.comp_utils import evaluate_bbox, align_comp_to_port
 from glayout.pdk.util.port_utils import assert_port_manhattan, set_port_orientation, add_ports_perimeter
@@ -115,14 +112,3 @@ def straight_route(
 	return straightroute.flatten()
 
 
-if __name__ == "__main__":
-	from glayout.pdk.util.standard_main import pdk
-	
-	routebetweentop = rectangle(layer=pdk.get_glayer("met3"),size=(1,1)).ref()
-	routebetweentop.movex(20)
-	routebetweenbottom = rectangle(layer=pdk.get_glayer("met1"), size=(1, 1))
-	mycomp = straight_route(pdk,routebetweentop.ports["e1"],routebetweenbottom.ports["e3"])
-	mycomp.unlock()
-	mycomp.add(routebetweentop)
-	mycomp << routebetweenbottom
-	mycomp.show()

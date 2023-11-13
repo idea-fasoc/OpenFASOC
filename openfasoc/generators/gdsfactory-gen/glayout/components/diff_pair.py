@@ -1,7 +1,7 @@
 from gdsfactory.cell import cell
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
-from glayout.fet import nmos, pmos
+from glayout.primitives.fet import nmos, pmos
 from glayout.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
 from gdsfactory.routing.route_quad import route_quad
@@ -10,8 +10,8 @@ from glayout.routing.c_route import c_route
 from glayout.routing.straight_route import straight_route
 from glayout.pdk.util.comp_utils import movex, movey, evaluate_bbox, align_comp_to_port
 from glayout.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, get_orientation, set_port_orientation
-from glayout.via_gen import via_stack
-from glayout.guardring import tapring
+from glayout.primitives.via_gen import via_stack
+from glayout.primitives.guardring import tapring
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 
 
@@ -144,9 +144,4 @@ def diff_pair(
 	return component_snap_to_grid(rename_ports_by_orientation(diffpair))
 
 
-if __name__ == "__main__":
-	from .pdk.util.standard_main import pdk
-	mycomp = diff_pair(pdk,length=1,width=6,fingers=4,rmult=2)
-	mycomp.show()
-	print_ports(mycomp)
 

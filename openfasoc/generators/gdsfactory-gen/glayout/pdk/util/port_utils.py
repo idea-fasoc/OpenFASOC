@@ -331,12 +331,12 @@ def print_port_tree_all_cells() -> list:
 	"""print the PortTree for most of the glayout cells and save as a text file.
 	returns a list of components
 	"""
-	from glayout.via_gen import via_stack, via_array
+	from glayout.primitives.via_gen import via_stack, via_array
 	from glayout.opamp import opamp
-	from glayout.mimcap import mimcap
-	from glayout.mimcap import mimcap_array
-	from glayout.guardring import tapring
-	from glayout.fet import multiplier, nmos, pmos
+	from glayout.primitives.mimcap import mimcap
+	from glayout.primitives.mimcap import mimcap_array
+	from glayout.primitives.guardring import tapring
+	from glayout.primitives.fet import multiplier, nmos, pmos
 	from glayout.diff_pair import diff_pair
 	from glayout.routing.straight_route import straight_route
 	from glayout.routing.c_route import c_route

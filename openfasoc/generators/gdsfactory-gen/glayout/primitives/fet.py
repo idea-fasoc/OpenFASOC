@@ -4,8 +4,8 @@ from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
 from glayout.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
-from glayout.via_gen import via_array, via_stack
-from glayout.guardring import tapring
+from glayout.primitives.via_gen import via_array, via_stack
+from glayout.primitives.guardring import tapring
 from pydantic import validate_arguments
 from glayout.pdk.util.comp_utils import evaluate_bbox, to_float, to_decimal, prec_array, prec_center, prec_ref_center, movey, align_comp_to_port
 from glayout.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports
@@ -550,21 +550,3 @@ def pmos(
     return rename_ports_by_orientation(pfet).flatten()
 
 
-if __name__ == "__main__":
-    from .pdk.util.standard_main import pdk
-
-    showmult = True
-    if showmult:
-        mycomp = multiplier(pdk, "p+s/d", fingers=1, dummy=True, gate_route_topmet="met4",sd_route_topmet="met3", length=1, width=6)
-        #bcomp = multiplier(pdk, "p+s/d", fingers=8, dummy=True, gate_route_topmet="met4",sd_route_topmet="met3", length=1, rmult=2)
-        #bcomp.show()
-    else:
-        #mycomp = pmos(pdk, fingers=8, length=1, multipliers=3, width=6, with_dummy=True)
-        mycomp = pmos(pdk, fingers=8, length=0, multipliers=3, width=6, with_dummy=True,rmult=2)
-        #print(*mycomp.get_polygons(),sep="\n")
-        #large = pmos(pdk, fingers=20, length=1, multipliers=5, width=6, with_dummy=True)
-        #large.show()
-        #mycomp = pmos(pdk, fingers=8, multipliers=2, with_dummy=False, gate_route_topmet="met4",sd_route_topmet="met4")
-    mycomp.show()
-    for key in mycomp.ports.keys():
-        print(key)

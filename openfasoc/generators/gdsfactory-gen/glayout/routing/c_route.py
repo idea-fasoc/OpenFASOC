@@ -4,7 +4,7 @@ from gdsfactory.port import Port
 from glayout.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
 from math import isclose
-from glayout.via_gen import via_stack
+from glayout.primitives.via_gen import via_stack
 from gdsfactory.routing.route_quad import route_quad
 from gdsfactory.components.rectangle import rectangle
 from glayout.pdk.util.comp_utils import evaluate_bbox, get_primitive_rectangle
@@ -200,14 +200,3 @@ def c_route(
 	croute.add_ports(route_ports,prefix="con_")
 	return rename_ports_by_orientation(rename_ports_by_list(croute.flatten(), [("con_","con_")]))
 
-if __name__ == "__main__":
-	from glayout.pdk.util.standard_main import pdk
-	
-	routebetweentop = copy(get_primitive_rectangle(layer=pdk.get_glayer("met1"))).ref()
-	routebetweentop.movey(10)
-	routebetweenbottom = get_primitive_rectangle(layer=pdk.get_glayer("met1"))
-	mycomp = c_route(pdk,routebetweentop.ports["e3"],routebetweenbottom.ports["e3"])
-	mycomp.unlock()
-	mycomp.add(routebetweentop)
-	mycomp << routebetweenbottom
-	mycomp.flatten().show()

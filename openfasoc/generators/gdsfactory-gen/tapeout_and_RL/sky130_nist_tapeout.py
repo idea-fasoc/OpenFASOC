@@ -8,11 +8,11 @@ from glayout.pdk.util.comp_utils import prec_array, movey, align_comp_to_port, p
 from glayout.pdk.util.port_utils import add_ports_perimeter, print_ports
 from gdsfactory.component import Component
 from glayout.pdk.mappedpdk import MappedPDK
-from glayout.opamp import opamp
+from glayout.components.opamp import opamp
 from glayout.routing.L_route import L_route
 from glayout.routing.straight_route import straight_route
 from glayout.routing.c_route import c_route
-from glayout.via_gen import via_array
+from glayout.primitives.via_gen import via_array
 from gdsfactory.cell import cell, clear_cache
 import numpy as np
 from subprocess import Popen
@@ -34,13 +34,15 @@ import argparse
 from glayout.pdk.sky130_mapped import sky130_mapped_pdk as pdk
 from itertools import count, repeat
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
-from glayout.pdk.util.opamp_array_create import write_opamp_matrix
+from glayout.pdk.util.component_array_create import write_component_matrix
 
 
 global _GET_PARAM_SET_LENGTH_
 global _TAKE_OUTPUT_AT_SECOND_STAGE_
 global PDK_ROOT
 global __NO_LVT_GLOBAL_
+global __SMALL_PAD_
+__SMALL_PAD_ = True
 __NO_LVT_GLOBAL_ = False
 _GET_PARAM_SET_LENGTH_ = False
 _TAKE_OUTPUT_AT_SECOND_STAGE_ = False
@@ -57,10 +59,19 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	opamp_wpads = opamp_in.copy()
 	opamp_wpads = movey(opamp_wpads, destination=0)
 	# create pad array and add to opamp
-	pad = import_gds("pads/pad_60um_flat.gds")
-	pad.name = "NISTpad"
+	global __SMALL_PAD_
+	small_pad=__SMALL_PAD_
+	if small_pad:
+		pad = import_gds("pads/pad_60um_flat.gds")
+		pad.name = "NISTpad"
+	else:
+		pad = import_gds("pads/Manhattan120umPad.gds")
+		pad.name = "Manhattan120umPad"
 	pad = add_ports_perimeter(pad, pdk.get_glayer("met4"),prefix="pad_")
-	pad_array = prec_array(pad, rows=2, columns=(4+1), spacing=(40,120))
+	if small_pad:
+		pad_array = prec_array(pad, rows=2, columns=(4+1), spacing=(40,120))
+	else:
+		pad_array = prec_array(pad, rows=2, columns=(4+1), spacing=(120,120))
 	pad_array_ref = prec_ref_center(pad_array)
 	opamp_wpads.add(pad_array_ref)
 	# add via_array to vdd pin
@@ -106,7 +117,10 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col1_nanopad_E"],pad_array_ref.ports["row1_col1_pad_S"],width=3,glayer2=leftroutelayer)
 	# add the extra pad for the CS output
 	cspadref = opamp_wpads << pad
-	cspadref.movex(300).movey(90)
+	if not small_pad:
+		cspadref.movex(720).movey(120)
+	else:
+		cspadref.movex(300).movey(90)
 	opamp_wpads << L_route(pdk, cspadref.ports["pad_S"], opamp_wpads.ports["commonsource_output_E"],hwidth=3, hglayer="met5",vglayer="met5")
 	#opamp_wpads << nanopad
 	if flatten:
@@ -1034,7 +1048,13 @@ def create_opamp_matrix(save_dir_name: str, params: np.array, results: Optional[
 				strtowrite += "\n\nresults = " + str(opamp_results_de_serializer(results[index]))
 			strtowrite += "\n\n\n"
 			resfile.write(strtowrite)
-	write_opamp_matrix(comps, write_name = str(save_dir) + "/opamp_matrix.gds", xspace=600)
+	global __SMALL_PAD_
+	xspace=1440
+	yspace=400
+	if __SMALL_PAD_:
+		xspace=600
+		yspace=280
+	write_component_matrix(comps, write_name = str(save_dir) + "/opamp_matrix.gds", xspace=xspace,yspace=yspace)
 	pdk.cell_decorator_settings.cache = current_setting
 
 
@@ -1101,9 +1121,14 @@ if __name__ == "__main__":
 	for prsr in [get_training_data_parser,gen_opamp_parser,test,create_opamp_matrix_parser]:
 		prsr.add_argument("--no_lvt",action="store_true",help="do not place any low threshold voltage transistors.")
 		prsr.add_argument("--PDK_ROOT",type=Path,default="/usr/bin/miniconda3/share/pdk/",help="path to the sky130 PDK library")
+	for prsr in [gen_opamp_parser,create_opamp_matrix_parser]:
+		prsr.add_argument("--big_pad",action="store_true",help="use 120um pad")
 	
 	args = parser.parse_args()
 
+	if args.mode in ["gen_opamps","create_opamp_matrix"]:
+		__SMALL_PAD_ = not args.big_pad
+	
 	if args.mode in ["get_training_data","test","gen_opamps","create_opamp_matrix"]:
 		__NO_LVT_GLOBAL_ = args.no_lvt
 		PDK_ROOT = Path(args.PDK_ROOT).resolve()
