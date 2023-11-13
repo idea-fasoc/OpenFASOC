@@ -1,5 +1,5 @@
 from os.path import join, dirname
-from typing import Union
+from typing import Union, Optional
 
 import re
 
@@ -66,10 +66,16 @@ class Netlist:
 
 		return 'Netlist'
 
-	def generate_instance(self, name: str, nodes: list[str]) -> str:
+	def generate_instance(self, name: Optional[str], nodes: Optional[list[str]]) -> str:
 		"""Generates an instance of the netlist subcircuit.
 		Override to insert parameters in the instance.
 		"""
+		if name == None:
+			name = self.circuit_name
+
+		if nodes == None:
+			nodes = self.nodes
+
 		return f"X{name} {' '.join(nodes)} {self.circuit_name}"
 
 	def read_source_netlist(self, netlist_src: str) -> str:
