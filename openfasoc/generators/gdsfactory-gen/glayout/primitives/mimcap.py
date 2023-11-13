@@ -22,18 +22,6 @@ def __get_mimcap_layerconstruction_info(pdk: MappedPDK) -> tuple[str,str]:
 	pdk.activate()
 	return capmettop, capmetbottom
 
-class __mimcap_netlist(Netlist):
-	nodes = ['V1', 'V2']
-
-	def __init__(self, pdk: MappedPDK, size: tuple[float, float] = (5, 5)):
-		super().__init__(pdk, 'MIMCap', {}, [])
-
-		self.source_netlist = f"""
-.subckt MIMCAP V1 V2
-C1 V1 V2 ${pdk.models['mimcap']} l={size[0]} w={size[1]}
-.ends MIMCAP
-		"""
-
 @cell
 def mimcap(
     pdk: MappedPDK, size: tuple[float,float]=(5.0, 5.0)
@@ -65,7 +53,15 @@ def mimcap(
     component = rename_ports_by_orientation(mim_cap).flatten()
 
     # netlist generation
-    component.info['netlist'] = __mimcap_netlist(pdk, size)
+    component.info['netlist'] = Netlist(
+		'MIMCap',
+		source_netlist = f"""
+.subckt MIMCAP V1 V2
+C1 V1 V2 ${pdk.models['mimcap']} l={size[0]} w={size[1]}
+.ends MIMCAP
+		""",
+		nodes = ['V1', 'V2']
+	)
 
     return component
 

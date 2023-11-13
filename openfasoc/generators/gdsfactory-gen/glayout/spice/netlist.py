@@ -39,7 +39,7 @@ class Netlist:
 	parameters: dict = {}
 	"""Dictionary of the high-level parameters."""
 
-	def __init__(self, circuit_name: str, parameters: dict, sub_netlists: list['Netlist']):
+	def __init__(self, circuit_name: str, source_netlist: str = '', nodes: list[str] = [], parameters: dict = {}, sub_netlists: list['Netlist'] = []):
 		"""Initializes a Netlist object.
 
 		Override to load sub-netlists and parameters on initialization.
@@ -49,6 +49,8 @@ class Netlist:
 
 		self.sub_netlists = []
 		self.netlist_connections = []
+		self.source_netlist = source_netlist
+		self.nodes = nodes
 
 		self.add_netlists(sub_netlists)
 
