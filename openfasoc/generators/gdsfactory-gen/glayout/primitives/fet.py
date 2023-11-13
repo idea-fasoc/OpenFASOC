@@ -438,7 +438,7 @@ def nmos(
         source_netlist=f"""
 .subckt NMOS D G S B
 {f"M1 B B B B {pdk.models['nfet']} l={length} w={width} m={fingers}" if dummy_tuple[0] else ""}
-M2 D G S B {pdk.models['nfet']} l={length} w={width} m={fingers * multiplier}
+M2 D G S B {pdk.models['nfet']} l={length} w={width} m={fingers * multipliers}
 {f"M3 B B B B {pdk.models['nfet']} l={length} w={width} m={fingers}" if dummy_tuple[1] else ""}
 .ends NMOS
         """,
@@ -584,7 +584,7 @@ def pmos(
         source_netlist=f"""
 .subckt NMOS D G S B
 {f"M1 B B B B {pdk.models['pfet']} l={length} w={width} m={fingers}" if dummy_tuple[0] else ""}
-M2 D G S B {pdk.models['pfet']} l={length} w={width} m={fingers * multiplier}
+M2 D G S B {pdk.models['pfet']} l={length} w={width} m={fingers * multipliers}
 {f"M3 B B B B {pdk.models['pfet']} l={length} w={width} m={fingers}" if dummy_tuple[1] else ""}
 .ends NMOS
         """,
