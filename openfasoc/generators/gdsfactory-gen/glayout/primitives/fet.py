@@ -582,11 +582,11 @@ def pmos(
 
     component.info['netlist'] = Netlist(
         source_netlist=f"""
-.subckt NMOS D G S B
+.subckt PMOS D G S B
 {f"M1 B B B B {pdk.models['pfet']} l={length} w={width} m={fingers}" if dummy_tuple[0] else ""}
 M2 D G S B {pdk.models['pfet']} l={length} w={width} m={fingers * multipliers}
 {f"M3 B B B B {pdk.models['pfet']} l={length} w={width} m={fingers}" if dummy_tuple[1] else ""}
-.ends NMOS
+.ends PMOS
         """,
         nodes=['D', 'G', 'S', 'B']
     )
