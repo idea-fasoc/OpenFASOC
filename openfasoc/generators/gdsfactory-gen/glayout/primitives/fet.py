@@ -14,6 +14,7 @@ from glayout.routing.L_route import L_route
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from decimal import Decimal
 from glayout.routing.straight_route import straight_route
+from glayout.spice.netlist import Netlist
 
 
 @validate_arguments
@@ -99,8 +100,8 @@ def multiplier(
     sd_route_extension = float, how far extra to extend the source/drain connections (default=0)
     gate_route_extension = float, how far extra to extend the gate connection (default=0)
     dummy_routes: bool default=True, if true add add vias and short dummy poly,source,drain
-    
-    ports (one port for each edge), 
+
+    ports (one port for each edge),
     ****NOTE: source is below drain:
     gate_... all edges (top met route of gate connection)
     source_...all edges (top met route of source connections)
@@ -134,7 +135,7 @@ def multiplier(
     width = min_width if (width or min_width) <= min_width else width
     width = pdk.snap_to_2xgrid(width)
     poly_height = width + 2 * pdk.get_grule("poly", "active_diff")["overhang"]
-    # call finger array    
+    # call finger array
     multiplier = __gen_fingers_macro(pdk, interfinger_rmult, fingers, length, width, poly_height, sdlayer, inter_finger_topmet)
     # route all drains/ gates/ sources
     if routing:
@@ -212,13 +213,13 @@ def __mult_array_macro(
     width: Optional[float] = 3,
     fingers: Optional[int] = 1,
     multipliers: Optional[int] = 1,
-    routing: Optional[bool] = True,
+    routing: Optional[bool] = True, #
     dummy: Optional[Union[bool, tuple[bool, bool]]] = True,
     length: Optional[float] = None,
-    sd_route_topmet: Optional[str] = "met2",
-    gate_route_topmet: Optional[str] = "met2",
-    sd_route_left: Optional[bool] = True,
-    sd_rmult: int = 1,
+    sd_route_topmet: Optional[str] = "met2", #
+    gate_route_topmet: Optional[str] = "met2", #
+    sd_route_left: Optional[bool] = True, #
+    sd_rmult: int = 1, #
     gate_rmult: int=1,
     interfinger_rmult: int=1,
     dummy_routes: bool=True
@@ -422,7 +423,28 @@ def nmos(
         )
         tapring_ref = nfet << ringtoadd
         nfet.add_ports(tapring_ref.get_ports_list(),prefix="guardring_")
-    return rename_ports_by_orientation(nfet).flatten()
+
+    component = rename_ports_by_orientation(nfet).flatten()
+
+    # add spice netlist
+    dummy_tuple = (True, True)
+    if with_dummy == False:
+        dummy_tuple = (False, False)
+    else:
+        dummy_tuple = with_dummy
+
+    component.info['netlist'] = Netlist(
+        source_netlist=f"""
+.subckt NMOS D G S B
+{f"M1 B B B B {pdk.models['nfet']} l={length} w={width} m={fingers}" if dummy_tuple[0] else ""}
+M2 D G S B {pdk.models['nfet']} l={length} w={width} m={fingers * multiplier}
+{f"M3 B B B B {pdk.models['nfet']} l={length} w={width} m={fingers}" if dummy_tuple[1] else ""}
+.ends NMOS
+        """,
+        nodes=['D', 'G', 'S', 'B']
+    )
+
+    return component
 
 
 @cell
@@ -547,6 +569,26 @@ def pmos(
             horizontal_glayer=substrate_tap_layers[0],
             vertical_glayer=substrate_tap_layers[1],
         )
-    return rename_ports_by_orientation(pfet).flatten()
+    component =  rename_ports_by_orientation(pfet).flatten()
+
+    # add spice netlist
+    dummy_tuple = (True, True)
+    if with_dummy == False:
+        dummy_tuple = (False, False)
+    else:
+        dummy_tuple = with_dummy
+
+    component.info['netlist'] = Netlist(
+        source_netlist=f"""
+.subckt NMOS D G S B
+{f"M1 B B B B {pdk.models['pfet']} l={length} w={width} m={fingers}" if dummy_tuple[0] else ""}
+M2 D G S B {pdk.models['pfet']} l={length} w={width} m={fingers * multiplier}
+{f"M3 B B B B {pdk.models['pfet']} l={length} w={width} m={fingers}" if dummy_tuple[1] else ""}
+.ends NMOS
+        """,
+        nodes=['D', 'G', 'S', 'B']
+    )
+
+    return component
 
 
