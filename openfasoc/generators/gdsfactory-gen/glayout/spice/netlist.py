@@ -66,7 +66,7 @@ class Netlist:
 
 		return 'Netlist'
 
-	def generate_instance(self, name: Optional[str], nodes: Optional[list[str]]) -> str:
+	def generate_instance(self, name: Optional[str] = None, nodes: Optional[list[str]] = None) -> str:
 		"""Generates an instance of the netlist subcircuit.
 		Override to insert parameters in the instance.
 		"""
@@ -178,7 +178,7 @@ class Netlist:
 		The name of the subcircuit is set by `self.circuit_name`.
 		"""
 		if self.source_netlist != "":
-			text = self.source_netlist
+			return self.source_netlist
 
 		elif len(self.sub_netlists) > 0:
 			main_circuit = f".subckt {self.circuit_name} {' '.join(self.nodes)}\n"
