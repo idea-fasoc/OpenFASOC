@@ -35,7 +35,7 @@ from glayout.routing.straight_route import straight_route
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized
-
+from glayout.spice.netlist import Netlist
 
 @validate_arguments
 def diff_pair_ibias(
@@ -145,6 +145,23 @@ def diff_pair_ibias(
         viaoffset=False,
     )
     cmirror.add_ports(srcshort.get_ports_list(), prefix="purposegndports")
+    # current mirror netlist
+    cmirror.info['netlist'] = Netlist(
+        circuit_name='CURRENT_MIRROR',
+        nodes=['VREF', 'VCOPY', 'VSS'],
+        source_netlist="""
+.subckt {circuit_name} {nodes}
+M1 VREF VREF VSS VSS {model} l={length} w={width} m={mult}
+M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
+.ends {circuit_name}
+        """,
+        parameters={
+            'model': pdk.models['nfet'],
+            'width': diffpair_bias[0],
+            'length': diffpair_bias[1]
+        }
+    )
+
     # add cmirror
     tailcurrent_ref = diffpair_i_ << cmirror
     tailcurrent_ref.movey(
@@ -158,6 +175,29 @@ def diff_pair_ibias(
     purposegndPort.name = "ibias_purposegndport"
     diffpair_i_.add_ports([purposegndPort])
     diffpair_i_.add_ports(tailcurrent_ref.get_ports_list(), prefix="ibias_")
+
+    # complete netlist
+    diffpair_i_.info['netlist'] = Netlist(
+        circuit_name="DIFFPAIR_CMIRROR_BIAS",
+        nodes=['VP', 'VN', 'VDD1', 'VDD2', 'VBIAS', 'VSS', 'B']
+    )
+
+    diffpair_i_.info['netlist'].connect_netlist(
+        center_diffpair_comp.info['netlist'],
+        []
+    )
+
+    diffpair_i_.info['netlist'].connect_netlist(
+        cmirror.info['netlist'],
+        [('VREF', 'VBIAS')]
+    )
+
+    diffpair_i_.info['netlist'].connect_subnets(
+        cmirror.info['netlist'],
+        center_diffpair_comp.info['netlist'],
+        [('VCOPY', 'VTAIL')]
+    )
+
     diffpair_i_ref = prec_ref_center(diffpair_i_)
     return diffpair_i_ref
 
