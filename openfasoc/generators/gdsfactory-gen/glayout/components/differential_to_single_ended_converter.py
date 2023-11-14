@@ -18,6 +18,7 @@ from glayout.routing.straight_route import straight_route
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized
+from glayout.spice.netlist import Netlist
 
 
 
@@ -83,6 +84,7 @@ def __create_sharedgatecomps(pdk: MappedPDK, rmult: int, half_pload: tuple[float
     ytranslation_pcenter = 2 * pcenterfourunits.ymax + 5*pdk.util_max_metal_seperation()
     ptop_AB = (shared_gate_comps << twomultpcomps).movey(ytranslation_pcenter)
     pbottom_AB = (shared_gate_comps << twomultpcomps).movey(-1 * ytranslation_pcenter)
+
     return shared_gate_comps, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts, LRdummyports
 
 
@@ -150,4 +152,28 @@ def differential_to_single_ended_converter(pdk: MappedPDK, rmult: int, half_ploa
     pmos_comps, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts, LRdummyports = __create_sharedgatecomps(pdk, rmult,half_pload)
     clear_cache()
     pmos_comps = __route_sharedgatecomps(pdk, pmos_comps, via_xlocation, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts, LRdummyports)
+
+    # add spice netlist
+    diff_to_single_netlist = Netlist(
+        circuit_name="DIFF_TO_SINGLE",
+        nodes=['VIN', 'VOUT', 'VSS', 'VSS2', 'VBB']
+        source_netlist="""
+.subckt {circuit_name} {nodes}
+X1 V1   VIN VSS  VSS ${model} l={length} w={width} m={mult_top}
+X2 VSS2 VIN VSS  VSS ${model} l={length} w={width} m={mult_top}
+X3 VIN  VIN V1   VSS  ${model} l={length} w={width} m={mult_bot}
+X4 VOUT VIN VSS2 VSS  ${model} l={length} w={width} m={mult_bot}
+.ends {circuit_name}
+        """,
+        parameters={
+            'model': pdk.models['pfet'],
+            'width': half_pload[0],
+            'length': half_pload[1],
+            'mult_top': 4 * 2,
+            'mult_bot': half_pload[2] * 2
+        }
+    )
+
+    pmos_comps.info['netlist'] = diff_to_single_netlist
+
     return pmos_comps
