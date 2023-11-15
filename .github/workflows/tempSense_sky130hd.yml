@@ -39,7 +39,7 @@ jobs:
               cp ./.github/scripts/parse_rpt.py ./openfasoc/generators/temp-sense-gen/. &&\
               pip3 install -r requirements.txt &&\
               cd ./openfasoc/generators/temp-sense-gen &&\
-              make sky130hd_temp &&\
+              make sky130hd_temp_full &&\
               python3 parse_rpt.py
             " && exit_code=$? | tee -a file.log
             if [ $? -ne 0 ]; then exit 1; fi

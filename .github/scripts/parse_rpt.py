@@ -28,6 +28,7 @@ import sys
 import json
 import os
 import re, subprocess
+from common.get_ngspice_version import get_ngspice_version
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from common.check_gen_files import check_gen_files
 
@@ -110,3 +111,42 @@ if check_gen_files(json_filename, _generator_is, cryo_library):
         print("Flow check is clean!")
 else:
     print("Flow check failed!")
+
+if len(sys.argv) == 1:
+    prev_ngspice_ver = 41
+    installed_ngspice_ver = get_ngspice_version()
+    sim_state_filename = "work/sim_state_file.txt"
+
+    if installed_ngspice_ver != 0:
+        if installed_ngspice_ver == prev_ngspice_ver:
+            result_filename = "work/prePEX_sim_result" 
+
+            with open(result_filename) as f2, open("../../../.github/scripts/expected_sim_outputs/prePEX_sim_result.txt") as f1:
+                content1 = f2.readlines()
+                content2 = f1.readlines()
+                if content1 != content2:
+                    raise ValueError("Simulations failed: simulation result file does not match!")
+        else:
+            print("Warning: the ngspice version does not match, "
+                          "frequency results might not match! "
+                          "Please contact a maintainer of the repo.")
+
+    sim_state = json.load(open("work/sim_state_file.txt"))
+    if sim_state["failed_sims"] != 0:
+        raise ValueError("Simulations failed: Non zero failed simulations!")
+
+    for folder_num in range(1, sim_state["completed_sims"] + 1):
+        dir_path = r'simulations/run/'
+        pex_path = os.listdir(dir_path)
+
+        file_name = "simulations/run/" + pex_path + "/" + str(folder_num) + "/"
+        param_file = file_name + "parameters.txt"
+        log_file = file_name + "sim_" + str(folder_num) + ".log"
+        spice_file = file_name + "sim_" + str(folder_num) + ".sp"
+
+        if os.path.exists(log_file) and os.path.exists(log_file) and os.path.exists(spice_file):
+            pass
+        else:
+            raise ValueError("Simulations failed: required of run folders do not exist!")
+
+    print("Simulations are clean!")
