@@ -111,7 +111,7 @@ if check_gen_files(json_filename, _generator_is, cryo_library):
 else:
     print("Flow check failed!")
 
-if len(sys.argv) == 1 and sys.argv[1] == "sky130hd_temp_full":
+if len(sys.argv) == 1:
     result_filename = "work/prePEX_sim_result" # might remove from check or need to implement different logic later if sim outputs change due to downstream changes
     sim_state_filename = "work/sim_state_file.txt"
 
