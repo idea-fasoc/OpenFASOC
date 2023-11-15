@@ -1,7 +1,8 @@
 import subprocess
 import re
 
-def get_ngspice_version() -> int:
+def check_ngspice_version() -> int:
+    last_known_version = "41+"
     result = subprocess.run(["ngspice", "--version"], capture_output=True, text=True)
 
     if result.returncode == 0:
@@ -10,10 +11,10 @@ def get_ngspice_version() -> int:
 
         if match:
             ngspice_version = match.group(1)
-            return ngspice_version
+            return ngspice_version == last_known_version
         else:
             print("Error parsing ngspice version.")
-            return 0
     else:
         print("Error getting ngspice version:", result.stderr)
-        return 0
+    
+    return 0
