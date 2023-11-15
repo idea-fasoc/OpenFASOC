@@ -28,8 +28,9 @@ import sys
 import json
 import os
 import re, subprocess
-from common.get_ngspice_version import check_ngspice_version
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from common.get_ngspice_version import check_ngspice_version
 from common.check_gen_files import check_gen_files
 
 sys.stdout.flush()
