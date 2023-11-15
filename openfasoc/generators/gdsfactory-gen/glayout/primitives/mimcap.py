@@ -111,6 +111,18 @@ def mimcap_array(pdk: MappedPDK, rows: int, columns: int, size: tuple[float,floa
 					port_pairs.append((bl_north_port,top_south_port,layer))
 	for port_pair in port_pairs:
 		mimcap_arr << straight_route(pdk,port_pair[0],port_pair[1],width=rmult*pdk.get_grule(port_pair[2])["min_width"])
+
+	# add netlist
+	mimcap_arr.info['netlist'] = Netlist(
+		nodes = ['V1', 'V2']
+	)
+
+	for _ in range(rows * columns):
+		mimcap_arr.info['netlist'].connect_netlist(
+			mimcap_single.info['netlist'],
+			[('V1', 'V1'), ('V2', 'V2')]
+		)
+
 	return mimcap_arr.flatten()
 
 
