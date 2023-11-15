@@ -105,9 +105,9 @@ else:
 
 ## Result File Check
 if _generator_is['sky130hvl_ldo']:
-   json_filename = "spec.json"
+    json_filename = "spec.json"
 else:
-   json_filename = "test.json"
+    json_filename = "test.json"
 
 if check_gen_files(json_filename, _generator_is, cryo_library):
     print("Flow check is clean!")
@@ -120,8 +120,8 @@ if len(sys.argv) == 1:
     if check_ngspice_version():
         result_filename = "work/prePEX_sim_result" 
 
-         template_filename = "../../../.github/scripts/expected_sim_outputs/prePEX_sim_result.txt"
-         with open(result_filename) as f2, open(template_filename) as f1:
+        template_filename = "../../../.github/scripts/expected_sim_outputs/prePEX_sim_result.txt"
+        with open(result_filename) as f2, open(template_filename) as f1:
             content1 = f2.readlines()
             content2 = f1.readlines()
             if content1 != content2:
