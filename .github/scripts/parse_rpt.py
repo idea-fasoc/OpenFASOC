@@ -28,7 +28,7 @@ import sys
 import json
 import os
 import re, subprocess
-from common.get_ngspice_version import get_ngspice_version
+from common.get_ngspice_version import check_ngspice_version
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from common.check_gen_files import check_gen_files
 
@@ -113,11 +113,9 @@ else:
     print("Flow check failed!")
 
 if len(sys.argv) == 1:
-    prev_ngspice_ver = 41
-    installed_ngspice_ver = get_ngspice_version()
     sim_state_filename = "work/sim_state_file.txt"
 
-    if installed_ngspice_ver != 0:
+    if check_ngspice_version():
         if installed_ngspice_ver == prev_ngspice_ver:
             result_filename = "work/prePEX_sim_result" 
 
