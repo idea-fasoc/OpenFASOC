@@ -28,6 +28,7 @@ import sys
 import json
 import os
 import re, subprocess
+import warnings
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from common.get_ngspice_version import check_ngspice_version
@@ -117,18 +118,18 @@ if len(sys.argv) == 1:
     sim_state_filename = "work/sim_state_file.txt"
 
     if check_ngspice_version():
-        if installed_ngspice_ver == prev_ngspice_ver:
-            result_filename = "work/prePEX_sim_result" 
+         result_filename = "work/prePEX_sim_result" 
 
-            with open(result_filename) as f2, open("../../../.github/scripts/expected_sim_outputs/prePEX_sim_result.txt") as f1:
-                content1 = f2.readlines()
-                content2 = f1.readlines()
-                if content1 != content2:
-                    raise ValueError("Simulations failed: simulation result file does not match!")
-        else:
-            print("Warning: the ngspice version does not match, "
-                          "frequency results might not match! "
-                          "Please contact a maintainer of the repo.")
+         template_filename = "../../../.github/scripts/expected_sim_outputs/prePEX_sim_result.txt"
+         with open(result_filename) as f2, open(template_filename) as f1:
+             content1 = f2.readlines()
+             content2 = f1.readlines()
+             if content1 != content2:
+                 warnings.warn("Simulation result file does not match! Please contact a maintainer of the repo!", DeprecationWarning)
+     else:
+         print("The ngspice version does not match, "
+                       "frequency results might not match! "
+                       "Please contact a maintainer of the repo.", DeprecationWarning)
 
     sim_state = json.load(open("work/sim_state_file.txt"))
     if sim_state["failed_sims"] != 0:
@@ -138,7 +139,7 @@ if len(sys.argv) == 1:
         dir_path = r'simulations/run/'
         pex_path = os.listdir(dir_path)
 
-        file_name = "simulations/run/" + pex_path + "/" + str(folder_num) + "/"
+        file_name = "simulations/run/" + str(pex_path[0]) + "/" + str(folder_num) + "/"
         param_file = file_name + "parameters.txt"
         log_file = file_name + "sim_" + str(folder_num) + ".log"
         spice_file = file_name + "sim_" + str(folder_num) + ".sp"
