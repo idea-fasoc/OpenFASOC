@@ -110,7 +110,7 @@ else:
    json_filename = "test.json"
 
 if check_gen_files(json_filename, _generator_is, cryo_library):
-        print("Flow check is clean!")
+    print("Flow check is clean!")
 else:
     print("Flow check failed!")
 
@@ -118,16 +118,16 @@ if len(sys.argv) == 1:
     sim_state_filename = "work/sim_state_file.txt"
 
     if check_ngspice_version():
-         result_filename = "work/prePEX_sim_result" 
+        result_filename = "work/prePEX_sim_result" 
 
          template_filename = "../../../.github/scripts/expected_sim_outputs/prePEX_sim_result.txt"
          with open(result_filename) as f2, open(template_filename) as f1:
-             content1 = f2.readlines()
-             content2 = f1.readlines()
-             if content1 != content2:
-                 warnings.warn("Simulation result file does not match! Please contact a maintainer of the repo!", DeprecationWarning)
-     else:
-         print("The ngspice version does not match, "
+            content1 = f2.readlines()
+            content2 = f1.readlines()
+            if content1 != content2:
+                warnings.warn("Simulation result file does not match! Please contact a maintainer of the repo!", DeprecationWarning)
+    else:
+        print("The ngspice version does not match, "
                        "frequency results might not match! "
                        "Please contact a maintainer of the repo.", DeprecationWarning)
 
