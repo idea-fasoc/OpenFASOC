@@ -158,7 +158,8 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
         parameters={
             'model': pdk.models['nfet'],
             'width': diffpair_bias[0],
-            'length': diffpair_bias[1]
+            'length': diffpair_bias[1],
+            'mult': diffpair_bias[2]
         }
     )
 
