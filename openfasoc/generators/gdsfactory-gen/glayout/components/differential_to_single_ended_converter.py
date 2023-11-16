@@ -159,10 +159,10 @@ def differential_to_single_ended_converter(pdk: MappedPDK, rmult: int, half_ploa
         nodes=['VIN', 'VOUT', 'VSS', 'VSS2'],
         source_netlist="""
 .subckt {circuit_name} {nodes}
-X1 V1   VIN VSS  VSS ${model} l={length} w={width} m={mult_top}
-X2 VSS2 VIN VSS  VSS ${model} l={length} w={width} m={mult_top}
-X3 VIN  VIN V1   VSS  ${model} l={length} w={width} m={mult_bot}
-X4 VOUT VIN VSS2 VSS  ${model} l={length} w={width} m={mult_bot}
+X1 V1   VIN VSS  VSS {model} l={length} w={width} m={mult_top}
+X2 VSS2 VIN VSS  VSS {model} l={length} w={width} m={mult_top}
+X3 VIN  VIN V1   VSS {model} l={length} w={width} m={mult_bot}
+X4 VOUT VIN VSS2 VSS {model} l={length} w={width} m={mult_bot}
 .ends {circuit_name}
         """,
         parameters={
