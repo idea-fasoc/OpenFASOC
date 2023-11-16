@@ -18,7 +18,7 @@ from glayout.routing.straight_route import straight_route
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized
-
+from glayout.spice.netlist import Netlist
 
 from glayout.components.opamp_twostage import opamp_twostage
 
@@ -30,7 +30,7 @@ def __add_output_stage(
     amplifierParams: tuple[float, float, int],
     biasParams: list,
     rmult: int,
-) -> Component:
+) -> tuple[Component, Netlist]:
     '''add output stage to opamp_top, args:
     pdk = pdk to use
     opamp_top = component to add output stage to
@@ -65,6 +65,7 @@ def __add_output_stage(
         with_substrate_tap=False,
         tie_layers=("met2","met2")
     )
+
     metal_sep = pdk.util_max_metal_seperation()
     # Locate output stage relative position
     # x-coordinate: Center of SW capacitor in array
@@ -107,7 +108,46 @@ def __add_output_stage(
     bias_pin.movex(cmirror_ibias.center[0]).movey(cmirror_ibias.ports["B_gate_S"].center[1]-bias_pin.ymax-5*metal_sep)
     opamp_top << straight_route(pdk, bias_pin.ports["e2"], cmirror_ibias.ports["B_gate_S"],width=1)
     opamp_top.add_ports(bias_pin.get_ports_list(),prefix="pin_outputibias_")
-    return opamp_top
+
+    bias_netlist = Netlist(
+        circuit_name='CURRENT_MIRROR',
+        nodes=['VREF', 'VCOPY', 'VSS'],
+        source_netlist="""
+.subckt {circuit_name} {nodes}
+M1 VREF VREF VSS VSS {model} l={length} w={width} m={mult}
+M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
+.ends {circuit_name}
+        """,
+        parameters={
+            'model': pdk.models['nfet'],
+            'width': biasParams[0],
+            'length': biasParams[1],
+            'mult': biasParams[2]
+        }
+    )
+
+    output_stage_netlist = Netlist(
+        circuit_name="OUTPUT_STAGE",
+        nodes=['VDD', 'GND', 'VBIAS', 'VIN', 'VOUT']
+    )
+
+    output_stage_netlist.connect_netlist(
+        amp_fet_ref.info['netlist'],
+        [('D', 'VDD'), ('G', 'VIN'), ('B', 'GND')]
+    )
+
+    output_stage_netlist.connect_netlist(
+        bias_netlist,
+        [('VREF', 'VBIAS'), ('VSS', 'GND')]
+    )
+
+    output_stage_netlist.connect_subnets(
+        amp_fet_ref.info['netlist'],
+        bias_netlist,
+        [('S', 'VCOPY')]
+    )
+
+    return opamp_top, output_stage_netlist
 
 
 
@@ -155,7 +195,27 @@ def opamp(
         with_antenna_diode_on_diffinputs
     )
     # add output amplfier stage
-    opamp_top = __add_output_stage(pdk, opamp_top, output_stage_params, output_stage_bias, rmult)
+    opamp_top, output_stage_netlist = __add_output_stage(pdk, opamp_top, output_stage_params, output_stage_bias, rmult)
+
+    two_stage_netlist = opamp_top.info['netlist']
+
+    top_level_netlist = Netlist(
+        circuit_name="OPAMP",
+        nodes=['VDD', 'GND', 'VP', 'VN', 'VOUT_PRE', 'VOUT', 'VBIAS1', 'VBIAS2', 'VBIAS3']
+    )
+
+    top_level_netlist.connect_netlist(
+        two_stage_netlist,
+        [('VOUT', 'VOUT_PRE')]
+    )
+
+    top_level_netlist.connect_netlist(
+        output_stage_netlist,
+        [('VBIAS', 'VBIAS3'), ('VIN', 'VOUT_PRE')]
+    )
+
+    opamp_top.info['netlist'] = top_level_netlist
+
     # return
     return rename_ports_by_orientation(component_snap_to_grid(opamp_top))
 
