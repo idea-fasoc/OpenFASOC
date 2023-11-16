@@ -193,7 +193,7 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
 
     pmos_comps.info['netlist'].connect_netlist(
         diff_cs_netlist,
-        [('CSOUT', 'VOUT')]
+        []
     )
 
     pmos_comps.info['netlist'].connect_netlist(
@@ -238,7 +238,7 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
     two_stage_netlist.connect_subnets(
         input_stage_netlist,
         gain_stage_netlist,
-        [('VDD1', 'VIN1'), ('VDD2', 'VIN2')]
+        [('VDD1', 'VIN'), ('VDD2', 'VOUT')]
     )
 
     opamp_top.info['netlist'] = two_stage_netlist
