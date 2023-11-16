@@ -114,6 +114,7 @@ def mimcap_array(pdk: MappedPDK, rows: int, columns: int, size: tuple[float,floa
 
 	# add netlist
 	mimcap_arr.info['netlist'] = Netlist(
+		circuit_name="MIMCAP_ARR",
 		nodes = ['V1', 'V2']
 	)
 
