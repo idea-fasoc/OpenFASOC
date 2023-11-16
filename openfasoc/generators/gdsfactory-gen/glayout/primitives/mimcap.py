@@ -115,14 +115,16 @@ def mimcap_array(pdk: MappedPDK, rows: int, columns: int, size: tuple[float,floa
 	# add netlist
 	mimcap_arr.info['netlist'] = Netlist(
 		circuit_name="MIMCAP_ARR",
-		nodes = ['V1', 'V2']
+		nodes = ['V1', 'V2'],
+		source_netlist="""
+.subckt {circuit_name} {nodes}
+{mimcap_arr_instances}
+.ends {circuit_name}
+		""",
+		parameters={
+			'mimcap_arr_instances': '\n'.join([f"C{i+1} {pdk.models['mimcap']} V1 V2 w={size[0]} l={size[1]}" for i in range(rows * columns)])
+		}
 	)
-
-	for _ in range(rows * columns):
-		mimcap_arr.info['netlist'].connect_netlist(
-			mimcap_single.info['netlist'],
-			[('V1', 'V1'), ('V2', 'V2')]
-		)
 
 	return mimcap_arr.flatten()
 
