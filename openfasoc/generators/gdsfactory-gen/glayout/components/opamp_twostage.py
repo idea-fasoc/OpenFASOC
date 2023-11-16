@@ -106,10 +106,13 @@ def __create_and_route_pins(
 
 
 @validate_arguments
-def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap_rows, ymin: float, n_to_p_output_route) -> Component:
+def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap_rows, ymin: float, n_to_p_output_route) -> tuple[Component, Netlist]:
     mim_cap_size = pdk.snap_to_2xgrid(mim_cap_size, return_type="float")
     max_metalsep = pdk.util_max_metal_seperation()
     mimcaps_ref = opamp_top << mimcap_array(pdk,mim_cap_rows,2,size=mim_cap_size,rmult=6)
+
+    mimcap_netlist = mimcaps_ref.info['netlist']
+
     displace_fact = max(max_metalsep,pdk.get_grule("capmet")["min_separation"])
     mimcaps_ref.movex(pdk.snap_to_2xgrid(opamp_top.xmax + displace_fact + mim_cap_size[0]/2))
     mimcaps_ref.movey(pdk.snap_to_2xgrid(ymin + mim_cap_size[1]/2))
@@ -123,7 +126,7 @@ def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap
     opamp_top.add_ports(mimcaps_ref.get_ports_list(),prefix="mimcap_")
     # add the cs output as a port
     opamp_top.add_port(name="commonsource_output_E", port=intermediate_output)
-    return opamp_top
+    return opamp_top, mimcap_netlist
 
 
 
@@ -185,10 +188,26 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
         }
     )
 
+    ydim_ncomps = opamp_top.ymax
+    pmos_comps_ref = opamp_top << pmos_comps
+    pmos_comps_ref.movey(round(ydim_ncomps + pmos_comps_ref.ymax+10))
+    opamp_top.add_ports(pmos_comps_ref.get_ports_list(),prefix="pcomps_")
+    rename_func = lambda name_, port_ : name_.replace("pcomps_halfpspecialmarker","commonsource_Pamp") if name_.startswith("pcomps_halfpspecialmarker") else name_
+    opamp_top = rename_component_ports(opamp_top, rename_function=rename_func)
+    # create pins and route
+    clear_cache()
+    opamp_top, n_to_p_output_route = __create_and_route_pins(pdk, opamp_top, pmos_comps_ref, halfmultn_drain_routeref, halfmultn_gate_routeref)
+    # place mimcaps and route
+    clear_cache()
+    opamp_top, mimcap_netlist = __add_mimcap_arr(pdk, opamp_top, mim_cap_size, mim_cap_rows, pmos_comps_ref.ymin, n_to_p_output_route)
+    opamp_top.add_ports(n_to_p_output_route.get_ports_list(),"special_con_npr_")
+    # return
+    opamp_top.add_ports(_cref.get_ports_list(), prefix="gnd_route_")
+
     diff_cs_netlist = pmos_comps.info['netlist']
     pmos_comps.info['netlist'] = Netlist(
         circuit_name="GAIN_STAGE",
-        nodes=['VIN', 'VOUT', 'VSS2', 'VSS', 'VBIAS', 'GND']
+        nodes=['VIN', 'VOUT', 'VSS', 'VBIAS', 'GND']
     )
 
     pmos_comps.info['netlist'].connect_netlist(
@@ -201,25 +220,16 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
         [('VREF', 'VBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
     )
 
-    ydim_ncomps = opamp_top.ymax
-    pmos_comps_ref = opamp_top << pmos_comps
-    pmos_comps_ref.movey(round(ydim_ncomps + pmos_comps_ref.ymax+10))
-    opamp_top.add_ports(pmos_comps_ref.get_ports_list(),prefix="pcomps_")
-    rename_func = lambda name_, port_ : name_.replace("pcomps_halfpspecialmarker","commonsource_Pamp") if name_.startswith("pcomps_halfpspecialmarker") else name_
-    opamp_top = rename_component_ports(opamp_top, rename_function=rename_func)
-    # create pins and route
-    clear_cache()
-    opamp_top, n_to_p_output_route = __create_and_route_pins(pdk, opamp_top, pmos_comps_ref, halfmultn_drain_routeref, halfmultn_gate_routeref)
-    # place mimcaps and route
-    clear_cache()
-    opamp_top = __add_mimcap_arr(pdk, opamp_top, mim_cap_size, mim_cap_rows, pmos_comps_ref.ymin, n_to_p_output_route)
-    opamp_top.add_ports(n_to_p_output_route.get_ports_list(),"special_con_npr_")
-    # return
-    opamp_top.add_ports(_cref.get_ports_list(), prefix="gnd_route_")
+    pmos_comps.info['netlist'].connect_netlist(mimcap_netlist, [('V2', 'VOUT')])
+    pmos_comps.info['netlist'].connect_subnets(
+        mimcap_netlist,
+        diff_cs_netlist,
+        [('V1', 'VSS2')]
+    )
 
     two_stage_netlist = Netlist(
         circuit_name="OPAMP_TWO_STAGE",
-        nodes=['VDD', 'GND', 'VBIAS1', 'VP', 'VN', 'VSS2', 'VBIAS2', 'VOUT']
+        nodes=['VDD', 'GND', 'VBIAS1', 'VP', 'VN', 'VBIAS2', 'VOUT']
     )
 
     input_stage_netlist = opamp_top.info['netlist']
