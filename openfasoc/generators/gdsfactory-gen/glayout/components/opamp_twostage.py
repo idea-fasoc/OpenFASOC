@@ -24,7 +24,7 @@ from glayout.components.stacked_current_mirror import stacked_nfet_current_mirro
 from glayout.components.differential_to_single_ended_converter import differential_to_single_ended_converter
 from glayout.components.row_csamplifier_diff_to_single_ended_converter import row_csamplifier_diff_to_single_ended_converter
 from glayout.components.diff_pair_stackedcmirror import diff_pair_stackedcmirror
-
+from glayout.spice.netlist import Netlist
 
 
 @validate_arguments
@@ -159,10 +159,48 @@ def opamp_twostage(
     if half_common_source_bias[3] < 2:
         raise ValueError("half_common_source_bias num multiplier must be >= 2")
     opamp_top, halfmultn_drain_routeref, halfmultn_gate_routeref, _cref = diff_pair_stackedcmirror(pdk, half_diffpair_params, diffpair_bias, half_common_source_bias, rmult, with_antenna_diode_on_diffinputs)
+
+    opamp_top.info['netlist'].circuit_name = "INPUT_STAGE"
+
     # place pmos components
     pmos_comps = differential_to_single_ended_converter(pdk, rmult, half_pload, opamp_top.ports["diffpair_tl_multiplier_0_drain_N"].center[0])
     clear_cache()
+
     pmos_comps = row_csamplifier_diff_to_single_ended_converter(pdk, pmos_comps, half_common_source_params, rmult)
+
+    cs_bias_netlist = Netlist(
+        circuit_name='CURRENT_MIRROR',
+        nodes=['VREF', 'VCOPY', 'VSS'],
+        source_netlist="""
+.subckt {circuit_name} {nodes}
+M1 VREF VREF VSS VSS {model} l={length} w={width} m={mult}
+M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
+.ends {circuit_name}
+        """,
+        parameters={
+            'model': pdk.models['nfet'],
+            'width': diffpair_bias[0],
+            'length': diffpair_bias[1],
+            'mult': diffpair_bias[2]
+        }
+    )
+
+    diff_cs_netlist = pmos_comps.info['netlist']
+    pmos_comps.info['netlist'] = Netlist(
+        circuit_name="GAIN_STAGE",
+        nodes=['VIN', 'VOUT', 'VSS2', 'VSS', 'VBIAS', 'GND']
+    )
+
+    pmos_comps.info['netlist'].connect_netlist(
+        diff_cs_netlist,
+        [('CSOUT', 'VOUT')]
+    )
+
+    pmos_comps.info['netlist'].connect_netlist(
+        cs_bias_netlist,
+        [('VREF', 'VBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
+    )
+
     ydim_ncomps = opamp_top.ymax
     pmos_comps_ref = opamp_top << pmos_comps
     pmos_comps_ref.movey(round(ydim_ncomps + pmos_comps_ref.ymax+10))
@@ -178,6 +216,33 @@ def opamp_twostage(
     opamp_top.add_ports(n_to_p_output_route.get_ports_list(),"special_con_npr_")
     # return
     opamp_top.add_ports(_cref.get_ports_list(), prefix="gnd_route_")
+
+    two_stage_netlist = Netlist(
+        circuit_name="OPAMP_TWO_STAGE",
+        nodes=['VDD', 'GND', 'VBIAS1', 'VP', 'VN', 'VSS2', 'VBIAS2', 'VOUT']
+    )
+
+    input_stage_netlist = opamp_top.info['netlist']
+    gain_stage_netlist = pmos_comps.info['netlist']
+
+    two_stage_netlist.connect_netlist(
+        input_stage_netlist,
+        [('VBIAS', 'VBIAS1'), ('VSS', 'GND'), ('B', 'GND')]
+    )
+
+    two_stage_netlist.connect_netlist(
+        gain_stage_netlist,
+        [('VSS', 'GND')]
+    )
+
+    two_stage_netlist.connect_subnets(
+        input_stage_netlist,
+        gain_stage_netlist,
+        [('VDD1', 'VIN1'), ('VDD2', 'VIN2')]
+    )
+
+    opamp_top.info['netlist'] = two_stage_netlist
+
     return opamp_top
 
 

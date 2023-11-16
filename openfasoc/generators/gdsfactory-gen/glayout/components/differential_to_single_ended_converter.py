@@ -156,7 +156,7 @@ def differential_to_single_ended_converter(pdk: MappedPDK, rmult: int, half_ploa
     # add spice netlist
     diff_to_single_netlist = Netlist(
         circuit_name="DIFF_TO_SINGLE",
-        nodes=['VIN', 'VOUT', 'VSS', 'VSS2', 'VBB'],
+        nodes=['VIN', 'VOUT', 'VSS', 'VSS2'],
         source_netlist="""
 .subckt {circuit_name} {nodes}
 X1 V1   VIN VSS  VSS ${model} l={length} w={width} m={mult_top}
