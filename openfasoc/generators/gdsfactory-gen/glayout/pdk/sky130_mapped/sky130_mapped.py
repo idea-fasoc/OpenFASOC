@@ -39,8 +39,8 @@ sky130_mapped_pdk = MappedPDK(
     name="sky130",
     glayers=sky130_glayer_mapping,
 	models={
-        'nfet': 'sky130_fd_pr__nfet_01v8__model',
-		'pfet': 'sky130_fd_pr__pfet_01v8__model',
+        'nfet': 'sky130_fd_pr__nfet_01v8',
+		'pfet': 'sky130_fd_pr__pfet_01v8',
 		'mimcap': 'sky130_fd_pr__cap_mim_m3_1'
     },
     grules=grulesobj,
