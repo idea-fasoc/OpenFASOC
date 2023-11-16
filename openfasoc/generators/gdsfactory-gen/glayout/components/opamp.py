@@ -128,7 +128,7 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
 
     output_stage_netlist = Netlist(
         circuit_name="OUTPUT_STAGE",
-        nodes=['VDD', 'GND', 'VBIAS', 'VIN', 'VOUT']
+        nodes=['VDD', 'GND', 'IBIAS', 'VIN', 'VOUT']
     )
 
     output_stage_netlist.connect_netlist(
@@ -138,7 +138,7 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
 
     output_stage_netlist.connect_netlist(
         bias_netlist,
-        [('VREF', 'VBIAS'), ('VSS', 'GND')]
+        [('VREF', 'IBIAS'), ('VSS', 'GND')]
     )
 
     output_stage_netlist.connect_subnets(
@@ -201,7 +201,7 @@ def opamp(
 
     top_level_netlist = Netlist(
         circuit_name="OPAMP",
-        nodes=['VDD', 'GND', 'VP', 'VN', 'VOUT_PRE', 'VOUT', 'VBIAS1', 'VBIAS2', 'VBIAS3']
+        nodes=['VDD', 'GND', 'VP', 'VN', 'VOUT_PRE', 'VOUT', 'IBIAS1', 'IBIAS2', 'IBIAS3']
     )
 
     top_level_netlist.connect_netlist(
@@ -211,7 +211,7 @@ def opamp(
 
     top_level_netlist.connect_netlist(
         output_stage_netlist,
-        [('VBIAS', 'VBIAS3'), ('VIN', 'VOUT_PRE')]
+        [('IBIAS', 'IBIAS3'), ('VIN', 'VOUT_PRE')]
     )
 
     opamp_top.info['netlist'] = top_level_netlist

@@ -207,7 +207,7 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
     diff_cs_netlist = pmos_comps.info['netlist']
     pmos_comps.info['netlist'] = Netlist(
         circuit_name="GAIN_STAGE",
-        nodes=['VIN', 'VOUT', 'VSS', 'VBIAS', 'GND']
+        nodes=['VIN', 'VOUT', 'VSS', 'IBIAS', 'GND']
     )
 
     pmos_comps.info['netlist'].connect_netlist(
@@ -217,7 +217,7 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
 
     pmos_comps.info['netlist'].connect_netlist(
         cs_bias_netlist,
-        [('VREF', 'VBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
+        [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
     )
 
     pmos_comps.info['netlist'].connect_netlist(mimcap_netlist, [('V2', 'VOUT')])
@@ -229,7 +229,7 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
 
     two_stage_netlist = Netlist(
         circuit_name="OPAMP_TWO_STAGE",
-        nodes=['VDD', 'GND', 'VBIAS1', 'VP', 'VN', 'VBIAS2', 'VOUT']
+        nodes=['VDD', 'GND', 'IBIAS1', 'VP', 'VN', 'IBIAS2', 'VOUT']
     )
 
     input_stage_netlist = opamp_top.info['netlist']
@@ -237,7 +237,7 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
 
     two_stage_netlist.connect_netlist(
         input_stage_netlist,
-        [('VBIAS', 'VBIAS1'), ('VSS', 'GND'), ('B', 'GND')]
+        [('IBIAS', 'IBIAS1'), ('VSS', 'GND'), ('B', 'GND')]
     )
 
     two_stage_netlist.connect_netlist(

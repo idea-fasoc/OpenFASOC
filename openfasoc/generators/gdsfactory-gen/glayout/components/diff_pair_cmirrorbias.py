@@ -180,7 +180,7 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
     # complete netlist
     diffpair_i_.info['netlist'] = Netlist(
         circuit_name="DIFFPAIR_CMIRROR_BIAS",
-        nodes=['VP', 'VN', 'VDD1', 'VDD2', 'VBIAS', 'VSS', 'B']
+        nodes=['VP', 'VN', 'VDD1', 'VDD2', 'IBIAS', 'VSS', 'B']
     )
 
     diffpair_i_.info['netlist'].connect_netlist(
@@ -190,7 +190,7 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
 
     diffpair_i_.info['netlist'].connect_netlist(
         cmirror.info['netlist'],
-        [('VREF', 'VBIAS')]
+        [('VREF', 'IBIAS')]
     )
 
     diffpair_i_.info['netlist'].connect_subnets(
