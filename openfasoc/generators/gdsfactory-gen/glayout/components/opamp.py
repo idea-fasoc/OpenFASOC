@@ -193,18 +193,18 @@ def opamp(
     two_stage_netlist = opamp_top.info['netlist']
 
     top_level_netlist = Netlist(
-        circuit_name="OPAMP",
-        nodes=['VDD', 'GND', 'VP', 'VN', 'VOUT_PRE', 'VOUT', 'DIFFPAIR_BIAS', 'CS_BIAS', 'OUTPUT_STAGE_BIAS']
+        circuit_name="opamp",
+        nodes=['gnd', 'CSoutput', 'output', 'vdd', 'plus', 'minus', 'commonsourceibias', 'outputibias', 'diffpairibias']
     )
 
     top_level_netlist.connect_netlist(
         two_stage_netlist,
-        [('VOUT', 'VOUT_PRE')]
+        [('VDD', 'vdd'), ('GND', 'gnd'), ('DIFFPAIR_BIAS', 'diffpairibias'), ('VP', 'plus'), ('VN', 'minus'), ('CS_BIAS', 'commonsourceibias'), ('VOUT', 'CSoutput')]
     )
 
     top_level_netlist.connect_netlist(
         output_stage_netlist,
-        [('IBIAS', 'OUTPUT_STAGE_BIAS'), ('VIN', 'VOUT_PRE')]
+        [('VDD', 'vdd'), ('GND', 'gnd'), ('IBIAS', 'outputibias'), ('VIN', 'CSoutput'), ('VOUT', 'output')]
     )
 
     opamp_top.info['netlist'] = top_level_netlist
