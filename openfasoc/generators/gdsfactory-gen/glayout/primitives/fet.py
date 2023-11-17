@@ -436,7 +436,7 @@ def nmos(
         num_dummies = 2
 
     nmos_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1 dm=1
-XMAIN D G S B {model} l={{l}} w={{w}} m={{m}}"""
+XMAIN   D G S B {model} l={{l}} w={{w}} m={{m}}"""
 
     for i in range(num_dummies):
         nmos_netlist += "\nXDUMMY" + str(i+1) + " B B B B {model} l={{l}} w={{w}} m={{dm}}"
@@ -594,7 +594,7 @@ def pmos(
         num_dummies = 2
 
     pmos_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1 dm=1
-XMAIN D G S B {model} l={{l}} w={{w}} m={{m}}"""
+XMAIN   D G S B {model} l={{l}} w={{w}} m={{m}}"""
 
     for i in range(num_dummies):
         pmos_netlist += "\nXDUMMY" + str(i+1) + " B B B B {model} l={{l}} w={{w}} m={{dm}}"
