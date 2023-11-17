@@ -245,22 +245,36 @@ class Netlist:
 		Parameters:
 		- `only_subcircuits`: Only generates the subcircuit directives if set to `True`. (Default: `False`)
 		"""
+
+		# GENERATE UNIQUE SUBCIRCUIT DiRECTIVES
 		subcircuits_netlist_map = self.get_subcircuits_netlist_map(sub_netlists_only=True)
-		subcircuits_list = []
+
 		subcircuit_suffixes = dict()
-
+		# Get the unique netlists' list and set their suffixes
 		for subckt in subcircuits_netlist_map:
-			for netlist in subcircuits_netlist_map[subckt]:
-				if netlist.circuit_name in subcircuit_suffixes:
-					subcircuit_suffixes[netlist.circuit_name] += 1
+			netlists = subcircuits_netlist_map[subckt]
+			# All of these subcircuits will have the same name, so use any one
+			subckt_name = netlists[0].circuit_name
 
-					netlist.circuit_name = f"{netlist.circuit_name}_{subcircuit_suffixes[netlist.circuit_name]}"
-				else:
-					subcircuit_suffixes[netlist.circuit_name] = 0
+			if subckt_name in subcircuit_suffixes:
+				# If a suffix exists, use it and increment it
+				for netlist in netlists: netlist.circuit_name = f"{netlist.circuit_name}_{subcircuit_suffixes[subckt_name]}"
+				subcircuit_suffixes[subckt_name] += 1
+			else:
+				# If a suffix doesn't exist, create it.
+				subcircuit_suffixes[subckt_name] = 1
 
-			subcircuits_list.append(subcircuits_netlist_map[subckt][0].__generate_self_subcircuit())
+		unique_subcircuits_list = []
+		# Generate all the unique subcircuits (generation is done again since suffixes were updated)
+		for subckt in subcircuits_netlist_map:
+			unique_subcircuits_list.append(
+				# Use any one since all will be equal
+				subcircuits_netlist_map[subckt][0].__generate_self_subcircuit()
+			)
+		# /GENERATE UNIQUE SUBCIRCUIT DiRECTIVES
 
-		subcircuits = '\n\n'.join(subcircuits_list)
+		# GENERATE THE FINAL NETLIST
+		subcircuits = '\n\n'.join(unique_subcircuits_list)
 		main_circuit = self.__generate_self_subcircuit()
 		global_nodes = ' '.join(self.get_global_nodes_list())
 
@@ -270,5 +284,6 @@ class Netlist:
 
 		self.spice_netlist += subcircuits + "\n"
 		self.spice_netlist += main_circuit
+		# /GENERATE THE FINAL NETLIST
 
 		return self.spice_netlist
