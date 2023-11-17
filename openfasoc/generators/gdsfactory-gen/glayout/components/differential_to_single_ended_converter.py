@@ -18,7 +18,7 @@ from glayout.routing.straight_route import straight_route
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized
-from glayout.spice.netlist import Netlist
+from glayout.spice import Netlist
 
 
 

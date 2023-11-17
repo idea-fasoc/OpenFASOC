@@ -14,7 +14,7 @@ from glayout.routing.L_route import L_route
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from decimal import Decimal
 from glayout.routing.straight_route import straight_route
-from glayout.spice.netlist import Netlist
+from glayout.spice import Netlist
 
 
 @validate_arguments

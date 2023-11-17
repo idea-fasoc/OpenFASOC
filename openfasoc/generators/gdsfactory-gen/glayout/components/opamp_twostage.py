@@ -24,7 +24,7 @@ from glayout.components.stacked_current_mirror import stacked_nfet_current_mirro
 from glayout.components.differential_to_single_ended_converter import differential_to_single_ended_converter
 from glayout.components.row_csamplifier_diff_to_single_ended_converter import row_csamplifier_diff_to_single_ended_converter
 from glayout.components.diff_pair_stackedcmirror import diff_pair_stackedcmirror
-from glayout.spice.netlist import Netlist
+from glayout.spice import Netlist
 
 
 @validate_arguments

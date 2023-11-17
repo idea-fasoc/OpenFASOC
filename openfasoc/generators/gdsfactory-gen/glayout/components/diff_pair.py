@@ -13,7 +13,7 @@ from glayout.pdk.util.port_utils import rename_ports_by_orientation, rename_port
 from glayout.primitives.via_gen import via_stack
 from glayout.primitives.guardring import tapring
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
-from glayout.spice.netlist import Netlist
+from glayout.spice import Netlist
 
 @cell
 def diff_pair(

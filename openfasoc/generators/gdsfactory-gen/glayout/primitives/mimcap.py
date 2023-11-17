@@ -9,7 +9,7 @@ from glayout.pdk.util.port_utils import rename_ports_by_orientation, add_ports_p
 from pydantic import validate_arguments
 from glayout.routing.straight_route import straight_route
 from decimal import ROUND_UP, Decimal
-from glayout.spice.netlist import Netlist
+from glayout.spice import Netlist
 
 @validate_arguments
 def __get_mimcap_layerconstruction_info(pdk: MappedPDK) -> tuple[str,str]:
