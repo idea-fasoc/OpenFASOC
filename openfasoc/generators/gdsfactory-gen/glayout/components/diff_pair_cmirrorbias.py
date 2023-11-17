@@ -151,8 +151,8 @@ def diff_pair_ibias(
         nodes=['VREF', 'VCOPY', 'VSS'],
         source_netlist="""
 .subckt {circuit_name} {nodes}
-M1 VREF VREF VSS VSS {model} l={length} w={width} m={mult}
-M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
+XREF VREF VREF VSS VSS {model} l={length} w={width} m={mult}
+XCOPY VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
 .ends {circuit_name}
         """,
         parameters={

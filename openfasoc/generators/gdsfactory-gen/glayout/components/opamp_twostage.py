@@ -176,8 +176,8 @@ def opamp_twostage(
         nodes=['VREF', 'VCOPY', 'VSS'],
         source_netlist="""
 .subckt {circuit_name} {nodes}
-M1 VREF VREF VSS VSS {model} l={length} w={width} m={mult}
-M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
+XREF VREF VREF VSS VSS {model} l={length} w={width} m={mult}
+XCOPY VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
 .ends {circuit_name}
         """,
         parameters={
@@ -229,7 +229,7 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
 
     two_stage_netlist = Netlist(
         circuit_name="OPAMP_TWO_STAGE",
-        nodes=['VDD', 'GND', 'IBIAS1', 'VP', 'VN', 'IBIAS2', 'VOUT']
+        nodes=['VDD', 'GND', 'DIFFPAIR_BIAS', 'VP', 'VN', 'CS_BIAS', 'VOUT']
     )
 
     input_stage_netlist = opamp_top.info['netlist']
@@ -237,12 +237,12 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
 
     two_stage_netlist.connect_netlist(
         input_stage_netlist,
-        [('IBIAS', 'IBIAS1'), ('VSS', 'GND'), ('B', 'GND')]
+        [('IBIAS', 'DIFFPAIR_BIAS'), ('VSS', 'GND'), ('B', 'GND')]
     )
 
     two_stage_netlist.connect_netlist(
         gain_stage_netlist,
-        [('VSS', 'GND')]
+        [('VSS', 'GND'), ('IBIAS', 'CS_BIAS')]
     )
 
     two_stage_netlist.connect_subnets(

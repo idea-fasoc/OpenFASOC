@@ -114,8 +114,8 @@ def __add_output_stage(
         nodes=['VREF', 'VCOPY', 'VSS'],
         source_netlist="""
 .subckt {circuit_name} {nodes}
-M1 VREF VREF VSS VSS {model} l={length} w={width} m={mult}
-M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
+XREF VREF VREF VSS VSS {model} l={length} w={width} m={mult}
+XCOPY VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
 .ends {circuit_name}
         """,
         parameters={
@@ -133,18 +133,12 @@ M2 VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
 
     output_stage_netlist.connect_netlist(
         amp_fet_ref.info['netlist'],
-        [('D', 'VDD'), ('G', 'VIN'), ('B', 'GND')]
+        [('D', 'VDD'), ('G', 'VIN'), ('B', 'GND'), ('S', 'VOUT')]
     )
 
     output_stage_netlist.connect_netlist(
         bias_netlist,
-        [('VREF', 'IBIAS'), ('VSS', 'GND')]
-    )
-
-    output_stage_netlist.connect_subnets(
-        amp_fet_ref.info['netlist'],
-        bias_netlist,
-        [('S', 'VCOPY')]
+        [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
     )
 
     return opamp_top, output_stage_netlist
@@ -201,7 +195,7 @@ def opamp(
 
     top_level_netlist = Netlist(
         circuit_name="OPAMP",
-        nodes=['VDD', 'GND', 'VP', 'VN', 'VOUT_PRE', 'VOUT', 'IBIAS1', 'IBIAS2', 'IBIAS3']
+        nodes=['VDD', 'GND', 'VP', 'VN', 'VOUT_PRE', 'VOUT', 'DIFFPAIR_BIAS', 'CS_BIAS', 'OUTPUT_STAGE_BIAS']
     )
 
     top_level_netlist.connect_netlist(
@@ -211,7 +205,7 @@ def opamp(
 
     top_level_netlist.connect_netlist(
         output_stage_netlist,
-        [('IBIAS', 'IBIAS3'), ('VIN', 'VOUT_PRE')]
+        [('IBIAS', 'OUTPUT_STAGE_BIAS'), ('VIN', 'VOUT_PRE')]
     )
 
     opamp_top.info['netlist'] = top_level_netlist
