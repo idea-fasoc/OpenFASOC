@@ -18,6 +18,8 @@ class Netlist:
 
 	source_netlist: str = ""
 	"""The source SPICE subcircuit (template) for the subcircuit. [Mako](https://makotemplates.org) templating syntax is supported."""
+	instance_format: str = "X{name} {nodes} {circuit_name}"
+	"""The format for the SPICE instantiation. Uses the Python string formatting syntax. `self.parameters`, `nodes`, `name`, and `circuit_name` are available parameters."""
 	spice_netlist: str = ""
 	"""The generated SPICE netlist."""
 
@@ -66,17 +68,26 @@ class Netlist:
 
 		return 'Netlist'
 
-	def generate_instance(self, name: Optional[str] = None, nodes: Optional[list[str]] = None) -> str:
+	def generate_instance(self, name: Optional[str] = None, nodes: Optional[list[str]] = None, instance_format: Optional[str] = None) -> str:
 		"""Generates an instance of the netlist subcircuit.
 		Override to insert parameters in the instance.
 		"""
 		if name == None:
 			name = self.circuit_name
 
+		if instance_format == None:
+			instance_format = self.instance_format
+
 		if nodes == None:
 			nodes = self.nodes
 
-		return f"X{name} {' '.join(nodes)} {self.circuit_name}"
+		params = {
+			**self.generate_source_netlist_params(),
+			'nodes': ' '.join(nodes),
+			'name': name
+		}
+
+		return instance_format.format(**params)
 
 	def read_source_netlist(self, netlist_src: str) -> str:
 		"""Reads a source SPICE subcircuit template from a SPICE file. [Mako](https://makotemplates.org) templating syntax is supported in the source SPICE netlist."""
