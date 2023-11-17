@@ -427,20 +427,19 @@ def nmos(
     component = rename_ports_by_orientation(nfet).flatten()
 
     # add spice netlist
-    if with_dummy == False:
-        dummy_tuple = (False, False)
-    elif with_dummy == True:
-        dummy_tuple = (True, True)
-    else:
-        dummy_tuple = with_dummy
+    num_dummies = 0
+    if with_dummy == False or with_dummy == (False, False):
+        num_dummies = 0
+    elif with_dummy == (True, False) or with_dummy == (False, True):
+        num_dummies = 1
+    elif with_dummy == True or with_dummy == (True, True):
+        num_dummies = 2
 
     nmos_netlist=""".subckt {circuit_name} {nodes}
-M1 D G S B {model} l={length} w={width} m={mult}"""
+XMAIN D G S B {model} l={length} w={width} m={mult}"""
 
-    if dummy_tuple[0]:
-        nmos_netlist += "\nM2 B B B B {model} l={length} w={width} m={dummy_mult}"
-    if dummy_tuple[1]:
-        nmos_netlist += "\nM3 B B B B {model} l={length} w={width} m={dummy_mult}"
+    for i in range(num_dummies):
+        nmos_netlist += "\nXDUMMY" + str(i+1) + "B B B B {model} l={length} w={width} m={dummy_mult}"
 
     nmos_netlist += "\n.ends {circuit_name}"
 
@@ -585,20 +584,19 @@ def pmos(
     component =  rename_ports_by_orientation(pfet).flatten()
 
     # add spice netlist
-    if with_dummy == False:
-        dummy_tuple = (False, False)
-    elif with_dummy == True:
-        dummy_tuple = (True, True)
-    else:
-        dummy_tuple = with_dummy
+    num_dummies = 0
+    if with_dummy == False or with_dummy == (False, False):
+        num_dummies = 0
+    elif with_dummy == (True, False) or with_dummy == (False, True):
+        num_dummies = 1
+    elif with_dummy == True or with_dummy == (True, True):
+        num_dummies = 2
 
     pmos_netlist=""".subckt {circuit_name} {nodes}
-M1 D G S B {model} l={length} w={width} m={mult}"""
+XMAIN D G S B {model} l={length} w={width} m={mult}"""
 
-    if dummy_tuple[0]:
-        pmos_netlist += "\nM2 B B B B {model} l={length} w={width} m={dummy_mult}"
-    if dummy_tuple[1]:
-        pmos_netlist += "\nM3 B B B B {model} l={length} w={width} m={dummy_mult}"
+    for i in range(num_dummies):
+        pmos_netlist += "\nXDUMMY" + str(i+1) + "B B B B {model} l={length} w={width} m={dummy_mult}"
 
     pmos_netlist += "\n.ends {circuit_name}"
 
