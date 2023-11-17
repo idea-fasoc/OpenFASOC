@@ -1,3 +1,4 @@
+from copy import deepcopy
 from gdsfactory.cell import cell, clear_cache
 from gdsfactory.component import Component, copy
 from gdsfactory.component_reference import ComponentReference
@@ -196,6 +197,15 @@ XCOPY VCOPY VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
         cmirror.info['netlist'],
         center_diffpair_comp.info['netlist'],
         [('VCOPY', 'VTAIL')]
+    )
+
+    diffpair_i_.info['netlist'].connect_netlist(
+        antenna_diode_comp.info['netlist'],
+        [('D', 'VSS'), ('G', 'VSS'), ('B', 'VSS'), ('S', 'VP')]
+    )
+    diffpair_i_.info['netlist'].connect_netlist(
+        deepcopy(antenna_diode_comp.info['netlist']),
+        [('D', 'VSS'), ('G', 'VSS'), ('B', 'VSS'), ('S', 'VN')]
     )
 
     diffpair_i_ref = prec_ref_center(diffpair_i_)
