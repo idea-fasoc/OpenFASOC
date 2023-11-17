@@ -204,14 +204,15 @@ XCOPY VCOPY VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
     opamp_top.add_ports(_cref.get_ports_list(), prefix="gnd_route_")
 
     diff_cs_netlist = pmos_comps.info['netlist']
+
     pmos_comps.info['netlist'] = Netlist(
         circuit_name="GAIN_STAGE",
-        nodes=['VIN', 'VOUT', 'VSS', 'IBIAS', 'GND']
+        nodes=['VIN1', 'VIN2', 'VOUT', 'VDD', 'IBIAS', 'GND']
     )
 
     pmos_comps.info['netlist'].connect_netlist(
         diff_cs_netlist,
-        []
+        [('VSS', 'VDD')]
     )
 
     pmos_comps.info['netlist'].connect_netlist(
@@ -241,13 +242,13 @@ XCOPY VCOPY VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
 
     two_stage_netlist.connect_netlist(
         gain_stage_netlist,
-        [('VSS', 'GND'), ('IBIAS', 'CS_BIAS')]
+        [('IBIAS', 'CS_BIAS')]
     )
 
     two_stage_netlist.connect_subnets(
         input_stage_netlist,
         gain_stage_netlist,
-        [('VDD1', 'VIN'), ('VDD2', 'VOUT')]
+        [('VDD1', 'VIN1'), ('VDD2', 'VIN2')]
     )
 
     opamp_top.info['netlist'] = two_stage_netlist

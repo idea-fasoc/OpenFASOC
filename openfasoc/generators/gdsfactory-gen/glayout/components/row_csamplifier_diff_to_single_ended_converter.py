@@ -59,11 +59,7 @@ def row_csamplifier_diff_to_single_ended_converter(pdk: MappedPDK, diff_to_singl
 
         pmos_comps.info['netlist'].connect_netlist(
             halfMultp.info['netlist'],
-            [('D', 'VOUT'), ('S', 'VSS'), ('B', 'VSS')]
-        )
-
-        pmos_comps.info['netlist'].connect_subnets(
-            0, halfMultp.info['netlist'], [('VOUT', 'G')]
+            [('D', 'VOUT'), ('S', 'VSS'), ('B', 'VSS'), ('G', 'VIN2')]
         )
 
     # add npadding and add ports
