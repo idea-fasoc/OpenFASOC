@@ -439,7 +439,7 @@ def nmos(
 XMAIN D G S B {model} l={length} w={width} m={mult}"""
 
     for i in range(num_dummies):
-        nmos_netlist += "\nXDUMMY" + str(i+1) + "B B B B {model} l={length} w={width} m={dummy_mult}"
+        nmos_netlist += "\n " + str(i+1) + "B B B B {model} l={length} w={width} m={dummy_mult}"
 
     nmos_netlist += "\n.ends {circuit_name}"
 
@@ -596,7 +596,7 @@ def pmos(
 XMAIN D G S B {model} l={length} w={width} m={mult}"""
 
     for i in range(num_dummies):
-        pmos_netlist += "\nXDUMMY" + str(i+1) + "B B B B {model} l={length} w={width} m={dummy_mult}"
+        pmos_netlist += "\nXDUMMY " + str(i+1) + "B B B B {model} l={length} w={width} m={dummy_mult}"
 
     pmos_netlist += "\n.ends {circuit_name}"
 
