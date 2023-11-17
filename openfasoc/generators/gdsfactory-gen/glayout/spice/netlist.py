@@ -190,7 +190,7 @@ class Netlist:
 			main_circuit = f".subckt {generated_circuit_name} {' '.join(self.nodes)}\n"
 
 			for i, netlist in enumerate(self.sub_netlists):
-				main_circuit += netlist.generate_instance(i, self.netlist_connections[i]) + "\n"
+				main_circuit += netlist.generate_instance(str(i), self.netlist_connections[i]) + "\n"
 
 			main_circuit += f".ends {generated_circuit_name}"
 
@@ -199,15 +199,30 @@ class Netlist:
 		else:
 			return ""
 
-	def get_subcircuits_list(self, sub_netlists_only = False) -> set[str]:
+	def get_subcircuits_netlist_map(self, sub_netlists_only = False) -> dict[str, list['Netlist']]:
 		"""Generates a list of all the unique SPICE subcircuits directives used in the netlist."""
-		subcircuits = set()
+		subcircuits = dict()
 
-		for i, netlist in enumerate(self.sub_netlists):
-			netlist.circuit_name = f"{self.circuit_name}_{i}_{netlist.circuit_name}"
-			subcircuits.update(netlist.get_subcircuits_list())
+		# Get sub netlists' subcircuits
+		for netlist in self.sub_netlists:
+			subnetlist_subcircuits = netlist.get_subcircuits_netlist_map()
 
-		if not sub_netlists_only: subcircuits.add(self.__generate_self_subcircuit())
+			# For each subnetlists' subcircuit
+			for subckt in subnetlist_subcircuits:
+				subckt_netlists = subnetlist_subcircuits[subckt]
+
+				if subckt not in subcircuits:
+					# If it is unique, create an entry in the dict
+					subcircuits[subckt] = [*subckt_netlists]
+				else:
+					# If it is not unique, append the netlists to the dict
+					subcircuits[subckt] += subckt_netlists
+
+
+		if not sub_netlists_only:
+			self_subckt = self.__generate_self_subcircuit()
+			if self_subckt not in subcircuits:
+				subcircuits[self_subckt] = [self]
 
 		return subcircuits
 
@@ -230,7 +245,22 @@ class Netlist:
 		Parameters:
 		- `only_subcircuits`: Only generates the subcircuit directives if set to `True`. (Default: `False`)
 		"""
-		subcircuits = '\n'.join(self.get_subcircuits_list(sub_netlists_only=True))
+		subcircuits_netlist_map = self.get_subcircuits_netlist_map(sub_netlists_only=True)
+		subcircuits_list = []
+		subcircuit_suffixes = dict()
+
+		for subckt in subcircuits_netlist_map:
+			for netlist in subcircuits_netlist_map[subckt]:
+				if netlist.circuit_name in subcircuit_suffixes:
+					subcircuit_suffixes[netlist.circuit_name] += 1
+
+					netlist.circuit_name = f"{netlist.circuit_name}_{subcircuit_suffixes[netlist.circuit_name]}"
+				else:
+					subcircuit_suffixes[netlist.circuit_name] = 0
+
+			subcircuits_list.append(subcircuits_netlist_map[subckt][0].__generate_self_subcircuit())
+
+		subcircuits = '\n'.join(subcircuits_list)
 		main_circuit = self.__generate_self_subcircuit()
 		global_nodes = ' '.join(self.get_global_nodes_list())
 
