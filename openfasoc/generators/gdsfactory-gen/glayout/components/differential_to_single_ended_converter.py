@@ -157,12 +157,13 @@ def differential_to_single_ended_converter(pdk: MappedPDK, rmult: int, half_ploa
     diff_to_single_netlist = Netlist(
         circuit_name="DIFF_TO_SINGLE",
         nodes=['VIN', 'VOUT', 'VSS', 'VSS2'],
-        source_netlist=""".subckt {circuit_name} {nodes}
-X1 V1   VIN VSS  VSS {model} l={length} w={width} m={mult_top}
-X2 VSS2 VIN VSS  VSS {model} l={length} w={width} m={mult_top}
-X3 VIN  VIN V1   VSS {model} l={length} w={width} m={mult_bot}
-X4 VOUT VIN VSS2 VSS {model} l={length} w={width} m={mult_bot}
+        source_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 mt=1 mb=1
+X1 V1   VIN VSS  VSS {model} l={{l}} w={{w}} m={{w}}
+X2 VSS2 VIN VSS  VSS {model} l={{l}} w={{w}} m={{mt}}
+X3 VIN  VIN V1   VSS {model} l={{l}} w={{w}} m={{mb}}
+X4 VOUT VIN VSS2 VSS {model} l={{l}} w={{w}} m={{mb}}
 .ends {circuit_name}""",
+        instance_format="X{name} {nodes} {circuit_name} l={length} w={width} mt={mult_top} mb={mult_bot}",
         parameters={
             'model': pdk.models['pfet'],
             'width': half_pload[0],

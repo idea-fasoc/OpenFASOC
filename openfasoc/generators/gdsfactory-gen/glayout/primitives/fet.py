@@ -435,11 +435,11 @@ def nmos(
     elif with_dummy == True or with_dummy == (True, True):
         num_dummies = 2
 
-    nmos_netlist=""".subckt {circuit_name} {nodes}
-XMAIN D G S B {model} l={length} w={width} m={mult}"""
+    nmos_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1 dm=1
+XMAIN D G S B {model} l={{l}} w={{w}} m={{m}}"""
 
     for i in range(num_dummies):
-        nmos_netlist += "\n " + str(i+1) + "B B B B {model} l={length} w={width} m={dummy_mult}"
+        nmos_netlist += "\nXDUMMY" + str(i+1) + " B B B B {model} l={{l}} w={{w}} m={{dm}}"
 
     nmos_netlist += "\n.ends {circuit_name}"
 
@@ -447,6 +447,7 @@ XMAIN D G S B {model} l={length} w={width} m={mult}"""
         circuit_name="NMOS",
         nodes=['D', 'G', 'S', 'B'],
         source_netlist=nmos_netlist,
+        instance_format="X{name} {nodes} {circuit_name} l={length} w={width} m={mult} dm={dummy_mult}",
         parameters={
             'model': pdk.models['nfet'],
             'length': length,
@@ -592,11 +593,11 @@ def pmos(
     elif with_dummy == True or with_dummy == (True, True):
         num_dummies = 2
 
-    pmos_netlist=""".subckt {circuit_name} {nodes}
-XMAIN D G S B {model} l={length} w={width} m={mult}"""
+    pmos_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1 dm=1
+XMAIN D G S B {model} l={{l}} w={{w}} m={{m}}"""
 
     for i in range(num_dummies):
-        pmos_netlist += "\nXDUMMY " + str(i+1) + "B B B B {model} l={length} w={width} m={dummy_mult}"
+        pmos_netlist += "\nXDUMMY" + str(i+1) + " B B B B {model} l={{l}} w={{w}} m={{dm}}"
 
     pmos_netlist += "\n.ends {circuit_name}"
 
@@ -604,6 +605,7 @@ XMAIN D G S B {model} l={length} w={width} m={mult}"""
         circuit_name="PMOS",
         nodes=['D', 'G', 'S', 'B'],
         source_netlist=pmos_netlist,
+        instance_format="X{name} {nodes} {circuit_name} l={length} w={width} m={mult} dm={dummy_mult}",
         parameters={
             'model': pdk.models['pfet'],
             'length': length,
