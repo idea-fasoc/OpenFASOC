@@ -294,9 +294,9 @@ class Netlist:
 
 		self.spice_netlist = ""
 
-		if len(global_nodes) > 0 and not only_subcircuits: self.spice_netlist += f".global {global_nodes}\n"
+		if len(global_nodes) > 0 and not only_subcircuits: self.spice_netlist += f".global {global_nodes}\n\n"
 
-		self.spice_netlist += subcircuits + "\n"
+		self.spice_netlist += subcircuits + "\n\n"
 		self.spice_netlist += main_circuit
 		# /GENERATE THE FINAL NETLIST
 
