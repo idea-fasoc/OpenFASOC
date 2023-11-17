@@ -3,7 +3,7 @@ from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
 from glayout.pdk.mappedpdk import MappedPDK
 from typing import Optional
-from glayout.via_gen import via_array
+from glayout.primitives.via_gen import via_array
 from glayout.pdk.util.comp_utils import prec_array, to_decimal, to_float
 from glayout.pdk.util.port_utils import rename_ports_by_orientation, add_ports_perimeter, print_ports
 from pydantic import validate_arguments
@@ -97,9 +97,3 @@ def mimcap_array(pdk: MappedPDK, rows: int, columns: int, size: tuple[float,floa
 	return mimcap_arr.flatten()
 
 
-if __name__ == "__main__":
-    from .pdk.util.standard_main import pdk
-
-    mycap = mimcap_array(pdk,1,1)
-    mycap.show()
-    print_ports(mycap)

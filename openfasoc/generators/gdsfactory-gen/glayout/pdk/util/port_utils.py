@@ -43,7 +43,7 @@ def rename_component_ports(custom_comp: Component, rename_function: Callable[[st
 @validate_arguments
 def rename_ports_by_orientation__call(old_name: str, pobj: Port) -> str:
 	"""internal implementation of port orientation rename"""
-	if not "_" in old_name:
+	if not "_" in old_name and not any(old_name==edge for edge in ["e1","e2","e3","e4"]):
 		raise ValueError("portname must contain underscore \"_\" " + old_name)
 	# get new suffix (port orientation)
 	new_suffix = None
@@ -57,6 +57,9 @@ def rename_ports_by_orientation__call(old_name: str, pobj: Port) -> str:
 		new_suffix = "W"
 	else:
 		new_suffix = "S"
+	# handle special case where no underscore and name is e1/2/3/4
+	if any(old_name==edge for edge in ["e1","e2","e3","e4"]):
+		return new_suffix
 	# construct new name
 	old_str_split = old_name.rsplit("_", 1)
 	old_str_split[1] = new_suffix
@@ -66,7 +69,7 @@ def rename_ports_by_orientation__call(old_name: str, pobj: Port) -> str:
 @validate_arguments
 def rename_ports_by_orientation(custom_comp: Component) -> Component:
     """replaces the last part of the port name 
-    (after the last underscore) with a direction
+    (after the last underscore, unless name is e1/2/3/4) with a direction
     direction is one of N,E,S,W
     returns the modified component
     """
@@ -102,24 +105,22 @@ def rename_ports_by_list(custom_comp: Component, replace_list: list[tuple[str,st
 
 @validate_arguments
 def add_ports_perimeter(custom_comp: Component, layer: tuple[int, int], prefix: Optional[str] = "_") -> Component:
-    """adds ports to the outside perimeter of a cell
-    custom_comp = component to add ports to (returns the modified component)
-    layer = will extract this layer and take it as the bbox, ports will also be on this layer
-    prefix = prefix to add to the port names. Adds an underscore by default
-    """
-    if "_" not in prefix:
-        raise ValueError("you need underscore char in prefix")
-    compbbox = custom_comp.extract(layers=(layer,)).bbox
-    width = compbbox[1][0] - compbbox[0][0]
-    height = compbbox[1][1] - compbbox[0][1]
-    size = (width, height)
-    temp = Component()
-    swref = temp << rectangle(layer=layer,size=size)
-    swref.move(destination=(custom_comp.bbox[0]))
-    temp.add_ports(swref.get_ports_list(),prefix=prefix)
-    temp = rename_ports_by_orientation(temp)
-    custom_comp.add_ports(temp.get_ports_list())
-    return custom_comp
+	"""adds ports to the outside perimeter of a cell
+	custom_comp = component to add ports to (returns the modified component)
+	layer = will extract this layer and take it as the bbox, ports will also be on this layer
+	prefix = prefix to add to the port names. Adds an underscore by default
+	returns ports named by orientation
+	"""
+	if "_" not in prefix:
+		raise ValueError("you need underscore char in prefix")
+	compbbox = custom_comp.extract(layers=(layer,)).bbox
+	width = compbbox[1][0] - compbbox[0][0]
+	height = compbbox[1][1] - compbbox[0][1]
+	custom_comp.add_port(name=prefix+"W",width=height,orientation=180,center=(compbbox[0][0],compbbox[0][1]+height/2),layer=layer,port_type="electrical")
+	custom_comp.add_port(name=prefix+"N",width=width,orientation=90,center=(compbbox[0][0]+width/2,compbbox[1][1]),layer=layer,port_type="electrical")
+	custom_comp.add_port(name=prefix+"E",width=height,orientation=0,center=(compbbox[1][0],compbbox[0][1]+height/2),layer=layer,port_type="electrical")
+	custom_comp.add_port(name=prefix+"S",width=width,orientation=270,center=(compbbox[0][0]+width/2,compbbox[0][1]),layer=layer,port_type="electrical")
+	return custom_comp
 
 
 @validate_arguments
@@ -330,12 +331,12 @@ def print_port_tree_all_cells() -> list:
 	"""print the PortTree for most of the glayout cells and save as a text file.
 	returns a list of components
 	"""
-	from glayout.via_gen import via_stack, via_array
+	from glayout.primitives.via_gen import via_stack, via_array
 	from glayout.opamp import opamp
-	from glayout.mimcap import mimcap
-	from glayout.mimcap import mimcap_array
-	from glayout.guardring import tapring
-	from glayout.fet import multiplier, nmos, pmos
+	from glayout.primitives.mimcap import mimcap
+	from glayout.primitives.mimcap import mimcap_array
+	from glayout.primitives.guardring import tapring
+	from glayout.primitives.fet import multiplier, nmos, pmos
 	from glayout.diff_pair import diff_pair
 	from glayout.routing.straight_route import straight_route
 	from glayout.routing.c_route import c_route

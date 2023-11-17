@@ -14,7 +14,7 @@
 
 ** Define netlist
 Vsupply VDD GND 1.8
-Vindc net1 GND 0.9
+Vindc net1 GND 1
 V2 vin net1 AC 0.5
 V3 vip net1 AC -0.5
 .save i(vindc)
@@ -34,8 +34,8 @@ Ibiaso  VDD biason   {bo}
 **@@stp .include /home/rw/work/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
 
 ** GCP machine
-.lib /usr/bin/miniconda3/share/pdk/sky130A/libs.tech/ngspice/sky130.lib.spice tt
-*@@stp .include /usr/bin/miniconda3/share/pdk/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
+.lib @@PDK_ROOT/sky130A/libs.tech/ngspice/sky130.lib.spice tt
+*@@stp .include @@PDK_ROOT/sky130A/libs.ref/sky130_fd_sc_hvl/spice/sky130_fd_sc_hvl.spice
 
 
 ** Import cryo libs (these are stored in the sky130A folder)
@@ -50,7 +50,7 @@ XDUT vo VDD vip vin biascsn biason biasdpn GND csoutputnetNC opamp
 ** Run initial analysis
 .save all
 .options savecurrents
-.ac dec 100 1k 10G
+.ac dec 100 10 10G
 .control
 ** Set initial values
 set filetype = ascii
@@ -64,14 +64,14 @@ let savedDCGain = -1
 let savedthreedbBW = -1
 
 * dp and cs bias log step
-let linear_step_until = 60u
-let linear_step_default = 7u
-let bias_dp_Min  = 10u
-let bias_dp_Max  = 400u
-let bias_dp_logStep = 1.1
-let bias_cs_Min  = 10u
-let bias_cs_Max  = 300u
-let bias_cs_logStep = 1.1
+let linear_step_until = 0u
+let linear_step_default = 1.1u
+let bias_dp_Min  = 25u
+let bias_dp_Max  = 200u
+let bias_dp_logStep = 1.15
+let bias_cs_Min  = 30u
+let bias_cs_Max  = 1m
+let bias_cs_logStep = 1.18
 
 * output bias linear step
 let bias_o_Min   = 93.5u
@@ -103,13 +103,14 @@ while bias_cs le bias_cs_Max
             ** Measure phase margin
             let phase = (180/PI)*vp(vo)
             meas ac pm find phase when vdb(vo)=0
+            let pm_FOM_factor = pm > 45 ? 1 : 0.0000001
             ** Measure DC(ish) gain
-            meas ac dcg find vdb(vo) at=1k
+            meas ac dcg find vdb(vo) at=10
             ** Measure 3db BW
             let threedbabsgain = dcg - 3
             meas ac threedb when vdb(vo)=threedbabsgain FALL=1
             ** if FOM is better than previous max save results
-            let FOM = ugb_f / (bias_cs + bias_dp)
+            let FOM = pm_FOM_factor * ugb_f / (bias_cs + bias_dp)
             if ( FOM ge maxFOM )
                 let maxFOM = FOM
                 let maxUGB = ugb_f
@@ -150,7 +151,7 @@ alterparam bo = $&maxBio
 reset
 
 op
-let estimated_output_1to1_ref = @Ibiaso[current]*1.8
+let estimated_output_1to1_ref = 336.6u
 let ptotal_exact = -i(vsupply)*1.8
 let estimated_two_stagepwr = ptotal_exact - estimated_output_1to1_ref
 wrdata result_power.txt ptotal_exact estimated_two_stagepwr

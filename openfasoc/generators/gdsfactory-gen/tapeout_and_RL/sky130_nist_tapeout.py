@@ -8,11 +8,11 @@ from glayout.pdk.util.comp_utils import prec_array, movey, align_comp_to_port, p
 from glayout.pdk.util.port_utils import add_ports_perimeter, print_ports
 from gdsfactory.component import Component
 from glayout.pdk.mappedpdk import MappedPDK
-from glayout.opamp import opamp
+from glayout.components.opamp import opamp
 from glayout.routing.L_route import L_route
 from glayout.routing.straight_route import straight_route
 from glayout.routing.c_route import c_route
-from glayout.via_gen import via_array
+from glayout.primitives.via_gen import via_array
 from gdsfactory.cell import cell, clear_cache
 import numpy as np
 from subprocess import Popen
@@ -34,14 +34,19 @@ import argparse
 from glayout.pdk.sky130_mapped import sky130_mapped_pdk as pdk
 from itertools import count, repeat
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
-from glayout.pdk.util.opamp_array_create import write_opamp_matrix
+from glayout.pdk.util.component_array_create import write_component_matrix
 
 
 global _GET_PARAM_SET_LENGTH_
 global _TAKE_OUTPUT_AT_SECOND_STAGE_
+global PDK_ROOT
+global __NO_LVT_GLOBAL_
+global __SMALL_PAD_
+__SMALL_PAD_ = True
+__NO_LVT_GLOBAL_ = False
 _GET_PARAM_SET_LENGTH_ = False
 _TAKE_OUTPUT_AT_SECOND_STAGE_ = False
-
+PDK_ROOT = "/usr/bin/miniconda3/share/pdk/"
 
 # ====Build Opamp====
 
@@ -54,10 +59,19 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	opamp_wpads = opamp_in.copy()
 	opamp_wpads = movey(opamp_wpads, destination=0)
 	# create pad array and add to opamp
-	pad = import_gds("pads/pad_60um_flat.gds")
-	pad.name = "NISTpad"
+	global __SMALL_PAD_
+	small_pad=__SMALL_PAD_
+	if small_pad:
+		pad = import_gds("pads/pad_60um_flat.gds")
+		pad.name = "NISTpad"
+	else:
+		pad = import_gds("pads/Manhattan120umPad.gds")
+		pad.name = "Manhattan120umPad"
 	pad = add_ports_perimeter(pad, pdk.get_glayer("met4"),prefix="pad_")
-	pad_array = prec_array(pad, rows=2, columns=(4+1), spacing=(20,120))
+	if small_pad:
+		pad_array = prec_array(pad, rows=2, columns=(4+1), spacing=(40,120))
+	else:
+		pad_array = prec_array(pad, rows=2, columns=(4+1), spacing=(120,120))
 	pad_array_ref = prec_ref_center(pad_array)
 	opamp_wpads.add(pad_array_ref)
 	# add via_array to vdd pin
@@ -65,18 +79,19 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	via_array_ref = opamp_wpads << vddarray
 	align_comp_to_port(via_array_ref,opamp_wpads.ports["pin_vdd_N"],alignment=('c','b'))
 	# route to the pads
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_minus_W"],pad_array_ref.ports["row1_col1_pad_S"],hwidth=3)
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_plus_W"],pad_array_ref.ports["row0_col1_pad_N"],hwidth=3)
+	leftroutelayer="met4"
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_plus_W"],pad_array_ref.ports["row1_col1_pad_S"], hwidth=3, vglayer=leftroutelayer)
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_minus_W"],pad_array_ref.ports["row0_col1_pad_N"],hwidth=3, vglayer=leftroutelayer)
 	opamp_wpads << straight_route(pdk, pad_array_ref.ports["row1_col2_pad_S"],opamp_wpads.ports["pin_vdd_S"], width=4,glayer1="met5")
 	opamp_wpads << straight_route(pdk, opamp_wpads.ports["pin_diffpairibias_S"],pad_array_ref.ports["row0_col2_pad_N"])
-	opamp_wpads << L_route(pdk, opamp_wpads.ports["gnd_route_con_E"],pad_array_ref.ports["row0_col3_pad_N"], vglayer="met4",hwidth=3)
+	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_gnd_E"],pad_array_ref.ports["row0_col3_pad_N"], vglayer="met4",hwidth=3)
 	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_commonsourceibias_E"],pad_array_ref.ports["row0_col4_pad_N"],hwidth=3)
 	opamp_wpads << L_route(pdk, opamp_wpads.ports["pin_outputibias_E"],pad_array_ref.ports["row1_col4_pad_S"], hwidth=3)
 	opamp_wpads << c_route(pdk, opamp_wpads.ports["pin_output_route_E"],pad_array_ref.ports["row1_col3_pad_E"], extension=1, cglayer="met3", cwidth=4)
 	# add pin layer and text labels for LVS
 	text_pin_labels = list()
 	met5pin = rectangle(size=(5,5),layer=(72,16), centered=True)
-	for name in ["plus","diffpairibias","gnd","commonsourceibias","minus","vdd","output","outputibias"]:
+	for name in ["minus","diffpairibias","gnd","commonsourceibias","plus","vdd","output","outputibias"]:
 		pin_w_label = met5pin.copy()
 		pin_w_label.add_label(text=name,layer=(72,5),magnification=4)
 		text_pin_labels.append(pin_w_label)
@@ -90,19 +105,22 @@ def sky130_opamp_add_pads(opamp_in: Component, flatten=False) -> Component:
 	# import nano pad and add to opamp
 	nanopad = import_gds("pads/sky130_nano_pad.gds")
 	nanopad.name = "nanopad"
-	nanopad = add_ports_perimeter(nanopad, pdk.get_glayer("met4"),prefix="nanopad_")
+	nanopad = add_ports_perimeter(nanopad, pdk.get_glayer(leftroutelayer),prefix="nanopad_")
 	nanopad_array = prec_array(nanopad, rows=2, columns=2, spacing=(10,10))
 	nanopad_array_ref = nanopad_array.ref_center()
 	opamp_wpads.add(nanopad_array_ref)
 	nanopad_array_ref.movex(opamp_wpads.xmin+nanopad_array.xmax)
 	# route nano pad connections
-	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col0_nanopad_N"],pad_array_ref.ports["row1_col0_pad_S"],width=3)
-	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col0_nanopad_S"],pad_array_ref.ports["row0_col0_pad_N"],width=3)
-	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col1_nanopad_E"],pad_array_ref.ports["row0_col1_pad_N"],width=3)
-	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col1_nanopad_E"],pad_array_ref.ports["row1_col1_pad_S"],width=3)
+	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col0_nanopad_N"],pad_array_ref.ports["row1_col0_pad_S"],width=3,glayer2=leftroutelayer)
+	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col0_nanopad_S"],pad_array_ref.ports["row0_col0_pad_N"],width=3,glayer2=leftroutelayer)
+	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col1_nanopad_E"],pad_array_ref.ports["row0_col1_pad_N"],width=3,glayer2=leftroutelayer)
+	opamp_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col1_nanopad_E"],pad_array_ref.ports["row1_col1_pad_S"],width=3,glayer2=leftroutelayer)
 	# add the extra pad for the CS output
 	cspadref = opamp_wpads << pad
-	cspadref.movex(240).movey(90)
+	if not small_pad:
+		cspadref.movex(720).movey(120)
+	else:
+		cspadref.movex(300).movey(90)
 	opamp_wpads << L_route(pdk, cspadref.ports["pad_S"], opamp_wpads.ports["commonsource_output_E"],hwidth=3, hglayer="met5",vglayer="met5")
 	#opamp_wpads << nanopad
 	if flatten:
@@ -143,12 +161,12 @@ def sky130_add_opamp_labels(opamp_in: Component) -> Component:
 	ibias2label.add_label(text="commonsourceibias",layer=met4_label)
 	move_info.append((ibias2label,opamp_in.ports["pin_commonsourceibias_N"],None))
 	#minus
-	minuslabel = rectangle(layer=met3_pin,size=(1,1),centered=True).copy()
-	minuslabel.add_label(text="minus",layer=met3_label)
+	minuslabel = rectangle(layer=met2_pin,size=(1,1),centered=True).copy()
+	minuslabel.add_label(text="minus",layer=met2_label)
 	move_info.append((minuslabel,opamp_in.ports["pin_minus_N"],None))
 	#-plus
-	pluslabel = rectangle(layer=met3_pin,size=(1,1),centered=True).copy()
-	pluslabel.add_label(text="plus",layer=met3_label)
+	pluslabel = rectangle(layer=met2_pin,size=(1,1),centered=True).copy()
+	pluslabel.add_label(text="plus",layer=met2_label)
 	move_info.append((pluslabel,opamp_in.ports["pin_plus_N"],None))
 	#vdd
 	vddlabel = rectangle(layer=met3_pin,size=(1,1),centered=True).copy()
@@ -171,14 +189,17 @@ def sky130_add_opamp_labels(opamp_in: Component) -> Component:
 
 
 def sky130_add_lvt_layer(opamp_in: Component) -> Component:
+	global __NO_LVT_GLOBAL_
+	if __NO_LVT_GLOBAL_:
+		return opamp_in
 	opamp_in.unlock()
 	# define layers
 	lvt_layer = (125,44)
 	# define geometry over pmos components and add lvt
 	SW_S_edge = opamp_in.ports["commonsource_Pamp_L_multiplier_0_plusdoped_S"]
-	SW_W_edge = opamp_in.ports["commonsource_Pamp_L_multiplier_0_plusdoped_W"]
+	SW_W_edge = opamp_in.ports["commonsource_Pamp_L_multiplier_0_dummy_L_plusdoped_W"]
 	NE_N_edge = opamp_in.ports["commonsource_Pamp_R_multiplier_2_plusdoped_N"]
-	NE_E_edge = opamp_in.ports["commonsource_Pamp_R_multiplier_2_plusdoped_E"]
+	NE_E_edge = opamp_in.ports["commonsource_Pamp_R_multiplier_2_dummy_R_plusdoped_E"]
 	SW_S_center = SW_S_edge.center
 	SW_W_center = SW_W_edge.center
 	NE_N_center = NE_N_edge.center
@@ -191,15 +212,15 @@ def sky130_add_lvt_layer(opamp_in: Component) -> Component:
 	min_y = min(middle_bottom_y, SW_corner[1])
 	abs_center = (SW_corner[0] + (NE_corner[0] - SW_corner[0])/2, min_y + (max_y - min_y)/2)
 	# draw lvt rectangle
-	LVT_rectangle = rectangle(layer=lvt_layer, size=(abs(NE_corner[0] - SW_corner[0]), abs(max_y - min_y)), centered=True)
+	LVT_rectangle = rectangle(layer=lvt_layer, size=(abs(NE_corner[0] - SW_corner[0]), abs(max_y - min_y)+0.36), centered=True)
 	LVT_rectangle_ref = opamp_in << LVT_rectangle
 	# align lvt rectangle to the plusdoped_N region
 	LVT_rectangle_ref.move(origin=(0, 0), destination=abs_center)
 	# define geometry over output amplfier and add lvt
-	outputW = opamp_in.ports["outputstage_amp_multiplier_0_plusdoped_W"]
-	outputE = opamp_in.ports["outputstage_amp_multiplier_0_plusdoped_E"]
+	outputW = opamp_in.ports["outputstage_amp_multiplier_0_dummy_L_plusdoped_W"]
+	outputE = opamp_in.ports["outputstage_amp_multiplier_0_dummy_R_plusdoped_E"]
 	width = abs(outputE.center[0]-outputW.center[0])
-	hieght = outputW.width
+	hieght = outputW.width+0.36
 	center = (outputW.center[0] + width/2, outputW.center[1])
 	lvtref = opamp_in << rectangle(size=(width,hieght),layer=lvt_layer,centered=True)
 	lvtref.move(destination=center)
@@ -212,24 +233,26 @@ def sky130_add_lvt_layer(opamp_in: Component) -> Component:
 
 
 def opamp_parameters_serializer(
-	diffpair_params: tuple[float, float, int] = (6, 1, 4),
+	half_diffpair_params: tuple[float, float, int] = (6, 1, 4),
     diffpair_bias: tuple[float, float, int] = (6, 2, 4),
     half_common_source_params: tuple[float, float, int, int] = (7, 1, 10, 3),
     half_common_source_bias: tuple[float, float, int, int] = (6, 2, 8, 2),
     output_stage_params: tuple[float, float, int] = (5, 1, 16),
     output_stage_bias: tuple[float, float, int] = (6, 2, 4),
+	half_pload: tuple[float,float,int] = (6,1,6),
     mim_cap_size=(12, 12),
     mim_cap_rows=3,
     rmult: int = 2
 ) -> np.array:
 	"""converts opamp params into the uniform numpy float format"""
 	return np.array(
-		[diffpair_params[0],diffpair_params[1],diffpair_params[2],
+		[half_diffpair_params[0],half_diffpair_params[1],half_diffpair_params[2],
 		diffpair_bias[0],diffpair_bias[1],diffpair_bias[2],
 		half_common_source_params[0],half_common_source_params[1],half_common_source_params[2],half_common_source_params[3],
 		half_common_source_bias[0],half_common_source_bias[1],half_common_source_bias[2],half_common_source_bias[3],
 		output_stage_params[0],output_stage_params[1],output_stage_params[2],
 		output_stage_bias[0],output_stage_bias[1],output_stage_bias[2],
+		half_pload[0],half_pload[1],half_pload[2],
 		mim_cap_size[0],mim_cap_size[1],
 		mim_cap_rows,
 		rmult],
@@ -239,21 +262,22 @@ def opamp_parameters_serializer(
 def opamp_parameters_de_serializer(serialized_params: Optional[np.array]=None) -> dict:
 	"""converts uniform numpy float format to opamp kwargs"""
 	if serialized_params is None:
-		serialized_params = 24*[-987.654321]
+		serialized_params = 27*[-987.654321]
 		serialized_params[16] = int(-987.654321)
 		serialized_params[17] = int(-987.654321)
-	if not len(serialized_params) == 24:
-		raise ValueError("serialized_params should be a length 24 array")
+	if not len(serialized_params) == 27:
+		raise ValueError("serialized_params should be a length 27 array")
 	params_dict = dict()
-	params_dict["diffpair_params"] = tuple(serialized_params[0:3])
+	params_dict["half_diffpair_params"] = tuple(serialized_params[0:3])
 	params_dict["diffpair_bias"] = tuple(serialized_params[3:6])
 	params_dict["half_common_source_params"] = tuple(serialized_params[6:10])
 	params_dict["half_common_source_bias"] = tuple(serialized_params[10:14])
 	params_dict["output_stage_params"] = tuple(serialized_params[14:17])
 	params_dict["output_stage_bias"] = tuple(serialized_params[17:20])
-	params_dict["mim_cap_size"] = tuple(serialized_params[20:22])
-	params_dict["mim_cap_rows"] = int(serialized_params[22])
-	params_dict["rmult"] = int(serialized_params[23])
+	params_dict["half_pload"] = tuple(serialized_params[20:23])
+	params_dict["mim_cap_size"] = tuple(serialized_params[23:25])
+	params_dict["mim_cap_rows"] = int(serialized_params[25])
+	params_dict["rmult"] = int(serialized_params[26])
 	return params_dict
 
 def opamp_results_serializer(
@@ -301,45 +325,54 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 		diffpairs.append((6,1,4))
 		diffpairs.append((5,1,4))
 	else:
-		for width in [2,6]:
-			for length in [0.5, 1, 2]:
-				for fingers in [2,4]:
+		for width in [7]:
+			for length in [0.5,0.7, 0.9]:
+				for fingers in [8,10,12]:
 					diffpairs.append((width,length,fingers))
 	# all bias2 (output amp bias) transistors
 	bias2s = list()
 	if test_mode:
 		bias2s.append((6,1,4,3))
 	else:
-		for width in [6]:
-			for length in [1,2]:
-				for fingers in [4]:
+		for width in [7]:
+			for length in [1]:
+				for fingers in [12,16,20]:
 					for mults in [2,3]:
 						bias2s.append((width,length,fingers,mults))
+	# all pmos first stage load transistors
+	half_pload = list()
+	if test_mode:
+		half_pload.append((6,1,6))
+	else:
+		for width in [9]:
+			for length in [0.5]:
+				for fingers in [6,8,10,12]:
+					half_pload.append((width,length,fingers))
 	# all output pmos transistors
 	pamp_hparams = list()
 	if test_mode:
 		pamp_hparams.append((7,1,8,3))
 	else:
-		for width in [7,4]:
-			for length in [0.5,1,2]:
-				for fingers in [8,4,2]:
+		for width in [8]:
+			for length in [0.5]:
+				for fingers in [8,12,16,20]:
 					pamp_hparams.append((width,length,fingers,3))
 	# diffpair bias cmirror
 	diffpair_cmirrors = list()
 	if test_mode:
 		pass
 	else:
-		for width in [6]:
-			for length in [2]:
-				for fingers in [4]:
+		for width in [7]:
+			for length in [1]:
+				for fingers in [8,10]:
 					diffpair_cmirrors.append((width,length,fingers))
 	# rows of the cap array to try
-	cap_arrays = [1,2]
+	cap_arrays = [3]
 	# routing mults to try
 	rmults = [2]
 	# ******************************************
 	# create and return the small parameters list
-	short_list_len = len(diffpairs) * len(bias2s) * len(pamp_hparams) * len(cap_arrays) * len(rmults) * len(diffpair_cmirrors)
+	short_list_len = len(diffpairs) * len(bias2s) * len(pamp_hparams) * len(cap_arrays) * len(rmults) * len(diffpair_cmirrors) * len(half_pload)
 	short_list_len += 2 if test_mode else 0
 	short_list = np.empty(shape=(short_list_len,len(opamp_parameters_serializer())),dtype=np.float64)
 	index = 0
@@ -349,16 +382,18 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 				for cap_array_v in cap_arrays:
 					for rmult in rmults:
 						for diffpair_cmirror_v in diffpair_cmirrors:
-							tup_to_add = opamp_parameters_serializer(
-								diffpair_params=diffpair_v, 
-								half_common_source_bias=bias2_v, 
-								mim_cap_rows=cap_array_v, 
-								half_common_source_params=pamp_o_v,
-								rmult=rmult,
-								diffpair_bias=diffpair_cmirror_v,
-							)
-							short_list[index] = tup_to_add
-							index = index + 1
+							for halfpld in half_pload:
+								tup_to_add = opamp_parameters_serializer(
+									half_pload=halfpld,
+									half_diffpair_params=diffpair_v, 
+									half_common_source_bias=bias2_v, 
+									mim_cap_rows=cap_array_v, 
+									half_common_source_params=pamp_o_v,
+									rmult=rmult,
+									diffpair_bias=diffpair_cmirror_v,
+								)
+								short_list[index] = tup_to_add
+								index = index + 1
 	# if test_mode create a failed attempt (to test error handling)
 	if test_mode:
 		short_list[index] = opamp_parameters_serializer(mim_cap_rows=-1)
@@ -424,7 +459,7 @@ def process_netlist_subckt(netlist: Union[str,Path], sim_model: Literal["normal 
 	global _TAKE_OUTPUT_AT_SECOND_STAGE_
 	netlist = Path(netlist).resolve()
 	if not netlist.is_file():
-		raise ValueError("netlist must be file")
+		raise ValueError("netlist is not a valid file")
 	hints = [".subckt","output","plus","minus","vdd","gnd","commonsourceibias","outputibias"]
 	subckt_lines = list()
 	with open(netlist, "r") as spice_net:
@@ -436,26 +471,36 @@ def process_netlist_subckt(netlist: Union[str,Path], sim_model: Literal["normal 
 				subckt_lines[i] = line.rstrip("+") + " " + subckt_lines[i+1] + "\n"
 				subckt_lines[i+1] = ""
 				line = subckt_lines[i]
-			if "cryo" in sim_model and len(line) and line[0]=="M":
-				subckt_lines[i][0]="X"
+			if "cryo" in sim_model and len(line)>1:
+				subckt_lines[i] = subckt_lines[i].replace("sky130_fd_pr__nfet_01v8_lvt","nshortlvth")
+				subckt_lines[i] = subckt_lines[i].replace("sky130_fd_pr__pfet_01v8_lvt","pshort")
+				subckt_lines[i] = subckt_lines[i].replace("sky130_fd_pr__nfet_01v8","nshort")
+				if ("nshort" in subckt_lines[i]) or ("pshort" in subckt_lines[i]) or ("nshortlvth" in subckt_lines[i]):
+					subckt_lines[i] = "M" + subckt_lines[i][1:]
 			if all([hint in line for hint in hints]):
 				if _TAKE_OUTPUT_AT_SECOND_STAGE_:
 					headerstr = ".subckt opamp CSoutput vdd plus minus commonsourceibias outputibias diffpairibias gnd output"
 				else:
 					headerstr = ".subckt opamp output vdd plus minus commonsourceibias outputibias diffpairibias gnd CSoutput"
 				subckt_lines[i] = headerstr+"\nCload output gnd " + str(cload) +"p\n"
-			if "floating" in line or (noparasitics and len(line) and line[0]=="C"):
+			if ("floating" in line) or (noparasitics and len(line) and line[0]=="C"):
 				subckt_lines[i] = "* "+ subckt_lines[i]
 	with open(netlist, "w") as spice_net:
 		spice_net.writelines(subckt_lines)
 
 def process_spice_testbench(testbench: Union[str,Path], temperature_info: tuple[int,str]=(25,"normal model")):
+	global PDK_ROOT
+	PDK_ROOT = Path(PDK_ROOT).resolve()
 	testbench = Path(testbench).resolve()
 	if not testbench.is_file():
 		raise ValueError("testbench must be file")
+	if not PDK_ROOT.is_dir():
+		raise ValueError("PDK_ROOT is not a valid directory")
+	PDK_ROOT = str(PDK_ROOT)
 	with open(testbench, "r") as spice_file:
 		spicetb = spice_file.read()
 		spicetb = spicetb.replace('{@@TEMP}', str(int(temperature_info[0])))
+		spicetb = spicetb.replace("@@PDK_ROOT", PDK_ROOT)
 		if temperature_info[1] == "cryo model":
 			spicetb = spicetb.replace("*@@cryo ","")
 		else:
@@ -466,6 +511,7 @@ def process_spice_testbench(testbench: Union[str,Path], temperature_info: tuple[
 def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, output_dir: Optional[Union[int,str,Path]] = None):
 	# pass pdk as global var to avoid pickling issues
 	global pdk
+	global PDK_ROOT
 	# generate layout
 	destination_gds_copy = save_gds_dir / (str(index)+".gds")
 	sky130pdk = pdk
@@ -480,7 +526,14 @@ def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: t
 			tmp_gds_path = Path(opamp_v.write_gds(gdsdir=tmpdirname)).resolve()
 			if tmp_gds_path.is_file():
 				destination_gds_copy.write_bytes(tmp_gds_path.read_bytes())
-			copyfile("extract.bash",str(tmpdirname)+"/extract.bash")
+			extractbash_template=str()
+			#import pdb; pdb.set_trace()
+			with open("extract.bash.template","r") as extraction_script:
+				extractbash_template = extraction_script.read()
+				extractbash_template = extractbash_template.replace("@@PDK_ROOT",PDK_ROOT)
+			with open(str(tmpdirname)+"/extract.bash","w") as extraction_script:
+				extraction_script.write(extractbash_template)
+			#copyfile("extract.bash",str(tmpdirname)+"/extract.bash")
 			copyfile("opamp_perf_eval.sp",str(tmpdirname)+"/opamp_perf_eval.sp")
 			copytree("sky130A",str(tmpdirname)+"/sky130A")
 			# extract layout
@@ -982,7 +1035,7 @@ def create_opamp_matrix(save_dir_name: str, params: np.array, results: Optional[
 	# run opamps
 	for index in indices:
 		# create opamp
-		comp = sky130_opamp_add_pads(opamp(pdk, **opamp_parameters_de_serializer(params[index])), flatten=False)
+		comp = sky130_opamp_add_pads(sky130_add_lvt_layer(opamp(pdk, **opamp_parameters_de_serializer(params[index]))), flatten=False)
 		comp = component_snap_to_grid(comp)
 		comp.name = "opamp_" + str(index)
 		# append to list
@@ -995,7 +1048,13 @@ def create_opamp_matrix(save_dir_name: str, params: np.array, results: Optional[
 				strtowrite += "\n\nresults = " + str(opamp_results_de_serializer(results[index]))
 			strtowrite += "\n\n\n"
 			resfile.write(strtowrite)
-	write_opamp_matrix(comps, write_name = str(save_dir) + "/opamp_matrix.gds", xspace=600)
+	global __SMALL_PAD_
+	xspace=1440
+	yspace=400
+	if __SMALL_PAD_:
+		xspace=600
+		yspace=280
+	write_component_matrix(comps, write_name = str(save_dir) + "/opamp_matrix.gds", xspace=xspace,yspace=yspace)
 	pdk.cell_decorator_settings.cache = current_setting
 
 
@@ -1007,6 +1066,7 @@ if __name__ == "__main__":
 	start_watch = time.time()
 
 	parser = argparse.ArgumentParser(description="sky130 nist tapeout sample, RL generation, and statistics utility.")
+	
 	subparsers = parser.add_subparsers(title="mode", required=True, dest="mode")
 
 	# Subparser for extract_stats mode
@@ -1027,7 +1087,7 @@ if __name__ == "__main__":
 
 	# Subparser for gen_opamp mode
 	gen_opamp_parser = subparsers.add_parser("gen_opamp", help="Run the gen_opamp function. optional parameters for transistors are width,length,fingers,mults")
-	gen_opamp_parser.add_argument("--diffpair_params", nargs=3, type=float, default=[6, 1, 4], help="diffpair_params (default: 6 1 4)")
+	gen_opamp_parser.add_argument("--half_diffpair_params", nargs=3, type=float, default=[6, 1, 4], help="half_diffpair_params (default: 6 1 4)")
 	gen_opamp_parser.add_argument("--diffpair_bias", nargs=3, type=float, default=[6, 2, 4], help="diffpair_bias (default: 6 2 4)")
 	gen_opamp_parser.add_argument("--half_common_source_params", nargs=4, type=float, default=[7, 1, 10, 3], help="half_common_source_params (default: 7 1 10 3)")
 	gen_opamp_parser.add_argument("--half_common_source_bias", nargs=4, type=float, default=[6, 2, 8, 2], help="half_common_source_bias (default: 6 2 8 3)")
@@ -1058,8 +1118,24 @@ if __name__ == "__main__":
 	create_opamp_matrix_parser.add_argument("--indices", type=int, nargs="+", help="list of int indices to pick from the opamp param.npy and add to the matrix (default: the entire params list)")
 	create_opamp_matrix_parser.add_argument("--output_dir", type=Path, default="./opampmatrix", help="Directory for output files (default: ./opampmatrix)")
 
+	for prsr in [get_training_data_parser,gen_opamp_parser,test,create_opamp_matrix_parser]:
+		prsr.add_argument("--no_lvt",action="store_true",help="do not place any low threshold voltage transistors.")
+		prsr.add_argument("--PDK_ROOT",type=Path,default="/usr/bin/miniconda3/share/pdk/",help="path to the sky130 PDK library")
+	for prsr in [gen_opamp_parser,create_opamp_matrix_parser]:
+		prsr.add_argument("--big_pad",action="store_true",help="use 120um pad")
+	
 	args = parser.parse_args()
 
+	if args.mode in ["gen_opamps","create_opamp_matrix"]:
+		__SMALL_PAD_ = not args.big_pad
+	
+	if args.mode in ["get_training_data","test","gen_opamps","create_opamp_matrix"]:
+		__NO_LVT_GLOBAL_ = args.no_lvt
+		PDK_ROOT = Path(args.PDK_ROOT).resolve()
+		if not(PDK_ROOT.is_dir()):
+			raise ValueError("PDK_ROOT is not a valid directory\n")
+		PDK_ROOT = str(PDK_ROOT)
+	
 	# Simulation Temperature information
 	if vars(args).get("temp") is not None:
 		temperature_info = [args.temp, None]
@@ -1091,7 +1167,7 @@ if __name__ == "__main__":
 	elif args.mode=="gen_opamp":
 		# Call the opamp function with the parsed arguments
 		opamp_comp = opamp(pdk=pdk,
-				diffpair_params=tuple(args.diffpair_params),
+				half_diffpair_params=tuple(args.half_diffpair_params),
 				diffpair_bias=tuple(args.diffpair_bias),
 				half_common_source_bias=tuple(args.half_common_source_bias),
 				half_common_source_params=tuple(args.half_common_source_params),
@@ -1115,10 +1191,10 @@ if __name__ == "__main__":
 		if args.output_second_stage:
 			_TAKE_OUTPUT_AT_SECOND_STAGE_ = True
 		params = {
-			"diffpair_params": (6, 1, 4),
+			"half_diffpair_params": (6, 1, 4),
 			"diffpair_bias": (6, 2, 4),
-			"half_common_source_bias": (6, 2, 8, 3),
-			"half_common_source_params": (7, 1, 10, 3),
+			"half_common_source_params": (7.2, 1, 10, 3),
+			"half_common_source_bias": (8, 2, 12, 3),
 			"output_stage_params": (5, 1, 16),
 			"output_stage_bias": (6, 2, 4),
 			"mim_cap_size": (12, 12),
