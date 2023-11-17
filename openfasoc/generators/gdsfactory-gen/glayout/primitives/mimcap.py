@@ -58,7 +58,7 @@ def mimcap(
 		nodes = ['V1', 'V2'],
 		source_netlist="""
 .subckt {circuit_name} {nodes}
-C1 V1 V2 {model} l={length} w={width}
+X1 V1 V2 {model} l={length} w={width}
 .ends {circuit_name}
 		""",
 		parameters={
@@ -122,7 +122,7 @@ def mimcap_array(pdk: MappedPDK, rows: int, columns: int, size: tuple[float,floa
 .ends {circuit_name}
 		""",
 		parameters={
-			'mimcap_arr_instances': '\n'.join([f"C{i+1} {pdk.models['mimcap']} V1 V2 w={size[0]} l={size[1]}" for i in range(rows * columns)])
+			'mimcap_arr_instances': '\n'.join([f"X{i+1} V1 V2 {pdk.models['mimcap']} w={size[0]} l={size[1]}" for i in range(rows * columns)])
 		}
 	)
 
