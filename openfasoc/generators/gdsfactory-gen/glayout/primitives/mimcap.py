@@ -56,11 +56,9 @@ def mimcap(
     component.info['netlist'] = Netlist(
 		circuit_name="MIMCap",
 		nodes = ['V1', 'V2'],
-		source_netlist="""
-.subckt {circuit_name} {nodes}
+		source_netlist=""".subckt {circuit_name} {nodes}
 X1 V1 V2 {model} l={length} w={width}
-.ends {circuit_name}
-		""",
+.ends {circuit_name}""",
 		parameters={
 			'model': pdk.models['mimcap'],
 			'length': size[0],
@@ -116,11 +114,9 @@ def mimcap_array(pdk: MappedPDK, rows: int, columns: int, size: tuple[float,floa
 	mimcap_arr.info['netlist'] = Netlist(
 		circuit_name="MIMCAP_ARR",
 		nodes = ['V1', 'V2'],
-		source_netlist="""
-.subckt {circuit_name} {nodes}
+		source_netlist=""".subckt {circuit_name} {nodes}
 {mimcap_arr_instances}
-.ends {circuit_name}
-		""",
+.ends {circuit_name}""",
 		parameters={
 			'mimcap_arr_instances': '\n'.join([f"X{i+1} V1 V2 {pdk.models['mimcap']} w={size[0]} l={size[1]}" for i in range(rows * columns)])
 		}

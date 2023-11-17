@@ -149,12 +149,10 @@ def diff_pair_ibias(
     cmirror.info['netlist'] = Netlist(
         circuit_name='CURRENT_MIRROR',
         nodes=['VREF', 'VCOPY', 'VSS'],
-        source_netlist="""
-.subckt {circuit_name} {nodes}
+        source_netlist=""".subckt {circuit_name} {nodes}
 XREF VREF VREF VSS VSS {model} l={length} w={width} m={mult}
 XCOPY VCOPY VREF VSS VSS {model} l={length} w={width} m={mult}
-.ends {circuit_name}
-        """,
+.ends {circuit_name}""",
         parameters={
             'model': pdk.models['nfet'],
             'width': diffpair_bias[0],
