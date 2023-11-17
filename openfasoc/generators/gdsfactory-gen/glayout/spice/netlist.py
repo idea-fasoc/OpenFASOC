@@ -260,7 +260,7 @@ class Netlist:
 
 			subcircuits_list.append(subcircuits_netlist_map[subckt][0].__generate_self_subcircuit())
 
-		subcircuits = '\n'.join(subcircuits_list)
+		subcircuits = '\n\n'.join(subcircuits_list)
 		main_circuit = self.__generate_self_subcircuit()
 		global_nodes = ' '.join(self.get_global_nodes_list())
 
