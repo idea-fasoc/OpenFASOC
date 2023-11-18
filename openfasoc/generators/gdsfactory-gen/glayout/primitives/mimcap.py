@@ -10,6 +10,7 @@ from pydantic import validate_arguments
 from glayout.routing.straight_route import straight_route
 from decimal import ROUND_UP, Decimal
 from glayout.spice import Netlist
+from copy import deepcopy
 
 @validate_arguments
 def __get_mimcap_layerconstruction_info(pdk: MappedPDK) -> tuple[str,str]:
@@ -21,6 +22,35 @@ def __get_mimcap_layerconstruction_info(pdk: MappedPDK) -> tuple[str,str]:
 	pdk.has_required_glayers(["capmet",capmettop,capmetbottom])
 	pdk.activate()
 	return capmettop, capmetbottom
+
+def __generate_mimcap_netlist(pdk: MappedPDK, size: tuple[float, float]) -> Netlist:
+	return Netlist(
+		circuit_name="MIMCap",
+		nodes = ['V1', 'V2'],
+		source_netlist=""".subckt {circuit_name} {nodes} l=1 w=1
+X1 V1 V2 {model} l={{l}} w={{w}}
+.ends {circuit_name}""",
+		instance_format="X{name} {nodes} {circuit_name} l={length} w={width}",
+		parameters={
+			'model': pdk.models['mimcap'],
+			'length': size[0],
+			'width': size[1]
+		}
+	)
+
+def __generate_mimcap_array_netlist(mimcap_netlist: Netlist, num_caps: int) -> Netlist:
+	arr_netlist = Netlist(
+		circuit_name="MIMCAP_ARR",
+		nodes = ['V1', 'V2']
+	)
+
+	for _ in range(num_caps):
+		arr_netlist.connect_netlist(
+			deepcopy(mimcap_netlist),
+			[]
+		)
+
+	return arr_netlist
 
 @cell
 def mimcap(
@@ -53,18 +83,7 @@ def mimcap(
     component = rename_ports_by_orientation(mim_cap).flatten()
 
     # netlist generation
-    component.info['netlist'] = Netlist(
-		circuit_name="MIMCap",
-		nodes = ['V1', 'V2'],
-		source_netlist=""".subckt {circuit_name} {nodes}
-X1 V1 V2 {model} l={length} w={width}
-.ends {circuit_name}""",
-		parameters={
-			'model': pdk.models['mimcap'],
-			'length': size[0],
-			'width': size[1]
-		}
-	)
+    component.info['netlist'] = __generate_mimcap_netlist(pdk, size)
 
     return component
 
@@ -111,16 +130,7 @@ def mimcap_array(pdk: MappedPDK, rows: int, columns: int, size: tuple[float,floa
 		mimcap_arr << straight_route(pdk,port_pair[0],port_pair[1],width=rmult*pdk.get_grule(port_pair[2])["min_width"])
 
 	# add netlist
-	mimcap_arr.info['netlist'] = Netlist(
-		circuit_name="MIMCAP_ARR",
-		nodes = ['V1', 'V2'],
-		source_netlist=""".subckt {circuit_name} {nodes}
-{mimcap_arr_instances}
-.ends {circuit_name}""",
-		parameters={
-			'mimcap_arr_instances': '\n'.join([f"X{i+1} V1 V2 {pdk.models['mimcap']} w={size[0]} l={size[1]}" for i in range(rows * columns)])
-		}
-	)
+	mimcap_arr.info['netlist'] = __generate_mimcap_array_netlist(mimcap_single.info['netlist'], rows * columns)
 
 	return mimcap_arr.flatten()
 
