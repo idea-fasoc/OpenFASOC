@@ -25,7 +25,7 @@ from glayout.components.differential_to_single_ended_converter import differenti
 from glayout.components.row_csamplifier_diff_to_single_ended_converter import row_csamplifier_diff_to_single_ended_converter
 from glayout.components.diff_pair_stackedcmirror import diff_pair_stackedcmirror
 from glayout.spice import Netlist
-
+from glayout.components.stacked_current_mirror import create_current_mirror_netlist
 
 @validate_arguments
 def __create_and_route_pins(
@@ -171,20 +171,11 @@ def opamp_twostage(
 
     pmos_comps = row_csamplifier_diff_to_single_ended_converter(pdk, pmos_comps, half_common_source_params, rmult)
 
-    cs_bias_netlist = Netlist(
-        circuit_name='CURRENT_MIRROR',
-        nodes=['VREF', 'VCOPY', 'VSS'],
-        source_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1
-XREF VREF VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
-XCOPY VCOPY VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
-.ends {circuit_name}""",
-        instance_format="X{name} {nodes} {circuit_name} l={length} w={width} m={mult}",
-        parameters={
-            'model': pdk.models['nfet'],
-            'width': diffpair_bias[0],
-            'length': diffpair_bias[1],
-            'mult': diffpair_bias[2]
-        }
+    cs_bias_netlist = create_current_mirror_netlist(
+        pdk,
+        width=diffpair_bias[0],
+        length=diffpair_bias[1],
+        multipliers=diffpair_bias[2]
     )
 
     ydim_ncomps = opamp_top.ymax

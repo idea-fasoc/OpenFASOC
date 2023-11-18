@@ -18,8 +18,24 @@ from glayout.routing.straight_route import straight_route
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized
+from glayout.spice import Netlist
 
-
+def create_current_mirror_netlist(pdk: MappedPDK, width: float, length: float, multipliers: int) -> Netlist:
+    return Netlist(
+        circuit_name='CURRENT_MIRROR',
+        nodes=['VREF', 'VCOPY', 'VSS'],
+        source_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1
+XREF VREF VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
+XCOPY VCOPY VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
+.ends {circuit_name}""",
+        instance_format="X{name} {nodes} {circuit_name} l={length} w={width} m={mult}",
+        parameters={
+            'model': pdk.models['nfet'],
+            'width': width,
+            'length': length,
+            'mult': multipliers
+        }
+    )
 
 @validate_arguments
 def stacked_nfet_current_mirror(pdk: MappedPDK, half_common_source_nbias: tuple[float, float, int, int], rmult: int, sd_route_left: bool) -> Component:

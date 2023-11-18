@@ -37,6 +37,7 @@ from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized
 from glayout.spice import Netlist
+from glayout.components.stacked_current_mirror import create_current_mirror_netlist
 
 @validate_arguments
 def diff_pair_ibias(
@@ -147,20 +148,11 @@ def diff_pair_ibias(
     )
     cmirror.add_ports(srcshort.get_ports_list(), prefix="purposegndports")
     # current mirror netlist
-    cmirror.info['netlist'] = Netlist(
-        circuit_name='CURRENT_MIRROR',
-        nodes=['VREF', 'VCOPY', 'VSS'],
-        source_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1
-XREF VREF VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
-XCOPY VCOPY VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
-.ends {circuit_name}""",
-        instance_format="X{name} {nodes} {circuit_name} l={length} w={width} m={mult}",
-        parameters={
-            'model': pdk.models['nfet'],
-            'width': diffpair_bias[0],
-            'length': diffpair_bias[1],
-            'mult': diffpair_bias[2]
-        }
+    cmirror.info['netlist'] = create_current_mirror_netlist(
+        pdk,
+        width=diffpair_bias[0],
+        length=diffpair_bias[1],
+        multipliers=diffpair_bias[2]
     )
 
     # add cmirror

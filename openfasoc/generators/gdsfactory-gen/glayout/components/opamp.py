@@ -21,23 +21,10 @@ from glayout.placement.two_transistor_interdigitized import two_nfet_interdigiti
 from glayout.spice import Netlist
 
 from glayout.components.opamp_twostage import opamp_twostage
+from glayout.components.stacked_current_mirror import create_current_mirror_netlist
 
 def __create_output_stage_netlist(pdk: MappedPDK, output_amp_fet_ref: ComponentReference, biasParams: list) -> Netlist:
-    bias_netlist = Netlist(
-        circuit_name='CURRENT_MIRROR',
-        nodes=['VREF', 'VCOPY', 'VSS'],
-        source_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1
-XREF VREF VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
-XCOPY VCOPY VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
-.ends {circuit_name}""",
-        instance_format="X{name} {nodes} {circuit_name} l={length} w={width} m={mult}",
-        parameters={
-            'model': pdk.models['nfet'],
-            'width': biasParams[0],
-            'length': biasParams[1],
-            'mult': biasParams[2]
-        }
-    )
+    bias_netlist = create_current_mirror_netlist(pdk, biasParams[0], biasParams[1], biasParams[2])
 
     output_stage_netlist = Netlist(
         circuit_name="OUTPUT_STAGE",
