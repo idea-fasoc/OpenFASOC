@@ -22,6 +22,39 @@ from glayout.spice import Netlist
 
 from glayout.components.opamp_twostage import opamp_twostage
 
+def __create_output_stage_netlist(pdk: MappedPDK, output_amp_fet_ref: ComponentReference, biasParams: list) -> Netlist:
+    bias_netlist = Netlist(
+        circuit_name='CURRENT_MIRROR',
+        nodes=['VREF', 'VCOPY', 'VSS'],
+        source_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1
+XREF VREF VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
+XCOPY VCOPY VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
+.ends {circuit_name}""",
+        instance_format="X{name} {nodes} {circuit_name} l={length} w={width} m={mult}",
+        parameters={
+            'model': pdk.models['nfet'],
+            'width': biasParams[0],
+            'length': biasParams[1],
+            'mult': biasParams[2]
+        }
+    )
+
+    output_stage_netlist = Netlist(
+        circuit_name="OUTPUT_STAGE",
+        nodes=['VDD', 'GND', 'IBIAS', 'VIN', 'VOUT']
+    )
+
+    output_stage_netlist.connect_netlist(
+        output_amp_fet_ref.info['netlist'],
+        [('D', 'VDD'), ('G', 'VIN'), ('B', 'GND'), ('S', 'VOUT')]
+    )
+
+    output_stage_netlist.connect_netlist(
+        bias_netlist,
+        [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
+    )
+
+    return output_stage_netlist
 
 @validate_arguments
 def __add_output_stage(
@@ -109,40 +142,26 @@ def __add_output_stage(
     opamp_top << straight_route(pdk, bias_pin.ports["e2"], cmirror_ibias.ports["B_gate_S"],width=1)
     opamp_top.add_ports(bias_pin.get_ports_list(),prefix="pin_outputibias_")
 
-    bias_netlist = Netlist(
-        circuit_name='CURRENT_MIRROR',
-        nodes=['VREF', 'VCOPY', 'VSS'],
-        source_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1
-XREF VREF VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
-XCOPY VCOPY VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
-.ends {circuit_name}""",
-        instance_format="X{name} {nodes} {circuit_name} l={length} w={width} m={mult}",
-        parameters={
-            'model': pdk.models['nfet'],
-            'width': biasParams[0],
-            'length': biasParams[1],
-            'mult': biasParams[2]
-        }
-    )
-
-    output_stage_netlist = Netlist(
-        circuit_name="OUTPUT_STAGE",
-        nodes=['VDD', 'GND', 'IBIAS', 'VIN', 'VOUT']
-    )
-
-    output_stage_netlist.connect_netlist(
-        amp_fet_ref.info['netlist'],
-        [('D', 'VDD'), ('G', 'VIN'), ('B', 'GND'), ('S', 'VOUT')]
-    )
-
-    output_stage_netlist.connect_netlist(
-        bias_netlist,
-        [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
-    )
-
+    output_stage_netlist = __create_output_stage_netlist(pdk, amp_fet_ref, biasParams)
     return opamp_top, output_stage_netlist
 
+def __create_opamp_netlist(two_stage_netlist: Netlist, output_stage_netlist: Netlist) -> Netlist:
+    top_level_netlist = Netlist(
+        circuit_name="opamp",
+        nodes=['gnd', 'CSoutput', 'output', 'vdd', 'plus', 'minus', 'commonsourceibias', 'outputibias', 'diffpairibias']
+    )
 
+    top_level_netlist.connect_netlist(
+        two_stage_netlist,
+        [('VDD', 'vdd'), ('GND', 'gnd'), ('DIFFPAIR_BIAS', 'diffpairibias'), ('VP', 'plus'), ('VN', 'minus'), ('CS_BIAS', 'commonsourceibias'), ('VOUT', 'CSoutput')]
+    )
+
+    top_level_netlist.connect_netlist(
+        output_stage_netlist,
+        [('VDD', 'vdd'), ('GND', 'gnd'), ('IBIAS', 'outputibias'), ('VIN', 'CSoutput'), ('VOUT', 'output')]
+    )
+
+    return top_level_netlist
 
 @cell
 def opamp(
@@ -189,25 +208,7 @@ def opamp(
     )
     # add output amplfier stage
     opamp_top, output_stage_netlist = __add_output_stage(pdk, opamp_top, output_stage_params, output_stage_bias, rmult)
-
-    two_stage_netlist = opamp_top.info['netlist']
-
-    top_level_netlist = Netlist(
-        circuit_name="opamp",
-        nodes=['gnd', 'CSoutput', 'output', 'vdd', 'plus', 'minus', 'commonsourceibias', 'outputibias', 'diffpairibias']
-    )
-
-    top_level_netlist.connect_netlist(
-        two_stage_netlist,
-        [('VDD', 'vdd'), ('GND', 'gnd'), ('DIFFPAIR_BIAS', 'diffpairibias'), ('VP', 'plus'), ('VN', 'minus'), ('CS_BIAS', 'commonsourceibias'), ('VOUT', 'CSoutput')]
-    )
-
-    top_level_netlist.connect_netlist(
-        output_stage_netlist,
-        [('VDD', 'vdd'), ('GND', 'gnd'), ('IBIAS', 'outputibias'), ('VIN', 'CSoutput'), ('VOUT', 'output')]
-    )
-
-    opamp_top.info['netlist'] = top_level_netlist
+    opamp_top.info['netlist'] = __create_opamp_netlist(opamp_top.info['netlist'], output_stage_netlist)
 
     # return
     return rename_ports_by_orientation(component_snap_to_grid(opamp_top))
