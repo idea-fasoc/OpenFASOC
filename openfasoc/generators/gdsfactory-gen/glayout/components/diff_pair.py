@@ -15,6 +15,19 @@ from glayout.primitives.guardring import tapring
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from glayout.spice import Netlist
 
+def __create_diff_pair_netlist(fetL: Component, fetR: Component) -> Netlist:
+	diff_pair_netlist = Netlist(circuit_name='DIFF_PAIR', nodes=['VP', 'VN', 'VDD1', 'VDD2', 'VTAIL', 'B'])
+	diff_pair_netlist.connect_netlist(
+		fetL.info['netlist'],
+		[('D', 'VDD1'), ('G', 'VP'), ('S', 'VTAIL'), ('B', 'B')]
+	)
+	diff_pair_netlist.connect_netlist(
+		fetR.info['netlist'],
+		[('D', 'VDD2'), ('G', 'VN'), ('S', 'VTAIL'), ('B', 'B')]
+	)
+
+	return diff_pair_netlist
+
 @cell
 def diff_pair(
 	pdk: MappedPDK,
@@ -144,18 +157,7 @@ def diff_pair(
 
 	component = component_snap_to_grid(rename_ports_by_orientation(diffpair))
 
-	# add spice netlist
-	diff_pair_netlist = Netlist(circuit_name='DIFF_PAIR', nodes=['VP', 'VN', 'VDD1', 'VDD2', 'VTAIL', 'B'])
-	diff_pair_netlist.connect_netlist(
-		fetL.info['netlist'],
-		[('D', 'VDD1'), ('G', 'VP'), ('S', 'VTAIL'), ('B', 'B')]
-	)
-	diff_pair_netlist.connect_netlist(
-		fetR.info['netlist'],
-		[('D', 'VDD2'), ('G', 'VN'), ('S', 'VTAIL'), ('B', 'B')]
-	)
-
-	component.info['netlist'] = diff_pair_netlist
+	component.info['netlist'] = __create_diff_pair_netlist(fetL, fetR)
 	return component
 
 
