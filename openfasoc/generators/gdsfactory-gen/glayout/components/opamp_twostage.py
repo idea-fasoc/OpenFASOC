@@ -128,7 +128,54 @@ def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap
     opamp_top.add_port(name="commonsource_output_E", port=intermediate_output)
     return opamp_top, mimcap_netlist
 
+def __create_gain_stage_netlist(mimcap_netlist: Netlist, diff_cs_netlist: Netlist, cs_bias_netlist: Netlist) -> Netlist:
+    netlist = Netlist(
+        circuit_name="GAIN_STAGE",
+        nodes=['VIN1', 'VIN2', 'VOUT', 'VDD', 'IBIAS', 'GND']
+    )
 
+    netlist.connect_netlist(
+        diff_cs_netlist,
+        [('VSS', 'VDD')]
+    )
+
+    netlist.connect_netlist(
+        cs_bias_netlist,
+        [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
+    )
+
+    netlist.connect_netlist(mimcap_netlist, [('V2', 'VOUT')])
+    netlist.connect_subnets(
+        mimcap_netlist,
+        diff_cs_netlist,
+        [('V1', 'VSS2')]
+    )
+
+    return netlist
+
+def __create_two_stage_netlist(input_stage_netlist: Netlist, gain_stage_netlist: Netlist) -> Netlist:
+    two_stage_netlist = Netlist(
+        circuit_name="OPAMP_TWO_STAGE",
+        nodes=['VDD', 'GND', 'DIFFPAIR_BIAS', 'VP', 'VN', 'CS_BIAS', 'VOUT']
+    )
+
+    two_stage_netlist.connect_netlist(
+        input_stage_netlist,
+        [('IBIAS', 'DIFFPAIR_BIAS'), ('VSS', 'GND'), ('B', 'GND')]
+    )
+
+    two_stage_netlist.connect_netlist(
+        gain_stage_netlist,
+        [('IBIAS', 'CS_BIAS')]
+    )
+
+    two_stage_netlist.connect_subnets(
+        input_stage_netlist,
+        gain_stage_netlist,
+        [('VDD1', 'VIN1'), ('VDD2', 'VIN2')]
+    )
+
+    return two_stage_netlist
 
 def opamp_twostage(
     pdk: MappedPDK,
@@ -194,55 +241,8 @@ def opamp_twostage(
     # return
     opamp_top.add_ports(_cref.get_ports_list(), prefix="gnd_route_")
 
-    diff_cs_netlist = pmos_comps.info['netlist']
-
-    pmos_comps.info['netlist'] = Netlist(
-        circuit_name="GAIN_STAGE",
-        nodes=['VIN1', 'VIN2', 'VOUT', 'VDD', 'IBIAS', 'GND']
-    )
-
-    pmos_comps.info['netlist'].connect_netlist(
-        diff_cs_netlist,
-        [('VSS', 'VDD')]
-    )
-
-    pmos_comps.info['netlist'].connect_netlist(
-        cs_bias_netlist,
-        [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
-    )
-
-    pmos_comps.info['netlist'].connect_netlist(mimcap_netlist, [('V2', 'VOUT')])
-    pmos_comps.info['netlist'].connect_subnets(
-        mimcap_netlist,
-        diff_cs_netlist,
-        [('V1', 'VSS2')]
-    )
-
-    two_stage_netlist = Netlist(
-        circuit_name="OPAMP_TWO_STAGE",
-        nodes=['VDD', 'GND', 'DIFFPAIR_BIAS', 'VP', 'VN', 'CS_BIAS', 'VOUT']
-    )
-
-    input_stage_netlist = opamp_top.info['netlist']
-    gain_stage_netlist = pmos_comps.info['netlist']
-
-    two_stage_netlist.connect_netlist(
-        input_stage_netlist,
-        [('IBIAS', 'DIFFPAIR_BIAS'), ('VSS', 'GND'), ('B', 'GND')]
-    )
-
-    two_stage_netlist.connect_netlist(
-        gain_stage_netlist,
-        [('IBIAS', 'CS_BIAS')]
-    )
-
-    two_stage_netlist.connect_subnets(
-        input_stage_netlist,
-        gain_stage_netlist,
-        [('VDD1', 'VIN1'), ('VDD2', 'VIN2')]
-    )
-
-    opamp_top.info['netlist'] = two_stage_netlist
+    pmos_comps.info['netlist'] = __create_gain_stage_netlist(mimcap_netlist, pmos_comps.info['netlist'], cs_bias_netlist)
+    opamp_top.info['netlist'] = __create_two_stage_netlist(opamp_top.info['netlist'], pmos_comps.info['netlist'])
 
     return opamp_top
 
