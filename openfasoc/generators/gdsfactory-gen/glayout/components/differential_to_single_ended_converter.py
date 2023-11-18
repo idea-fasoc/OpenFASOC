@@ -146,15 +146,8 @@ def __route_sharedgatecomps(pdk: MappedPDK, shared_gate_comps, via_location, pto
     shared_gate_comps.add_ports(mimcap_connection_ref.get_ports_list(),prefix="mimcap_connection_")
     return shared_gate_comps
 
-
-def differential_to_single_ended_converter(pdk: MappedPDK, rmult: int, half_pload: tuple[float,float,int], via_xlocation) -> tuple:
-    clear_cache()
-    pmos_comps, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts, LRdummyports = __create_sharedgatecomps(pdk, rmult,half_pload)
-    clear_cache()
-    pmos_comps = __route_sharedgatecomps(pdk, pmos_comps, via_xlocation, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts, LRdummyports)
-
-    # add spice netlist
-    diff_to_single_netlist = Netlist(
+def __create_diff_to_single_netlist(pdk: MappedPDK, half_pload: tuple[float, float, int]) -> Netlist:
+    return Netlist(
         circuit_name="DIFF_TO_SINGLE",
         nodes=['VIN', 'VOUT', 'VSS', 'VSS2'],
         source_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 mt=1 mb=1
@@ -173,6 +166,12 @@ XBOT2 VOUT VIN VSS2 VSS {model} l={{l}} w={{w}} m={{mb}}
         }
     )
 
-    pmos_comps.info['netlist'] = diff_to_single_netlist
+def differential_to_single_ended_converter(pdk: MappedPDK, rmult: int, half_pload: tuple[float,float,int], via_xlocation) -> tuple:
+    clear_cache()
+    pmos_comps, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts, LRdummyports = __create_sharedgatecomps(pdk, rmult,half_pload)
+    clear_cache()
+    pmos_comps = __route_sharedgatecomps(pdk, pmos_comps, via_xlocation, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts, LRdummyports)
+
+    pmos_comps.info['netlist'] = __create_diff_to_single_netlist(pdk, half_pload)
 
     return pmos_comps
