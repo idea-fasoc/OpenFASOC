@@ -39,6 +39,40 @@ from glayout.placement.two_transistor_interdigitized import two_nfet_interdigiti
 from glayout.spice import Netlist
 from glayout.components.stacked_current_mirror import create_current_mirror_netlist
 
+def __create_diff_pair_ibias_netlist(center_diffpair: Component, current_mirror: Component, antenna_diode: Component) -> Netlist:
+    netlist = Netlist(
+        circuit_name="DIFFPAIR_CMIRROR_BIAS",
+        nodes=['VP', 'VN', 'VDD1', 'VDD2', 'IBIAS', 'VSS', 'B']
+    )
+
+    netlist.connect_netlist(
+        center_diffpair.info['netlist'],
+        []
+    )
+
+    netlist.connect_netlist(
+        current_mirror.info['netlist'],
+        [('VREF', 'IBIAS')]
+    )
+
+    netlist.connect_subnets(
+        current_mirror.info['netlist'],
+        center_diffpair.info['netlist'],
+        [('VCOPY', 'VTAIL')]
+    )
+
+    netlist.connect_netlist(
+        antenna_diode.info['netlist'],
+        [('D', 'VSS'), ('G', 'VSS'), ('B', 'VSS'), ('S', 'VP')]
+    )
+
+    netlist.connect_netlist(
+        deepcopy(antenna_diode.info['netlist']),
+        [('D', 'VSS'), ('G', 'VSS'), ('B', 'VSS'), ('S', 'VN')]
+    )
+
+    return netlist
+
 @validate_arguments
 def diff_pair_ibias(
     pdk: MappedPDK,
@@ -169,37 +203,8 @@ def diff_pair_ibias(
     diffpair_i_.add_ports([purposegndPort])
     diffpair_i_.add_ports(tailcurrent_ref.get_ports_list(), prefix="ibias_")
 
-    # complete netlist
-    diffpair_i_.info['netlist'] = Netlist(
-        circuit_name="DIFFPAIR_CMIRROR_BIAS",
-        nodes=['VP', 'VN', 'VDD1', 'VDD2', 'IBIAS', 'VSS', 'B']
-    )
-
-    diffpair_i_.info['netlist'].connect_netlist(
-        center_diffpair_comp.info['netlist'],
-        []
-    )
-
-    diffpair_i_.info['netlist'].connect_netlist(
-        cmirror.info['netlist'],
-        [('VREF', 'IBIAS')]
-    )
-
-    diffpair_i_.info['netlist'].connect_subnets(
-        cmirror.info['netlist'],
-        center_diffpair_comp.info['netlist'],
-        [('VCOPY', 'VTAIL')]
-    )
-
-    diffpair_i_.info['netlist'].connect_netlist(
-        antenna_diode_comp.info['netlist'],
-        [('D', 'VSS'), ('G', 'VSS'), ('B', 'VSS'), ('S', 'VP')]
-    )
-    diffpair_i_.info['netlist'].connect_netlist(
-        deepcopy(antenna_diode_comp.info['netlist']),
-        [('D', 'VSS'), ('G', 'VSS'), ('B', 'VSS'), ('S', 'VN')]
-    )
-
     diffpair_i_ref = prec_ref_center(diffpair_i_)
+
+    diffpair_i_ref.info['netlist'] = __create_diff_pair_ibias_netlist(center_diffpair_comp, cmirror, antenna_diode_comp)
     return diffpair_i_ref
 
