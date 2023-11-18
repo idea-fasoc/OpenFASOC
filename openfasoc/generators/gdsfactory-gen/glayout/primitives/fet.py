@@ -62,6 +62,45 @@ def __gen_fingers_macro(pdk: MappedPDK, rmult: int, fingers: int, length: float,
     multiplier.add_ports(diff.get_ports_list(),prefix="diff_")
     return component_snap_to_grid(rename_ports_by_orientation(multiplier))
 
+def __generate_fet_netlist(
+    circuit_name: str,
+    model: str,
+    width: float,
+    length: float,
+    fingers: int,
+    multipliers: int,
+    with_dummy: Union[bool, tuple[bool, bool]]
+) -> Netlist:
+     # add spice netlist
+    num_dummies = 0
+    if with_dummy == False or with_dummy == (False, False):
+        num_dummies = 0
+    elif with_dummy == (True, False) or with_dummy == (False, True):
+        num_dummies = 1
+    elif with_dummy == True or with_dummy == (True, True):
+        num_dummies = 2
+
+    source_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1 dm=1
+XMAIN   D G S B {model} l={{l}} w={{w}} m={{m}}"""
+
+    for i in range(num_dummies):
+        source_netlist += "\nXDUMMY" + str(i+1) + " B B B B {model} l={{l}} w={{w}} m={{dm}}"
+
+    source_netlist += "\n.ends {circuit_name}"
+
+    return Netlist(
+        circuit_name=circuit_name,
+        nodes=['D', 'G', 'S', 'B'],
+        source_netlist=source_netlist,
+        instance_format="X{name} {nodes} {circuit_name} l={length} w={width} m={mult} dm={dummy_mult}",
+        parameters={
+            'model': model,
+            'length': length,
+            'width': width,
+            'mult': fingers * multipliers,
+            'dummy_mult': multipliers
+        }
+    )
 
 @cell
 def multiplier(
@@ -426,35 +465,14 @@ def nmos(
 
     component = rename_ports_by_orientation(nfet).flatten()
 
-    # add spice netlist
-    num_dummies = 0
-    if with_dummy == False or with_dummy == (False, False):
-        num_dummies = 0
-    elif with_dummy == (True, False) or with_dummy == (False, True):
-        num_dummies = 1
-    elif with_dummy == True or with_dummy == (True, True):
-        num_dummies = 2
-
-    nmos_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1 dm=1
-XMAIN   D G S B {model} l={{l}} w={{w}} m={{m}}"""
-
-    for i in range(num_dummies):
-        nmos_netlist += "\nXDUMMY" + str(i+1) + " B B B B {model} l={{l}} w={{w}} m={{dm}}"
-
-    nmos_netlist += "\n.ends {circuit_name}"
-
-    component.info['netlist'] = Netlist(
+    component.info['netlist'] = __generate_fet_netlist(
         circuit_name="NMOS",
-        nodes=['D', 'G', 'S', 'B'],
-        source_netlist=nmos_netlist,
-        instance_format="X{name} {nodes} {circuit_name} l={length} w={width} m={mult} dm={dummy_mult}",
-        parameters={
-            'model': pdk.models['nfet'],
-            'length': length,
-            'width': width,
-            'mult': fingers * multipliers,
-            'dummy_mult': multipliers
-        }
+        model=pdk.models['nfet'],
+        width=width,
+        length=length,
+        fingers=fingers,
+        multipliers=multipliers,
+        with_dummy=with_dummy
     )
 
     return component
@@ -584,35 +602,14 @@ def pmos(
         )
     component =  rename_ports_by_orientation(pfet).flatten()
 
-    # add spice netlist
-    num_dummies = 0
-    if with_dummy == False or with_dummy == (False, False):
-        num_dummies = 0
-    elif with_dummy == (True, False) or with_dummy == (False, True):
-        num_dummies = 1
-    elif with_dummy == True or with_dummy == (True, True):
-        num_dummies = 2
-
-    pmos_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1 dm=1
-XMAIN   D G S B {model} l={{l}} w={{w}} m={{m}}"""
-
-    for i in range(num_dummies):
-        pmos_netlist += "\nXDUMMY" + str(i+1) + " B B B B {model} l={{l}} w={{w}} m={{dm}}"
-
-    pmos_netlist += "\n.ends {circuit_name}"
-
-    component.info['netlist'] = Netlist(
+    component.info['netlist'] = __generate_fet_netlist(
         circuit_name="PMOS",
-        nodes=['D', 'G', 'S', 'B'],
-        source_netlist=pmos_netlist,
-        instance_format="X{name} {nodes} {circuit_name} l={length} w={width} m={mult} dm={dummy_mult}",
-        parameters={
-            'model': pdk.models['pfet'],
-            'length': length,
-            'width': width,
-            'mult': fingers * multipliers,
-            'dummy_mult': multipliers
-        }
+        model=pdk.models['pfet'],
+        width=width,
+        length=length,
+        fingers=fingers,
+        multipliers=multipliers,
+        with_dummy=with_dummy
     )
 
     return component
