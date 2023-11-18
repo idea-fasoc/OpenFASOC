@@ -1,4 +1,3 @@
-from copy import deepcopy
 from gdsfactory.cell import cell, clear_cache
 from gdsfactory.component import Component, copy
 from gdsfactory.component_reference import ComponentReference
@@ -45,19 +44,19 @@ def diff_pair_ibias_netlist(center_diffpair: Component, current_mirror: Componen
         nodes=['VP', 'VN', 'VDD1', 'VDD2', 'IBIAS', 'VSS', 'B']
     )
 
-    netlist.connect_netlist(
+    diffpair_ref = netlist.connect_netlist(
         center_diffpair.info['netlist'],
         []
     )
 
-    netlist.connect_netlist(
+    cmirror_ref = netlist.connect_netlist(
         current_mirror.info['netlist'],
         [('VREF', 'IBIAS')]
     )
 
     netlist.connect_subnets(
-        current_mirror.info['netlist'],
-        center_diffpair.info['netlist'],
+        cmirror_ref,
+        diffpair_ref,
         [('VCOPY', 'VTAIL')]
     )
 
@@ -67,7 +66,7 @@ def diff_pair_ibias_netlist(center_diffpair: Component, current_mirror: Componen
     )
 
     netlist.connect_netlist(
-        deepcopy(antenna_diode.info['netlist']),
+        antenna_diode.info['netlist'],
         [('D', 'VSS'), ('G', 'VSS'), ('B', 'VSS'), ('S', 'VN')]
     )
 

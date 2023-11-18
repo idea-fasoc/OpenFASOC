@@ -10,7 +10,6 @@ from pydantic import validate_arguments
 from glayout.routing.straight_route import straight_route
 from decimal import ROUND_UP, Decimal
 from glayout.spice import Netlist
-from copy import deepcopy
 
 @validate_arguments
 def __get_mimcap_layerconstruction_info(pdk: MappedPDK) -> tuple[str,str]:
@@ -46,7 +45,7 @@ def __generate_mimcap_array_netlist(mimcap_netlist: Netlist, num_caps: int) -> N
 
 	for _ in range(num_caps):
 		arr_netlist.connect_netlist(
-			deepcopy(mimcap_netlist),
+			mimcap_netlist,
 			[]
 		)
 

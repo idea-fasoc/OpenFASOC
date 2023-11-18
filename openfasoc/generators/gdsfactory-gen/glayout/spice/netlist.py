@@ -1,5 +1,6 @@
 from os.path import join, dirname
 from typing import Union, Optional
+from copy import deepcopy
 
 import re
 
@@ -169,14 +170,14 @@ class Netlist:
 			self.sub_netlists.append(netlist)
 			self.netlist_connections.append(netlist.nodes.copy())
 
-	def connect_netlist(self, netlist: 'Netlist', node_mapping: list[tuple[str, str]]):
+	def connect_netlist(self, netlist: 'Netlist', node_mapping: list[tuple[str, str]]) -> int:
 		"""Adds a sub-netlist and connects it to top-level nodes.
 
 		Parameters:
 		- `netlist`: The netlist object to add.
 		- `node_mapping`: A list of 2-element tuples representing the connections between the netlist nodes and the top-level nodes. The first element in the tuple is the name of the node of `netlist` and the second value is the name of the top-level to connect to.
 		"""
-		self.add_netlists([netlist])
+		self.add_netlists([deepcopy(netlist)])
 		netlist_index = len(self.sub_netlists) - 1
 
 		self.connect_node(net=netlist_index, node_mapping=node_mapping)

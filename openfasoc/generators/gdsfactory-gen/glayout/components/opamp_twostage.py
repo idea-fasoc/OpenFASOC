@@ -134,7 +134,7 @@ def opamp_gain_stage_netlist(mimcap_netlist: Netlist, diff_cs_netlist: Netlist, 
         nodes=['VIN1', 'VIN2', 'VOUT', 'VDD', 'IBIAS', 'GND']
     )
 
-    netlist.connect_netlist(
+    diff_cs_ref = netlist.connect_netlist(
         diff_cs_netlist,
         [('VSS', 'VDD')]
     )
@@ -144,10 +144,11 @@ def opamp_gain_stage_netlist(mimcap_netlist: Netlist, diff_cs_netlist: Netlist, 
         [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
     )
 
-    netlist.connect_netlist(mimcap_netlist, [('V2', 'VOUT')])
+    mimcap_ref = netlist.connect_netlist(mimcap_netlist, [('V2', 'VOUT')])
+
     netlist.connect_subnets(
-        mimcap_netlist,
-        diff_cs_netlist,
+        mimcap_ref,
+        diff_cs_ref,
         [('V1', 'VSS2')]
     )
 
@@ -159,19 +160,19 @@ def opamp_twostage_netlist(input_stage_netlist: Netlist, gain_stage_netlist: Net
         nodes=['VDD', 'GND', 'DIFFPAIR_BIAS', 'VP', 'VN', 'CS_BIAS', 'VOUT']
     )
 
-    two_stage_netlist.connect_netlist(
+    input_stage_ref = two_stage_netlist.connect_netlist(
         input_stage_netlist,
         [('IBIAS', 'DIFFPAIR_BIAS'), ('VSS', 'GND'), ('B', 'GND')]
     )
 
-    two_stage_netlist.connect_netlist(
+    gain_stage_ref = two_stage_netlist.connect_netlist(
         gain_stage_netlist,
         [('IBIAS', 'CS_BIAS')]
     )
 
     two_stage_netlist.connect_subnets(
-        input_stage_netlist,
-        gain_stage_netlist,
+        input_stage_ref,
+        gain_stage_ref,
         [('VDD1', 'VIN1'), ('VDD2', 'VIN2')]
     )
 
