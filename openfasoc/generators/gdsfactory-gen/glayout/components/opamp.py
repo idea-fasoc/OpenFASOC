@@ -21,10 +21,10 @@ from glayout.placement.two_transistor_interdigitized import two_nfet_interdigiti
 from glayout.spice import Netlist
 
 from glayout.components.opamp_twostage import opamp_twostage
-from glayout.components.stacked_current_mirror import create_current_mirror_netlist
+from glayout.components.stacked_current_mirror import current_mirror_netlist
 
-def __create_output_stage_netlist(pdk: MappedPDK, output_amp_fet_ref: ComponentReference, biasParams: list) -> Netlist:
-    bias_netlist = create_current_mirror_netlist(pdk, biasParams[0], biasParams[1], biasParams[2])
+def opamp_output_stage_netlist(pdk: MappedPDK, output_amp_fet_ref: ComponentReference, biasParams: list) -> Netlist:
+    bias_netlist = current_mirror_netlist(pdk, biasParams[0], biasParams[1], biasParams[2])
 
     output_stage_netlist = Netlist(
         circuit_name="OUTPUT_STAGE",
@@ -129,10 +129,10 @@ def __add_output_stage(
     opamp_top << straight_route(pdk, bias_pin.ports["e2"], cmirror_ibias.ports["B_gate_S"],width=1)
     opamp_top.add_ports(bias_pin.get_ports_list(),prefix="pin_outputibias_")
 
-    output_stage_netlist = __create_output_stage_netlist(pdk, amp_fet_ref, biasParams)
+    output_stage_netlist = opamp_output_stage_netlist(pdk, amp_fet_ref, biasParams)
     return opamp_top, output_stage_netlist
 
-def __create_opamp_netlist(two_stage_netlist: Netlist, output_stage_netlist: Netlist) -> Netlist:
+def opamp_netlist(two_stage_netlist: Netlist, output_stage_netlist: Netlist) -> Netlist:
     top_level_netlist = Netlist(
         circuit_name="opamp",
         nodes=['gnd', 'CSoutput', 'output', 'vdd', 'plus', 'minus', 'commonsourceibias', 'outputibias', 'diffpairibias']
@@ -195,7 +195,7 @@ def opamp(
     )
     # add output amplfier stage
     opamp_top, output_stage_netlist = __add_output_stage(pdk, opamp_top, output_stage_params, output_stage_bias, rmult)
-    opamp_top.info['netlist'] = __create_opamp_netlist(opamp_top.info['netlist'], output_stage_netlist)
+    opamp_top.info['netlist'] = opamp_netlist(opamp_top.info['netlist'], output_stage_netlist)
 
     # return
     return rename_ports_by_orientation(component_snap_to_grid(opamp_top))

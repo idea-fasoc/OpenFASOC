@@ -37,9 +37,9 @@ from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized
 from glayout.spice import Netlist
-from glayout.components.stacked_current_mirror import create_current_mirror_netlist
+from glayout.components.stacked_current_mirror import current_mirror_netlist
 
-def __create_diff_pair_ibias_netlist(center_diffpair: Component, current_mirror: Component, antenna_diode: Component) -> Netlist:
+def diff_pair_ibias_netlist(center_diffpair: Component, current_mirror: Component, antenna_diode: Component) -> Netlist:
     netlist = Netlist(
         circuit_name="DIFFPAIR_CMIRROR_BIAS",
         nodes=['VP', 'VN', 'VDD1', 'VDD2', 'IBIAS', 'VSS', 'B']
@@ -182,7 +182,7 @@ def diff_pair_ibias(
     )
     cmirror.add_ports(srcshort.get_ports_list(), prefix="purposegndports")
     # current mirror netlist
-    cmirror.info['netlist'] = create_current_mirror_netlist(
+    cmirror.info['netlist'] = current_mirror_netlist(
         pdk,
         width=diffpair_bias[0],
         length=diffpair_bias[1],
@@ -205,6 +205,6 @@ def diff_pair_ibias(
 
     diffpair_i_ref = prec_ref_center(diffpair_i_)
 
-    diffpair_i_ref.info['netlist'] = __create_diff_pair_ibias_netlist(center_diffpair_comp, cmirror, antenna_diode_comp)
+    diffpair_i_ref.info['netlist'] = diff_pair_ibias_netlist(center_diffpair_comp, cmirror, antenna_diode_comp)
     return diffpair_i_ref
 

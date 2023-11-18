@@ -20,7 +20,7 @@ from pydantic import validate_arguments
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized
 from glayout.spice import Netlist
 
-def create_current_mirror_netlist(pdk: MappedPDK, width: float, length: float, multipliers: int) -> Netlist:
+def current_mirror_netlist(pdk: MappedPDK, width: float, length: float, multipliers: int) -> Netlist:
     return Netlist(
         circuit_name='CURRENT_MIRROR',
         nodes=['VREF', 'VCOPY', 'VSS'],

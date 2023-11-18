@@ -25,7 +25,7 @@ from glayout.components.differential_to_single_ended_converter import differenti
 from glayout.components.row_csamplifier_diff_to_single_ended_converter import row_csamplifier_diff_to_single_ended_converter
 from glayout.components.diff_pair_stackedcmirror import diff_pair_stackedcmirror
 from glayout.spice import Netlist
-from glayout.components.stacked_current_mirror import create_current_mirror_netlist
+from glayout.components.stacked_current_mirror import current_mirror_netlist
 
 @validate_arguments
 def __create_and_route_pins(
@@ -128,7 +128,7 @@ def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap
     opamp_top.add_port(name="commonsource_output_E", port=intermediate_output)
     return opamp_top, mimcap_netlist
 
-def __create_gain_stage_netlist(mimcap_netlist: Netlist, diff_cs_netlist: Netlist, cs_bias_netlist: Netlist) -> Netlist:
+def opamp_gain_stage_netlist(mimcap_netlist: Netlist, diff_cs_netlist: Netlist, cs_bias_netlist: Netlist) -> Netlist:
     netlist = Netlist(
         circuit_name="GAIN_STAGE",
         nodes=['VIN1', 'VIN2', 'VOUT', 'VDD', 'IBIAS', 'GND']
@@ -153,7 +153,7 @@ def __create_gain_stage_netlist(mimcap_netlist: Netlist, diff_cs_netlist: Netlis
 
     return netlist
 
-def __create_two_stage_netlist(input_stage_netlist: Netlist, gain_stage_netlist: Netlist) -> Netlist:
+def opamp_twostage_netlist(input_stage_netlist: Netlist, gain_stage_netlist: Netlist) -> Netlist:
     two_stage_netlist = Netlist(
         circuit_name="OPAMP_TWO_STAGE",
         nodes=['VDD', 'GND', 'DIFFPAIR_BIAS', 'VP', 'VN', 'CS_BIAS', 'VOUT']
@@ -218,7 +218,7 @@ def opamp_twostage(
 
     pmos_comps = row_csamplifier_diff_to_single_ended_converter(pdk, pmos_comps, half_common_source_params, rmult)
 
-    cs_bias_netlist = create_current_mirror_netlist(
+    cs_bias_netlist = current_mirror_netlist(
         pdk,
         width=diffpair_bias[0],
         length=diffpair_bias[1],
@@ -241,8 +241,8 @@ def opamp_twostage(
     # return
     opamp_top.add_ports(_cref.get_ports_list(), prefix="gnd_route_")
 
-    pmos_comps.info['netlist'] = __create_gain_stage_netlist(mimcap_netlist, pmos_comps.info['netlist'], cs_bias_netlist)
-    opamp_top.info['netlist'] = __create_two_stage_netlist(opamp_top.info['netlist'], pmos_comps.info['netlist'])
+    pmos_comps.info['netlist'] = opamp_gain_stage_netlist(mimcap_netlist, pmos_comps.info['netlist'], cs_bias_netlist)
+    opamp_top.info['netlist'] = opamp_twostage_netlist(opamp_top.info['netlist'], pmos_comps.info['netlist'])
 
     return opamp_top
 

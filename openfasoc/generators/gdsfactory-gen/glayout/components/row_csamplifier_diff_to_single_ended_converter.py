@@ -20,7 +20,7 @@ from pydantic import validate_arguments
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized
 from glayout.spice import Netlist
 
-def __create_csamp_diff_to_single_netlist(diff_to_single: Component) -> Netlist:
+def row_csamplifier_diff_to_single_ended_converter_netlist(diff_to_single: Component) -> Netlist:
     overall_netlist = Netlist(
         circuit_name="DIFF_TO_SINGLE_CS",
         nodes=['VIN1', 'VIN2', 'VOUT', 'VSS', 'VSS2']
@@ -42,7 +42,7 @@ def __connect_cs_netlist(pmos_comps: Component, half_cs_pmos: Component):
 def row_csamplifier_diff_to_single_ended_converter(pdk: MappedPDK, diff_to_single_ended_converter: Component, pamp_hparams, rmult) -> Component:
     pmos_comps = diff_to_single_ended_converter
 
-    pmos_comps.info['netlist'] = __create_csamp_diff_to_single_netlist(diff_to_single_ended_converter)
+    pmos_comps.info['netlist'] = row_csamplifier_diff_to_single_ended_converter_netlist(diff_to_single_ended_converter)
 
     x_dim_center = max(abs(pmos_comps.xmax),abs(pmos_comps.xmin))
     for direction in [-1, 1]:

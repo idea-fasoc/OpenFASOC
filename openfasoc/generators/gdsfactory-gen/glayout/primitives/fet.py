@@ -62,7 +62,7 @@ def __gen_fingers_macro(pdk: MappedPDK, rmult: int, fingers: int, length: float,
     multiplier.add_ports(diff.get_ports_list(),prefix="diff_")
     return component_snap_to_grid(rename_ports_by_orientation(multiplier))
 
-def __generate_fet_netlist(
+def fet_netlist(
     circuit_name: str,
     model: str,
     width: float,
@@ -465,7 +465,7 @@ def nmos(
 
     component = rename_ports_by_orientation(nfet).flatten()
 
-    component.info['netlist'] = __generate_fet_netlist(
+    component.info['netlist'] = fet_netlist(
         circuit_name="NMOS",
         model=pdk.models['nfet'],
         width=width,
@@ -602,7 +602,7 @@ def pmos(
         )
     component =  rename_ports_by_orientation(pfet).flatten()
 
-    component.info['netlist'] = __generate_fet_netlist(
+    component.info['netlist'] = fet_netlist(
         circuit_name="PMOS",
         model=pdk.models['pfet'],
         width=width,

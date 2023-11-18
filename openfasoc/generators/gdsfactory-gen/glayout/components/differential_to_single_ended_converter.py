@@ -146,7 +146,7 @@ def __route_sharedgatecomps(pdk: MappedPDK, shared_gate_comps, via_location, pto
     shared_gate_comps.add_ports(mimcap_connection_ref.get_ports_list(),prefix="mimcap_connection_")
     return shared_gate_comps
 
-def __create_diff_to_single_netlist(pdk: MappedPDK, half_pload: tuple[float, float, int]) -> Netlist:
+def differential_to_single_ended_converter_netlist(pdk: MappedPDK, half_pload: tuple[float, float, int]) -> Netlist:
     return Netlist(
         circuit_name="DIFF_TO_SINGLE",
         nodes=['VIN', 'VOUT', 'VSS', 'VSS2'],
@@ -172,6 +172,6 @@ def differential_to_single_ended_converter(pdk: MappedPDK, rmult: int, half_ploa
     clear_cache()
     pmos_comps = __route_sharedgatecomps(pdk, pmos_comps, via_xlocation, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts, LRdummyports)
 
-    pmos_comps.info['netlist'] = __create_diff_to_single_netlist(pdk, half_pload)
+    pmos_comps.info['netlist'] = differential_to_single_ended_converter_netlist(pdk, half_pload)
 
     return pmos_comps
