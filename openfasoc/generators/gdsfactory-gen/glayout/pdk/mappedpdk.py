@@ -14,11 +14,6 @@ from decimal import Decimal
 from pydantic import validate_arguments
 import xml.etree.ElementTree as ET
 
-class SpiceModels(TypedDict):
-    nfet: str
-    pfet: str
-    mimcap: str
-
 class MappedPDK(Pdk):
     """Inherits everything from the pdk class but also requires mapping to glayers
     glayers are generic layers which can be returned with get_glayer(name: str)
@@ -47,7 +42,7 @@ class MappedPDK(Pdk):
         "capmet",
     )
 
-    models: SpiceModels = {
+    models: dict = {
         "nfet": "",
         "pfet": "",
         "mimcap": ""
