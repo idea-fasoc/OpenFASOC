@@ -35,7 +35,7 @@ from glayout.pdk.sky130_mapped import sky130_mapped_pdk as pdk
 from itertools import count, repeat
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from glayout.pdk.util.component_array_create import write_component_matrix
-
+import re
 
 global _GET_PARAM_SET_LENGTH_
 global _TAKE_OUTPUT_AT_SECOND_STAGE_
@@ -538,6 +538,11 @@ def process_netlist_subckt(netlist: Union[str,Path], sim_model: Literal["normal 
 				subckt_lines[i] = headerstr+"\nCload output gnd " + str(cload) +"p\n"
 			if ("floating" in line) or (noparasitics and len(line) and line[0]=="C"):
 				subckt_lines[i] = "* "+ subckt_lines[i]
+			if noparasitics:
+				subckt_lines[i] = re.sub(r"ad=(\S*)","",subckt_lines[i])
+				subckt_lines[i] = re.sub(r"as=(\S*)","",subckt_lines[i])
+				subckt_lines[i] = re.sub(r"ps=(\S*)","",subckt_lines[i])
+				subckt_lines[i] = re.sub(r"pd=(\S*)","",subckt_lines[i])
 	with open(netlist, "w") as spice_net:
 		spice_net.writelines(subckt_lines)
 
@@ -640,7 +645,7 @@ def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.
 	# pass pdk as global var to avoid pickling issues
 	global pdk
 	pdk = sky130pdk
-	with Pool(120) as cores:
+	with Pool(128) as cores:
 		if saverawsims:
 			results = np.array(cores.starmap(__run_single_brtfrc, zip(count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info), repeat(cload), repeat(noparasitics), count(0))),np.float64)
 		else:
