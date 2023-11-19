@@ -41,6 +41,11 @@ gf180_lydrc_file_path = Path(__file__).resolve().parent / "gf180mcu_drc.lydrc"
 gf180_mapped_pdk = MappedPDK(
     name="gf180",
     glayers=gf180_glayer_mapping,
+	models={
+        'nfet': 'nfet_03v3',
+		'pfet': 'pfet_03v3',
+		'mimcap': 'mimcap_1p0fF'
+    },
     layers=LAYER,
     klayout_lydrc_file=gf180_lydrc_file_path,
     grules=grulesobj,

@@ -38,6 +38,11 @@ sky130_lydrc_file_path = Path(__file__).resolve().parent / "sky130.lydrc"
 sky130_mapped_pdk = MappedPDK(
     name="sky130",
     glayers=sky130_glayer_mapping,
+	models={
+        'nfet': 'sky130_fd_pr__nfet_01v8',
+		'pfet': 'sky130_fd_pr__pfet_01v8',
+		'mimcap': 'sky130_fd_pr__cap_mim_m3_1'
+    },
     grules=grulesobj,
     klayout_lydrc_file=sky130_lydrc_file_path,
     default_decorator=sky130_add_npc

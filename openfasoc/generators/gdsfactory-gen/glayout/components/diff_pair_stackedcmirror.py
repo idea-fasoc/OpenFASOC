@@ -31,6 +31,9 @@ def __add_diff_pair_and_bias(pdk: MappedPDK, toplevel_stacked: Component, half_d
     diffpair_i_ref = diff_pair_ibias(pdk, half_diffpair_params, diffpair_bias, rmult, with_antenna_diode_on_diffinputs)
     toplevel_stacked.add(diffpair_i_ref)
     toplevel_stacked.add_ports(diffpair_i_ref.get_ports_list(),prefix="diffpair_")
+
+    toplevel_stacked.info['netlist'] = diffpair_i_ref.info['netlist']
+
     return toplevel_stacked
 
 @validate_arguments
@@ -103,11 +106,11 @@ def __route_bottom_ncomps_except_drain_nbias(pdk: MappedPDK, toplevel_stacked: C
 
 
 def diff_pair_stackedcmirror(
-    pdk: MappedPDK, 
-    half_diffpair_params: tuple[float, float, int], 
-    diffpair_bias: tuple[float, float, int], 
+    pdk: MappedPDK,
+    half_diffpair_params: tuple[float, float, int],
+    diffpair_bias: tuple[float, float, int],
     half_common_source_nbias: tuple[float, float, int, int],
-    rmult: int, 
+    rmult: int,
     with_antenna_diode_on_diffinputs: int
 ) -> Component:
     # create toplevel_stacked component
@@ -123,4 +126,5 @@ def diff_pair_stackedcmirror(
     # route bottom ncomps except drain of nbias (still need to place common source pmos amp)
     toplevel_stacked, halfmultn_drain_routeref, halfmultn_gate_routeref, _cref = __route_bottom_ncomps_except_drain_nbias(pdk, toplevel_stacked, gndpin, half_common_source_nbias[3])
     toplevel_stacked.add_ports(gndpin.get_ports_list(), prefix="pin_gnd_")
+
     return toplevel_stacked, halfmultn_drain_routeref, halfmultn_gate_routeref, _cref

@@ -35,7 +35,42 @@ from glayout.routing.straight_route import straight_route
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized
+from glayout.spice import Netlist
+from glayout.components.stacked_current_mirror import current_mirror_netlist
 
+def diff_pair_ibias_netlist(center_diffpair: Component, current_mirror: Component, antenna_diode: Component) -> Netlist:
+    netlist = Netlist(
+        circuit_name="DIFFPAIR_CMIRROR_BIAS",
+        nodes=['VP', 'VN', 'VDD1', 'VDD2', 'IBIAS', 'VSS', 'B']
+    )
+
+    diffpair_ref = netlist.connect_netlist(
+        center_diffpair.info['netlist'],
+        []
+    )
+
+    cmirror_ref = netlist.connect_netlist(
+        current_mirror.info['netlist'],
+        [('VREF', 'IBIAS')]
+    )
+
+    netlist.connect_subnets(
+        cmirror_ref,
+        diffpair_ref,
+        [('VCOPY', 'VTAIL')]
+    )
+
+    netlist.connect_netlist(
+        antenna_diode.info['netlist'],
+        [('D', 'VSS'), ('G', 'VSS'), ('B', 'VSS'), ('S', 'VP')]
+    )
+
+    netlist.connect_netlist(
+        antenna_diode.info['netlist'],
+        [('D', 'VSS'), ('G', 'VSS'), ('B', 'VSS'), ('S', 'VN')]
+    )
+
+    return netlist
 
 @validate_arguments
 def diff_pair_ibias(
@@ -145,6 +180,14 @@ def diff_pair_ibias(
         viaoffset=False,
     )
     cmirror.add_ports(srcshort.get_ports_list(), prefix="purposegndports")
+    # current mirror netlist
+    cmirror.info['netlist'] = current_mirror_netlist(
+        pdk,
+        width=diffpair_bias[0],
+        length=diffpair_bias[1],
+        multipliers=diffpair_bias[2]
+    )
+
     # add cmirror
     tailcurrent_ref = diffpair_i_ << cmirror
     tailcurrent_ref.movey(
@@ -158,6 +201,9 @@ def diff_pair_ibias(
     purposegndPort.name = "ibias_purposegndport"
     diffpair_i_.add_ports([purposegndPort])
     diffpair_i_.add_ports(tailcurrent_ref.get_ports_list(), prefix="ibias_")
+
     diffpair_i_ref = prec_ref_center(diffpair_i_)
+
+    diffpair_i_ref.info['netlist'] = diff_pair_ibias_netlist(center_diffpair_comp, cmirror, antenna_diode_comp)
     return diffpair_i_ref
 

@@ -18,6 +18,7 @@ from glayout.routing.straight_route import straight_route
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized
+from glayout.spice import Netlist
 
 
 
@@ -83,6 +84,7 @@ def __create_sharedgatecomps(pdk: MappedPDK, rmult: int, half_pload: tuple[float
     ytranslation_pcenter = 2 * pcenterfourunits.ymax + 5*pdk.util_max_metal_seperation()
     ptop_AB = (shared_gate_comps << twomultpcomps).movey(ytranslation_pcenter)
     pbottom_AB = (shared_gate_comps << twomultpcomps).movey(-1 * ytranslation_pcenter)
+
     return shared_gate_comps, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts, LRdummyports
 
 
@@ -144,10 +146,32 @@ def __route_sharedgatecomps(pdk: MappedPDK, shared_gate_comps, via_location, pto
     shared_gate_comps.add_ports(mimcap_connection_ref.get_ports_list(),prefix="mimcap_connection_")
     return shared_gate_comps
 
+def differential_to_single_ended_converter_netlist(pdk: MappedPDK, half_pload: tuple[float, float, int]) -> Netlist:
+    return Netlist(
+        circuit_name="DIFF_TO_SINGLE",
+        nodes=['VIN', 'VOUT', 'VSS', 'VSS2'],
+        source_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 mt=1 mb=1
+XTOP1 V1   VIN VSS  VSS {model} l={{l}} w={{w}} m={{mt}}
+XTOP2 VSS2 VIN VSS  VSS {model} l={{l}} w={{w}} m={{mt}}
+XBOT1 VIN  VIN V1   VSS {model} l={{l}} w={{w}} m={{mb}}
+XBOT2 VOUT VIN VSS2 VSS {model} l={{l}} w={{w}} m={{mb}}
+.ends {circuit_name}""",
+        instance_format="X{name} {nodes} {circuit_name} l={length} w={width} mt={mult_top} mb={mult_bot}",
+        parameters={
+            'model': pdk.models['pfet'],
+            'width': half_pload[0],
+            'length': half_pload[1],
+            'mult_top': 4 * 2,
+            'mult_bot': half_pload[2] * 2
+        }
+    )
 
 def differential_to_single_ended_converter(pdk: MappedPDK, rmult: int, half_pload: tuple[float,float,int], via_xlocation) -> tuple:
     clear_cache()
     pmos_comps, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts, LRdummyports = __create_sharedgatecomps(pdk, rmult,half_pload)
     clear_cache()
     pmos_comps = __route_sharedgatecomps(pdk, pmos_comps, via_xlocation, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts, LRdummyports)
+
+    pmos_comps.info['netlist'] = differential_to_single_ended_converter_netlist(pdk, half_pload)
+
     return pmos_comps

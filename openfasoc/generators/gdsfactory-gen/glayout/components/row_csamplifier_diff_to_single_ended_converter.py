@@ -18,11 +18,32 @@ from glayout.routing.straight_route import straight_route
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized
+from glayout.spice import Netlist
 
+def row_csamplifier_diff_to_single_ended_converter_netlist(diff_to_single: Component) -> Netlist:
+    overall_netlist = Netlist(
+        circuit_name="DIFF_TO_SINGLE_CS",
+        nodes=['VIN1', 'VIN2', 'VOUT', 'VSS', 'VSS2']
+    )
 
+    overall_netlist.connect_netlist(
+        diff_to_single.info['netlist'],
+        [('VIN', 'VIN1'), ('VOUT', 'VIN2')]
+    )
+
+    return overall_netlist
+
+def __connect_cs_netlist(pmos_comps: Component, half_cs_pmos: Component):
+    pmos_comps.info['netlist'].connect_netlist(
+        half_cs_pmos.info['netlist'],
+        [('D', 'VOUT'), ('S', 'VSS'), ('B', 'VSS'), ('G', 'VIN2')]
+    )
 
 def row_csamplifier_diff_to_single_ended_converter(pdk: MappedPDK, diff_to_single_ended_converter: Component, pamp_hparams, rmult) -> Component:
     pmos_comps = diff_to_single_ended_converter
+
+    pmos_comps.info['netlist'] = row_csamplifier_diff_to_single_ended_converter_netlist(diff_to_single_ended_converter)
+
     x_dim_center = max(abs(pmos_comps.xmax),abs(pmos_comps.xmin))
     for direction in [-1, 1]:
         halfMultp = pmos(
@@ -43,6 +64,9 @@ def row_csamplifier_diff_to_single_ended_converter(pdk: MappedPDK, diff_to_singl
         label = "L_" if direction==-1 else "R_"
         # this special marker is used to rename these ports in the opamp to commonsource_Pamp_
         pmos_comps.add_ports(halfMultp_ref.get_ports_list(),prefix="halfpspecialmarker_"+label)
+
+        __connect_cs_netlist(pmos_comps, halfMultp)
+
     # add npadding and add ports
     nwellbbox = pmos_comps.extract(layers=[pdk.get_glayer("poly"),pdk.get_glayer("active_diff"),pdk.get_glayer("active_tap"), pdk.get_glayer("nwell"),pdk.get_glayer("dnwell")]).bbox
     nwellspacing = pdk.get_grule("nwell", "active_tap")["min_enclosure"]
@@ -58,4 +82,4 @@ def row_csamplifier_diff_to_single_ended_converter(pdk: MappedPDK, diff_to_singl
     pmos_comps << straight_route(pdk, pmos_comps.ports["pbottomAB_L_welltap_W_top_met_W"],pmos_comps.ports["halfpspecialmarker_L_tie_E_top_met_W"],width=2,glayer1="met2",via1_alignment=('c','c'),via2_alignment=('c','c'),fullbottom=True)
     pmos_comps << straight_route(pdk, pmos_comps.ports["pbottomAB_R_welltap_E_top_met_E"],pmos_comps.ports["halfpspecialmarker_R_tie_W_top_met_E"],width=2,glayer1="met2",via1_alignment=('c','c'),via2_alignment=('c','c'),fullbottom=True)
     return pmos_comps
-    
+

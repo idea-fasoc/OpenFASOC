@@ -13,7 +13,20 @@ from glayout.pdk.util.port_utils import rename_ports_by_orientation, rename_port
 from glayout.primitives.via_gen import via_stack
 from glayout.primitives.guardring import tapring
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
+from glayout.spice import Netlist
 
+def diff_pair_netlist(fetL: Component, fetR: Component) -> Netlist:
+	diff_pair_netlist = Netlist(circuit_name='DIFF_PAIR', nodes=['VP', 'VN', 'VDD1', 'VDD2', 'VTAIL', 'B'])
+	diff_pair_netlist.connect_netlist(
+		fetL.info['netlist'],
+		[('D', 'VDD1'), ('G', 'VP'), ('S', 'VTAIL'), ('B', 'B')]
+	)
+	diff_pair_netlist.connect_netlist(
+		fetR.info['netlist'],
+		[('D', 'VDD2'), ('G', 'VN'), ('S', 'VTAIL'), ('B', 'B')]
+	)
+
+	return diff_pair_netlist
 
 @cell
 def diff_pair(
@@ -141,7 +154,12 @@ def diff_pair(
 	diffpair.add_ports(PLUSgate_routeW.get_ports_list(),prefix="PLUSgateroute_W_")
 	diffpair.add_ports(PLUSgate_routeE.get_ports_list(),prefix="PLUSgateroute_E_")
 	diffpair.add_padding(layers=(pdk.get_glayer(well),), default=0)
-	return component_snap_to_grid(rename_ports_by_orientation(diffpair))
+
+	component = component_snap_to_grid(rename_ports_by_orientation(diffpair))
+
+	component.info['netlist'] = diff_pair_netlist(fetL, fetR)
+	return component
+
 
 
 

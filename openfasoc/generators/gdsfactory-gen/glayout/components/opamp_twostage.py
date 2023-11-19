@@ -24,8 +24,8 @@ from glayout.components.stacked_current_mirror import stacked_nfet_current_mirro
 from glayout.components.differential_to_single_ended_converter import differential_to_single_ended_converter
 from glayout.components.row_csamplifier_diff_to_single_ended_converter import row_csamplifier_diff_to_single_ended_converter
 from glayout.components.diff_pair_stackedcmirror import diff_pair_stackedcmirror
-
-
+from glayout.spice import Netlist
+from glayout.components.stacked_current_mirror import current_mirror_netlist
 
 @validate_arguments
 def __create_and_route_pins(
@@ -106,10 +106,13 @@ def __create_and_route_pins(
 
 
 @validate_arguments
-def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap_rows, ymin: float, n_to_p_output_route) -> Component:
+def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap_rows, ymin: float, n_to_p_output_route) -> tuple[Component, Netlist]:
     mim_cap_size = pdk.snap_to_2xgrid(mim_cap_size, return_type="float")
     max_metalsep = pdk.util_max_metal_seperation()
     mimcaps_ref = opamp_top << mimcap_array(pdk,mim_cap_rows,2,size=mim_cap_size,rmult=6)
+
+    mimcap_netlist = mimcaps_ref.info['netlist']
+
     displace_fact = max(max_metalsep,pdk.get_grule("capmet")["min_separation"])
     mimcaps_ref.movex(pdk.snap_to_2xgrid(opamp_top.xmax + displace_fact + mim_cap_size[0]/2))
     mimcaps_ref.movey(pdk.snap_to_2xgrid(ymin + mim_cap_size[1]/2))
@@ -123,9 +126,57 @@ def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap
     opamp_top.add_ports(mimcaps_ref.get_ports_list(),prefix="mimcap_")
     # add the cs output as a port
     opamp_top.add_port(name="commonsource_output_E", port=intermediate_output)
-    return opamp_top
+    return opamp_top, mimcap_netlist
 
+def opamp_gain_stage_netlist(mimcap_netlist: Netlist, diff_cs_netlist: Netlist, cs_bias_netlist: Netlist) -> Netlist:
+    netlist = Netlist(
+        circuit_name="GAIN_STAGE",
+        nodes=['VIN1', 'VIN2', 'VOUT', 'VDD', 'IBIAS', 'GND']
+    )
 
+    diff_cs_ref = netlist.connect_netlist(
+        diff_cs_netlist,
+        [('VSS', 'VDD')]
+    )
+
+    netlist.connect_netlist(
+        cs_bias_netlist,
+        [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
+    )
+
+    mimcap_ref = netlist.connect_netlist(mimcap_netlist, [('V2', 'VOUT')])
+
+    netlist.connect_subnets(
+        mimcap_ref,
+        diff_cs_ref,
+        [('V1', 'VSS2')]
+    )
+
+    return netlist
+
+def opamp_twostage_netlist(input_stage_netlist: Netlist, gain_stage_netlist: Netlist) -> Netlist:
+    two_stage_netlist = Netlist(
+        circuit_name="OPAMP_TWO_STAGE",
+        nodes=['VDD', 'GND', 'DIFFPAIR_BIAS', 'VP', 'VN', 'CS_BIAS', 'VOUT']
+    )
+
+    input_stage_ref = two_stage_netlist.connect_netlist(
+        input_stage_netlist,
+        [('IBIAS', 'DIFFPAIR_BIAS'), ('VSS', 'GND'), ('B', 'GND')]
+    )
+
+    gain_stage_ref = two_stage_netlist.connect_netlist(
+        gain_stage_netlist,
+        [('IBIAS', 'CS_BIAS')]
+    )
+
+    two_stage_netlist.connect_subnets(
+        input_stage_ref,
+        gain_stage_ref,
+        [('VDD1', 'VIN1'), ('VDD2', 'VIN2')]
+    )
+
+    return two_stage_netlist
 
 def opamp_twostage(
     pdk: MappedPDK,
@@ -159,10 +210,22 @@ def opamp_twostage(
     if half_common_source_bias[3] < 2:
         raise ValueError("half_common_source_bias num multiplier must be >= 2")
     opamp_top, halfmultn_drain_routeref, halfmultn_gate_routeref, _cref = diff_pair_stackedcmirror(pdk, half_diffpair_params, diffpair_bias, half_common_source_bias, rmult, with_antenna_diode_on_diffinputs)
+
+    opamp_top.info['netlist'].circuit_name = "INPUT_STAGE"
+
     # place pmos components
     pmos_comps = differential_to_single_ended_converter(pdk, rmult, half_pload, opamp_top.ports["diffpair_tl_multiplier_0_drain_N"].center[0])
     clear_cache()
+
     pmos_comps = row_csamplifier_diff_to_single_ended_converter(pdk, pmos_comps, half_common_source_params, rmult)
+
+    cs_bias_netlist = current_mirror_netlist(
+        pdk,
+        width=diffpair_bias[0],
+        length=diffpair_bias[1],
+        multipliers=diffpair_bias[2]
+    )
+
     ydim_ncomps = opamp_top.ymax
     pmos_comps_ref = opamp_top << pmos_comps
     pmos_comps_ref.movey(round(ydim_ncomps + pmos_comps_ref.ymax+10))
@@ -174,10 +237,14 @@ def opamp_twostage(
     opamp_top, n_to_p_output_route = __create_and_route_pins(pdk, opamp_top, pmos_comps_ref, halfmultn_drain_routeref, halfmultn_gate_routeref)
     # place mimcaps and route
     clear_cache()
-    opamp_top = __add_mimcap_arr(pdk, opamp_top, mim_cap_size, mim_cap_rows, pmos_comps_ref.ymin, n_to_p_output_route)
+    opamp_top, mimcap_netlist = __add_mimcap_arr(pdk, opamp_top, mim_cap_size, mim_cap_rows, pmos_comps_ref.ymin, n_to_p_output_route)
     opamp_top.add_ports(n_to_p_output_route.get_ports_list(),"special_con_npr_")
     # return
     opamp_top.add_ports(_cref.get_ports_list(), prefix="gnd_route_")
+
+    pmos_comps.info['netlist'] = opamp_gain_stage_netlist(mimcap_netlist, pmos_comps.info['netlist'], cs_bias_netlist)
+    opamp_top.info['netlist'] = opamp_twostage_netlist(opamp_top.info['netlist'], pmos_comps.info['netlist'])
+
     return opamp_top
 
 
