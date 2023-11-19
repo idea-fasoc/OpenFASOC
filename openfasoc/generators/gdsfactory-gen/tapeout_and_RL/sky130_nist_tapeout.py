@@ -317,59 +317,112 @@ def opamp_results_de_serializer(
 	results_dict["power_twostage"] = float(results[10])
 	return results_dict
 
-def get_small_parameter_list(test_mode = False) -> np.array:
+def get_small_parameter_list(test_mode = False, clarge=True) -> np.array:
 	"""creates small parameter list intended for brute force"""
-	# all diffpairs to try
-	diffpairs = list()
-	if test_mode:
-		diffpairs.append((6,1,4))
-		diffpairs.append((5,1,4))
+	if not clarge:
+		# all diffpairs to try
+		diffpairs = list()
+		if test_mode:
+			diffpairs.append((6,1,4))
+			diffpairs.append((5,1,4))
+		else:
+			for width in [7]:
+				for length in [0.5,0.7, 0.9]:
+					for fingers in [8,10,12]:
+						diffpairs.append((width,length,fingers))
+		# all bias2 (output amp bias) transistors
+		bias2s = list()
+		if test_mode:
+			bias2s.append((6,1,4,3))
+		else:
+			for width in [7]:
+				for length in [1]:
+					for fingers in [12,16,20]:
+						for mults in [2,3]:
+							bias2s.append((width,length,fingers,mults))
+		# all pmos first stage load transistors
+		half_pload = list()
+		if test_mode:
+			half_pload.append((6,1,6))
+		else:
+			for width in [9]:
+				for length in [0.5]:
+					for fingers in [6,8,10,12]:
+						half_pload.append((width,length,fingers))
+		# all output pmos transistors
+		pamp_hparams = list()
+		if test_mode:
+			pamp_hparams.append((7,1,8,3))
+		else:
+			for width in [8]:
+				for length in [0.5]:
+					for fingers in [8,12,16,20]:
+						pamp_hparams.append((width,length,fingers,3))
+		# diffpair bias cmirror
+		diffpair_cmirrors = list()
+		if test_mode:
+			pass
+		else:
+			for width in [7]:
+				for length in [1]:
+					for fingers in [8,10]:
+						diffpair_cmirrors.append((width,length,fingers))
+		# rows of the cap array to try
+		cap_arrays = [3]
+		# routing mults to try
+		rmults = [2]
 	else:
-		for width in [7]:
-			for length in [0.5,0.7, 0.9]:
-				for fingers in [8,10,12]:
-					diffpairs.append((width,length,fingers))
-	# all bias2 (output amp bias) transistors
-	bias2s = list()
-	if test_mode:
-		bias2s.append((6,1,4,3))
-	else:
-		for width in [7]:
-			for length in [1]:
-				for fingers in [12,16,20]:
-					for mults in [2,3]:
-						bias2s.append((width,length,fingers,mults))
-	# all pmos first stage load transistors
-	half_pload = list()
-	if test_mode:
-		half_pload.append((6,1,6))
-	else:
-		for width in [9]:
-			for length in [0.5]:
-				for fingers in [6,8,10,12]:
-					half_pload.append((width,length,fingers))
-	# all output pmos transistors
-	pamp_hparams = list()
-	if test_mode:
-		pamp_hparams.append((7,1,8,3))
-	else:
-		for width in [8]:
-			for length in [0.5]:
-				for fingers in [8,12,16,20]:
-					pamp_hparams.append((width,length,fingers,3))
-	# diffpair bias cmirror
-	diffpair_cmirrors = list()
-	if test_mode:
-		pass
-	else:
-		for width in [7]:
-			for length in [1]:
-				for fingers in [8,10]:
-					diffpair_cmirrors.append((width,length,fingers))
-	# rows of the cap array to try
-	cap_arrays = [3]
-	# routing mults to try
-	rmults = [2]
+		# all diffpairs to try
+		diffpairs = list()
+		if test_mode:
+			diffpairs.append((6,1,4))
+			diffpairs.append((5,1,4))
+		else:
+			for width in [2,4,6]:
+				for length in [0.5, 1]:
+					for fingers in [2,4,6,8]:
+						diffpairs.append((width,length,fingers))
+		# all bias2 (output amp bias) transistors
+		bias2s = list()
+		if test_mode:
+			bias2s.append((6,1,4,3))
+		else:
+			for width in [6]:
+				for length in [2]:
+					for fingers in [4,6]:
+						for mults in [2,3]:
+							bias2s.append((width,length,fingers,mults))
+		# all pmos first stage load transistors
+		half_pload = list()
+		if test_mode:
+			half_pload.append((6,1,6))
+		else:
+			for width in [4,6]:
+				for length in [0.5,1]:
+					for fingers in [4,6,8]:
+						half_pload.append((width,length,fingers))
+		# all output pmos transistors
+		pamp_hparams = list()
+		if test_mode:
+			pamp_hparams.append((7,1,8,3))
+		else:
+			for width in [7,4]:
+				for length in [0.5,1]:
+					for fingers in [8,4,2]:
+						pamp_hparams.append((width,length,fingers,3))
+		# diffpair bias cmirror
+		diffpair_cmirrors = list()
+		if test_mode:
+			pass
+		else:
+			for width in [6]:
+				for length in [2]:
+					for fingers in [3]:
+						diffpair_cmirrors.append((width,length,fingers))
+		# rows of the cap array to try
+		cap_arrays = [3]
+		# routing mults to try
+		rmults = [2]
 	# ******************************************
 	# create and return the small parameters list
 	short_list_len = len(diffpairs) * len(bias2s) * len(pamp_hparams) * len(cap_arrays) * len(rmults) * len(diffpair_cmirrors) * len(half_pload)
