@@ -566,7 +566,7 @@ def process_spice_testbench(testbench: Union[str,Path], temperature_info: tuple[
 	with open(testbench, "w") as spice_file:
 		spice_file.write(spicetb)
 
-def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, output_dir: Optional[Union[int,str,Path]] = None):
+def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, output_dir: Optional[Union[int,str,Path]] = None, hardfail=False):
 	# pass pdk as global var to avoid pickling issues
 	global pdk
 	global PDK_ROOT
@@ -618,6 +618,8 @@ def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: t
 					raise ValueError("Output directory must be a directory")
 				copytree(str(tmpdirname), str(output_dir)+"/test_output", dirs_exist_ok=True)
 	except Exception as e_LorA:
+		if hardfail:
+			raise e_LorA
 		results = opamp_results_serializer()
 		with open('get_training_data_ERRORS.log', 'a') as errlog:
 			errlog.write("\nopamp run "+str(index)+" with the following params failed: \n"+str(params))
@@ -669,7 +671,7 @@ def get_training_data(test_mode: bool=True, temperature_info: tuple[int,str]=(25
 
 
 #util function for pure simulation. sky130 is imported automatically
-def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: Optional[Union[str,Path]] = None, cload: float=0.0, noparasitics: bool=False) -> dict:
+def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: Optional[Union[str,Path]] = None, cload: float=0.0, noparasitics: bool=False,hardfail=False) -> dict:
 	"""Builds, extract, and simulates a single opamp
 	saves opamp gds in current directory with name 12345678987654321.gds
 	returns -987.654321 for all values IF phase margin < 45
@@ -690,7 +692,7 @@ def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: 
 	# pass pdk as global var to avoid pickling issues
 	global pdk
 	pdk = sky130_mapped_pdk
-	results = __run_single_brtfrc(index, parameters, temperature_info=temperature_info, save_gds_dir=save_gds_dir, output_dir=output_dir, cload=cload, noparasitics=noparasitics)
+	results = __run_single_brtfrc(index, parameters, temperature_info=temperature_info, save_gds_dir=save_gds_dir, output_dir=output_dir, cload=cload, noparasitics=noparasitics, hardfail=hardfail)
 	results = opamp_results_de_serializer(results)
 	if results["phaseMargin"] < 45:
 		for key in results:
@@ -1259,7 +1261,7 @@ if __name__ == "__main__":
 			"mim_cap_rows": 3,
 			"rmult": 2
 		}
-		results = single_build_and_simulation(opamp_parameters_serializer(**params), temperature_info[0], args.output_dir, cload=args.cload, noparasitics=args.noparasitics)
+		results = single_build_and_simulation(opamp_parameters_serializer(**params), temperature_info[0], args.output_dir, cload=args.cload, noparasitics=args.noparasitics, hardfail=True)
 		print(results)
 
 	elif args.mode =="create_opamp_matrix":

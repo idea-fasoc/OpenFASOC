@@ -1,9 +1,28 @@
+# Installation and Getting Started
+These generators require python version >= 3.10  
+## Installing Layout Tools
+All layout dependencies can be installed with pip (the official python package manager). From here you can generate layouts with [Glayout](https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/README.md#glayout).  
+
+```
+python3 -m pip install -r requirements.txt
+python3 -m pip install gdsfactory==7.7.0
+```
+**After installing python packages, you can test with:**  
+`python3 sky130_nist_tapeout.py gen_opamp --output_gds test1.gds`
+
+## Installing Simulation Tools
+A full install of these tools has only been verified on Linux platforms
+- [Skywater 130nm Open PDK](https://github.com/RTimothyEdwards/open_pdks)
+- [Magic](http://opencircuitdesign.com/magic/install.html)
+- [ngspice](https://ngspice.sourceforge.io/download.html) 
+- **Optional**: [Klayout](https://www.klayout.de/build.html)
+
+**After a full install, you can test with:**  
+`python3 sky130_nist_tapeout.py test --output_dir test`
+
 # sky130 NIST Tapeout Macros
 This directory contains the `sky130_nist_tapeout.py` file which is a python program containing all functions and utils neccessary to produce the circuits, simulation info, and statistics used in the sky130 NIST tapeout.  
 `sky130_nist_tapeout.py` has a command line interface. use the `-h` option to see all args for this program. help output is replicated below.
-
-## NOTE
-Before using `sky130_nist_tapeout.py` file you should set env variable `PDK_ROOT` to the root directory of the sky130 pdk on your system. You should also change the pdk path in `opamp_perf_eval.sp` and `extract.bash`.
 
 ## general help
 ```
@@ -99,9 +118,10 @@ options:
 
 ## test mode
 ```
-usage: sky130_nist_tapeout.py test [-h] [--output_dir OUTPUT_DIR] [--temp TEMP] [--cload CLOAD]
-                                   [--noparasitics] [--output_second_stage]
-
+usage: sky130_nist_tapeout.py test [-h] [--output_dir OUTPUT_DIR] [--temp TEMP]
+                                   [--cload CLOAD] [--noparasitics]
+                                   [--output_second_stage] [--no_lvt]
+                                   [--PDK_ROOT PDK_ROOT]
 options:
   -h, --help            show this help message and exit
   --output_dir OUTPUT_DIR
@@ -110,8 +130,10 @@ options:
   --cload CLOAD         run simulation with load capacitance units=pico Farads
   --noparasitics        specify that parasitics should be removed when simulating
   --output_second_stage
-                        measure relevant sim metrics at the output of the second stage rather than
-                        output of third stage
+                        measure relevant sim metrics at the output of the second stage
+                        rather than output of third stage
+  --no_lvt              do not place any low threshold voltage transistors.
+  --PDK_ROOT PDK_ROOT   path to the sky130 PDK library
 ```
 
 ## create_opamp_matrix mode
