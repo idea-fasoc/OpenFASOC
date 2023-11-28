@@ -6,12 +6,13 @@ import random
 import yaml
 import os
 import argparse
+import path_module_thing
 
 def gen_data(env, num_specs):
 
   specs_range = {
-                "gain_min" : [float(1000338000.0), float(3000338000.0)],
-                "FOM" : [float(5*10**11), float(5*10**11)]
+                "gain_min" : [float(14003380.0), float(50003380.0)],
+                "FOM" : [float(4e11), float(4e11)]
                 }
   specs_range_vals = list(specs_range.values())
   specs_valid = []
@@ -34,8 +35,8 @@ def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('--num_specs', type=str)
   args = parser.parse_args()
-  
-  gen_data("newnew_eval_3.yaml", int(50))
+
+  gen_data("train.yaml", int(100))
 
 if __name__=="__main__":
   main()
