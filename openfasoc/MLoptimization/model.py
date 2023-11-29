@@ -1,13 +1,14 @@
-#training import
+# Add glayout to path
 import sys
+sys.path.append('../generators/gdsfactory-gen')
+sys.path.append('../generators/gdsfactory-gen/tapeout_and_RL')
+
+#training import
 import gym
 import ray
 import ray.tune as tune
 from ray.rllib.algorithms.ppo import PPO
 from run_training import Envir
-sys.path.append('../generators/gdsfactory-gen')
-sys.path.append('../generators/gdsfactory-gen/tapeout_and_RL')
-sys.path.append('../generators/gdsfactory-gen/tapeout_and_RL/sky130_nist_tapeout.py')
 from sky130_nist_tapeout import single_build_and_simulation
 
 import argparse
