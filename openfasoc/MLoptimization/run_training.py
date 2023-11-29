@@ -52,7 +52,7 @@ class Envir(gym.Env):
         # design specs
         if self.generalize == True:
             if self.valid == False:
-                specs = yaml.safe_load(Path('train1.yaml').read_text())
+                specs = yaml.safe_load(Path('train.yaml').read_text())
             else:
                 specs = inputspec
 
