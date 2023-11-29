@@ -9,8 +9,6 @@ from gymnasium.spaces import Discrete
 from gymnasium.wrappers import EnvCompatibility
 from ray.rllib.env.wrappers.multi_agent_env_compatibility import MultiAgentEnvCompatibility
 from sky130_nist_tapeout import single_build_and_simulation
-import sky130_nist_tapeout
-sky130_nist_tapeout.path.append('../generators/gdsfactory-gen/tapeout_and_RL')
 import numpy as np
 import random
 import psutil
