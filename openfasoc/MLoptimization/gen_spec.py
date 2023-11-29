@@ -6,7 +6,6 @@ import random
 import yaml
 import os
 import argparse
-import path_module_thing
 
 def gen_data(env, num_specs):
 
