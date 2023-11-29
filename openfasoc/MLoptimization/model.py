@@ -1,9 +1,12 @@
 #training import
+import sys
 import gym
 import ray
 import ray.tune as tune
 from ray.rllib.algorithms.ppo import PPO
 from run_training import Envir
+sys.path.append('../generators/gdsfactory-gen')
+sys.path.append('../generators/gdsfactory-gen/tapeout_and_RL')
 from sky130_nist_tapeout import single_build_and_simulation
 
 import argparse
