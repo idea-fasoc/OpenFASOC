@@ -1,6 +1,7 @@
 # Add glayout to path
 import sys
 sys.path.append('../generators/gdsfactory-gen')
+sys.path.append('../generators/gdsfactory-gen/glayout')
 sys.path.append('../generators/gdsfactory-gen/tapeout_and_RL')
 
 #training import
