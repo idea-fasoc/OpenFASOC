@@ -12,6 +12,8 @@ from sky130_nist_tapeout import single_build_and_simulation
 import numpy as np
 import random
 import psutil
+import sky130_nist_tapeout
+sky130_nist_tapeout.Path.append('../generators/gdsfactory-gen')
 
 from multiprocessing import Pool
 from collections import OrderedDict
