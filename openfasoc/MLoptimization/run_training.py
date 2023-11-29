@@ -1,3 +1,7 @@
+# Add glayout to path
+import sys
+sys.path.append('../generators/gdsfactory-gen/tapeout_and_RL')
+
 #env import
 import gymnasium as gym
 from gymnasium import spaces
@@ -5,6 +9,7 @@ from gymnasium.spaces import Discrete
 from gymnasium.wrappers import EnvCompatibility
 from ray.rllib.env.wrappers.multi_agent_env_compatibility import MultiAgentEnvCompatibility
 from sky130_nist_tapeout import single_build_and_simulation
+import sky130_nist_tapeout
 sky130_nist_tapeout.path.append('../generators/gdsfactory-gen/tapeout_and_RL')
 import numpy as np
 import random
@@ -52,7 +57,7 @@ class Envir(gym.Env):
                 specs = yaml.safe_load(Path('train1.yaml').read_text())
             else:
                 specs = inputspec
-                
+
         self.specs = specs
 
         self.specs_ideal = []
@@ -62,17 +67,17 @@ class Envir(gym.Env):
 
         # param array
         params = {
-                  "diffpair_params0" : [1, 8, 1],       
-                  "diffpair_params1" : [0.5, 2.1, 0.1],   
+                  "diffpair_params0" : [1, 8, 1],
+                  "diffpair_params1" : [0.5, 2.1, 0.1],
                   "diffpair_params2" : [1, 9, 1],
                   "Diffpair_bias0" : [1, 8, 1],
                   "Diffpair_bias1" : [1, 4.5, 0.5],
                   "Diffpair_bias2" : [3, 13, 1],
-                  "pamp_hparams0" : [1, 8, 1], 
-                  "pamp_hparams1" : [0.5, 2.1, 0.1], 
+                  "pamp_hparams0" : [1, 8, 1],
+                  "pamp_hparams1" : [0.5, 2.1, 0.1],
                   "pamp_hparams2" : [2, 11, 1],
-                  "bias0" : [1, 8, 1], 
-                  "bias1" : [0.5, 2.1, 0.1], 
+                  "bias0" : [1, 8, 1],
+                  "bias1" : [0.5, 2.1, 0.1],
                   "bias2" : [3, 13, 1],
                   "bias3" : [2, 4, 1],
                   "half_pload1": [3, 7, 1],
@@ -233,7 +238,7 @@ class Envir(gym.Env):
         for i,rel_spec in enumerate(rel_specs):
             if rel_spec < -0.02:
                 trueorfalse = False
-        
+
         if trueorfalse:
             return 2.0+reward
         else:
