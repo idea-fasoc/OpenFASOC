@@ -5,7 +5,7 @@ usage: from mappedpdk import MappedPDK
 from gdsfactory.pdk import Pdk
 from gdsfactory.typings import Component, PathType, Layer
 from pydantic import validator, StrictStr, ValidationError
-from typing import ClassVar, Optional, Any, Union, Literal, Iterable
+from typing import ClassVar, Optional, Any, Union, Literal, Iterable, TypedDict
 from pathlib import Path
 from decimal import Decimal, ROUND_UP
 import tempfile
@@ -42,10 +42,23 @@ class MappedPDK(Pdk):
         "capmet",
     )
 
+    models: dict = {
+        "nfet": "",
+        "pfet": "",
+        "mimcap": ""
+    }
+
     glayers: dict[StrictStr, Union[StrictStr, tuple[int,int]]]
     # friendly way to implement a graph
     grules: dict[StrictStr, dict[StrictStr, Optional[dict[StrictStr, Any]]]]
     klayout_lydrc_file: Optional[Path] = None
+
+    @validator("models")
+    def models_check(cls, models_obj: dict[StrictStr, StrictStr]):
+        for model in models_obj.keys():
+            if not model in ["nfet","pfet","mimcap"]:
+                raise ValueError(f"specify nfet, pfet, or mimcap models only")
+        return models_obj
 
     @validator("glayers")
     def glayers_check_keys(cls, glayers_obj: dict[StrictStr, Union[StrictStr, tuple[int,int]]]):
@@ -127,7 +140,7 @@ class MappedPDK(Pdk):
         # there is a drc parsing open-source at:
         # https://github.com/google/globalfoundries-pdk-libs-gf180mcu_fd_pr/blob/main/rules/klayout/drc
         # eventually I can return more info on the drc run, but for now just void and view the lyrdb in klayout
-        
+
         # Open DRC output XML file
         drc_tree = ET.parse(report_path.resolve())
         drc_root = drc_tree.getroot()
@@ -161,7 +174,7 @@ class MappedPDK(Pdk):
         # lambda for finding last matching key in dict from val
         find_last = lambda val, d: [x for x, y in d.items() if y == val].pop()
         if layer in self.glayers.values():
-            return find_last(layer)
+            return find_last(layer, self.glayers)
         elif self.layers is not None:
             # find glayer verfying presence along the way
             pdk_real_layers = self.layers.values()
@@ -286,7 +299,7 @@ class MappedPDK(Pdk):
         for met in metal_levels:
             sep_rules.append(self.get_grule(met)["min_separation"])
         return self.snap_to_2xgrid(max(sep_rules))
-    
+
     @validate_arguments
     def snap_to_2xgrid(self, dims: Union[list[Union[float,Decimal]], Union[float,Decimal]], return_type: Literal["decimal","float","same"]="float", snap4: bool=False) -> Union[list[Union[float,Decimal]], Union[float,Decimal]]:
         """snap all numbers in dims to double the grid size.

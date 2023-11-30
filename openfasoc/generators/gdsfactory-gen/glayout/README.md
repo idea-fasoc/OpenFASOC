@@ -1,29 +1,37 @@
 All functions, classes, etc have a help docustring. See python help() for specific questions
 
+- [Installation](#installation)
 - [Glayout](#glayout)
-	- [MappedPDK](#mappedpdk)
-		- [Generic Layers](#generic-layers)
-		- [Generic Rule Guide](#generic-rule-guide)
-		- [Creating a MappedPDK](#creating-a-mappedpdk)
-	- [PDK Agnostic Layout, Basics](#pdk-agnostic-layout-basics)
-		- [Via Stack Generator](#via-stack-generator)
-		- [Routing](#routing)
-		- [PDK Agnostic Hierarchical Cells](#pdk-agnostic-hierarchical-cells)
-			- [Example 1: via\_array](#example-1-via_array)
-			- [Example 2: tapring](#example-2-tapring)
-			- [Example 3: fet](#example-3-fet)
-	- [Advanced Topics](#advanced-topics)
-		- [Cells and PDK.activate()](#cells-and-pdkactivate)
-		- [Important GDSFactory Notes and Glayout Utilities](#important-gdsfactory-notes-and-glayout-utilities)
-		- [Port Naming Best Practices Guide](#port-naming-best-practices-guide)
-			- [PortTree](#porttree)
-		- [Snap to 2x grid](#snap-to-2x-grid)
-		- [Mimcaps Implementation](#mimcaps-implementation)
-		- [DRC](#drc)
-		- [LVS, and Labeling Issues](#lvs-and-labeling-issues)
-		- [Addressing Complicated Requirments with Default Decorators](#addressing-complicated-requirments-with-default-decorators)
-	- [API overview](#api-overview)
+  - [MappedPDK](#mappedpdk)
+    - [Generic Layers](#generic-layers)
+    - [Generic Rule Guide](#generic-rule-guide)
+    - [Creating a MappedPDK](#creating-a-mappedpdk)
+  - [PDK Agnostic Layout, Basics](#pdk-agnostic-layout-basics)
+    - [Via Stack Generator](#via-stack-generator)
+    - [Routing](#routing)
+    - [PDK Agnostic Hierarchical Cells](#pdk-agnostic-hierarchical-cells)
+      - [Example 1: via\_array](#example-1-via_array)
+      - [Example 2: tapring](#example-2-tapring)
+      - [Example 3: fet](#example-3-fet)
+  - [Advanced Topics](#advanced-topics)
+    - [Cells and PDK.activate()](#cells-and-pdkactivate)
+    - [Important GDSFactory Notes and Glayout Utilities](#important-gdsfactory-notes-and-glayout-utilities)
+    - [Port Naming Best Practices Guide](#port-naming-best-practices-guide)
+      - [PortTree](#porttree)
+    - [Snap to 2x grid](#snap-to-2x-grid)
+    - [Mimcaps Implementation](#mimcaps-implementation)
+    - [DRC](#drc)
+    - [LVS, and Labeling Issues](#lvs-and-labeling-issues)
+    - [Addressing Complicated Requirments with Default Decorators](#addressing-complicated-requirments-with-default-decorators)
+  - [API overview](#api-overview)
 
+# Installation
+You must be running python3.10 or later. 
+- Run `python3 -m pip install -r requirements.txt` in the gdsfactory-gen directory
+- open Klayout
+  - go to Tools -> Manage Packages
+  - under "Install New Packages" search for "klive"
+  - install klive and when promoted, select "run macros"
 
 # Glayout
 Glayout is a layout automation tool which generates DRC clean circuit layouts for any technology implementing the Glayout framework. Glayout is implemented as an easy-to-install python package. All required Glayout dependencies are available on pypi and are installed automatically from pypi when downloading OpenFASOC. Glayout (being a generic layout automation tool) does not require an installed pdk (just a MappedPDK description, explained below). Glayout is composed of 2 main parts: the generic pdk framework and the circuit generators.  
@@ -85,13 +93,13 @@ For example, Straight route creates a straight path directly between two ports. 
 L route and C route also create simple paths. L route creates an L shaped route (two straight paths perpendicular) and C route creates a C shaped route (two parallel paths connected by a straight path).  
 ### PDK Agnostic Hierarchical Cells
 All cells other than the via stack contain hierarchy. Combining hierarchy and careful routing allows for clean layouts while increasing complexity. 
-#### Example 1: [via_array](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/via_gen.py#L180)
-The most basic hierarchical cell is the [via_array](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/via_gen.py#L180). Via array is composed of via stacks and has a similar interface to the via stack generator, but additionally accepts a size argument. The array spacing computation is another example of the programmers role in creating DRC clean layout. After error checking, the via array program creates the via stack single element that will be copied to create the array. Then, the generator loops through each layer and uses the gdsfactory component.extract method to get the dimension of that layer in the via stack; The min spacing for that layer is `pdk.get_grule(layer)["min_separation"] + 2*layer_dim`. After looping through the entire array, The maximum seperation is the correct spacing to use.  
-#### Example 2: [tapring](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/guardring.py)
-tapring produces a substrate / well tap rectanglular ring that legally enclose a rectangular shape. `gdsfactory.component.rectangular_ring` is used along with glayout [via_array](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/via_gen.py#L180). The ring is always of minimum width and legalizing the ring is easy because via_array does most of the work. Special care is taken at the corners to ensure min spacing between adjacent metal layers is not below min_separation. Although not currently implemented, error checking for this ring should check the size is not too small (separation between edges is not legal).  
+#### Example 1: [via_array](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/primitives/via_gen.py#L180)
+The most basic hierarchical cell is the [via_array](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/primitives/via_gen.py#L180). Via array is composed of via stacks and has a similar interface to the via stack generator, but additionally accepts a size argument. The array spacing computation is another example of the programmers role in creating DRC clean layout. After error checking, the via array program creates the via stack single element that will be copied to create the array. Then, the generator loops through each layer and uses the gdsfactory component.extract method to get the dimension of that layer in the via stack; The min spacing for that layer is `pdk.get_grule(layer)["min_separation"] + 2*layer_dim`. After looping through the entire array, The maximum seperation is the correct spacing to use.  
+#### Example 2: [tapring](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/primitives/guardring.py)
+tapring produces a substrate / well tap rectanglular ring that legally enclose a rectangular shape. `gdsfactory.component.rectangular_ring` is used along with glayout [via_array](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/primitives/via_gen.py#L180). The ring is always of minimum width and legalizing the ring is easy because via_array does most of the work. Special care is taken at the corners to ensure min spacing between adjacent metal layers is not below min_separation. Although not currently implemented, error checking for this ring should check the size is not too small (separation between edges is not legal).  
 Generators should be made as generic as possible. In this case, tapring can produce either a p-tap or n-tap ring. Glayers are just strings and they can be passed to functions as arguments. Also, you glayer variables can be passed directly to `pdk.get_grule(glayer_var)`.
-#### Example 3: [fet](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/fet.py)
-The most important component factory in glayout is the [multiplier](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/fet.py#L61) because it handles the difficult task of creating legal transistors. By passing the source/drain layer (either "p+s/d" or "n+s/d") multiplier code is reused to create nmos and pmos transistors. arrays of multipliers can be created to allow for transistors with several multipliers. read the help docustring for all functions in [fet.py](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/fet.py)
+#### Example 3: [fet](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/primitives/fet.py)
+The most important component factory in glayout is the [multiplier](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/primitives/fet.py#L61) because it handles the difficult task of creating legal transistors. By passing the source/drain layer (either "p+s/d" or "n+s/d") multiplier code is reused to create nmos and pmos transistors. arrays of multipliers can be created to allow for transistors with several multipliers. read the help docustring for all functions in [fet.py](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc/generators/gdsfactory-gen/glayout/primitives/fet.py)
 
 ## Advanced Topics
 The following topics are only neccessary if you want to code with glayout, but are not neccessary for a basic understanding of glayout.
@@ -214,7 +222,6 @@ This section provides a high-level overview of all functions in glayout. See **d
         - port_utils.py
         - print_rules.py
         - snap_to_grid.py
-        - standard_main.py
-        - opamp_array_create.py
+        - component_array_create.py
 
 

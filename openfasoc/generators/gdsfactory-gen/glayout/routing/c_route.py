@@ -4,7 +4,7 @@ from gdsfactory.port import Port
 from glayout.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
 from math import isclose
-from glayout.via_gen import via_stack
+from glayout.primitives.via_gen import via_stack
 from gdsfactory.routing.route_quad import route_quad
 from gdsfactory.components.rectangle import rectangle
 from glayout.pdk.util.comp_utils import evaluate_bbox, get_primitive_rectangle
@@ -57,7 +57,6 @@ def c_route(
 	- None means center (no offset)
 	****NOTE: viaoffset pushes both vias towards each other slightly
 	"""
-	extension = snap_to_grid(extension)
 	# error checking and figure out args
 	if round(edge1.orientation) % 90 or round(edge2.orientation) % 90:
 		raise ValueError("Ports must be vertical or horizontal")
@@ -76,6 +75,7 @@ def c_route(
 		viaoffset = (True,True) if viaoffset else (False,False)
 	pdk.has_required_glayers([e1glayer,e2glayer,cglayer])
 	pdk.activate()
+	extension = snap_to_grid(extension)
 	# create route
 	croute = Component()
 	viastack1 = via_stack(pdk,e1glayer,cglayer,fullbottom=fullbottom,assume_bottom_via=True)
@@ -123,6 +123,7 @@ def c_route(
 	rect_c2 = get_primitive_rectangle(size=box_dims[1], layer=pdk.get_glayer(e2glayer))
 	rect_c1 = rename_ports_by_orientation(rename_ports_by_list(rect_c1,[("e","e_")]))
 	rect_c2 = rename_ports_by_orientation(rename_ports_by_list(rect_c2,[("e","e_")]))
+	# TODO: make sure ports match bbox
 	e1_extension = e1_extension_comp << rect_c1
 	e2_extension = e2_extension_comp << rect_c2
 	e1_extension.move(destination=edge1.center)
@@ -195,20 +196,7 @@ def c_route(
 	cconnection = croute << route_quad(route_ports[0],route_ports[1],layer=pdk.get_glayer(cglayer))
 	for i,port_to_add in enumerate(route_ports):
 		orta = get_orientation(port_to_add.orientation)
-		#orta = "S" if orta=="N" else ("N" if orta=="S" else orta)
-		#orta = "E" if orta=="W" else ("W" if orta=="E" else orta)
 		route_ports[i] = set_port_orientation(port_to_add, orta)
 	croute.add_ports(route_ports,prefix="con_")
 	return rename_ports_by_orientation(rename_ports_by_list(croute.flatten(), [("con_","con_")]))
 
-if __name__ == "__main__":
-	from glayout.pdk.util.standard_main import pdk
-	
-	routebetweentop = copy(get_primitive_rectangle(layer=pdk.get_glayer("met1"))).ref()
-	routebetweentop.movey(10)
-	routebetweenbottom = get_primitive_rectangle(layer=pdk.get_glayer("met1"))
-	mycomp = c_route(pdk,routebetweentop.ports["e3"],routebetweenbottom.ports["e3"])
-	mycomp.unlock()
-	mycomp.add(routebetweentop)
-	mycomp << routebetweenbottom
-	mycomp.flatten().show()
