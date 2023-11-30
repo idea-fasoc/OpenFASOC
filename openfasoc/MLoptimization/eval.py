@@ -1,3 +1,8 @@
+# Add glayout to path
+import sys
+sys.path.append('../generators/gdsfactory-gen')
+sys.path.append('../generators/gdsfactory-gen/tapeout_and_RL')
+
 #training import
 import numpy as np
 import gym
@@ -6,24 +11,23 @@ import ray.tune as tune
 from ray.rllib.algorithms.ppo import PPO
 from run_training import Envir
 from sky130_nist_tapeout import single_build_and_simulation
-sky130_nist_tapeout.path.append('../generators/gdsfactory-gen/tapeout_and_RL')
 import pickle
 import yaml
 from pathlib import Path
 import argparse
 
 def unlookup(norm_spec, goal_spec):
-    spec = -1*np.multiply((norm_spec+1), goal_spec)/(norm_spec-1) 
+    spec = -1*np.multiply((norm_spec+1), goal_spec)/(norm_spec-1)
     return spec
 
 specs = yaml.safe_load(Path('newnew_eval_3.yaml').read_text())
 
 #
 #training set up
-env_config = { 
+env_config = {
             "generalize":True,
-            "num_valid":2, 
-            "save_specs":False, 
+            "num_valid":2,
+            "save_specs":False,
             "inputspec":specs,
             "run_valid":True,
             "horizon":25,
@@ -34,8 +38,8 @@ config_eval = {
             "env": Envir,
             "env_config":{
                             "generalize":True,
-                            "num_valid":2, 
-                            "save_specs":False, 
+                            "num_valid":2,
+                            "save_specs":False,
                             "inputspec":specs,
                             "run_valid":True,
                             "horizon":25,
@@ -68,7 +72,7 @@ f = open("newnewnew_eval__3.txt", "a")
 while rollout_steps < 100:
     rollout_num = []
     state, info = env.reset()
-        
+
     done = False
     truncated = False
     reward_total = 0.0
@@ -90,7 +94,7 @@ while rollout_steps < 100:
 
         rollout_num.append(reward)
         next_states.append(next_state)
-            
+
         state = next_state
 
     norm_ideal_spec = state[spec_num:spec_num+spec_num]
@@ -102,7 +106,7 @@ while rollout_steps < 100:
         action_array = []
         pickle.dump(action_arr_comp, open("action_arr_test", "wb"))
     else:
-        obs_nreached.append(ideal_spec)          #save unreached observation 
+        obs_nreached.append(ideal_spec)          #save unreached observation
         action_array=[]
     f.write('done----------------------------------------')
     rollouts.append(rollout_num)
@@ -114,6 +118,6 @@ while rollout_steps < 100:
     pickle.dump(obs_nreached, open("opamp_obs_nreached_test","wb"))
 
     f.write("Specs reached: " + str(reached_spec) + "/" + str(len(obs_nreached)))
-    print("Specs reached: " + str(reached_spec) + "/" + str(len(obs_nreached))) 
+    print("Specs reached: " + str(reached_spec) + "/" + str(len(obs_nreached)))
 
 print("Num specs reached: " + str(reached_spec) + "/" + str(1))
