@@ -37,4 +37,4 @@ trials = tune.run(
     checkpoint_freq=1,
     config=config_train,
 )
-
+trials.get_last_checkpoint().to_directory('./last_checkpoint')
