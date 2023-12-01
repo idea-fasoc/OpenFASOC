@@ -51,7 +51,7 @@ parser.add_argument('--checkpoint_dir', '-cpd', type=str)
 args = parser.parse_args()
 env = Envir(env_config=env_config)
 
-agent = PPO.from_checkpoint("/home/wentian/ray_results/brandnewBound_1/PPO_Envir_7fc09_00000_0_2023-08-18_20-40-42/checkpoint_000015")
+agent = PPO.from_checkpoint("./last_checkpoint")
 
 
 
