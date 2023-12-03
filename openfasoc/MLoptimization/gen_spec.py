@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 ## Generate the design specifications and then save to a pickle file
 
-import numpy as np
 import random
-import yaml
-import os
 import argparse
 
-def gen_data(env, num_specs):
-
+def generate_random_specs(env, num_specs):
   specs_range = {
                 "gain_min" : [float(14003380.0), float(50003380.0)],
                 "FOM" : [float(4e11), float(4e11)]
@@ -35,7 +31,7 @@ def main():
   parser.add_argument('--num_specs', type=str)
   args = parser.parse_args()
 
-  gen_data("train.yaml", int(100))
+  generate_random_specs("train.yaml", int(100))
 
 if __name__=="__main__":
   main()
