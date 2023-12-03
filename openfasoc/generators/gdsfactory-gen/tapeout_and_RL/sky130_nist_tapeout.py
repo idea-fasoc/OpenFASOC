@@ -1,6 +1,7 @@
 import sys
+from os import path
 # path to glayout
-sys.path.append('../')
+sys.path.append(path.join(path.dirname(__file__), '../'))
 
 from gdsfactory.read.import_gds import import_gds
 from gdsfactory.components import text_freetype, rectangle
@@ -385,9 +386,9 @@ def get_small_parameter_list(test_mode = False) -> np.array:
 							for halfpld in half_pload:
 								tup_to_add = opamp_parameters_serializer(
 									half_pload=halfpld,
-									half_diffpair_params=diffpair_v, 
-									half_common_source_bias=bias2_v, 
-									mim_cap_rows=cap_array_v, 
+									half_diffpair_params=diffpair_v,
+									half_common_source_bias=bias2_v,
+									mim_cap_rows=cap_array_v,
 									half_common_source_params=pamp_o_v,
 									rmult=rmult,
 									diffpair_bias=diffpair_cmirror_v,
@@ -961,7 +962,7 @@ def extract_stats(
 			colnames_vals[key] = "place_holder"
 	for i, colname in enumerate(colnames_vals):
 		colnames_vals[colname] = params[:, i]
-	
+
 	# run statistics on distribution of training parameters individually
 	params_stats_hists = Path("./stats/param_stats/hists1D")
 	params_stats_hists.mkdir(parents=True)
@@ -973,7 +974,7 @@ def extract_stats(
 	save_pairwise_scatter_plot(params,str(params_stats_scatter)+"/pairscatter_params.png")
 	# run PCA on training parameters
 	run_pca_and_save_plot(params,str(params_stats_scatter)+"/PCA_params.png")
-	
+
 	# run statistics on results
 	result_stats_dir = Path("./stats/result_stats/hist1d")
 	result_stats_dir.mkdir(parents=True)
@@ -1015,7 +1016,7 @@ def extract_stats(
 
 
 def create_opamp_matrix(save_dir_name: str, params: np.array, results: Optional[np.array] = None, indices: Optional[list]=None):
-	"""create opamps with pads from the np array of opamp parameters 
+	"""create opamps with pads from the np array of opamp parameters
 	args:
 	save_dir_name = name of directory to save gds array and text description into
 	params = 2d list-like container (list, np.array, tuple, etc.) where each row is in the same form as opamp_parameters_serializer
@@ -1066,7 +1067,7 @@ if __name__ == "__main__":
 	start_watch = time.time()
 
 	parser = argparse.ArgumentParser(description="sky130 nist tapeout sample, RL generation, and statistics utility.")
-	
+
 	subparsers = parser.add_subparsers(title="mode", required=True, dest="mode")
 
 	# Subparser for extract_stats mode
@@ -1110,7 +1111,7 @@ if __name__ == "__main__":
 	test.add_argument("--cload", type=float, default=float(0), help="run simulation with load capacitance units=pico Farads")
 	test.add_argument("--noparasitics",action="store_true",help="specify that parasitics should be removed when simulating")
 	test.add_argument("--output_second_stage",action="store_true",help="measure relevant sim metrics at the output of the second stage rather than output of third stage")
-	
+
 	# Subparser for create_opamp_matrix mode
 	create_opamp_matrix_parser = subparsers.add_parser("create_opamp_matrix", help="create a matrix of opamps")
 	create_opamp_matrix_parser.add_argument("-p", "--params", default="params.npy", help="File path for params (default: params.npy)")
@@ -1123,19 +1124,19 @@ if __name__ == "__main__":
 		prsr.add_argument("--PDK_ROOT",type=Path,default="/usr/bin/miniconda3/share/pdk/",help="path to the sky130 PDK library")
 	for prsr in [gen_opamp_parser,create_opamp_matrix_parser]:
 		prsr.add_argument("--big_pad",action="store_true",help="use 120um pad")
-	
+
 	args = parser.parse_args()
 
 	if args.mode in ["gen_opamps","create_opamp_matrix"]:
 		__SMALL_PAD_ = not args.big_pad
-	
+
 	if args.mode in ["get_training_data","test","gen_opamps","create_opamp_matrix"]:
 		__NO_LVT_GLOBAL_ = args.no_lvt
 		PDK_ROOT = Path(args.PDK_ROOT).resolve()
 		if not(PDK_ROOT.is_dir()):
 			raise ValueError("PDK_ROOT is not a valid directory\n")
 		PDK_ROOT = str(PDK_ROOT)
-	
+
 	# Simulation Temperature information
 	if vars(args).get("temp") is not None:
 		temperature_info = [args.temp, None]
@@ -1214,8 +1215,8 @@ if __name__ == "__main__":
 		else:
 			indices = None
 		create_opamp_matrix(args.output_dir,params,results,indices)
-		
-	
+
+
 	elif args.mode == "gen_opamps":
 		global usepdk
 		if args.pdk[0].lower()=="g":
@@ -1229,10 +1230,10 @@ if __name__ == "__main__":
 			global usepdk
 			comp = opamp(usepdk,**opamp_parameters_de_serializer(argnparray))
 			comp.write_gds("./outputrawopamps/amp"+str(indx)+".gds")
-		
+
 		argnparray = get_small_parameter_list()
 		with Pool(120) as cores:
 			cores.starmap(create_func, zip(argnparray,count(0)))
-	
+
 	end_watch = time.time()
 	print("\ntotal runtime was "+str((end_watch-start_watch)/3600) + " hours\n")
