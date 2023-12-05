@@ -33,6 +33,7 @@ import warnings
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from common.get_ngspice_version import check_ngspice_version
 from common.check_gen_files import check_gen_files
+from common.check_sim_results import compare_files
 
 sys.stdout.flush()
 
@@ -119,23 +120,28 @@ else:
 if len(sys.argv) > 1 and sys.argv[1] == "sky130hd_temp_full":
     sim_state_filename = "work/sim_state_file.txt"
     result_filename = "work/prePEX_sim_result" 
-
     template_filename = "../../../.github/scripts/expected_sim_outputs/temp-sense-gen/prePEX_sim_result"
-    with open(result_filename) as f2, open(template_filename) as f1:
-        content1 = f2.readlines()
-        content2 = f1.readlines()
-        if content1 != content2:
-            warnings.warn("Simulation result file does not match! Please contact a maintainer of the repo!", DeprecationWarning)
+    max_allowable_error = 0.5
     
-    if check_ngspice_version() == 0:
+    ### Generated result file check against stored template
+    ngspice_version_flag = check_ngspice_version()
+    file_comp_flag = compare_files(template_filename, result_filename, max_allowable_error)
+    
+    if ngspice_version_flag == 1 and file_comp_flag == 0:
+        raise ValueError("Ngspice version matches but sim results do not...sims failed!")
+    elif ngspice_version_flag == 0 and file_comp_flag == 0:
         warnings.warn("The ngspice version does not match, "
-                       "frequency results might not match! "
-                       "Please contact a maintainer of the repo.", DeprecationWarning)
-
+                       "simulation results might not match! "
+                       "Please contact a maintainer of the repo!", DeprecationWarning)
+    elif ngspice_version_flag == 0 and file_comp_flag == 1:
+        warnings.warn("The ngspice version does not match!", DeprecationWarning)
+    
+    ### Number of failed simulations returned from simulation state check
     sim_state = json.load(open("work/sim_state_file.txt"))
     if sim_state["failed_sims"] != 0:
         raise ValueError("Simulations failed: Non zero failed simulations!")
 
+    ### Generated file check
     for folder_num in range(1, sim_state["completed_sims"] + 1):
         dir_path = r'simulations/run/'
         pex_path = os.listdir(dir_path)
@@ -148,6 +154,6 @@ if len(sys.argv) > 1 and sys.argv[1] == "sky130hd_temp_full":
         if os.path.exists(log_file) and os.path.exists(log_file) and os.path.exists(spice_file):
             pass
         else:
-            raise ValueError("Simulations failed: required of run folders do not exist!")
+            raise ValueError("Simulations failed: required number of run folders do not exist!")
 
     print("Simulations are clean!")
