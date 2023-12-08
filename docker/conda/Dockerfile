@@ -29,6 +29,6 @@ RUN strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so
 
 COPY ./scripts /scripts
 
-RUN git clone https://git.code.sf.net/p/ngspice/ngspice && \
+RUN git clone http://git.code.sf.net/p/ngspice/ngspice && \
     cd ngspice && \
     ./compile_linux.sh
