@@ -25,7 +25,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Test sky130hd Temp sensor
+      - name: Test sky130hd temperature sensor
         env:
                 IMAGE_NAME: msaligane/openfasoc:stable
         run: |
@@ -41,6 +41,27 @@ jobs:
               cd ./openfasoc/generators/temp-sense-gen &&\
               make sky130hd_temp &&\
               python3 parse_rpt.py
+            " && exit_code=$? | tee -a file.log
+            if [ $? -ne 0 ]; then exit 1; fi
+            if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi
+      
+      - name: Test sky130hd temperature sensor simulations
+        env:
+                IMAGE_NAME: msaligane/openfasoc:stable
+        run: |
+          cd $GITHUB_WORKSPACE
+          touch sim_file.log
+          docker run --rm \
+            -v $PWD:$PWD\
+            -w $PWD\
+            $IMAGE_NAME\
+            bash -c "\
+              cp ./.github/scripts/parse_rpt.py ./openfasoc/generators/temp-sense-gen/. &&\
+              pip3 install -r requirements.txt &&\
+              cd ./openfasoc/generators/temp-sense-gen &&\
+              make clean &&\
+              make sky130hd_temp_full &&\
+              python3 parse_rpt.py sky130hd_temp_full
             " && exit_code=$? | tee -a file.log
             if [ $? -ne 0 ]; then exit 1; fi
             if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi

@@ -46,7 +46,11 @@ vVSS                      VSS                      0                  dc        
 
 c0 lc_out 0 1f
 
+.if (temp_var <= 20)
+.TRAN 1u 'sim_end'
+.else
 .TRAN 10n 'sim_end'
+.endif
 
 .meas   tran period TRIG v(lc_out) td=10p val=1.0 rise=2
 +           TARG v(lc_out) td=10p val=1.0 rise=3
