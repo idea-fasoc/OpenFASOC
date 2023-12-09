@@ -1,5 +1,6 @@
 import warnings
 import sys
+import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from common.get_ngspice_version import check_ngspice_version
