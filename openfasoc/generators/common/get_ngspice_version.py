@@ -2,6 +2,7 @@ import subprocess
 import re
 
 def check_ngspice_version() -> int:
+    
     last_known_version = "41+"
     result = subprocess.run(["ngspice", "--version"], capture_output=True, text=True)
 
