@@ -1,5 +1,8 @@
 import warnings
-from get_ngspice_version import check_ngspice_version
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from common.get_ngspice_version import check_ngspice_version
 
 def compare_files(template_file, result_file, errors) -> int:
     """Checks if the generated simulation result file matches with 
