@@ -7,7 +7,6 @@ export PDK_ROOT=@@PDK_ROOT
 # first arg = gds file to read
 # second arg = name of top cell in gds file to read
 
-# generate lvs netlist using magic
 magic -rcfile ./sky130A/sky130A.magicrc -noconsole -dnull << EOF
 gds read $1
 flatten $2

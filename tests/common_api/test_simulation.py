@@ -60,7 +60,7 @@ def run_before_and_after_tests():
 		rmtree(RUNS_DIR)
 
 def test_simulations():
-	num_runs = run_simulations(
+	sim_state = run_simulations(
 		parameters=PARAMS,
 		platform = "",
 		simulation_dir = TEST_SIMULATION_DIR,
@@ -69,7 +69,7 @@ def test_simulations():
 	)
 
 	# Check if the correct number of configurations are generated
-	assert num_runs == EXPECTED_NUM_CONFIGS, "The number of runs does not match the expected number."
+	assert sim_state["completed_sims"] == EXPECTED_NUM_CONFIGS, "The number of runs does not match the expected number."
 	assert len(os.listdir(RUNS_DIR)) == EXPECTED_NUM_CONFIGS, "The number of generated configurations does not match the expected number."
 
 

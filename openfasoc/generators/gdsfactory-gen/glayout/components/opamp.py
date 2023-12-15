@@ -135,7 +135,7 @@ def __add_output_stage(
 def opamp_netlist(two_stage_netlist: Netlist, output_stage_netlist: Netlist) -> Netlist:
     top_level_netlist = Netlist(
         circuit_name="opamp",
-        nodes=['gnd', 'CSoutput', 'output', 'vdd', 'plus', 'minus', 'commonsourceibias', 'outputibias', 'diffpairibias']
+        nodes=["CSoutput", "vdd", "plus", "minus", "commonsourceibias", "outputibias", "diffpairibias", "gnd", "output"]
     )
 
     top_level_netlist.connect_netlist(

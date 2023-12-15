@@ -212,7 +212,7 @@ source ~/.bashrc
 if cat /etc/os-release | grep "ubuntu" >> /dev/null
 then
  apt install bison flex libx11-dev libx11-6 libxaw7-dev libreadline6-dev autoconf libtool automake -y
- git clone http://git.code.sf.net/p/ngspice/ngspice
+ git clone https://git.code.sf.net/p/ngspice/ngspice
  currentver="$(lsb_release -rs)"
  requiredver="22.04"
  if [ $currentver == $requiredver ]
