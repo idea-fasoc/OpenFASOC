@@ -2,4 +2,4 @@ magic==8.3.453_0_g943e0d4
 netgen==1.5.264_0_gbf53d52
 open_pdks.sky130a==1.0.286_0_g52af776
 openroad==2.0_10905_ge89829335
-yosys==0.36_3_g093f9c7ba
+yosys==0.36_11_ge6021b2b4
