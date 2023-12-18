@@ -32,6 +32,9 @@ This project is led by a team of researchers at the University of Michigan and i
     .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/cryo_gen.yml/badge.svg
         :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/cryo_gen.yml
 
+* **Glayout Generators -**
+    `Installation and Running <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/gdsfactory-gen/tapeout_and_RL/README.md>`_
+
 
 Getting Started
 ****************
@@ -55,7 +58,7 @@ Below are the tool requirements along with their currently support versions that
       - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
-  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.36+0)
+  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.36+8)
 
 
   5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_10905)
@@ -79,20 +82,21 @@ Below are the tool requirements along with their currently support versions that
 Generators
 ********************
 
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------+
-| Generator                                | Technology nodes   | Supported                  | Documentation                                                  |
-|                                          |                    |                            |                                                                |
-+==========================================+====================+============================+================================================================+
-| Temperature Sensor                       | sky130hd           |    Yes                     | https://openfasoc.readthedocs.io/en/latest/flow-tempsense.html |       
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------+
-| Low dropout Voltage Regulator (LDO)      | sky130hvl          |    Yes                     | https://openfasoc.readthedocs.io/en/latest/flow-ldo.html       |  
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------+ 
-| Cryogenic                                | sky130hs,          |    No (In-progress)        | https://openfasoc.readthedocs.io/en/latest/flow-cryo.html      |                                      
-|                                          | sky130hd,          |                            |                                                                |                        
-|                                          | sky130hvl          |                            |                                                                |                                     
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------+
-| GDSFactory                               | sky130hd           |     No (In-progress)       | https://openfasoc.readthedocs.io/en/latest/flow-ldo.html       |
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------+
++------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+
+| Generator                                | Technology nodes   | Supported                  | Documentation                                                                                                  |
+|                                          |                    |                            |                                                                                                                |
++==========================================+====================+============================+================================================================================================================+
+| Temperature Sensor                       | sky130hd           |    Yes                     | https://openfasoc.readthedocs.io/en/latest/flow-tempsense.html                                                 |       
++------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+
+| Low dropout Voltage Regulator (LDO)      | sky130hvl          |    Yes                     | https://openfasoc.readthedocs.io/en/latest/flow-ldo.html                                                       |  
++------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+ 
+| Cryogenic                                | sky130hs,          |    No (In-progress)        | https://openfasoc.readthedocs.io/en/latest/flow-cryo.html                                                      |                                      
+|                                          | sky130hd,          |                            |                                                                                                                |                        
+|                                          | sky130hvl          |                            |                                                                                                                |                                     
++------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+
+| Glayout                                  | sky130,            |     Yes                    | https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/gdsfactory-gen/tapeout_and_RL/README.md |
+|                                          | gf180              |                            |                                                                                                                |
++------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+
 
 
 Tapeouts and testing setup
