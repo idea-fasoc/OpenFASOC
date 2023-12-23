@@ -43,14 +43,20 @@ def check_gen_files(json_filename, _generator_is, cryo_library) -> int:
             with open(extension_file_path) as f:
                 
                 for extension in f:
-                    file = "".join([filename, extension.strip()])
+                    if (_generator_is['sky130XX_cryo']) and (extension.strip() == ".spice" or extension.strip() == "_pex.spice" or extension.strip() == "_sim.spice"):
+                        file = "./flow/" + module_name + extension.strip() 
+                    else:
+                        file = "".join([filename, extension.strip()])
                     if (os.path.exists(file) == 0):
                         raise ValueError(file + " does not exist!")
         else: 
             print("checking flow results with possibly stale list of extensions...")
             extensions = [".sdc", ".gds", ".def", ".spice", ".v", "_pex.spice"]
             for extension in extensions:
-                    file = "".join([filename, extension])
+                    if (_generator_is['sky130XX_cryo']) and (extension.strip() == ".spice" or extension.strip() == "_pex.spice"):
+                        file = "./flow/" + module_name + extension.strip() 
+                    else:
+                        file = "".join([filename, extension.strip()])
                     
                     if (os.path.exists(file) == 0):
                         raise ValueError(file + " does not exist!")

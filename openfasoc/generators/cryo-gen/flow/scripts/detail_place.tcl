@@ -12,55 +12,57 @@ set_placement_padding -global \
 source $::env(SCRIPTS_DIR)/openfasoc/custom_place.tcl
 customPlace_east [ord::get_db_block] "HEADER" 1 no
 
-set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__decap_4
-set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__inv_1
-set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__nand2_1
-set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hd__tapvpwrvgnd_1
-
-set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hs__decap_4
-set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__inv_1
-set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__nand2_1
-set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__tapvpwrvgnd_1
-
-set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hvl__inv_1
-set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hvl__decap_4
-set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hvl__nand2_1
-
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_hs__inv_1
-set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_12T_hs__decap_1
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_hs__nand2_1
-
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_ms__inv_1
-set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_12T_ms__decap_1
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_ms__nand2_1
-
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_ls__inv_1
-set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_12T_ls__decap_1
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_ls__nand2_1
-
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_15T_hs__inv_1
-set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_15T_hs__decap_1
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_15T_hs__nand2_1
-
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_15T_ms__inv_1
-set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_15T_ms__decap_1
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_15T_ms__nand2_1
-
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_15T_ls__inv_1
-set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_15T_ls__decap_1
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_15T_ls__nand2_1
-
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_hs__inv_1
-set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_18T_hs__decap_1
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_hs__nand2_1
-
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_ms__inv_1
-set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_18T_ms__decap_1
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_ms__nand2_1
-
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_ls__inv_1
-set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_18T_ls__decap_1
-set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_ls__nand2_1
+if {$::env(PLATFORM) eq "sky130hd"} {
+  set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__decap_4
+  set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__inv_1
+  set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hd__nand2_1
+  set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hd__tapvpwrvgnd_1
+} elseif {$::env(PLATFORM) eq "sky130hs"} {
+  set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hs__decap_4
+  set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__inv_1
+  set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__nand2_1
+  set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hs__tapvpwrvgnd_1
+} elseif {$::env(PLATFORM) eq "sky130hvl"} {
+  set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hvl__inv_1
+  set_placement_padding -left 1 -right 1 -masters sky130_fd_sc_hvl__decap_4
+  set_placement_padding -left 0 -right 0 -masters sky130_fd_sc_hvl__nand2_1
+} elseif {$::env(PLATFORM) eq "sky130osu12Ths"} {
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_hs__inv_1
+  set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_12T_hs__decap_1
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_hs__nand2_1
+} elseif {$::env(PLATFORM) eq "sky130osu12Tms"} {
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_ms__inv_1
+  set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_12T_ms__decap_1
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_ms__nand2_1
+} elseif {$::env(PLATFORM) eq "sky130osu12Tls"} {
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_ls__inv_1
+  set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_12T_ls__decap_1
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_12T_ls__nand2_1
+} elseif {$::env(PLATFORM) eq "sky130osu15Ths"} {
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_15T_hs__inv_1
+  set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_15T_hs__decap_1
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_15T_hs__nand2_1
+} elseif {$::env(PLATFORM) eq "sky130osu15Tms"} {
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_15T_ms__inv_1
+  set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_15T_ms__decap_1
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_15T_ms__nand2_1
+} elseif {$::env(PLATFORM) eq "sky130osu15Tls"} {
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_15T_ls__inv_1
+  set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_15T_ls__decap_1
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_15T_ls__nand2_1
+} elseif {$::env(PLATFORM) eq "sky130osu18Ths"} {
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_hs__inv_1
+  set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_18T_hs__decap_1
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_hs__nand2_1
+} elseif {$::env(PLATFORM) eq "sky130osu18Tms"} {
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_ms__inv_1
+  set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_18T_ms__decap_1
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_ms__nand2_1
+} elseif {$::env(PLATFORM) eq "sky130osu18Tls"} {
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_ls__inv_1
+  set_placement_padding -left 1 -right 1 -masters sky130_osu_sc_18T_ls__decap_1
+  set_placement_padding -left 0 -right 0 -masters sky130_osu_sc_18T_ls__nand2_1
+}
 
 detailed_placement
 
