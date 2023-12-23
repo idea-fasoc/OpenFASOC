@@ -1,7 +1,7 @@
 # Description
 This folder contains python script files that are common to all generators, used as config or result parse files for generator flows and simulations
 
-# File Tree
+### File Tree
 ```
 |_ generators/common/
     |_ simulation/
@@ -15,13 +15,13 @@ This folder contains python script files that are common to all generators, used
     |_ get_ngspice_version.py
     |_ verilog_generation.py
 ```
-# Verilog Generation
+### Verilog Generation
 The file `verilog_generation.py` is used to convert verilog files such that they use the mako templating library for simpler and more readable syntax. Specific function descriptions are present in as docstrings in the file.
 
-# Simulations
+### Simulations
 The files found in the `simulation/` directory are used as pythonic script files to run simulations for each generator. These files mainly generate configurations and run files for the simulations, which are used by each of the generators. Specific function descriptions are found in the respective files
 
-# Flow result checks
+### Flow result checks
 The file `check_gen_files.py` is used to check if simulations can be run correctly for a generator. Specifically, it is used in the `parse_rpt.py` file found in the `tools/` folder of each generator. This file runs at the end of each generator flow to check for successful completion.       
 
 Only temp-sense-gen, cryo-gen and ldo-gen are currently supported. For these generators, this file checks if the necessary `work/` directory and the simulation generated files are present (such as `.sdc`, `.cdl`, `.gds`, `.def`, among others).  
@@ -29,7 +29,7 @@ Only temp-sense-gen, cryo-gen and ldo-gen are currently supported. For these gen
 The file also checks if the necessary optimum inverter-header configuration search results are present for the temp-sense-gen flow (in the form of the error optimisation `.csv` files)
 
 Check the docstrings in each file for specific function definitions.
-# Simulation Result Checks
+### Simulation Result Checks
 The files `classify_sim_error.py` and `get_ngspice_version.py` together, are used to check for errors in the simulation runs for each generator. These files use a dictionary of maximum and minimum allowable deviations of simulation results from an ideal set of result files present in `.github/scripts/expected_sim_outputs/*`. The dictionary of deviations, called "errors" is used for the same
 ```python
 errors = {

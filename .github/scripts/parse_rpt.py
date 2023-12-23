@@ -122,7 +122,7 @@ if len(sys.argv) > 1 and sys.argv[1] == "sky130hd_temp_full":
     template_filename = "../../../.github/scripts/expected_sim_outputs/temp-sense-gen/prePEX_sim_result"
     
     ### Generated result file check against stored template
-    sim_error_type = classify_sim_error(template_filename, result_filename)
+    sim_error_type = classify_sim_error(template_filename, result_filename, _generator_is)
     if sim_error_type == 'red':
         raise ValueError("Simulation results do not match with those in stored template file!")
     elif sim_error_type == 'amber':
