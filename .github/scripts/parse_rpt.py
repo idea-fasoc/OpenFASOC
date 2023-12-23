@@ -31,8 +31,9 @@ import re, subprocess
 import warnings
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../common'))
 from common.check_gen_files import check_gen_files
-from common.classify_sim_error import classify_sim_error
+from simulation.classify_sim_error import classify_sim_error
 
 sys.stdout.flush()
 
