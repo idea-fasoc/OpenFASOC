@@ -1,19 +1,29 @@
+# Table of Contents
+- [Description](#description)
+- [File Tree](#file-tree)
+- [Verilog Generation](#verilog-generation)
+- [Simulation runs](#simulations)
+- [Flow result checks](#flow-result-checks)
+- [Simulation result checks](#simulation-result-checks)
+
 # Description
 This folder contains python script files that are common to all generators, used as config or result parse files for generator flows and simulations
 
 ### File Tree
 ```
-|_ generators/common/
-    |_ simulation/
-        |_ simulation_config.py
-        |_ simulation_run.py
-        |_ utils.py
-        |_ init.py
-    |_ init.py
-    |_ check_gen_files.py
-    |_ classify_sim_error.py
-    |_ get_ngspice_version.py
-    |_ verilog_generation.py
+generators
+└── common
+    ├── simulation
+    │   ├── simulation_config.py
+    │   ├── simulation_run.py
+    │   ├── utils.py
+    │   └── __init__.py
+    ├── __init__.py
+    ├── check_gen_files.py
+    ├── classify_sim_error.py
+    ├── get_ngspice_version.py
+    └── verilog_generation.py
+
 ```
 ### Verilog Generation
 The file `verilog_generation.py` is used to convert verilog files such that they use the mako templating library for simpler and more readable syntax. Specific function descriptions are present in as docstrings in the file.
