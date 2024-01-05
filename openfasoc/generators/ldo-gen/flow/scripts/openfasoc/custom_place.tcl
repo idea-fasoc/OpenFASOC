@@ -4,7 +4,7 @@ proc place_pt_unit {instances_list place_limit} {
   set units [$block getDefUnits]
   set inst [$block findInst cmp1]
   set instName [$inst getName]
-  place_cell -inst_name $instName -orient MY -origin [list 48.480 40.700] -status PLACED
+  place_cell -inst_name $instName -orient MY -origin [list 66.72 40.000] -status PLACED
   set place_limit [expr $place_limit-5]
   set x_R1 [expr 0 + 48.480]
   set y_R1 [expr 0 + 48.840]
