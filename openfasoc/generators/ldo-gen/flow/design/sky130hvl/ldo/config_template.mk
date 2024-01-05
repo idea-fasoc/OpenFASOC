@@ -24,6 +24,7 @@ export PDN_TCL 			= ../blocks/$(PLATFORM)/pdn.tcl
 
 #Placement options
 export PLACE_DENSITY = @PARAM_PLACE_DENSITY
+export PLACE_SITE = unithv unithvdbl
 
 # Macro options
 export MACRO_PLACE_HALO         = 1 1
