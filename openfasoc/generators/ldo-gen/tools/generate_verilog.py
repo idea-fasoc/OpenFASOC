@@ -83,7 +83,6 @@ def update_area_and_place_density(flowDir, arrSize):
     vreg_width = die_width - 39
 
     place_density = round(0.3 + 0.1 * math.ceil((arrSize%50)/10),1)
-    # place_density = 0.426
 
     config_template = config_template.replace("@PARAM_DIE_WIDTH", str(die_width), 1)
     config_template = config_template.replace("@PARAM_DIE_LENGTH", str(die_length), 1)
