@@ -43,6 +43,9 @@ parser.add_argument(
 parser.add_argument(
     "--arr_size_in", help="Debug option to manually set power arr size."
 )
+parser.add_argument(
+    "--place_density", help="Debug option to manually set the placement density."
+)
 parser.add_argument("--clean", action="store_true", help="Clean the workspace.")
 parser.add_argument(
     "--simtype",
@@ -115,7 +118,7 @@ designArea = polynomial_output_at_point_from_coefficients(jsonModel["area"], arr
 print("# LDO - Design Area = " + str(designArea) + " um^2")
 
 # Update place density according to power transistor array size
-update_area_and_place_density(directories["flowDir"], arrSize)
+update_area_and_place_density(directories["flowDir"], arrSize, place_density=args.place_density)
 
 # Generate the Behavioral Verilog
 verilog_gen_dir = os.path.join('flow', 'design', 'src', 'ldo')
