@@ -21,10 +21,12 @@ def update_ldo_domain_insts(blocksDir, arrSize):
     """Writes arrSize pt unit cell instances to ldo_domain_insts.txt."""
     with open(blocksDir + "/ldo_domain_insts.txt", "w") as ldo_domain_insts:
         # Always write comparator and pmos instances
-        if arrSize > INCLUDE_2_PMOS_ARRSIZE:
-            ldo_domain_insts.write("cmp1\npmos_1\npmos_2\n")
-        else:
-            ldo_domain_insts.write("cmp1\npmos_1\n")
+
+        ldo_domain_insts.write("cmp1\npmos_1\n")
+        # The below code is commented since pmos_2 is commented in the Verilog
+        # if arrSize > INCLUDE_2_PMOS_ARRSIZE:
+        #     ldo_domain_insts.write("pmos_2\n")
+
         # write arrSize pt cells
         for i in range(arrSize):
             ldo_domain_insts.write("{pt_array_unit\[" + str(i) + "\]}\n")
@@ -76,14 +78,17 @@ def update_area_and_place_density(flowDir, arrSize):
         config_template = config.read()
     die_length = die_width = 275 + 20 * int(arrSize / 50)
     core_length = core_width = 260 + 20 * int(arrSize / 50)
-    vreg_width = die_width - 40
+    vreg_width = die_width - 39
+
     # place_density = round(0.3 + 0.1 * math.ceil((arrSize%50)/10),1)
-    place_density = 0.7
+    place_density = 0.426
+
     config_template = config_template.replace("@PARAM_DIE_WIDTH", str(die_width), 1)
     config_template = config_template.replace("@PARAM_DIE_LENGTH", str(die_length), 1)
     config_template = config_template.replace("@PARAM_CORE_WIDTH", str(core_width), 1)
     config_template = config_template.replace("@PARAM_CORE_LENGTH", str(core_length), 1)
     config_template = config_template.replace("@PARAM_VREG_WIDTH", str(vreg_width), 2)
+
     config_template = config_template.replace(
         "@PARAM_PLACE_DENSITY", str(place_density), 1
     )
