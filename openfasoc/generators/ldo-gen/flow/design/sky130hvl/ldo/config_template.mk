@@ -18,7 +18,7 @@ export SDC_FILE    		= ./design/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export DIE_AREA                 = 0 0 @PARAM_DIE_WIDTH @PARAM_DIE_LENGTH
 export CORE_AREA                = 15 15 @PARAM_CORE_WIDTH @PARAM_CORE_LENGTH
-export VREG_AREA                = 40 40 @PARAM_VREG_WIDTH 55
+export VREG_AREA                = 39 40 @PARAM_VREG_WIDTH 55
 
 export PDN_TCL 			= ../blocks/$(PLATFORM)/pdn.tcl
 
