@@ -1,4 +1,3 @@
-#from pydantic import validate_call
 from pathlib import Path
 from typing import Optional, Union, Literal, Callable, cast
 from importlib import import_module
@@ -6,7 +5,9 @@ import shutil
 import inspect
 import operator
 from abc import ABC, abstractmethod
-#from sympy import sympify, symbols
+import nltk
+import re
+import copy
 
 
 def get_all_derived_classes(class_type, remove_parent: bool=True) -> list:
@@ -63,10 +64,14 @@ class ParametersList:
         for param_name, param in parameters.items():
             paraminfo = {"name":param_name, 'defaultvalue':param.default, 'type':param.annotation}
             self.params.append(paraminfo)
+        # formulate the grammar using the parameters
+        self.__grammar = nltk.CFG.fromstring(self.__get_str_grammar())
+        self.__grammar_parser = nltk.ChartParser(self.__grammar)
+
     def __iter__(self):
         return iter(self.params)
     def names(self):
-        return [self.params["name"] for param in self.params]
+        return [param["name"] for param in self.params]
     def find(self, param_name: str):
         """look for param with name param_name. 
         If found, return info, else return None"""
@@ -76,6 +81,106 @@ class ParametersList:
         return None
     def __str__(self):
         return str(self.params)
+    
+    def __construct_glayers(self) -> dict:
+        glayerids = ['met1', 'met2', 'met3', 'met4', 'met5', 'metal1', 'metal2', 'metal3', 'metal4', 'metal5', 'capmet', 'active', 'diffusion', 'tap', 'welltap', 'n+s/d', 'p+s/d', 'polysilicon', 'poly', 'p+', 'n+', 'deep nwell', 'pwell', 'nwell', 'dnwell']
+        glayerids += ["metal 1", "metal 2","metal 3","metal 4","metal 5","met 1","met 2","met 3","met 4","met 5"]
+        glayerids += ["via 1", "via 2","via 3","via 4","via1","via2","via3","via4","metal contact","mcon","metal con"]
+        glayers = dict()
+        for glayerid in glayerids:
+            if "p+" in glayerid:
+                glayers[glayerid] = "p+s/d"
+            elif "n+" in glayerid:
+                glayers[glayerid] = "n+s/d"
+            elif "poly" in glayerid:
+                glayers[glayerid] = "poly"
+            elif "cap" in glayerid:
+                glayers[glayerid] = "capmet"
+            elif "tap" in glayerid:
+                glayers[glayerid] = "active_tap"
+            elif "active" in glayerid or "diff" in glayerid:
+                glayers[glayerid] = "active_diff"
+            elif "well" in glayerid:
+                if "d" in glayerid:
+                    glayers[glayerid] = "dnwell"
+                elif "n" in glayerid:
+                    glayers[glayerid] = "nwell"
+                else:
+                    glayers[glayerid] = "pwell"
+            elif "via" in glayerid:
+                for i in range(1,5):
+                    if str(i) in glayerid:
+                        glayers[glayerid] = f"via{i}"
+            elif "met" in glayerid:
+                for i in range(1,6):
+                    if str(i) in glayerid:
+                        glayers[glayerid] = f"met{i}"
+            elif "con" in glayerid:
+                glayers[glayerid] = "mcon"
+            else:
+                raise ValueError("could not parse this id")
+        return glayers
+    def __cfgformat_from_list(self, strlist: list[str]):
+        rtrstr = str()
+        for ele in strlist:
+            rtrstr += "\'" + ele + "\' | "
+        rtrstr =rtrstr.removesuffix("| ")
+        return rtrstr
+    def __custom_tokenize(self, sentence: str) -> list:
+        sentence = sentence.strip().removesuffix(".").removeprefix("with")
+        # save and replace all instances of strings with indicator words
+        string_pattern = re.compile(r'\'[^\']*\'|\"[^\"]*\"')
+        string_list = [str(match.group()) for match in string_pattern.finditer(sentence)]
+        string_list = [w.replace("\"","").replace("'","").strip() for w in string_list]
+        sentence = re.sub(string_pattern, "sTRingindICatorWOrd", sentence)
+        # add a space after every symbol (except period)
+        rsymbols = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
+        parsedsentence = str()
+        for char in sentence:
+            if char in rsymbols:
+                parsedsentence += f" {char} "
+            else:
+                parsedsentence += char
+        sentence = copy.deepcopy(parsedsentence)
+        # double space (add one space everywhere there is a space)
+        parsedsentence = str()
+        for char in sentence:
+            if char.isspace():
+                parsedsentence += f" {char}"
+            else:
+                parsedsentence += char
+        sentence = copy.deepcopy(parsedsentence)
+        # save and replace all instances of numbers with indicator words
+        number_pattern = re.compile(r'(?:^|\s|\b)-?\d+(\.\d+)?([eE]-?\d+)?(?=\s|$|[^\w\d])')
+        number_list = [str(match.group()) for match in number_pattern.finditer(sentence)]
+        number_list = [num.strip() for num in number_list]
+        sentence = re.sub(number_pattern, "nUMptindICatorWOrd", sentence)
+        # save numbers and strings to list and return tokenized sentence
+        self.__number_list = number_list
+        self.__string_list = string_list
+        return sentence.split()
+    def __get_str_grammar(self) -> str:
+        basic_grammar = str()
+        basic_grammar += """S -> ArgList\n"""
+        basic_grammar += """ArgList -> ArgDesc | ArgDesc ArgList | ArgDesc ListSeparator ArgList\n"""
+        basic_grammar += """ListSeparator -> ',' | ', and' | 'and'\n"""
+        basic_grammar += """ArgDesc -> Value Paramname | Paramname Value | Paramname Filler Value | Value Filler Paramname\n"""
+        basic_grammar += """Filler -> 'is' | '=' | 'equal' | 'equals' | 'of' | 'for'\n"""
+        basic_grammar += """Value  -> Number | Glayer | Dictionary | Boolean | List | Tuple | String\n"""
+        basic_grammar += """Vpair -> Value ',' Value | Value Value \n"""
+        basic_grammar += """Values -> Vpair | Vpair Values | Vpair ',' Values\n"""
+        basic_grammar += """Number -> 'nUMptindICatorWOrd'\n"""
+        basic_grammar += """String -> 'sTRingindICatorWOrd'\n"""
+        basic_grammar += """Parity -> '+' | '-' | 'positive' | 'negative' | 'plus' | 'minus'\n"""
+        basic_grammar += """Boolean -> 'true' | 'false' | 'True' | 'False'\n"""
+        basic_grammar += """List   -> '[' Values ']' | '[' Value ']'\n"""
+        basic_grammar += """Tuple  -> '(' Values ')' | '(' Value ')' | Values\n"""
+        basic_grammar += """Dictionary  -> '{' keyvalpairs '}'\n"""
+        basic_grammar += """keyvalpairs -> Value ':' Value | Value ':' Value ',' keyvalpairs\n"""
+        basic_grammar += f"Glayer -> {self.__cfgformat_from_list(self.__construct_glayers().keys())}\n"
+        basic_grammar += f"Paramname -> {self.__cfgformat_from_list(self.names())}\n"
+        return basic_grammar
+
     def parse_user_params(self, user_input_params: Optional[str]=None):
         """Take user params as a string and parse+error check to produce a dictionary of params
         Args:
@@ -83,33 +188,35 @@ class ParametersList:
         """
         if user_input_params is None or user_input_params.isspace() or len(user_input_params)==0:
             return {}
-        parsed_input = user_input_params.replace("of"," ").replace("="," ").replace("is"," ")
-        # TODO: remove , makes it so you cannot read tuples
-        parsed_input = parsed_input.replace("with"," ").replace(",","").replace("and","").strip()
-        input_list = parsed_input.split()
-        if len(input_list)%2:
-            raise ValueError("when specifying parameters, each parameter should have a corresponding value")
-        user_params = dict([(input_list[i], input_list[i+1]) for i in range(0, len(input_list)-1, 2)])
-        # fill in the parameters dictionary from the user inputs
-        final_params = dict()
-        for param_name, inputvalue in user_params.items():
-            param_info = self.find(param_name)
-            if param_info is None:
-                raise LookupError(f"{param_name} is not a parameter for {self.func_name}")
-            # desired_type = param_info["type"]
-            # if desired_type is not inspect.Parameter.empty:
-            #     # TODO: either convert to type OR just directly print as a string (this has issues with tuples)
-            #     try:
-            #         inputvalue = eval(inputvalue)
-            #         # cast(desired_type,inputvalue)
-            #         #inputvalue = desired_type(inputvalue)
-            #     #except (TypeError,ValueError):
-            #     except Exception:
-            #         inputvalue = self.noprintobj(inputvalue)
-            #         #pass# continue anyways
-            #         #raise TypeError(f"you gave value {inputvalue} for parameter {param_name} of generator {self.func_name}. This parameter should be of type {desired_type}.")
-            final_params[param_name] = self.noprintobj(inputvalue)
-        return final_params
+        # tokenize
+        tokens = self.__custom_tokenize(user_input_params)
+        # try to parse syntax
+        try:
+            mytree = list(self.__grammar_parser.parse(tokens))[0]
+        except Exception as serr:
+            print("You may have provided a parameter that does not exist for this function OR there may be some other error")
+            raise serr
+        # reinsert numbers and strings
+        numlist_index = 0
+        strlist_index = 0
+        for pos in mytree.treepositions('leaves'):
+            if "nUMptindICatorWOrd" in mytree[pos]:
+                mytree[pos] = self.__number_list[numlist_index]
+                numlist_index += 1
+            elif "sTRingindICatorWOrd" in mytree[pos]:
+                mytree[pos] = self.__string_list[strlist_index]
+                strlist_index += 1
+        # grab user params from the tree
+        user_params = dict()
+        for i, ArgDesc in enumerate(mytree.subtrees(lambda t: t.label()=="ArgDesc")):
+            # TODO: implement param name aliasing
+            paramname = "".join(list(ArgDesc.subtrees(lambda A: A.label()=="Paramname"))[0].leaves())
+            # TODO: implement more sophisticated value parsing, and properly add double qoutes are glayers
+            value = " ".join(list(ArgDesc.subtrees(lambda A: A.label()=="Value"))[0].leaves())
+            user_params[paramname] = self.noprintobj(value)
+        return user_params
+            
+        
 
 
 
