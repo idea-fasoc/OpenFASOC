@@ -5,7 +5,7 @@ import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from common.check_gen_files import check_gen_files
 
-_generator_is = {
+generator_is = {
     'sky130hvl_ldo': 0, 
     'sky130hd_temp': 0, 
     'sky130XX_cryo': 1
@@ -38,7 +38,7 @@ else:
 
 json_filename = "test.json"
 
-if check_gen_files(json_filename, _generator_is, cryo_library):
+if check_gen_files(json_filename, generator_is, cryo_library):
         print("Flow check is clean!")
 else:
     print("Flow check failed!")

@@ -3,7 +3,7 @@ import re
 
 def check_ngspice_version() -> int:
     
-    last_known_version = "41+"
+    last_known_version = "42"
     result = subprocess.run(["ngspice", "--version"], capture_output=True, text=True)
 
     if result.returncode == 0:

@@ -66,7 +66,7 @@ These workflow jobs, which include -
 * `tempSense_sky130hd.yml`
 * `ldo_sky130hvl.yml`
 
-are run for to verify the potential changes made to the repository via pull requests. 
+are run to verify the potential changes made to the repository via pull requests. 
 
 These workflows run the verilog generation and openroad flows for the 3 generators and spice simulations are run specifically for the temperature sensor generator.
 

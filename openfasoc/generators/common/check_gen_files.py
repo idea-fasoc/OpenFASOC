@@ -4,7 +4,7 @@ the module_name (str) from the .json file present in the generator top-level fol
 
 Args:
     json_filename (str): String containing the name of the .json filename for each generator
-    _generator_is (dict): Dictionary containing key-value pairs that signify which generator's flow results are being checked
+    generator_is (dict): Dictionary containing key-value pairs that signify which generator's flow results are being checked
     cryo_library (str): String containing which cryo-gen library (sky130hs, sky130hd, sky130hvl) is being checked for
 Uses: 
     work_dir (str): String containing the directory in which to check files
@@ -20,7 +20,7 @@ Raises:
 import json
 import os
 
-def check_gen_files(json_filename, _generator_is, cryo_library) -> int:
+def check_gen_files(json_filename, generator_is, cryo_library) -> int:
     with open(json_filename) as file:
         data = json.load(file)
     
@@ -28,7 +28,7 @@ def check_gen_files(json_filename, _generator_is, cryo_library) -> int:
 
     module_name = data.get("module_name", "default")
 
-    if _generator_is['sky130XX_cryo']:
+    if generator_is['sky130XX_cryo']:
         work_dir = "./work/" + cryo_library + "/"
     else:
         work_dir = "./work/"
@@ -44,7 +44,7 @@ def check_gen_files(json_filename, _generator_is, cryo_library) -> int:
                 
                 for extension in f:
                     extension = extension.strip()
-                    if (_generator_is['sky130XX_cryo']) and (extension == ".spice" or extension == "_pex.spice" or extension.strip() == "_sim.spice"):
+                    if (generator_is['sky130XX_cryo']) and (extension == ".spice" or extension == "_pex.spice" or extension.strip() == "_sim.spice"):
                         file = "./flow/" + module_name + extension.strip() 
                     else:
                         file = "".join([filename, extension])
@@ -55,7 +55,7 @@ def check_gen_files(json_filename, _generator_is, cryo_library) -> int:
             extensions = [".sdc", ".gds", ".def", ".spice", ".v", "_pex.spice"]
             for extension in extensions:
                     extension = extension.strip()
-                    if (_generator_is['sky130XX_cryo']) and (extension == ".spice" or extension == "_pex.spice"):
+                    if (generator_is['sky130XX_cryo']) and (extension == ".spice" or extension == "_pex.spice"):
                         file = "./flow/" + module_name + extension 
                     else:
                         file = "".join([filename, extension])
@@ -63,7 +63,7 @@ def check_gen_files(json_filename, _generator_is, cryo_library) -> int:
                     if (os.path.exists(file) == 0):
                         raise ValueError(file + " does not exist!")
     # print("Found necessary work result files!")
-    if _generator_is['sky130hd_temp']:
+    if generator_is['sky130hd_temp']:
         for file in ("error_within_x.csv", "golden_error_opt.csv", "search_result.csv"):
             if os.path.exists(file) == 0:
                 raise ValueError(file + " does not exist!")

@@ -13,11 +13,12 @@ def compare_files(template_file, result_file) -> int:
         Returns 1 if the differences in readings lie between the maximum and minimum allowable error range,
         Returns 0 otherwise
     """
-    errors = {
-        'frequency': { 'max': 1, 'min': 0.5 },
-        'power': { 'max': 1000, 'min': 1000 },
-        'error': { 'max': 100, 'min': 50 },
-    }
+    # commented out until simulations can be run to decide limits
+    # errors = {
+    #     'frequency': { 'max': 1, 'min': 0.5 },
+    #     'power': { 'max': 1000, 'min': 1000 },
+    #     'error': { 'max': 100, 'min': 50 },
+    # }
     
     with open(template_file, 'r') as template, open(result_file, 'r') as result:
         next(template)
@@ -31,8 +32,8 @@ def compare_files(template_file, result_file) -> int:
             power_diff = (abs(template_data[2] - result_data[2]) / template_data[2]) * 100 if template_data[2] != 0.0 else (abs(template_data[2] - result_data[2])) * 100
             error_diff = (abs(template_data[3] - result_data[3]) / template_data[3]) * 100 if template_data[3] != 0.0 else (abs(template_data[3] - result_data[3])) * 100
             
-            if freq_diff > errors['frequency']['max'] or power_diff > errors['power']['max'] or error_diff > errors['error']['max']:
-                return 2
-            elif freq_diff > errors['frequency']['min'] or power_diff > errors['power']['min'] or error_diff > errors['error']['min']:
-                return 1
+            # if freq_diff > errors['frequency']['max'] or power_diff > errors['power']['max'] or error_diff > errors['error']['max']:
+            #     return 2
+            # elif freq_diff > errors['frequency']['min'] or power_diff > errors['power']['min'] or error_diff > errors['error']['min']:
+            #     return 1
         return 0

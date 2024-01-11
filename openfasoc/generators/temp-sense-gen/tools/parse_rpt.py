@@ -3,7 +3,7 @@ import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from common.check_gen_files import check_gen_files
 
-_generator_is = {
+generator_is = {
     'sky130hvl_ldo': 0, 
     'sky130hd_temp': 1, 
     'sky130XX_cryo': 0
@@ -30,7 +30,7 @@ with open(lvs_filename) as f:
 
 json_filename = "test.json"
 
-if check_gen_files(json_filename, _generator_is, " "):
+if check_gen_files(json_filename, generator_is, " "):
         print("Flow check is clean!")
 else:
     print("Flow check failed!")
