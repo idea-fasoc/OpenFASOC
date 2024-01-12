@@ -1,5 +1,5 @@
 """
-This script is used to check for the presence of the required non-report files that each generator creates. It gets
+This module is used to check for the presence of the required non-report files that each generator creates. It gets
 the module_name (str) from the .json file present in the generator top-level folder.
 
 Args:
