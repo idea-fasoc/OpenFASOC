@@ -1,7 +1,7 @@
 """
 This script performs checks on generated files and reports for different generators based on workflow parameters.
 
-The `_generator_is` variable is a dictionary with keys and values indicating information about the workflow being run.
+The `generator_is` variable is a dictionary with keys and values indicating information about the workflow being run.
 Values for each key are determined by how this script is called by the .yml files in .github/workflows.
 
 The `cryo_library` variable is used to determine which library (sky130hd_cryo, sky130hs_cryo, sky130hvl_cryo) the workflow is targeting.
@@ -31,37 +31,38 @@ import re, subprocess
 import warnings
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from common.get_ngspice_version import check_ngspice_version
+sys.path.append(os.path.join(os.path.dirname(__file__), '../common'))
 from common.check_gen_files import check_gen_files
-from common.check_sim_results import compare_files
+from simulation.classify_sim_error import classify_sim_error
+from tools.compare_files import compare_files
 
 sys.stdout.flush()
 
 cryo_library = ""
-_generator_is = {
+generator_is = {
     'sky130hvl_ldo': 0, 
     'sky130hd_temp': 0, 
     'sky130XX_cryo': 0
 }
 
 if len(sys.argv) == 1:
-    _generator_is['sky130hd_temp'] = 1
+    generator_is['sky130hd_temp'] = 1
 elif len(sys.argv) > 1:
     if sys.argv[1] == 'sky130hvl_ldo':
-        _generator_is['sky130hvl_ldo'] = 1
+        generator_is['sky130hvl_ldo'] = 1
     elif sys.argv[1] == 'sky130hd_temp_full':
-        _generator_is['sky130hd_temp'] = 1
+        generator_is['sky130hd_temp'] = 1
     else:
-        _generator_is['sky130XX_cryo'] = 1
+        generator_is['sky130XX_cryo'] = 1
 
-if _generator_is['sky130XX_cryo']:
+if generator_is['sky130XX_cryo']:
     # check which cryo-gen library's workflow is being run
     dir_path = r'flow/reports'
     lib = os.listdir(dir_path)
     cryo_library = str(lib[0])
 
 ## DRC and LVS Filename Declaration 
-if _generator_is['sky130hd_temp'] or _generator_is['sky130hvl_ldo']:
+if generator_is['sky130hd_temp'] or generator_is['sky130hvl_ldo']:
     drc_filename = "work/6_final_drc.rpt"
     lvs_filename = "work/6_final_lvs.rpt"
 elif len(sys.argv) > 1 and sys.argv[1] == cryo_library:
@@ -70,7 +71,7 @@ elif len(sys.argv) > 1 and sys.argv[1] == cryo_library:
 
 
 ## DRC check 
-if _generator_is['sky130hvl_ldo']:
+if generator_is['sky130hvl_ldo']:
     expected_ldo_rpt_filename = "../../../.github/scripts/expected_drc_reports/expected_ldo_drc.rpt"
     with open(drc_filename) as f1, open(expected_ldo_rpt_filename) as f2:
         content1 = f1.readlines()
@@ -107,12 +108,12 @@ else:
             print("LVS is clean!")
 
 ## Result File Check
-if _generator_is['sky130hvl_ldo']:
+if generator_is['sky130hvl_ldo']:
     json_filename = "spec.json"
 else:
     json_filename = "test.json"
 
-if check_gen_files(json_filename, _generator_is, cryo_library):
+if check_gen_files(json_filename, generator_is, cryo_library):
     print("Flow check is clean!")
 else:
     print("Flow check failed!")
@@ -121,20 +122,13 @@ if len(sys.argv) > 1 and sys.argv[1] == "sky130hd_temp_full":
     sim_state_filename = "work/sim_state_file.txt"
     result_filename = "work/prePEX_sim_result" 
     template_filename = "../../../.github/scripts/expected_sim_outputs/temp-sense-gen/prePEX_sim_result"
-    max_allowable_error = 0.5
     
     ### Generated result file check against stored template
-    ngspice_version_flag = check_ngspice_version()
-    file_comp_flag = compare_files(template_filename, result_filename, max_allowable_error)
-    
-    if ngspice_version_flag == 1 and file_comp_flag == 0:
-        raise ValueError("Ngspice version matches but sim results do not...sims failed!")
-    elif ngspice_version_flag == 0 and file_comp_flag == 0:
-        warnings.warn("The ngspice version does not match, "
-                       "simulation results might not match! "
-                       "Please contact a maintainer of the repo!", DeprecationWarning)
-    elif ngspice_version_flag == 0 and file_comp_flag == 1:
-        warnings.warn("The ngspice version does not match!", DeprecationWarning)
+    sim_error_type = classify_sim_error(template_filename, result_filename, compare_files)
+    if sim_error_type == 'red':
+        raise ValueError("Simulation results do not match with those in stored template file!")
+    elif sim_error_type == 'amber':
+        warnings.warn("Simulation results are within an allowable error range from template files!")
     
     ### Number of failed simulations returned from simulation state check
     sim_state = json.load(open("work/sim_state_file.txt"))

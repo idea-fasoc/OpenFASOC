@@ -17,3 +17,5 @@ If the CI works, the tool versions will be  mentioned in the README file beside 
 Alpha image of OpenFASoC environment - `docker pull msaligane/openfasoc:alpha`
 
 Stable image of OpenFASoC environment - `docker pull msaligane/openfasoc:stable`
+
+**More detailed information about the CI and its workflows can be found in the README under the `.github` folder in the repository**
