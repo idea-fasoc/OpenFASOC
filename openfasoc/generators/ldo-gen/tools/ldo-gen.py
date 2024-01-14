@@ -182,9 +182,9 @@ if args.mode != "verilog" and clean_work_dir:
     print("# LVS and DRC finished successfully")
     print("#----------------------------------------------------------------------")
 
-if args.mode == "full":
     # function defined in configure_workspace.py
     copy_outputs(directories, args.outputDir, args.platform, user_specs["designName"])
+if args.mode == "full":
 
     # simulations are ran for the following configurations:
     cap_list = ["1p", "5p"]  # additional capacitance at node VREG
