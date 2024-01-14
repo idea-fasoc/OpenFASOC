@@ -74,7 +74,7 @@ def get_ctrl_wd_rst(arrSize):
     return ctrlWdRst
 
 
-def update_area_and_place_density(flowDir, arrSize, place_density):
+def update_area_and_place_density(flowDir, arrSize, place_density_model_file, place_density):
     """Increases place density for designs with large power transistor arrays."""
     with open(flowDir + "design/sky130hvl/ldo/config_template.mk", "r") as config:
         config_template = config.read()
@@ -83,7 +83,17 @@ def update_area_and_place_density(flowDir, arrSize, place_density):
     vreg_width = die_width - 39
 
     if place_density is None:
+        # Set default estimated place density
         place_density = round(0.3 + 0.1 * math.ceil((arrSize%50)/10),1)
+
+        # Find density from the modelfile if the data exists
+        with open(place_density_model_file) as model:
+            for line in model:
+                data = line.strip().split(',')
+                if int(data[0]) == arrSize:
+                    place_density = float(data[1])
+                    break
+
 
     config_template = config_template.replace("@PARAM_DIE_WIDTH", str(die_width), 1)
     config_template = config_template.replace("@PARAM_DIE_LENGTH", str(die_length), 1)
