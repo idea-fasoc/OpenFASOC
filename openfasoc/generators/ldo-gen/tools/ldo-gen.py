@@ -163,9 +163,9 @@ if args.mode != "verilog" and clean_work_dir:
     # TODO: look at drc after this PR
     p = sp.Popen(["make", "magic_drc"], cwd=directories["flowDir"])
     p.wait()
-    # if p.returncode:
-    # 	print("[Error] DRC failed. Refer to the report")
-    # 	exit(1)
+    if p.returncode:
+        print("[Error] DRC failed. Refer to the report")
+        exit(1)
 
     print("#----------------------------------------------------------------------")
     print("# Run LVS")
