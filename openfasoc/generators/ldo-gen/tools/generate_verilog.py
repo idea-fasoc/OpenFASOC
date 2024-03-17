@@ -21,10 +21,12 @@ def update_ldo_domain_insts(blocksDir, arrSize):
     """Writes arrSize pt unit cell instances to ldo_domain_insts.txt."""
     with open(blocksDir + "/ldo_domain_insts.txt", "w") as ldo_domain_insts:
         # Always write comparator and pmos instances
-        if arrSize > INCLUDE_2_PMOS_ARRSIZE:
-            ldo_domain_insts.write("cmp1\npmos_1\npmos_2\n")
-        else:
-            ldo_domain_insts.write("cmp1\npmos_1\n")
+
+        ldo_domain_insts.write("cmp1\npmos_1\n")
+        # The below code is commented since pmos_2 is commented in the Verilog
+        # if arrSize > INCLUDE_2_PMOS_ARRSIZE:
+        #     ldo_domain_insts.write("pmos_2\n")
+
         # write arrSize pt cells
         for i in range(arrSize):
             ldo_domain_insts.write("{pt_array_unit\[" + str(i) + "\]}\n")
@@ -47,10 +49,12 @@ def update_custom_nets(blocksDir, arrSize):
     """Creates custom routes in ldo_custom_net.txt."""
     with open(blocksDir + "/ldo_custom_net.txt", "w") as ldo_domain_insts:
         # Always write comparator and pmos connections
-        if arrSize > INCLUDE_2_PMOS_ARRSIZE:
-            ldo_domain_insts.write("r_VREG\ncmp1 VREG\npmos_1 VREG\npmos_2 VREG\n")
-        else:
-            ldo_domain_insts.write("r_VREG\ncmp1 VREG\npmos_1 VREG\n")
+        ldo_domain_insts.write("r_VREG\ncmp1 VREG\npmos_1 VREG\n")
+
+        # The below code is commented since pmos_2 is commented in the Verilog
+        # if arrSize > INCLUDE_2_PMOS_ARRSIZE:
+        #     ldo_domain_insts.write("pmos_2 VREG\n")
+
         # write arrSize pt cells
         for i in range(arrSize):
             ldo_domain_insts.write("{pt_array_unit\[" + str(i) + "\]} VREG\n")
@@ -70,20 +74,33 @@ def get_ctrl_wd_rst(arrSize):
     return ctrlWdRst
 
 
-def update_area_and_place_density(flowDir, arrSize):
+def update_area_and_place_density(flowDir, arrSize, place_density_model_file, place_density):
     """Increases place density for designs with large power transistor arrays."""
     with open(flowDir + "design/sky130hvl/ldo/config_template.mk", "r") as config:
         config_template = config.read()
     die_length = die_width = 275 + 20 * int(arrSize / 50)
     core_length = core_width = 260 + 20 * int(arrSize / 50)
-    vreg_width = die_width - 40
-    # place_density = round(0.3 + 0.1 * math.ceil((arrSize%50)/10),1)
-    place_density = 0.7
+    vreg_width = die_width - 39
+
+    if place_density is None:
+        # Set default estimated place density
+        place_density = round(0.3 + 0.1 * math.ceil((arrSize%50)/10),1)
+
+        # Find density from the modelfile if the data exists
+        with open(place_density_model_file) as model:
+            for line in model:
+                data = line.strip().split(',')
+                if int(data[0]) == arrSize:
+                    place_density = float(data[1])
+                    break
+
+
     config_template = config_template.replace("@PARAM_DIE_WIDTH", str(die_width), 1)
     config_template = config_template.replace("@PARAM_DIE_LENGTH", str(die_length), 1)
     config_template = config_template.replace("@PARAM_CORE_WIDTH", str(core_width), 1)
     config_template = config_template.replace("@PARAM_CORE_LENGTH", str(core_length), 1)
     config_template = config_template.replace("@PARAM_VREG_WIDTH", str(vreg_width), 2)
+
     config_template = config_template.replace(
         "@PARAM_PLACE_DENSITY", str(place_density), 1
     )
