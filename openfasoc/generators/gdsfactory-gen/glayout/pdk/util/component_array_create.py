@@ -17,11 +17,11 @@ def get_files_with_extension(directory, extension):
 
 
 @validate_arguments
-def write_opamp_matrix(opamps_dir: Union[str,Path,list]="./", xspace: float=400,yspace: float=300, rtr_comp: bool=False, write_name: str="big_gds_here.gds"):
-	"""Use the write_opamp_matrix function to create a matrix of many different opamps
-	reads the different opamps from all gds files in opamps_dir
+def write_component_matrix(components_dir: Union[str,Path,list]="./", xspace: float=400,yspace: float=280, rtr_comp: bool=False, write_name: str="big_gds_here.gds"):
+	"""Use the write_component_matrix function to create a matrix of many different components
+	reads the different components from all gds files in components_dir
 	args:
-	opamps_dir = a file directory where all gds files are treated as opamps (i.e. to add to the matrix)
+	components_dir = a file directory where all gds files are treated as components (i.e. to add to the matrix)
 	****Note: you can specify this as a list Components, in which case, the list is used to make the matrix
 	xspace = xspacing to use (center to center x distance between adajacent elements in the matrix)
 	yspace = yspacing to use (center to center y distance between adajacent elements in the matrix)
@@ -32,27 +32,27 @@ def write_opamp_matrix(opamps_dir: Union[str,Path,list]="./", xspace: float=400,
 	pdk_nochache.cell_decorator_settings.cache=False
 	pdk_nochache.activate()
 
-	if isinstance(opamps_dir, list):
-		opamp_comp_list = opamps_dir
+	if isinstance(components_dir, list):
+		c_comp_list = components_dir
 	else:
-		search_dir = Path(opamps_dir).resolve()
-		opamp_files_list = get_files_with_extension(str(search_dir),".gds")
-		opamp_comp_list = list()
-		for i,filev in enumerate(opamp_files_list):
+		search_dir = Path(components_dir).resolve()
+		c_files_list = get_files_with_extension(str(search_dir),".gds")
+		c_comp_list = list()
+		for i,filev in enumerate(c_files_list):
 			if "big_gds_here" in str(filev) or write_name in str(filev):
 				continue
 			tempcomp = import_gds(filev)
-			tempcomp.name = "opamp"+str(i)
-			opamp_comp_list.append(tempcomp)
+			tempcomp.name = "circ"+str(i)
+			c_comp_list.append(tempcomp)
 
-	col_len = round(math.sqrt(len(opamp_comp_list)))
+	col_len = round(math.sqrt(len(c_comp_list)))
 	col_index = 0
 	row_index = 0
 	big_comp = Component("big comp")
-	for opamp_v in opamp_comp_list:
-		if opamp_v is None:
+	for comp_v in c_comp_list:
+		if comp_v is None:
 			continue
-		opref = big_comp << opamp_v
+		opref = big_comp << comp_v
 		opref.movex(col_index * xspace).movey(row_index*yspace)
 		col_index += 1
 		if not col_index % col_len:
@@ -64,4 +64,4 @@ def write_opamp_matrix(opamps_dir: Union[str,Path,list]="./", xspace: float=400,
 		big_comp.write_gds(write_name)
 
 if __name__=="__main__":
-	write_opamp_matrix()
+	write_component_matrix()

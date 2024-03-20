@@ -1,5 +1,4 @@
 gf180
-sky130
 scikit-learn
 matplotlib
 scipy

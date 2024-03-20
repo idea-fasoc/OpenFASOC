@@ -13,11 +13,11 @@ from .port_utils import add_ports_perimeter, rename_ports_by_list
 
 
 @validate_arguments
-def evaluate_bbox(custom_comp: Union[Component, ComponentReference], return_decimal: Optional[bool]=False) -> tuple[Union[float,Decimal],Union[float,Decimal]]:
+def evaluate_bbox(custom_comp: Union[Component, ComponentReference], return_decimal: Optional[bool]=False, padding: float=0) -> tuple[Union[float,Decimal],Union[float,Decimal]]:
 	"""returns the length and height of a component like object"""
 	compbbox = custom_comp.bbox
-	width = abs(Decimal(str(compbbox[1][0])) - Decimal(str(compbbox[0][0])))
-	height = abs(Decimal(str(compbbox[1][1])) - Decimal(str(compbbox[0][1])))
+	width = abs(Decimal(str(compbbox[1][0])) - Decimal(str(compbbox[0][0]))) + 2*Decimal(str(padding))
+	height = abs(Decimal(str(compbbox[1][1])) - Decimal(str(compbbox[0][1]))) + 2*Decimal(str(padding))
 	if return_decimal:
 		return (width,height)
 	return (float(width),float(height))

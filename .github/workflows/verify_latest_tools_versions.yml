@@ -1,4 +1,4 @@
-#This flow will build the latest docker image, test the OpenFASOC flow in it and if it works, update the readme file and push it to the docker hub for reference
+#This flow will build the latest docker image, test the OpenFASOC generators (only drc and lvs for now) in it and if it works, update the readme file and push it to the docker hub for reference
 
 name: Build and test with the latest version of tools set
 
@@ -65,32 +65,82 @@ jobs:
             if [ $? -ne 0 ]; then exit 1; fi
             if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi
 
-  # sky130hd_temp_full:
-  #   runs-on: self-hosted
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v2
+  sky130hd_ldoGen:
+    needs: build_docker_image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove unnecessary files
+        run: |
+          du . -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          du . -h
 
-  #     - name: Test sky130hd Temp sensor
-  #       env:
-  #               IMAGE_NAME: msaligane/openfasoc:alpha
-  #       run: |
-  #         cd $GITHUB_WORKSPACE
-  #         touch flow_report.log
-  #         docker run --rm \
-  #           -v $PWD:$PWD\
-  #           -w $PWD\
-  #           $IMAGE_NAME\
-  #           bash -c "\
-  #             pip3 install -r requirements.txt &&\
-  #             cd ./openfasoc/generators/temp-sense-gen &&\
-  #             make clean &&\
-  #             make sky130hd_temp_full\
-  #           ">> flow_report.log
-  #           if grep "\[ERROR\]" flow_report.log; then exit 1; else exit 0; fi
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Test sky130hvl LDO
+        env:
+                IMAGE_NAME: msaligane/openfasoc:alpha
+        run: |
+          cd $GITHUB_WORKSPACE
+          touch file.log
+          docker run --rm \
+            -v $PWD:$PWD\
+            -w $PWD\
+            $IMAGE_NAME\
+            bash -c "\
+              cp ./.github/scripts/parse_rpt.py ./openfasoc/generators/ldo-gen/. &&\
+              pip3 install -r requirements.txt &&\
+              cd ./openfasoc/generators/ldo-gen &&\
+              make sky130hvl_ldo &&\
+              python3 parse_rpt.py sky130hvl_ldo
+            " && exit_code=$? | tee -a file.log
+            if [ $? -ne 0 ]; then exit 1; fi
+            if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi
+
+
+  cryoGenerator:
+    needs: build_docker_image
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [sky130hd, sky130hs, sky130hvl]
+
+    steps:
+      - name: Remove unnecessary files
+        run: |
+          du . -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          du . -h
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Test ${{ matrix.platform }} Cryo Gen
+        env:
+                IMAGE_NAME: msaligane/openfasoc:stable
+        run: |
+          cd $GITHUB_WORKSPACE
+          touch file.log
+          docker run --rm \
+            -v $PWD:$PWD\
+            -w $PWD\
+            $IMAGE_NAME\
+            bash -c "\
+              cp ./.github/scripts/parse_rpt.py ./openfasoc/generators/cryo-gen/. &&\
+              pip3 install -r requirements.txt &&\
+              cd ./openfasoc/generators/cryo-gen &&\
+              make ${{ matrix.platform }}_cryo &&\
+              python3 parse_rpt.py ${{ matrix.platform }}
+            " && exit_code=$? | tee -a file.log
+            if [ $? -ne 0 ]; then exit 1; fi
+            if grep "^Error" file.log; then exit 1; else exit 0; fi
+          
 
   update_readme:
-    needs: sky130hd_temp
+    needs: [sky130hd_temp,sky130hd_ldoGen,cryoGenerator,build_docker_image]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -140,12 +190,3 @@ jobs:
           branch: versions-update-branch
           push-to-fork: ${{ secrets.FORK_NAME }}
           delete-branch: true
-
-
-      # - name: Commit README.rst
-      #   run: |
-      #     git config --global user.name 'idea-fasoc'
-      #     git config --global user.email 'idea-fasoc@users.noreply.github.com'
-      #     git add -A
-      #     git commit -m "Updated README with latest stable version numbers of dependent tools"
-      #     git push

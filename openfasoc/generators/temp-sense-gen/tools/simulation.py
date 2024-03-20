@@ -1,4 +1,4 @@
-import os
+import os, json
 import re
 import shutil
 import sys
@@ -57,7 +57,7 @@ def generate_runs(
 
         update_netlist(srcNetlist, dstNetlist, jsonConfig["simMode"])
 
-        num_simulations = run_simulations(
+        sim_state = run_simulations(
             parameters={
                 'temp': {'start': tempStart, 'end': tempStop, 'step': tempStep},
                 'model_file': model_file,
@@ -75,7 +75,7 @@ def generate_runs(
 
         # Calculating simulation results and error
         with open(os.path.join(runDirPath, 'sim_output'), 'w') as sim_output_file:
-            for i in range(num_simulations):
+            for i in range(sim_state["completed_sims"]):
                 log_file_path = os.path.join(runDirPath, f"{i + 1}", f"sim_{i + 1}.log")
                 sim_results = get_sim_results(open(log_file_path, "r").read())
 
@@ -85,6 +85,10 @@ def generate_runs(
             with open(os.path.join(runDirPath, 'all_result'), 'w') as all_result_file:
                 error_data = calculate_sim_error(sim_output_lines=sim_output_file.readlines())
                 all_result_file.write("\n".join(error_data))
+
+        # dump final simulation state to log file called sim_state_file
+        with open(spiceDir + "/sim_state_file.txt", 'w') as sim_state_file:
+            json.dump(sim_state, sim_state_file)
 
     return runDirPath
 

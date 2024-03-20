@@ -1,17 +1,32 @@
 from gdsfactory.cell import cell
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
-from glayout.fet import nmos, pmos
+from glayout.primitives.fet import nmos, pmos
 from glayout.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
 from gdsfactory.routing.route_quad import route_quad
 from gdsfactory.routing.route_sharp import route_sharp
 from glayout.routing.c_route import c_route
+from glayout.routing.straight_route import straight_route
 from glayout.pdk.util.comp_utils import movex, movey, evaluate_bbox, align_comp_to_port
 from glayout.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, get_orientation, set_port_orientation
-from glayout.via_gen import via_stack
+from glayout.primitives.via_gen import via_stack
+from glayout.primitives.guardring import tapring
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
+from glayout.spice import Netlist
 
+def diff_pair_netlist(fetL: Component, fetR: Component) -> Netlist:
+	diff_pair_netlist = Netlist(circuit_name='DIFF_PAIR', nodes=['VP', 'VN', 'VDD1', 'VDD2', 'VTAIL', 'B'])
+	diff_pair_netlist.connect_netlist(
+		fetL.info['netlist'],
+		[('D', 'VDD1'), ('G', 'VP'), ('S', 'VTAIL'), ('B', 'B')]
+	)
+	diff_pair_netlist.connect_netlist(
+		fetR.info['netlist'],
+		[('D', 'VDD2'), ('G', 'VN'), ('S', 'VTAIL'), ('B', 'B')]
+	)
+
+	return diff_pair_netlist
 
 @cell
 def diff_pair(
@@ -22,7 +37,8 @@ def diff_pair(
 	n_or_p_fet: bool = True,
 	plus_minus_seperation: float = 0,
 	rmult: int = 1,
-	dummy: Union[bool, tuple[bool, bool]] = True
+	dummy: Union[bool, tuple[bool, bool]] = True,
+	substrate_tap: bool=True
 ) -> Component:
 	"""create a diffpair with 2 transistors placed in two rows with common centroid place. Sources are shorted
 	width = width of the transistors
@@ -30,6 +46,7 @@ def diff_pair(
 	length = length of the transistors, None or 0 means use min length
 	short_source = if true connects source of both transistors
 	n_or_p_fet = if true the diffpair is made of nfets else it is made of pfets
+	substrate_tap: if true place a tapring around the diffpair (connects on met1)
 	"""
 	# TODO: error checking
 	pdk.activate()
@@ -62,6 +79,26 @@ def diff_pair(
 	a_botr.mirror_y().movey(0-0.5-fetL.ymax-min_spacing_y/2).movex(fetL.xmax+min_spacing_x/2)
 	b_botl = (diffpair << fetL)
 	b_botl.mirror_y().movey(0-0.5-fetR.ymax-min_spacing_y/2).movex(0-fetL.xmax-min_spacing_x/2)
+	# if substrate tap place substrate tap
+	if substrate_tap:
+		tapref = diffpair << tapring(pdk,evaluate_bbox(diffpair,padding=1),horizontal_glayer="met1")
+		diffpair.add_ports(tapref.get_ports_list(),prefix="tap_")
+		try:
+			diffpair<<straight_route(pdk,a_topl.ports["multiplier_0_dummy_L_gsdcon_top_met_W"],diffpair.ports["tap_W_top_met_W"],glayer2="met1")
+		except KeyError:
+			pass
+		try:
+			diffpair<<straight_route(pdk,b_topr.ports["multiplier_0_dummy_R_gsdcon_top_met_W"],diffpair.ports["tap_E_top_met_E"],glayer2="met1")
+		except KeyError:
+			pass
+		try:
+			diffpair<<straight_route(pdk,b_botl.ports["multiplier_0_dummy_L_gsdcon_top_met_W"],diffpair.ports["tap_W_top_met_W"],glayer2="met1")
+		except KeyError:
+			pass
+		try:
+			diffpair<<straight_route(pdk,a_botr.ports["multiplier_0_dummy_R_gsdcon_top_met_W"],diffpair.ports["tap_E_top_met_E"],glayer2="met1")
+		except KeyError:
+			pass
 	# route sources (short sources)
 	diffpair << route_quad(a_topl.ports["multiplier_0_source_E"], b_topr.ports["multiplier_0_source_W"], layer=pdk.get_glayer("met2"))
 	diffpair << route_quad(b_botl.ports["multiplier_0_source_E"], a_botr.ports["multiplier_0_source_W"], layer=pdk.get_glayer("met2"))
@@ -117,12 +154,12 @@ def diff_pair(
 	diffpair.add_ports(PLUSgate_routeW.get_ports_list(),prefix="PLUSgateroute_W_")
 	diffpair.add_ports(PLUSgate_routeE.get_ports_list(),prefix="PLUSgateroute_E_")
 	diffpair.add_padding(layers=(pdk.get_glayer(well),), default=0)
-	return component_snap_to_grid(rename_ports_by_orientation(diffpair))
+
+	component = component_snap_to_grid(rename_ports_by_orientation(diffpair))
+
+	component.info['netlist'] = diff_pair_netlist(fetL, fetR)
+	return component
 
 
-if __name__ == "__main__":
-	from .pdk.util.standard_main import pdk
-	mycomp = diff_pair(pdk,length=1,width=6,fingers=4,rmult=2)
-	mycomp.show()
-	print_ports(mycomp)
+
 

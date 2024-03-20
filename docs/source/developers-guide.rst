@@ -18,6 +18,7 @@ Developer's Guide for Generators
 
     stages
     regression
+    ci
 
 .. note::
 
