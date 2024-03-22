@@ -1,0 +1,4 @@
+cmirror
+place an nfet called reference with width 5
+place an nfet called mirror with width 10
+move mirror to the left of reference

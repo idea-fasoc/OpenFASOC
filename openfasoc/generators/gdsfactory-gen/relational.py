@@ -455,7 +455,7 @@ class PlaceCell(GlayoutAction):
         l1 = f"{self.name} = {self.handle.__name__}(pdk,**{str(self.params)})"
         l2 = f"{self.name}_{self.ref_suffix} = prec_ref_center({self.name})"
         l3 = f"{self.toplvl_name}.add({self.name}_{self.ref_suffix})"
-        l4 = f"{self.toplvl_name}.add_ports({self.name}_{self.ref_suffix}.get_ports_list(),prefix={self.name}_)"
+        l4 = f"{self.toplvl_name}.add_ports({self.name}_{self.ref_suffix}.get_ports_list(),prefix=\"{self.name}_\")"
         return comment + "\n" + l1 + "\n" + l2 + "\n" + l3 + "\n" + l4
     
     @classmethod
@@ -531,17 +531,17 @@ class RelativeMove(GlayoutAction):
         else:
             raise ValueError("invalid direction, move must be either up/north/above, right/east, left/west, or down/south/below")
     
-    def get_code(self, comp_boxx) -> str:
+    def get_code(self) -> str:
         movinfo = [self.separation*direc for direc in self.direction]
         l1 = f"# move {self.name} {self.strdirection} {self.relative_comp}"
         if self.direction[0]:
-            l2 = f"{self.direction[0]}*({self.separation} + evaluate_bbox({self.relative_comp})[0]/2 + evaluate_bbox({self.name})[0]/2)"
+            l2 = f"[{self.direction[0]}*({self.separation} + evaluate_bbox({self.relative_comp})[0]/2 + evaluate_bbox({self.name})[0]/2), 0]"
         elif self.direction[1]:
-            l2 = f"{self.direction[1]}*({self.separation} + evaluate_bbox({self.relative_comp})[1]/2 + evaluate_bbox({self.name})[1]/2)"
+            l2 = f"[0, {self.direction[1]}*({self.separation} + evaluate_bbox({self.relative_comp})[1]/2 + evaluate_bbox({self.name})[1]/2)]"
         else:
             raise ValueError("move must be either up/north/above, right/east, left/west, or down/south/below")
         l2 = f"relativemovcorrection_{str(self.move_index)} = " + l2
-        l3 = f"move({self.name},destination=[dim+relativemovcorrection_{str(self.move_index)}[idir] for idir,dim in enumerate({self.relative_comp.center})])"
+        l3 = f"move({self.name}_ref,destination=[dim+relativemovcorrection_{str(self.move_index)}[idir] for idir,dim in enumerate({self.relative_comp}.center)])"
         return l1 + "\n" + l2 + "\n" + l3
 
     @classmethod
@@ -596,14 +596,11 @@ class GlayoutCode(GlayoutAction):
         # tables
         self.import_table = list()# list of ImportCell type
         self.parameter_table = list()# list of CreateCellParameter type
-        #self.variable_table = list()# list of CreateWorkingVariable type
-        #self.place_table = list()# a list of PlaceCell type
-        #self.move_table = list()# a list of AbsoluteMove or RelativeMove types
-        #self.route_table = list()# a list of Route type
         self.bulk_action_table = list()# list of Route, AbsoluteMove, RelativeMove, PlaceCell, CreateWorkingVariable
         # initialize the import table to contain all primitives and routing primitives
         self.__known_generator_ids = list()# list of str
         self.__random_name_index = int(0)
+        # general components
         self.update_import_table(["nmos","nfet"],"nmos","glayout.primitives.fet")
         self.update_import_table(["pmos","pfet"],"pmos","glayout.primitives.fet")
         self.update_import_table(["guardring","tapring","welltap","well tap", "tap ring"],"tapring","glayout.primitives.guardring")
@@ -694,16 +691,18 @@ class GlayoutCode(GlayoutAction):
     
     def get_code(self) -> str:
         # produce all import code
-        import_code = str()
+        import_code = "from glayout.pdk.mappedpdk import MappedPDK\n"
+        import_code += "from gdsfactory import Component\n"
+        import_code += "from glayout.pdk.util.comp_utils import move\n"
         for comp_import in self.import_table:
             import_code += comp_import.get_code() + "\n"
         # create function header
-        function_head = f"def {self.toplvl_name}(\n"
+        function_head = f"def {self.toplvl_name}_cell(\n\tpdk: MappedPDK,\n"
         for param in self.parameter_table:
             function_head += param.get_code()+"\n"
         function_head += "):\n"
         # create variables, place, route, and move in the order that user supplied these directions
-        function_body = str()
+        function_body = f"{self.toplvl_name} = Component()\n"
         for bulk_action in self.bulk_action_table:
             function_body+= bulk_action.get_code()+"\n"
         function_body = "\n".join(["\t"+line for line in function_body.splitlines()])

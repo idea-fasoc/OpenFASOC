@@ -22,7 +22,7 @@ if args.load_conversation is not None:
 				convo = Session(inputstream=sys.stdin,outputstream=sys.stdout,toplvlname=line)
 				continue
 			convo.process_next_input(line)
-		loop_count=len(lines)
+		loop_count=len(lines)-1
 	print("\n\nloaded conversation from "+str(savedconvo))
 	print("You can now continue providing inputs")
 else:

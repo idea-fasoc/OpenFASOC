@@ -24,8 +24,6 @@ What would you like to do?"""
 		"""
 		self.inputstream = inputstream
 		self.outputstream = outputstream
-		# save a list of responses to recreate this component from a .conv file
-		self.conversation_responses = list()
 		# greet the user and get a top level name for the component
 		if toplvlname is None:
 			if inputstream is None:
@@ -33,9 +31,12 @@ What would you like to do?"""
 			self.print_to_stream("Hello!")
 			self.print_to_stream("Please provide a name for the Component you want to create")
 			self.print_to_stream("remember, this will be the name of your top level component: ")
-			self.name = self.read_from_stream()
+			self.name = self.read_from_stream().strip()
 		else:
-			self.name = str(toplvlname)
+			self.name = str(toplvlname).strip()
+		# save a list of responses to recreate this component from a .conv file
+		self.conversation_responses = list()
+		self.conversation_responses.append(self.name)
 		# init the code object
 		self.code = GlayoutCode(self.name)
 		# create a backup that goes back exactly one call to process_next_input
