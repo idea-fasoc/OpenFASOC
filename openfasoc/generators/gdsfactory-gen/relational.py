@@ -133,8 +133,8 @@ class ParametersList:
         string_list = [str(match.group()) for match in string_pattern.finditer(sentence)]
         string_list = [w.replace("\"","").replace("'","").strip() for w in string_list]
         sentence = re.sub(string_pattern, "sTRingindICatorWOrd", sentence)
-        # add a space after every symbol (except period)
-        rsymbols = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
+        # add a space after every symbol (except period and _)
+        rsymbols = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '`', '{', '|', '}', '~']
         parsedsentence = str()
         for char in sentence:
             if char in rsymbols:
@@ -194,8 +194,7 @@ class ParametersList:
         try:
             mytree = list(self.__grammar_parser.parse(tokens))[0]
         except Exception as serr:
-            print("You may have provided a parameter that does not exist for this function OR there may be some other error")
-            raise serr
+            raise ValueError("You may have provided a parameter that does not exist for this function OR there may be some other error") from serr
         # reinsert numbers and strings
         numlist_index = 0
         strlist_index = 0
@@ -475,14 +474,18 @@ class AbsoluteMove(GlayoutAction):
         move_distance: tuple[float,float] (x,y) absolute move distance
     """
     #@validate_call
-    def __init__(self, name_of_component_to_move: str, absolute_move_info: tuple[float,float]):
+    def __init__(self, name_of_component_to_move: str, toplvl_name:str, absolute_move_info: tuple[float,float]):
         self.name = str(name_of_component_to_move)
         self.move_distance = absolute_move_info
+        self.toplvl_name = toplvl_name
     
     def get_code(self) -> str:
         xmov = self.move_distance[0]
         ymov = self.move_distance[1]
-        return f"{self.name}_reference.movex({xmov}).movey({ymov})"
+        movecode = f"{self.name}_ref.movex({xmov}).movey({ymov})\n"
+        movecode += "remove_ports_with_prefix({self.toplvl_name},\"{self.name}_\")\n"
+        movecode += "tester.add_ports({self.name}_ref.get_ports_list(),prefix=\"{self.name}_\")"
+        return movecode
     
     @classmethod
     def test(cls):
@@ -504,7 +507,7 @@ class RelativeMove(GlayoutAction):
     move_index = int(0)
 
     #@validate_call
-    def __init__(self, name_of_component_to_move: str, relative_comp: str, direction: str, separation: str="max_metal_sep_"):
+    def __init__(self, name_of_component_to_move: str, toplvl_name: str, relative_comp: str, direction: str, separation: str="max_metal_sep_"):
         """Store all information neccessary to move a Component relative to another component
         Args:
             name_of_component_to_move (str): name of the component that will be moved
@@ -514,6 +517,7 @@ class RelativeMove(GlayoutAction):
         """
         self.name = str(name_of_component_to_move)
         self.relative_comp = str(relative_comp)
+        self.toplvl_name = toplvl_name
         # TODO: more sophisticated validation that can distinguish float from var for separation
         self.separation = str(separation) if separation is not None else "max_metal_sep_"
         # parse direction
@@ -542,7 +546,10 @@ class RelativeMove(GlayoutAction):
             raise ValueError("move must be either up/north/above, right/east, left/west, or down/south/below")
         l2 = f"relativemovcorrection_{str(self.move_index)} = " + l2
         l3 = f"move({self.name}_ref,destination=[dim+relativemovcorrection_{str(self.move_index)}[idir] for idir,dim in enumerate({self.relative_comp}.center)])"
-        return l1 + "\n" + l2 + "\n" + l3
+        # update ports
+        l4 = f"remove_ports_with_prefix({self.toplvl_name},\"{self.name}_\")"
+        l5 = f"tester.add_ports({self.name}_ref.get_ports_list(),prefix=\"{self.name}_\")"
+        return l1 + "\n" + l2 + "\n" + l3 + "\n" + l4+ "\n" + l5
 
     @classmethod
     def test(cls):
@@ -574,7 +581,9 @@ class Route(GlayoutAction):
         self.toplvl_name = toplvl_name
     
     def get_code(self) -> str:
-        return f"{self.toplvl_name} << {self.route_type.__name__}(pdk,{self.port1},{self.port2},**{str(self.params)})"
+        port1s = f"{self.toplvl_name}.ports[\"{self.port1}\"]"
+        port2s = f"{self.toplvl_name}.ports[\"{self.port2}\"]"
+        return f"{self.toplvl_name} << {self.route_type.__name__}(pdk,{port1s},{port2s},**{str(self.params)})"
     
     @classmethod
     def test(cls):
@@ -673,9 +682,9 @@ class GlayoutCode(GlayoutAction):
         """move_type can be absolute, relative"""
         move_type = move_type.lower().strip()
         if move_type=="absolute":
-            self.bulk_action_table.append(AbsoluteMove(name_of_component_to_move,*args,**kwargs))
+            self.bulk_action_table.append(AbsoluteMove(name_of_component_to_move,self.toplvl_name,*args,**kwargs))
         elif move_type=="relative":
-            self.bulk_action_table.append(RelativeMove(name_of_component_to_move,*args,**kwargs))
+            self.bulk_action_table.append(RelativeMove(name_of_component_to_move,self.toplvl_name,*args,**kwargs))
     
     def update_route_table(self, port1: str, port2: str, parameters: str, route_type: Optional[str]=None):
         # guess route type if not specified
@@ -694,6 +703,7 @@ class GlayoutCode(GlayoutAction):
         import_code = "from glayout.pdk.mappedpdk import MappedPDK\n"
         import_code += "from gdsfactory import Component\n"
         import_code += "from glayout.pdk.util.comp_utils import move\n"
+        import_code += "from glayout.pdk.util.port_utils import remove_ports_with_prefix\n"
         for comp_import in self.import_table:
             import_code += comp_import.get_code() + "\n"
         # create function header

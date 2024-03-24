@@ -103,6 +103,19 @@ def rename_ports_by_list(custom_comp: Component, replace_list: list[tuple[str,st
     return rename_component_ports(custom_comp, rename_func)
 
 
+def remove_ports_with_prefix(custom_comp: Component, prefix: str) -> Component:
+	"""remove all ports in custom_comp which begin with prefix"""
+	# determine which ports to remove
+	remove_list = list()
+	for prt in custom_comp.ports.keys():
+		if prt.startswith(prefix):
+			remove_list.append(prt)
+	# remove the ports
+	for prt in remove_list:
+		custom_comp.ports.pop(prt)
+	return custom_comp
+
+
 @validate_arguments
 def add_ports_perimeter(custom_comp: Component, layer: tuple[int, int], prefix: Optional[str] = "_") -> Component:
 	"""adds ports to the outside perimeter of a cell
