@@ -483,8 +483,8 @@ class AbsoluteMove(GlayoutAction):
         xmov = self.move_distance[0]
         ymov = self.move_distance[1]
         movecode = f"{self.name}_ref.movex({xmov}).movey({ymov})\n"
-        movecode += "remove_ports_with_prefix({self.toplvl_name},\"{self.name}_\")\n"
-        movecode += "tester.add_ports({self.name}_ref.get_ports_list(),prefix=\"{self.name}_\")"
+        movecode += f"remove_ports_with_prefix({self.toplvl_name},\"{self.name}_\")\n"
+        movecode += f"{self.toplvl_name}.add_ports({self.name}_ref.get_ports_list(),prefix=\"{self.name}_\")"
         return movecode
     
     @classmethod
