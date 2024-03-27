@@ -548,7 +548,7 @@ class RelativeMove(GlayoutAction):
         l3 = f"move({self.name}_ref,destination=[dim+relativemovcorrection_{str(self.move_index)}[idir] for idir,dim in enumerate({self.relative_comp}.center)])"
         # update ports
         l4 = f"remove_ports_with_prefix({self.toplvl_name},\"{self.name}_\")"
-        l5 = f"tester.add_ports({self.name}_ref.get_ports_list(),prefix=\"{self.name}_\")"
+        l5 = f"{self.toplvl_name}.add_ports({self.name}_ref.get_ports_list(),prefix=\"{self.name}_\")"
         return l1 + "\n" + l2 + "\n" + l3 + "\n" + l4+ "\n" + l5
 
     @classmethod
