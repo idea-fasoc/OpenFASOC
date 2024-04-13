@@ -8,3 +8,6 @@ cairosvg
 scipy
 ltspice
 mako
+## glayout
+gdsfactory==7.7.0
+prettyprinttree

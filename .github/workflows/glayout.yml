@@ -1,0 +1,66 @@
+name: check glayout with sky130 and gf180
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        paths:
+            - 'openfasoc/generators/common/**'
+            - 'openfasoc/generators/gdsfasctory-gen/**'
+    workflow_dispatch:
+
+jobs:
+    sky130_glayout:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Remove unnecessary files
+              run: |
+                du . -h
+                sudo rm -rf /usr/share/dotnet
+                sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+                du . -h
+            - name: Checkout Repository
+              uses: actions/checkout@v2 
+            
+            - name: Test sky130 glayout DRC
+              env:
+                  IMAGE_NAME: msaligane/openfasoc:stable
+              run: |
+                cd $GITHUB_WORKSPACE
+                touch file_sky130.log
+                docker run --rm \
+                    -v $PWD:$PWD\
+                    -w $PWD\
+                    $IMAGE_NAME\
+                    bash -c "\
+                        mkdir ./res/reports &&\
+                        mkdir ./res/results &&\
+                        cp ./.github/scripts/setup_glayout_ci.py ./openfasoc/generators/gdsfactory-gen/glayout/. &&\
+                        pip3 install -r requirements.txt &&\
+                        cd ./openfasoc/generators/gdsfactory-gen/ &&\
+                        python3 setup_glayout_ci.py --pdk sky130
+                    " && exit_code=$? | tee -a file_sky130.log
+                    if [ $? -ne 0 ]; then exit 1; fi
+                    if grep "\[ERROR\]" file_sky130.log; then exit 1; else exit 0; fi
+            
+            - name: Test gf180 glayout DRC
+              env:
+                  IMAGE_NAME: msaligane/openfasoc:stable
+              run: |
+                cd $GITHUB_WORKSPACE
+                touch file_gf180.log
+                docker run --rm \
+                    -v $PWD:$PWD\
+                    -w $PWD\
+                    $IMAGE_NAME\
+                    bash -c "\
+                        mkdir ./res/reports &&\
+                        mkdir ./res/results &&\
+                        cp ./.github/scripts/setup_glayout_ci.py ./openfasoc/generators/gdsfactory-gen/glayout/. &&\
+                        pip3 install -r requirements.txt &&\
+                        cd ./openfasoc/generators/gdsfactory-gen/ &&\
+                        python3 setup_glayout_ci.py --pdk gf180
+                    " && exit_code=$? | tee -a file_gf180.log
+                    if [ $? -ne 0 ]; then exit 1; fi
+                    if grep "\[ERROR\]" file_gf180.log; then exit 1; else exit 0; fi
