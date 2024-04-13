@@ -19,6 +19,7 @@ pydantic
 shapely
 tqdm
 typer
+rich
 watchdog
 toolz
 sky130
