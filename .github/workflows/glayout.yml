@@ -34,6 +34,7 @@ jobs:
                     -w $PWD\
                     $IMAGE_NAME\
                     bash -c "\
+                        mkdir ./res &&\
                         mkdir ./res/reports &&\
                         mkdir ./res/results &&\
                         cp ./.github/scripts/setup_glayout_ci.py ./openfasoc/generators/gdsfactory-gen/glayout/. &&\
@@ -55,6 +56,7 @@ jobs:
                     -w $PWD\
                     $IMAGE_NAME\
                     bash -c "\
+                        mkdir ./res &&\
                         mkdir ./res/reports &&\
                         mkdir ./res/results &&\
                         cp ./.github/scripts/setup_glayout_ci.py ./openfasoc/generators/gdsfactory-gen/glayout/. &&\
