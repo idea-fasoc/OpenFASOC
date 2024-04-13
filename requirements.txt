@@ -20,6 +20,8 @@ shapely
 tqdm
 typer
 rich
+typing-extensions
+types-PyYAML
 watchdog
 toolz
 sky130
