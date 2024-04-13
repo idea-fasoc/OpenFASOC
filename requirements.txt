@@ -10,6 +10,16 @@ ltspice
 mako
 ## glayout
 gdstk
+flatdict
+Jinja2
+loguru
+omegaconf
+orjson
+pydantic
+shapely
+tqdm
+typer
+watchdog
 toolz
 sky130
 gf180
