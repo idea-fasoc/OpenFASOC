@@ -9,22 +9,6 @@ scipy
 ltspice
 mako
 ## glayout
-gdstk
-flatdict
-Jinja2
-loguru
-omegaconf
-orjson
-pydantic
-shapely
-tqdm
-typer
-rich
-typing-extensions
-types-PyYAML
-watchdog
-toolz
 sky130
 gf180
-gdsfactory==7.7.0
 prettyprinttree

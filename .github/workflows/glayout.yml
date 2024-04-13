@@ -38,7 +38,8 @@ jobs:
                         mkdir ./res/reports &&\
                         mkdir ./res/results &&\
                         cp ./.github/scripts/setup_glayout_ci.py ./openfasoc/generators/gdsfactory-gen/. &&\
-                        pip3 install --no-deps -r requirements.txt &&\
+                        pip3 install -r requirements.txt &&\
+                        pip3 install gdsfactory==7.7.0 &&\
                         cd ./openfasoc/generators/gdsfactory-gen/ &&\
                         python3 setup_glayout_ci.py --pdk sky130
                     " && exit_code=$? | tee -a file_sky130.log
@@ -60,7 +61,8 @@ jobs:
                         mkdir ./res/reports &&\
                         mkdir ./res/results &&\
                         cp ./.github/scripts/setup_glayout_ci.py ./openfasoc/generators/gdsfactory-gen/. &&\
-                        pip3 install --no-deps -r requirements.txt &&\
+                        pip3 install -r requirements.txt &&\
+                        pip3 install gdsfactory==7.7.0 &&\
                         cd ./openfasoc/generators/gdsfactory-gen/ &&\
                         python3 setup_glayout_ci.py --pdk gf180
                     " && exit_code=$? | tee -a file_gf180.log
