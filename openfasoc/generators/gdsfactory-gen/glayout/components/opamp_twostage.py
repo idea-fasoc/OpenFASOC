@@ -206,7 +206,7 @@ def opamp_twostage(
     """
     # error checks
     if half_common_source_params[3] < 2:
-        raise ValueError("half_diffpair_params num multiplier must be >= 2")
+        raise ValueError("half_common_source_params num multiplier must be >= 2")
     if with_antenna_diode_on_diffinputs!=0 and with_antenna_diode_on_diffinputs<2:
         raise ValueError("number of antenna diodes should be at least 2 (or 0 to specify no diodes)")
     if half_common_source_bias[3] < 2:
