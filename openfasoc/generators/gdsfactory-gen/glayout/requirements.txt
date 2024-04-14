@@ -1,2 +1,14 @@
+pandas
+klayout
+numpy
+matplotlib
+gdsfactory
+nbsphinx
+cairosvg
+scipy
+ltspice
+mako
+## glayout
+sky130
 gf180
 prettyprinttree
