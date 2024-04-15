@@ -20,7 +20,7 @@ What would you like to do?"""
 			outputstream (io.IOBase): used to print outputs
 			inputstream (io.IOBase): saved for (optionally) reading in user input, also just provide a string
 			NOTE: if input stream not provided, str input must be provided
-			toplvlname (str): in string only mode, you can input toplvl name using this arg
+			toplvlname (str): name of the toplevel component. in string only mode, you can input toplvl name using this arg
 		"""
 		self.inputstream = inputstream
 		self.outputstream = outputstream
