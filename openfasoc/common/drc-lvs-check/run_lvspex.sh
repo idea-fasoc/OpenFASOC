@@ -8,12 +8,12 @@ gds flatglob *\$\$*
 gds read $1
 load $2
 
-if {![string compare $2 "ldoInst"]} {
+if {![string compare $2 "diff_test"]} {
   select top cell
-  flatten ldoInst_flat
-  load ldoInst_flat
-  cellname delete ldoInst
-  cellname rename ldoInst_flat ldoInst
+  flatten diff_test_flat
+  load diff_test_flat
+  cellname delete diff_test
+  cellname rename diff_test_flat diff_test
   select top cell
 } else {
     select top cell

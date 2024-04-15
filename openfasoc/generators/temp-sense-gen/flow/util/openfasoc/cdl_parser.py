@@ -72,6 +72,8 @@ with open(args.inputCdl, "r") as rf:
 
 with open(args.outputCdl, "w") as wf:
     ckt_re = re.search("(\.SUBCKT.*\n(\+.*\n)*)((.*\n)*)(\.ENDS.*)", filedata)
+    if not ckt_re:
+        ckt_re = re.search("(\.subckt.*\n(\+.*\n)*)((.*\n)*)(\.ends.*)", filedata)
     ckt_head = ckt_re.group(1)
     ckt_cells = ckt_re.group(3)
     ckt_end = ckt_re.group(5)

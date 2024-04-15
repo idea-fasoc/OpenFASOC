@@ -1,12 +1,14 @@
 #---------need to be modified by user--------------------------------------------
 # the path for your gds file
-GDS_FILE_PATH = /home/elonjia/Desktop/tool_package/ALIGN-public/work/DCDC_MUX/DCDC_MUX.gds
+GDS_FILE_PATH = /home/chetanya/OpenFASOC/openfasoc/generators/gdsfactory-gen/diff_test.gds
+# GDS_FILE_PATH = /home/elonjia/Desktop/tool_package/ALIGN-public/work/DCDC_MUX/DCDC_MUX.gds
 #the path for your cdl/ngspice file
-CDL_FILE_PATH = /home/elonjia/Desktop/tool_package/ALIGN-public/work/DCDC_MUX/DCDC_MUX.sp
+CDL_FILE_PATH = /home/chetanya/OpenFASOC/openfasoc/common/platforms/sky130hd/cdl/sky130_fd_sc_hd.spice
+# CDL_FILE_PATH = /home/elonjia/Desktop/tool_package/ALIGN-public/work/DCDC_MUX/DCDC_MUX.sp
 #the name for your block [the name of block in gds & cdl file must be same.]
-DesignName = DCDC_MUX
+DesignName = diff_test
 #the path for your PDK file -> to sky130A eg: my sky130A file in the path: /home/elonjia/Desktop/tool_package/open_pdks/sky130/sky130A
-export PDK_ROOT=/home/elonjia/Desktop/tool_package/open_pdks/sky130/
+export PDK_ROOT=/usr/bin/miniconda3/share/pdk/
 #--------------------------------------------------------------------------------
 .PHONY: lvs
 lvs :

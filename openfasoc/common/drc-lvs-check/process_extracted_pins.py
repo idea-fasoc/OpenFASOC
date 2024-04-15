@@ -158,6 +158,11 @@ if args.generator:
         pin_name = None
         # the LDO requires a custom replacment of the VREG pin name
         extracted_spice = re.sub("r_VREG", "VREG", extracted_spice)
+    else: 
+        voltage_cell_name = None
+        pins_to_remove = None
+        rpin_name = None
+        pin_name = None
 
     # end edits
 
