@@ -2,7 +2,7 @@ import os
 import pathlib
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', '.github', 'scripts'))
-from run_glayout_drc import place_component, eval_component
+from run_glayout_drc import run_drc_wrapper
 from gdsfactory.component import Component
 import argparse
 
@@ -24,7 +24,7 @@ if (args.pdk == 'sky130'):
     pdk = sky130
 elif (args.pdk == 'gf180'):
     pdk = gf180
-else :
+else:
     print('Invalid PDK, continuing with sky130')
     pdk = sky130
     
@@ -45,8 +45,6 @@ reports_dir = os.path.abspath("../../../res/reports")
 os.environ["RESULTS_DIR"] = results_dir
 os.environ["REPORTS_DIR"] = reports_dir
 
-# pdks = [sky130, gf180]
-error_codes = []
 
 components = [
     ("nfet_test", fet.nmos),
@@ -60,11 +58,6 @@ components = [
     ("opamp_test", opamp.opamp)
 ]
 
-
-for component_info in components:
-    component_name, component_function, *args = component_info
-    
-    inst = place_component(component_name, component_function, pdk, *args)
-    error_codes.append(eval_component(inst, pdk, 1))
+run_drc_wrapper(pdk, components)
 
 sys.exit(0)

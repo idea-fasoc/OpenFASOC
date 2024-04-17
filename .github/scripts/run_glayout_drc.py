@@ -1,14 +1,9 @@
-import os, sys
+import os, sys, re, gdstk, shutil, warnings
 from pathlib import Path
-import gdstk 
-import shutil
 import subprocess as sp
 from gdsfactory.component import Component
-# import module for warnings
-import warnings
 
-
-def place_component(comp_name: str, func: "callable[[Component], any]", pdk: str, *args):
+def place_component(comp_name: str, func: "callable[[Component], any]", pdk, *args):
     """This function places the component on the layout and runs DRC on it
     in the most modular manner possible to accomodate for possible changes
     later
@@ -30,7 +25,7 @@ def place_component(comp_name: str, func: "callable[[Component], any]", pdk: str
         print(f"Error in placing {comp_name} : {e}\n exiting....")
         sys.exit(1)
 
-def eval_component(comp_to_run: Component, pdk: str, clean: int):
+def eval_component(comp_to_run: Component, pdk, clean: int):
     """runs DRC on the generated component passed to it and 
     describes the errors if any. Also cleans the generated gds file
 
@@ -96,7 +91,7 @@ def run_glayout_drc(design_name: str, gds_file: str) -> list:
     return [subproc_code, drc_report_code]
 
 
-def check_errors(list_of_errors: list, comp: str, pdk: str):
+def check_errors(list_of_errors: list, comp: str, pdk):
     """helper function to print the errors if any
 
     Args:
@@ -110,3 +105,19 @@ def check_errors(list_of_errors: list, comp: str, pdk: str):
         warnings.warn(f"DRC returned non-zero errors for {comp} for {pdk.name}")
     else:
         print(f"DRC passed successfully for {comp} for {pdk.name}")
+        
+def run_drc_wrapper(pdk, components: list):
+    """wrapper function to run DRC on a list of components
+
+    Args:
+        pdk (MappedPDK): sky130 or gf180, the process-design-kit being used
+        components (list): a list of components to run DRC on, contains the name of the 
+            component, the function to generate it and the arguments to be passed to the function
+    """
+    error_codes = []
+    for component_info in components:
+        component_name, component_function, *args = component_info
+        
+        inst = place_component(component_name, component_function, pdk, *args)
+        error_codes.append(eval_component(inst, pdk, 1))
+        
