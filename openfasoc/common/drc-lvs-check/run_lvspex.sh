@@ -15,6 +15,34 @@ if {![string compare $2 "diff_test"]} {
   cellname delete diff_test
   cellname rename diff_test_flat diff_test
   select top cell
+} elseif {![string compare $2 "diff_test"]} {
+    select top cell
+    flatten diff_test_flat
+    load diff_test_flat
+    cellname delete diff_test
+    cellname rename diff_test_flat diff_test
+    select top cell
+} elseif {![string compare $2 "nmos_test"]} {
+    select top cell
+    flatten nmos_test_flat
+    load nmos_test_flat
+    cellname delete nmos_test
+    cellname rename nmos_test_flat nmos_test
+    select top cell
+} elseif {![string compare $2 "pmos_test"]} {
+    select top cell
+    flatten pmos_test_flat
+    load pmos_test_flat
+    cellname delete pmos_test
+    cellname rename pmos_test_flat pmos_test
+    select top cell
+} elseif {![string compare $2 "opamp_test"]} {
+    select top cell
+    flatten opamp_test_flat
+    load opamp_test_flat
+    cellname delete opamp_test
+    cellname rename opamp_test_flat opamp_test
+    select top cell
 } else {
     select top cell
 }

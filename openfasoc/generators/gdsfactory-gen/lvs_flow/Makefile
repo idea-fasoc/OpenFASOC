@@ -59,18 +59,10 @@ endif
 
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
 include $(PLATFORM_DIR)/config.mk
-export DESIGN_NAME = diff_test
+export DESIGN_NAME = opamp_test
 export GALLERY_REPORT ?= 0
 export VIN_ROUTE_CONNECTION_POINTS = 3
 
-# Enables hierarchical yosys
-# export SYNTH_HIERARCHICAL ?= 0
-# export SYNTH_STOP_MODULE_SCRIPT = $(OBJECTS_DIR)/mark_hier_stop_modules.tcl
-# ifeq ($(SYNTH_HIERARCHICAL), 1)
-# export HIER_REPORT_SCRIPT = $(SCRIPTS_DIR)/synth_hier_report.tcl
-# export MAX_UNGROUP_SIZE ?= 0
-# endif
-# Enables Re-synthesis for area reclaim
 export RESYNTH_AREA_RECOVER ?= 0
 export RESYNTH_TIMING_RECOVER ?= 0
 export ABC_AREA ?= 0
@@ -97,26 +89,6 @@ export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(FLOW_VARIANT)
 export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(FLOW_VARIANT)
 export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(FLOW_VARIANT)
 export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(FLOW_VARIANT)
-
-# ifdef BLOCKS
-#   $(info [INFO][FLOW] Invoked hierarchical flow.)
-#   $(foreach block,$(BLOCKS),$(info Block ${block} needs to be hardened.))
-#   $(foreach block,$(BLOCKS),$(eval BLOCK_CONFIGS += ./designs/$(PLATFORM)/$(block)/config.mk))
-#   $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)_$(block)/$(FLOW_VARIANT)/${block}.lef))
-#   $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)_$(block)/$(FLOW_VARIANT)/6_final.gds))
-#   $(foreach block,$(BLOCKS),$(eval BLOCK_CDL += ./results/$(PLATFORM)_$(block)/$(FLOW_VARIANT)/6_final.cdl))
-#   export ADDITIONAL_LEFS += $(BLOCK_LEFS)
-#   export ADDITIONAL_GDS += $(BLOCK_GDS)
-#   export GDS_FILES += $(BLOCK_GDS)
-#   ifdef CDL_FILES
-#     export CDL_FILES += $(BLOCK_CDL)
-#   endif
-# endif
-
-# export RTLMP_RPT_DIR ?= $(OBJECTS_DIR)/rtlmp
-# export RTLMP_RPT_FILE ?= partition.txt
-# export RTLMP_BLOCKAGE_FILE ?= $(OBJECTS_DIR)/rtlmp/partition.txt.blockage
-
 #-------------------------------------------------------------------------------
 ifeq (, $(strip $(NPROC)))
   # Linux (utility program)
@@ -285,7 +257,9 @@ ifeq ($(shell command -v magic),)
 endif
 	mkdir -p $(OBJECTS_DIR)/netgen_lvs/spice $(OBJECTS_DIR)/netgen_lvs/ext
 	python3 $(UTILS_DIR)/openfasoc/cdl_parser.py -i $(RESULTS_DIR)/6_final.cdl -s $(PLATFORM_DIR)/cdl/sky130_fd_sc_hd.spice -o $(OBJECTS_DIR)/netgen_lvs/spice/$(DESIGN_NAME).spice
-	$(COMMON_VERIF_DIR)/run_lvsglayout.sh $(RESULTS_DIR)/6_final.gds $(DESIGN_NAME) $(REPORTS_DIR)/6_final_lvs.rpt
+	$(COMMON_VERIF_DIR)/run_lvspex.sh $(RESULTS_DIR)/6_final.gds $(DESIGN_NAME) $(REPORTS_DIR)/6_final_lvs.rpt
 
 clean_all: 
 	rm -rf $(OBJECTS_DIR)/*
+	rm -rf $(REPORTS_DIR)/*
+	rm -rf $(RESULTS_DIR)/*

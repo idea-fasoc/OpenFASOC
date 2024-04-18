@@ -11,6 +11,7 @@ from glayout.pdk.sky130_mapped import sky130_mapped_pdk as sky130
 from glayout.pdk.gf180_mapped import gf180_mapped_pdk as gf180
 from glayout.components.diff_pair import diff_pair
 from glayout.primitives.fet import  nmos, pmos
+from glayout.components.opamp import opamp
 
 from run_glayout_drc import place_component
 
@@ -27,8 +28,9 @@ def compname_in_net(mynet: str) -> str:
     pattern_diff = re.compile(r'\bDIFF_PAIR\b')
     pattern_nmos = re.compile(r'\bNMOS\b')
     pattern_pmos = re.compile(r'\bPMOS\b')
-    patterns = [pattern_diff, pattern_nmos, pattern_pmos]
-    replacements = ['diff_test', 'nmos_test', 'pmos_test']
+    pattern_opamp = re.compile(r'\bopamp\b')
+    patterns = [pattern_diff, pattern_nmos, pattern_pmos, pattern_opamp]
+    replacements = ['diff_test', 'nmos_test', 'pmos_test', 'opamp_test']
 
     for i, pattern in enumerate(patterns):
         if pattern.search(mynet):
@@ -74,7 +76,7 @@ gds_path = './results/sky130hd/glayout/6_final.gds'
 cdl_path = './results/sky130hd/glayout/6_final.cdl'
 makefile_script = './Makefile'
 
-
+## PMOS
 mynet, comp = get_gds_netlist('pmos_test', pmos, sky130, gds_path)
 
 net_file = cdl_path
@@ -95,7 +97,7 @@ if sub.returncode != 0:
 else:
     print(f'LVS run successful for pmos_test')
 
-
+## NMOS
 mynet, comp = get_gds_netlist('nmos_test', nmos, sky130, gds_path)
 
 net_file = cdl_path
@@ -116,7 +118,7 @@ if sub.returncode != 0:
 else:
     print(f'LVS run successful for nmos_test')
     
-
+## DIFF_PAIR
 mynet, comp = get_gds_netlist('diff_test', diff_pair, sky130, gds_path)
 
 net_file = cdl_path
@@ -136,3 +138,24 @@ if sub.returncode != 0:
     print(f'LVS failed for diff_test with error:\n {stderr}')
 else:
     print(f'LVS run successful for diff_test')
+    
+## OPAMP
+mynet, comp = get_gds_netlist('opamp_test', opamp, sky130, gds_path)
+
+net_file = cdl_path
+mynet = compname_in_net(mynet)
+with open(net_file, 'w') as wf:
+    wf.write(mynet)
+    
+edit_makefile(comp, makefile_script)
+
+subproc_cmd = ['make', 'netgen_lvs']
+sub = sp.Popen(subproc_cmd, stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)
+stdout, stderr = sub.communicate()
+
+print(stdout)
+
+if sub.returncode != 0:
+    print(f'LVS failed for opamp_test with error:\n {stderr}')
+else:
+    print(f'LVS run successful for opamp_test')
