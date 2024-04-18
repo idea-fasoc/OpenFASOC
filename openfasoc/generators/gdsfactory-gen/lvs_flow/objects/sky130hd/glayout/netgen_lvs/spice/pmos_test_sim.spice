@@ -1,0 +1,18 @@
+* NGSPICE file created from pmos_test.ext - technology: sky130A
+
+.subckt pmos_test
+X0 w_n708_n711# w_n708_n711# w_n708_n711# w_n708_n711# sky130_fd_pr__pfet_01v8 ad=1.425 pd=6.95 as=5.7 ps=27.8 w=3 l=0.15
+X1 a_15_n286# a_n33_n482# a_n110_n286# w_n708_n711# sky130_fd_pr__pfet_01v8 ad=1.425 pd=6.95 as=1.425 ps=6.95 w=3 l=0.15
+X2 w_n708_n711# w_n708_n711# w_n708_n711# w_n708_n711# sky130_fd_pr__pfet_01v8 ad=1.425 pd=6.95 as=0 ps=0 w=3 l=0.15
+C0 w_n708_n711# a_15_n286# 0.398469f
+C1 a_15_n286# a_n33_n482# 0.045575f
+C2 w_n708_n711# a_n33_n482# 0.283709f
+C3 a_15_n286# a_n110_n286# 0.598904f
+C4 w_n708_n711# a_n110_n286# 0.282941f
+C5 a_n110_n286# a_n33_n482# 0.055698f
+C6 a_15_n286# a_n858_n861# 0.049098f
+C7 a_n110_n286# a_n858_n861# 0.049466f
+C8 a_n33_n482# a_n858_n861# 0.03607f
+C9 w_n708_n711# a_n858_n861# 7.67499f
+.ends
+

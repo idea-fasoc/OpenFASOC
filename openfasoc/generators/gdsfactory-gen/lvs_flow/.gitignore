@@ -1,7 +1,7 @@
-logs/
-objects/
-reports/
-results/
-/*.log
-/*.spice
-/*.ext
+# logs/
+# objects/
+# reports/
+# results/
+# /*.log
+# /*.spice
+# /*.ext

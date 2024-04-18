@@ -1,0 +1,6 @@
+.INCLUDE '/home/chetanya/OpenFASOC/openfasoc/common/platforms/sky130hd/cdl/sky130_fd_sc_hd.spice'
+.subckt nmos_test D G S B l=1 w=1 m=1 dm=1
+XMAIN   D G S B sky130_fd_pr__nfet_01v8 l={l} w={w} m={m}
+XDUMMY1 B B B B sky130_fd_pr__nfet_01v8 l={l} w={w} m={dm}
+XDUMMY2 B B B B sky130_fd_pr__nfet_01v8 l={l} w={w} m={dm}
+.ends nmos_test

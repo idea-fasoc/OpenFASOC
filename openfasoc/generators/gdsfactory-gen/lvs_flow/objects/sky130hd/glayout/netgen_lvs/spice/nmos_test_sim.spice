@@ -1,0 +1,20 @@
+* NGSPICE file created from nmos_test.ext - technology: sky130A
+
+.subckt nmos_test
+X0 w_n734_n737# w_n734_n737# w_n734_n737# w_n734_n737# sky130_fd_pr__nfet_01v8 ad=1.425 pd=6.95 as=5.7 ps=27.8 w=3 l=0.15
+X1 a_15_n286# a_n33_n482# a_n110_n286# w_n734_n737# sky130_fd_pr__nfet_01v8 ad=1.425 pd=6.95 as=1.425 ps=6.95 w=3 l=0.15
+X2 w_n734_n737# w_n734_n737# w_n734_n737# w_n734_n737# sky130_fd_pr__nfet_01v8 ad=1.425 pd=6.95 as=0 ps=0 w=3 l=0.15
+C0 a_n33_n482# a_n110_n286# 0.055698f
+C1 w_n734_n737# a_n110_n286# 0.283328f
+C2 a_n33_n482# a_15_n286# 0.045575f
+C3 w_n734_n737# a_15_n286# 0.387693f
+C4 w_n734_n737# dw_n734_n737# 6.4915f
+C5 a_n110_n286# a_15_n286# 0.598904f
+C6 w_n734_n737# a_n33_n482# 0.279309f
+C7 a_15_n286# a_n884_n887# 0.047764f
+C8 a_n110_n286# a_n884_n887# 0.048094f
+C9 a_n33_n482# a_n884_n887# 0.035076f
+C10 w_n734_n737# a_n884_n887# 2.05305f
+C11 dw_n734_n737# a_n884_n887# 6.4915f $ **FLOATING
+.ends
+
