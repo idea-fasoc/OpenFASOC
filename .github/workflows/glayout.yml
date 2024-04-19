@@ -79,7 +79,7 @@ jobs:
                         cp ./.github/scripts/run_glayout_lvs.py ./openfasoc/generators/gdsfactory-gen/lvs_flow/. &&\
                         pip3 install -r ./openfasoc/generators/gdsfactory-gen/glayout/requirements.txt &&\
                         pip3 install gdsfactory==7.7.0 &&\
-                        cd ./openfasoc/generators/gdsfactory-gen/lvs-flow &&\
+                        cd ./openfasoc/generators/gdsfactory-gen/lvs_flow &&\
                         python3 run_glayout_lvs.py
                     " && exit_code=$? | tee -a file_sky130_lvs.log
                     if [ $? -ne 0 ]; then exit 1; fi
