@@ -34,9 +34,9 @@ jobs:
                     -w $PWD\
                     $IMAGE_NAME\
                     bash -c "\
-                        mkdir ./res &&\
-                        mkdir ./res/reports &&\
-                        mkdir ./res/results &&\
+                        mkdir -p ./res &&\
+                        mkdir -p ./res/reports &&\
+                        mkdir -p ./res/results &&\
                         cp ./.github/scripts/setup_glayout_ci.py ./openfasoc/generators/gdsfactory-gen/. &&\
                         pip3 install -r ./openfasoc/generators/gdsfactory-gen/glayout/requirements.txt &&\
                         pip3 install gdsfactory==7.7.0 &&\
