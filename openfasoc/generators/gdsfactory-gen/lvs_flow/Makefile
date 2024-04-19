@@ -59,7 +59,7 @@ endif
 
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
 include $(PLATFORM_DIR)/config.mk
-export DESIGN_NAME = opamp_test
+export DESIGN_NAME = diff_test
 export GALLERY_REPORT ?= 0
 export VIN_ROUTE_CONNECTION_POINTS = 3
 

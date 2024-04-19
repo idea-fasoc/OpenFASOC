@@ -65,22 +65,22 @@ jobs:
                     " && exit_code=$? | tee -a file_gf180.log
                     if [ $? -ne 0 ]; then exit 1; fi
                     if grep "\[ERROR\]" file_gf180.log; then exit 1; else exit 0; fi
-            # - name: Test sky130 glayout LVS
-            #   env:
-            #        IMAGE_NAME: msaligane/openfasoc:stable
-            #   run: |
-            #     cd $GITHUB_WORKSPACE
-            #     touch file_sky130_lvs.log
-            #     docker run --rm \
-            #         -v $PWD:$PWD\
-            #         -w $PWD\
-            #         $IMAGE_NAME\
-            #         bash -c "\
-            #             cp ./.github/scripts/run_glayout_lvs.py ./openfasoc/generators/gdsfactory-gen/lvs_flow. &&\
-            #             pip3 install -r ./openfasoc/generators/gdsfactory-gen/glayout/requirements.txt &&\
-            #             pip3 install gdsfactory==7.7.0 &&\
-            #             cd ./openfasoc/generators/gdsfactory-gen/ &&\
-            #             python3 run_glayout_lvs.py
-            #         " && exit_code=$? | tee -a file_sky130_lvs.log
-            #         if [ $? -ne 0 ]; then exit 1; fi
-            #         if grep "\[ERROR\]" file_sky130_lvs.log; then exit 1; else exit 0; fi
+            - name: Test sky130 glayout LVS
+              env:
+                   IMAGE_NAME: msaligane/openfasoc:stable
+              run: |
+                cd $GITHUB_WORKSPACE
+                touch file_sky130_lvs.log
+                docker run --rm \
+                    -v $PWD:$PWD\
+                    -w $PWD\
+                    $IMAGE_NAME\
+                    bash -c "\
+                        cp ./.github/scripts/run_glayout_lvs.py ./openfasoc/generators/gdsfactory-gen/lvs_flow. &&\
+                        pip3 install -r ./openfasoc/generators/gdsfactory-gen/glayout/requirements.txt &&\
+                        pip3 install gdsfactory==7.7.0 &&\
+                        cd ./openfasoc/generators/gdsfactory-gen/ &&\
+                        python3 run_glayout_lvs.py
+                    " && exit_code=$? | tee -a file_sky130_lvs.log
+                    if [ $? -ne 0 ]; then exit 1; fi
+                    if grep "\[ERROR\]" file_sky130_lvs.log; then exit 1; else exit 0; fi

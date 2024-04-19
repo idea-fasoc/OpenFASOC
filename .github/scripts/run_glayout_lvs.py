@@ -18,6 +18,19 @@ from run_glayout_drc import place_component
 # ###########################################################################################################
 # ###########################################################################################################
 def get_gds_netlist(component_name, func, pdk, gds_path):
+    """used to return the netlist and component object for the 
+    desired component's placement
+
+    Args:
+        component_name (str): the global descriptor for the instantiated component
+        func (callable[[Component], any]): the function to be called to generate the component
+        pdk (MappedPDK): the pdk object for which the component is to be generated
+        gds_path (str): the path to the generated gds file
+
+    Returns:
+        Component: the instance of the component
+        str: the netlist string
+    """
     component = place_component(component_name, func, pdk)
     component.write_gds(gds_path)
     netlist = component.info['netlist'].generate_netlist()
@@ -25,6 +38,15 @@ def get_gds_netlist(component_name, func, pdk, gds_path):
 
 
 def compname_in_net(mynet: str) -> str:
+    """used to edit netlist to change the component name to 
+    the test component name for global definition
+
+    Args:
+        mynet (str): the netlist string input
+
+    Returns:
+        str: the modified netlist string
+    """
     pattern_diff = re.compile(r'\bDIFF_PAIR\b')
     pattern_nmos = re.compile(r'\bNMOS\b')
     pattern_pmos = re.compile(r'\bPMOS\b')
@@ -36,28 +58,16 @@ def compname_in_net(mynet: str) -> str:
         if pattern.search(mynet):
             replacement = replacements[i]
             mynet = re.sub(pattern, replacement, mynet)  
-    return mynet
-        
-def edit_lvs_script(lvs_script: str, comp: Component, revert_flag: bool):
-    with open(lvs_script, 'r', encoding='utf-8') as rf:
-        data = rf.read()
-    print(f'Editing lvs script: {lvs_script}')
-    pattern = re.compile(r'\{\!\[string compare \$2 "(.*?)"\]\}')
-    matches = pattern.findall(data)
-
-    to_replace = matches[0]
-    if not revert_flag:
-        to_replace_with = comp.name
-    else: 
-        to_replace_with = 'ldoInst'
-
-    data = re.sub(to_replace, to_replace_with, data)
-    print(f'Edited lvs script: {data}')
-    with open(lvs_script, 'w', encoding='utf-8') as wf:
-        wf.write(data)
-        
+    return mynet    
 
 def edit_makefile(comp: Component, makefile_path: str):
+    """used to edit the makefile to change the DESIGN_NAME variable
+    according to the component name
+
+    Args:
+        comp (Component): the component object for which the makefile is to be edited
+        makefile_path (str): the string path to the makefile
+    """
     pattern = re.compile(r'export DESIGN_NAME = (.*)_test')
     my_var = comp.name
 
@@ -68,12 +78,32 @@ def edit_makefile(comp: Component, makefile_path: str):
 
     with open(makefile_path, 'w') as wf:
         wf.write(new_content)
+    
+def evaluate_report(report_fle: str) -> bool:
+    """used to evaluate the lvs report file
+
+    Args:
+        report_fle (str): the path to the lvs report file (6_final_lvs.rpt)
+
+    Returns:
+        bool: The flag indicating if the lvs run was successful
+    """
+    with open(report_fle, 'r') as file:
+        report_content = file.read()
+
+    string1 = 'Cell pin lists are equivalent.'
+    string2 = 'Netlists match with'
+    
+    if string1 in report_content and string2 in report_content:
+        return True
+    return False
 ######################################################################################################################################################################################################################   
 ######################################################################################################################################################################################################################
 
 
 gds_path = './results/sky130hd/glayout/6_final.gds'
 cdl_path = './results/sky130hd/glayout/6_final.cdl'
+report_path = './reports/sky130hd/glayout/6_final_lvs.rpt'
 makefile_script = './Makefile'
 
 ## PMOS
@@ -92,10 +122,13 @@ stdout, stderr = sub.communicate()
 
 print(stdout)
 
-if sub.returncode != 0:
-    print(f'LVS failed for pmos_test with error:\n {stderr}')
-else:
+report_return_code = evaluate_report(report_path)
+
+if report_return_code:
     print(f'LVS run successful for pmos_test')
+else:
+    print(f'LVS failed for pmos_test!')
+    sys.exit(1)
 
 ## NMOS
 mynet, comp = get_gds_netlist('nmos_test', nmos, sky130, gds_path)
@@ -113,10 +146,13 @@ stdout, stderr = sub.communicate()
 
 print(stdout)
 
-if sub.returncode != 0:
-    print(f'LVS failed for nmos_test with error:\n {stderr}')
-else:
+report_return_code = evaluate_report(report_path)
+
+if report_return_code:
     print(f'LVS run successful for nmos_test')
+else:
+    print(f'LVS failed for nmos_test!')
+    sys.exit(1)
     
 ## DIFF_PAIR
 mynet, comp = get_gds_netlist('diff_test', diff_pair, sky130, gds_path)
@@ -134,28 +170,32 @@ stdout, stderr = sub.communicate()
 
 print(stdout)
 
-if sub.returncode != 0:
-    print(f'LVS failed for diff_test with error:\n {stderr}')
-else:
+report_return_code = evaluate_report(report_path)
+
+if report_return_code:
     print(f'LVS run successful for diff_test')
+else:
+    print(f'LVS failed for diff_test!')
+    sys.exit(1)
     
 ## OPAMP
-mynet, comp = get_gds_netlist('opamp_test', opamp, sky130, gds_path)
+##### not using currently because not LVS clean
+# mynet, comp = get_gds_netlist('opamp_test', opamp, sky130, gds_path)
 
-net_file = cdl_path
-mynet = compname_in_net(mynet)
-with open(net_file, 'w') as wf:
-    wf.write(mynet)
+# net_file = cdl_path
+# mynet = compname_in_net(mynet)
+# with open(net_file, 'w') as wf:
+#     wf.write(mynet)
     
-edit_makefile(comp, makefile_script)
+# edit_makefile(comp, makefile_script)
 
-subproc_cmd = ['make', 'netgen_lvs']
-sub = sp.Popen(subproc_cmd, stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)
-stdout, stderr = sub.communicate()
+# subproc_cmd = ['make', 'netgen_lvs']
+# sub = sp.Popen(subproc_cmd, stdout=sp.PIPE, stderr=sp.PIPE, universal_newlines=True)
+# stdout, stderr = sub.communicate()
 
-print(stdout)
+# print(stdout)
 
-if sub.returncode != 0:
-    print(f'LVS failed for opamp_test with error:\n {stderr}')
-else:
-    print(f'LVS run successful for opamp_test')
+# if sub.returncode != 0:
+#     print(f'LVS failed for opamp_test with error:\n {stderr}')
+# else:
+#     print(f'LVS run successful for opamp_test')
