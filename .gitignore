@@ -149,6 +149,4 @@ cython_debug/
 *Thumbs.db
 
 # glayout
-*.res/
-*.res/reports
-*.res/results
+*.res/** 
