@@ -1,7 +1,4 @@
-# logs/
-# objects/
-# reports/
-# results/
-# /*.log
-# /*.spice
-# /*.ext
+objects/sky130hd/glayout/netgen_lvs/ext/*
+objects/sky130hd/glayout/netgen_lvs/spice/*
+results/sky130hd/glayout/**
+/reports/sky130hd/glayout/** 
