@@ -38,6 +38,7 @@ jobs:
                         mkdir -p ./res/reports &&\
                         mkdir -p ./res/results &&\
                         cp ./.github/scripts/setup_glayout_ci.py ./openfasoc/generators/gdsfactory-gen/. &&\
+                        rm -r ./openfasoc/common/drc-lvs-check/sky130A &&\
                         pip3 install -r ./openfasoc/generators/gdsfactory-gen/glayout/requirements.txt &&\
                         pip3 install gdsfactory==7.7.0 &&\
                         cd ./openfasoc/generators/gdsfactory-gen/ &&\
@@ -57,7 +58,11 @@ jobs:
                     -w $PWD\
                     $IMAGE_NAME\
                     bash -c "\
+                        mkdir -p ./res &&\
+                        mkdir -p ./res/reports &&\
+                        mkdir -p ./res/results &&\
                         cp ./.github/scripts/setup_glayout_ci.py ./openfasoc/generators/gdsfactory-gen/. &&\
+                        rm -r ./openfasoc/common/drc-lvs-check/sky130A &&\
                         pip3 install -r ./openfasoc/generators/gdsfactory-gen/glayout/requirements.txt &&\
                         pip3 install gdsfactory==7.7.0 &&\
                         cd ./openfasoc/generators/gdsfactory-gen/ &&\
