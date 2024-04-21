@@ -23,9 +23,13 @@ jobs:
             - name: Checkout Repository
               uses: actions/checkout@v2 
             
+            - name: Build Custom Image
+              run: |
+                cd $GITHUB_WORKSPACE
+                docker build -t latest-glayout -f docker/conda/Dockerfile .
             - name: Test sky130 glayout DRC
               env:
-                  IMAGE_NAME: msaligane/openfasoc:stable
+                  IMAGE_NAME: latest-glayout
               run: |
                 cd $GITHUB_WORKSPACE
                 touch file_sky130.log
@@ -48,7 +52,7 @@ jobs:
             
             - name: Test gf180 glayout DRC
               env:
-                  IMAGE_NAME: msaligane/openfasoc:stable
+                  IMAGE_NAME: latest-glayout
               run: |
                 cd $GITHUB_WORKSPACE
                 touch file_gf180.log
@@ -70,7 +74,7 @@ jobs:
                     if grep "\[ERROR\]" file_gf180.log; then exit 1; else exit 0; fi
             - name: Test sky130 glayout LVS
               env:
-                   IMAGE_NAME: msaligane/openfasoc:stable
+                   IMAGE_NAME: latest-glayout
               run: |
                 cd $GITHUB_WORKSPACE
                 touch file_sky130_lvs.log
