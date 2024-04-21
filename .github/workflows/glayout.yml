@@ -25,8 +25,8 @@ jobs:
             
             - name: Build Custom Image
               run: |
-                cd $GITHUB_WORKSPACE
-                docker build -t latest-glayout -f docker/conda/Dockerfile .
+                cd $GITHUB_WORKSPACE/docker/conda
+                docker build -t latest-glayout -f ./Dockerfile .
             - name: Test sky130 glayout DRC
               env:
                   IMAGE_NAME: latest-glayout
