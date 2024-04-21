@@ -15,6 +15,9 @@ from glayout.components.opamp import opamp
 
 from run_glayout_drc import place_component, setup_pdk_dir
 
+COMMON_VERIF_DIR = '../../../common/drc-lvs-check'
+os.environ["COMMON_VERIF_DIR"] = COMMON_VERIF_DIR
+
 # ###########################################################################################################
 # ###########################################################################################################
 def get_gds_netlist(component_name, func, pdk, gds_path):

@@ -147,6 +147,3 @@ cython_debug/
 *.DS_Store
 .DS_Store
 *Thumbs.db
-
-# glayout
-*.res/** 

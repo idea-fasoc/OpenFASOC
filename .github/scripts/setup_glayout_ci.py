@@ -54,7 +54,7 @@ components = [
     ("mimcap_test", mimcap.mimcap),
     ("via_stack_test", via.via_stack, 'poly', 'met1'),
     ("via_array_test", via.via_array, 'poly', 'met1', (2.0, 2.5)),
-    ("ttp_test", two_transistor_place.two_transistor_place, 'aba bab aba', (fet.nmos, {"pdk": pdk}), (fet.pmos, {"pdk": pdk})),
+    ("ttp_test", two_transistor_place.two_transistor_place, 'ab', (fet.nmos, {"pdk": pdk}), (fet.pmos, {"pdk": pdk})),
     ("diff_pair_test", diff_pair.diff_pair),
     ("opamp_test", opamp.opamp)
 ]
