@@ -1,0 +1,561 @@
+python3 tools/cryo-gen.py --specfile test.json --outputDir ./work --platform sky130hd --mode macro --ninv 144 --prepex 
+make[1]: Entering directory '/home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow'
+[INFO][FLOW] Using platform directory /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/../../../common/platforms/sky130hd
+make[1]: Nothing to be done for 'finish'.
+make[1]: Leaving directory '/home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow'
+make[1]: Entering directory '/home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow'
+[INFO][FLOW] Using platform directory /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/../../../common/platforms/sky130hd
+/home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/../../../common/drc-lvs-check/run_drc.sh
+
+Magic 8.3 revision 464 - Compiled on Sat Mar  9 23:18:29 UTC 2024.
+Starting magic under Tcl interpreter
+Using the terminal as the console.
+Using NULL graphics device.
+Processing system .magicrc file
+Sourcing design .magicrc for technology sky130A ...
+2 Magic internal units = 1 Lambda
+Input style sky130(): scaleFactor=2, multiplier=2
+The following types are not handled by extraction and will be treated as non-electrical types:
+    ubm 
+Scaled tech values by 2 / 1 to match internal grid scaling
+Loading sky130A Device Generator Menu ...
+Loading "/home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/../../../common/drc-lvs-check/magic_commands.tcl" from command line.
+Warning: Calma reading is not undoable!  I hope that's OK.
+Library written using GDS-II Release 6.0
+Library name: LIB
+Reading "VIA_L1M1_PR_MR".
+Saving contents of cell VIA_L1M1_PR_MR
+Reading "VIA_M1M2_PR".
+Saving contents of cell VIA_M1M2_PR
+Reading "VIA_via2_3_1600_480_1_5_320_320".
+Saving contents of cell VIA_via2_3_1600_480_1_5_320_320
+Reading "VIA_via3_4_1600_480_1_4_400_400".
+Saving contents of cell VIA_via3_4_1600_480_1_4_400_400
+Reading "VIA_via4_5_1600_480_1_4_400_400".
+Saving contents of cell VIA_via4_5_1600_480_1_4_400_400
+Reading "VIA_via2_3_4200_480_1_13_320_320".
+Saving contents of cell VIA_via2_3_4200_480_1_13_320_320
+Reading "VIA_via3_4_4200_480_1_10_400_400".
+Saving contents of cell VIA_via3_4_4200_480_1_10_400_400
+Reading "VIA_via4_5_4200_480_1_10_400_400".
+Saving contents of cell VIA_via4_5_4200_480_1_10_400_400
+Reading "VIA_via5_6_1600_1600_1_1_1600_1600".
+Saving contents of cell VIA_via5_6_1600_1600_1_1_1600_1600
+Reading "VIA_via5_6_1600_4200_2_1_1600_1600".
+Saving contents of cell VIA_via5_6_1600_4200_2_1_1600_1600
+Reading "VIA_via5_6_4200_1600_1_2_1600_1600".
+Saving contents of cell VIA_via5_6_4200_1600_1_2_1600_1600
+Reading "VIA_via5_6_4200_4200_2_2_1600_1600".
+Saving contents of cell VIA_via5_6_4200_4200_2_2_1600_1600
+Reading "sky130_fd_sc_hd__nand2_1".
+Reading "sky130_fd_sc_hd__dfxtp_1".
+Reading "sky130_fd_sc_hd__inv_1".
+Reading "sky130_fd_sc_hd__tapvpwrvgnd_1".
+Reading "sky130_fd_sc_hd__decap_4".
+Reading "sky130_fd_sc_hd__fill_1".
+Reading "sky130_fd_sc_hd__fill_4".
+Reading "sky130_fd_sc_hd__fill_2".
+Reading "sky130_fd_sc_hd__fill_8".
+Reading "cryoInst".
+[INFO]: Loading cryoInst
+
+Loading DRC CIF style.
+No errors found.
+[INFO]: DONE with /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/reports/sky130hd/cryo//6_final_drc.rpt
+
+Using technology "sky130A", version 1.0.471-0-g97d0844
+magic -rcfile /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/../../../common/drc-lvs-check/sky130A/sky130A.magicrc -noconsole -dnull /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/../../../common/drc-lvs-check/magic_commands.tcl < /dev/null
+
+Magic 8.3 revision 464 - Compiled on Sat Mar  9 23:18:29 UTC 2024.
+Starting magic under Tcl interpreter
+Using the terminal as the console.
+Using NULL graphics device.
+Processing system .magicrc file
+Sourcing design .magicrc for technology sky130A ...
+2 Magic internal units = 1 Lambda
+Input style sky130(): scaleFactor=2, multiplier=2
+The following types are not handled by extraction and will be treated as non-electrical types:
+    ubm 
+Scaled tech values by 2 / 1 to match internal grid scaling
+Loading sky130A Device Generator Menu ...
+Loading "/home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/../../../common/drc-lvs-check/magic_commands.tcl" from command line.
+Warning: Calma reading is not undoable!  I hope that's OK.
+Library written using GDS-II Release 6.0
+Library name: LIB
+Reading "VIA_L1M1_PR_MR".
+Saving contents of cell VIA_L1M1_PR_MR
+Reading "VIA_M1M2_PR".
+Saving contents of cell VIA_M1M2_PR
+Reading "VIA_via2_3_1600_480_1_5_320_320".
+Saving contents of cell VIA_via2_3_1600_480_1_5_320_320
+Reading "VIA_via3_4_1600_480_1_4_400_400".
+Saving contents of cell VIA_via3_4_1600_480_1_4_400_400
+Reading "VIA_via4_5_1600_480_1_4_400_400".
+Saving contents of cell VIA_via4_5_1600_480_1_4_400_400
+Reading "VIA_via2_3_4200_480_1_13_320_320".
+Saving contents of cell VIA_via2_3_4200_480_1_13_320_320
+Reading "VIA_via3_4_4200_480_1_10_400_400".
+Saving contents of cell VIA_via3_4_4200_480_1_10_400_400
+Reading "VIA_via4_5_4200_480_1_10_400_400".
+Saving contents of cell VIA_via4_5_4200_480_1_10_400_400
+Reading "VIA_via5_6_1600_1600_1_1_1600_1600".
+Saving contents of cell VIA_via5_6_1600_1600_1_1_1600_1600
+Reading "VIA_via5_6_1600_4200_2_1_1600_1600".
+Saving contents of cell VIA_via5_6_1600_4200_2_1_1600_1600
+Reading "VIA_via5_6_4200_1600_1_2_1600_1600".
+Saving contents of cell VIA_via5_6_4200_1600_1_2_1600_1600
+Reading "VIA_via5_6_4200_4200_2_2_1600_1600".
+Saving contents of cell VIA_via5_6_4200_4200_2_2_1600_1600
+Reading "sky130_fd_sc_hd__nand2_1".
+Reading "sky130_fd_sc_hd__dfxtp_1".
+Reading "sky130_fd_sc_hd__inv_1".
+Reading "sky130_fd_sc_hd__tapvpwrvgnd_1".
+Reading "sky130_fd_sc_hd__decap_4".
+Reading "sky130_fd_sc_hd__fill_1".
+Reading "sky130_fd_sc_hd__fill_4".
+Reading "sky130_fd_sc_hd__fill_2".
+Reading "sky130_fd_sc_hd__fill_8".
+Reading "cryoInst".
+[INFO]: Loading cryoInst
+
+Loading DRC CIF style.
+No errors found.
+[INFO]: DONE with /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/reports/sky130hd/cryo//6_final_drc.rpt
+
+Using technology "sky130A", version 1.0.471-0-g97d0844
+make[1]: Leaving directory '/home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow'
+make[1]: Entering directory '/home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow'
+[INFO][FLOW] Using platform directory /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/../../../common/platforms/sky130hd
+mkdir -p /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/objects/sky130hd/cryo//netgen_lvs/spice /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/objects/sky130hd/cryo//netgen_lvs/ext
+python /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/util/openfasoc/cdl_parser.py -i /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/results/sky130hd/cryo//6_final.cdl -s /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/../../../common/platforms/sky130hd/cdl/sky130_fd_sc_hd.spice -o /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/objects/sky130hd/cryo//netgen_lvs/spice/cryoInst.spice
+/home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/../../../common/drc-lvs-check/run_lvspex.sh /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/results/sky130hd/cryo//6_final.gds cryoInst /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/reports/sky130hd/cryo//6_final_lvs.rpt
+
+Magic 8.3 revision 464 - Compiled on Sat Mar  9 23:18:29 UTC 2024.
+Starting magic under Tcl interpreter
+Using the terminal as the console.
+Using NULL graphics device.
+Processing system .magicrc file
+Sourcing design .magicrc for technology sky130A ...
+2 Magic internal units = 1 Lambda
+Input style sky130(): scaleFactor=2, multiplier=2
+The following types are not handled by extraction and will be treated as non-electrical types:
+    ubm 
+Scaled tech values by 2 / 1 to match internal grid scaling
+Loading sky130A Device Generator Menu ...
+Using technology "sky130A", version 1.0.471-0-g97d0844
+Warning: Calma reading is not undoable!  I hope that's OK.
+Library written using GDS-II Release 6.0
+Library name: LIB
+Reading "VIA_L1M1_PR_MR".
+Reading "VIA_M1M2_PR".
+Reading "VIA_via2_3_1600_480_1_5_320_320".
+Reading "VIA_via3_4_1600_480_1_4_400_400".
+Reading "VIA_via4_5_1600_480_1_4_400_400".
+Reading "VIA_via2_3_4200_480_1_13_320_320".
+Reading "VIA_via3_4_4200_480_1_10_400_400".
+Reading "VIA_via4_5_4200_480_1_10_400_400".
+Reading "VIA_via5_6_1600_1600_1_1_1600_1600".
+Reading "VIA_via5_6_1600_4200_2_1_1600_1600".
+Reading "VIA_via5_6_4200_1600_1_2_1600_1600".
+Reading "VIA_via5_6_4200_4200_2_2_1600_1600".
+Reading "sky130_fd_sc_hd__nand2_1".
+Reading "sky130_fd_sc_hd__dfxtp_1".
+Reading "sky130_fd_sc_hd__inv_1".
+Reading "sky130_fd_sc_hd__tapvpwrvgnd_1".
+Reading "sky130_fd_sc_hd__decap_4".
+Reading "sky130_fd_sc_hd__fill_1".
+Reading "sky130_fd_sc_hd__fill_4".
+Reading "sky130_fd_sc_hd__fill_2".
+Reading "sky130_fd_sc_hd__fill_8".
+Reading "cryoInst".
+Extracting VIA_via5_6_4200_4200_2_2_1600_1600 into VIA_via5_6_4200_4200_2_2_1600_1600.ext:
+Extracting VIA_via5_6_1600_4200_2_1_1600_1600 into VIA_via5_6_1600_4200_2_1_1600_1600.ext:
+Extracting VIA_via2_3_4200_480_1_13_320_320 into VIA_via2_3_4200_480_1_13_320_320.ext:
+Extracting VIA_via4_5_4200_480_1_10_400_400 into VIA_via4_5_4200_480_1_10_400_400.ext:
+Extracting VIA_via3_4_4200_480_1_10_400_400 into VIA_via3_4_4200_480_1_10_400_400.ext:
+Extracting sky130_fd_sc_hd__decap_4 into sky130_fd_sc_hd__decap_4.ext:
+sky130_fd_sc_hd__decap_4: 2 warnings
+Extracting sky130_fd_sc_hd__nand2_1 into sky130_fd_sc_hd__nand2_1.ext:
+Extracting sky130_fd_sc_hd__fill_4 into sky130_fd_sc_hd__fill_4.ext:
+Extracting sky130_fd_sc_hd__inv_1 into sky130_fd_sc_hd__inv_1.ext:
+Extracting sky130_fd_sc_hd__fill_1 into sky130_fd_sc_hd__fill_1.ext:
+Extracting sky130_fd_sc_hd__fill_2 into sky130_fd_sc_hd__fill_2.ext:
+Extracting VIA_L1M1_PR_MR into VIA_L1M1_PR_MR.ext:
+Extracting VIA_M1M2_PR into VIA_M1M2_PR.ext:
+Extracting sky130_fd_sc_hd__tapvpwrvgnd_1 into sky130_fd_sc_hd__tapvpwrvgnd_1.ext:
+Extracting VIA_via4_5_1600_480_1_4_400_400 into VIA_via4_5_1600_480_1_4_400_400.ext:
+Extracting VIA_via2_3_1600_480_1_5_320_320 into VIA_via2_3_1600_480_1_5_320_320.ext:
+Extracting VIA_via3_4_1600_480_1_4_400_400 into VIA_via3_4_1600_480_1_4_400_400.ext:
+Extracting sky130_fd_sc_hd__fill_8 into sky130_fd_sc_hd__fill_8.ext:
+Extracting sky130_fd_sc_hd__dfxtp_1 into sky130_fd_sc_hd__dfxtp_1.ext:
+Extracting VIA_via5_6_4200_1600_1_2_1600_1600 into VIA_via5_6_4200_1600_1_2_1600_1600.ext:
+Extracting VIA_via5_6_1600_1600_1_1_1600_1600 into VIA_via5_6_1600_1600_1_1_1600_1600.ext:
+Extracting cryoInst into cryoInst.ext:
+exttospice finished.
+Extracting VIA_via5_6_4200_4200_2_2_1600_1600 into VIA_via5_6_4200_4200_2_2_1600_1600.ext:
+Extracting VIA_via5_6_1600_4200_2_1_1600_1600 into VIA_via5_6_1600_4200_2_1_1600_1600.ext:
+Extracting VIA_via2_3_4200_480_1_13_320_320 into VIA_via2_3_4200_480_1_13_320_320.ext:
+Extracting VIA_via4_5_4200_480_1_10_400_400 into VIA_via4_5_4200_480_1_10_400_400.ext:
+Extracting VIA_via3_4_4200_480_1_10_400_400 into VIA_via3_4_4200_480_1_10_400_400.ext:
+Extracting sky130_fd_sc_hd__decap_4 into sky130_fd_sc_hd__decap_4.ext:
+sky130_fd_sc_hd__decap_4: 2 warnings
+Extracting sky130_fd_sc_hd__nand2_1 into sky130_fd_sc_hd__nand2_1.ext:
+Extracting sky130_fd_sc_hd__fill_4 into sky130_fd_sc_hd__fill_4.ext:
+Extracting sky130_fd_sc_hd__inv_1 into sky130_fd_sc_hd__inv_1.ext:
+Extracting sky130_fd_sc_hd__fill_1 into sky130_fd_sc_hd__fill_1.ext:
+Extracting sky130_fd_sc_hd__fill_2 into sky130_fd_sc_hd__fill_2.ext:
+Extracting VIA_L1M1_PR_MR into VIA_L1M1_PR_MR.ext:
+Extracting VIA_M1M2_PR into VIA_M1M2_PR.ext:
+Extracting sky130_fd_sc_hd__tapvpwrvgnd_1 into sky130_fd_sc_hd__tapvpwrvgnd_1.ext:
+Extracting VIA_via4_5_1600_480_1_4_400_400 into VIA_via4_5_1600_480_1_4_400_400.ext:
+Extracting VIA_via2_3_1600_480_1_5_320_320 into VIA_via2_3_1600_480_1_5_320_320.ext:
+Extracting VIA_via3_4_1600_480_1_4_400_400 into VIA_via3_4_1600_480_1_4_400_400.ext:
+Extracting sky130_fd_sc_hd__fill_8 into sky130_fd_sc_hd__fill_8.ext:
+Extracting sky130_fd_sc_hd__dfxtp_1 into sky130_fd_sc_hd__dfxtp_1.ext:
+Extracting VIA_via5_6_4200_1600_1_2_1600_1600 into VIA_via5_6_4200_1600_1_2_1600_1600.ext:
+Extracting VIA_via5_6_1600_1600_1_1_1600_1600 into VIA_via5_6_1600_1600_1_1_1600_1600.ext:
+Extracting cryoInst into cryoInst.ext:
+exttospice finished.
+Extracting VIA_via5_6_4200_4200_2_2_1600_1600 into VIA_via5_6_4200_4200_2_2_1600_1600.ext:
+Extracting VIA_via5_6_1600_4200_2_1_1600_1600 into VIA_via5_6_1600_4200_2_1_1600_1600.ext:
+Extracting VIA_via2_3_4200_480_1_13_320_320 into VIA_via2_3_4200_480_1_13_320_320.ext:
+Extracting VIA_via4_5_4200_480_1_10_400_400 into VIA_via4_5_4200_480_1_10_400_400.ext:
+Extracting VIA_via3_4_4200_480_1_10_400_400 into VIA_via3_4_4200_480_1_10_400_400.ext:
+Extracting sky130_fd_sc_hd__decap_4 into sky130_fd_sc_hd__decap_4.ext:
+sky130_fd_sc_hd__decap_4: 2 warnings
+Extracting sky130_fd_sc_hd__nand2_1 into sky130_fd_sc_hd__nand2_1.ext:
+Extracting sky130_fd_sc_hd__fill_4 into sky130_fd_sc_hd__fill_4.ext:
+Extracting sky130_fd_sc_hd__inv_1 into sky130_fd_sc_hd__inv_1.ext:
+Extracting sky130_fd_sc_hd__fill_1 into sky130_fd_sc_hd__fill_1.ext:
+Extracting sky130_fd_sc_hd__fill_2 into sky130_fd_sc_hd__fill_2.ext:
+Extracting VIA_L1M1_PR_MR into VIA_L1M1_PR_MR.ext:
+Extracting VIA_M1M2_PR into VIA_M1M2_PR.ext:
+Extracting sky130_fd_sc_hd__tapvpwrvgnd_1 into sky130_fd_sc_hd__tapvpwrvgnd_1.ext:
+Extracting VIA_via4_5_1600_480_1_4_400_400 into VIA_via4_5_1600_480_1_4_400_400.ext:
+Extracting VIA_via2_3_1600_480_1_5_320_320 into VIA_via2_3_1600_480_1_5_320_320.ext:
+Extracting VIA_via3_4_1600_480_1_4_400_400 into VIA_via3_4_1600_480_1_4_400_400.ext:
+Extracting sky130_fd_sc_hd__fill_8 into sky130_fd_sc_hd__fill_8.ext:
+Extracting sky130_fd_sc_hd__dfxtp_1 into sky130_fd_sc_hd__dfxtp_1.ext:
+Extracting VIA_via5_6_4200_1600_1_2_1600_1600 into VIA_via5_6_4200_1600_1_2_1600_1600.ext:
+Extracting VIA_via5_6_1600_1600_1_1_1600_1600 into VIA_via5_6_1600_1600_1_1_1600_1600.ext:
+Extracting cryoInst into cryoInst.ext:
+exttospice finished.
+usage: process_extracted_pins.py [-h] --lvsmag LVSMAG [--toplevel TOPLEVEL]
+                                 [--generator GENERATOR]
+
+remove the proxy pins from extracted HEADER cell definition
+
+options:
+  -h, --help            show this help message and exit
+  --lvsmag LVSMAG, -l LVSMAG
+                        extracted spice file from GDS (i.e. extract
+                        6_final.gds)
+  --toplevel TOPLEVEL, -t TOPLEVEL
+                        name of toplevel module to look for
+  --generator GENERATOR, -g GENERATOR
+                        name of generator i.e. "temp-sense-gen" for tempsense.
+                        If not specified this script does nothing
+Netgen 1.5.272 compiled on Tue Mar  5 23:16:53 UTC 2024
+Warning: netgen command 'format' use fully-qualified name '::netgen::format'
+Warning: netgen command 'global' use fully-qualified name '::netgen::global'
+Reading netlist file /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/objects/sky130hd/cryo//netgen_lvs/spice/cryoInst_lvsmag.spice
+Call to undefined subcircuit sky130_fd_pr__nfet_01v8
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_pr__special_nfet_01v8
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_pr__pfet_01v8_hvt
+Creating placeholder cell definition.
+Reading netlist file /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/objects/sky130hd/cryo//netgen_lvs/spice/cryoInst.spice
+Call to undefined subcircuit sky130_fd_pr__nfet_01v8
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_pr__pfet_01v8_hvt
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_pr__diode_pw2nd
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_sc_hd__nand2_2
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_sc_hd__nor2_2
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_pr__nfet_03v3_nvt
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_pr__nfet_01v8_lvt
+Creating placeholder cell definition.
+
+Reading setup file /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/../../../common/drc-lvs-check/sky130A/sky130A_setup.tcl
+
+Model sky130_fd_pr__res_generic_po pin end_a == end_b
+No property mult found for device sky130_fd_pr__res_generic_po
+Model sky130_fd_pr__nfet_01v8 pin 1 == 3
+No property mult found for device sky130_fd_pr__nfet_01v8
+No property sa found for device sky130_fd_pr__nfet_01v8
+No property sb found for device sky130_fd_pr__nfet_01v8
+No property sd found for device sky130_fd_pr__nfet_01v8
+No property nf found for device sky130_fd_pr__nfet_01v8
+No property nrd found for device sky130_fd_pr__nfet_01v8
+No property nrs found for device sky130_fd_pr__nfet_01v8
+No property area found for device sky130_fd_pr__nfet_01v8
+No property perim found for device sky130_fd_pr__nfet_01v8
+No property topography found for device sky130_fd_pr__nfet_01v8
+Model sky130_fd_pr__nfet_01v8 pin 1 == 3
+No property as found for device sky130_fd_pr__nfet_01v8
+No property ad found for device sky130_fd_pr__nfet_01v8
+No property ps found for device sky130_fd_pr__nfet_01v8
+No property pd found for device sky130_fd_pr__nfet_01v8
+No property nf found for device sky130_fd_pr__nfet_01v8
+No property nrd found for device sky130_fd_pr__nfet_01v8
+No property nrs found for device sky130_fd_pr__nfet_01v8
+No property area found for device sky130_fd_pr__nfet_01v8
+No property perim found for device sky130_fd_pr__nfet_01v8
+No property topography found for device sky130_fd_pr__nfet_01v8
+Model sky130_fd_pr__nfet_01v8_lvt pin 1 == 3
+No property as found for device sky130_fd_pr__nfet_01v8_lvt
+No property ad found for device sky130_fd_pr__nfet_01v8_lvt
+No property ps found for device sky130_fd_pr__nfet_01v8_lvt
+No property pd found for device sky130_fd_pr__nfet_01v8_lvt
+No property nf found for device sky130_fd_pr__nfet_01v8_lvt
+No property nrd found for device sky130_fd_pr__nfet_01v8_lvt
+No property nrs found for device sky130_fd_pr__nfet_01v8_lvt
+No property area found for device sky130_fd_pr__nfet_01v8_lvt
+No property perim found for device sky130_fd_pr__nfet_01v8_lvt
+No property topography found for device sky130_fd_pr__nfet_01v8_lvt
+Model sky130_fd_pr__nfet_03v3_nvt pin 1 == 3
+No property mult found for device sky130_fd_pr__nfet_03v3_nvt
+No property sa found for device sky130_fd_pr__nfet_03v3_nvt
+No property sb found for device sky130_fd_pr__nfet_03v3_nvt
+No property sd found for device sky130_fd_pr__nfet_03v3_nvt
+No property nf found for device sky130_fd_pr__nfet_03v3_nvt
+No property nrd found for device sky130_fd_pr__nfet_03v3_nvt
+No property nrs found for device sky130_fd_pr__nfet_03v3_nvt
+No property area found for device sky130_fd_pr__nfet_03v3_nvt
+No property perim found for device sky130_fd_pr__nfet_03v3_nvt
+No property topography found for device sky130_fd_pr__nfet_03v3_nvt
+Model sky130_fd_pr__pfet_01v8_hvt pin 1 == 3
+No property mult found for device sky130_fd_pr__pfet_01v8_hvt
+No property sa found for device sky130_fd_pr__pfet_01v8_hvt
+No property sb found for device sky130_fd_pr__pfet_01v8_hvt
+No property sd found for device sky130_fd_pr__pfet_01v8_hvt
+No property nf found for device sky130_fd_pr__pfet_01v8_hvt
+No property nrd found for device sky130_fd_pr__pfet_01v8_hvt
+No property nrs found for device sky130_fd_pr__pfet_01v8_hvt
+No property area found for device sky130_fd_pr__pfet_01v8_hvt
+No property perim found for device sky130_fd_pr__pfet_01v8_hvt
+No property topography found for device sky130_fd_pr__pfet_01v8_hvt
+Model sky130_fd_pr__pfet_01v8_hvt pin 1 == 3
+No property as found for device sky130_fd_pr__pfet_01v8_hvt
+No property ad found for device sky130_fd_pr__pfet_01v8_hvt
+No property ps found for device sky130_fd_pr__pfet_01v8_hvt
+No property pd found for device sky130_fd_pr__pfet_01v8_hvt
+No property nf found for device sky130_fd_pr__pfet_01v8_hvt
+No property nrd found for device sky130_fd_pr__pfet_01v8_hvt
+No property nrs found for device sky130_fd_pr__pfet_01v8_hvt
+No property area found for device sky130_fd_pr__pfet_01v8_hvt
+No property perim found for device sky130_fd_pr__pfet_01v8_hvt
+No property topography found for device sky130_fd_pr__pfet_01v8_hvt
+Model sky130_fd_pr__special_nfet_01v8 pin 1 == 3
+No property mult found for device sky130_fd_pr__special_nfet_01v8
+No property sa found for device sky130_fd_pr__special_nfet_01v8
+No property sb found for device sky130_fd_pr__special_nfet_01v8
+No property sd found for device sky130_fd_pr__special_nfet_01v8
+No property nf found for device sky130_fd_pr__special_nfet_01v8
+No property nrd found for device sky130_fd_pr__special_nfet_01v8
+No property nrs found for device sky130_fd_pr__special_nfet_01v8
+No property area found for device sky130_fd_pr__special_nfet_01v8
+No property perim found for device sky130_fd_pr__special_nfet_01v8
+No property topography found for device sky130_fd_pr__special_nfet_01v8
+Comparison output logged to file /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/reports/sky130hd/cryo//6_final_lvs.rpt
+Logging to file "/home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/reports/sky130hd/cryo//6_final_lvs.rpt" enabled
+Circuit sky130_fd_pr__nfet_01v8 contains no devices.
+Circuit sky130_fd_pr__pfet_01v8_hvt contains no devices.
+
+Contents of circuit 1:  Circuit: 'sky130_fd_sc_hd__dfxtp_1'
+Circuit sky130_fd_sc_hd__dfxtp_1 contains 24 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances:   8
+  Class: sky130_fd_pr__pfet_01v8_hvt instances:  12
+  Class: sky130_fd_pr__special_nfet_01v8 instances:   4
+Circuit contains 18 nets.
+Contents of circuit 2:  Circuit: 'sky130_fd_sc_hd__dfxtp_1'
+Circuit sky130_fd_sc_hd__dfxtp_1 contains 24 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances:  12
+  Class: sky130_fd_pr__pfet_01v8_hvt instances:  12
+Circuit contains 18 nets.
+
+Circuit 1 contains 24 devices, Circuit 2 contains 24 devices.
+Circuit 1 contains 18 nets,    Circuit 2 contains 18 nets.
+
+  Flattening non-matched subcircuits sky130_fd_sc_hd__dfxtp_1 sky130_fd_sc_hd__dfxtp_1
+
+Flattening instances of sky130_fd_sc_hd__dfxtp_1 in file /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/objects/sky130hd/cryo//netgen_lvs/spice/cryoInst_lvsmag.spice
+Flattening instances of sky130_fd_sc_hd__dfxtp_1 in file /home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/objects/sky130hd/cryo//netgen_lvs/spice/cryoInst.spice
+
+Contents of circuit 1:  Circuit: 'sky130_fd_sc_hd__inv_1'
+Circuit sky130_fd_sc_hd__inv_1 contains 2 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances:   1
+  Class: sky130_fd_pr__pfet_01v8_hvt instances:   1
+Circuit contains 6 nets.
+Contents of circuit 2:  Circuit: 'sky130_fd_sc_hd__inv_1'
+Circuit sky130_fd_sc_hd__inv_1 contains 2 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances:   1
+  Class: sky130_fd_pr__pfet_01v8_hvt instances:   1
+Circuit contains 6 nets.
+
+Circuit 1 contains 2 devices, Circuit 2 contains 2 devices.
+Circuit 1 contains 6 nets,    Circuit 2 contains 6 nets.
+
+
+Contents of circuit 1:  Circuit: 'sky130_fd_sc_hd__decap_4'
+Circuit sky130_fd_sc_hd__decap_4 contains 2 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances:   1
+  Class: sky130_fd_pr__pfet_01v8_hvt instances:   1
+Circuit contains 4 nets.
+Contents of circuit 2:  Circuit: 'sky130_fd_sc_hd__decap_4'
+Circuit sky130_fd_sc_hd__decap_4 contains 2 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances:   1
+  Class: sky130_fd_pr__pfet_01v8_hvt instances:   1
+Circuit contains 4 nets.
+
+Circuit 1 contains 2 devices, Circuit 2 contains 2 devices.
+Circuit 1 contains 4 nets,    Circuit 2 contains 4 nets.
+
+
+Contents of circuit 1:  Circuit: 'sky130_fd_sc_hd__nand2_1'
+Circuit sky130_fd_sc_hd__nand2_1 contains 4 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances:   2
+  Class: sky130_fd_pr__pfet_01v8_hvt instances:   2
+Circuit contains 8 nets.
+Contents of circuit 2:  Circuit: 'sky130_fd_sc_hd__nand2_1'
+Circuit sky130_fd_sc_hd__nand2_1 contains 4 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances:   2
+  Class: sky130_fd_pr__pfet_01v8_hvt instances:   2
+Circuit contains 8 nets.
+
+Circuit 1 contains 4 devices, Circuit 2 contains 4 devices.
+Circuit 1 contains 8 nets,    Circuit 2 contains 8 nets.
+
+
+Contents of circuit 1:  Circuit: 'cryoInst'
+Circuit cryoInst contains 420 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances:  80
+  Class: sky130_fd_sc_hd__inv_1 instances: 155
+  Class: sky130_fd_sc_hd__decap_4 instances:  24
+  Class: sky130_fd_sc_hd__nand2_1 instances:   1
+  Class: sky130_fd_pr__pfet_01v8_hvt instances: 120
+  Class: sky130_fd_pr__special_nfet_01v8 instances:  40
+Circuit contains 279 nets.
+Contents of circuit 2:  Circuit: 'cryoInst'
+Circuit cryoInst contains 420 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances: 120
+  Class: sky130_fd_sc_hd__inv_1 instances: 155
+  Class: sky130_fd_sc_hd__decap_4 instances:  24
+  Class: sky130_fd_sc_hd__nand2_1 instances:   1
+  Class: sky130_fd_pr__pfet_01v8_hvt instances: 120
+Circuit contains 279 nets.
+
+Circuit was modified by parallel/series device merging.
+New circuit summary:
+
+Contents of circuit 1:  Circuit: 'cryoInst'
+Circuit cryoInst contains 397 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances:  80
+  Class: sky130_fd_sc_hd__inv_1 instances: 155
+  Class: sky130_fd_sc_hd__decap_4 instances:   1
+  Class: sky130_fd_sc_hd__nand2_1 instances:   1
+  Class: sky130_fd_pr__pfet_01v8_hvt instances: 120
+  Class: sky130_fd_pr__special_nfet_01v8 instances:  40
+Circuit contains 279 nets.
+Contents of circuit 2:  Circuit: 'cryoInst'
+Circuit cryoInst contains 397 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances: 120
+  Class: sky130_fd_sc_hd__inv_1 instances: 155
+  Class: sky130_fd_sc_hd__decap_4 instances:   1
+  Class: sky130_fd_sc_hd__nand2_1 instances:   1
+  Class: sky130_fd_pr__pfet_01v8_hvt instances: 120
+Circuit contains 279 nets.
+
+Circuit 1 contains 397 devices, Circuit 2 contains 397 devices.
+Circuit 1 contains 279 nets,    Circuit 2 contains 279 nets.
+
+
+Final result: 
+Netlists do not match.
+Logging to file "/home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow/reports/sky130hd/cryo//6_final_lvs.rpt" disabled
+LVS Done.
+make[1]: Leaving directory '/home/chetanya/OpenFASOC/openfasoc/generators/cryo-gen/flow'
+total 35704
+-rw-r--r-- 1 root root   21208 Apr 15 14:51 1_1_yosys.v
+-rw-r--r-- 1 root root       0 Apr 15 14:51 1_synth.sdc
+-rw-r--r-- 1 root root   21208 Apr 15 14:51 1_synth.v
+-rw-r--r-- 1 root root   23315 Apr 15 14:51 2_1_floorplan.def
+-rw-r--r-- 1 root root 1784416 Apr 15 14:51 2_1_floorplan.odb
+-rw-r--r-- 1 root root 1785656 Apr 15 14:51 2_2_floorplan_io.odb
+-rw-r--r-- 1 root root 1785656 Apr 15 14:51 2_3_floorplan_tdms.odb
+-rw-r--r-- 1 root root 1785656 Apr 15 14:51 2_4_floorplan_macro.odb
+-rw-r--r-- 1 root root 1805889 Apr 15 14:51 2_5_floorplan_tapcell.odb
+-rw-r--r-- 1 root root 1834388 Apr 15 14:51 2_6_floorplan_pdn.odb
+-rw-r--r-- 1 root root   56537 Apr 15 14:51 2_floorplan.def
+-rw-r--r-- 1 root root 1834388 Apr 15 14:51 2_floorplan.odb
+-rw-r--r-- 1 root root     764 Apr 15 14:51 2_floorplan.sdc
+-rw-r--r-- 1 root root   60353 Apr 15 14:51 2_floorplan_ro.def
+-rw-r--r-- 1 root root 1833196 Apr 15 14:51 2_floorplan_ro.odb
+-rw-r--r-- 1 root root 1842460 Apr 15 14:51 3_1_place_gp.odb
+-rw-r--r-- 1 root root 1842460 Apr 15 14:51 3_5_place_dp.odb
+-rw-r--r-- 1 root root 1842460 Apr 15 14:51 3_place.odb
+-rw-r--r-- 1 root root     764 Apr 15 14:51 3_place.sdc
+-rw-r--r-- 1 root root 1842460 Apr 15 14:51 4_1_cts.odb
+-rw-r--r-- 1 root root 1949040 Apr 15 14:51 4_2_cts_fillcell.odb
+-rw-r--r-- 1 root root 1949040 Apr 15 14:51 4_cts.odb
+-rw-r--r-- 1 root root     764 Apr 15 14:51 4_cts.sdc
+-rw-r--r-- 1 root root 1964240 Apr 15 14:51 5_1_grt.odb
+-rw-r--r-- 1 root root 2019021 Apr 15 14:51 5_2_route.odb
+-rw-r--r-- 1 root root 2019021 Apr 15 14:51 5_route.odb
+-rw-r--r-- 1 root root     764 Apr 15 14:51 5_route.sdc
+-rw-r--r-- 1 root root 2019021 Apr 15 14:51 6_1_fill.odb
+-rw-r--r-- 1 root root     764 Apr 15 14:51 6_1_fill.sdc
+-rw-r--r-- 1 root root  147602 Apr 15 14:51 6_1_merged.gds
+-rw-r--r-- 1 root root   18313 Apr 15 14:52 6_final.cdl
+-rw-r--r-- 1 root root  129126 Apr 15 14:51 6_final.def
+-rw-r--r-- 1 root root  147602 Apr 15 14:51 6_final.gds
+-rw-r--r-- 1 root root 2019021 Apr 15 14:51 6_final.odb
+-rw-r--r-- 1 root root     764 Apr 15 14:51 6_final.sdc
+-rw-r--r-- 1 root root   55245 Apr 15 14:51 6_final.spef
+-rw-r--r-- 1 root root   41632 Apr 15 14:51 6_final.v
+-rw-r--r-- 1 root root   15976 Apr 15 14:51 route.guide
+#----------------------------------------------------------------------
+# Parsing command line arguments...
+#----------------------------------------------------------------------
+['tools/cryo-gen.py', '--specfile', 'test.json', '--outputDir', './work', '--platform', 'sky130hd', '--mode', 'macro', '--ninv', '144', '--prepex']
+Loading specfile...
+#----------------------------------------------------------------------
+# Cleaning the workspace...
+#----------------------------------------------------------------------
+Loading platform_config file...
+
+PDK_ROOT value: /usr/bin/miniconda3/share/pdk/
+target number of inverters: 144
+#----------------------------------------------------------------------
+# Verilog Generation
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
+# Verilog Generated
+#----------------------------------------------------------------------
+
+#----------------------------------------------------------------------
+# Run Synthesis and APR
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
+# Place and Route finished
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
+# DRC finished
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
+# LVS finished
+#----------------------------------------------------------------------
+genDir + args.outputDir: tools/.././work
+flowDir: tools/../flow/
+args.platform: sky130hd
+designName: cryoInst
+#----------------------------------------------------------------------
+# Macro Generated
+#----------------------------------------------------------------------
+
+Exiting tool....
