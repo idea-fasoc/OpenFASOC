@@ -13,7 +13,7 @@ from glayout.components.diff_pair import diff_pair
 from glayout.primitives.fet import  nmos, pmos
 from glayout.components.opamp import opamp
 
-from run_glayout_drc import place_component
+from run_glayout_drc import place_component, setup_pdk_dir
 
 # ###########################################################################################################
 # ###########################################################################################################
@@ -106,6 +106,7 @@ cdl_path = './results/sky130hd/glayout/6_final.cdl'
 report_path = './reports/sky130hd/glayout/6_final_lvs.rpt'
 makefile_script = './Makefile'
 
+setup_pdk_dir('sky130')
 ## PMOS
 mynet, comp = get_gds_netlist('pmos_test', pmos, sky130, gds_path)
 

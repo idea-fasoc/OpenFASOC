@@ -27,6 +27,7 @@ elif (args.pdk == 'gf180'):
 else:
     print('Invalid PDK, continuing with sky130')
     pdk = sky130
+    args.pdk = 'sky130'
     
 ##### SETUP #####
 
@@ -53,11 +54,11 @@ components = [
     ("mimcap_test", mimcap.mimcap),
     ("via_stack_test", via.via_stack, 'poly', 'met1'),
     ("via_array_test", via.via_array, 'poly', 'met1', (2.0, 2.5)),
-    ("ttp_test", two_transistor_place.two_transistor_place, 'aba bab aba', (fet.nmos, {"pdk": pdk}), (fet.nmos, {"pdk": pdk})),
+    ("ttp_test", two_transistor_place.two_transistor_place, 'aba bab aba', (fet.nmos, {"pdk": pdk}), (fet.pmos, {"pdk": pdk})),
     ("diff_pair_test", diff_pair.diff_pair),
     ("opamp_test", opamp.opamp)
 ]
 
-run_drc_wrapper(pdk, components)
+run_drc_wrapper(pdk, components, args.pdk)
 
 sys.exit(0)
