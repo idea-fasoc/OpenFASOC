@@ -43,45 +43,7 @@ def eval_component(comp_to_run: Component, pdk_str: str, clean: int):
         os.remove(gds_path)
     return error_list
 
-def setup_pdk_dir(pdk_str: str):
-    if pdk_str == 'sky130':
-        sky130_path = Path(str(os.getenv('COMMON_VERIF_DIR')).replace("\\", "")) / "sky130A"
-        print(sky130_path.absolute())
-        pdk_root = '/usr/bin/miniconda3/share/pdk'
-        
-        if not sky130_path.exists():
-            print(f"Sky130A directory not found at {sky130_path}")
-            os.mkdir(sky130_path)
-            
-        source_file = '/usr/bin/miniconda3/share/pdk/sky130A/libs.tech/magic/sky130A.magicrc'
-        shutil.copy2(source_file, sky130_path)
-        if os.path.exists(source_file):
-            print(f'successfully copied sky130A.magicrc')
-        
-        source_file = '/usr/bin/miniconda3/share/pdk/sky130A/libs.tech/netgen/sky130A_setup.tcl'
-        shutil.copy2(source_file, sky130_path)
-        if os.path.exists(source_file):
-            print(f'successfully copied sky130A_setup.tcl')
-                
-    elif pdk_str == 'gf180':
-        gf180_path = Path(str(os.getenv('COMMON_VERIF_DIR')).replace("\\", "")) / "gf180mcuC"
-        pdk_root = '/usr/bin/miniconda3/share/pdk'
-        
-        if not gf180_path.exists():
-            print(f"gf180mcuC directory not found at {gf180_path}")
-            os.mkdir(gf180_path)
-            
-        source_file = '/usr/bin/miniconda3/share/pdk/gf180mcuC/libs.tech/magic/gf180mcuC.magicrc'
-        shutil.copy2(source_file, gf180_path)
-        if os.path.exists(source_file):
-            print(f'successfully copied gf180mcuC.magicrc')
-        
-        source_file = '/usr/bin/miniconda3/share/pdk/gf180mcuC/libs.tech/netgen/gf180mcuC_setup.tcl'
-        shutil.copy2(source_file, gf180_path)
-        if os.path.exists(source_file):
-            print(f'successfully copied gf180mcuC_setup.tcl')
-        
-        
+
 def run_glayout_drc(design_name: str, gds_file: str, pdk_str: str) -> list:
     """sets up the magicDRC script found in the drc-lvs-check directory and 
     runs it on the passed gds file. It then checks the output file for errors
@@ -107,12 +69,10 @@ def run_glayout_drc(design_name: str, gds_file: str, pdk_str: str) -> list:
     f1 = os.path.exists(path_magicrc)
     f2 = os.path.exists(path_tech)
     if not f1 or not f2:
-        setup_pdk_dir(pdk_str)
+        print(f"Error in setting up the PDK directory for {pdk_str}")
+        sys.exit(1)
     
-    if pdk_str == 'sky130':
-        cmd = 'bash -c "../../common/drc-lvs-check/run_drc.sh"'
-    elif pdk_str == 'gf180':
-        cmd = 'bash -c "../../common/drc-lvs-check/run_drc_gf180.sh"'
+    cmd = f'bash -c "magic -rcfile {path_magicrc} -noconsole -dnull ../../common/drc-lvs-check/magic_commands.tcl < /dev/null"'
     subproc = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
     subproc.wait()
     

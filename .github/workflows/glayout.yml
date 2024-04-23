@@ -22,14 +22,10 @@ jobs:
                 du . -h
             - name: Checkout Repository
               uses: actions/checkout@v2 
-            
-            - name: Build Custom Image
-              run: |
-                cd $GITHUB_WORKSPACE/docker/conda
-                docker build -t latest-glayout -f ./Dockerfile .
+          
             - name: Test sky130 glayout DRC
               env:
-                  IMAGE_NAME: latest-glayout
+                  IMAGE_NAME: msaligane/openfasoc:stable
               run: |
                 cd $GITHUB_WORKSPACE
                 touch file_sky130.log
@@ -40,7 +36,8 @@ jobs:
                     bash -c "\
                         mkdir -p ./res/reports &&\
                         mkdir -p ./res/results &&\
-                        mkdir -p ./openfasoc/common/drc-lvs-check/sky130A &&\
+                        cd ./openfasoc/common/drc-lvs-check/ &&\
+                        chmod +x install_pdk_latest.sh && ./install_pdk_latest.sh && cd ../../../ &&\
                         cp ./.github/scripts/setup_glayout_ci.py ./openfasoc/generators/gdsfactory-gen/. &&\
                         pip3 install -r ./openfasoc/generators/gdsfactory-gen/glayout/requirements.txt &&\
                         pip3 install gdsfactory==7.7.0 &&\
@@ -52,7 +49,7 @@ jobs:
             
             - name: Test gf180 glayout DRC
               env:
-                  IMAGE_NAME: latest-glayout
+                  IMAGE_NAME: msaligane/openfasoc:stable
               run: |
                 cd $GITHUB_WORKSPACE
                 touch file_gf180.log
@@ -63,7 +60,8 @@ jobs:
                     bash -c "\
                         mkdir -p ./res/reports &&\
                         mkdir -p ./res/results &&\
-                        mkdir -p ./openfasoc/common/drc-lvs-check/gf180mcuC &&\
+                        cd ./openfasoc/common/drc-lvs-check/ &&\
+                        chmod +x install_pdk_latest.sh && ./install_pdk_latest.sh && cd ../../../ &&\
                         cp ./.github/scripts/setup_glayout_ci.py ./openfasoc/generators/gdsfactory-gen/. &&\
                         pip3 install -r ./openfasoc/generators/gdsfactory-gen/glayout/requirements.txt &&\
                         pip3 install gdsfactory==7.7.0 &&\
@@ -74,7 +72,7 @@ jobs:
                     if grep "\[ERROR\]" file_gf180.log; then exit 1; else exit 0; fi
             - name: Test sky130 glayout LVS
               env:
-                   IMAGE_NAME: latest-glayout
+                   IMAGE_NAME: msaligane/openfasoc:stable
               run: |
                 cd $GITHUB_WORKSPACE
                 touch file_sky130_lvs.log
@@ -83,12 +81,12 @@ jobs:
                     -w $PWD\
                     $IMAGE_NAME\
                     bash -c "\
-                        mkdir -p ./openfasoc/common/drc-lvs-check/sky130A &&\
+                        cd ./openfasoc/common/drc-lvs-check/ &&\
+                        chmod +x install_pdk_latest.sh && ./install_pdk_latest.sh && cd ../../../ &&\
                         cp ./.github/scripts/run_glayout_lvs.py ./openfasoc/generators/gdsfactory-gen/lvs_flow/. &&\
                         pip3 install -r ./openfasoc/generators/gdsfactory-gen/glayout/requirements.txt &&\
                         pip3 install gdsfactory==7.7.0 &&\
                         cd ./openfasoc/generators/gdsfactory-gen/lvs_flow &&\
-
                         python3 run_glayout_lvs.py
                     " && exit_code=$? | tee -a file_sky130_lvs.log
                     if [ $? -ne 0 ]; then exit 1; fi

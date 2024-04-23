@@ -1,6 +1,7 @@
 import os
 import pathlib
 import sys
+import conda
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', '.github', 'scripts'))
 from run_glayout_drc import run_drc_wrapper
 from gdsfactory.component import Component

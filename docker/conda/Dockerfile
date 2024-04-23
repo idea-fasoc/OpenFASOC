@@ -14,7 +14,6 @@ RUN conda update conda --all -y
 RUN conda install python=3.10 \
                     yosys \
                     open_pdks.sky130a \
-                    open_pdks.gf180mcuc \
                     magic \
                     netgen \
                     openroad \
@@ -28,7 +27,7 @@ RUN wget https://www.klayout.org/downloads/Ubuntu-22/klayout_0.28.12-1_amd64.deb
 RUN dpkg -i klayout_0.28.12-1_amd64.deb
 RUN strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5
 
-# COPY ./scripts /scripts
+COPY ./scripts /scripts
 
 RUN git clone http://git.code.sf.net/p/ngspice/ngspice && \
     cd ngspice && \
