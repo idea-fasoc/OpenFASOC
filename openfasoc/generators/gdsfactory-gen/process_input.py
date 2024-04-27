@@ -20,7 +20,7 @@ What would you like to do?"""
 			outputstream (io.IOBase): used to print outputs
 			inputstream (io.IOBase): saved for (optionally) reading in user input, also just provide a string
 			NOTE: if input stream not provided, str input must be provided
-			toplvlname (str): name of the toplevel component. in string only mode, you can input toplvl name using this arg
+			toplvlname (str): in string only mode, you can input toplvl name using this arg
 		"""
 		self.inputstream = inputstream
 		self.outputstream = outputstream
@@ -44,6 +44,7 @@ What would you like to do?"""
 	
 
 	def __backup(self):
+		"""Produce an exact copy of this class to revert after an exception"""
 		newobj = self.__class__
 		backup = newobj.__new__(newobj)
 		backup.inputstream = self.inputstream
@@ -53,11 +54,31 @@ What would you like to do?"""
 		backup.backup = None
 		return backup
 	
+	def print_help(self):
+		"""print help message to self.outputstream"""
+		syntaxes = list()
+		syntaxes.append("place an genidhere called/named compnamehere with paramshere")#place_syntax
+		syntaxes.append("route between/from port1 and/to port2 using routetype with paramshere")#route_syntax
+		syntaxes.append("move compname [by] (x,y)")# absolute move syntax
+		syntaxes.append("move compname [filler words] direction [filler words] reference_comp [by separation]")# relative move syntax
+		import_syntax = "import comp1, comp2 from mod1, and comp3 from some/path/mod.py"
+		import_syntax += "\n\tNOTE: imports from glayout only need component name"
+		import_syntax += "\n\tNOTE: if mod name is not specified, it is assumed to be the component name"
+		syntaxes.append(import_syntax) # import
+		syntaxes.append("create/define [a/an] param_type parameter called/named paramname")# parameter
+		syntaxes.append("create/define [a/an] var_type variable called/named varname =/equal valorexpr")#variable
+		syntaxes.append("save/dump [conversation/code] to pathtosaveto\n\tNOTE: save code is assumed if neither conversation nor code are specified")#
+		# print all
+		self.print_to_stream("\nBelow are valid sentences:")
+		for syntax in syntaxes:
+			self.print_to_stream(syntax)
+		self.print_to_stream()
+	
 	def save_to_disk(self, savecode: bool=True, savepath: Optional[Union[str,Path]]=None):
 		"""Save NLP results to disk, either save code or conversation responses.
 		Args:
 			savemode: bool, default to True==save code, false==save conversation responses
-			savepath: Optional (defaults to None), 
+			savepath: Optional (if None, defaults to ./), 
 			NOTE: None is the same as specifying the current directory "./"
 		"""
 		# figure out which save mode we are in
@@ -104,25 +125,7 @@ What would you like to do?"""
 			# parse user input
 			if mode_indicator[0]=="h":# help
 				saveresponse = False
-				syntaxes = list()
-				syntaxes.append("place an genidhere called/named compnamehere with paramshere")#place_syntax
-				syntaxes.append("route between/from port1 and/to port2 using routetype with paramshere")#route_syntax
-				syntaxes.append("move compname [by] (x,y)")# absolute move syntax
-				syntaxes.append("move compname [filler words] direction [filler words] reference_comp [by separation]")# relative move syntax
-				import_syntax = "import comp1, comp2 from mod1, and comp3 from some/path/mod.py"
-				import_syntax += "\n\tNOTE: imports from glayout only need component name"
-				import_syntax += "\n\tNOTE: if mod name is not specified, it is assumed to be the component name"
-				syntaxes.append(import_syntax) # import
-				syntaxes.append("create/define [a/an] param_type parameter called/named paramname")# parameter
-				syntaxes.append("create/define [a/an] var_type variable called/named varname =/equal valorexpr")#variable
-				syntaxes.append("save/dump [conversation/code] to pathtosaveto\n\tNOTE: save code is assumed if neither conversation nor code are specified")#
-				# print all
-				self.print_to_stream("\nBelow are valid sentences:")
-				#for i, syntax in enumerate(syntaxes):
-				for syntax in syntaxes:
-					#self.print_to_stream(str(i)+" : "+syntax)
-					self.print_to_stream(syntax)
-				self.print_to_stream()
+				self.print_help()
 			elif mode_indicator[0]=="i":# import
 				imports = sentence.replace("and",",").replace("import","").replace("from","").strip().split(",")
 				for modimport in imports:

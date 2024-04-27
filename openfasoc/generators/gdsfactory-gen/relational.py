@@ -10,7 +10,14 @@ import re
 import copy
 
 
+# used to automatically update supported actions whenever a class which inherits from GlayoutAction is added to this file
 def get_all_derived_classes(class_type, remove_parent: bool=True) -> list:
+    """Finds all derived classes of a particular parent type in the current python file\
+    Args:
+        class_type (any): the parent type you want derived classes for
+        remove_parent (bool): if True, do not include the parent class in the returned list
+    Returns list of derived classes
+    """
     all_classes = [classname for name, classname in globals().items() if isinstance(classname, type)]
     glayout_actions = [classname for classname in all_classes if issubclass(classname, GlayoutAction)]
     try:
@@ -134,7 +141,8 @@ class ParametersList:
         string_list = [w.replace("\"","").replace("'","").strip() for w in string_list]
         sentence = re.sub(string_pattern, "sTRingindICatorWOrd", sentence)
         # add a space after every symbol (except period and _)
-        rsymbols = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '`', '{', '|', '}', '~']
+        rsymbols = list(set(strings.punctuation) - {'.', '_'})
+        #rsymbols = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '`', '{', '|', '}', '~']
         parsedsentence = str()
         for char in sentence:
             if char in rsymbols:
@@ -490,8 +498,8 @@ class AbsoluteMove(GlayoutAction):
     @classmethod
     def test(cls):
         tests = list()
-        tests.append(["mirror",(4.2,3.5)])
-        tests.append(["ref",(9,5)])
+        tests.append(["mirror","top",(4.2,3.5)])
+        tests.append(["ref","top",(9,5)])
         for testinst in tests:
             print(AbsoluteMove(*testinst).get_code())
 
