@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 import nltk
 import re
 import copy
+import string
 
 
 # used to automatically update supported actions whenever a class which inherits from GlayoutAction is added to this file
@@ -141,7 +142,7 @@ class ParametersList:
         string_list = [w.replace("\"","").replace("'","").strip() for w in string_list]
         sentence = re.sub(string_pattern, "sTRingindICatorWOrd", sentence)
         # add a space after every symbol (except period and _)
-        rsymbols = list(set(strings.punctuation) - {'.', '_'})
+        rsymbols = list(set(string.punctuation) - {'.', '_'})
         #rsymbols = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '`', '{', '|', '}', '~']
         parsedsentence = str()
         for char in sentence:
@@ -484,7 +485,7 @@ class AbsoluteMove(GlayoutAction):
     #@validate_call
     def __init__(self, name_of_component_to_move: str, toplvl_name:str, absolute_move_info: tuple[float,float]):
         self.name = str(name_of_component_to_move)
-        self.move_distance = absolute_move_info
+        self.move_distance = eval(absolute_move_info) if isinstance(absolute_move_info,str) else absolute_move_info
         self.toplvl_name = toplvl_name
     
     def get_code(self) -> str:
