@@ -1,5 +1,5 @@
 import sys
-from os import path
+from os import path, rename
 # path to glayout
 sys.path.append(path.join(path.dirname(__file__), '../'))
 
@@ -318,7 +318,7 @@ def opamp_results_de_serializer(
 	results_dict["power_twostage"] = float(results[10])
 	return results_dict
 
-def get_small_parameter_list(test_mode = False, clarge=True) -> np.array:
+def get_small_parameter_list(test_mode = False, clarge=False) -> np.array:
 	"""creates small parameter list intended for brute force"""
 	if not clarge:
 		# all diffpairs to try
@@ -537,7 +537,7 @@ def process_netlist_subckt(netlist: Union[str,Path], sim_model: Literal["normal 
 				else:
 					headerstr = ".subckt opamp output vdd plus minus commonsourceibias outputibias diffpairibias gnd CSoutput"
 				subckt_lines[i] = headerstr+"\nCload output gnd " + str(cload) +"p\n"
-			if ("floating" in line) or (noparasitics and len(line) and line[0]=="C"):
+			if ("floating" in line) or (noparasitics and len(line) and (line[0]=="c" or line[0]=="r")):
 				subckt_lines[i] = "* "+ subckt_lines[i]
 			if noparasitics:
 				subckt_lines[i] = re.sub(r"ad=(\S*)","",subckt_lines[i])
@@ -577,7 +577,7 @@ def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: t
 	params = opamp_parameters_de_serializer(parameters_ele)
 	try:
 		opamp_v = sky130_add_opamp_labels(sky130_add_lvt_layer(opamp(sky130pdk, **params)))
-		opamp_v.name = "opamp"
+		opamp_v.name = "opamp"+str(index)
 		area = float(opamp_v.area())
 		# use temp dir
 		with TemporaryDirectory() as tmpdirname:
@@ -589,7 +589,7 @@ def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: t
 			#import pdb; pdb.set_trace()
 			with open("extract.bash.template","r") as extraction_script:
 				extractbash_template = extraction_script.read()
-				extractbash_template = extractbash_template.replace("@@PDK_ROOT",PDK_ROOT)
+				extractbash_template = extractbash_template.replace("@@PDK_ROOT",PDK_ROOT).replace("@@@PAROPT","noparasitics" if noparasitics else "na")
 			with open(str(tmpdirname)+"/extract.bash","w") as extraction_script:
 				extraction_script.write(extractbash_template)
 			#copyfile("extract.bash",str(tmpdirname)+"/extract.bash")
@@ -599,8 +599,10 @@ def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: t
 			Popen(["bash","extract.bash", tmp_gds_path, opamp_v.name],cwd=tmpdirname).wait()
 			print("Running simulation at temperature: " + str(temperature_info[0]) + "C")
 			process_spice_testbench(str(tmpdirname)+"/opamp_perf_eval.sp",temperature_info=temperature_info)
-			process_netlist_subckt(str(tmpdirname)+"/opamp_pex.spice", temperature_info[1], cload=cload, noparasitics=noparasitics)
+			process_netlist_subckt(str(tmpdirname)+"/opamp"+str(index)+"_pex.spice", temperature_info[1], cload=cload, noparasitics=noparasitics)
+			rename(str(tmpdirname)+"/opamp"+str(index)+"_pex.spice", str(tmpdirname)+"/opamp_pex.spice")
 			# run sim and store result
+			#import pdb;pdb.set_trace()
 			Popen(["ngspice","-b","opamp_perf_eval.sp"],cwd=tmpdirname).wait()
 			ac_file = str(tmpdirname)+"/result_ac.txt"
 			power_file = str(tmpdirname)+"/result_power.txt"
@@ -648,7 +650,8 @@ def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.
 	# pass pdk as global var to avoid pickling issues
 	global pdk
 	pdk = sky130pdk
-	with Pool(128) as cores:
+	#with Pool(128) as cores:
+	with Pool(11) as cores:
 		if saverawsims:
 			results = np.array(cores.starmap(__run_single_brtfrc, zip(count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info), repeat(cload), repeat(noparasitics), count(0))),np.float64)
 		else:

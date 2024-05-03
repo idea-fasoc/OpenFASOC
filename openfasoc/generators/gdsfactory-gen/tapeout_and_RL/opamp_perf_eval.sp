@@ -6,7 +6,7 @@
 **              of this file on line 6 as 25. DO NOT OVERRIDE.
 .temp {@@TEMP}
 
-.save all
+*.save all
 ** Define global parameters for altering
 .param bdp = 5u
 .param bcs = 5u
@@ -17,10 +17,10 @@ Vsupply VDD GND 1.8
 Vindc net1 GND 1
 V2 vin net1 AC 0.5
 V3 vip net1 AC -0.5
-.save i(vindc)
-.save i(vsupply)
-.save i(v2)
-.save i(v3)
+*.save i(vindc)
+*.save i(vsupply)
+*.save i(v2)
+*.save i(v3)
 
 * bias currents
 Ibiasdp VDD biasdpn  {bdp}
@@ -48,9 +48,9 @@ Ibiaso  VDD biason   {bo}
 XDUT vo VDD vip vin biascsn biason biasdpn GND csoutputnetNC opamp
 * parameter sweep
 ** Run initial analysis
-.save all
-.options savecurrents
-.ac dec 100 10 10G
+*.save all
+*.options savecurrents
+*.ac dec 10 10 10G
 .control
 ** Set initial values
 set filetype = ascii
@@ -98,7 +98,7 @@ let absolute_counter = 0
 while bias_cs le bias_cs_Max
     while bias_dp le bias_dp_Max
         while bias_o le bias_o_Max
-            reset
+            *reset
             alter ibiascs = $&bias_cs
             alter ibiasdp = $&bias_dp
             alter ibiaso  = $&bias_o
@@ -107,7 +107,8 @@ while bias_cs le bias_cs_Max
             echo "Diff: $&bias_dp"
             echo "Out:  $&bias_o"
         
-            run
+            save vo
+            ac dec 10 10 10G
             ** Find unity-gain bw point
             meas ac ugb_f when vdb(vo)=0
             ** Measure phase margin
@@ -174,6 +175,7 @@ let integ = integ(onoise_spectrum)
 let totalNoise = sqrt(integ[length(integ)-1])
 wrdata result_noise.txt totalNoise
 
+quit
 .endc
 .GLOBAL GND
 .GLOBAL VDD

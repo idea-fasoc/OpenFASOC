@@ -11,7 +11,7 @@ from glayout.pdk.util.snap_to_grid import component_snap_to_grid
 from glayout.routing.L_route import L_route
 
 
-@cell
+#@cell
 def tapring(
     pdk: MappedPDK,
     enclosed_rectangle=(2.0, 4.0),

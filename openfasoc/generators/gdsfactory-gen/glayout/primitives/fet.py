@@ -102,7 +102,7 @@ XMAIN   D G S B {model} l={{l}} w={{w}} m={{m}}"""
         }
     )
 
-@cell
+#@cell
 def multiplier(
     pdk: MappedPDK,
     sdlayer: str,
@@ -334,7 +334,7 @@ def __mult_array_macro(
     return component_snap_to_grid(rename_ports_by_orientation(final_arr))
 
 
-@cell
+#@cell
 def nmos(
     pdk,
     width: float = 3,
@@ -478,7 +478,7 @@ def nmos(
     return component
 
 
-@cell
+#@cell
 def pmos(
     pdk,
     width: float = 3,

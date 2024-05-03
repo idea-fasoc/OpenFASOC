@@ -9,7 +9,7 @@ from glayout.pdk.util.port_utils import rename_ports_by_orientation, rename_port
 from decimal import Decimal
 
 
-@cell
+#@cell
 def L_route(
 	pdk: MappedPDK,
 	edge1: Port,

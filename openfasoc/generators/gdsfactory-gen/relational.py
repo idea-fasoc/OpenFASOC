@@ -600,7 +600,7 @@ class Route(GlayoutAction):
         tests = list()
         tests.append([c_route,"name_of_port_1","name_of_port_2","cwidth of 4 width1=3"])
         for testinst in tests:
-            print(Route(*testinst).get_code("toplvlname"))
+            print(Route(*testinst).get_code())
 
 
 
