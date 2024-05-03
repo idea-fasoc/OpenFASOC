@@ -650,8 +650,7 @@ def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.
 	# pass pdk as global var to avoid pickling issues
 	global pdk
 	pdk = sky130pdk
-	#with Pool(128) as cores:
-	with Pool(11) as cores:
+	with Pool(128) as cores:
 		if saverawsims:
 			results = np.array(cores.starmap(__run_single_brtfrc, zip(count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info), repeat(cload), repeat(noparasitics), count(0))),np.float64)
 		else:
