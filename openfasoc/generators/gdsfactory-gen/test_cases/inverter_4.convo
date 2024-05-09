@@ -1,0 +1,4 @@
+inverter
+Place an pmos called pullup with width 120 and length 120
+Place a nmos called pulldown with width 120 and length 120
+Move pulldown below pullup with separation 0.4

@@ -141,6 +141,155 @@ What would you like to do?"""
     def __save_response(self, response: str):
         self.conversation_responses.append(response.strip())
 
+    def process_import_sentence(self, text_input: str) -> bool:
+        """Will update the internal code table using a sentence which follows the import syntax
+
+        Args:
+            text_input (str): user input text
+        
+        Returns:
+            bool: saveresponse
+        """
+        words = nltk.word_tokenize(text_input)
+        imports = text_input.replace("and", ",").replace("import", "").replace("from", "").strip().split(",")
+        for modimport in imports:
+            if modimport == "" or modimport.isspace():
+                continue
+            words = modimport.strip().split()
+            compname = words[0]
+            modpath = words[1] if len(words) > 1 else None
+            aliases = [compname]  # TODO implement comp aliasing
+            self.code.update_import_table(aliases, compname, modpath)
+        return True
+
+    def process_param_or_var_sentence(self, text_input: str) -> bool:
+        """Will update the internal code table using a sentence which follows the variable or parameter define syntax
+
+        Args:
+            text_input (str): user input text
+        
+        Returns:
+            bool: saveresponse
+        """
+        words = nltk.word_tokenize(text_input)
+        vartype = None
+        for word in words:
+            word = word.lower().strip()
+            if "int" in word:
+                vartype = int
+            elif "float" in word:
+                vartype = float
+            elif "bool" in word:
+                vartype = bool
+            elif "str" in word:
+                vartype = str
+            elif "tupl" in word:
+                vartype = tuple
+            if vartype is not None:
+                break
+        varname = None
+        for i, word in enumerate(words):
+            if word in ["called", "named"]:
+                varname = words[i + 1]
+                break
+        expr = None
+        eqpar = text_input.replace("equal", "=").strip().removesuffix(".")
+        expr = eqpar.split("=")[1] if "=" in eqpar else None
+        if "parameter" in words:
+            self.code.update_parameter_table(varname, vartype, None, None)
+        else:  # variable
+            self.code.update_variable_table(varname, expr)
+        return True
+
+    def process_place_sentence(self, text_input: str) -> bool:
+        """Will update the internal code table using a sentence which follows the place syntax
+
+        Args:
+            text_input (str): user input text
+        
+        Returns:
+            bool: saveresponse
+        """
+        words = nltk.word_tokenize(text_input)
+        if "configuration" in text_input:
+            raise NotImplementedError("configs not yet implemented")
+        genid = self.code.find_first_generator_id(text_input)
+        comp_name = None
+        for i, word in enumerate(words):
+            if word in ["called", "named"]:
+                comp_name = words[i + 1]
+                break
+        params = None
+        for i, word in enumerate(words):
+            if word == "with":
+                params = " ".join(words[i:])
+                break
+        self.code.update_place_table(genid, params, comp_name)
+        return True
+
+    def process_route_sentence(self, text_input: str) -> bool:
+        """Will update the internal code table using a sentence which follows the route syntax
+
+        Args:
+            text_input (str): user input text
+        
+        Returns:
+            bool: saveresponse
+        """
+        words = nltk.word_tokenize(text_input)
+        port1 = None
+        port2 = None
+        routetype = None
+        params = None
+        for i, word in enumerate(words):
+            if word in ["between", "from"]:
+                port1 = words[i + 1] if port1 is None else port1
+            elif word in ["from", "and"]:
+                port2 = words[i + 1] if port2 is None else port2
+            elif word in ["using", "a", "an"]:
+                routetype = words[i + 1]
+            elif word == "with":
+                params = " ".join(words[i:])
+        self.code.update_route_table(port1, port2, params, routetype)
+        return True
+
+    def process_move_sentence(self, text_input: str) -> bool:
+        """Will update the internal code table using a sentence which follows the route syntax
+
+        Args:
+            text_input (str): user input text
+        
+        Returns:
+            bool: saveresponse
+        """
+        #import pdb; pdb.set_trace()
+        words = nltk.word_tokenize(text_input)
+        direction = None
+        reference_comp = None
+        separation = None
+        # words[0] is "move" and words[1] is the component name
+        for i, word in enumerate(words[2:]):
+            # try to find direction until we see it then move on
+            if parse_direction(word) is not None and direction is None:
+                direction = word
+            # once you see a direction, look for a reference_comp
+            elif (word=="by" or word=="with") and reference_comp is None:
+                reference_comp = words[i-1]
+                separation = words[i+1]
+        # you may not find it in the loop, in which case reference_comp is the last word
+        if reference_comp is None:
+            reference_comp = words[-1]
+        # relative move
+        if direction is not None:
+            spacesepwords = text_input.split()
+            self.code.update_move_table("relative", words[1], reference_comp, direction, separation)
+        else:  # assume absolute move
+            words = nltk.word_tokenize(
+                text_input.replace("(", "").replace(")", "").replace("by", "").replace("with","")
+            )
+            self.code.update_move_table("absolute", words[1], words[2])
+        return True
+
     def process_next_input(self, text_input: str) -> bool:
         """main driver for doing things
         returns True if session is ongoing
@@ -157,106 +306,16 @@ What would you like to do?"""
                 saveresponse = False
                 self.print_help()
             elif mode_indicator[0] == "i":  # import
-                imports = (
-                    sentence.replace("and", ",")
-                    .replace("import", "")
-                    .replace("from", "")
-                    .strip()
-                    .split(",")
-                )
-                for modimport in imports:
-                    if modimport == "" or modimport.isspace():
-                        continue
-                    words = modimport.strip().split()
-                    compname = words[0]
-                    modpath = words[1] if len(words) > 1 else None
-                    aliases = [compname]  # TODO implement comp aliasing
-                    self.code.update_import_table(aliases, compname, modpath)
-            elif (
-                "create" in mode_indicator or "define" in mode_indicator
-            ):  # create/define a variable or param
-                vartype = None
-                for word in words:
-                    word = word.lower().strip()
-                    if "int" in word:
-                        vartype = int
-                    elif "float" in word:
-                        vartype = float
-                    elif "bool" in word:
-                        vartype = bool
-                    elif "str" in word:
-                        vartype = str
-                    elif "tupl" in word:
-                        vartype = tuple
-                    if vartype is not None:
-                        break
-                varname = None
-                for i, word in enumerate(words):
-                    if word in ["called", "named"]:
-                        varname = words[i + 1]
-                        break
-                expr = None
-                eqpar = sentence.replace("equal", "=").strip().removesuffix(".")
-                expr = eqpar.split("=")[1] if "=" in eqpar else None
-                if "parameter" in words:
-                    self.code.update_parameter_table(varname, vartype, None, None)
-                else:  # variable
-                    self.code.update_variable_table(varname, expr)
+                saveresponse = self.process_import_sentence(sentence)
+            elif "create" in mode_indicator or "define" in mode_indicator:  # create/define a variable or param
+                saveresponse = self.process_param_or_var_sentence(sentence)
             elif mode_indicator[0] == "p":  # place
-                if "configuration" in sentence:
-                    raise NotImplementedError("configs not yet implemented")
-                genid = self.code.find_first_generator_id(sentence)
-                comp_name = None
-                for i, word in enumerate(words):
-                    if word in ["called", "named"]:
-                        comp_name = words[i + 1]
-                        break
-                params = None
-                for i, word in enumerate(words):
-                    if word == "with":
-                        params = " ".join(words[i:])
-                        break
-                self.code.update_place_table(genid, params, comp_name)
+                saveresponse = self.process_place_sentence(sentence)
             elif mode_indicator[0] == "r":  # route
-                port1 = None
-                port2 = None
-                routetype = None
-                params = None
-                for i, word in enumerate(words):
-                    if word in ["between", "from"]:
-                        port1 = words[i + 1] if port1 is None else port1
-                    elif word in ["from", "and"]:
-                        port2 = words[i + 1] if port2 is None else port2
-                    elif word in ["using", "a", "an"]:
-                        routetype = words[i + 1]
-                    elif word == "with":
-                        params = " ".join(words[i:])
-                self.code.update_route_table(port1, port2, params, routetype)
+                saveresponse = self.process_route_sentence(sentence)
             elif mode_indicator[0] == "m":  # move
-                direction = None
-                for word in words:
-                    if parse_direction(word) is not None:
-                        direction = word
-                        break
-                if direction is not None:
-                    spacesepwords = sentence.split()
-                    relative_comp = (
-                        spacesepwords[-3]
-                        if spacesepwords[-2] == "by"
-                        else spacesepwords[-1]
-                    )
-                    separation = (
-                        spacesepwords[-1] if spacesepwords[-2] == "by" else None
-                    )
-                    self.code.update_move_table(
-                        "relative", words[1], relative_comp, direction, separation
-                    )
-                else:  # assume absolute move
-                    words = nltk.word_tokenize(
-                        sentence.replace("(", "").replace(")", "").replace("by", "")
-                    )
-                    self.code.update_move_table("absolute", words[1], words[2])
-            elif mode_indicator[0] == "e":  # dump code
+                saveresponse = self.process_move_sentence(sentence)
+            elif mode_indicator[0] == "e":  # dump code and exit
                 saveresponse = False
                 self.print_to_stream("\n" + self.code.get_code())
                 return False
@@ -278,9 +337,8 @@ What would you like to do?"""
                 raise NotImplementedError("dynamic show mode not yet implemented")
             else:
                 self.print_to_stream("invalid input")
-                self.print_to_stream(
-                    "sentences must begin with either place, route, generate, or move"
-                )
+                self.print_to_stream("sentences must begin with either place, route, generate, or move")
+                saveresponse = False
             # save when needed and return True to continue prompting for input
             if saveresponse:
                 self.__save_response(sentence)
