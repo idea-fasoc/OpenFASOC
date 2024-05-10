@@ -1,0 +1,11 @@
+DiffPair
+create float parameter called m1_width
+create float parameter called m2_width
+create an int parameter called m1_multiplier
+create an int parameter called m2_multiplier
+create an int parameter called m1_fingers
+create an int parameter called m2_fingers
+place an nfet called m1 with width m1_width length 10 rmult m1_multiplier fingers m1_fingers
+place an nfet called m2 with width m2_width length 10 rmult m2_multiplier fingers m2_fingers
+move m1 to the left of m2
+
