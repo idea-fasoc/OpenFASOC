@@ -1,0 +1,10 @@
+CommonSourceAmplifier
+create a float parameter called width_m1
+create a float parameter called width_m2
+create a int parameter called m1_multiplier 
+create a int parameter called m2_multiplier 
+place a nfet called m1 with width width_m1 rmult m1_multiplier with_substrate_tap False with_dnwell False
+place a nfet called m2 with width width_m2 rmult m2_multiplier with_substrate_tap False with_dnwell False
+move m2 to the right of m1 by separation 0
+route between m1_multiplier_0_source_W and m2_multiplier_0_source_E using straight_route
+dump code to csa.py
