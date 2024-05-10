@@ -262,7 +262,6 @@ What would you like to do?"""
         Returns:
             bool: saveresponse
         """
-        #import pdb; pdb.set_trace()
         words = nltk.word_tokenize(text_input)
         direction = None
         reference_comp = None
@@ -274,8 +273,10 @@ What would you like to do?"""
                 direction = word
             # once you see a direction, look for a reference_comp
             elif (word=="by" or word=="with") and reference_comp is None:
-                reference_comp = words[i-1]
-                separation = words[i+1]
+                reference_comp = words[2:][i-1]
+                separation = words[2:][i+1]
+                if len(separation)>3 and separation.strip().lower()[0:3]=="sep":
+                    separation = words[2:][i+2]
         # you may not find it in the loop, in which case reference_comp is the last word
         if reference_comp is None:
             reference_comp = words[-1]
