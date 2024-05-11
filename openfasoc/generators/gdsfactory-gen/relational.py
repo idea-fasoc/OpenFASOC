@@ -13,6 +13,26 @@ import string
 from glayout.pdk.mappedpdk import MappedPDK
 import traceback
 import os
+import itertools
+
+
+def list_cartesian_product(list1: list, list2: list, both: bool=False) -> list:
+    """Compute the Cartesian product of two lists and combine elements into a list of strings.
+
+    Args:
+        list1 (list): The first list.
+        list2 (list): The second list.
+        both (bool): provide the cartesian product of list1,list2 AND list2,list1
+
+    Returns:
+        list: A list containing the Cartesian product of the input lists as strings.
+    """
+    # Cartesian product of the two lists
+    cartesian_product = list(itertools.product(list1, list2))
+    # Combine the elements into a list of strings
+    combined_list = [' '.join(map(str, pair)) for pair in cartesian_product]
+    return combined_list + (list_cartesian_product(list2,list1,False) if both else [])
+
 
 # used to automatically update supported actions whenever a class which inherits from GlayoutAction is added to this file
 def get_all_derived_classes(class_type, remove_parent: bool=True) -> list:
@@ -50,7 +70,6 @@ def parse_direction(direction: str) -> Union[str,None]:
     else:
         return None
 
-    
 
 
 class ParametersList:
@@ -633,7 +652,7 @@ class GlayoutCode(GlayoutAction):
         # initialize the import table to contain all primitives and routing primitives
         self.__known_generator_ids = list()# list of str
         self.__random_name_index = int(0)
-        # general components
+        # primitives
         self.update_import_table(["nmos","nfet"],"nmos","glayout.primitives.fet")
         self.update_import_table(["pmos","pfet"],"pmos","glayout.primitives.fet")
         self.update_import_table(["guardring","tapring","welltap","well tap", "tap ring"],"tapring","glayout.primitives.guardring")
@@ -641,6 +660,11 @@ class GlayoutCode(GlayoutAction):
         self.update_import_table(["mimcap array","mimcaparray","mimcap_array"],"mimcap_array","glayout.primitives.mimcap")
         self.update_import_table(["via","via stack","via_stack"],"via_stack","glayout.primitives.via_gen")
         self.update_import_table(["via array","via_array"],"via_array","glayout.primitives.via_gen")
+        # general components and layout strategies
+        two_nfet_interdigitized_aliases = ["interdigitized","interdigitated"]+list_cartesian_product(["interdigitized","interdigitated"],["nmos","nfet"],True)
+        self.update_import_table(two_nfet_interdigitized_aliases,"two_nfet_interdigitized","glayout.placement.two_transistor_interdigitized")
+        two_pfet_interdigitized_aliases = list_cartesian_product(["interdigitized","interdigitated"],["pmos","pfet"],True)
+        self.update_import_table(two_pfet_interdigitized_aliases,"two_pfet_interdigitized","glayout.placement.two_transistor_interdigitized")
         self.update_import_table(["diff pair","diff_pair","differential pair","differential pairs","differential transistor"],"diff_pair",None)
         # import routing funcs
         self.update_import_table(["L route","L_route","l route","l_route"],"L_route","glayout.routing.L_route")
@@ -768,76 +792,16 @@ class GlayoutCode(GlayoutAction):
         """returns the first find generator id in the given sentence
         should only be used on sentences which for sure have a generator id in them
         """
+        # look for genids found in the sentence
+        genid_candidates = list()
         for genid in self.__known_generator_ids:
             if genid in sentence:
-                return genid
-        raise LookupError("no known generator id was found in the provided sentence")\
-
-
-
-
-def get_default_arguments(func, pdk: MappedPDK) -> dict:
-    """Gets default arguments to a function based on its argument types.
-
-    Args:
-        func (callable): The function to which default arguments will be added.
-        pdk (MappedPDK): If one of the non default args is of type MappedPDK, then this pdk is used for default value
-
-    Returns:
-        dict: A dictionary containing default arguments with values based on the argument types of the input function.
-    """
-    # get args that dont have a default
-    argspec = inspect.getfullargspec(func)
-    args_with_defaults = argspec.defaults or []
-    num_args_without_defaults = len(argspec.args) - len(args_with_defaults)
-    args_without_defaults = argspec.args[:num_args_without_defaults]
-    # loop through non default args and try to set some value for them
-    kwargs = {}
-    for arg, arg_type in zip(args_without_defaults, argspec.annotations.values()):
-        # pick some default value
-        if arg_type == int:
-            default_value = 2
-        elif arg_type == float:
-            default_value = 2.5
-        elif arg_type == bool:
-            default_value = True
-        elif arg_type == str:
-            default_value = "met1"
-        elif arg_type == MappedPDK:
-            default_value = pdk
-        else:# for other types, set default to None
-            default_value = None
-        # add this argument to the kwargs
-        kwargs[arg] = default_value
-    return kwargs
-
-
-def run_glayout_code_cell(pdk: MappedPDK, glayout_code: str) -> bool:
-    """Instantiates a layout form the given glayout cell
-    
-    Args:
-        glayout_code (str): string containg the cell function and all needed imports
-
-    Returns:
-        bool: True if the cell was instantiated
-    """
-    # modify the code to rename the cell function to "testcell"
-    pattern = r"def\s+([a-zA-Z_][a-zA-Z0-9_]*)cell\s*\("
-    glayout_code = re.sub(pattern,"def testcell(",glayout_code)
-    # write the code to a file called "testcell.py"
-    with open("testcell.py",mode="w") as testfile:
-        testfile.write(glayout_code)
-    # import testcell
-    spec = importlib.util.spec_from_file_location("testcell", "testcell.py")
-    temp_module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(temp_module)
-    # execute the code with some arguments to create and show the layout
-    temp_module.testcell(**get_default_arguments(temp_module.testcell, pdk)).show()
-    # delete testcell.py
-    if os.path.exists("testcell.py"):
-        os.remove("testcell.py")
-    # if we got this far the cell is clean, so return True
-    return True
+                genid_candidates.append(genid)
+        # error checking
+        if len(genid) == 0:
+            raise LookupError("no known generator id was found in the provided sentence")
+        # prefer longer strings
+        return max(genid_candidates, key=len)
 
 
 

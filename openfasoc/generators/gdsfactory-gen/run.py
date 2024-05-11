@@ -4,6 +4,7 @@ import sys
 from process_input import Session
 from typing import Union
 
+
 def reload_saved_convo(convo_file: Union[Path, str]) -> tuple:
     """restores a conversation from a .convo file
 
@@ -21,9 +22,7 @@ def reload_saved_convo(convo_file: Union[Path, str]) -> tuple:
         lines = loadconvo.readlines()
         for i, line in enumerate(lines):
             if i == 0:
-                convo = Session(
-                    inputstream=sys.stdin, outputstream=sys.stdout, toplvlname=line
-                )
+                convo = Session(inputstream=sys.stdin, outputstream=sys.stdout, toplvlname=line)
                 continue
             convo.process_next_input(line)
         loop_count = len(lines) - 1
@@ -79,4 +78,3 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     run_session(args.load_conversation, args.restore_and_exit)
-

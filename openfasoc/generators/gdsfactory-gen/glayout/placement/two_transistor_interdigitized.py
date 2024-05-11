@@ -164,3 +164,80 @@ def two_nfet_interdigitized(
         tapring_ref = base_multiplier << ringtoadd
         base_multiplier.add_ports(tapring_ref.get_ports_list(),prefix="substratetap_")
     return base_multiplier
+
+
+
+@validate_arguments
+def two_pfet_interdigitized(
+    pdk: MappedPDK,
+    numcols: int,
+    dummy: Union[bool, tuple[bool, bool]] = True,
+    with_substrate_tap: bool = True,
+    with_tie: bool = True,
+    tie_layers: tuple[str,str]=("met2","met1"),
+    **kwargs
+) -> Component:
+    """Currently only supports two of the same nfet instances. does NOT support multipliers (currently)
+    Place follows an ABABAB... pattern
+    args:
+    pdk = MappedPDK to use
+    numcols = a single col is actually one col for both nfets (so AB). 2 cols = ABAB ... so on
+    dummy = place dummy at the edges of the interdigitized place (true by default). you can specify tuple to place only on one side
+    kwargs = key word arguments for multiplier. 
+    ****NOTE: These are the same as glayout.primitives.fet.multiplier arguments EXCLUDING dummy, sd_route_extension, and pdk options
+    tie_layers: tuple[str,str] specifying (horizontal glayer, vertical glayer) or well tie ring. default=("met2","met1")
+    """
+    base_multiplier = two_transistor_interdigitized(pdk, numcols, "pfet", dummy, **kwargs)
+    # tie
+    if with_tie:
+        tap_separation = max(
+            pdk.util_max_metal_seperation(),
+            pdk.get_grule("active_diff", "active_tap")["min_separation"],
+        )
+        tap_separation += pdk.get_grule("n+s/d", "active_tap")["min_enclosure"]
+        tap_encloses = (
+            2 * (tap_separation + base_multiplier.xmax),
+            2 * (tap_separation + base_multiplier.ymax),
+        )
+        tiering_ref = base_multiplier << tapring(
+            pdk,
+            enclosed_rectangle=tap_encloses,
+            sdlayer="n+s/d",
+            horizontal_glayer=tie_layers[0],
+            vertical_glayer=tie_layers[1],
+        )
+        base_multiplier.add_ports(tiering_ref.get_ports_list(), prefix="welltie_")
+        try:
+            base_multiplier<<straight_route(pdk,base_multiplier.ports["A_0_dummy_L_gsdcon_top_met_W"],base_multiplier.ports["welltie_W_top_met_W"],glayer2="met1")
+        except KeyError:
+            pass
+        try:
+            base_multiplier<<straight_route(pdk,base_multiplier.ports[f"B_{numcols-1}_dummy_R_gsdcon_top_met_E"],base_multiplier.ports["welltie_E_top_met_E"],glayer2="met1")
+        except KeyError:
+            pass
+    # add pwell
+    base_multiplier.add_padding(
+        layers=(pdk.get_glayer("nwell"),),
+        default=pdk.get_grule("nwell", "active_tap")["min_enclosure"],
+    )
+    # add substrate tap
+    base_multiplier = add_ports_perimeter(base_multiplier,layer=pdk.get_glayer("nwell"),prefix="well_")
+    # add substrate tap if with_substrate_tap
+    if with_substrate_tap:
+        substrate_tap_separation = pdk.get_grule("dnwell", "active_tap")[
+            "min_separation"
+        ]
+        substrate_tap_encloses = (
+            2 * (substrate_tap_separation + base_multiplier.xmax),
+            2 * (substrate_tap_separation + base_multiplier.ymax),
+        )
+        ringtoadd = tapring(
+            pdk,
+            enclosed_rectangle=substrate_tap_encloses,
+            sdlayer="p+s/d",
+            horizontal_glayer="met2",
+            vertical_glayer="met1",
+        )
+        tapring_ref = base_multiplier << ringtoadd
+        base_multiplier.add_ports(tapring_ref.get_ports_list(),prefix="substratetap_")
+    return base_multiplier

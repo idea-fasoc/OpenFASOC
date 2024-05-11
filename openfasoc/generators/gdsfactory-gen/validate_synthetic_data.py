@@ -10,7 +10,7 @@ from typing import Union
 
 from glayout.pdk.mappedpdk import MappedPDK
 from glayout.pdk.sky130_mapped import sky130_mapped_pdk
-from relational import run_glayout_code_cell
+from dynamic_load import run_glayout_code_cell
 from run import run_session
 
 

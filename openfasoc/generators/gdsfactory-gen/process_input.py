@@ -4,7 +4,8 @@ from pathlib import Path
 from typing import Optional, Union
 
 import nltk
-from relational import GlayoutCode, parse_direction, run_glayout_code_cell
+from dynamic_load import run_glayout_code_cell
+from relational import GlayoutCode, parse_direction
 from glayout.pdk.sky130_mapped import sky130_mapped_pdk
 
 class Session:
@@ -212,7 +213,33 @@ What would you like to do?"""
         words = nltk.word_tokenize(text_input)
         if "configuration" in text_input:
             raise NotImplementedError("configs not yet implemented")
-        genid = self.code.find_first_generator_id(text_input)
+        # util func
+        def split_input_on_compname(text_input:str) -> str:
+                """Split a string on the words 'called' or 'named' and retain everything before these keywords.
+                Args:
+                    text_input (str): The input string.
+                Returns:
+                    str: The part of the text_input before 'called' or 'named'.
+                """
+                # look for either named or called in a lower case version of parts
+                lc_parts = text_input.lower().split()
+                indexCalled, indexNamed = None, None
+                if "called" in lc_parts:
+                    indexCalled = lc_parts.index("called")
+                if "named" in lc_parts:
+                    indexNamed = lc_parts.index("named")
+                # pick which index to use or raise error if neither
+                index = None
+                if (indexCalled is not None) and (indexNamed is not None):
+                    index = max(indexCalled,indexNamed)
+                else:
+                    index = indexCalled if (indexCalled is not None) else indexNamed
+                if index is None:
+                    raise SyntaxError("invalid place syntax, place sentence must include 'called' or 'named' keyword")
+                # return everything in the sentence before the "called" or "named" keyword
+                parts = text_input.split()
+                return " ".join(parts[0:index])
+        genid = self.code.find_first_generator_id(split_input_on_compname(text_input))
         comp_name = None
         for i, word in enumerate(words):
             if word in ["called", "named"]:
