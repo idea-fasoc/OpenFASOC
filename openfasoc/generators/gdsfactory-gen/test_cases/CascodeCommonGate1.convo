@@ -1,0 +1,7 @@
+CascodeCommonGate
+create float parameter called width_m1
+create float parameter called width_m2
+place an nfet called m1 with width width_m1
+place an nfet called m2 with width width_m2
+move m2 above m1
+route between m1_multiplier_0_source_W and m2_multiplier_0_drain_W using c_route

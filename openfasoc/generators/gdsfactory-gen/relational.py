@@ -72,9 +72,6 @@ class ParametersList:
         for param_name, param in parameters.items():
             paraminfo = {"name":param_name, 'defaultvalue':param.default, 'type':param.annotation}
             self.params.append(paraminfo)
-        # formulate the grammar using the parameters
-        self.__grammar = nltk.CFG.fromstring(self.__get_str_grammar())
-        self.__grammar_parser = nltk.ChartParser(self.__grammar)
 
     def __iter__(self):
         return iter(self.params)
@@ -168,14 +165,16 @@ class ParametersList:
         self.__number_list = number_list
         self.__string_list = string_list
         return sentence.split()
-    def __get_str_grammar(self) -> str:
+    def __get_str_grammar(self, known_paramsORvars: list) -> str:
+        if len(known_paramsORvars)==0:
+            known_paramsORvars = ["thiswordwillsurelyneverevercomeupduringparsing"]
         basic_grammar = str()
         basic_grammar += """S -> ArgList\n"""
         basic_grammar += """ArgList -> ArgDesc | ArgDesc ArgList | ArgDesc ListSeparator ArgList\n"""
         basic_grammar += """ListSeparator -> ',' | ', and' | 'and'\n"""
         basic_grammar += """ArgDesc -> Value Paramname | Paramname Value | Paramname Filler Value | Value Filler Paramname\n"""
         basic_grammar += """Filler -> 'is' | '=' | 'equal' | 'equals' | 'of' | 'for'\n"""
-        basic_grammar += """Value  -> Number | Glayer | Dictionary | Boolean | List | Tuple | String\n"""
+        basic_grammar += """Value  -> Number | Glayer | Dictionary | Boolean | List | Tuple | String | paramORvar\n"""
         basic_grammar += """Vpair -> Value ',' Value | Value Value \n"""
         basic_grammar += """Values -> Vpair | Vpair Values | Vpair ',' Values\n"""
         basic_grammar += """Number -> 'nUMptindICatorWOrd'\n"""
@@ -185,12 +184,13 @@ class ParametersList:
         basic_grammar += """List   -> '[' Values ']' | '[' Value ']'\n"""
         basic_grammar += """Tuple  -> '(' Values ')' | '(' Value ')' | Values\n"""
         basic_grammar += """Dictionary  -> '{' keyvalpairs '}'\n"""
+        basic_grammar += f"""paramORvar  -> {self.__cfgformat_from_list(known_paramsORvars)}\n"""
         basic_grammar += """keyvalpairs -> Value ':' Value | Value ':' Value ',' keyvalpairs\n"""
         basic_grammar += f"Glayer -> {self.__cfgformat_from_list(self.__construct_glayers().keys())}\n"
         basic_grammar += f"Paramname -> {self.__cfgformat_from_list(self.names())}\n"
         return basic_grammar
 
-    def parse_user_params(self, user_input_params: Optional[str]=None):
+    def parse_user_params(self, known_paramsORvars: list, user_input_params: Optional[str]=None):
         """Take user params as a string and parse+error check to produce a dictionary of params
         Args:
             user_input_params (str)
@@ -200,6 +200,9 @@ class ParametersList:
         # tokenize
         tokens = self.__custom_tokenize(user_input_params)
         # try to parse syntax
+        # formulate the grammar using the parameters
+        self.__grammar = nltk.CFG.fromstring(self.__get_str_grammar(known_paramsORvars))
+        self.__grammar_parser = nltk.ChartParser(self.__grammar)
         try:
             mytree = list(self.__grammar_parser.parse(tokens))[0]
         except Exception as serr:
@@ -234,6 +237,12 @@ class ParametersList:
 ######################################################
 
 class GlayoutAction(ABC):    
+    """each GlayoutAction corresponds to one or several Glayout code operations
+    GlayoutActions are convertible to code via the "get_code" method
+
+    Args:
+        ABC (_type_): _description_
+    """
     # GlayoutActions must be convertible to Glayout code via the get_code method
     @abstractmethod
     def get_code(self) -> str:
@@ -442,7 +451,7 @@ class PlaceCell(GlayoutAction):
     """
     ref_suffix = "ref"
     #@validate_call
-    def __init__(self, toplvl_name: str, generator_handle: Callable, component_name: str, user_input_parameters: str):
+    def __init__(self, toplvl_name: str, generator_handle: Callable, component_name: str, user_input_parameters: str, known_paramsORvars: list):
         """Store all information neccessary to place a cell without moving it anywhere
         Args:
             generator_handle (Callable): cell factory
@@ -450,11 +459,12 @@ class PlaceCell(GlayoutAction):
             user_input_parameters (str): just the portion of user input containing the parameters for the component
             user input should be parameter name followed by value (optionally with a filler word e.g. [of, =, is])
             user input should contain NOTHING except parameters and values
+            known_paramsORvars (list): a list containing names of the currently defined parameters or variables
         """
         # append to the place table
         self.name = component_name
         self.handle = generator_handle
-        self.params = ParametersList(generator_handle).parse_user_params(user_input_parameters)
+        self.params = ParametersList(generator_handle).parse_user_params(known_paramsORvars, user_input_parameters)
         self.toplvl_name = toplvl_name
     
     def get_code(self) -> str:
@@ -574,19 +584,20 @@ class Route(GlayoutAction):
         params: dict paramters to pass to function
     """
     #@validate_call
-    def __init__(self, toplvl_name: str, route_type: Callable, port1: str, port2: str, parameters: str):
+    def __init__(self, toplvl_name: str, route_type: Callable, port1: str, port2: str, parameters: str, known_paramsORvars: list):
         """Store all neccessary information to route between two ports
         Args:
             route_type (Callable): l,c, or straight route
             port1 (str):
             port2 (str):
             parameters (str): user input parameters
+            known_paramsORvars (list): names of currently defined parameters and variables
         """
         self.port1 = str(port1)
         self.port2 = str(port2)
         self.route_type = route_type
         # parse user params
-        self.params = ParametersList(self.route_type).parse_user_params(parameters)
+        self.params = ParametersList(self.route_type).parse_user_params(known_paramsORvars, parameters)
         self.toplvl_name = toplvl_name
     
     def get_code(self) -> str:
@@ -606,7 +617,8 @@ class Route(GlayoutAction):
 
 # Top level Code Relational table
 class GlayoutCode(GlayoutAction):
-    """Stores all needed information to create Glayout code in relation tables"""
+    """Stores all needed information to create Glayout code in relation tables
+    GlayoutActions require some general context provided by the GlayoutCode class"""
 
     # each table is implemented as a list of dictionaries
     def __init__(self, toplvl_name: str):
@@ -656,7 +668,6 @@ class GlayoutCode(GlayoutAction):
             self.__random_name_index += 1
         self.__known_generator_ids += component_identifiers
         self.import_table.append(ImportCell(component_identifiers, component_name, module_path))
-        #self.import_table.append(ImportCell(*args,**kwargs))
     
     def update_parameter_table(
             self, 
@@ -685,7 +696,7 @@ class GlayoutCode(GlayoutAction):
             current_val = self.__placed_noname_objs.get(generator_id,int(0))
             self.__placed_noname_objs[generator_id] = current_val + 1
             component_name = generator_id + str(current_val)
-        self.bulk_action_table.append(PlaceCell(self.toplvl_name, self.search_import_table(generator_id), component_name, user_input_parameters))
+        self.bulk_action_table.append(PlaceCell(self.toplvl_name, self.search_import_table(generator_id), component_name, user_input_parameters, [param.varname for param in self.parameter_table]))
     
     def update_move_table(self, move_type: str, name_of_component_to_move: str, *args, **kwargs):
         """move_type can be absolute, relative"""
@@ -705,7 +716,7 @@ class GlayoutCode(GlayoutAction):
         if rpre is None:
             raise ValueError("unknown route type, failed to parse")
         route_type = rpre + "_route"
-        self.bulk_action_table.append(Route(self.toplvl_name,self.search_import_table(route_type),port1,port2,parameters))
+        self.bulk_action_table.append(Route(self.toplvl_name,self.search_import_table(route_type),port1,port2,parameters,[param.varname for param in self.parameter_table]))
     
     def get_code(self) -> str:
         # produce all import code
