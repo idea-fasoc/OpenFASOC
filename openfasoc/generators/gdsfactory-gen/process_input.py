@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Optional, Union
 
 import nltk
-from relational import GlayoutCode, parse_direction
-
+from relational import GlayoutCode, parse_direction, run_glayout_code_cell
+from glayout.pdk.sky130_mapped import sky130_mapped_pdk
 
 class Session:
     """The session stores all relevant information for producing code from a conversation"""
@@ -84,9 +84,8 @@ What would you like to do?"""
         syntaxes.append("create/define [a/an] param_type parameter called/named paramname")
         # variable
         syntaxes.append("create/define [a/an] var_type variable called/named varname =/equal valorexpr")
-        syntaxes.append(
-            "save/dump [conversation/code] to pathtosaveto\n\tNOTE: save code is assumed if neither conversation nor code are specified"
-        )
+        syntaxes.append("save/dump [conversation/code] to pathtosaveto\n\tNOTE: save code is assumed if neither conversation nor code are specified")
+        syntaxes.append("show\n\tNOTE: This will show the current component in klayout using .show and klive plugin")
         # print all
         self.print_to_stream("\nBelow are valid sentences:")
         for syntax in syntaxes:
@@ -291,6 +290,14 @@ What would you like to do?"""
             self.code.update_move_table("absolute", words[1], words[2])
         return True
 
+    def show_current_component(self) -> False:
+        """displays the current state of the layout with klayout using .show in sky130nm tech
+        Returns:
+            False: saveresponse=False
+        """
+        run_glayout_code_cell(sky130_mapped_pdk, self.code.get_code())
+        return False
+    
     def process_next_input(self, text_input: str) -> bool:
         """main driver for doing things
         returns True if session is ongoing
@@ -334,11 +341,10 @@ What would you like to do?"""
                 )
                 self.save_to_disk(savecode, savepath)
             elif mode_indicator[0] == "s":  # show a component
-                saveresponse = False
-                raise NotImplementedError("dynamic show mode not yet implemented")
+                saveresponse = self.show_current_component()
             else:
                 self.print_to_stream("invalid input")
-                self.print_to_stream("sentences must begin with either place, route, generate, or move")
+                self.print_to_stream("sentences must begin with either place, route, generate, show, dump, or move")
                 saveresponse = False
             # save when needed and return True to continue prompting for input
             if saveresponse:
