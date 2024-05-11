@@ -4,8 +4,9 @@ from pathlib import Path
 from typing import Optional, Union
 
 import nltk
+from dynamic_load import run_glayout_code_cell
 from relational import GlayoutCode, parse_direction
-
+from glayout.pdk.sky130_mapped import sky130_mapped_pdk
 
 class Session:
     """The session stores all relevant information for producing code from a conversation"""
@@ -84,9 +85,8 @@ What would you like to do?"""
         syntaxes.append("create/define [a/an] param_type parameter called/named paramname")
         # variable
         syntaxes.append("create/define [a/an] var_type variable called/named varname =/equal valorexpr")
-        syntaxes.append(
-            "save/dump [conversation/code] to pathtosaveto\n\tNOTE: save code is assumed if neither conversation nor code are specified"
-        )
+        syntaxes.append("save/dump [conversation/code] to pathtosaveto\n\tNOTE: save code is assumed if neither conversation nor code are specified")
+        syntaxes.append("show\n\tNOTE: This will show the current component in klayout using .show and klive plugin")
         # print all
         self.print_to_stream("\nBelow are valid sentences:")
         for syntax in syntaxes:
@@ -213,7 +213,33 @@ What would you like to do?"""
         words = nltk.word_tokenize(text_input)
         if "configuration" in text_input:
             raise NotImplementedError("configs not yet implemented")
-        genid = self.code.find_first_generator_id(text_input)
+        # util func
+        def split_input_on_compname(text_input:str) -> str:
+                """Split a string on the words 'called' or 'named' and retain everything before these keywords.
+                Args:
+                    text_input (str): The input string.
+                Returns:
+                    str: The part of the text_input before 'called' or 'named'.
+                """
+                # look for either named or called in a lower case version of parts
+                lc_parts = text_input.lower().split()
+                indexCalled, indexNamed = None, None
+                if "called" in lc_parts:
+                    indexCalled = lc_parts.index("called")
+                if "named" in lc_parts:
+                    indexNamed = lc_parts.index("named")
+                # pick which index to use or raise error if neither
+                index = None
+                if (indexCalled is not None) and (indexNamed is not None):
+                    index = max(indexCalled,indexNamed)
+                else:
+                    index = indexCalled if (indexCalled is not None) else indexNamed
+                if index is None:
+                    raise SyntaxError("invalid place syntax, place sentence must include 'called' or 'named' keyword")
+                # return everything in the sentence before the "called" or "named" keyword
+                parts = text_input.split()
+                return " ".join(parts[0:index])
+        genid = self.code.find_first_generator_id(split_input_on_compname(text_input))
         comp_name = None
         for i, word in enumerate(words):
             if word in ["called", "named"]:
@@ -262,7 +288,6 @@ What would you like to do?"""
         Returns:
             bool: saveresponse
         """
-        #import pdb; pdb.set_trace()
         words = nltk.word_tokenize(text_input)
         direction = None
         reference_comp = None
@@ -274,8 +299,10 @@ What would you like to do?"""
                 direction = word
             # once you see a direction, look for a reference_comp
             elif (word=="by" or word=="with") and reference_comp is None:
-                reference_comp = words[i-1]
-                separation = words[i+1]
+                reference_comp = words[2:][i-1]
+                separation = words[2:][i+1]
+                if len(separation)>3 and separation.strip().lower()[0:3]=="sep":
+                    separation = words[2:][i+2]
         # you may not find it in the loop, in which case reference_comp is the last word
         if reference_comp is None:
             reference_comp = words[-1]
@@ -290,6 +317,14 @@ What would you like to do?"""
             self.code.update_move_table("absolute", words[1], words[2])
         return True
 
+    def show_current_component(self) -> False:
+        """displays the current state of the layout with klayout using .show in sky130nm tech
+        Returns:
+            False: saveresponse=False
+        """
+        run_glayout_code_cell(sky130_mapped_pdk, self.code.get_code())
+        return False
+    
     def process_next_input(self, text_input: str) -> bool:
         """main driver for doing things
         returns True if session is ongoing
@@ -333,11 +368,10 @@ What would you like to do?"""
                 )
                 self.save_to_disk(savecode, savepath)
             elif mode_indicator[0] == "s":  # show a component
-                saveresponse = False
-                raise NotImplementedError("dynamic show mode not yet implemented")
+                saveresponse = self.show_current_component()
             else:
                 self.print_to_stream("invalid input")
-                self.print_to_stream("sentences must begin with either place, route, generate, or move")
+                self.print_to_stream("sentences must begin with either place, route, generate, show, dump, or move")
                 saveresponse = False
             # save when needed and return True to continue prompting for input
             if saveresponse:

@@ -2,40 +2,36 @@
 # 1- verify the test_cases
 # 2- augment test_cases to synthetically increase the number of data points
 
+
 import os
+import traceback
 from pathlib import Path
 from typing import Union
+
+from glayout.pdk.mappedpdk import MappedPDK
+from glayout.pdk.sky130_mapped import sky130_mapped_pdk
+from dynamic_load import run_glayout_code_cell
 from run import run_session
 
 
-def verify_glayout_cell(code: str) -> bool:
-    """runs the glayout cell provided with default args
-
-    Args:
-        code (str): Glayout python code (cell function only)
-
-    Returns:
-        bool: True if the cell is a valid testcase
-    """
-    # TODO: finish implementing
-    return True
-
-def run_with_convo(convo_file: Union[str, Path]) -> bool:
-    """Run the run_session function with the given conversation file.
+def instantiate_convo(pdk: MappedPDK, convo_file: Union[str, Path]) -> bool:
+    """Instantiates a layout for the given conversation file
     
     Args:
         convo_file (str or Path): path to Glayout .convo file
 
     Returns:
-        bool: True if the cell is a valid testcase
+        bool: True if the cell was instantiated
     """
     try:
+        # convert NLP to code and pass to run_glayout_code_cell
         session_code = run_session(load_conversation=convo_file, restore_and_exit=True)
-        return verify_glayout_cell(session_code)
-        print(f"Session code for {convo_file}:\n{session_code}")
+        return run_glayout_code_cell(pdk, session_code)
     except Exception as e:
         print(f"Error running session with {convo_file}: {e}")
+        print(traceback.format_exc())
     return False
+
 
 def run_all_tests(test_cases_dir: Union[str, Path] = "test_cases"):
     """Run all test cases found in the 'test_cases' directory."""
@@ -46,8 +42,9 @@ def run_all_tests(test_cases_dir: Union[str, Path] = "test_cases"):
     # run and verify all convos
     for convo_file in convo_files:
         convo_file_path = os.path.join(test_cases_dir, convo_file)
-        print(f"Running session with {convo_file_path}...")
-        run_with_convo(convo_file_path)
+        print(f"Running session with {convo_file_path}")
+        instantiate_convo(pdk=sky130_mapped_pdk, convo_file=convo_file_path)
+
 
 if __name__ == "__main__":
     run_all_tests()
