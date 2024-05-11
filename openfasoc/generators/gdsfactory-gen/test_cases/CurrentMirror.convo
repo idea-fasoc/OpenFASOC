@@ -1,0 +1,13 @@
+CMbasic
+create float parameter called m1_width
+create float parameter called m2_width
+create an int parameter called m1_multiplier
+create an int parameter called m2_multiplier
+place an nmos called m1 with width m1_width length 10 rmult m1_multiplier 
+place a nmos called m2 with width m2_width length 10 rmult m2_multiplier
+route between m1_multiplier_0_drain_tr and m2_multiplier_0_gate_bl using straight_route
+route between m1_tie_br_top_met_W and	m2_tie_bl_top_met_E using straig
+place an nmos called m1 with width 5 and length 10
+place a nmos called m2 with width 10 and length 10
+route between m1_multiplier_0_drain_tr and m2_multiplier_0_gate_bl using l_route
+route between m1_multiplier_0_gate_br and m2_multiplier_0_gate_bl using straight_route
