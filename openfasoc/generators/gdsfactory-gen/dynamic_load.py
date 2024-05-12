@@ -3,11 +3,14 @@ import importlib.util
 import inspect
 import os
 import re
+from typing import Callable, Union
+from pathlib import Path
+import tempfile
 
 from glayout.pdk.mappedpdk import MappedPDK
+from glayout.pdk.util.port_utils import PortTree
 
-
-def get_default_arguments(func, pdk: MappedPDK) -> dict:
+def get_default_arguments(func: Callable, pdk: MappedPDK) -> dict:
     """Gets default arguments to a function based on its argument types.
 
     Args:
@@ -36,39 +39,88 @@ def get_default_arguments(func, pdk: MappedPDK) -> dict:
             default_value = "met1"
         elif arg_type == MappedPDK:
             default_value = pdk
-        else:# for other types, set default to None
+        else:  # for other types, set default to None
             default_value = None
         # add this argument to the kwargs
         kwargs[arg] = default_value
     return kwargs
 
 
-#def get_glayout
+class CodeImportHandler:
+    """create, manage, destroy temporary files created as part of dynamic importing
+    contains
+        self.function (Callable): the function handle
+        self.func_name (str): the name of the function imported
+        self.temp_module: the imported module handle
+    """
+
+    def __init__(self, glayout_code: str):
+        """create temporary file with glayout python code from glayout_code string
+        and import the module
+        Args:
+            glayout_code (str): string containing cell function and imports.
+        """
+        # figure out what the cell is called
+        pattern = r"def\s+([a-zA-Z_][a-zA-Z0-9_]*)cell\s*\("
+        self.func_name = (
+            re.search(pattern, glayout_code).group().lstrip("def").rstrip("(").strip()
+        )
+        pymodule_name = self.func_name.removesuffix("_cell") + ".py"
+        #import pdb; pdb.set_trace()
+        # create the cell py module
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_dir_path = Path(temp_dir).resolve()
+            pythonfile = temp_dir_path / pymodule_name
+            with pythonfile.open(mode="w") as pyfile:
+                pyfile.write(glayout_code)
+            # import the cell
+            spec = importlib.util.spec_from_file_location(self.func_name, pythonfile)
+            self.temp_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(self.temp_module)
+            self.function = getattr(self.temp_module, self.func_name)
+
 
 
 def run_glayout_code_cell(pdk: MappedPDK, glayout_code: str) -> bool:
-    """Instantiates a layout form the given glayout cell
-    
+    """Instantiate a layout from the given glayout cell code and returns Component
+
     Args:
+        pdk (MappedPDK): pdk to instantiate this cell
         glayout_code (str): string containg the cell function and all needed imports
 
     Returns:
-        bool: True if the cell was instantiated
+        Component: gdsfactory Component corresponding to the produced layout
     """
-    # modify the code to rename the cell function to "testcell"
-    pattern = r"def\s+([a-zA-Z_][a-zA-Z0-9_]*)cell\s*\("
-    glayout_code = re.sub(pattern,"def testcell(",glayout_code)
-    # write the code to a file called "testcell.py"
-    with open("testcell.py",mode="w") as testfile:
-        testfile.write(glayout_code)
-    # import testcell
-    spec = importlib.util.spec_from_file_location("testcell", "testcell.py")
-    temp_module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(temp_module)
-    # execute the code with some arguments to create and show the layout
-    temp_module.testcell(**get_default_arguments(temp_module.testcell, pdk)).show()
-    # delete testcell.py
-    if os.path.exists("testcell.py"):
-        os.remove("testcell.py")
-    # if we got this far the cell is clean, so return True
-    return True
+    testcell = CodeImportHandler(glayout_code).function
+    return testcell(**get_default_arguments(testcell, pdk))
+
+
+def show_glayout_code_cell(pdk: MappedPDK, glayout_code: str):
+    """Instantiate and show a layout from the given glayout cell code
+
+    Args:
+        pdk (MappedPDK): pdk to instantiate this cell
+        glayout_code (str): string containg the cell function and all needed imports
+    """
+    run_glayout_code_cell(pdk, glayout_code).show()
+
+
+def getPortTree_glayout_code_cell(pdk: MappedPDK, glayout_code: str) -> PortTree:
+    """return PortTree for a given glayout cell
+
+    Args:
+        pdk (MappedPDK): pdk to instantiate this cell
+        glayout_code (str): string containg the cell function and all needed imports
+    
+    Returns PortTree
+    """
+    return PortTree(run_glayout_code_cell(pdk, glayout_code))
+
+def printPortTree_glayout_code_cell(pdk: MappedPDK, glayout_code: str):
+    """return PortTree for a given glayout cell
+
+    Args:
+        pdk (MappedPDK): pdk to instantiate this cell
+        glayout_code (str): string containg the cell function and all needed imports
+    """
+    PortTree(run_glayout_code_cell(pdk, glayout_code)).print(depth=6)

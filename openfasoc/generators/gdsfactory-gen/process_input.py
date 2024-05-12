@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 import nltk
-from dynamic_load import run_glayout_code_cell
+from dynamic_load import show_glayout_code_cell, printPortTree_glayout_code_cell
 from relational import GlayoutCode, parse_direction
 from glayout.pdk.sky130_mapped import sky130_mapped_pdk
 
@@ -210,7 +210,7 @@ What would you like to do?"""
         Returns:
             bool: saveresponse
         """
-        words = nltk.word_tokenize(text_input)
+        words = text_input.strip().split()#nltk.word_tokenize(text_input)
         if "configuration" in text_input:
             raise NotImplementedError("configs not yet implemented")
         # util func
@@ -317,12 +317,18 @@ What would you like to do?"""
             self.code.update_move_table("absolute", words[1], words[2])
         return True
 
-    def show_current_component(self) -> False:
+    def show_current_component(self, text_input: str) -> False:
         """displays the current state of the layout with klayout using .show in sky130nm tech
+        if the keyword "port" is found within text_input, port tree (with depth 6) will be saved to a file instead
+        Args:
+            text_input (str): user input text
         Returns:
             False: saveresponse=False
         """
-        run_glayout_code_cell(sky130_mapped_pdk, self.code.get_code())
+        if "port" in text_input.lower():
+            printPortTree_glayout_code_cell(sky130_mapped_pdk,self.code.get_code())
+        else:
+            show_glayout_code_cell(sky130_mapped_pdk, self.code.get_code())
         return False
     
     def process_next_input(self, text_input: str) -> bool:
@@ -368,7 +374,9 @@ What would you like to do?"""
                 )
                 self.save_to_disk(savecode, savepath)
             elif mode_indicator[0] == "s":  # show a component
-                saveresponse = self.show_current_component()
+                saveresponse = self.show_current_component(sentence)
+            elif mode_indicator[0] == "#" or mode_indicator[0]=="/": # comment
+                saveresponse=True
             else:
                 self.print_to_stream("invalid input")
                 self.print_to_stream("sentences must begin with either place, route, generate, show, dump, or move")

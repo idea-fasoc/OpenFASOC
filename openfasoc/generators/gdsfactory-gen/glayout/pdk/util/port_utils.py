@@ -7,6 +7,70 @@ from decimal import Decimal
 from pathlib import Path
 import pickle
 from PrettyPrint import PrettyPrintTree
+import math
+
+
+def proc_angle(angle: float) -> int:
+	"""round an angle in degrees to nearest int and converts to an angle [-180,180]
+
+	Args:
+		angle (float): angle in degrees
+
+	Returns:
+		float: angle in degrees [-180,180]
+	"""
+	angle = round(angle)
+	angle = angle % 360
+	if angle > 180:
+	    angle -= 360
+	return angle
+
+
+@validate_arguments
+def ports_parallel(edge1: Port, edge2: Port) -> bool:
+	"""returns True if the provided ports are parralel (same or 180degree opposite directions)
+	Requires ports are manhattan
+	Args:
+		edge1 (Port)
+		edge2 (Port)
+	Returns:
+		bool: True if the provided ports are parralel
+	"""
+	assert_port_manhattan([edge1,edge2])
+	e1orientation = abs(proc_angle(edge1.orientation))
+	e2orientation = abs(proc_angle(edge2.orientation))
+	if e1orientation==e2orientation:
+		return True
+	if (e1orientation==180 and e2orientation==0) or (e1orientation==0 and e2orientation==180):
+		return True
+	return False
+
+
+@validate_arguments
+def ports_inline(edge1: Port, edge2: Port, abstolerance: float=0.1) -> bool:
+	"""Check if two ports are inline within a tolerance.
+
+	Args:
+		edge1 (Port): The first port.
+		edge2 (Port): The second port.
+		abstolerance (float, optional): The absolute tolerance for inline check.. Defaults to 0.1.
+
+	Returns:
+		bool: True if the ports are inline within the given tolerance.
+	"""
+	# trivial cases and error checking
+	assert_port_manhattan([edge1, edge2])
+	if not(ports_parallel(edge1, edge2)):
+		return False
+	# given ports are parallel, determine coordinates of value
+	e1orientation = abs(proc_angle(edge1.orientation))
+	if e1orientation == 90:
+		centers = sorted([edge1.center[0], edge2.center[0]])
+	else:
+		centers = sorted([edge1.center[1], edge2.center[1]])
+	# determine if ports are inline within tolerance bounds
+	return not(centers[0] < (centers[1] - abstolerance))
+
 
 
 @validate_arguments

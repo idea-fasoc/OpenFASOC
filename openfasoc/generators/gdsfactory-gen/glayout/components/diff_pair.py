@@ -28,7 +28,7 @@ def diff_pair_netlist(fetL: Component, fetR: Component) -> Netlist:
 
 	return diff_pair_netlist
 
-#@cell
+@cell
 def diff_pair(
 	pdk: MappedPDK,
 	width: float = 3,
