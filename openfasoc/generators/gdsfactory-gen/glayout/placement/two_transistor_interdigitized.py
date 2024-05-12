@@ -4,7 +4,7 @@ from gdsfactory.component import Component
 from glayout.primitives.fet import nmos, pmos, multiplier
 from glayout.pdk.util.comp_utils import evaluate_bbox
 from typing import Literal, Union
-from glayout.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list
+from glayout.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, create_private_ports
 from glayout.pdk.util.comp_utils import prec_ref_center
 from glayout.routing.straight_route import straight_route
 from gdsfactory.functions import transformed
@@ -94,6 +94,7 @@ def macro_two_transistor_interdigitized(
         idplace.add_ports(ref.get_ports_list(),prefix=prefixes[i])
     idplace = transformed(prec_ref_center(idplace))
     idplace.unlock()
+    idplace.add_ports(create_private_ports(idplace, prefixes))
     return idplace
 
 

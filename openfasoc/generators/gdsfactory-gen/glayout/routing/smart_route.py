@@ -27,6 +27,8 @@ def smart_route(
             try:
                 if ref_comp.info["route_genid"] == "two_transistor_interdigitized":
                     return generic_route_two_transistor_interdigitized(pdk, edge1, edge2, top_comp)
+                if ref_comp.info["route_genid"] == "common_centroid":
+                    return generic_route_ab_ba_common_centroid(pdk, edge1, edge2, top_comp)
             except ValueError:
                 warnings.warn("attempted a specialized smart route, but failed. Now attempting general smart route")
     # determine route type based on port orientation and distance
@@ -107,3 +109,14 @@ def generic_route_two_transistor_interdigitized(
         edge = edge1 if "source" in edge1.name else edge2
         return align_comp_to_port(via_stack(pdk,"met1",glayer2),exchange_ports(top_comp,edge,"W"),alignment=("r","c"),rtr_comp_ref=False)
     raise ValueError("You picked a port that smart_route with interdigitized 2 transistor does not support")
+
+
+
+def generic_route_ab_ba_common_centroid(
+    pdk: MappedPDK,
+    edge1: Port,
+    edge2: Port,
+    top_comp: Union[Component, ComponentReference]
+) -> Component:
+    # TODO: implement
+    raise ValueError("not yet implemented")

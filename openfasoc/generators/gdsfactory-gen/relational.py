@@ -735,7 +735,7 @@ class GlayoutCode(GlayoutAction):
             current_val = self.__placed_noname_objs.get(generator_id,int(0))
             self.__placed_noname_objs[generator_id] = current_val + 1
             component_name = generator_id + str(current_val)
-        self.bulk_action_table.append(PlaceCell(self.toplvl_name, self.search_import_table(generator_id), component_name, user_input_parameters, [param.varname for param in self.parameter_table]))
+        self.bulk_action_table.append(PlaceCell(self.toplvl_name, self.search_import_table(generator_id), component_name, user_input_parameters, self.get_params_and_vars()))
     
     def update_move_table(self, move_type: str, name_of_component_to_move: str, *args, **kwargs):
         """move_type can be absolute, relative"""
@@ -766,7 +766,18 @@ class GlayoutCode(GlayoutAction):
                     break
         else:
             compref = None
-        self.bulk_action_table.append(Route(self.toplvl_name,self.search_import_table(route_type),port1,port2,parameters,[param.varname for param in self.parameter_table],compref))
+        self.bulk_action_table.append(Route(self.toplvl_name,self.search_import_table(route_type),port1,port2,parameters,self.get_params_and_vars(),compref))
+    
+    def get_params_and_vars(self) -> list[str]:
+        """Get the names of parameters and variables.
+        This method retrieves the names of parameters from the parameter table and the names of variables created
+        by 'CreateWorkingVariable' actions from the bulk action table.
+        Returns:
+            list[str]: A list containing the names of parameters and variables.
+        """
+        params = [param.varname for param in self.parameter_table]
+        variables = [variable.varname for variable in self.bulk_action_table if isinstance(variable,CreateWorkingVariable)]
+        return params + variables
     
     def get_code(self) -> str:
         # produce all import code

@@ -308,6 +308,30 @@ def print_ports(custom_comp: Union[Component, ComponentReference], names_only: O
             print()
 
 
+def create_private_ports(custom_comp: Union[Component, ComponentReference], port_paths: Optional[Union[str,list[str]]] = None) -> list[Port]:
+	"""returns a list with a copy ports for children of the port_paths specified
+	the ports have _private appended
+	Args:
+		custom_comp (Component): comp to consider PortTree for
+		port_paths (str, list[str], optional): path along the PortTree to consider. Defaults to None (all ports are copied)
+		****NOTE: if a list is provided, then it will consider all paths in the list
+	Returns:
+		list[Port]: copies of all ports along port_path, these ports end with _private
+	"""
+	# arg setup
+	bypass = port_paths is None
+	if bypass:
+		port_paths = []
+	else:
+		if isinstance(port_paths, str):
+			port_paths = [port_paths]
+	# find all matching ports
+	ports_to_add = list()
+	for port in custom_comp.get_ports_list():
+		if any([port.name.startswith(port_path) for port_path in port_paths]) or bypass:
+			ports_to_add.append(port.copy(name=port.name+"_private"))
+	return ports_to_add
+
 class PortTree:
 	"""PortTree helps a glayout programmer visualize the ports in a component
 	\"_\" should represent a level of hiearchy (much like a directory). think of this like psuedo directories
@@ -379,6 +403,24 @@ class PortTree:
 	def get_val(self, node: tuple[str, dict]) -> str:
 		"""returns value of a node, (node might be a PortTree)"""
 		return node[0] if isinstance(node, tuple) else self.name
+	
+	def get_node(self, port_path: Optional[str] = None) -> tuple[str, dict]:
+		"""get a node name and children from a port_path
+		Args:
+			port_path (str, optional): psuedo path to a node in this PortTree. Defaults to None (returns root of the tree)
+		Returns:
+			list[tuple[str, dict]]: name and children of the specified node
+		"""
+		if port_path is None:
+			return self.name, self.tree
+		else:
+			current_children = self.tree
+			current_name = self.name
+			for node in port_path.split("_"):
+				current_children = current_children[node]
+				current_name = node
+		return current_name, current_children
+
 	
 	def print(self, savetofile: bool=True, default_opts: bool=True, depth: Optional[int]=None, outfile_name: Optional[str]=None, **kwargs):
 		"""prints output to terminal directly using prettyprinttree pypi package
