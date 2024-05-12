@@ -19,7 +19,7 @@ def __fill_empty_viastack__macro(pdk: MappedPDK, glayer: str, size: tuple[float,
 	comp = rectangle(size=size,layer=pdk.get_glayer(glayer),centered=True)
 	return rename_ports_by_orientation(rename_ports_by_list(comp,replace_list=[("e","top_met_")])).flatten()
 
-#@cell
+@cell
 def c_route(
 	pdk: MappedPDK, 
 	edge1: Port, 

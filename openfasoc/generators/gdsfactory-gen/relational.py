@@ -1,19 +1,17 @@
-from pathlib import Path
-from typing import Optional, Union, Literal, Callable, cast
-from importlib import import_module
-import importlib.util
-import shutil
-import inspect
-import operator
-from abc import ABC, abstractmethod
-import nltk
-import re
 import copy
-import string
-from glayout.pdk.mappedpdk import MappedPDK
-import traceback
-import os
+import inspect
 import itertools
+import operator
+import os
+import re
+import shutil
+import string
+from abc import ABC, abstractmethod
+from importlib import import_module
+from pathlib import Path
+from typing import Callable, Literal, Optional, Union, cast
+
+import nltk
 
 
 def list_cartesian_product(list1: list, list2: list, both: bool=False) -> list:
@@ -162,7 +160,6 @@ class ParametersList:
         sentence = re.sub(string_pattern, "sTRingindICatorWOrd", sentence)
         # add a space after every symbol (except period and _)
         rsymbols = list(set(string.punctuation) - {'.', '_'})
-        #rsymbols = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '`', '{', '|', '}', '~']
         parsedsentence = str()
         for char in sentence:
             if char in rsymbols:
@@ -237,7 +234,7 @@ class ParametersList:
                 mytree[pos] = self.__number_list[numlist_index]
                 numlist_index += 1
             elif "sTRingindICatorWOrd" in mytree[pos]:
-                mytree[pos] = self.__string_list[strlist_index]
+                mytree[pos] = "\""+self.__string_list[strlist_index]+"\""
                 strlist_index += 1
         # grab user params from the tree
         user_params = dict()
@@ -247,9 +244,13 @@ class ParametersList:
             # TODO: implement more sophisticated value parsing, and properly add double qoutes are glayers
             value = " ".join(list(ArgDesc.subtrees(lambda A: A.label()=="Value"))[0].leaves())
             user_params[paramname] = self.noprintobj(value)
+        # split off kwargs into actual key word arguments in the params dictionary
+        if user_params.get("kwargs") is not None:
+            # TODO: maybe does not support edgecase where kwargs contains a dictionary? check
+            user_params[self.noprintobj("None")] = self.noprintobj("None,"+user_params["kwargs"].data.split("{")[-1].replace("}",""))
+            del user_params["kwargs"]
+        user_params = str(user_params).replace("None: None,","")
         return user_params
-            
-        
 
 
 
@@ -424,6 +425,9 @@ class CreateCellParameter(GlayoutAction):
             raise NotImplementedError("parameter error checking has not yet been implemented")
         return "\t" + param + ", "
     
+    def __str__(self) -> str:
+        return self.type.__name__ + " " + self.varname + ((" = "+str(self.defaultvalue)) if self.defaultvalue is not None else "")
+    
     @classmethod
     def test(cls):
         tests = list()
@@ -548,7 +552,7 @@ class RelativeMove(GlayoutAction):
     move_index = int(0)
 
     #@validate_call
-    def __init__(self, name_of_component_to_move: str, toplvl_name: str, relative_comp: str, direction: str, separation: str="max_metal_sep_"):
+    def __init__(self, name_of_component_to_move: str, toplvl_name: str, relative_comp: str, direction: str, separation: str="maxmetalsep"):
         """Store all information neccessary to move a Component relative to another component
         Args:
             name_of_component_to_move (str): name of the component that will be moved
@@ -560,7 +564,7 @@ class RelativeMove(GlayoutAction):
         self.relative_comp = str(relative_comp)
         self.toplvl_name = toplvl_name
         # TODO: more sophisticated validation that can distinguish float from var for separation
-        self.separation = str(separation) if separation is not None else "max_metal_sep_"
+        self.separation = str(separation) if separation is not None else "maxmetalsep"
         # parse direction
         direction = direction.lower().strip()
         self.strdirection = direction
@@ -606,14 +610,15 @@ class Route(GlayoutAction):
         params: dict paramters to pass to function
     """
     #@validate_call
-    def __init__(self, toplvl_name: str, route_type: Callable, port1: str, port2: str, parameters: str, known_paramsORvars: list):
+    def __init__(self, toplvl_name: str, route_type: Callable, port1: str, port2: str, parameters: str, known_paramsORvars: list, compref: str=None):
         """Store all neccessary information to route between two ports
         Args:
-            route_type (Callable): l,c, or straight route
+            route_type (Callable): l,c, straight, or smart route
             port1 (str):
             port2 (str):
             parameters (str): user input parameters
             known_paramsORvars (list): names of currently defined parameters and variables
+            compref (str, optional): if smart route this will be passed along
         """
         self.port1 = str(port1)
         self.port2 = str(port2)
@@ -621,10 +626,13 @@ class Route(GlayoutAction):
         # parse user params
         self.params = ParametersList(self.route_type).parse_user_params(known_paramsORvars, parameters)
         self.toplvl_name = toplvl_name
+        self.compref = compref
     
     def get_code(self) -> str:
         port1s = f"{self.toplvl_name}.ports[\"{self.port1}\"]"
         port2s = f"{self.toplvl_name}.ports[\"{self.port2}\"]"
+        if "smart" in self.route_type.__name__:
+            return f"{self.toplvl_name} << {self.route_type.__name__}(pdk,{port1s},{port2s},{self.compref},{self.toplvl_name},**{str(self.params)})"
         return f"{self.toplvl_name} << {self.route_type.__name__}(pdk,{port1s},{port2s},**{str(self.params)})"
     
     @classmethod
@@ -667,6 +675,7 @@ class GlayoutCode(GlayoutAction):
         self.update_import_table(two_pfet_interdigitized_aliases,"two_pfet_interdigitized","glayout.placement.two_transistor_interdigitized")
         self.update_import_table(["diff pair","diff_pair","differential pair","differential pairs","differential transistor"],"diff_pair",None)
         # import routing funcs
+        self.update_import_table(["smart route","smart","smart_route"],"smart_route","glayout.routing.smart_route")
         self.update_import_table(["L route","L_route","l route","l_route"],"L_route","glayout.routing.L_route")
         self.update_import_table(["C route","C_route","c route","c_route"],"c_route","glayout.routing.c_route")
         self.update_import_table(["straight route","straight_route"],"straight_route","glayout.routing.straight_route")
@@ -674,7 +683,10 @@ class GlayoutCode(GlayoutAction):
         self.update_import_table(["prec_ref_center"],"prec_ref_center","glayout.pdk.util.comp_utils")
         self.update_import_table(["evaluate_bbox"],"evaluate_bbox","glayout.pdk.util.comp_utils")
         # add working variable max metal separation
-        self.update_variable_table("max_metal_sep_","pdk.util_max_metal_seperation()")
+        self.update_variable_table("maxmetalsep","pdk.util_max_metal_seperation()")
+        self.update_variable_table("double_maxmetalsep","2*pdk.util_max_metal_seperation()")
+        self.update_variable_table("triple_maxmetalsep","3*pdk.util_max_metal_seperation()")
+        self.update_variable_table("quadruple_maxmetalsep","4*pdk.util_max_metal_seperation()")
         self.__placed_noname_objs = dict()
     
     def search_import_table(self, generator_id: str) -> Callable:
@@ -735,15 +747,26 @@ class GlayoutCode(GlayoutAction):
     
     def update_route_table(self, port1: str, port2: str, parameters: str, route_type: Optional[str]=None):
         # guess route type if not specified
-        if route_type==None:
-            raise NotImplementedError("You must specify route type, infer route type has not yet been implemented")
-        # parse route type
-        route_type = str(route_type).lower().strip()
-        rpre = "L" if "l" in route_type else ("c" if "c" in route_type else ("straight" if "s" in route_type else None))
-        if rpre is None:
-            raise ValueError("unknown route type, failed to parse")
-        route_type = rpre + "_route"
-        self.bulk_action_table.append(Route(self.toplvl_name,self.search_import_table(route_type),port1,port2,parameters,[param.varname for param in self.parameter_table]))
+        if route_type is None:
+            route_type = "smart_route"
+        else:
+            # parse route type
+            route_type = str(route_type).lower().strip()
+            rpre = "L" if "l" in route_type else ("c" if "c" in route_type else ("straight" if "s" in route_type else None))
+            rpre = "smart" if "sma" in route_type else rpre
+            if rpre is None:
+                rpre = "smart"
+            route_type = rpre + "_route"
+        # look for top comp ref this goes back to
+        if route_type=="smart_route":
+            for cellname in self.names_of_placed_cells():
+                compref = cellname in port1 and cellname in port2
+                if compref is not None:
+                    compref = cellname + "_ref"
+                    break
+        else:
+            compref = None
+        self.bulk_action_table.append(Route(self.toplvl_name,self.search_import_table(route_type),port1,port2,parameters,[param.varname for param in self.parameter_table],compref))
     
     def get_code(self) -> str:
         # produce all import code
@@ -788,8 +811,19 @@ class GlayoutCode(GlayoutAction):
         codeobj.update_route_table("nfet_drain_west","nfet_source_west","","c route")
         print(codeobj.get_code())
     
+    def names_of_placed_cells(self) -> list:
+        """Get the names of cells that have been placed.
+        Returns:
+            list: A list containing the names of cells that have been placed.
+        """
+        names = list()
+        for action in self.bulk_action_table:
+            if isinstance(action,PlaceCell):
+                names.append(action.name)
+        return names
+
     def find_first_generator_id(self, sentence: str) -> str:
-        """returns the first find generator id in the given sentence
+        """returns the longest generator id in the given sentence
         should only be used on sentences which for sure have a generator id in them
         """
         # look for genids found in the sentence
@@ -798,7 +832,9 @@ class GlayoutCode(GlayoutAction):
             if genid in sentence:
                 genid_candidates.append(genid)
         # error checking
-        if len(genid) == 0:
+        if len(genid_candidates) == 0:
+            print(self.__known_generator_ids)
+            print(sentence)
             raise LookupError("no known generator id was found in the provided sentence")
         # prefer longer strings
         return max(genid_candidates, key=len)

@@ -11,12 +11,12 @@ from gdsfactory.functions import transformed
 from glayout.primitives.guardring import tapring
 from glayout.pdk.util.port_utils import add_ports_perimeter
 from gdsfactory.cell import clear_cache
-
+from typing import Literal
 
 #from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized; from glayout.pdk.sky130_mapped import sky130_mapped_pdk as pdk; biasParams=[6,2,4]; rmult=2
 
 @validate_arguments
-def two_transistor_interdigitized(
+def macro_two_transistor_interdigitized(
     pdk: MappedPDK,
     numcols: int,
     deviceA_and_B: Literal["nfet", "pfet"],
@@ -71,7 +71,14 @@ def two_transistor_interdigitized(
         devletter = "B" if i%2 else "A"
         prefix=devletter+"_"+str(int(i/2))+"_"
         idplace.add_ports(refs[-1].get_ports_list(), prefix=prefix)
-    #issue somehwere before line 89
+    # extend poly layer for equal parasitics
+    for i in range(2*numcols):
+        desired_end_layer = pdk.layer_to_glayer(refs[i].ports["row0_col0_rightsd_top_met_N"].layer)
+        idplace << straight_route(pdk, refs[i].ports["row0_col0_rightsd_top_met_N"],refs[-1].ports["drain_E"],glayer2=desired_end_layer)
+        idplace << straight_route(pdk, refs[i].ports["leftsd_top_met_N"],refs[-1].ports["drain_E"],glayer2=desired_end_layer)
+        if not i%2:
+            desired_gate_end_layer = "poly"
+            idplace << straight_route(pdk, refs[i].ports["row0_col0_gate_S"], refs[-1].ports["gate_E"],glayer2=desired_gate_end_layer)
     # merge s/d layer for all transistors
     idplace << straight_route(pdk, refs[0].ports["plusdoped_W"],refs[-1].ports["plusdoped_E"])
     # create s/d/gate connections extending over entire row
@@ -110,7 +117,7 @@ def two_nfet_interdigitized(
     ****NOTE: These are the same as glayout.primitives.fet.multiplier arguments EXCLUDING dummy, sd_route_extension, and pdk options
     tie_layers: tuple[str,str] specifying (horizontal glayer, vertical glayer) or well tie ring. default=("met2","met1")
     """
-    base_multiplier = two_transistor_interdigitized(pdk, numcols, "nfet", dummy, **kwargs)
+    base_multiplier = macro_two_transistor_interdigitized(pdk, numcols, "nfet", dummy, **kwargs)
     # tie
     if with_tie:
         tap_separation = max(
@@ -163,6 +170,7 @@ def two_nfet_interdigitized(
         )
         tapring_ref = base_multiplier << ringtoadd
         base_multiplier.add_ports(tapring_ref.get_ports_list(),prefix="substratetap_")
+    base_multiplier.info["route_genid"] = "two_transistor_interdigitized"
     return base_multiplier
 
 
@@ -187,7 +195,7 @@ def two_pfet_interdigitized(
     ****NOTE: These are the same as glayout.primitives.fet.multiplier arguments EXCLUDING dummy, sd_route_extension, and pdk options
     tie_layers: tuple[str,str] specifying (horizontal glayer, vertical glayer) or well tie ring. default=("met2","met1")
     """
-    base_multiplier = two_transistor_interdigitized(pdk, numcols, "pfet", dummy, **kwargs)
+    base_multiplier = macro_two_transistor_interdigitized(pdk, numcols, "pfet", dummy, **kwargs)
     # tie
     if with_tie:
         tap_separation = max(
@@ -240,4 +248,25 @@ def two_pfet_interdigitized(
         )
         tapring_ref = base_multiplier << ringtoadd
         base_multiplier.add_ports(tapring_ref.get_ports_list(),prefix="substratetap_")
+    base_multiplier.info["route_genid"] = "two_transistor_interdigitized"
     return base_multiplier
+
+
+
+
+def two_transistor_interdigitized(
+    pdk: MappedPDK,
+    device: Literal["nfet","pfet"],
+    numcols: int,
+    dummy: Union[bool, tuple[bool, bool]] = True,
+    with_substrate_tap: bool = True,
+    with_tie: bool = True,
+    tie_layers: tuple[str,str]=("met2","met1"),
+    **kwargs
+) -> Component:
+    if device=="nfet":
+        return two_nfet_interdigitized(pdk=pdk,numcols=numcols,dummy=dummy,with_substrate_tap=with_substrate_tap,with_tie=with_tie,tie_layers=tie_layers,**kwargs)
+    else:
+        return two_pfet_interdigitized(pdk=pdk,numcols=numcols,dummy=dummy,with_substrate_tap=with_substrate_tap,with_tie=with_tie,tie_layers=tie_layers,**kwargs)
+
+

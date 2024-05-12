@@ -1,8 +1,9 @@
 import argparse
-from pathlib import Path
 import sys
-from process_input import Session
+from pathlib import Path
 from typing import Union
+
+from process_input import Session
 
 
 def reload_saved_convo(convo_file: Union[Path, str]) -> tuple:
