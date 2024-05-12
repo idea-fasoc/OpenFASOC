@@ -77,7 +77,6 @@ def generic_route_two_transistor_interdigitized(
     if samecomp and samepin:
         return Component()
     # easy routes 3/15
-    #import pdb;pdb.set_trace()
     straight_route_width = 1 if edge1.width > 1 else edge1.width
     if check_route(name1,name2,"A_gate","B_gate") or check_route(name1,name2,"A_source","B_source") or check_route(name1,name2,"A_drain","B_drain"):
         return straight_route(pdk,edge1,edge2,width=straight_route_width)

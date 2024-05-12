@@ -425,6 +425,9 @@ class CreateCellParameter(GlayoutAction):
             raise NotImplementedError("parameter error checking has not yet been implemented")
         return "\t" + param + ", "
     
+    def __str__(self) -> str:
+        return self.type.__name__ + " " + self.varname + ((" = "+str(self.defaultvalue)) if self.defaultvalue is not None else "")
+    
     @classmethod
     def test(cls):
         tests = list()

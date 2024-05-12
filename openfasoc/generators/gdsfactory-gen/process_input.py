@@ -327,6 +327,8 @@ What would you like to do?"""
         """
         if "port" in text_input.lower():
             printPortTree_glayout_code_cell(sky130_mapped_pdk,self.code.get_code())
+        elif "param" in text_input.lower():
+            print(*self.code.parameter_table,sep="\n")
         else:
             show_glayout_code_cell(sky130_mapped_pdk, self.code.get_code())
         return False
