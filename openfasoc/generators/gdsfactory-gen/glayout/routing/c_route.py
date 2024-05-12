@@ -52,8 +52,8 @@ def c_route(
 	e2glayer = glayer for the parts connecting to the edge2. Default to layer of edge2
 	cglayer = glayer for the connection part (part that goes through a via) defaults to e1glayer met+1
 	viaoffset = offsets the via so that it is flush with the cglayer (may be needed for drc) i.e. -| vs _|
-	- False offsets via towards the other via
-	- True offsets via away from the other via
+	- True offsets via towards the other via
+	- False offsets via away from the other via
 	- None means center (no offset)
 	****NOTE: viaoffset pushes both vias towards each other slightly
 	"""

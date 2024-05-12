@@ -77,32 +77,34 @@ def generic_route_two_transistor_interdigitized(
     if samecomp and samepin:
         return Component()
     # easy routes 3/15
+    #import pdb;pdb.set_trace()
     straight_route_width = 1 if edge1.width > 1 else edge1.width
     if check_route(name1,name2,"A_gate","B_gate") or check_route(name1,name2,"A_source","B_source") or check_route(name1,name2,"A_drain","B_drain"):
         return straight_route(pdk,edge1,edge2,width=straight_route_width)
     # easy self routes (A->A or B->B, and source<->drain) 2/15 (5/15)
     if check_route(name1,name2,"A_drain","A_source"):
-        edge = edge1 if "drain" in edge1 else edge2
+        edge = edge1 if "drain" in edge1.name else edge2
         return align_comp_to_port(via_stack(pdk,"met1",glayer2),exchange_ports(top_comp,edge,"W"),alignment=("r","c"),rtr_comp_ref=False)
     if check_route(name1,name2,"B_drain","B_source"):
-        edge = edge1 if "source" in edge1 else edge2
+        edge = edge1 if "source" in edge1.name else edge2
         return align_comp_to_port(via_stack(pdk,"met1",glayer2),exchange_ports(top_comp,edge,"E"),alignment=("l","c"),rtr_comp_ref=False)# B is higher
     # hard self route (A->A or B->B, and source or drain -> gate) 4/15 (9/15)
-    viaoffset = check_route(name1,name2,"A_gate","A_drain") or check_route(name1,name2,"B_gate","B_drain")
+    viaoffset = not(check_route(name1,name2,"A_gate","A_drain") or check_route(name1,name2,"B_gate","B_drain"))
+    edge1, edge2 = (edge2, edge1) if ("drain" in edge2.name or "source" in edge2.name) else (edge1, edge2)
     if check_route(name1,name2,"A_gate","A_drain") or check_route(name1,name2,"A_gate","A_source"):
-        return c_route(pdk,exchange_ports(top_comp,edge1,"W"),exchange_ports(top_comp,edge2,"W"),viaoffset=viaoffset) # A gets W
+        return c_route(pdk,exchange_ports(top_comp,edge1,"W"),exchange_ports(top_comp,edge2,"W"),viaoffset=(viaoffset,True)) # A gets W
     if check_route(name1,name2,"B_gate","B_drain") or check_route(name1,name2,"B_gate","B_source"):
-        return c_route(pdk,exchange_ports(top_comp,edge1,"E"),exchange_ports(top_comp,edge2,"E"),viaoffset=viaoffset) # B gets E
+        return c_route(pdk,exchange_ports(top_comp,edge1,"E"),exchange_ports(top_comp,edge2,"E"),viaoffset=(viaoffset,True)) # B gets E
     # inter transistor routes going to the gate of A or B   4/15 (13/15)
     if check_route(name1,name2,"A_gate","B_drain") or check_route(name1,name2,"A_gate","B_source"):
-        return c_route(pdk,exchange_ports(top_comp,edge1,"W"),exchange_ports(top_comp,edge2,"W"),viaoffset=check_route(name1,name2,"A_gate","B_drain")) # A_gate gets W
+        return c_route(pdk,exchange_ports(top_comp,edge1,"W"),exchange_ports(top_comp,edge2,"W"),viaoffset=(not(check_route(name1,name2,"A_gate","B_drain")),True)) # A_gate gets W
     if check_route(name1,name2,"B_gate","A_drain") or check_route(name1,name2,"B_gate","A_source"):
-        return c_route(pdk,exchange_ports(top_comp,edge1,"E"),exchange_ports(top_comp,edge2,"E"),viaoffset=check_route(name1,name2,"B_gate","A_drain")) # B_gate gets E
+        return c_route(pdk,exchange_ports(top_comp,edge1,"E"),exchange_ports(top_comp,edge2,"E"),viaoffset=(not(check_route(name1,name2,"B_gate","A_drain")),True)) # B_gate gets E
     # inter transistor routes going to from s or d to s or d   2/15 (15/15)
     if check_route(name1,name2,"A_source","B_drain"):
-        edge = edge1 if "drain" in edge1 else edge2
+        edge = edge1 if "drain" in edge1.name else edge2
         return align_comp_to_port(via_stack(pdk,"met1",glayer2),exchange_ports(top_comp,edge,"W"),alignment=("r","c"),rtr_comp_ref=False)
     if check_route(name1,name2,"A_drain","B_source"):
-        edge = edge1 if "source" in edge1 else edge2
+        edge = edge1 if "source" in edge1.name else edge2
         return align_comp_to_port(via_stack(pdk,"met1",glayer2),exchange_ports(top_comp,edge,"W"),alignment=("r","c"),rtr_comp_ref=False)
     raise ValueError("You picked a port that smart_route with interdigitized 2 transistor does not support")
