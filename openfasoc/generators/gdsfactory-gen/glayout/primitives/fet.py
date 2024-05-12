@@ -102,7 +102,8 @@ XMAIN   D G S B {model} l={{l}} w={{w}} m={{m}}"""
         }
     )
 
-#@cell
+# drain is above source
+@cell
 def multiplier(
     pdk: MappedPDK,
     sdlayer: str,

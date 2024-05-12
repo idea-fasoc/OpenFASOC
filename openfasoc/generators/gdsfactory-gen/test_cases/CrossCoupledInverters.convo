@@ -1,0 +1,35 @@
+CrossCoupledInverters
+Create a float parameter called cc_invs_nfet_width
+Create a float parameter called cc_invs_pfet_width
+Create a float parameter called cc_invs_nfet_length
+Create a float parameter called cc_invs_pfet_length
+Create an int parameter called cc_invs_numfingers
+place an interdigitated nfet called cc_nfets with with_substrate_tap=False, numcols=cc_invs_numfingers , kwargs={ "width" : cc_invs_nfet_width , "length" : cc_invs_nfet_length }
+place an interdigitated pfet called cc_pfets with numcols=cc_invs_numfingers , kwargs={ "width" : cc_invs_pfet_width , "length" : cc_invs_pfet_length }
+move cc_pfets above cc_nfets
+# route between cc_pfets_substratetap_S_top_met_S and cc_nfets_welltie_N_top_met_N using straight_route
+# route between cc_nfets_A_gate_E and cc_pfets_A_gate_E using c_route
+# route between cc_nfets_B_gate_W and cc_pfets_B_gate_W using c_route
+# route between cc_nfets_A_source_E and cc_pfets_A_source_E using c_route with extension=1
+# route between cc_nfets_B_source_W and cc_pfets_B_source_W using c_route with extension=1
+# route between cc_nfets_A_drain_E and cc_nfets_B_gate_E using c_route with extension=1.5
+# route between cc_pfets_A_drain_E and cc_pfets_B_gate_E using c_route with extension=1.5
+# self routes 6/15
+route between cc_pfets_A_drain_E and cc_pfets_A_gate_E 
+route between cc_pfets_A_drain_E and cc_pfets_A_source_E 
+route between cc_pfets_A_source_E and cc_pfets_A_gate_E 
+route between cc_pfets_B_drain_E and cc_pfets_B_gate_E 
+route between cc_pfets_B_drain_E and cc_pfets_B_source_E 
+route between cc_pfets_B_source_E and cc_pfets_B_gate_E 
+# inter transistor s/d routes 4/15
+route between cc_pfets_B_source_E and cc_pfets_A_source_E
+route between cc_pfets_B_drain_E and cc_pfets_A_drain_E 
+route between cc_pfets_B_source_E and cc_pfets_A_drain_E 
+route between cc_pfets_B_drain_E and cc_pfets_A_source_E 
+# inter transistor s/d to gate routes 4/15
+route between cc_pfets_B_gate_E and cc_pfets_A_source_E
+route between cc_pfets_B_gate_E and cc_pfets_A_drain_E
+route between cc_pfets_A_gate_E and cc_pfets_B_source_E
+route between cc_pfets_A_gate_E and cc_pfets_B_drain_E
+# inter transistor gate to gate route 1/15
+route between cc_pfets_B_gate_E and cc_pfets_A_gate_E

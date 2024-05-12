@@ -10,7 +10,7 @@ from glayout.pdk.util.port_utils import assert_port_manhattan, set_port_orientat
 from gdstk import rectangle as primitive_rectangle
 
 
-#@cell
+@cell
 def straight_route(
 	pdk: MappedPDK,
 	edge1: Port,
