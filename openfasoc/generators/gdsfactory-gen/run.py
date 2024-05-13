@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Union
 import traceback
 
-from process_input import Session
+import process_input
 
 
 def reload_saved_convo(convo_file: Union[Path, str]) -> tuple:
@@ -24,7 +24,7 @@ def reload_saved_convo(convo_file: Union[Path, str]) -> tuple:
         lines = loadconvo.readlines()
         for i, line in enumerate(lines):
             if i == 0:
-                convo = Session(inputstream=sys.stdin, outputstream=sys.stdout, toplvlname=line)
+                convo = process_input.Session(inputstream=sys.stdin, outputstream=sys.stdout, toplvlname=line)
                 continue
             convo.process_next_input(line)
         loop_count = len(lines) - 1
@@ -45,7 +45,7 @@ def run_session(load_conversation: Union[str, Path], restore_and_exit: bool=Fals
         if restore_and_exit:
             return convo.code.get_code()
     else:
-        convo, loop_count = Session(inputstream=sys.stdin, outputstream=sys.stdout), int(0)
+        convo, loop_count = process_input.Session(inputstream=sys.stdin, outputstream=sys.stdout), int(0)
     # enter design loop
     session_ongoing = True
     while session_ongoing:

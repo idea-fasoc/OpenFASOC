@@ -6,6 +6,8 @@ import re
 from typing import Callable, Union
 from pathlib import Path
 import tempfile
+import run
+import relational
 
 from glayout.pdk.mappedpdk import MappedPDK
 from glayout.pdk.util.port_utils import PortTree
@@ -37,6 +39,12 @@ def get_default_arguments(func: Callable, pdk: MappedPDK) -> dict:
             default_value = True
         elif arg_type == str:
             default_value = "met1"
+        # hard to guess what a person might want with a tuple, but make it a pair of ints (size) is a safe bet
+        elif arg_type == tuple:
+            default_value = (1,1)
+        # hard to guess what a person might want with a list, but make it a long list of ints is a safe bet
+        elif arg_type == list:
+            default_value = [1,1,1,1,1,1,1,1,1]
         elif arg_type == MappedPDK:
             default_value = pdk
         else:  # for other types, set default to None
@@ -46,6 +54,10 @@ def get_default_arguments(func: Callable, pdk: MappedPDK) -> dict:
     return kwargs
 
 
+def get_funccell_name(glayout_code: str) -> str:
+    pattern = r"def\s+([a-zA-Z_][a-zA-Z0-9_]*)cell\s*\("
+    return re.search(pattern, glayout_code).group().lstrip("def").rstrip("(").strip()
+
 class CodeImportHandler:
     """create, manage, destroy temporary files created as part of dynamic importing
     contains
@@ -54,19 +66,24 @@ class CodeImportHandler:
         self.temp_module: the imported module handle
     """
 
-    def __init__(self, glayout_code: str):
+    def __init__(self, glayout_code: Union[str, Path]):
         """create temporary file with glayout python code from glayout_code string
         and import the module
         Args:
-            glayout_code (str): string containing cell function and imports.
+            glayout_code (str, Path): string containing cell function and imports.
+            ****or, string or pathlib.Path: path to a convo file
         """
+        # check if this is a code string or a file
+        precompiled_code = False
+        if isinstance(glayout_code, str):
+            if relational.GlayoutCode.HEAD_MARKER in glayout_code:
+                precompiled_code = True
+        # if this is not a code string, convert NLP file to python code
+        if not precompiled_code:
+            glayout_code = run.run_session(glayout_code, restore_and_exit=True)
         # figure out what the cell is called
-        pattern = r"def\s+([a-zA-Z_][a-zA-Z0-9_]*)cell\s*\("
-        self.func_name = (
-            re.search(pattern, glayout_code).group().lstrip("def").rstrip("(").strip()
-        )
+        self.func_name = get_funccell_name(glayout_code)
         pymodule_name = self.func_name.removesuffix("_cell") + ".py"
-        #import pdb; pdb.set_trace()
         # create the cell py module
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_dir_path = Path(temp_dir).resolve()

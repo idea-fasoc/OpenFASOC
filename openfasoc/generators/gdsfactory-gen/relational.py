@@ -2,7 +2,6 @@ import copy
 import inspect
 import itertools
 import operator
-import os
 import re
 import shutil
 import string
@@ -10,6 +9,9 @@ from abc import ABC, abstractmethod
 from importlib import import_module
 from pathlib import Path
 from typing import Callable, Literal, Optional, Union, cast
+import datetime
+import run
+import dynamic_load
 
 import nltk
 
@@ -305,11 +307,25 @@ class ImportCell(GlayoutAction):
             else:
                 raise FileNotFoundError("Glayout package not found in a sub folder of ../ directory")
             # try to resolve path of user module in Glayout package
+            # this will look for the file which starts with "component_name" ANYWHERE in the glayout package
             matching_files = list(glayout_path.rglob(str(component_name)+".py"))
+            matching_files += list(glayout_path.rglob(str(component_name)+".convo"))
+            # also check the test_cases directory for convo files
+            matching_files += list((glayout_path / "../test_cases").rglob(str(component_name)+".convo"))
             if len(matching_files)>0:
                 module_path = matching_files[0].resolve()
             else:
-                raise FileNotFoundError("Could not find a module called "+component_name+" in Glayout")
+                raise FileNotFoundError("Could not find a module called "+str(component_name)+" in Glayout")
+        # copy convo file into glayout Components and then create a python file and copy it into glayout components
+        if str(module_path).endswith(".convo"):
+            components_directory = glayout_path / "components"
+            shutil.copy(module_path, components_directory)
+            glayoutcode = run.run_session(module_path,True)
+            component_name = dynamic_load.get_funccell_name(glayoutcode)
+            module_path = components_directory / (component_name + ".py")
+            # write python code from a convo to the components directory
+            with open(module_path,mode="w") as pycell:
+                pycell.write(glayoutcode)
         # resolve module_path into a python relative import path (if it is not already so)
         if any(ind in Path(module_path).as_posix() for ind in ["/",".py"]):
             module_path = Path(module_path).resolve()
@@ -649,6 +665,8 @@ class Route(GlayoutAction):
 class GlayoutCode(GlayoutAction):
     """Stores all needed information to create Glayout code in relation tables
     GlayoutActions require some general context provided by the GlayoutCode class"""
+    
+    HEAD_MARKER = "####\n# Compiled Glayout\n# Apache License\n# Version 2.0, January 2004\n# http://www.apache.org/licenses/"
 
     # each table is implemented as a list of dictionaries
     def __init__(self, toplvl_name: str):
@@ -702,7 +720,6 @@ class GlayoutCode(GlayoutAction):
         return handle
     
     def update_import_table(self, component_identifiers: list[str], component_name: Optional[str]=None, module_path: Optional[Union[str, Path]]=None):
-        #def update_import_table(self, *args, **kwargs):
         """Add an ImportCell to the import_table, see ImportCell class"""
         if component_name is None or component_name=="" or component_name.isspace():
             component_name = f"comp_{self.__random_name_index}"
@@ -761,7 +778,6 @@ class GlayoutCode(GlayoutAction):
             route_type = rpre + "_route"
         # look for top comp ref this goes back to
         if route_type=="smart_route":
-            #import pdb;pdb.set_trace()
             for cellname in self.names_of_placed_cells():
                 compref = cellname in port1 and cellname in port2
                 if compref is not None:
@@ -783,6 +799,9 @@ class GlayoutCode(GlayoutAction):
         return params + variables
     
     def get_code(self) -> str:
+        # time this NLP was compiled to python code
+        current_time = datetime.datetime.now()
+        compilation_head = self.HEAD_MARKER + f"\n# {current_time}\n\n"
         # produce all import code
         import_code = "from glayout.pdk.mappedpdk import MappedPDK\n"
         import_code += "from gdsfactory import Component\n"
@@ -802,7 +821,7 @@ class GlayoutCode(GlayoutAction):
         function_body = "\n".join(["\t"+line for line in function_body.splitlines()])
         # footer
         footer = "\n\treturn "+self.toplvl_name+"\n"
-        return import_code + "\n" + function_head + function_body + footer
+        return compilation_head + import_code + "\n" + function_head + function_body + footer
     
     @classmethod
     def test(cls, test_all: bool=True):
