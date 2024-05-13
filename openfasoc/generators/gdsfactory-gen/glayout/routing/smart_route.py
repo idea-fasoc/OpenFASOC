@@ -27,9 +27,8 @@ def smart_route(
             try:
                 if ref_comp.info["route_genid"] == "two_transistor_interdigitized":
                     return generic_route_two_transistor_interdigitized(pdk, edge1, edge2, top_comp)
-                # commented because buggy
-                # if ref_comp.info["route_genid"] == "four_transistor_interdigitized":
-                #     return generic_route_four_transistor_interdigitized(pdk, edge1, edge2, top_comp)
+                if ref_comp.info["route_genid"] == "four_transistor_interdigitized":
+                    return generic_route_four_transistor_interdigitized(pdk, edge1, edge2, top_comp)
                 if ref_comp.info["route_genid"] == "common_centroid":
                     return generic_route_ab_ba_common_centroid(pdk, edge1, edge2, top_comp)
             except ValueError:
