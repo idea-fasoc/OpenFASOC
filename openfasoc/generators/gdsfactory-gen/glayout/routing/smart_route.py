@@ -162,6 +162,7 @@ def generic_route_four_transistor_interdigitized(
         pname = pname.rstrip("NESW_")
         pname = pname.removesuffix("source").removesuffix("drain").removesuffix("gate")
         pname = pname.rstrip("_").removesuffix("A").removesuffix("B").rstrip("_")
+        return pname
     # check ports are valid
     cond1 = check_port(edge1.name) or check_port(edge2.name)
     cond2 = strip_portname(edge1.name).split("_")[-1] != strip_portname(edge2.name).split("_")[-1]

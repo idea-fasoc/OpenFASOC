@@ -2,6 +2,7 @@ import argparse
 import sys
 from pathlib import Path
 from typing import Union
+import traceback
 
 from process_input import Session
 
@@ -54,6 +55,7 @@ def run_session(load_conversation: Union[str, Path], restore_and_exit: bool=Fals
         try:
             session_ongoing = convo.process_next_input(convo.read_from_stream())
         except Exception as e:
+            print(traceback.format_exc())
             print("an exception was encounterd")
             print(str(e))
             print("restoring last valid state and resuming regular program execution\n")

@@ -1,16 +1,18 @@
 CrossCoupledInverters
-Create a float parameter called cc_invs_nfet_width
-Create a float parameter called cc_invs_pfet_width
-Create a float parameter called cc_invs_nfet_length
-Create a float parameter called cc_invs_pfet_length
-Create an int parameter called cc_invs_numfingers
-place an interdigitated nfet called cc_nfets with with_substrate_tap=False, numcols=cc_invs_numfingers , kwargs={ "width" : cc_invs_nfet_width , "length" : cc_invs_nfet_length }
-place an interdigitated pfet called cc_pfets with numcols=cc_invs_numfingers , kwargs={ "width" : cc_invs_pfet_width , "length" : cc_invs_pfet_length }
-move cc_pfets above cc_nfets
-# route between cc_pfets_substratetap_S_top_met_S and cc_nfets_welltie_N_top_met_N using straight_route
-# route between cc_nfets_A_gate_E and cc_pfets_A_gate_E using c_route
-# route between cc_nfets_B_gate_W and cc_pfets_B_gate_W using c_route
-# route between cc_nfets_A_source_E and cc_pfets_A_source_E using c_route with extension=1
-# route between cc_nfets_B_source_W and cc_pfets_B_source_W using c_route with extension=1
-# route between cc_nfets_A_drain_E and cc_nfets_B_gate_E using c_route with extension=1.5
-# route between cc_pfets_A_drain_E and cc_pfets_B_gate_E using c_route with extension=1.5
+Create a float parameter called ccinvs_nfet_width
+Create a float parameter called ccinvs_pfet_width
+Create a float parameter called ccinvs_nfet_length
+Create a float parameter called ccinvs_pfet_length
+Create an int parameter called ccinvs_numfingers
+place 4 interdigitated transistors called ccinvs with numcols=ccinvs_numfingers, top_row_device="pfet", bottom_row_device="nfet"
+# sources are connected to pwr and gnd respectively
+route between ccinvs_top_A_source_E and ccinvs_top_B_source_E
+route between ccinvs_bottom_A_source_E and ccinvs_bottom_B_source_E
+# output of each inverter goes to input of the other inverter
+route between ccinvs_top_A_drain_E and ccinvs_top_B_gate_E
+route between ccinvs_bottom_A_drain_E and ccinvs_bottom_B_gate_E
+route between ccinvs_top_B_drain_E and ccinvs_top_A_gate_E
+route between ccinvs_bottom_B_drain_E and ccinvs_bottom_A_gate_E
+# connect nfet and pfet of each inverter at the gate
+route between ccinvs_top_B_gate_E and ccinvs_bottom_B_gate_E
+route between ccinvs_top_A_gate_W and ccinvs_bottom_A_gate_W

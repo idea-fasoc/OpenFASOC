@@ -671,6 +671,8 @@ class GlayoutCode(GlayoutAction):
         # general components and layout strategies
         two_nfet_interdigitized_aliases = ["interdigitized","interdigitated"]+list_cartesian_product(["interdigitized","interdigitated"],["nmos","nfet"],True)
         self.update_import_table(two_nfet_interdigitized_aliases,"two_nfet_interdigitized","glayout.placement.two_transistor_interdigitized")
+        generic_4T_interdigitzed_aliases = list_cartesian_product(list_cartesian_product(["four","4"], ["interdigitized","interdigitated"]),["fet","transistor"])
+        self.update_import_table(generic_4T_interdigitzed_aliases, "generic_4T_interdigitzed", "glayout.placement.four_transistor_interdigitized")
         two_pfet_interdigitized_aliases = list_cartesian_product(["interdigitized","interdigitated"],["pmos","pfet"],True)
         self.update_import_table(two_pfet_interdigitized_aliases,"two_pfet_interdigitized","glayout.placement.two_transistor_interdigitized")
         self.update_import_table(["diff pair","diff_pair","differential pair","differential pairs","differential transistor"],"diff_pair",None)
@@ -759,6 +761,7 @@ class GlayoutCode(GlayoutAction):
             route_type = rpre + "_route"
         # look for top comp ref this goes back to
         if route_type=="smart_route":
+            #import pdb;pdb.set_trace()
             for cellname in self.names_of_placed_cells():
                 compref = cellname in port1 and cellname in port2
                 if compref is not None:
