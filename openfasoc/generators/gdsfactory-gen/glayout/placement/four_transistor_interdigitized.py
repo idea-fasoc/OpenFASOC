@@ -6,13 +6,15 @@ from glayout.pdk.mappedpdk import MappedPDK
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized, two_pfet_interdigitized
 from typing import Literal, Optional
 from gdsfactory import Component
-from glayout.pdk.util.comp_utils import evaluate_bbox
+from glayout.pdk.util.comp_utils import evaluate_bbox, movey
+from glayout.primitives.guardring import tapring
 
 def generic_4T_interdigitzed(
     pdk: MappedPDK,
     top_row_device: Literal["nfet", "pfet"],
     bottom_row_device: Literal["nfet", "pfet"],
     numcols: int,
+    with_substrate_tap: bool = True,
     top_kwargs: Optional[dict]=None,
     bottom_kwargs: Optional[dict]=None
 ):
@@ -32,6 +34,14 @@ def generic_4T_interdigitzed(
         bottomrow = toplvl << two_pfet_interdigitized(pdk,numcols,with_substrate_tap=False,**bottom_kwargs)
     # move
     toprow.movey(pdk.snap_to_2xgrid((evaluate_bbox(bottomrow)[1]/2 + evaluate_bbox(toprow)[1]/2 + pdk.util_max_metal_seperation())))
-    # routes
-
+    # add substrate tap
+    if with_substrate_tap:
+        substrate_tap = tapring(pdk, enclosed_rectangle=pdk.snap_to_2xgrid(evaluate_bbox(toplvl.flatten(),padding=pdk.util_max_metal_seperation())))
+        substrate_tap_ref = toplvl << movey(substrate_tap,destination=pdk.snap_to_2xgrid(toplvl.flatten().center[1],snap4=True))
+    # add ports
+    toplvl.add_ports(substrate_tap_ref.get_ports_list(),prefix="substratetap_")
+    toplvl.add_ports(toprow.get_ports_list(),prefix="top_")
+    toplvl.add_ports(bottomrow.get_ports_list(),prefix="bottom_")
+    # flag for smart route
+    toplvl.info["route_genid"] = "four_transistor_interdigitized"
     return toplvl
