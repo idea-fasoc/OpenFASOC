@@ -3,7 +3,7 @@
 # Apache License
 # Version 2.0, January 2004
 # http://www.apache.org/licenses/
-# 2024-05-14 10:14:02.481311
+# 2024-05-14 16:28:24.417473
 
 from glayout.pdk.mappedpdk import MappedPDK
 from gdsfactory import Component
@@ -30,7 +30,7 @@ def CrossCoupledInverters_cell(
 	ccinvs_numfingers: int, 
 ):
 	pdk.activate()
-	CrossCoupledInverters = Component()
+	CrossCoupledInverters = Component(name="CrossCoupledInverters")
 	maxmetalsep = pdk.util_max_metal_seperation()
 	double_maxmetalsep = 2*pdk.util_max_metal_seperation()
 	triple_maxmetalsep = 3*pdk.util_max_metal_seperation()

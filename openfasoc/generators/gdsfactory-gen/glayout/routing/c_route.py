@@ -5,7 +5,7 @@ from glayout.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
 from math import isclose
 from glayout.primitives.via_gen import via_stack
-from gdsfactory.routing.route_quad import route_quad
+from glayout.routing.straight_route import straight_route
 from gdsfactory.components.rectangle import rectangle
 from glayout.pdk.util.comp_utils import evaluate_bbox, get_primitive_rectangle
 from glayout.pdk.util.port_utils import add_ports_perimeter, rename_ports_by_orientation, rename_ports_by_list, print_ports, set_port_width, set_port_orientation, get_orientation
@@ -32,7 +32,8 @@ def c_route(
 	e2glayer: Optional[str] = None, 
 	cglayer: Optional[str] = None, 
 	viaoffset: Optional[Union[bool,tuple[Optional[bool],Optional[bool]]]]=(True,True),
-	fullbottom: Optional[bool] = False
+	fullbottom: Optional[bool] = False,
+	debug=False
 ) -> Component:
 	"""creates a C shaped route between two Ports.
 	
@@ -57,6 +58,9 @@ def c_route(
 	- None means center (no offset)
 	****NOTE: viaoffset pushes both vias towards each other slightly
 	"""
+	if debug:
+		pass
+		#import pdb; pdb.set_trace()
 	# error checking and figure out args
 	if round(edge1.orientation) % 90 or round(edge2.orientation) % 90:
 		raise ValueError("Ports must be vertical or horizontal")
@@ -163,6 +167,8 @@ def c_route(
 		me2.movex(0-viastack2.xmax).movey(via_flush2)
 		me1, me2 = (me1, me2) if (me1.origin[1] > me2.origin[1]) else (me2, me1)
 		route_ports = [me1.ports["top_met_N"],me2.ports["top_met_S"]]
+		fix_connection_direction = "E"
+		fix_ports = [me1.ports["top_met_E"],me2.ports["top_met_E"]]
 	elif round(edge1.orientation) == 180:# facing west
 		me1.move(destination=e1_extension.ports["e_W"].center)
 		me2.move(destination=e2_extension.ports["e_W"].center)
@@ -171,6 +177,8 @@ def c_route(
 		me2.movex(viastack2.xmax).movey(via_flush2)
 		me1, me2 = (me1, me2) if (me1.origin[1] > me2.origin[1]) else (me2, me1)
 		route_ports = [me1.ports["top_met_N"],me2.ports["top_met_S"]]
+		fix_connection_direction = "E"
+		fix_ports = [me1.ports["top_met_E"],me2.ports["top_met_E"]]
 	elif round(edge1.orientation) == 270:# facing south
 		me1.move(destination=e1_extension.ports["e_S"].center)
 		me2.move(destination=e2_extension.ports["e_S"].center)
@@ -179,6 +187,8 @@ def c_route(
 		me2.movey(viastack2.xmax).movex(via_flush2)
 		me1, me2 = (me1, me2) if (me1.origin[0] > me2.origin[0]) else (me2, me1)
 		route_ports = [me1.ports["top_met_E"],me2.ports["top_met_W"]]
+		fix_connection_direction = "N"
+		fix_ports = [me1.ports["top_met_N"],me2.ports["top_met_N"]]
 	else:#facing north
 		me1.move(destination=e1_extension.ports["e_N"].center)
 		me2.move(destination=e2_extension.ports["e_N"].center)
@@ -187,13 +197,22 @@ def c_route(
 		me2.movey(0-viastack2.xmax).movex(via_flush2)
 		me1, me2 = (me1, me2) if (me1.origin[0] > me2.origin[0]) else (me2, me1)
 		route_ports = [me1.ports["top_met_E"],me2.ports["top_met_W"]]
+		fix_connection_direction = "N"
+		fix_ports = [me1.ports["top_met_N"],me2.ports["top_met_N"]]
 	# connect extensions, add ports, return
 	croute << e1_extension_comp
 	croute << e2_extension_comp
 	if cwidth:
 		route_ports = [set_port_width(port_,cwidth) for port_ in route_ports]
 	route_ports[0].width = route_ports[1].width = max(route_ports[0].width, route_ports[1].width)
-	cconnection = croute << route_quad(route_ports[0],route_ports[1],layer=pdk.get_glayer(cglayer))
+	route_port0 = route_ports[0].copy()
+	route_port1 = route_ports[1].copy()
+	route_port0.layer = route_port1.layer = pdk.get_glayer(cglayer)
+	cconnection = croute << straight_route(pdk, route_port0,route_port1,glayer1=cglayer,glayer2=cglayer)
+	for _port in fix_ports:
+		port2 = cconnection.ports["route_"+fix_connection_direction]
+		port2.layer = _port.layer = pdk.get_glayer(cglayer)
+		croute << straight_route(pdk, _port, port2, glayer1=cglayer,glayer2=cglayer)
 	for i,port_to_add in enumerate(route_ports):
 		orta = get_orientation(port_to_add.orientation)
 		route_ports[i] = set_port_orientation(port_to_add, orta)

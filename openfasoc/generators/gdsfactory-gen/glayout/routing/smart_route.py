@@ -11,6 +11,13 @@ from glayout.primitives.via_gen import via_stack
 from glayout.pdk.util.comp_utils import align_comp_to_port
 import warnings
 
+def check_route(name1, name2, pin1, pin2) -> bool:
+    # check if this routes between the 2 pins
+    cond1 = name1==pin1 and name2==pin2
+    cond2 = name2==pin1 and name1==pin2
+    return cond1 or cond2
+
+
 def smart_route(
     pdk: MappedPDK,
     edge1: Port,
@@ -72,11 +79,6 @@ def generic_route_two_transistor_interdigitized(
         return top_comp.ports[edge.name.rstrip("NESW")+direction+"_private"]
     #glayer1 = pdk.layer_to_glayer(edge1.layer)
     glayer2 = pdk.layer_to_glayer(edge2.layer)
-    def check_route(name1, name2, pin1, pin2) -> bool:
-        # check if this routes between the 2 pins
-        cond1 = name1==pin1 and name2==pin2
-        cond2 = name2==pin1 and name1==pin2
-        return cond1 or cond2
     # AorB_source,gate,or drain
     def parse_port_name(pname: str) -> str:
         comp = str()
@@ -163,13 +165,18 @@ def generic_route_four_transistor_interdigitized(
         pname = pname.removesuffix("source").removesuffix("drain").removesuffix("gate")
         pname = pname.rstrip("_").removesuffix("A").removesuffix("B").rstrip("_")
         return pname
-    # check ports are valid
+    # check that this function supports the ports specified
     cond1 = check_port(edge1.name) or check_port(edge2.name)
     cond2 = strip_portname(edge1.name).split("_")[-1] != strip_portname(edge2.name).split("_")[-1]
-    if cond1 or cond2:
+    if cond1:
         raise ValueError("You picked a port that smart_route with interdigitized 4 transistor does not support")
-    # else return 2 tran route
-    return generic_route_two_transistor_interdigitized(pdk, edge1, edge2, top_comp)
+    elif cond2:
+        # do your code here
+        #if check_route("")
+        raise ValueError("these ports will be supported soon")
+    else:
+        # else return 2 tran route
+        return generic_route_two_transistor_interdigitized(pdk, edge1, edge2, top_comp)
 
 
 

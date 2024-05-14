@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 import nltk
-from dynamic_load import show_glayout_code_cell, printPortTree_glayout_code_cell
+import dynamic_load
 from relational import GlayoutCode, parse_direction
 from glayout.pdk.sky130_mapped import sky130_mapped_pdk
 
@@ -326,11 +326,11 @@ What would you like to do?"""
             False: saveresponse=False
         """
         if "port" in text_input.lower():
-            printPortTree_glayout_code_cell(sky130_mapped_pdk,self.code.get_code())
+            dynamic_load.printPortTree_glayout_code_cell(sky130_mapped_pdk,self.code.get_code())
         elif "param" in text_input.lower():
             print(*self.code.parameter_table,sep="\n")
         else:
-            show_glayout_code_cell(sky130_mapped_pdk, self.code.get_code())
+            dynamic_load.show_glayout_code_cell(sky130_mapped_pdk, self.code.get_code())
         return False
     
     def process_next_input(self, text_input: str) -> bool:

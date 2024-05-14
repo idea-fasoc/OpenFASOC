@@ -10,8 +10,8 @@ from typing import Union
 
 from glayout.pdk.mappedpdk import MappedPDK
 from glayout.pdk.sky130_mapped import sky130_mapped_pdk
-from dynamic_load import show_glayout_code_cell
-from run import run_session
+import dynamic_load
+import run
 
 
 def instantiate_convo(pdk: MappedPDK, convo_file: Union[str, Path]) -> bool:
@@ -25,8 +25,8 @@ def instantiate_convo(pdk: MappedPDK, convo_file: Union[str, Path]) -> bool:
     """
     try:
         # convert NLP to code and pass to show_glayout_code_cell
-        session_code = run_session(load_conversation=convo_file, restore_and_exit=True)
-        return show_glayout_code_cell(pdk, session_code)
+        session_code = run.run_session(load_conversation=convo_file, restore_and_exit=True)
+        return dynamic_load.show_glayout_code_cell(pdk, session_code)
     except Exception as e:
         print(f"Error running session with {convo_file}: {e}")
         print(traceback.format_exc())

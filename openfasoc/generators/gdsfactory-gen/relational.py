@@ -824,7 +824,7 @@ class GlayoutCode(GlayoutAction):
         function_head += "):\n"
         # create variables, place, route, and move in the order that user supplied these directions
         function_body = "pdk.activate()\n"
-        function_body += f"{self.toplvl_name} = Component()\n"
+        function_body += f"{self.toplvl_name} = Component(name=\"{self.toplvl_name}\")\n"
         for bulk_action in self.bulk_action_table:
             function_body += bulk_action.get_code()+"\n"
         function_body = "\n".join(["\t"+line for line in function_body.splitlines()])
