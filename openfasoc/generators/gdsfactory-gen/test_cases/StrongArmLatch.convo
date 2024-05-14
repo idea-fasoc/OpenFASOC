@@ -1,0 +1,15 @@
+StrongArmLatch
+import CrossCoupledInverters
+place a diff pair called inputdiff
+place CrossCoupledInverters called ccinvs with ccinvs_numfingers=4
+place a nfet called bridge with with_substrate_tap=False
+place a nfet called clkgnd with with_substrate_tap=False
+place a pfet called clkpwrL
+place a pfet called clkpwrR
+move clkgnd below inputdiff
+move bridge above inputdiff
+move ccinvs above bridge
+move clkpwrR to the right of ccinvs
+move clkpwrR above bridge
+move clkpwrL to the left of ccinvs
+move clkpwrL above bridge

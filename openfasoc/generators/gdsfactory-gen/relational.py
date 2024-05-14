@@ -313,13 +313,14 @@ class ImportCell(GlayoutAction):
             # also check the test_cases directory for convo files
             matching_files += list((glayout_path / "../test_cases").rglob(str(component_name)+".convo"))
             if len(matching_files)>0:
-                module_path = matching_files[0].resolve()
+                module_path = matching_files[-1].resolve()
             else:
                 raise FileNotFoundError("Could not find a module called "+str(component_name)+" in Glayout")
         # copy convo file into glayout Components and then create a python file and copy it into glayout components
         if str(module_path).endswith(".convo"):
             components_directory = glayout_path / "components"
-            shutil.copy(module_path, components_directory)
+            if module_path.parent != components_directory:
+                shutil.copy(module_path, components_directory)
             glayoutcode = run.run_session(module_path,True)
             component_name = dynamic_load.get_funccell_name(glayoutcode)
             module_path = components_directory / (component_name + ".py")
@@ -599,14 +600,23 @@ class RelativeMove(GlayoutAction):
     def get_code(self) -> str:
         movinfo = [self.separation*direc for direc in self.direction]
         l1 = f"# move {self.name} {self.strdirection} {self.relative_comp}"
-        if self.direction[0]:
-            l2 = f"[{self.direction[0]}*({self.separation} + evaluate_bbox({self.relative_comp})[0]/2 + evaluate_bbox({self.name})[0]/2), 0]"
-        elif self.direction[1]:
-            l2 = f"[0, {self.direction[1]}*({self.separation} + evaluate_bbox({self.relative_comp})[1]/2 + evaluate_bbox({self.name})[1]/2)]"
-        else:
+        l2 = None
+        if self.direction[0]==1:# move to the right
+            l2 = f"{self.direction[0]}*({self.separation} + center_to_edge_distance({self.relative_comp}_ref,3) + center_to_edge_distance({self.name}_ref,1))"
+            movfunc, cidx = "movex", 0
+        if self.direction[0]==-1:# move to the left
+            l2 = f"{self.direction[0]}*({self.separation} + center_to_edge_distance({self.relative_comp}_ref,1) + center_to_edge_distance({self.name}_ref,3))"
+            movfunc, cidx  = "movex", 0
+        if self.direction[1]==1:# move to the north
+            l2 = f"{self.direction[1]}*({self.separation} + center_to_edge_distance({self.relative_comp}_ref,2) + center_to_edge_distance({self.name}_ref,4))"
+            movfunc, cidx  = "movey", 1
+        if self.direction[1]==-1:# move to the south
+            l2 = f"{self.direction[1]}*({self.separation} + center_to_edge_distance({self.relative_comp}_ref,4) + center_to_edge_distance({self.name}_ref,2))"
+            movfunc, cidx  = "movey", 1
+        if l2 is None:
             raise ValueError("move must be either up/north/above, right/east, left/west, or down/south/below")
         l2 = f"relativemovcorrection_{str(self.move_index)} = " + l2
-        l3 = f"move({self.name}_ref,destination=[dim+relativemovcorrection_{str(self.move_index)}[idir] for idir,dim in enumerate({self.relative_comp}.center)])"
+        l3 = movfunc + f"({self.name}_ref,destination=(relativemovcorrection_{str(self.move_index)} + {self.relative_comp}_ref.center[{cidx}]))"
         # update ports
         l4 = f"remove_ports_with_prefix({self.toplvl_name},\"{self.name}_\")"
         l5 = f"{self.toplvl_name}.add_ports({self.name}_ref.get_ports_list(),prefix=\"{self.name}_\")"
@@ -699,9 +709,7 @@ class GlayoutCode(GlayoutAction):
         self.update_import_table(["L route","L_route","l route","l_route"],"L_route","glayout.routing.L_route")
         self.update_import_table(["C route","C_route","c route","c_route"],"c_route","glayout.routing.c_route")
         self.update_import_table(["straight route","straight_route"],"straight_route","glayout.routing.straight_route")
-        # import general utils
-        self.update_import_table(["prec_ref_center"],"prec_ref_center","glayout.pdk.util.comp_utils")
-        self.update_import_table(["evaluate_bbox"],"evaluate_bbox","glayout.pdk.util.comp_utils")
+        # general utils are hardcoded imports in the get_code method
         # add working variable max metal separation
         self.update_variable_table("maxmetalsep","pdk.util_max_metal_seperation()")
         self.update_variable_table("double_maxmetalsep","2*pdk.util_max_metal_seperation()")
@@ -805,7 +813,7 @@ class GlayoutCode(GlayoutAction):
         # produce all import code
         import_code = "from glayout.pdk.mappedpdk import MappedPDK\n"
         import_code += "from gdsfactory import Component\n"
-        import_code += "from glayout.pdk.util.comp_utils import move\n"
+        import_code += "from glayout.pdk.util.comp_utils import move, movex, movey, prec_ref_center, evaluate_bbox, center_to_edge_distance\n"
         import_code += "from glayout.pdk.util.port_utils import remove_ports_with_prefix\n"
         for comp_import in self.import_table:
             import_code += comp_import.get_code() + "\n"
@@ -815,9 +823,10 @@ class GlayoutCode(GlayoutAction):
             function_head += param.get_code()+"\n"
         function_head += "):\n"
         # create variables, place, route, and move in the order that user supplied these directions
-        function_body = f"{self.toplvl_name} = Component()\n"
+        function_body = "pdk.activate()\n"
+        function_body += f"{self.toplvl_name} = Component()\n"
         for bulk_action in self.bulk_action_table:
-            function_body+= bulk_action.get_code()+"\n"
+            function_body += bulk_action.get_code()+"\n"
         function_body = "\n".join(["\t"+line for line in function_body.splitlines()])
         # footer
         footer = "\n\treturn "+self.toplvl_name+"\n"

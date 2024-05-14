@@ -10,6 +10,36 @@ from PrettyPrint import PrettyPrintTree
 import math
 
 
+@validate_arguments
+def parse_direction(direction: Union[int, str]) -> int:
+	"""returns 1,2,3,4 (W,N,E,S)
+
+	Args:
+		direction (int | str): a direction description either string or int
+		****direction descrption could be north/south/east/west or left/right/up/down, etc.
+
+	Returns:
+		int: 1=W, 2=N, 3=E, 4=S
+	"""
+	if isinstance(direction, int):
+		if direction<1 or direction>4:
+			raise ValueError(f"direction was specified as int {direction}, but int directions are 1,2,3, or 4")
+		else:
+			return direction
+	else:# direction is a string
+		cmp = direction.strip().lower()[0]
+		if cmp=="l" or cmp=="w" or cmp=="1":
+			return 1
+		elif cmp=="u" or cmp=="n" or cmp=="2":
+			return 2
+		elif cmp=="r" or cmp=="e" or cmp=="3":
+			return 3
+		elif cmp=="d" or cmp=="s" or cmp=="4":
+			return 4
+		else:
+			raise ValueError(f"failed to parse direction string {direction}")
+
+
 def proc_angle(angle: float) -> int:
 	"""round an angle in degrees to nearest int and converts to an angle [-180,180]
 

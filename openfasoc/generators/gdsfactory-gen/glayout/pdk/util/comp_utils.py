@@ -9,7 +9,7 @@ from gdsfactory.functions import transformed
 from gdsfactory.functions import move as __gf_move
 from glayout.pdk.mappedpdk import MappedPDK
 from gdstk import rectangle as primitive_rectangle
-from .port_utils import add_ports_perimeter, rename_ports_by_list
+from .port_utils import add_ports_perimeter, rename_ports_by_list, parse_direction
 
 
 @validate_arguments
@@ -22,6 +22,32 @@ def evaluate_bbox(custom_comp: Union[Component, ComponentReference], return_deci
 		return (width,height)
 	return (float(width),float(height))
 
+
+@validate_arguments
+def center_to_edge_distance(custom_comp: Union[Component, ComponentReference], direction: Union[str,int]) -> float:
+	"""specifies the distance between the center of custom_comp and a specified edge given by the direction argument
+	the component is considerd a rectangle (using the bounding box), such there are 4 edges
+	Args:
+		custom_comp (Component | ComponentReference): Component we want the center of
+		direction (str | int): the edge we are interested in
+	Returns:
+		float: absolute distance between custom_comp center and N,S,E, or W edge
+	"""
+	compbbox = custom_comp.bbox
+	#center = prec_center(custom_comp)
+	center = custom_comp.center
+	direction = parse_direction(direction)
+	if direction==1:# West edge
+		distance = center[0] - compbbox[0][0]
+	elif direction==2:# North edge
+		distance = center[1] - compbbox[1][1]
+	elif direction==3:# East edge
+		distance = center[0] - compbbox[1][0]
+	elif direction==4:# South edge
+		distance = center[1] - compbbox[0][1]
+	else:
+		raise ValueError("unknown error with direction in function center_to_edge_distance (comp_utils)")
+	return snap_to_grid(abs(distance),2)
 
 @validate_arguments
 def move(custom_comp: Union[Port, ComponentReference, Component], offsetxy: tuple[float,float] = (0,0), destination: Optional[tuple[Optional[float],Optional[float]]]=None, layer: Optional[tuple[int,int]]=None) -> Union[Port, ComponentReference, Component]:
