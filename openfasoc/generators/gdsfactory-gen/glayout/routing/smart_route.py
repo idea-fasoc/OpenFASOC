@@ -179,15 +179,76 @@ def generic_route_four_transistor_interdigitized(
         pname = pname.removesuffix("source").removesuffix("drain").removesuffix("gate")
         pname = pname.rstrip("_").removesuffix("A").removesuffix("B").rstrip("_")
         return pname
+    def exchange_ports(top_comp, edge: Port, direction: str) -> Port:
+        # gives port which is same except a different edge N,E,S,W
+        return top_comp.ports[edge.name.rstrip("NESW")+direction+"_private"]
+    def parse_port_name(pname: str) -> str:
+        comp = str()
+        pin = str()
+        topbot = str()
+        for part in pname.split("_"):
+            if part=="A" or part=="B":
+                comp = part
+            if part=="source" or part=="drain" or part=="gate":
+                pin=part
+            if part=="top" or part=="bottom":
+                topbot = part
+        return topbot+"_"+comp+"_"+pin
+    def compensate_for_croutes(top_comp, sample_port: Port, LeftSide: bool, extend_to: Port):
+        # top_comp is Component to modify, sample_port is a port name for refernce (we dont know what the prefix should be) side is either west (left) or east
+        # adds a metal extension and changes the ports to compensate for the fact that there will be a croute on that side
+        # extend_to should be the outside port of croute
+        basename = sample_port.name.rstrip("NESW").rstrip("_")
+        basename = basename.removesuffix("source").removesuffix("drain").removesuffix("gate").rstrip("_")
+        basename = basename.removesuffix("A").removesuffix("B")
+        direction = "_W" if LeftSide else "_E"
+        #import pdb; pdb.set_trace()
+        for dev in ["A_","B_"]:
+            specbase = basename + dev
+            for pin in ["source","drain","gate"]:
+                portcorrection = top_comp.ports[specbase+pin+direction+"_private"]
+                rt = top_comp << straight_route(pdk, portcorrection, extend_to, glayer2=pdk.layer_to_glayer(portcorrection.layer))
+                top_comp.ports[specbase+pin+direction] = rt.ports["route"+direction]
+                top_comp.ports[specbase+pin+direction].name = specbase+pin+direction
     # check that this function supports the ports specified
     cond1 = check_port(edge1.name) or check_port(edge2.name)
     cond2 = strip_portname(edge1.name).split("_")[-1] != strip_portname(edge2.name).split("_")[-1]
+    name1 = parse_port_name(edge1.name)
+    name2 = parse_port_name(edge2.name)
+    width1 = edge1.width
+    width2 = edge2.width
+    if "A" in name2 and not("A" in name1):
+        name1, name2 = name2, name1
     if cond1:
         raise ValueError("You picked a port that smart_route with interdigitized 4 transistor does not support")
     elif cond2:
         # do your code here
+
         # if check_route("")
+
         raise ValueError("these ports will be supported soon")
+        # print(f'\nname1: {name1}, name2: {name2}\n"top_A_source", "bottom_A_source"\n')
+        
+        print('\n result of check_route: ', check_route(name1, name2, "top_A_source", "bottom_A_source"))
+        if check_route(name1, name2, "top_A_drain", "bottom_A_drain"):
+            rt = c_route(pdk, exchange_ports(top_comp, edge1, "W"), exchange_ports(top_comp, edge2, "W"), viaoffset=(True, True), width1=width1, width2=width2)
+            compensate_for_croutes(top_comp, edge1, True, rt.ports["con_N"])
+            return rt
+        if check_route(name1, name2, "top_A_drain", "bottom_A_source"):
+            # print('\n\nin second if condition\n\n')
+            rt = c_route(pdk, exchange_ports(top_comp, edge1, "W"), exchange_ports(top_comp, edge2, "W"), viaoffset=(True, True), width1=width1, width2=width2)
+            compensate_for_croutes(top_comp, edge1, True, rt.ports["con_N"])
+            return rt
+        if check_route(name1, name2, "top_A_source", "bottom_A_source"):
+            # print('\n\nin third if condition\n\n')
+            rt = c_route(pdk, exchange_ports(top_comp, edge1, "W"), exchange_ports(top_comp, edge2, "W"), viaoffset=(True, True), width1=width1, width2=width2, extension=4*width1)
+            compensate_for_croutes(top_comp, edge1, True, rt.ports["con_N"])
+            return rt
+        if check_route(name1, name2, "top_A_source", "bottom_A_drain"):
+            # print('\n\nin fourth if condition\n\n')
+            rt = c_route(pdk, exchange_ports(top_comp, edge1, "W"), exchange_ports(top_comp, edge2, "W"), viaoffset=(True, True), width1=width1, width2=width2, extension=4*width1)
+            compensate_for_croutes(top_comp, edge1, True, rt.ports["con_N"])
+            return rt
     else:
         # else return 2 tran route
         return generic_route_two_transistor_interdigitized(pdk, edge1, edge2, top_comp)
