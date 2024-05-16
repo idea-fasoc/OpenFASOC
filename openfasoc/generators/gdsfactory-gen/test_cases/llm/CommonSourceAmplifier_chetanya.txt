@@ -1,0 +1,2 @@
+place a CS amp/Common Source Amplifier with nfet and pfet width, fingers and routing multipliers as parameters. Turn off the deep nwell and substrate taprings 
+for the fets.
