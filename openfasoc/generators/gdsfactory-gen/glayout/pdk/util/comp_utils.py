@@ -160,19 +160,19 @@ def align_comp_to_port(
 		else:
 			raise ValueError("port must be vertical or horizontal")
 	else:
-		xalign = (alignment[0] or "none").lower()
-		yalign = (alignment[1] or "none").lower()
+		xalign = (alignment[0] or "none").lower().strip()
+		yalign = (alignment[1] or "none").lower().strip()
 	# compute translation x amount for x alignment
 	x_movcenter = align_to.center[0] - ccenter[0]
 	x_mov_lr = abs(xdim/2 if is_EW else (width-xdim)/2)
 	if "none" in xalign:
 		xmov = 0
-	elif "l" in xalign:
+	elif "l" in xalign[0]:
 		xmov = x_movcenter - x_mov_lr
-	elif "r" in xalign:
-		xmov = x_movcenter + x_mov_lr
-	elif "c" in xalign:
+	elif "c" in xalign[0]:
 		xmov = x_movcenter
+	elif "r" in xalign[0]:
+		xmov = x_movcenter + x_mov_lr
 	else:
 		raise ValueError("please specify valid x alignment of l/r/c/None")
 	# compute translation y amount for y alignment
@@ -180,11 +180,11 @@ def align_comp_to_port(
 	y_move_updown = abs((width-ydim)/2 if is_EW else ydim/2)
 	if "none" in yalign:
 		ymov = 0
-	elif "t" in yalign:
-		ymov = y_movcenter + y_move_updown
-	elif "b" in yalign:
+	elif "b" in yalign[0]:
 		ymov = y_movcenter - y_move_updown
-	elif "c" in yalign:
+	elif "t" in yalign[0]:
+		ymov = y_movcenter + y_move_updown
+	elif "c" in yalign[0]:
 		ymov = y_movcenter
 	else:
 		raise ValueError("please specify valid y alignment of t/b/c/None")
@@ -272,7 +272,7 @@ def prec_center(custom_comp: Union[Component,ComponentReference], return_decimal
 	return to_float(correctionxy)
 
 @validate_arguments
-def prec_ref_center(custom_comp: Union[Component,ComponentReference], destination: Optional[tuple[float,float]]=None) -> ComponentReference:
+def prec_ref_center(custom_comp: Union[Component,ComponentReference], destination: Optional[tuple[float,float]]=None, snapmov2grid: bool=False) -> ComponentReference:
 	"""instead of using component.ref_center() to get a ref to center at origin,
 	use this function which will return a centered ref
 	you can then run component.add(prec_ref_center(custom_comp)) to add the reference to your component
@@ -284,7 +284,10 @@ def prec_ref_center(custom_comp: Union[Component,ComponentReference], destinatio
 	if destination is not None:
 		xcor += destination[0]
 		ycor += destination[1]
-	return compref.movex(xcor).movey(ycor)
+	if snapmov2grid:
+		compref.movex(snap_to_grid(xcor,2)).movey(snap_to_grid(ycor,2))
+	else:
+		return compref.movex(xcor).movey(ycor)
 
 
 

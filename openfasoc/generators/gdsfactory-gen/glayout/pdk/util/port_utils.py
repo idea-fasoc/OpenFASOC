@@ -104,7 +104,7 @@ def ports_inline(edge1: Port, edge2: Port, abstolerance: float=0.1) -> bool:
 
 
 @validate_arguments
-def rename_component_ports(custom_comp: Component, rename_function: Callable[[str, Port], str]) -> Component:
+def rename_component_ports(custom_comp: Union[Component, ComponentReference], rename_function: Callable[[str, Port], str]) -> Union[Component, ComponentReference]:
     """uses rename_function(str, Port) -> str to decide which ports to rename.
     rename_function accepts the current port name (string) and current port (Port) then returns the new port name
     rename_function can return new name = current port name, in which case the name will not change
@@ -118,9 +118,7 @@ def rename_component_ports(custom_comp: Component, rename_function: Callable[[st
         # error checking
         if not pname == pobj.name:
             raise ValueError("component may have an invalid ports dict")
-        
         new_name = rename_function(pname, pobj)
-        
         names_to_modify.append((pname,new_name))
     # modify names
     for namepair in names_to_modify:
@@ -161,7 +159,7 @@ def rename_ports_by_orientation__call(old_name: str, pobj: Port) -> str:
 	return new_name
 
 @validate_arguments
-def rename_ports_by_orientation(custom_comp: Component) -> Component:
+def rename_ports_by_orientation(custom_comp: Union[Component, ComponentReference]) -> Union[Component, ComponentReference]:
     """replaces the last part of the port name 
     (after the last underscore, unless name is e1/2/3/4) with a direction
     direction is one of N,E,S,W
