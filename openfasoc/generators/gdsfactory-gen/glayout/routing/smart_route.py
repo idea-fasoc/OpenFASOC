@@ -1,21 +1,19 @@
+import warnings
+from typing import Optional, Union
+
+from gdsfactory import Component, ComponentReference
+from gdsfactory.port import Port
+from glayout.pdk.mappedpdk import MappedPDK
+from glayout.pdk.util.comp_utils import align_comp_to_port, movex
+from glayout.pdk.util.port_utils import (
+    assert_port_manhattan,
+    ports_inline,
+    ports_parallel,
+)
+from glayout.primitives.via_gen import via_stack
 from glayout.routing.c_route import c_route
 from glayout.routing.L_route import L_route
 from glayout.routing.straight_route import straight_route
-from glayout.pdk.mappedpdk import MappedPDK
-from gdsfactory.port import Port
-from gdsfactory import Component, ComponentReference
-
-from typing import Optional, Union
-from glayout.pdk.util.port_utils import assert_port_manhattan, ports_parallel, ports_inline
-from glayout.primitives.via_gen import via_stack
-from glayout.pdk.util.comp_utils import align_comp_to_port
-import warnings
-
-def check_route(name1, name2, pin1, pin2) -> bool:
-    # check if this routes between the 2 pins
-    cond1 = name1==pin1 and name2==pin2
-    cond2 = name2==pin1 and name1==pin2
-    return cond1 or cond2
 
 
 def smart_route(
@@ -36,10 +34,10 @@ def smart_route(
                     return generic_route_two_transistor_interdigitized(pdk, edge1, edge2, top_comp)
                 if ref_comp.info["route_genid"] == "four_transistor_interdigitized":
                     return generic_route_four_transistor_interdigitized(pdk, edge1, edge2, top_comp)
-                if ref_comp.info["route_genid"] == "common_centroid":
+                if ref_comp.info["route_genid"] == "common_centroid_ab_ba":
                     return generic_route_ab_ba_common_centroid(pdk, edge1, edge2, top_comp)
             except ValueError:
-                warnings.warn("attempted a specialized smart route, but failed. Now attempting general smart route")
+                warnings.warn("Attempted a specialized smart route, but failed. Now attempting general smart route...")
     # determine route type based on port orientation and distance
     if ports_parallel(edge1,edge2):
         # croute or straightroute
@@ -49,6 +47,32 @@ def smart_route(
             return c_route(pdk, edge1, edge2, **kwargs)
     else:
         return L_route(pdk, edge1, edge2, **kwargs)
+
+
+# AorB_source,gate,or drain
+def parse_port_name(pname: str) -> str:
+    """Parse a port name to extract the device (A or B) and pin (source, drain, or gate)
+    returning just that (without directions NESW)
+    Args:
+        pname (str): The port name to get extract device_pin
+    Returns:
+        str: A string containing the component and pin type separated by an underscore.
+    """
+    comp = str()
+    pin = str()
+    for part in pname.split("_"):
+        if part=="A" or part=="B":
+            comp = part
+        if part=="source" or part=="drain" or part=="gate":
+            pin=part
+    return comp+"_"+pin
+
+
+def check_route(name1, name2, pin1, pin2) -> bool:
+    # check if this routes between the 2 pins
+    cond1 = name1==pin1 and name2==pin2
+    cond2 = name2==pin1 and name1==pin2
+    return cond1 or cond2
 
 
 def generic_route_two_transistor_interdigitized(
@@ -79,16 +103,6 @@ def generic_route_two_transistor_interdigitized(
         return top_comp.ports[edge.name.rstrip("NESW")+direction+"_private"]
     #glayer1 = pdk.layer_to_glayer(edge1.layer)
     glayer2 = pdk.layer_to_glayer(edge2.layer)
-    # AorB_source,gate,or drain
-    def parse_port_name(pname: str) -> str:
-        comp = str()
-        pin = str()
-        for part in pname.split("_"):
-            if part=="A" or part=="B":
-                comp = part
-            if part=="source" or part=="drain" or part=="gate":
-                pin=part
-        return comp+"_"+pin
     name1 = parse_port_name(edge1.name)
     name2 = parse_port_name(edge2.name)
     # order names so that A is first (if only one A)
@@ -154,7 +168,7 @@ def generic_route_four_transistor_interdigitized(
     top_comp: Union[Component, ComponentReference]
 ) -> Component:
     def check_port(pname: str) -> bool:
-        # check that this is a source,drain,or gate
+        # check that this is a source, drain, or gate
         # returns false if the port is source drain or gate
         pname = pname.rstrip("NESW_")
         pin = pname.split("_")[-1]
@@ -172,7 +186,7 @@ def generic_route_four_transistor_interdigitized(
         raise ValueError("You picked a port that smart_route with interdigitized 4 transistor does not support")
     elif cond2:
         # do your code here
-        #if check_route("")
+        # if check_route("")
         raise ValueError("these ports will be supported soon")
     else:
         # else return 2 tran route
@@ -187,5 +201,50 @@ def generic_route_ab_ba_common_centroid(
     top_comp: Union[Component, ComponentReference]
 ) -> Component:
     # TODO: implement
-    raise ValueError("not yet implemented")
-
+    name1, name2 = parse_port_name(edge1.name), parse_port_name(edge2.name)
+    width1 = edge1.width
+    # order names so that A is first (if only one A)
+    if "A" in name2 and not("A" in name1):
+        name1, name2 = name2, name1
+    # same device routes (A->A or B->B) (6/15)
+    if check_route(name1,name2,"A_source","A_gate"):
+        return straight_route(pdk, top_comp.ports["A_source_E_private"],top_comp.ports["A_gate_route_con_N"],via2_alignment=("right","bottom"))
+    if check_route(name1,name2,"A_drain","A_gate"):
+        return straight_route(pdk, top_comp.ports["A_drain_E_private"],top_comp.ports["A_gate_route_con_N"],via2_alignment=("right","top"))
+    if check_route(name1,name2,"A_source","A_drain"):
+        straight_route(pdk, top_comp.ports["br_multiplier_0_source_N"],top_comp.ports["br_multiplier_0_drain_S"],width=min(width1,1))
+        return straight_route(pdk, top_comp.ports["tl_multiplier_0_source_S"],top_comp.ports["tl_multiplier_0_drain_N"],width=min(width1,1))
+    if check_route(name1,name2,"B_source","B_gate"):
+        return straight_route(pdk, top_comp.ports["B_source_W_private"],top_comp.ports["B_gate_route_con_N"],via2_alignment=("left","bottom"))
+    if check_route(name1,name2,"B_drain","B_gate"):
+        return straight_route(pdk, top_comp.ports["B_drain_W_private"],top_comp.ports["B_gate_route_con_N"],via2_alignment=("left","top"))
+    if check_route(name1,name2,"B_source","B_drain"):
+        top_comp << straight_route(pdk, top_comp.ports["tr_multiplier_0_source_S"],top_comp.ports["tr_multiplier_0_drain_N"],width=min(width1,1))
+        return straight_route(pdk, top_comp.ports["bl_multiplier_0_source_N"],top_comp.ports["bl_multiplier_0_drain_S"],width=min(width1,1))
+    # A_src/drain->B_gate or B_src/drain->A_gate (4/15)
+    if check_route(name1,name2,"A_source","B_gate"):
+        return straight_route(pdk, top_comp.ports["A_source_W_private"],top_comp.ports["B_gate_route_con_N"],via2_alignment=("left","top"))
+    if check_route(name1,name2,"A_drain","B_gate"):
+        return straight_route(pdk, top_comp.ports["A_drain_W_private"],top_comp.ports["B_gate_route_con_N"],via2_alignment=("left","bottom"))
+    if check_route(name1,name2,"B_source","A_gate"):
+        return straight_route(pdk, top_comp.ports["B_source_E_private"],top_comp.ports["A_gate_route_con_N"],via2_alignment=("right","top"))
+    if check_route(name1,name2,"B_drain","A_gate"):
+        return straight_route(pdk, top_comp.ports["B_drain_E_private"],top_comp.ports["A_gate_route_con_N"],via2_alignment=("right","bottom"))
+    # A_src/drain->B_src or A_src/drain->B_drain (4/15)
+    if check_route(name1,name2,"A_source","B_source"):
+        return straight_route(pdk, top_comp.ports["tl_multiplier_0_source_E"],top_comp.ports["tr_multiplier_0_source_W"])
+    if check_route(name1,name2,"A_drain","B_source"):
+        portmv1 = top_comp.ports["tl_multiplier_0_drain_E"].copy()
+        return straight_route(pdk, top_comp.ports["tl_multiplier_0_drain_E"],movex(portmv1,2*pdk.get_grule(pdk.layer_to_glayer(portmv1.layer))["min_separation"]))
+    if check_route(name1,name2,"A_source","B_drain"):
+        portmv1 = top_comp.ports["tr_multiplier_0_drain_W"].copy()
+        return straight_route(pdk, top_comp.ports["tr_multiplier_0_drain_W"],movex(portmv1,-2*pdk.get_grule(pdk.layer_to_glayer(portmv1.layer))["min_separation"]))
+    if check_route(name1,name2,"A_drain","B_drain"):
+        portmv1 = top_comp.ports["bl_mutliplier_0_drain_N"].copy()
+        portmv2 = top_comp.ports["br_multiplier_0_drain_N"].copy()
+        top_comp << straight_route(pdk, movex(portmv1,-portmv1.width/2), top_comp.ports["tl_multiplier_0_drain_S"],width=width1)
+        return straight_route(pdk, movex(portmv2,portmv2.width/2),top_comp.ports["tr_multiplier_0_drain_S"])
+    # A_gate -> B_gate (1/15)
+    if check_route(name1,name2,"A_gate","B_gate"):
+        return straight_route(pdk,top_comp.ports["br_multiplier_0_gate_W"],top_comp.ports["bl_multiplier_0_gate_E"])
+    raise ValueError("You picked a port that smart_route with ab_ba_common_centroid does not support")

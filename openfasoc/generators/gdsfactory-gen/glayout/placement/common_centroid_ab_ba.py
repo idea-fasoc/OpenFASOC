@@ -4,11 +4,12 @@ from glayout.routing.c_route import c_route
 from glayout.primitives.fet import nmos, pmos
 from glayout.primitives.via_gen import via_stack, via_array
 from glayout.pdk.util.comp_utils import evaluate_bbox, movex, move, movey, align_comp_to_port, prec_ref_center, center_to_edge_distance
-from glayout.pdk.util.port_utils import set_port_orientation, rename_ports_by_orientation
+from glayout.pdk.util.port_utils import set_port_orientation, rename_ports_by_orientation, create_private_ports
 from glayout.pdk.mappedpdk import MappedPDK
 from glayout.primitives.guardring import tapring
 from gdsfactory.components import rectangle
 from typing import Union, Optional
+from itertools import product
 
 from gdsfactory import Component
 
@@ -151,8 +152,9 @@ def common_centroid_ab_ba(
     align_comp_to_port(vgatea2,comcentroid.ports["br_multiplier_0_gate_S"],alignment=("right","bottom"))
     vgatea2.movey(-gate2rt_sep)
     comcentroid << straight_route(pdk, vgatea2.ports["bottom_met_S"], comcentroid.ports["br_multiplier_0_gate_N"])
-    g1extension = pdk.snap_to_2xgrid(comcentroid.ports["tr_multiplier_0_plusdoped_E"].center[0] - vgatea2.ports["top_met_E"].center[0])
+    g1extension = pdk.util_max_metal_seperation()+pdk.snap_to_2xgrid(comcentroid.ports["tr_multiplier_0_plusdoped_E"].center[0] - vgatea2.ports["top_met_E"].center[0])
     cext1 = comcentroid << c_route(pdk, vgatea2.ports["top_met_E"], vgatea1.ports["top_met_E"], cglayer=glayer2, extension=g1extension)
+    comcentroid.add_ports(ports=cext1.get_ports_list(),prefix="A_gate_route_")
     # bgate to bgate
     vgateb1 = comcentroid << g1g2via# first via
     align_comp_to_port(vgateb1,comcentroid.ports["bl_multiplier_0_gate_E"],alignment=("right","top"))
@@ -160,8 +162,9 @@ def common_centroid_ab_ba(
     align_comp_to_port(vgateb2,comcentroid.ports["tr_multiplier_0_gate_S"],alignment=("right","top"))
     vgateb2.movey(gate2rt_sep)
     comcentroid << straight_route(pdk, vgateb2.ports["bottom_met_N"], comcentroid.ports["tr_multiplier_0_gate_S"])
-    g2extension = pdk.snap_to_2xgrid(abs(comcentroid.ports["tl_multiplier_0_plusdoped_W"].center[0] - vgateb1.ports["top_met_W"].center[0]))
+    g2extension = pdk.util_max_metal_seperation()+pdk.snap_to_2xgrid(abs(comcentroid.ports["tl_multiplier_0_plusdoped_W"].center[0] - vgateb1.ports["top_met_W"].center[0]))
     cext2 = comcentroid << c_route(pdk, vgateb2.ports["top_met_W"], vgateb1.ports["top_met_W"], cglayer=glayer2, extension=g2extension)
+    comcentroid.add_ports(ports=cext2.get_ports_list(),prefix="B_gate_route_")
     # create better toplevel ports
     b_drainENS = comcentroid << straight_route(pdk, comcentroid.ports["tr_multiplier_0_drain_E"], movex(cext1.ports["con_N"],cext2.ports["con_N"].width/2+pdk.util_max_metal_seperation()), glayer2=glayer1)
     a_drainENS = comcentroid << straight_route(pdk, comcentroid.ports["br_multiplier_0_drain_E"], movex(cext1.ports["con_N"],cext2.ports["con_N"].width/2+pdk.util_max_metal_seperation()), glayer2=glayer1)
@@ -202,6 +205,18 @@ def common_centroid_ab_ba(
     comcentroid.add_ports(ports=[localportrename(b_gateE.ports["route_E"])],prefix="B_gate_")
     comcentroid.add_ports(ports=[localportrename(a_gateW.ports["route_W"])],prefix="A_gate_")
     comcentroid.add_ports(ports=[localportrename(b_gateW.ports["route_W"])],prefix="B_gate_")
-    # add private ports for smart route
+    rename_north_portb = vgateb2.ports["top_met_N"].copy()# add B_gate_N
+    rename_north_portb.name = "B_gate_N"
+    comcentroid.add_ports(ports=[rename_north_portb])
+    rename_south_porta = vgatea2.ports["top_met_S"].copy()# add A_gate_S
+    rename_south_porta.name = "A_gate_S"
+    comcentroid.add_ports(ports=[rename_south_porta])
+    rename_south_portb = vgateb1.ports["top_met_S"].copy()# add B_gate_S
+    rename_south_portb.name = "B_gate_S"
+    comcentroid.add_ports(ports=[rename_south_portb])
+    # rename ports and add private ports for smart route
+    comcentroid = rename_ports_by_orientation(comcentroid)
+    comcentroid.add_ports(create_private_ports(comcentroid,["".join(prtp) for prtp in product(["A_","B_"],["drain","source","gate"])]))
+    comcentroid.info["route_genid"]="common_centroid_ab_ba"
     return comcentroid
 
