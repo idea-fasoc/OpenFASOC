@@ -1,19 +1,30 @@
+from typing import Optional, Union
+
 from gdsfactory.cell import cell
 from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
-from glayout.primitives.fet import nmos, pmos
-from glayout.pdk.mappedpdk import MappedPDK
-from typing import Optional, Union
 from gdsfactory.routing.route_quad import route_quad
 from gdsfactory.routing.route_sharp import route_sharp
-from glayout.routing.c_route import c_route
-from glayout.routing.straight_route import straight_route
-from glayout.pdk.util.comp_utils import movex, movey, evaluate_bbox, align_comp_to_port
-from glayout.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, get_orientation, set_port_orientation
-from glayout.primitives.via_gen import via_stack
-from glayout.primitives.guardring import tapring
+from glayout.pdk.mappedpdk import MappedPDK
+from glayout.pdk.util.comp_utils import align_comp_to_port, evaluate_bbox, movex, movey
+from glayout.pdk.util.port_utils import (
+    add_ports_perimeter,
+    get_orientation,
+    print_ports,
+    rename_ports_by_list,
+    rename_ports_by_orientation,
+    set_port_orientation,
+)
 from glayout.pdk.util.snap_to_grid import component_snap_to_grid
+from glayout.placement.common_centroid_ab_ba import common_centroid_ab_ba
+from glayout.primitives.fet import nmos, pmos
+from glayout.primitives.guardring import tapring
+from glayout.primitives.via_gen import via_stack
+from glayout.routing.c_route import c_route
+from glayout.routing.smart_route import smart_route
+from glayout.routing.straight_route import straight_route
 from glayout.spice import Netlist
+
 
 def diff_pair_netlist(fetL: Component, fetR: Component) -> Netlist:
 	diff_pair_netlist = Netlist(circuit_name='DIFF_PAIR', nodes=['VP', 'VN', 'VDD1', 'VDD2', 'VTAIL', 'B'])
@@ -25,7 +36,6 @@ def diff_pair_netlist(fetL: Component, fetR: Component) -> Netlist:
 		fetR.info['netlist'],
 		[('D', 'VDD2'), ('G', 'VN'), ('S', 'VTAIL'), ('B', 'B')]
 	)
-
 	return diff_pair_netlist
 
 @cell
@@ -162,4 +172,18 @@ def diff_pair(
 
 
 
-
+@cell
+def diff_pair_generic(
+	pdk: MappedPDK,
+	width: float = 3,
+	fingers: int = 4,
+	length: Optional[float] = None,
+	n_or_p_fet: bool = True,
+	plus_minus_seperation: float = 0,
+	rmult: int = 1,
+	dummy: Union[bool, tuple[bool, bool]] = True,
+	substrate_tap: bool=True
+) -> Component:
+	diffpair = common_centroid_ab_ba(pdk,width,fingers,length,n_or_p_fet,rmult,dummy,substrate_tap)
+	diffpair << smart_route(pdk,diffpair.ports["A_source_E"],diffpair.ports["B_source_E"],diffpair, diffpair)
+	return diffpair

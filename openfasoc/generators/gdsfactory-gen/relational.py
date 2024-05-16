@@ -703,7 +703,7 @@ class GlayoutCode(GlayoutAction):
         self.update_import_table(generic_4T_interdigitzed_aliases, "generic_4T_interdigitzed", "glayout.placement.four_transistor_interdigitized")
         two_pfet_interdigitized_aliases = list_cartesian_product(["interdigitized","interdigitated"],["pmos","pfet"],True)
         self.update_import_table(two_pfet_interdigitized_aliases,"two_pfet_interdigitized","glayout.placement.two_transistor_interdigitized")
-        self.update_import_table(["diff pair","diff_pair","differential pair","differential pairs","differential transistor"],"diff_pair",None)
+        self.update_import_table(["diff pair","diff_pair","differential pair","differential pairs","differential transistor"],"diff_pair_generic","glayout.components.diff_pair")
         # import routing funcs
         self.update_import_table(["smart route","smart","smart_route"],"smart_route","glayout.routing.smart_route")
         self.update_import_table(["L route","L_route","l route","l_route"],"L_route","glayout.routing.L_route")

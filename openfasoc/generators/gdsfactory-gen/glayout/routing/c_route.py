@@ -14,8 +14,11 @@ from gdsfactory.snap import snap_to_grid
 
 
 @validate_arguments
-def __fill_empty_viastack__macro(pdk: MappedPDK, glayer: str, size: tuple[float,float]) -> Component:
-	"""returns a rectangle with ports that pretend to be viastack ports"""
+def __fill_empty_viastack__macro(pdk: MappedPDK, glayer: str, size: Optional[tuple[float,float]]=None) -> Component:
+	"""returns a rectangle with ports that pretend to be viastack ports
+	by default creates a rectangle with size double the min width of the glayer"""
+	if size is None:
+		size = pdk.snap_to_2xgrid([2*pdk.get_grule(glayer)["min_width"],2*pdk.get_grule(glayer)["min_width"]])
 	comp = rectangle(size=size,layer=pdk.get_glayer(glayer),centered=True)
 	return rename_ports_by_orientation(rename_ports_by_list(comp,replace_list=[("e","top_met_")])).flatten()
 
@@ -84,8 +87,9 @@ def c_route(
 	croute = Component()
 	viastack1 = via_stack(pdk,e1glayer,cglayer,fullbottom=fullbottom,assume_bottom_via=True)
 	viastack2 = via_stack(pdk,e2glayer,cglayer,fullbottom=fullbottom,assume_bottom_via=True)
-	if e1glayer == e2glayer:
-		pass
+	if e1glayer==cglayer and e2glayer==cglayer:
+		viastack1 = __fill_empty_viastack__macro(pdk,e1glayer)
+		viastack2 = __fill_empty_viastack__macro(pdk,e2glayer)
 	elif e1glayer == cglayer:
 		viastack1 = __fill_empty_viastack__macro(pdk,e1glayer,size=evaluate_bbox(viastack2))
 	elif e2glayer == cglayer:

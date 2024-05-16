@@ -3,7 +3,7 @@
 # Apache License
 # Version 2.0, January 2004
 # http://www.apache.org/licenses/
-# 2024-05-14 16:28:24.417473
+# 2024-05-16 04:16:01.683397
 
 from glayout.pdk.mappedpdk import MappedPDK
 from gdsfactory import Component
@@ -19,7 +19,7 @@ from glayout.primitives.via_gen import via_array
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized
 from glayout.placement.four_transistor_interdigitized import generic_4T_interdigitzed
 from glayout.placement.two_transistor_interdigitized import two_pfet_interdigitized
-from glayout.components.diff_pair import diff_pair
+from glayout.components.diff_pair import diff_pair_generic
 from glayout.routing.smart_route import smart_route
 from glayout.routing.L_route import L_route
 from glayout.routing.c_route import c_route
