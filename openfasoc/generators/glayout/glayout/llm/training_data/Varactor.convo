@@ -1,0 +1,11 @@
+Varactor
+create a float parameter called width_m1
+create a float parameter called width_m2
+create a int parameter called m2_multiplier
+create a int parameter called m1_multiplier
+place a nfet called m1 with width width_m1 multipliers m1_multiplier with_substrate_tap False with_dnwell False
+place a nfet called m2 with width width_m2 multipliers m2_multiplier with_substrate_tap False with_dnwell False
+move m2 to the right of m1
+route between m1_multiplier_0_drain_N and m2_multiplier_0_drain_N using smart_route
+route between m1_multiplier_0_source_N and m2_multiplier_0_source_N using smart_route
+route between m1_multiplier_0_source_N and m2_multiplier_0_drain_N using smart_route
