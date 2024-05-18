@@ -32,7 +32,7 @@ def instantiate_convo(pdk: MappedPDK, convo_file: Union[str, Path]) -> bool:
     return False
 
 
-def run_all_tests(test_cases_dir: Union[str, Path] = "./training_data"):
+def run_all_tests(test_cases_dir: Union[str, Path] = "./syntax_data"):
     """Run all test cases found in the 'test_cases' directory."""
     # Directory containing test cases
     test_cases_dir = str(Path(test_cases_dir).resolve())

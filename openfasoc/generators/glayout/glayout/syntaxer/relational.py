@@ -13,7 +13,7 @@ import datetime
 import glayout.syntaxer.dynamic_load
 
 import nltk
-
+import glayout.syntaxer.nltk_init_deps
 
 def list_cartesian_product(list1: list, list2: list, both: bool=False) -> list:
     """Compute the Cartesian product of two lists and combine elements into a list of strings.

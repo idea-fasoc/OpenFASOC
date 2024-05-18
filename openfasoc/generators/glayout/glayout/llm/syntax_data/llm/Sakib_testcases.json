@@ -1,5 +1,5 @@
 {
-    "cases": [
+    "data": [
         {
             "NLPfilename": "BiasVoltageGenerator.convo",
             "LLMprompt": "layout a pmos called m1 with width width_m1, length length_m1, fingers m1_fingers, and multipliers m1_multipliers. layout a nmos called m2 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. Short the drains of both transistors, and connect the gate of m2 to this short. Connect the gate of m1 to the source of m2."

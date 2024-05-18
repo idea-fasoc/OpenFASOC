@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 import nltk
+import glayout.syntaxer.nltk_init_deps
 import glayout.syntaxer.dynamic_load
 from glayout.syntaxer.relational import GlayoutCode, parse_direction
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk

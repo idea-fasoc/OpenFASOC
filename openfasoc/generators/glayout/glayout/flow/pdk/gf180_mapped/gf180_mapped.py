@@ -2,14 +2,32 @@
 usage: from gf180_mapped import gf180_mapped_pdk
 """
 
-from gf180.layers import LAYER  # , LAYER_VIEWS
 from ..gf180_mapped.grules import grulesobj
 from ..mappedpdk import MappedPDK
 from pathlib import Path
 
-LAYER = LAYER.dict()
+
 #LAYER["fusetop"]=(75, 0)
-LAYER["CAP_MK"] = (117,5)
+LAYER = {
+    "metal5": (81, 0),
+    "via4": (41, 0),
+    "metal4": (46, 0),
+    "via3": (40, 0),
+    "metal3": (42, 0),
+    "via2": (38, 0),
+    "metal2": (36, 0),
+    "via1": (35, 0),
+    "metal1": (34, 0),
+    "contact": (33, 0),
+    "poly2": (30, 0),
+    "comp": (22, 0),
+    "nplus": (32, 0),
+    "pplus": (31, 0),
+    "nwell": (21, 0),
+    "lvpwell": (204, 0),
+    "dnwell": (12, 0),
+    "CAP_MK": (117, 5)
+}
 
 gf180_glayer_mapping = {
     "met5": "metal5",

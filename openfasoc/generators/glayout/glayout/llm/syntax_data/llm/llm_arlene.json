@@ -1,5 +1,5 @@
 {
-    "LLM": [ 
+    "data": [ 
         {
             "NLPfilename": "BiasVoltageGenerator",
             "LLMprompt": "create a biased voltage generator using an nfet and pfet called m1 and m2 with width, multiplier, and fingers as parameters. Use common centroid technique"
