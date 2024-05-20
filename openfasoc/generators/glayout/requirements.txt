@@ -1,3 +1,15 @@
-gf180
-prettyprinttree
 gdsfactory==7.7.0
+prettyprint
+prettyprinttree
+nltk
+torch
+transformers
+langchain
+chromadb
+ollama
+unstructured
+sentence-transformers
+peft
+accelerate
+bitsandbytes
+safetensors
