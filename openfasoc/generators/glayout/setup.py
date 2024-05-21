@@ -1,10 +1,6 @@
 from setuptools import setup, find_packages
 
 
-#def install_nltk_datasets():
-#	nltk.download("punkt")
-
-
 setup(
     name='glayout',
     version='0.0.4',
@@ -30,7 +26,13 @@ setup(
         "transformers",
         "langchain",
         "chromadb",
-        "ollama"
+        "ollama",
+        "unstructured",
+        "sentence-transformers",
+        "peft",
+        "accelerate",
+        "bitsandbytes",
+        "safetensors"
     ],
     entry_points={
         'console_scripts': [
@@ -38,4 +40,3 @@ setup(
         ],
     },
 )
-

@@ -15,7 +15,7 @@ attention_masks = []
 labels = []
 
 for text, label in train_data.values:
-	 inputs = tokenizer.encode_plus(
+	inputs = tokenizer.encode_plus(
 		text,
 		add_special_tokens=True,
 		max_length=512,
@@ -24,9 +24,9 @@ for text, label in train_data.values:
 		return_attention_mask=True,
 		return_tensors='pt'
 	)
-	 input_ids.append(inputs['input_ids'].flatten())
-	 attention_masks.append(inputs['attention_mask'].flatten())
-	 labels.append(label)
+	input_ids.append(inputs['input_ids'].flatten())
+	attention_masks.append(inputs['attention_mask'].flatten())
+	labels.append(label)
 
 # Convert lists to tensors
 input_ids = torch.tensor(input_ids)
@@ -57,6 +57,7 @@ class GlayoutDataset(torch.utils.data.Dataset):
 dataset = GlayoutDataset(input_ids, attention_masks, labels)
 data_loader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=True)
 
+
 # Define a custom model class
 class GlayoutModel(BertModel):
 	def __init__(self, num_labels):
@@ -76,11 +77,10 @@ class GlayoutModel(BertModel):
 		return outputs
 
 # Initialize the custom model
-model = GlayoutModel(num_labels=len(GlayoutActions))
+model = GlayoutModel(num_labels=len(glayoutactions))
 
 # Fine-tune the model
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-(link unavailable)(device)
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
 
