@@ -33,10 +33,6 @@ sky130_glayer_mapping = {
 
 
 sky130_lydrc_file_path = Path(__file__).resolve().parent / "sky130.lydrc"
-import os
-sky130_magic_commands_file = Path(__file__).resolve().parent / "magic_commands.tcl"
-sky130_schematic_ref_file = Path(__file__).resolve().parent / "sky130_fd_sc_hd.spice"
-
 
 sky130_mapped_pdk = MappedPDK(
     name="sky130",
@@ -48,8 +44,6 @@ sky130_mapped_pdk = MappedPDK(
     },
     grules=grulesobj,
     klayout_lydrc_file=sky130_lydrc_file_path,
-    magic_commands_file=sky130_magic_commands_file,
-    lvs_schematic_ref_file=sky130_schematic_ref_file,
     default_decorator=sky130_add_npc
 )
 # set the grid size

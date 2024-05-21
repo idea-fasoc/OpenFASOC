@@ -54,7 +54,6 @@ gf180_glayer_mapping = {
 # note for DRC, there is mim_option 'A'. This is the one configured for use
 
 gf180_lydrc_file_path = Path(__file__).resolve().parent / "gf180mcu_drc.lydrc"
-gf180_magic_commands_file_path = Path(__file__).resolve().parent.parent / "gf180_mapped" / "magic_commands.tcl"
 
 gf180_mapped_pdk = MappedPDK(
     name="gf180",
@@ -66,7 +65,6 @@ gf180_mapped_pdk = MappedPDK(
     },
     layers=LAYER,
     klayout_lydrc_file=gf180_lydrc_file_path,
-    magic_drc_file=gf180_magic_commands_file_path,
     grules=grulesobj,
 )
 
