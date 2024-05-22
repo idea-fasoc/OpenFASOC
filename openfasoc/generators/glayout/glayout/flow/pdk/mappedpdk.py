@@ -368,9 +368,6 @@ class MappedPDK(Pdk):
                 - Please either provide a PDK root or the following files: 
                     - a file containing magic commands to be executed for DRC (magic_commands.tcl) 
                     - the .magicrc file for your PDK of choice
-
-        Returns:
-            str: A string indicating whether the DRC passed or failed, and if there are any errors in the DRC report
         """
         
         def create_magic_commands_file(temp_dir):
@@ -497,7 +494,7 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
                 else:
                     result_str = result_str + "\nNo errors found in DRC report"
 
-        return result_str
+        print(result_str)
 
     @validate_arguments
     def lvs_netgen(
@@ -508,7 +505,7 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
         lvs_setup_tcl_file: Optional[PathType] = None,
         lvs_schematic_ref_file: Optional[PathType] = None,
         magic_drc_file: Optional[PathType] = None, 
-        cdl_path: Optional[PathType] = None,
+        netlist: Optional[PathType] = None,
         report_handling: Optional[tuple[Optional[bool], Optional[str]]] = (False, None)
     ):
         """Runs LVS using netgen on the either the component or the gds file path provided. Requires the design name and the pdk_root to be specified, handles importing the required setup files, if not specified. Accepts overriden lvs_setup_tcl_file, lvs_schematic_ref_file, and magic_drc_file.
@@ -532,7 +529,7 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
             - magic_drc_file (Optional[PathType], optional): 
                 - The .magicrc file for your PDK of choice. 
                 - Defaults to None.
-            - cdl_path (Optional[PathType], optional): 
+            - netlist (Optional[PathType], optional): 
                 - The path to the CDL file (netlist) for the design. 
                 - Defaults to None.
             - report_handling (Optional[tuple[Optional[bool], Optional[str]]], optional): 
@@ -552,6 +549,14 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
         """
         if not self.name == 'sky130':
             raise NotImplementedError("LVS only supported for sky130 PDK")
+        def check_if_path_or_net_string(netlist: PathType):
+            cdl_suffix = ".cdl"
+            spice_suffix = ".spice"
+            if netlist is None:
+                raise ValueError("Path to cdl (netlist) must be provided!")
+            check_suffix = str(netlist).endswith(cdl_suffix) or str(netlist).endswith(spice_suffix)
+            return check_suffix # True for cdl and spice, False if net passed
+        
         def extract_design_name_from_netlist(file_path: str):
             """ Extracts the design name from the netlist file (found after the final .ends statement in the netlist file)"""
             with open(file_path, 'r') as file:
@@ -573,16 +578,16 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
             result = subprocess.run(f"command -v {command}", shell=True, capture_output=True, text=True)
             return result.returncode == 0
         
-        def modify_design_name_in_cdl(cdl_path, design_name):
-            design_name_from_cdl = extract_design_name_from_netlist(cdl_path)
+        def modify_design_name_in_cdl(netlist, design_name):
+            design_name_from_cdl = extract_design_name_from_netlist(netlist)
             if design_name_from_cdl is not None and design_name_from_cdl == design_name:
                 print(f"Design name from CDL file: {design_name_from_cdl} matches the design name: {design_name}")
             else:
                 # replace all occurences of design_name_from_cdl with design_name in the cdl file
-                with open(cdl_path, 'r') as file:
+                with open(netlist, 'r') as file:
                     filedata = file.read()
                 newdata = filedata.replace(design_name_from_cdl, design_name)
-                with open(cdl_path, 'w') as file:
+                with open(netlist, 'w') as file:
                     file.write(newdata)
         
         def write_spice(input_cdl, output_spice, lvs_schematic_ref_file):
@@ -612,28 +617,39 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
             pex_path = temp_dir_path / f"{design_name}_pex.spice"
             sim_path = temp_dir_path / f"{design_name}_sim.spice"
             spice_path = temp_dir_path / f"{design_name}.spice"
-            cdl_path_from_comp = temp_dir_path / f"{design_name}.cdl"
+            netlist_from_comp = temp_dir_path / f"{design_name}.cdl"
             gds_path = temp_dir_path / f"{design_name}.gds"
             report_path = temp_dir_path / f"{design_name}_lvs.rpt"
             
             if isinstance(layout, Component):
                 layout.write_gds(str(gds_path))
-                netlist = layout.info['netlist'].generate_netlist()
-                with open(str(cdl_path_from_comp), 'w') as f:
-                    f.write(netlist)
+                if netlist is None:
+                    netlist = layout.info['netlist'].generate_netlist()
+                    with open(str(netlist_from_comp), 'w') as f:
+                        f.write(netlist)
+                else: 
+                    if check_if_path_or_net_string(netlist):
+                        shutil.copy(netlist, str(netlist_from_comp))
+                    else: 
+                        with open(str(netlist_from_comp), 'w') as f:
+                            f.write(netlist)
             elif isinstance(layout, PathType):            
                 shutil.copy(layout, str(gds_path))
-                if cdl_path is None:
+                if netlist is None:
                     raise ValueError("Path to cdl (netlist) must be provided if only gds file is provided! Provide Component alternatively!")
                 else:
-                    shutil.copy(cdl_path, str(cdl_path_from_comp))
+                    if check_if_path_or_net_string(netlist):
+                        shutil.copy(netlist, str(netlist_from_comp))
+                    else: 
+                        with open(str(netlist_from_comp), 'w') as f:
+                            f.write(netlist)
                     
-            modify_design_name_in_cdl(str(cdl_path_from_comp), design_name)
+            modify_design_name_in_cdl(str(netlist_from_comp), design_name)
             
             lvsschemref_file = self.pdk_files['lvs_schematic_ref_file'] if lvs_schematic_ref_file is None else lvs_schematic_ref_file
         
             
-            write_spice(str(cdl_path_from_comp), str(spice_path), lvsschemref_file)
+            write_spice(str(netlist_from_comp), str(spice_path), lvsschemref_file)
             
             magic_script_content = f"""
 gds flatglob *\\$\\$*
@@ -688,6 +704,11 @@ exit
                 netgen_subproc_code = netgen_subproc.returncode
                 netgen_subproc_out = netgen_subproc.stdout.decode('utf-8')
                 print(netgen_subproc_out)
+                
+                if netgen_subproc_code == 0 and magic_subproc_code == 0:
+                    print("LVS run succeeded, writing report...")
+                else:
+                    raise ValueError("LVS run failed")
             
             finally: 
                 os.remove(magic_script_path)
