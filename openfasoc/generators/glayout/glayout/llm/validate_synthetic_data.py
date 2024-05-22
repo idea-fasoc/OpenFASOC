@@ -10,7 +10,7 @@ from typing import Union
 
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk
-from glayout.syntaxer.dynamic_load import *
+import glayout.syntaxer.dynamic_load
 
 
 def instantiate_convo(pdk: MappedPDK, convo_file: Union[str, Path]) -> bool:
@@ -32,7 +32,7 @@ def instantiate_convo(pdk: MappedPDK, convo_file: Union[str, Path]) -> bool:
     return False
 
 
-def run_all_tests(test_cases_dir: Union[str, Path] = Path(__file__).resolve().parent / "syntax_data" / "convos"):
+def run_all_tests(test_cases_dir: Union[str, Path] = "./syntax_data/convos"):
     """Run all test cases found in the 'test_cases' directory."""
     # Directory containing test cases
     test_cases_dir = str(Path(test_cases_dir).resolve())
