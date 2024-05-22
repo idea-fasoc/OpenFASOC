@@ -25,14 +25,18 @@ setup(
         "torch",
         "transformers",
         "langchain",
+        "langchain_community",
         "chromadb",
         "ollama",
         "unstructured",
+        "unstructured[md]"
         "sentence-transformers",
         "peft",
         "accelerate",
         "bitsandbytes",
-        "safetensors"
+        "safetensors",
+        "requests",
+        "datasets"
     ],
     entry_points={
         'console_scripts': [

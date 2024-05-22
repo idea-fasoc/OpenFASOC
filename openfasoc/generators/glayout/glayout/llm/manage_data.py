@@ -2,9 +2,15 @@ import json
 import warnings
 from pathlib import Path
 from typing import List, Tuple, Union
-from langchain_community.document_loaders import DirectoryLoader
+from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
+
+
+def get_glayout_context() -> str:
+    contextmdfile = Path(__file__).resolve().parent / "syntax_data/GlayoutStrictSyntax.md"
+    loader = TextLoader(contextmdfile)
+    return loader.load()[0].page_content
 
 
 def load_labeled_syntax_data_json(
@@ -83,7 +89,7 @@ def load_all_labeled_syntax_data_json() -> List[Tuple[str, str]]:
     # Path to the directory containing JSON files
     llm_dir = Path(__file__).resolve().parent
     json_dir = llm_dir / "syntax_data"
-    convo_dir = json_dir / "../"
+    convo_dir = json_dir / "convos"
     if not json_dir.is_dir():
         raise FileNotFoundError(
             "Could not find syntax_data directory within llm subpackage of glayout"
@@ -91,15 +97,9 @@ def load_all_labeled_syntax_data_json() -> List[Tuple[str, str]]:
     # Iterate over all JSON files in the directory
     all_results = list()
     for json_file_path in json_dir.glob("*.json"):
-        all_results.extend(load_labeled_syntax_data_json(json_file_path, convo_dir))
+        all_results.extend(load_labeled_syntax_data_json(json_file_path, convo_dir, False))
     return all_results
 
-
-# def load_rag_example()
-# TODO: load and properly split up markdown files into parts
-
-# def load_all_rag_examples()
-# TODO: iterate over every .md file in rag_data directory calling load_rag_example
 
 
 class RAGdb:
@@ -126,7 +126,7 @@ class RAGdb:
         self.vectordb = Chroma.from_documents(documents=self.documents,embedding=embeddings)
 
 
-    def query(self, query_text: str):
+    def query(self, query_text: str, k: int=4):
         """
         Queries the vector database to find the top-k most similar vectors to the given query text.
         Args:
@@ -134,7 +134,7 @@ class RAGdb:
         Returns:
             List: The list of top-k most similar docs.
         """
-        rawdocs =  self.vectordb.similarity_search(query=query_text,k=4)
+        rawdocs =  self.vectordb.similarity_search(query=query_text,k=k)
         rawtxt = list()
         for doc in rawdocs:
             rawtxt.append(doc.page_content)

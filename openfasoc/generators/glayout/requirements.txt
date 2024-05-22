@@ -5,11 +5,15 @@ nltk
 torch
 transformers
 langchain
+langchain_community
 chromadb
 ollama
 unstructured
+unstructured[md]
+protobuf
 sentence-transformers
 peft
 accelerate
 bitsandbytes
 safetensors
+datasets
