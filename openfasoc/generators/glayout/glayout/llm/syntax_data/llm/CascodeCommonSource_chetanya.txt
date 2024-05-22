@@ -1,0 +1,1 @@
+place an nfet cascode stage with fet width, multipliers, and fingers as parameters and substrate tap and deep n-well turned off. Route the top and bottom right edges of the ties together.

@@ -1,0 +1,13 @@
+CommonSourceBE
+create float parameter called m1_width
+create float parameter called m2_width
+create an int parameter called m1_multiplier
+create an int parameter called m2_multiplier
+place an nmos called m1 with width m1_width length 3 multipliers m1_multiplier 
+place a nmos called m2 with width m2_width length 3 multipliers m2_multiplier
+move m2 to the right of m1
+route between m1_multiplier_0_drain_N and m2_multiplier_0_gate_N using c_route
+route between m1_multiplier_0_drain_W and m2_multiplier_0_drain_E using straight_route
+
+
+

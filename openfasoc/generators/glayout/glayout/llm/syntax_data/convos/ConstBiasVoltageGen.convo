@@ -1,0 +1,16 @@
+ConstBiasVoltageGen
+create a float parameter called width_m1
+create a float parameter called width_m2
+create a float parameter called length_m1
+create a float parameter called length_m2 
+create a int parameter called m1_multiplier
+create a int parameter called m2_multiplier
+create a int parameter called m1_fingers
+create a int parameter called m2_fingers
+place a nmos called m1 with width width_m1 length length_m1 fingers m1_fingers rmult 1 multipliers m1_multiplier with_substrate_tap False with_tie True sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy True with_dnwell False
+place a nmos called m2 with width width_m2 length length_m2 fingers m2_fingers rmult 1 multipliers m2_multiplier with_substrate_tap False with_tie True sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy True with_dnwell False
+move m2 below m1
+route between m1_multiplier_0_source_E and m2_multiplier_0_drain_E using c_route with extension=4
+route between m2_multiplier_0_gate_E and m2_multiplier_0_drain_E using c_route with extension=2
+route between m1_multiplier_0_gate_W and m2_multiplier_0_source_W using c_route with extension=3
+route between m1_tie_br_top_met_S and m2_tie_bl_top_met_N using straight_route

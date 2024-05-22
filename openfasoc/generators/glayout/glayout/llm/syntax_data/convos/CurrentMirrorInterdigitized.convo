@@ -1,0 +1,16 @@
+CrossCoupledInverters
+# create parameters in alphabetical order
+Create a float parameter called length
+Create an int parameter called numfingers
+Create a float parameter called width
+# place list out all parameters (some are different than default) in order they appear in the function call
+# use a/an depending on english grammar (an before a vowel)
+place an interdigitated nfet called cmirror with numcols=numfingers, dummy=True, with_substrate_tap=False, with_tie=True, tie_layers=("met2","met1"), kwargs={ "width" : width , "length" : length }
+# route between ... and ... 
+# if you dont specify anything that means you are doing smart_route on a supported circuit
+# which means you do not need to specify a direction, in this case always set direction to East and dont specify route type
+# if you have to specify a direction, then always specify route type (even if you are using smart_route)
+route between cmirror_A_drain_E and cmirror_A_gate_E
+route between cmirror_A_gate_E and cmirror_B_gate_E
+route between cmirror_A_source_E and cmirror_B_source_E
+# coming soon, also route ground/power
