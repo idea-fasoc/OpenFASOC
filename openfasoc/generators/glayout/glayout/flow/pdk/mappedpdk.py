@@ -13,6 +13,203 @@ import subprocess
 from decimal import Decimal
 from pydantic import validate_arguments
 import xml.etree.ElementTree as ET
+import pathlib, shutil, os, sys
+
+class SetupPDKFiles:
+    """Class to setup the PDK files required for DRC and LVS checks.
+    """
+
+    def __init__(
+        self, 
+        pdk_root: Optional[PathType] = None, 
+        klayout_drc_file: Optional[PathType] = None, 
+        lvs_schematic_ref_file: Optional[PathType] = None,
+        lvs_setup_tcl_file: Optional[PathType] = None, 
+        magic_drc_file: Optional[PathType] = None,
+        temp_dir: Optional[PathType] = None,
+        pdk: Optional[str] = 'sky130'
+    ):
+        """Initializes the class with the required PDK files for DRC and LVS checks."""
+        self.pdk = pdk
+        self.temp_dir = temp_dir
+        
+        if pdk_root is None: 
+            # condition for pdk_root not being provided
+            if klayout_drc_file is None: 
+                raise ValueError("Please provide a Klayout DRC file if not providing PDK root!")
+            else:
+                if not isinstance(klayout_drc_file, PathType):
+                    raise ValueError("The file must be provided as a Path object or string")
+                else:
+                    self.klayout_drc_file = klayout_drc_file
+            if magic_drc_file is None:
+                raise ValueError("Please provide a magic DRC file")
+            else:
+                if not isinstance(magic_drc_file, PathType):
+                    raise ValueError("The files must be provided as Path objects or strings")
+                else:
+                    self.magic_drc_file = magic_drc_file
+            if lvs_schematic_ref_file is None or lvs_setup_tcl_file is None or magic_drc_file is None:
+                raise ValueError(f"""Please provide the following files:
+                      - a spice file with subckt references(lvs_schematic_ref_file)
+                      - a tcl file with setup commands(lvs_setup_tcl_file)
+                      - a magic DRC file(magic_drc_file)""")
+            else:
+                if not isinstance(lvs_schematic_ref_file, PathType) or not isinstance(lvs_setup_tcl_file, PathType):
+                    raise ValueError("The files must be provided as Path objects or strings")
+                else:
+                    self.lvs_schematic_ref_file = lvs_schematic_ref_file
+                    self.lvs_setup_tcl_file = lvs_setup_tcl_file
+                    self.magic_drc_file = magic_drc_file
+        else:
+            if not isinstance(pdk_root, PathType):
+            # condition for pdk_root not being a Path object
+                raise ValueError("pdk_root must be a Path object or string")
+            # condition for pdk_root being provided
+            self.pdk_root = pdk_root
+            if klayout_drc_file is None:
+                # condition for klayout_drc_file not being provided with pdk_root provided
+                if pdk == 'sky130':
+                    klayout_drc_file = Path(pdk_root) / "sky130A" / "libs.tech" / "klayout" / "drc" / "sky130.lydrc"
+                elif pdk == 'gf180':
+                    raise NotImplementedError("Klayout lvs is not supported for gf180 PDK")
+                else:
+                    raise ValueError("pdk must be either 'sky130' or 'gf180', others not supported!")
+            
+                
+            if lvs_schematic_ref_file is None:
+                if pdk == 'gf180':
+                    raise NotImplementedError("LVS is not supported for gf180 PDK")
+                
+                lvs_spice_file = Path(pdk_root) / "sky130A" / "libs.ref" / "sky130_fd_sc_hd" / "spice" / "sky130_fd_sc_hd.spice"
+                lvs_schematic_ref_file = temp_dir / "sky130_fd_sc_hd.spice"
+                self.write_custom_spice_to_file(lvs_spice_file, lvs_schematic_ref_file)
+            
+            if lvs_setup_tcl_file is None:
+                if pdk == 'gf180':
+                    raise NotImplementedError("LVS is not supported for gf180 PDK")
+                dest_lvs_setup_tcl = temp_dir / "sky130A_setup.tcl"
+                lvs_setup_tcl_file = self.magic_netgen_file_exists(dest_lvs_setup_tcl, pdk_root)
+                
+            if magic_drc_file is None:
+                if pdk == "sky130":
+                    dest_magic_drc = temp_dir / f"{pdk}A.magicrc"     
+                elif pdk == "gf180": 
+                    dest_magic_drc = temp_dir / f"{pdk}mcuC.magicrc"
+                    
+                magic_drc_file = self.magic_netgen_file_exists(dest_magic_drc, pdk_root)
+                
+            self.klayout_drc_file = klayout_drc_file
+            self.lvs_schematic_ref_file = lvs_schematic_ref_file
+            self.lvs_setup_tcl_file = lvs_setup_tcl_file
+            self.magic_drc_file = magic_drc_file
+            
+    def write_custom_spice_to_file(
+        self, 
+        input_spice: str, 
+        output_spice: str
+    ):
+        """Writes a custom spice file to the output_spice file path."""
+        custom_spice_string = f"""
+* HEADER and SLC cells
+* Proxy pins that may or may not be generated by magic sky130_fd_sc_hd__tap_1_0/VPB sky130_fd_sc_hd__tap_1_1/VPB
+
+.subckt HEADER VGND VIN VNB VPWR
+xMN0 VPWR VGND net7 VNB sky130_fd_pr__nfet_03v3_nvt ad=0p pd=0u as=0p ps=0u w=700000u l=500000u
+xMN1 net7 VGND VPWR VNB sky130_fd_pr__nfet_03v3_nvt ad=1.1445e+12p pd=1.167e+07u as=3.92e+11p ps=3.92e+06u w=700000u l=500000u
+xMN2 VPWR VGND net7 VNB sky130_fd_pr__nfet_03v3_nvt ad=0p pd=0u as=0p ps=0u w=700000u l=500000u
+xMN3 net7 VGND VPWR VNB sky130_fd_pr__nfet_03v3_nvt ad=0p pd=0u as=0p ps=0u w=700000u l=500000u
+xMN4 net7 VGND VIN VNB sky130_fd_pr__nfet_03v3_nvt ad=0p pd=0u as=0p ps=0u w=700000u l=500000u
+xMN5 VIN VGND net7 VNB sky130_fd_pr__nfet_03v3_nvt ad=3.92e+11p pd=3.92e+06u as=0p ps=0u w=700000u l=500000u
+xMN6 net7 VGND VIN VNB sky130_fd_pr__nfet_03v3_nvt ad=0p pd=0u as=0p ps=0u w=700000u l=500000u
+xMN7 VIN VGND net7 VNB sky130_fd_pr__nfet_03v3_nvt ad=0p pd=0u as=0p ps=0u w=700000u l=500000u
+.ends
+
+.subckt SLC IN INB VOUT VGND VNB VPWR VPB
+xMP0 net02 net07 VPWR VPB sky130_fd_pr__pfet_01v8_hvt m=1 mult=1 w=360000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+xMP1 net03 net03 net02 VPB sky130_fd_pr__pfet_01v8_hvt mult=1 w=360000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+xMP3 net06 net03 VPWR VPB sky130_fd_pr__pfet_01v8_hvt m=1 mult=1 w=360000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+xMP4 net07 net07 net06 VPB sky130_fd_pr__pfet_01v8_hvt m=1 mult=1 w=360000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+xMP6 VOUT net06 VPWR VPB sky130_fd_pr__pfet_01v8_hvt m=2 mult=1 w=0.5 l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+xMN4 VOUT net07 VGND VNB sky130_fd_pr__nfet_01v8 m=1 mult=1 w=0.65 l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+xMN0 net03 INB VGND VNB sky130_fd_pr__nfet_01v8_lvt m=10 mult=1 w=0.5 l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+xMN8 net07 IN VGND VNB sky130_fd_pr__nfet_01v8_lvt m=10 mult=1 w=500000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+.ends
+
+******* EOF
+
+* Modified subthreshold inverter cell
+
+.subckt dinv1 Yb Y Ab A Apb Ap VGND VPWR
+X1    t1    Apb    VPWR    VPWR   sky130_fd_pr__pfet_01v8_hvt m=1 mult=1 w=360000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+X2    Y    Yb    t1    t1   sky130_fd_pr__pfet_01v8_hvt m=1 mult=1 w=360000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+X3    t2    Ap    VPWR    VPWR  sky130_fd_pr__pfet_01v8_hvt m=1 mult=1 w=360000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3 
+X4    Yb    Y    t2    t2   sky130_fd_pr__pfet_01v8_hvt m=1 mult=1 w=360000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+X5    Y    Ab    t3    t3   sky130_fd_pr__nfet_01v8 m=1 mult=1 w=180000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+X6    t3    Ab    VGND   VGND  sky130_fd_pr__nfet_01v8 m=1 mult=1 w=180000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+X7    Yb    A    t4    t4  sky130_fd_pr__nfet_01v8 m=1 mult=1 w=180000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+X8    t4    A    VGND    VGND  sky130_fd_pr__nfet_01v8 m=1 mult=1 w=180000u l=150000u sa=265e-3 sb=265e-3 sd=280e-3
+.ends 
+
+******** EOF
+"""
+        with open(input_spice, 'r') as rf:
+            lines = rf.readlines()
+            with open(output_spice, 'w') as wf:
+                for line in lines:
+                    wf.write(line)
+                wf.write(custom_spice_string)
+                
+    def magic_netgen_file_exists(
+        self, 
+        magic_file, 
+        pdk_root
+    ):
+            """Check that magic_file exists if not none, and copy it to the required pdk directory if it doesn't exist"""
+            def copy_if_not_exists(src, dest):
+                if not os.path.exists(dest):
+                    print(f'copying file from required pdk dir: {src}')
+                    shutil.copy(src, dest)
+                else:
+                    print(f'Either file not found: {src}, or already copied to: {dest}')
+                    
+            def return_pdk_full_name(self):
+                """Returns the full name of the pdk based on the class name"""
+                if self.pdk == 'sky130':
+                    return f"{self.pdk}A"
+                elif self.pdk == 'gf180':
+                    return f"{self.pdk}mcuC"
+            
+            # Check if the magic_file exists, if not, copy it to the required pdk directory
+            if magic_file != None and not magic_file.is_file():
+                # Check if the pdk_root is a directory, if not raise an error
+                if pdk_root != None and Path(pdk_root).resolve().is_dir():
+                    pdk_name = return_pdk_full_name(self)
+                    if ".magicrc" in str(magic_file):
+                        magic_file_source = Path(pdk_root) / f"{pdk_name}" / "libs.tech" / "magic" / f"{pdk_name}.magicrc"
+                    elif "_setup.tcl" in str(magic_file):
+                        magic_file_source = Path(pdk_root) / f"{pdk_name}" / "libs.tech" / "netgen" / f"{pdk_name}_setup.tcl"
+                    copy_if_not_exists(magic_file_source, magic_file)
+                    return magic_file
+                elif pdk_root != None and not pdk_root.is_dir():
+                    raise ValueError("pdk_root must be a directory")
+                raise ValueError("magic/netgen script: the path given is not a file")
+            return magic_file
+        
+    def return_dict_of_files(
+        self
+    ):
+        pdk_files = {
+            'pdk_root': self.pdk_root,
+            'klayout_drc_file': self.klayout_drc_file,
+            'lvs_schematic_ref_file': self.lvs_schematic_ref_file,
+            'lvs_setup_tcl_file': self.lvs_setup_tcl_file,
+            'magic_drc_file': self.magic_drc_file,
+            'temp_dir': self.temp_dir,
+            'pdk': self.pdk
+        }
+        return pdk_files
+        
 
 class MappedPDK(Pdk):
     """Inherits everything from the pdk class but also requires mapping to glayers
@@ -51,7 +248,7 @@ class MappedPDK(Pdk):
     glayers: dict[StrictStr, Union[StrictStr, tuple[int,int]]]
     # friendly way to implement a graph
     grules: dict[StrictStr, dict[StrictStr, Optional[dict[StrictStr, Any]]]]
-    klayout_lydrc_file: Optional[Path] = None
+    pdk_files: dict[StrictStr, Union[PathType, None]]
 
     @validator("models")
     def models_check(cls, models_obj: dict[StrictStr, StrictStr]):
@@ -73,13 +270,6 @@ class MappedPDK(Pdk):
                     "glayers keys must be one of generic layers listed in class variable valid_glayers"
                 )
         return glayers_obj
-
-    @validator("klayout_lydrc_file")
-    def lydrc_file_exists(cls, lydrc_file_path):
-        """Check that lydrc_file_path exists if not none"""
-        if lydrc_file_path != None and not lydrc_file_path.is_file():
-            raise ValueError(".lydrc script: the path given is not a file")
-        return lydrc_file_path
 
     @validate_arguments
     def drc(
@@ -125,7 +315,7 @@ class MappedPDK(Pdk):
             "klayout",
             "-b",
             "-r",
-            str(self.klayout_lydrc_file),
+            str(self.pdk_files['klayout_lydrc_file']),
             "-rd",
             "input=" + str(layout_path),
             "-rd",
@@ -150,6 +340,385 @@ class MappedPDK(Pdk):
         drc_error_count = len(drc_root[7])
         return (drc_error_count == 0)
 
+    @validate_arguments
+    def drc_magic(
+        self, 
+        layout: Component | str, 
+        design_name: str, 
+        pdk_root: Optional[PathType] = None, 
+        magic_drc_file: Optional[PathType] = None
+    ):
+        """Runs DRC using magic on the either the component or the gds file path provided. Requires the design name and the pdk_root to be specified, handles importing the required magicrc and other setup files, if not specified. Accepts overriden magic_commands_file and magic_drc_file.
+
+        Args:
+            - layout (Component | str):
+                - Either the Component or the gds file path to run DRC on
+            - design_name (str):
+                - The designated name of the design
+            - pdk_root (Optional[PathType], optional):
+                - The directory where the pdk files are located. 
+                - e.g. - "/usr/bin/miniconda3/share/pdk/". Defaults to "/usr/bin/miniconda3/share/pdk/".
+            - magic_drc_file (Optional[PathType], optional):
+                - The .magicrc file for your PDK of choice. 
+                - Defaults to None.
+
+        Raises:
+            - ValueError: 
+                - If the magic DRC cannot be run! 
+                - Please either provide a PDK root or the following files: 
+                    - a file containing magic commands to be executed for DRC (magic_commands.tcl) 
+                    - the .magicrc file for your PDK of choice
+        """
+        
+        def create_magic_commands_file(temp_dir):
+            # magic commands file creation
+            print("Defaulting to stale magic_commands.tcl")
+            magic_commands_file_str = f"""
+gds flatglob *$$*
+gds flatglob *VIA*
+gds flatglob *CDNS*
+gds flatglob *capacitor_test_nf*
+
+gds read $::env(RESULTS_DIR)/$::env(DESIGN_NAME).gds
+
+proc custom_drc_save_report {{{{cellname ""}} {{outfile ""}}}} {{
+
+if {{$outfile == ""}} {{set outfile "drc.out"}}
+
+set fout [open $outfile w]
+set oscale [cif scale out]
+if {{$cellname == ""}} {{
+    select top cell
+    set cellname [cellname list self]
+    set origname ""
+}} else {{
+    set origname [cellname list self]
+    puts stdout "\[INFO\]: Loading $cellname\n"
+    flush stdout
+
+    load $cellname
+    select top cell
+}}
+
+drc check
+set count [drc list count]
+
+puts $fout "$cellname count: $count"
+puts $fout "----------------------------------------"
+set drcresult [drc listall why]
+foreach {{errtype coordlist}} $drcresult {{
+    puts $fout $errtype
+    puts $fout "----------------------------------------"
+    foreach coord $coordlist {{
+        set bllx [expr {{$oscale * [lindex $coord 0]}}]
+        set blly [expr {{$oscale * [lindex $coord 1]}}]
+        set burx [expr {{$oscale * [lindex $coord 2]}}]
+        set bury [expr {{$oscale * [lindex $coord 3]}}]
+        set coords [format " %.3fum %.3fum %.3fum %.3fum" $bllx $blly $burx $bury]
+        puts $fout "$coords"
+    }}
+puts $fout "----------------------------------------"
+}}
+puts $fout ""
+
+if {{$origname != ""}} {{
+    load $origname
+}}
+
+close $fout
+puts "\[INFO\]: DONE with $outfile\n"
+}}
+
+custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAME).rpt
+"""
+                
+            new_path = temp_dir / "magic_commands.tcl"
+            with open(str(new_path.resolve()), 'w') as f:
+                f.write(magic_commands_file_str)
+                
+            return new_path.resolve()
+    
+        self.pdk_files['pdk'] = self.name
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_dir_path = pathlib.Path(temp_dir).resolve()
+            self.pdk_files['temp_dir'] = temp_dir_path
+            
+            if pdk_root is None:
+                print("using default pdk_root: /usr/bin/miniconda3/share/pdk/")
+            else: 
+                print('using provided pdk_root')
+                self.pdk_files['pdk_root'] = pdk_root
+                
+            env_vars = {
+                    'PDK_ROOT': str(self.pdk_files['pdk_root']),
+                    'DESIGN_NAME': design_name,
+                    'REPORTS_DIR': str(temp_dir_path),
+                    'RESULTS_DIR': str(temp_dir_path)
+                }
+            os.environ.update(env_vars)
+                    
+            gds_path = str(temp_dir_path / f"{design_name}.gds")
+            if isinstance(layout, Component):
+                layout.write_gds(gds_path)
+            elif isinstance(layout, PathType):            
+                shutil.copy(layout, gds_path)
+            
+            magicrc_file = self.pdk_files['magic_drc_file'] if magic_drc_file is None else magic_drc_file
+            magic_cmd_file = create_magic_commands_file(temp_dir_path)
+            cmd = f'bash -c "magic -rcfile {magicrc_file} -noconsole -dnull {magic_cmd_file} < /dev/null"'
+            
+            subp = subprocess.Popen(
+                cmd, 
+                shell=True, 
+                stdout=subprocess.PIPE, 
+                stderr=subprocess.PIPE
+            )
+            
+            subp.wait()
+            print(subp.stdout.read().decode('utf-8'))
+            
+            subproc_code = subp.returncode
+            result_str = "magic drc script passed" if subproc_code == 0 else "magic drc script failed"
+            # print errors
+            
+            errors = subp.stderr.read().decode('utf-8')
+            if errors:
+                print(f"Soft errors: \n{errors}")
+                
+            with open(f'{str(temp_dir_path)}/{design_name}.rpt', 'r') as f:
+                num_lines = len(f.readlines())
+                if num_lines > 3:
+                    result_str = result_str + "\nErrors found in DRC report"
+                    f.seek(0)
+                    print(f.read())
+                else:
+                    result_str = result_str + "\nNo errors found in DRC report"
+
+        print(result_str)
+
+    @validate_arguments
+    def lvs_netgen(
+        self,
+        layout: Component | PathType, 
+        design_name: str, 
+        pdk_root: Optional[PathType] = None,
+        lvs_setup_tcl_file: Optional[PathType] = None,
+        lvs_schematic_ref_file: Optional[PathType] = None,
+        magic_drc_file: Optional[PathType] = None, 
+        netlist: Optional[PathType] = None,
+        report_handling: Optional[tuple[Optional[bool], Optional[str]]] = (False, None)
+    ):
+        """Runs LVS using netgen on the either the component or the gds file path provided. Requires the design name and the pdk_root to be specified, handles importing the required setup files, if not specified. Accepts overriden lvs_setup_tcl_file, lvs_schematic_ref_file, and magic_drc_file.
+
+        Args:
+            - layout (Component | PathType): 
+                - Either the Component or the gds file path to run LVS on
+            design_name (str): 
+                - The designated name of the design
+            pdk_root (Optional[PathType], optional): 
+                - The directory where the pdk files are located. 
+                - e.g. - "/usr/bin/miniconda3/share/pdk/". Defaults to None.
+            - lvs_setup_tcl_file (Optional[PathType], optional): 
+                - A file containing netgen setup commands to be executed for LVS (sky130A_setup.tcl). 
+                - Defaults to None. 
+                - (Found in libs.tech/netgen/ of the pdk directory)
+            - lvs_schematic_ref_file (Optional[PathType], optional): 
+                - A spice file containing subckt definitions for the PDK. 
+                - Defaults to None. 
+                - (Found in libs.ref/sky130_fd_sc_hd/spice of the pdk directory)
+            - magic_drc_file (Optional[PathType], optional): 
+                - The .magicrc file for your PDK of choice. 
+                - Defaults to None.
+            - netlist (Optional[PathType], optional): 
+                - The path to the CDL file (netlist) for the design. 
+                - Defaults to None.
+            - report_handling (Optional[tuple[Optional[bool], Optional[str]]], optional): 
+                - A tuple containing a boolean value and a string. 
+                - The boolean value indicates whether to handle the report or not, and the string indicates the path to the report. 
+                - Defaults to (False, None).
+
+        Raises:
+            - NotImplementedError: 
+                - If LVS is not supported for gf180 PDK
+            - RuntimeError:
+                - If Netgen or Magic is not found in the system
+            - ValueError:
+                - If LVS cannot be run! 
+                - Please provide either a PDK root or the following files: a setup.tcl file for the PDK, a .magicrc file, and a spice file containing subckt definitions for the PDK.
+
+        """
+        if not self.name == 'sky130':
+            raise NotImplementedError("LVS only supported for sky130 PDK")
+        def check_if_path_or_net_string(netlist: PathType):
+            cdl_suffix = ".cdl"
+            spice_suffix = ".spice"
+            if netlist is None:
+                raise ValueError("Path to cdl (netlist) must be provided!")
+            check_suffix = str(netlist).endswith(cdl_suffix) or str(netlist).endswith(spice_suffix)
+            return check_suffix # True for cdl and spice, False if net passed
+        
+        def extract_design_name_from_netlist(file_path: str):
+            """ Extracts the design name from the netlist file (found after the final .ends statement in the netlist file)"""
+            with open(file_path, 'r') as file:
+                lines = file.readlines()
+            last_ends_line = None
+            for line in lines:
+                if line.strip().startswith(".ends"):
+                    last_ends_line = line.strip()
+
+            if last_ends_line:
+                parts = last_ends_line.split()
+                if len(parts) > 1:
+                    return parts[1]
+                else:
+                    return None
+                
+        def check_command_exists(command: str):
+            """ Check if a command exists in the system """
+            result = subprocess.run(f"command -v {command}", shell=True, capture_output=True, text=True)
+            return result.returncode == 0
+        
+        def modify_design_name_in_cdl(netlist, design_name):
+            design_name_from_cdl = extract_design_name_from_netlist(netlist)
+            if design_name_from_cdl is not None and design_name_from_cdl == design_name:
+                print(f"Design name from CDL file: {design_name_from_cdl} matches the design name: {design_name}")
+            else:
+                # replace all occurences of design_name_from_cdl with design_name in the cdl file
+                with open(netlist, 'r') as file:
+                    filedata = file.read()
+                newdata = filedata.replace(design_name_from_cdl, design_name)
+                with open(netlist, 'w') as file:
+                    file.write(newdata)
+        
+        def write_spice(input_cdl, output_spice, lvs_schematic_ref_file):
+        # create {design_name}.spice
+            with open(input_cdl, 'r') as file:
+                lines = file.readlines()
+                with open(output_spice, 'w') as file2:
+                    sky130_spice_path = Path(lvs_schematic_ref_file).resolve()
+                    file2.write(f".include {sky130_spice_path}\n")
+                    # write the rest of the lines
+                    for line in lines:
+                        file2.write(line)
+        
+        if not check_command_exists("netgen"):
+            raise RuntimeError("Netgen not found in the system")
+        if not check_command_exists("magic"):
+            raise RuntimeError("Magic not found in the system")
+        os.environ['DESIGN_NAME'] = design_name
+        # results go to a tempdirectory 
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_dir_path = Path(temp_dir).resolve()
+            self.pdk_files['temp_dir'] = temp_dir_path
+            print("using user specified pdk_root, will search for required files in the specified directory")
+            self.pdk_files['pdk_root'] = pdk_root 
+            
+            lvsmag_path = temp_dir_path / f"{design_name}_lvsmag.spice"
+            pex_path = temp_dir_path / f"{design_name}_pex.spice"
+            sim_path = temp_dir_path / f"{design_name}_sim.spice"
+            spice_path = temp_dir_path / f"{design_name}.spice"
+            netlist_from_comp = temp_dir_path / f"{design_name}.cdl"
+            gds_path = temp_dir_path / f"{design_name}.gds"
+            report_path = temp_dir_path / f"{design_name}_lvs.rpt"
+            
+            if isinstance(layout, Component):
+                layout.write_gds(str(gds_path))
+                if netlist is None:
+                    netlist = layout.info['netlist'].generate_netlist()
+                    with open(str(netlist_from_comp), 'w') as f:
+                        f.write(netlist)
+                else: 
+                    if check_if_path_or_net_string(netlist):
+                        shutil.copy(netlist, str(netlist_from_comp))
+                    else: 
+                        with open(str(netlist_from_comp), 'w') as f:
+                            f.write(netlist)
+            elif isinstance(layout, PathType):            
+                shutil.copy(layout, str(gds_path))
+                if netlist is None:
+                    raise ValueError("Path to cdl (netlist) must be provided if only gds file is provided! Provide Component alternatively!")
+                else:
+                    if check_if_path_or_net_string(netlist):
+                        shutil.copy(netlist, str(netlist_from_comp))
+                    else: 
+                        with open(str(netlist_from_comp), 'w') as f:
+                            f.write(netlist)
+                    
+            modify_design_name_in_cdl(str(netlist_from_comp), design_name)
+            
+            lvsschemref_file = self.pdk_files['lvs_schematic_ref_file'] if lvs_schematic_ref_file is None else lvs_schematic_ref_file
+        
+            
+            write_spice(str(netlist_from_comp), str(spice_path), lvsschemref_file)
+            
+            magic_script_content = f"""
+gds flatglob *\\$\\$*
+gds read {gds_path}
+load {design_name}
+
+select top cell
+extract all
+ext2spice lvs
+ext2spice -o {str(lvsmag_path)}
+load {design_name}
+extract all
+ext2spice lvs
+ext2spice rthresh 0
+ext2spice cthresh 0
+ext2spice -o {str(pex_path)}
+load {design_name}
+extract all
+ext2spice cthresh 0
+ext2spice -o {str(sim_path)}
+exit
+"""
+
+            with tempfile.NamedTemporaryFile(mode='w', delete=False) as magic_script_file:
+                magic_script_file.write(magic_script_content)
+                magic_script_path = magic_script_file.name
+            
+            try:
+                
+                magicrc_file = self.pdk_files['magic_drc_file'] if magic_drc_file is None else magic_drc_file
+                magic_cmd = f"bash -c 'magic -rcfile {magicrc_file} -noconsole -dnull < {magic_script_path}'",
+                magic_subproc = subprocess.run(
+                    magic_cmd, 
+                    shell=True,
+                    check=True,
+                    capture_output=True
+                )
+                
+                magic_subproc_code = magic_subproc.returncode
+                magic_subproc_out = magic_subproc.stdout.decode('utf-8')
+                print(magic_subproc_out)
+                
+                lvssetup_file = self.pdk_files['lvs_setup_tcl_file'] if lvs_setup_tcl_file is None else lvs_setup_tcl_file 
+                netgen_command = f'netgen -batch lvs "{str(lvsmag_path)} {design_name}" "{str(spice_path)} {design_name}" {lvssetup_file} {str(report_path)}'
+                
+                netgen_subproc = subprocess.run(
+                    netgen_command,
+                    shell=True,
+                    check=True, 
+                    capture_output=True
+                )
+                netgen_subproc_code = netgen_subproc.returncode
+                netgen_subproc_out = netgen_subproc.stdout.decode('utf-8')
+                print(netgen_subproc_out)
+                
+                if netgen_subproc_code == 0 and magic_subproc_code == 0:
+                    print("LVS run succeeded, writing report...")
+                else:
+                    raise ValueError("LVS run failed")
+            
+            finally: 
+                os.remove(magic_script_path)
+                if os.path.exists(f'{design_name}.ext'):
+                    os.remove(f'{design_name}.ext')
+                # copy the report from the temp directory to the specified location
+                if report_handling[0]:
+                    shutil.copy(report_path, report_handling[1])
+                    
+    
     @validate_arguments
     def has_required_glayers(self, layers_required: list[str]):
         """Raises ValueError if any of the generic layers in layers_required: list[str]

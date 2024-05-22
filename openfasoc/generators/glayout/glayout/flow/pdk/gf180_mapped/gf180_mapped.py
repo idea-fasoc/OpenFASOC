@@ -3,7 +3,7 @@ usage: from gf180_mapped import gf180_mapped_pdk
 """
 
 from ..gf180_mapped.grules import grulesobj
-from ..mappedpdk import MappedPDK
+from ..mappedpdk import MappedPDK, SetupPDKFiles
 from pathlib import Path
 
 
@@ -55,6 +55,23 @@ gf180_glayer_mapping = {
 
 gf180_lydrc_file_path = Path(__file__).resolve().parent / "gf180mcu_drc.lydrc"
 
+openfasoc_dir = Path(__file__).resolve().parent.parent.parent.parent.parent.parent.parent
+pdk_root = Path('/usr/bin/miniconda3/share/pdk/')
+lvs_schematic_ref_file = openfasoc_dir / "common" / "platforms" / "gf180osu9t" / "cdl" / "gf180mcu_osu_sc_9T.spice"
+magic_drc_file = pdk_root / "gf180mcuC" / "libs.tech" / "magic" / "gf180mcuC.magicrc"
+lvs_setup_tcl_file = pdk_root / "gf180mcuC" / "libs.tech" / "netgen" / "gf180mcuC_setup.tcl"
+temp_dir = None
+
+
+pdk_files = SetupPDKFiles(
+    pdk_root=pdk_root,
+    klayout_drc_file=gf180_lydrc_file_path,
+    lvs_schematic_ref_file=lvs_schematic_ref_file,
+    lvs_setup_tcl_file=lvs_setup_tcl_file,
+    magic_drc_file=magic_drc_file,
+    temp_dir=temp_dir,
+    pdk='gf180'
+).return_dict_of_files()
 
 gf180_mapped_pdk = MappedPDK(
     name="gf180",
@@ -65,7 +82,7 @@ gf180_mapped_pdk = MappedPDK(
 		'mimcap': 'mimcap_1p0fF'
     },
     layers=LAYER,
-    klayout_lydrc_file=gf180_lydrc_file_path,
+    pdk_files=pdk_files,
     grules=grulesobj,
 )
 
