@@ -2,11 +2,10 @@
 usage: from sky130_mapped import sky130_mapped_pdk
 """
 
-from ..mappedpdk import MappedPDK
+from ..mappedpdk import MappedPDK, SetupPDKFiles
 from ..sky130_mapped.grules import grulesobj
 from pathlib import Path
 from ..sky130_mapped.sky130_add_npc import sky130_add_npc
-
 
 # use mimcap over metal 3
 sky130_glayer_mapping = {
@@ -31,8 +30,25 @@ sky130_glayer_mapping = {
     "dnwell": (64,18),
 }
 
+openfasoc_dir = Path(__file__).resolve().parent.parent.parent.parent.parent.parent.parent
 
-sky130_lydrc_file_path = Path(__file__).resolve().parent / "sky130.lydrc"
+klayout_drc_file = Path(__file__).resolve().parent / "sky130.lydrc"
+pdk_root = Path('/usr/bin/miniconda3/share/pdk/')
+lvs_schematic_ref_file = openfasoc_dir / "common" / "platforms" / "sky130hd" / "cdl" / "sky130_fd_sc_hd.spice"
+magic_drc_file = pdk_root / "sky130A" / "libs.tech" / "magic" / "sky130A.magicrc"
+lvs_setup_tcl_file = pdk_root / "sky130A" / "libs.tech" / "netgen" / "sky130A_setup.tcl"
+temp_dir = None
+
+pdk_files = SetupPDKFiles(
+    pdk_root=pdk_root,
+    klayout_drc_file=klayout_drc_file,
+    lvs_schematic_ref_file=lvs_schematic_ref_file,
+    lvs_setup_tcl_file=lvs_setup_tcl_file,
+    magic_drc_file=magic_drc_file,
+    temp_dir=temp_dir,
+    pdk='sky130'
+).return_dict_of_files()
+
 
 sky130_mapped_pdk = MappedPDK(
     name="sky130",
@@ -43,7 +59,7 @@ sky130_mapped_pdk = MappedPDK(
 		'mimcap': 'sky130_fd_pr__cap_mim_m3_1'
     },
     grules=grulesobj,
-    klayout_lydrc_file=sky130_lydrc_file_path,
+    pdk_files=pdk_files,
     default_decorator=sky130_add_npc
 )
 # set the grid size
