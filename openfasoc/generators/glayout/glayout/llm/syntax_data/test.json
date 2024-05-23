@@ -1,0 +1,12 @@
+{
+    "data": [
+        {
+            "NLPfilename": "StrongArmLatch.convo",
+            "LLMprompt": "Create a strong arm latch from a cross coupled inverter, diffpair, and several pmos/nmos switches. Parametrize everything."
+        },
+        {
+            "NLPfilename": "BiasVoltageGenerator.convo",
+            "LLMprompt": "Create a Bias Voltage Generator by placing an nmos and pmos side by side. Parametrize everything"
+        }
+    ]
+}

@@ -5,10 +5,19 @@ from typing import List, Tuple, Union
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
+from datasets import Dataset
 
 
 def get_glayout_context() -> str:
-    contextmdfile = Path(__file__).resolve().parent / "syntax_data/GlayoutStrictSyntax.md"
+    """retrieve the context of syntax_data/GlayoutStrictSyntax.md
+    to provide context of Glayout strictsyntax inserted in the prompt
+
+    Returns:
+        str: string content of GlayoutStrictSyntax.md
+    """
+    contextmdfile = (
+        Path(__file__).resolve().parent / "syntax_data/GlayoutStrictSyntax.md"
+    )
     loader = TextLoader(contextmdfile)
     return loader.load()[0].page_content
 
@@ -80,9 +89,11 @@ def load_labeled_syntax_data_json(
     return results
 
 
-def load_all_labeled_syntax_data_json() -> List[Tuple[str, str]]:
+def load_all_labeled_syntax_data_json(test: bool = False) -> List[Tuple[str, str]]:
     """look in syntax_data folder for any json files
     and run load_labeled_syntax_data_json on those files
+    Args:
+        test (bool, Optional): if True, only load json files containing keyword "test", default False
     Returns:
         list[tuple]: all results from running load_labeled_syntax_data_json on all json files
     """
@@ -97,9 +108,18 @@ def load_all_labeled_syntax_data_json() -> List[Tuple[str, str]]:
     # Iterate over all JSON files in the directory
     all_results = list()
     for json_file_path in json_dir.glob("*.json"):
-        all_results.extend(load_labeled_syntax_data_json(json_file_path, convo_dir, False))
+        test_in_name = "test" in json_file_path.name
+        if test and test_in_name:  # load test data and test is in name of this json
+            all_results.extend(
+                load_labeled_syntax_data_json(json_file_path, convo_dir, False)
+            )
+        elif not (
+            test or test_in_name
+        ):  # dont load test data and test is not in name of this json
+            all_results.extend(
+                load_labeled_syntax_data_json(json_file_path, convo_dir, False)
+            )
     return all_results
-
 
 
 class RAGdb:
@@ -123,10 +143,11 @@ class RAGdb:
         # create vector db
         embeddings_model_name = "sentence-transformers/all-MiniLM-L6-v2"
         embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name)
-        self.vectordb = Chroma.from_documents(documents=self.documents,embedding=embeddings)
+        self.vectordb = Chroma.from_documents(
+            documents=self.documents, embedding=embeddings
+        )
 
-
-    def query(self, query_text: str, k: int=4):
+    def query(self, query_text: str, k: int = 4):
         """
         Queries the vector database to find the top-k most similar vectors to the given query text.
         Args:
@@ -134,11 +155,103 @@ class RAGdb:
         Returns:
             List: The list of top-k most similar docs.
         """
-        rawdocs =  self.vectordb.similarity_search(query=query_text,k=k)
+        rawdocs = self.vectordb.similarity_search(query=query_text, k=k)
         rawtxt = list()
         for doc in rawdocs:
             rawtxt.append(doc.page_content)
         return rawtxt
 
+
 RAGvecdb = RAGdb(Path(__file__).resolve().parent / "rag_data")
-#print(vecdb.query("currentmir"))
+
+
+def get_prompt_from_template(
+    glayout_NLPcontext: str, ragcontext: str, prompt: str, instruct: bool = False
+) -> str:
+    prompt = f"""
+[CONTEXT]
+[EXPLAINING STRICT SYNTAX]
+Below is some context on Glayout strictsyntax:
+{glayout_NLPcontext}
+[/EXPLAINING STRICT SYNTAX]
+Below is context on analog circuit design which will help you convert an example prompt to Glayout strictsyntax
+{ragcontext}
+[/CONTEXT]
+----
+[TRANSLATION_TASK]
+Convert the following prompt to Glayout strictsyntax:
+{prompt}
+[/TRANSLATION_TASK]
+"""
+    if instruct:
+        prompt = f"[INST] {prompt} [/INST]"
+    return prompt
+
+
+# pass all prompts through rag before handing training data to llm
+def add_context_to_data(data: list) -> list:
+    """Enhance a list of data pairs (prompt and result) with contextual information from external documents.
+    This function takes each prompt-result pair in the input data, queries an vector database for relevant documents,
+    constructs a new prompt incorporating this contextual information according to a specified template, and returns the modified
+    list of prompt-result pairs with added context.
+
+    Args:
+        data (list): A list of tuples, where each tuple is (prompt (str), result (str))
+
+    Returns:
+        list: same format as input but the prompt has additional context and is correctly formated
+    """
+    glayout_context = get_glayout_context()
+    contextualized_prompts = list()
+    for prompt, result in data:
+        docs = RAGvecdb.query(prompt, 2)
+        ragdata = str()
+        for i, doc in enumerate(docs):
+            ragdata += f"[CONTEXT DOCUMENT NUMBER {i}]\n"
+            ragdata += doc + "\n"
+            ragdata += f"[/CONTEXT DOCUMENT NUMBER {i}]\n"
+        newprompt = get_prompt_from_template(glayout_context, ragdata, prompt)
+        contextualized_prompts.append((newprompt, result))
+    return contextualized_prompts
+
+
+def pre_tokenize_dataset(tokenizer, data: list) -> dict:
+    """tokenize both the prompts and expected responses
+    Args:
+        tokenizer (_type_): LM tokenizer which follows hugging face tokenizer model
+        data (list): A list of tuples, where each tuple is (prompt (str), result (str))
+    Returns:
+        dict: {"prompt": list of tokenized prompts, "strictsyntax": list of tokenized responses}
+    """
+    tokenized_prompts = list()
+    tokenized_responses = list()
+    for prompt, response in data:
+        tokenized_prompt = tokenizer(prompt, return_tensors="pt")
+        tokenized_response = tokenizer(response, return_tensors="pt")
+        tokenized_prompts.append(tokenized_prompt)
+        tokenized_responses.append(tokenized_response)
+    return {"prompt": tokenized_prompts, "strictsyntax": tokenized_responses}
+
+
+def load_preprocessed_pretokenized_data(tokenizer):
+    """Wrapper function for full retrival and preprocessing of dataset
+    1- Loads raw data from files
+    2- adds RAG context to the LLM prompts
+    3- converts the dataset to Arrow
+    Args:
+        tokenizer: LM tokenizer which follows hugging face tokenizer model
+    Returns:
+        dataset in the exact format needed for training
+    """
+    # get train and testing data in dictionary {prompt: list, strictsyntax: list} form
+    train_data = pre_tokenize_dataset(
+        tokenizer, add_context_to_data(load_all_labeled_syntax_data_json())
+    )
+    test_data = pre_tokenize_dataset(
+        tokenizer, add_context_to_data(load_all_labeled_syntax_data_json(True))
+    )
+    # use from dict method to convert to hugging face dataset
+    train_data = Dataset.from_dict(train_data)
+    test_data = Dataset.from_dict(test_data)
+    # combine to create the final dataset
+    return {"train": train_data, "test": test_data}

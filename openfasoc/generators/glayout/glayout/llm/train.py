@@ -1,65 +1,16 @@
-import requests
 from pathlib import Path
+import time
+import requests
 
-from glayout.llm.manage_data import load_all_labeled_syntax_data_json, RAGdb
+from glayout.llm.manage_data import load_preprocessed_pretokenized_data
+
 # from manage_data import load_all_labeled_syntax_data_json, RAGvecdb, get_glayout_context
 import torch
-import time
 from peft import get_peft_config, get_peft_model, LoraConfig
 from datasets import Dataset
 
-# from transformers import AutoModelForCausalLM, AutoTokenizer, Conv1D, TrainingArguments
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 import transformers
-
-def get_prompt_from_template(
-    glayout_NLPcontext: str, ragcontext: str, prompt: str, instruct: bool = False
-) -> str:
-    prompt = f"""
-[CONTEXT]
-[EXPLAINING STRICT SYNTAX]
-Below is some context on Glayout strictsyntax:
-{glayout_NLPcontext}
-[/EXPLAINING STRICT SYNTAX]
-Below is context on analog circuit design which will help you convert an example prompt to Glayout strictsyntax
-{ragcontext}
-[/CONTEXT]
-----
-[TRANSLATION_TASK]
-Convert the following prompt to Glayout strictsyntax:
-{prompt}
-[/TRANSLATION_TASK]
-"""
-    if instruct:
-        prompt = f"[INST] {prompt} [/INST]"
-    return prompt
-
-
-# pass all prompts through rag before handing training data to llm
-def add_context_to_data(data: list) -> list:
-    """Enhance a list of data pairs (prompt and result) with contextual information from external documents.
-    This function takes each prompt-result pair in the input data, queries an vector database for relevant documents,
-    constructs a new prompt incorporating this contextual information according to a specified template, and returns the modified
-    list of prompt-result pairs with added context.
-
-    Args:
-        data (list): A list of tuples, where each tuple is (prompt (str), result (str))
-
-    Returns:
-        list: same format as input but the prompt has additional context and is correctly formated
-    """
-    glayout_context = get_glayout_context()
-    contextualized_prompts = list()
-    for prompt, result in data:
-        docs = RAGvecdb.query(prompt, 2)
-        ragdata = str()
-        for i, doc in enumerate(docs):
-            ragdata += f"[CONTEXT DOCUMENT NUMBER {i}]\n"
-            ragdata += doc + "\n"
-            ragdata += f"[/CONTEXT DOCUMENT NUMBER {i}]\n"
-        newprompt = get_prompt_from_template(glayout_context, ragdata, prompt)
-        contextualized_prompts.append((newprompt, result))
-    return contextualized_prompts
 
 
 # credit
@@ -80,7 +31,6 @@ def get_lora_supported_layer_names(model) -> list:
     # Recursively visit all modules and submodules
     for name, module in model.named_modules():
         # Check if the module is an instance of the specified layers
-        # if isinstance(module, (torch.nn.Linear, torch.nn.Embedding, torch.nn.Conv2d, Conv1D)):
         if isinstance(module, (torch.nn.Linear, torch.nn.Embedding, torch.nn.Conv2d)):
             layer_names.append(".".join(name.split(".")[4:]).split(".")[0])
     layer_names = list(set(layer_names))
@@ -105,7 +55,7 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
         RuntimeError: If there is an error moving the model to the specified device.
     """
     accesstoken = "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"
-    modelname = "mistralai/Mistral-7B-v0.1"
+    # modelname = "mistralai/Mistral-7B-v0.1"
     modelname = "mistralai/Mistral-7B-Instruct-v0.2"
     model = AutoModelForCausalLM.from_pretrained(modelname, token=accesstoken)
     tokenizer = AutoTokenizer.from_pretrained(modelname, use_fast=True)
@@ -146,20 +96,9 @@ def run_llm_normal(
     return tokenizer.decode(outputs[0], skip_special_tokens=True)
 
 
-# tokenize both the prompts and expected responses
-def pre_tokenize_and_convert_dataset_to_arrow(tokenizer, data: list) -> list:
-    tokenized_prompts = list()
-    tokenized_responses = list()
-    for prompt, response in data:
-        tokenized_prompt = tokenizer(prompt, return_tensors="pt")
-        tokenized_response = tokenizer(response, return_tensors="pt")
-        tokenized_prompts.append(tokenized_prompt)
-        tokenized_responses.append(tokenized_response)
-    dictionary_data = {"prompt": tokenized_prompts, "strictsyntax": tokenized_responses}
-    return tokenized_data
-
 
 def train(model, tokenizer, data):
+    # need to load data
     data = pre_tokenize_dataset(tokenizer, data)
     model.train()
     # hyperparameters
@@ -183,6 +122,7 @@ def train(model, tokenizer, data):
         fp16=True,
         # optim="paged_adamw_8bit",
     )
+    data_collator = transformers.DataCollatorForLanguageModeling(tokenizer, mlm=False)
     # configure trainer
     trainer = transformers.Trainer(
         model=model,
@@ -202,7 +142,7 @@ def run_full_training():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model, tokenizer = load_model_and_tokenizer(device)
     # load fine tuning data
-    labeled_data = add_context_to_data(load_all_labeled_syntax_data_json())
+    labeled_data = load_preprocessed_pretokenized_data(tokenizer)
     return train(model, tokenizer, labeled_data)
 
 
@@ -218,4 +158,4 @@ run_full_training()
 
 
 # data["train"] and data["test"]
-# each is 
+# each is
