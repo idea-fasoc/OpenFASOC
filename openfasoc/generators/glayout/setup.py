@@ -29,7 +29,7 @@ setup(
         "chromadb",
         "ollama",
         "unstructured",
-        "unstructured[md]"
+        "unstructured[md]",
         "sentence-transformers",
         "peft",
         "accelerate",
