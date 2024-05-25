@@ -36,7 +36,9 @@ setup(
         "bitsandbytes",
         "safetensors",
         "requests",
-        "datasets"
+        "datasets",
+        "auto-gptq",
+        "optimum",
     ],
     entry_points={
         'console_scripts': [

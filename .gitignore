@@ -147,3 +147,7 @@ cython_debug/
 *.DS_Store
 .DS_Store
 *Thumbs.db
+
+# Large Language Models
+glayout_llm_checkpoints/
+

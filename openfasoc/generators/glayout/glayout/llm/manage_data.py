@@ -6,20 +6,26 @@ from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from datasets import Dataset
+from typing import Optional
 
 
-def get_glayout_context() -> str:
-    """retrieve the context of syntax_data/GlayoutStrictSyntax.md
-    to provide context of Glayout strictsyntax inserted in the prompt
-
-    Returns:
-        str: string content of GlayoutStrictSyntax.md
+def remove_comments_and_empty_lines(input_string: str) -> str:
     """
-    contextmdfile = (
-        Path(__file__).resolve().parent / "syntax_data/GlayoutStrictSyntax.md"
-    )
-    loader = TextLoader(contextmdfile)
-    return loader.load()[0].page_content
+    Removes all lines starting with a '#' or any empty lines from the input string.
+    Args:
+        input_string (str): The input string containing multiple lines.
+    Returns:
+        str: The modified string with comments and empty lines removed.
+    """
+    # Split the input string into individual lines
+    lines = input_string.split('\n')
+    # Filter out lines that start with # or are empty
+    filtered_lines = str()
+    for line in lines:
+        remove = line.strip().startswith('#') or line.strip() == ''
+        if not remove:
+            filtered_lines += line + "\n"
+    return filtered_lines
 
 
 def load_labeled_syntax_data_json(
@@ -79,7 +85,7 @@ def load_labeled_syntax_data_json(
                 raise FileNotFoundError(f"Convo file '{convo_file_path}' not found.")
             # Read text from convo file
             with convo_file_path.open("r") as nlp_file:
-                nlp_text = nlp_file.read()
+                nlp_text = remove_comments_and_empty_lines(nlp_file.read())
             results.append((llm_prompt, nlp_text))
         except (FileNotFoundError, KeyError) as faulty_example_error:
             if fail_on_error:
@@ -89,11 +95,13 @@ def load_labeled_syntax_data_json(
     return results
 
 
-def load_all_labeled_syntax_data_json(test: bool = False) -> List[Tuple[str, str]]:
+def load_all_labeled_syntax_data_json(
+    evaluation: bool = False,
+) -> List[Tuple[str, str]]:
     """look in syntax_data folder for any json files
     and run load_labeled_syntax_data_json on those files
     Args:
-        test (bool, Optional): if True, only load json files containing keyword "test", default False
+        evaluation (bool, Optional): if True, only load json files containing keyword "eval", default False
     Returns:
         list[tuple]: all results from running load_labeled_syntax_data_json on all json files
     """
@@ -108,14 +116,14 @@ def load_all_labeled_syntax_data_json(test: bool = False) -> List[Tuple[str, str
     # Iterate over all JSON files in the directory
     all_results = list()
     for json_file_path in json_dir.glob("*.json"):
-        test_in_name = "test" in json_file_path.name
-        if test and test_in_name:  # load test data and test is in name of this json
+        eval_in_name = "eval" in json_file_path.name
+        # load evaluation data and evaluation is in name of this json
+        if evaluation and eval_in_name:
             all_results.extend(
                 load_labeled_syntax_data_json(json_file_path, convo_dir, False)
             )
-        elif not (
-            test or test_in_name
-        ):  # dont load test data and test is not in name of this json
+        # dont load evaluation data and evaluation is not in name of this json
+        elif not (evaluation or eval_in_name):
             all_results.extend(
                 load_labeled_syntax_data_json(json_file_path, convo_dir, False)
             )
@@ -165,93 +173,130 @@ class RAGdb:
 RAGvecdb = RAGdb(Path(__file__).resolve().parent / "rag_data")
 
 
+def get_glayout_context() -> str:
+    """retrieve the context of syntax_data/GlayoutStrictSyntax.md
+    to provide context of Glayout strictsyntax inserted in the prompt
+
+    Returns:
+        str: string content of GlayoutStrictSyntax.md
+    """
+    contextmdfile = (
+        Path(__file__).resolve().parent / "syntax_data/GlayoutStrictSyntax.md"
+    )
+    loader = TextLoader(contextmdfile)
+    return loader.load()[0].page_content
+
+
 def get_prompt_from_template(
-    glayout_NLPcontext: str, ragcontext: str, prompt: str, instruct: bool = False
+    glayout_nlp_context: str,
+    ragcontext: str,
+    prompt: str,
+    eos_token: str,
+    strictsyntax: Optional[str] = None,
+    instruct: bool = False,
 ) -> str:
-    prompt = f"""
-[CONTEXT]
-[EXPLAINING STRICT SYNTAX]
-Below is some context on Glayout strictsyntax:
-{glayout_NLPcontext}
-[/EXPLAINING STRICT SYNTAX]
-Below is context on analog circuit design which will help you convert an example prompt to Glayout strictsyntax
-{ragcontext}
-[/CONTEXT]
-----
-[TRANSLATION_TASK]
-Convert the following prompt to Glayout strictsyntax:
-{prompt}
-[/TRANSLATION_TASK]
-"""
+    """Generate a structured prompt for translating input text to Glayout strictsyntax.
+
+    Args:
+        glayout_NLPcontext (str): Contextual information about Glayout strictsyntax.
+        ragcontext (str): Contextual information about analog circuit design to aid in translation.
+        prompt (str): The input prompt that needs to be converted to Glayout strictsyntax.
+        eos_token (str): End-of-sequence token to append at the end of the output.
+        strictsyntax (str, Optional): The strictsyntax command language template to be used.
+            if None (default), then only format the prompt (no labeled output strictsyntax)
+        instruct (bool, optional): Flag to indicate if the prompt should be wrapped with instruction tags. Default is False.
+
+    Returns:
+        str: The generated prompt formatted with the provided context and input data.
+    """
+    unified_prompt = "CONTEXT\n"
+    unified_prompt += "EXPLAINING STRICT SYNTAX\n"
+    unified_prompt += (
+        f"Below is some context on Glayout strictsyntax:\n{glayout_nlp_context}\n\n"
+    )
+    unified_prompt += "Below is context on analog circuit design which will help you "
+    unified_prompt += "convert an example prompt to Glayout strictsyntax\n"
+    unified_prompt += f"{ragcontext}\n\n----\nTRANSLATION TASK\n"
+    unified_prompt += f"Convert the following prompt to Glayout strictsyntax:\n{prompt}"
     if instruct:
-        prompt = f"[INST] {prompt} [/INST]"
-    return prompt
+        unified_prompt = f"[INST] {unified_prompt} [/INST]"
+    # conditionally add label (expected strict syntax output)
+    if strictsyntax is not None:
+        unified_prompt += f"\n{strictsyntax} " + eos_token
+    else:
+        unified_prompt += eos_token
+    return unified_prompt
 
 
 # pass all prompts through rag before handing training data to llm
-def add_context_to_data(data: list) -> list:
-    """Enhance a list of data pairs (prompt and result) with contextual information from external documents.
-    This function takes each prompt-result pair in the input data, queries an vector database for relevant documents,
-    constructs a new prompt incorporating this contextual information according to a specified template, and returns the modified
-    list of prompt-result pairs with added context.
-
+def unify_prompt_and_add_context_to_data(data: list, eos_token: str, no_label: bool=False) -> list:
+    """Enhance prmopts with vectordb contextual information
+    constructs a new prompt incorporating this contextual information according to a specified template
     Args:
-        data (list): A list of tuples, where each tuple is (prompt (str), result (str))
-
+        data (list): A list of tuples, where each tuple is (prompt (str), result (str)) (or a list of prompts (str))
+        eos_token (str): End-of-sequence token to append at the end of the output
+        no_label (bool): set this to true if you pass data in with JUST the prompt (no strictsyntax label)
     Returns:
-        list: same format as input but the prompt has additional context and is correctly formated
+        list[str]: A list of strings (prompt and strictsyntax have been combined)
     """
     glayout_context = get_glayout_context()
+    if no_label:
+        data = [(prompt, None) for prompt in data]
     contextualized_prompts = list()
     for prompt, result in data:
         docs = RAGvecdb.query(prompt, 2)
         ragdata = str()
-        for i, doc in enumerate(docs):
-            ragdata += f"[CONTEXT DOCUMENT NUMBER {i}]\n"
-            ragdata += doc + "\n"
-            ragdata += f"[/CONTEXT DOCUMENT NUMBER {i}]\n"
-        newprompt = get_prompt_from_template(glayout_context, ragdata, prompt)
-        contextualized_prompts.append((newprompt, result))
+        for doc in docs:
+            # ragdata += f"[CONTEXT DOCUMENT NUMBER {i}]\n"
+            ragdata += "\n" + doc + "\n"
+            # ragdata += f"[/CONTEXT DOCUMENT NUMBER {i}]\n"
+        newprompt = get_prompt_from_template(
+            glayout_nlp_context=glayout_context,
+            ragcontext=ragdata,
+            prompt=prompt,
+            strictsyntax=result,
+            eos_token=eos_token,
+            instruct=True
+        )
+        contextualized_prompts.append(newprompt)
     return contextualized_prompts
-
-
-def pre_tokenize_dataset(tokenizer, data: list) -> dict:
-    """tokenize both the prompts and expected responses
-    Args:
-        tokenizer (_type_): LM tokenizer which follows hugging face tokenizer model
-        data (list): A list of tuples, where each tuple is (prompt (str), result (str))
-    Returns:
-        dict: {"prompt": list of tokenized prompts, "strictsyntax": list of tokenized responses}
-    """
-    tokenized_prompts = list()
-    tokenized_responses = list()
-    for prompt, response in data:
-        tokenized_prompt = tokenizer(prompt, return_tensors="pt")
-        tokenized_response = tokenizer(response, return_tensors="pt")
-        tokenized_prompts.append(tokenized_prompt)
-        tokenized_responses.append(tokenized_response)
-    return {"prompt": tokenized_prompts, "strictsyntax": tokenized_responses}
 
 
 def load_preprocessed_pretokenized_data(tokenizer):
     """Wrapper function for full retrival and preprocessing of dataset
     1- Loads raw data from files
     2- adds RAG context to the LLM prompts
-    3- converts the dataset to Arrow
+    3- unifies the prompt and strictsyntax output
+    4- converts the dataset to Dataset type with example, input_ids, and attention_mask
     Args:
         tokenizer: LM tokenizer which follows hugging face tokenizer model
     Returns:
         dataset in the exact format needed for training
     """
-    # get train and testing data in dictionary {prompt: list, strictsyntax: list} form
-    train_data = pre_tokenize_dataset(
-        tokenizer, add_context_to_data(load_all_labeled_syntax_data_json())
+    # get train and evaluation data in a single unified prompt format
+    train_examples = unify_prompt_and_add_context_to_data(
+        load_all_labeled_syntax_data_json(), tokenizer.eos_token
     )
-    test_data = pre_tokenize_dataset(
-        tokenizer, add_context_to_data(load_all_labeled_syntax_data_json(True))
+    eval_examples = unify_prompt_and_add_context_to_data(
+        load_all_labeled_syntax_data_json(True), tokenizer.eos_token
     )
+    # tokenize the prompts
+    train_data = tokenizer(train_examples, padding=True)
+    eval_data = tokenizer(eval_examples, padding=True)
     # use from dict method to convert to hugging face dataset
-    train_data = Dataset.from_dict(train_data)
-    test_data = Dataset.from_dict(test_data)
+    train_data = Dataset.from_dict(
+        {
+            "example": train_examples,
+            "input_ids": train_data.input_ids,
+            "attention_mask": train_data.attention_mask,
+        }
+    )
+    eval_data = Dataset.from_dict(
+        {
+            "example": eval_examples,
+            "input_ids": eval_data.input_ids,
+            "attention_mask": eval_data.attention_mask,
+        }
+    )
     # combine to create the final dataset
-    return {"train": train_data, "test": test_data}
+    return {"train": train_data, "evaluation": eval_data}
