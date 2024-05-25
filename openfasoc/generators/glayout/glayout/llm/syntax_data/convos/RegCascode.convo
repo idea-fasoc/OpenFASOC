@@ -1,10 +1,14 @@
 RegCascode
 create a float parameter called width_m1
 create a float parameter called width_m2
+create a float parameter called length_m1
+create a float parameter called length_m2 
 create a int parameter called m1_multiplier
 create a int parameter called m2_multiplier
-place a nfet called m1 with width width_m1 multipliers m1_multiplier with_substrate_tap False with_dnwell False
-place a nfet called m2 with width width_m2 multipliers m2_multiplier with_substrate_tap False with_dnwell False
+create a int parameter called m1_fingers
+create a int parameter called m2_fingers
+place a nmos called m1 with width width_m1 length length_m1 fingers m1_fingers rmult 1 multipliers m1_multiplier with_substrate_tap False with_tie True sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy True with_dnwell False
+place a nmos called m2 with width width_m2 length length_m2 fingers m2_fingers rmult 1 multipliers m2_multiplier with_substrate_tap False with_tie True sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy True with_dnwell False
 move m2 left of m1
 route between m1_multiplier_0_gate_N and m2_multiplier_0_drain_N using smart_route
 route between m2_multiplier_0_gate_E and m2_multiplier_0_source_N using smart_route
