@@ -1,13 +1,15 @@
-CMbasic
-create float parameter called m1_width
-create float parameter called m2_width
-create an int parameter called m1_multiplier
-create an int parameter called m2_multiplier
-place an nmos called m1 with width m1_width length 10 rmult m1_multiplier 
-place a nmos called m2 with width m2_width length 10 rmult m2_multiplier
-route between m1_multiplier_0_drain_tr and m2_multiplier_0_gate_bl using straight_route
-route between m1_tie_br_top_met_W and	m2_tie_bl_top_met_E using straig
-place an nmos called m1 with width 5 and length 10
-place a nmos called m2 with width 10 and length 10
-route between m1_multiplier_0_drain_tr and m2_multiplier_0_gate_bl using l_route
-route between m1_multiplier_0_gate_br and m2_multiplier_0_gate_bl using straight_route
+CurrentMirror
+create a float parameter called width_m1
+create a float parameter called width_m2
+create a float parameter called length_m1
+create a float parameter called length_m2 
+create a int parameter called m1_multiplier
+create a int parameter called m2_multiplier
+create a int parameter called m1_fingers
+create a int parameter called m2_fingers
+place a nmos called m1 with width width_m1 length length_m1 fingers m1_fingers rmult 1 multipliers m1_multiplier with_substrate_tap False with_tie True sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy True with_dnwell False
+place a nmos called m2 with width width_m2 length length_m2 fingers m2_fingers rmult 1 multipliers m2_multiplier with_substrate_tap False with_tie True sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy True with_dnwell False
+move m2 to the right of m1
+route between m1_multiplier_0_gate_E and m2_multiplier_0_gate_E using smart_route
+route between m2_multiplier_0_drain_E and m2_multiplier_0_gate_E using smart_route
+route between m2_multiplier_0_source_E and m2_multiplier_0_source_E using smart_route
