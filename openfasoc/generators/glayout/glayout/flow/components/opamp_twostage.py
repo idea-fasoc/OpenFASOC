@@ -144,12 +144,12 @@ def opamp_gain_stage_netlist(mimcap_netlist: Netlist, diff_cs_netlist: Netlist, 
         [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
     )
 
-    mimcap_ref = netlist.connect_netlist(mimcap_netlist, [('V2', 'VOUT')])
+    mimcap_ref = netlist.connect_netlist(mimcap_netlist, [('V1', 'VOUT'), ('V2', 'VSS2')])
 
     netlist.connect_subnets(
         mimcap_ref,
         diff_cs_ref,
-        [('V1', 'VSS2')]
+        [('V2', 'VSS2')]
     )
 
     return netlist

@@ -280,7 +280,7 @@ class MappedPDK(Pdk):
         """Returns true if the layout is DRC clean and false if not
         Also saves detailed results to output_dir_or_file location as lyrdb
         layout can be passed as a file path or gdsfactory component"""
-        if not self.klayout_lydrc_file:
+        if not self.pdk_files['klayout_drc_file']:
             raise NotImplementedError("no drc script for this pdk")
         # find layout gds file path
         tempdir = None
@@ -315,7 +315,7 @@ class MappedPDK(Pdk):
             "klayout",
             "-b",
             "-r",
-            str(self.pdk_files['klayout_lydrc_file']),
+            str(self.pdk_files['klayout_drc_file']),
             "-rd",
             "input=" + str(layout_path),
             "-rd",
@@ -343,11 +343,11 @@ class MappedPDK(Pdk):
     @validate_arguments
     def drc_magic(
         self, 
-        layout: Component | str, 
+        layout: Component | PathType, 
         design_name: str, 
         pdk_root: Optional[PathType] = None, 
         magic_drc_file: Optional[PathType] = None
-    ):
+    ) -> dict:
         """Runs DRC using magic on the either the component or the gds file path provided. Requires the design name and the pdk_root to be specified, handles importing the required magicrc and other setup files, if not specified. Accepts overriden magic_commands_file and magic_drc_file.
 
         Args:
@@ -490,11 +490,14 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
                 if num_lines > 3:
                     result_str = result_str + "\nErrors found in DRC report"
                     f.seek(0)
-                    print(f.read())
                 else:
                     result_str = result_str + "\nNo errors found in DRC report"
+                    
+            ret_dict = {"result_str": result_str, "subproc_code": subproc_code}
+            if ret_dict is None:
+                raise ValueError('Something weird happened')
 
-        print(result_str)
+        return ret_dict
 
     @validate_arguments
     def lvs_netgen(
@@ -506,7 +509,7 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
         lvs_schematic_ref_file: Optional[PathType] = None,
         magic_drc_file: Optional[PathType] = None, 
         netlist: Optional[PathType] = None,
-        report_handling: Optional[tuple[Optional[bool], Optional[str]]] = (False, None)
+        report_handling: Optional[PathType] = None
     ):
         """Runs LVS using netgen on the either the component or the gds file path provided. Requires the design name and the pdk_root to be specified, handles importing the required setup files, if not specified. Accepts overriden lvs_setup_tcl_file, lvs_schematic_ref_file, and magic_drc_file.
 
@@ -705,18 +708,31 @@ exit
                 netgen_subproc_out = netgen_subproc.stdout.decode('utf-8')
                 print(netgen_subproc_out)
                 
-                if netgen_subproc_code == 0 and magic_subproc_code == 0:
-                    print("LVS run succeeded, writing report...")
-                else:
-                    raise ValueError("LVS run failed")
+                result_str = "LVS run succeeded" if netgen_subproc_code == 0 and magic_subproc_code == 0 else "LVS run failed"
+
+                with open(report_path, 'r') as f:
+                    num_lines = len(f.readlines())
+                    if num_lines > 3:
+                        result_str += f"\nErrors found in LVS report: {report_path}"
+                        f.seek(0)
+                        print(f.read())
+                    else:
+                        result_str += f"\nNo errors found in LVS report: {report_path}"
+                        
+                # if netgen_subproc_code == 0 and magic_subproc_code == 0:
+                #     print("LVS run succeeded, writing report...")
+                # else:
+                #     raise ValueError("LVS run failed")
             
             finally: 
                 os.remove(magic_script_path)
                 if os.path.exists(f'{design_name}.ext'):
                     os.remove(f'{design_name}.ext')
                 # copy the report from the temp directory to the specified location
-                if report_handling[0]:
-                    shutil.copy(report_path, report_handling[1])
+                if report_handling is not None:
+                    shutil.copy(report_path, report_handling)
+                    
+        return {'magic_subproc_code': magic_subproc_code, 'netgen_subproc_code': netgen_subproc_code, 'result_str': result_str}
                     
     
     @validate_arguments

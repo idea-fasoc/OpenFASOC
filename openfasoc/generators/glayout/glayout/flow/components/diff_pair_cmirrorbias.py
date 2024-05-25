@@ -38,7 +38,7 @@ from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interd
 from glayout.flow.spice import Netlist
 from glayout.flow.components.stacked_current_mirror import current_mirror_netlist
 
-def diff_pair_ibias_netlist(center_diffpair: Component, current_mirror: Component, antenna_diode: Component) -> Netlist:
+def diff_pair_ibias_netlist(center_diffpair: Component, current_mirror: Component, antenna_diode: Optional[Component] = None) -> Netlist:
     netlist = Netlist(
         circuit_name="DIFFPAIR_CMIRROR_BIAS",
         nodes=['VP', 'VN', 'VDD1', 'VDD2', 'IBIAS', 'VSS', 'B']
@@ -60,15 +60,16 @@ def diff_pair_ibias_netlist(center_diffpair: Component, current_mirror: Componen
         [('VCOPY', 'VTAIL')]
     )
 
-    netlist.connect_netlist(
-        antenna_diode.info['netlist'],
-        [('D', 'VSS'), ('G', 'VSS'), ('B', 'VSS'), ('S', 'VP')]
-    )
+    if antenna_diode is not None:
+        netlist.connect_netlist(
+            antenna_diode.info['netlist'],
+            [('D', 'VSS'), ('G', 'VSS'), ('B', 'VSS'), ('S', 'VP')]
+        )
 
-    netlist.connect_netlist(
-        antenna_diode.info['netlist'],
-        [('D', 'VSS'), ('G', 'VSS'), ('B', 'VSS'), ('S', 'VN')]
-    )
+        netlist.connect_netlist(
+            antenna_diode.info['netlist'],
+            [('D', 'VSS'), ('G', 'VSS'), ('B', 'VSS'), ('S', 'VN')]
+        )
 
     return netlist
 
@@ -93,6 +94,7 @@ def diff_pair_ibias(
     diffpair_centered_ref = prec_ref_center(center_diffpair_comp)
     diffpair_i_.add(diffpair_centered_ref)
     diffpair_i_.add_ports(diffpair_centered_ref.get_ports_list())
+    antenna_diode_comp = None
     if with_antenna_diode_on_diffinputs:
         antenna_diode_comp = nmos(
             pdk,

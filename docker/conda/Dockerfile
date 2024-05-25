@@ -24,6 +24,8 @@ RUN conda install python=3.10 \
                     -y
 ENV PDK_ROOT=/usr/bin/miniconda3/share/pdk/
 
+# RUN pip install git+https://github.com/idea-fasoc/OpenFASOC.git@main#subdirectory=openfasoc/generators/glayout, need to add this back once glayout folder structure is fixed
+
 RUN wget https://www.klayout.org/downloads/Ubuntu-22/klayout_0.28.12-1_amd64.deb
 RUN dpkg -i klayout_0.28.12-1_amd64.deb
 RUN strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5

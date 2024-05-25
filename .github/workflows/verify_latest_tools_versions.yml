@@ -27,7 +27,7 @@ jobs:
               IMAGE_NAME: msaligane/openfasoc:alpha
         run: |
           cd $GITHUB_WORKSPACE/docker/conda
-          docker build -t $IMAGE_NAME .
+          docker build -t $IMAGE_NAME -f Dockerfile .
           docker push $IMAGE_NAME
 
   sky130hd_temp:
