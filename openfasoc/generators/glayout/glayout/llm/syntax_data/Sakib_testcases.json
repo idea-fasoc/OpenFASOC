@@ -1,6 +1,10 @@
 {
     "data": [
         {
+            "NLPfilename": "BiasVGen.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Short the drains of both transistors and connect that short to the gate of m2."
+        },
+        {
             "NLPfilename": "BiasVoltageGenerator.convo",
             "LLMprompt": "layout a pmos called m1 with width width_m1, length length_m1, fingers m1_fingers, and multipliers m1_multipliers. layout a nmos called m2 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. Short the drains of both transistors, and connect the gate of m2 to this short. Connect the gate of m1 to the source of m2."
         },
@@ -17,46 +21,6 @@
             "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another pmos called m2 with a different set of parameters that are suffixed by m2. Short the sources of the transistors, and short the gates of the transistors."
         },
         {
-            "NLPfilename": "CommonSourceAmplifier.convo",
-            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another pmos called m2 with a different set of parameters that are suffixed by m2. Connect the drain of m1 to the source of m2."
-        },
-        {
-            "NLPfilename": "CommonSourceAmplifier1.convo",
-            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m2 and the drain of m1. Connect the gate and drain of m2. Connect the ties of both transistors."
-        },
-        {
-            "NLPfilename": "CommonSourceAmplifier2.convo",
-            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Short the gate and drain of m2. Connect the sources of both transistors. Short the drains of both transistors. Connect the ties of both transistors."
-        },
-        {
-            "NLPfilename": "CommonSourceAmplifier2.convo",
-            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Short the gate and drain of m2. Connect the sources of both transistors. Short the drains of both transistors. Connect the ties of both transistors."
-        },
-        {
-            "NLPfilename": "ConstBiasVoltageGen.convo",
-            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m2 and the drain of m1. Connect the gate and drain of m2. Connect the ties of both transistors."
-        },
-        {
-            "NLPfilename": "DegenCommonGate.convo",
-            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m2 and the drain of m1. Connect the gate and drain of m2. Connect the ties of both transistors."
-        },
-        {
-            "NLPfilename": "DegenCommonSource.convo",
-            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m1 and the drain of m2. Connect the gates of m1 and m2. Short the ties of both transistors."
-        },
-        {
-            "NLPfilename": "LowNoiseAmp.convo",
-            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m1 and the drain of m2. Connect the source of m1 to the drain of m2. Connect the gate of m1 to the source of m2. Connect the ties of both transistors."
-        },
-        {
-            "NLPfilename": "NoiseXDiffConv.convo",
-            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the gate of m1 to the source of m2. Connect the ties of both transistors."
-        },
-        {
-            "NLPfilename": "PTATVoltageGen.convo",
-            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m2 and the drain of m1. Connect the gates of both transistors. Short the gate and drain of m2. Connect the ties of both transistors."
-        },
-        {
             "NLPfilename": "CMbasic.convo",
             "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the drain of m1 to the gate of m2. Connect the ties of both transistors."
         },
@@ -69,16 +33,92 @@
             "LLMprompt": "layout a nmos called reference with width 5, and another nmos called mirror with width 10. Move mirror to the left of reference."
         },
         {
+            "NLPfilename": "CommonSourceAmplifier1.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m2 and the drain of m1. Connect the gate and drain of m2. Connect the ties of both transistors."
+        },
+        {
+            "NLPfilename": "CommonSourceAmplifier2.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Short the gate and drain of m2. Connect the sources of both transistors. Short the drains of both transistors. Connect the ties of both transistors."
+        },
+        {
+            "NLPfilename": "CommonSourceAmplifier.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another pmos called m2 with a different set of parameters that are suffixed by m2. Connect the drain of m1 to the source of m2."
+        },
+        {
             "NLPfilename": "CommonSourceBE.convo",
             "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Short the drains of m1 and m2. Route between the drain of m1 and the gate of m2. Connect the ties of both transistors."
+        },
+        {
+            "NLPfilename": "ConstBiasVoltageGen.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m2 and the drain of m1. Connect the gate and drain of m2. Connect the ties of both transistors."
         },
         {
             "NLPfilename": "CrossCoupledInverters.convo",
             "LLMprompt": "layout two inverters, with the nmos and the pmos of both transistors being interdigitated. Short the sources of the interdigitated nmos' and short the sources for the interdigitated pmos'. Connect the output of the opposite inverter to the input of the inverter."
         },
         {
-            "NLPfilename": "CrossCoupledPair.convo",
-            "LLMprompt": "layout an interdigitated nmos. Connect the gate of A of that nmos to the drain of B. Connect the gate of B to the drain of A. Short the sources of A and B."
+            "NLPfilename": "CTATVGen.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the drain of m1 to the source of m2."
+        },
+        {
+            "NLPfilename": "CurrentMirror.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. "
+        },
+        {
+            "NLPfilename": "CurrentMirrorInterdigitized.convo",
+            "LLMprompt": "layout two interdigitized nmos' with parameters that describe the length, width, and number of fingers. Connect the drain and gates of the first transistor, and connect that net to the gate of the second transistor. Short the sources of both transistors."
+        },
+        {
+            "NLPfilename": "DegenCommonGate.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m2 and the drain of m1. Connect the gate and drain of m2. Connect the ties of both transistors."
+        },
+        {
+            "NLPfilename": "DegenCommonSource.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m1 and the drain of m2. Connect the gates of m1 and m2. Short the ties of both transistors."
+        },
+        {
+            "NLPfilename": "DiffPair.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m1 and the drain of m2. Connect the sources of both transistors"
+        },
+        {
+            "NLPfilename": "LowNoiseAmp.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m1 and the drain of m2. Connect the source of m1 to the drain of m2. Connect the gate of m1 to the source of m2. Connect the ties of both transistors."
+        },
+        {
+            "NLPfilename": "NoiseXDiffConv.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the gate of m1 to the source of m2. Connect the ties of both transistors."
+        },
+        {
+            "NLPfilename": "PTATVoltageGen.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called mirror with a different set of parameters that are suffixed by m2. Connect the source of m2 and the drain of m1. Connect the gates of both transistors. Short the gate and drain of m2. Connect the ties of both transistors."
+        },
+        {
+            "NLPfilename": "RegCascode.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the gate of m1 to the drain of m2. Connect the gate of m2 to the source of m2."
+        },
+        {
+            "NLPfilename": "routetest.convo",
+            "LLMprompt": "layout a nmos called ref with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the sources of ref and mirror."
+        },
+        {
+            "NLPfilename": "SourceFollow.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m1 to the drain of m2."
+        },
+        {
+            "NLPfilename": "StrongArmLatch.convo",
+            "LLMprompt": "Layout a differential pair called inputdiff. Layout a cross coupled inverter called ccinvs. Place a nmos called bridge, and another called clkgnd. Place a pfet called clkporL and another called clkpwrR. Connect the drain of A of inputdiff to the drain of bridge. Connect the drain of B of inputdiff to the source of bridge. Connect the source of A of inputdiff to the drain of clkgnd. Connect the source of A of ccinvs of ccinvs to the drain of clkpwrL. Connect the source of B of ccinvs of ccinvs to the drain of clkpwrR. Connect the source of bridge to the source of A of ccinvs of ccinvs to the source of bridge. Connect the drain of bridge to the source of B of ccinvs of ccinvs. Connect the gate of clkgnd to the fate of clkpwrL. Connect the gate of clkgnd to the gate of clkpwrR."
+        },
+        {
+            "NLPfilename": "ULPD.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the gate of m1 to the drain of of m2. Connect the drain of m1 to the gate of m2."
+        },
+        {
+            "NLPfilename": "Varactor.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Short the drains of both transistors, and short the sources of both transistors. Connect the source of m1 to the drain of m2."
+        },
+        {
+            "NLPfilename": "VoltageFollower.convo",
+            "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m1 to the gate of m2. Connect the drain and gate of m2."
         }
     ]
 }
