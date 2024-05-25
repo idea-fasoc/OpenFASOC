@@ -33,7 +33,7 @@ jobs:
                       bash -c "\
                         cp ./.github/scripts/test_glayout.py ./openfasoc/generators/glayout/. &&\
                         cd ./openfasoc/generators/glayout &&\
-                        pip3 install -r requirements.txt &&\
+                        pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
                         python3 test_glayout.py --component opamp
                       " && exit_code=$? | tee -a glayout.log
                     if [ $? -ne 0 ]; then exit 1; fi

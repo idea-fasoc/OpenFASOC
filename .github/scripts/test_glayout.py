@@ -10,6 +10,16 @@ from typing import Union
 import argparse
 import warnings
 import sys, os
+if 'seaborn' not in sys.modules:
+    os.system('pip install seaborn')
+if 'scikit-learn' not in sys.modules:
+    os.system('pip install scikit-learn')
+if 'matplotlib' not in sys.modules:
+    os.system('pip install matplotlib')
+if 'pandas' not in sys.modules:
+    os.system('pip install pandas')
+if 'scipy' not in sys.modules:
+    os.system('pip install scipy')
 from tapeout.tapeout_and_RL.sky130_nist_tapeout import sky130_add_opamp_labels
 
 def validate_drc_result(drc_result: dict, component_name: str):
