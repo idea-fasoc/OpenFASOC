@@ -3,7 +3,7 @@ name: Test glayout pypi package
 on:
     push:
         branches:
-            -  main
+            - main
     pull_request:
         paths:
             - 'openfasoc/common/**'
@@ -17,26 +17,179 @@ jobs:
         steps:
             - name: Checkout repo
               uses: actions/checkout@v2
-            
-            - name: Build docker image and run opamp test
+
+            - name: Cache Docker layers
+              uses: actions/cache@v2
+              with:
+                path: /tmp/.docker-cache
+                key: ${{ runner.os }}-docker-${{ github.sha }}
+                restore-keys: |
+                  ${{ runner.os }}-docker-
+
+            - name: Build docker image if not cached
               env:
                 IMAGE_NAME: openfasoc:glayout
               run: |
-                    cd $GITHUB_WORKSPACE/docker/conda
-                    docker build -t $IMAGE_NAME -f Dockerfile .
-                    cd $GITHUB_WORKSPACE
-                    touch glayout.log
-                    docker run --rm \
-                      -v $PWD:$PWD \
-                      -w $PWD \
-                      openfasoc:glayout \
-                      bash -c "\
-                        cp ./.github/scripts/test_glayout.py ./openfasoc/generators/glayout/. &&\
-                        cd ./openfasoc/generators/glayout &&\
-                        pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
-                        python3 test_glayout.py --component opamp
-                      " && exit_code=$? | tee -a glayout.log
-                    if [ $? -ne 0 ]; then exit 1; fi
-                    if grep "\[ERROR\]" glayout.log; then exit 1; else exit 0; fi
+                if ! docker images | grep -q $IMAGE_NAME; then
+                  cd $GITHUB_WORKSPACE/docker/conda
+                  mkdir -p /tmp/.docker-cache
+                  docker build -t $IMAGE_NAME -f Dockerfile . --cache-from type=local,src=/tmp/.docker-cache --cache-to type=local,dest=/tmp/.docker-cache
+                fi
+
+            - name: Run opamp test
+              env:
+                IMAGE_NAME: openfasoc:glayout
+              run: |
+                cd $GITHUB_WORKSPACE
+                touch glayout.log
+                docker run --rm \
+                  -v $PWD:$PWD \
+                  -w $PWD \
+                  openfasoc:glayout \
+                  bash -c "\
+                    cp ./.github/scripts/test_glayout.py ./openfasoc/generators/glayout/. &&\
+                    cd ./openfasoc/generators/glayout &&\
+                    pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
+                    python3 test_glayout.py --component opamp
+                  " && exit_code=$? | tee -a glayout.log
+                if [ $? -ne 0 ]; then exit 1; fi
+                if grep "\[ERROR\]" glayout.log; then exit 1; else exit 0; fi
+
+            - name: Run pmos test
+              env:
+                IMAGE_NAME: openfasoc:glayout
+              run: |
+                cd $GITHUB_WORKSPACE
+                touch glayout.log
+                docker run --rm \
+                  -v $PWD:$PWD \
+                  -w $PWD \
+                  openfasoc:glayout \
+                  bash -c "\
+                    cp ./.github/scripts/test_glayout.py ./openfasoc/generators/glayout/. &&\
+                    cd ./openfasoc/generators/glayout &&\
+                    pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
+                    python3 test_glayout.py --component pmos
+                  " && exit_code=$? | tee -a glayout.log
+                if [ $? -ne 0 ]; then exit 1; fi
+                if grep "\[ERROR\]" glayout.log; then exit 1; else exit 0; fi
+
+                - name: Run nmos test
+                env:
+                  IMAGE_NAME: openfasoc:glayout
+                run: |
+                  cd $GITHUB_WORKSPACE
+                  touch glayout.log
+                  docker run --rm \
+                    -v $PWD:$PWD \
+                    -w $PWD \
+                    openfasoc:glayout \
+                    bash -c "\
+                      cp ./.github/scripts/test_glayout.py ./openfasoc/generators/glayout/. &&\
+                      cd ./openfasoc/generators/glayout &&\
+                      pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
+                      python3 test_glayout.py --component nmos
+                    " && exit_code=$? | tee -a glayout.log
+                  if [ $? -ne 0 ]; then exit 1; fi
+                  if grep "\[ERROR\]" glayout.log; then exit 1; else exit 0; fi
+
+            - name: Run differential pair test
+              env:
+                IMAGE_NAME: openfasoc:glayout
+              run: |
+                cd $GITHUB_WORKSPACE
+                touch glayout.log
+                docker run --rm \
+                  -v $PWD:$PWD \
+                  -w $PWD \
+                  openfasoc:glayout \
+                  bash -c "\
+                    cp ./.github/scripts/test_glayout.py ./openfasoc/generators/glayout/. &&\
+                    cd ./openfasoc/generators/glayout &&\
+                    pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
+                    python3 test_glayout.py --component diff_pair
+                  " && exit_code=$? | tee -a glayout.log
+                if [ $? -ne 0 ]; then exit 1; fi
+                if grep "\[ERROR\]" glayout.log; then exit 1; else exit 0; fi
+            
+                - name: Run nmos test
+                env:
+                  IMAGE_NAME: openfasoc:glayout
+                run: |
+                  cd $GITHUB_WORKSPACE
+                  touch glayout.log
+                  docker run --rm \
+                    -v $PWD:$PWD \
+                    -w $PWD \
+                    openfasoc:glayout \
+                    bash -c "\
+                      cp ./.github/scripts/test_glayout.py ./openfasoc/generators/glayout/. &&\
+                      cd ./openfasoc/generators/glayout &&\
+                      pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
+                      python3 test_glayout.py --component opamp
+                    " && exit_code=$? | tee -a glayout.log
+                  if [ $? -ne 0 ]; then exit 1; fi
+                  if grep "\[ERROR\]" glayout.log; then exit 1; else exit 0; fi
+  
+            - name: Run opamp test
+              env:
+                IMAGE_NAME: openfasoc:glayout
+              run: |
+                cd $GITHUB_WORKSPACE
+                touch glayout.log
+                docker run --rm \
+                  -v $PWD:$PWD \
+                  -w $PWD \
+                  openfasoc:glayout \
+                  bash -c "\
+                    cp ./.github/scripts/test_glayout.py ./openfasoc/generators/glayout/. &&\
+                    cd ./openfasoc/generators/glayout &&\
+                    pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
+                    python3 test_glayout.py --component opamp
+                  " && exit_code=$? | tee -a glayout.log
+                if [ $? -ne 0 ]; then exit 1; fi
+                if grep "\[ERROR\]" glayout.log; then exit 1; else exit 0; fi
+
+
+# name: Test glayout pypi package
+
+# on:
+#     push:
+#         branches:
+#             -  main
+#     pull_request:
+#         paths:
+#             - 'openfasoc/common/**'
+#             - 'openfasoc/generators/common/**'
+#             - 'openfasoc/generators/glayout/**'
+#     workflow_dispatch:
+
+# jobs:
+#     glayout_sky130:
+#         runs-on: ubuntu-latest
+#         steps:
+#             - name: Checkout repo
+#               uses: actions/checkout@v2
+            
+#             - name: Build docker image and run opamp test
+#               env:
+#                 IMAGE_NAME: openfasoc:glayout
+#               run: |
+#                     cd $GITHUB_WORKSPACE/docker/conda
+#                     docker build -t $IMAGE_NAME -f Dockerfile .
+#                     cd $GITHUB_WORKSPACE
+#                     touch glayout.log
+#                     docker run --rm \
+#                       -v $PWD:$PWD \
+#                       -w $PWD \
+#                       openfasoc:glayout \
+#                       bash -c "\
+#                         cp ./.github/scripts/test_glayout.py ./openfasoc/generators/glayout/. &&\
+#                         cd ./openfasoc/generators/glayout &&\
+#                         pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
+#                         python3 test_glayout.py --component opamp
+#                       " && exit_code=$? | tee -a glayout.log
+#                     if [ $? -ne 0 ]; then exit 1; fi
+#                     if grep "\[ERROR\]" glayout.log; then exit 1; else exit 0; fi
 
     

@@ -161,14 +161,14 @@ def sky130_add_opamp_labels(opamp_in: Component) -> Component:
 	ibias2label = rectangle(layer=met4_pin,size=(1,1),centered=True).copy()
 	ibias2label.add_label(text="commonsourceibias",layer=met4_label)
 	move_info.append((ibias2label,opamp_in.ports["pin_commonsourceibias_N"],None))
-	#plus
-	pluslabel = rectangle(layer=met2_pin,size=(1,1),centered=True).copy()
-	pluslabel.add_label(text="plus",layer=met2_label)
-	move_info.append((pluslabel,opamp_in.ports["pin_plus_N"],None))
 	#minus
 	minuslabel = rectangle(layer=met2_pin,size=(1,1),centered=True).copy()
 	minuslabel.add_label(text="minus",layer=met2_label)
 	move_info.append((minuslabel,opamp_in.ports["pin_minus_N"],None))
+	#-plus
+	pluslabel = rectangle(layer=met2_pin,size=(1,1),centered=True).copy()
+	pluslabel.add_label(text="plus",layer=met2_label)
+	move_info.append((pluslabel,opamp_in.ports["pin_plus_N"],None))
 	#vdd
 	vddlabel = rectangle(layer=met3_pin,size=(1,1),centered=True).copy()
 	vddlabel.add_label(text="vdd",layer=met3_label)

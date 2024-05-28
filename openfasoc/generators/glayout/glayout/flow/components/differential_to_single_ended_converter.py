@@ -150,7 +150,7 @@ def differential_to_single_ended_converter_netlist(pdk: MappedPDK, half_pload: t
     return Netlist(
         circuit_name="DIFF_TO_SINGLE",
         nodes=['VIN', 'VOUT', 'VSS', 'VSS2'],
-        source_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 mt=1 mb=1
+        source_netlist=""".subckt {circuit_name} {nodes} """ + f'l={half_pload[1]} w={half_pload[0]} mt={4*2} mb={2 * half_pload[2]} ' + """
 XTOP1 V1   VIN VSS  VSS {model} l={{l}} w={{w}} m={{mt}}
 XTOP2 VSS2 VIN VSS  VSS {model} l={{l}} w={{w}} m={{mt}}
 XBOT1 VIN  VIN V1   VSS {model} l={{l}} w={{w}} m={{mb}}
@@ -162,7 +162,7 @@ XBOT2 VOUT VIN VSS2 VSS {model} l={{l}} w={{w}} m={{mb}}
             'width': half_pload[0],
             'length': half_pload[1],
             'mult_top': 4 * 2,
-            'mult_bot': half_pload[2] * 2
+            'mult_bot': 2 * (half_pload[2])
         }
     )
 

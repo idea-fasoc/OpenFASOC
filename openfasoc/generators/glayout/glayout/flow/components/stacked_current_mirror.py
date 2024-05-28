@@ -21,10 +21,13 @@ from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interd
 from glayout.flow.spice import Netlist
 
 def current_mirror_netlist(pdk: MappedPDK, width: float, length: float, multipliers: int) -> Netlist:
+    if length is None: 
+        length = pdk.get_grule('poly')['min_width']
+
     return Netlist(
         circuit_name='CURRENT_MIRROR',
         nodes=['VREF', 'VCOPY', 'VSS'],
-        source_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1
+        source_netlist=""".subckt {circuit_name} {nodes} """ + f'l={length} w={width} m=1 ' + """
 XREF VREF VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
 XCOPY VCOPY VREF VSS VSS {model} l={{l}} w={{w}} m={{m}}
 .ends {circuit_name}""",
