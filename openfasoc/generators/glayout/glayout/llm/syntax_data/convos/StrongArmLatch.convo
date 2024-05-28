@@ -1,7 +1,7 @@
 StrongArmLatch
 import CrossCoupledInverters
 place a diff pair called inputdiff
-place CrossCoupledInverters called ccinvs with ccinvs_numfingers=4
+place CrossCoupledInverters called ccinvs with numfingers=4
 place a nfet called bridge with with_substrate_tap=False with_dnwell=False
 place a nfet called clkgnd with with_substrate_tap=False with_dnwell=False
 place a pfet called clkpwrL

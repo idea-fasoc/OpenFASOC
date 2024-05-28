@@ -1,0 +1,15 @@
+# Define parameters for the width, length, and multiplier of the transistors in the current mirror
+create float parameter called ref_width
+create float parameter called ref_length
+create int parameter called ref_multiplier
+create float parameter called mirr_width
+create float parameter called mirr_length
+create int parameter called mirr_multiplier
+# Place the reference and mirror NFETs
+place an nfet called reference with width ref_width length ref_length multipliers ref_multiplier
+place an nfet called mirror with width mirr_width length mirr_length multipliers mirr_multiplier
+# Move the mirror NFET, ensuring the sources of reference and mirror are connected (assuming they start connected by default)
+move mirror by 0,0  # If the EDA tool places them at the same Y-coordinate initially, this command can ensure they stay connected
+# Route connections between the reference NFET gate and its drain, and between the mirror NFET gate and the reference gate
+route between reference_multiplier_0_gate_W and reference_multiplier_0_drain_W using c_route with extension=0
+route between mirror_multiplier_0_gate_W and reference_multiplier_0_gate_W using c_route with extension=0
