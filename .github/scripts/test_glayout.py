@@ -2,6 +2,7 @@ from glayout.flow.components.opamp import opamp
 from glayout.flow.components.diff_pair  import diff_pair
 from glayout.flow.primitives.fet import nmos, pmos
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk 
+from glayout.flow.components.current_mirror import current_mirror
 import shutil
 import tempfile as Temp
 from pathlib import Path as Path
@@ -165,3 +166,7 @@ elif args.component == 'pmos':
     comp.name = 'pmos_test'
     simulate_component(comp, sky130_mapped_pdk)
 
+elif args.component == 'current_mirror':
+    comp = current_mirror(sky130_mapped_pdk, numcols = 3, with_dummy=False)
+    comp.name = 'currmirror_test'
+    simulate_component(comp, sky130_mapped_pdk)

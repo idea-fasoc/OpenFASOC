@@ -490,6 +490,9 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
                 if num_lines > 3:
                     result_str = result_str + "\nErrors found in DRC report"
                     f.seek(0)
+                    for line in f.readlines():
+                        print(line)
+                        
                 else:
                     result_str = result_str + "\nNo errors found in DRC report"
                     

@@ -36,7 +36,7 @@ from glayout.flow.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized
 from glayout.flow.spice import Netlist
-from glayout.flow.components.stacked_current_mirror import current_mirror_netlist
+from glayout.flow.components.current_mirror import cmirror_netlist
 
 def diff_pair_ibias_netlist(center_diffpair: Component, current_mirror: Component, antenna_diode: Optional[Component] = None) -> Netlist:
     netlist = Netlist(
@@ -51,7 +51,7 @@ def diff_pair_ibias_netlist(center_diffpair: Component, current_mirror: Componen
 
     cmirror_ref = netlist.connect_netlist(
         current_mirror.info['netlist'],
-        [('VREF', 'IBIAS')]
+        [('VREF', 'IBIAS'), ('VB', 'VSS')]
     )
 
     netlist.connect_subnets(
@@ -183,7 +183,7 @@ def diff_pair_ibias(
     )
     cmirror.add_ports(srcshort.get_ports_list(), prefix="purposegndports")
     # current mirror netlist
-    cmirror.info['netlist'] = current_mirror_netlist(
+    cmirror.info['netlist'] = cmirror_netlist(
         pdk,
         width=diffpair_bias[0],
         length=diffpair_bias[1],
