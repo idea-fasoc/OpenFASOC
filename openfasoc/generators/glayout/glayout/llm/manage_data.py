@@ -155,7 +155,7 @@ class RAGdb:
             documents=self.documents, embedding=embeddings
         )
 
-    def query(self, query_text: str, k: int = 4):
+    def query(self, query_text: str, k: int = 1) -> list:
         """
         Queries the vector database to find the top-k most similar vectors to the given query text.
         Args:
@@ -163,10 +163,13 @@ class RAGdb:
         Returns:
             List: The list of top-k most similar docs.
         """
-        rawdocs = self.vectordb.similarity_search(query=query_text, k=k)
+        kact = k if k>1 else 2
+        rawdocs = self.vectordb.similarity_search(query=query_text, k=kact)
         rawtxt = list()
-        for doc in rawdocs:
+        for i, doc in enumerate(rawdocs):
             rawtxt.append(doc.page_content)
+            if i == kact-1:
+                break
         return rawtxt
 
 
@@ -188,75 +191,65 @@ def get_glayout_context() -> str:
 
 
 def get_prompt_from_template(
+    tokenizer,
     glayout_nlp_context: str,
     ragcontext: str,
     prompt: str,
-    eos_token: str,
     strictsyntax: Optional[str] = None,
-    instruct: bool = False,
 ) -> str:
     """Generate a structured prompt for translating input text to Glayout strictsyntax.
 
     Args:
+        tokenizer: a tokenizer compatible with huggingface, transformers tokenizer class
         glayout_NLPcontext (str): Contextual information about Glayout strictsyntax.
         ragcontext (str): Contextual information about analog circuit design to aid in translation.
         prompt (str): The input prompt that needs to be converted to Glayout strictsyntax.
-        eos_token (str): End-of-sequence token to append at the end of the output.
         strictsyntax (str, Optional): The strictsyntax command language template to be used.
             if None (default), then only format the prompt (no labeled output strictsyntax)
-        instruct (bool, optional): Flag to indicate if the prompt should be wrapped with instruction tags. Default is False.
 
     Returns:
         str: The generated prompt formatted with the provided context and input data.
     """
-    unified_prompt = "CONTEXT\n"
-    unified_prompt += "EXPLAINING STRICT SYNTAX\n"
-    unified_prompt += (
-        f"Below is some context on Glayout strictsyntax:\n{glayout_nlp_context}\n\n"
-    )
-    unified_prompt += "Below is context on analog circuit design which will help you "
-    unified_prompt += "convert an example prompt to Glayout strictsyntax\n"
-    unified_prompt += f"{ragcontext}\n\n----\nTRANSLATION TASK\n"
-    unified_prompt += f"Convert the following prompt to Glayout strictsyntax:\n{prompt}"
-    if instruct:
-        unified_prompt = f"[INST] {unified_prompt} [/INST]"
+    inst_prompt = f"Below is some context on Glayout strictsyntax:\n{glayout_nlp_context}\n\n"
+    #inst_prompt += "Below is context on the circuit"
+    #inst_prompt += "convert an example prompt to Glayout strictsyntax\n"
+    #inst_prompt += f"{ragcontext}\n\n----\nTRANSLATION TASK\n"
+    inst_prompt += f"Do NOT include the context in your response. Convert the following prompt to Glayout strictsyntax:\n{prompt}"
+    # unify prompt and return
+    messages = [{"role": "user", "content": inst_prompt}]
     # conditionally add label (expected strict syntax output)
     if strictsyntax is not None:
-        unified_prompt += f"\n{strictsyntax} " + eos_token
-    else:
-        unified_prompt += eos_token
-    return unified_prompt
-
+        messages.append({"role":"assistant", "content": strictsyntax})
+    return tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
 
 # pass all prompts through rag before handing training data to llm
-def unify_prompt_and_add_context_to_data(data: list, eos_token: str, no_label: bool=False) -> list:
+def unify_prompt_and_add_context_to_data(tokenizer, data: list, no_label: bool=False) -> list:
     """Enhance prmopts with vectordb contextual information
     constructs a new prompt incorporating this contextual information according to a specified template
     Args:
+        tokenizer: a tokenizer compatible with huggingface, transformers tokenizer class
         data (list): A list of tuples, where each tuple is (prompt (str), result (str)) (or a list of prompts (str))
-        eos_token (str): End-of-sequence token to append at the end of the output
         no_label (bool): set this to true if you pass data in with JUST the prompt (no strictsyntax label)
     Returns:
         list[str]: A list of strings (prompt and strictsyntax have been combined)
     """
     glayout_context = get_glayout_context()
     if no_label:
-        data = [(prompt, None) for prompt in data]
+        data = [(prompt, None) for prompt, result in data]
     contextualized_prompts = list()
     for prompt, result in data:
-        docs = RAGvecdb.query(prompt, 2)
+        docs = RAGvecdb.query(prompt, 1)
         ragdata = str()
         for doc in docs:
             # ragdata += f"[CONTEXT DOCUMENT NUMBER {i}]\n"
             ragdata += "\n" + doc + "\n"
             # ragdata += f"[/CONTEXT DOCUMENT NUMBER {i}]\n"
         newprompt = get_prompt_from_template(
+            tokenizer=tokenizer,
             glayout_nlp_context=glayout_context,
             ragcontext=ragdata,
             prompt=prompt,
-            strictsyntax=result,
-            eos_token=eos_token,
-            instruct=True
+            strictsyntax=result
         )
         contextualized_prompts.append(newprompt)
     return contextualized_prompts
@@ -274,12 +267,8 @@ def load_preprocessed_pretokenized_data(tokenizer):
         dataset in the exact format needed for training
     """
     # get train and evaluation data in a single unified prompt format
-    train_examples = unify_prompt_and_add_context_to_data(
-        load_all_labeled_syntax_data_json(), tokenizer.eos_token
-    )
-    eval_examples = unify_prompt_and_add_context_to_data(
-        load_all_labeled_syntax_data_json(True), tokenizer.eos_token
-    )
+    train_examples = unify_prompt_and_add_context_to_data(tokenizer, load_all_labeled_syntax_data_json())
+    eval_examples = unify_prompt_and_add_context_to_data(tokenizer, load_all_labeled_syntax_data_json(True),True)
     # tokenize the prompts
     train_data = tokenizer(train_examples, padding=True)
     eval_data = tokenizer(eval_examples, padding=True)
