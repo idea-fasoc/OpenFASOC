@@ -147,7 +147,7 @@ args = parser.parse_args()
 
 # simulate the component
 if args.component == 'opamp':
-    comp = (opamp(sky130_mapped_pdk, add_output_stage=False))
+    comp = (opamp(sky130_mapped_pdk, add_output_stage=True))
     comp.name = 'opamp_test'
     simulate_component(comp, sky130_mapped_pdk)
     

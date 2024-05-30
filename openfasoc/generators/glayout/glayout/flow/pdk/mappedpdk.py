@@ -673,19 +673,14 @@ gds read {gds_path}
 load {design_name}
 
 select top cell
+ext2resist all
 extract all
-ext2spice lvs 
+ext2spice lvs
+ext2spice extresist on 
 ext2spice -o {str(lvsmag_path)}
 load {design_name}
-extract all
-ext2spice lvs 
-ext2spice rthresh 0
-ext2spice cthresh 0
-ext2spice -o {str(pex_path)}
-load {design_name}
-extract all
-ext2spice cthresh 0
-ext2spice -o {str(sim_path)}
+ext2sim cthresh 0
+ext2sim -o {str(sim_path)}
 exit
 """
 
@@ -744,13 +739,16 @@ exit
                 os.remove(magic_script_path)
                 if os.path.exists(f'{design_name}.ext'):
                     os.remove(f'{design_name}.ext')
+                # remove all files with suffix .ext
+                for file in os.listdir(temp_dir_path):
+                    if file.endswith(".ext"):
+                        os.remove(file)
                 # copy the report from the temp directory to the specified location
                 if report_handling is not None:
                     shutil.copy(report_path, report_handling)
                     
                 if copy_intermediate_files:
-                    shutil.copy(lvsmag_path, str(Path.cwd() / f"{design_name}_lvsmag.spice"))
-                    shutil.copy(pex_path, str(Path.cwd() / f"{design_name}_pex.spice"))
+                    shutil.copy(lvsmag_path, str(Path.cwd() / f"{design_name}_lvsmag.spice"))  
                     shutil.copy(sim_path, str(Path.cwd() / f"{design_name}_sim.spice"))
                     
         return {'magic_subproc_code': magic_subproc_code, 'netgen_subproc_code': netgen_subproc_code, 'result_str': result_str}
