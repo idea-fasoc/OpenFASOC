@@ -27,7 +27,7 @@ jobs:
           du . -h
 
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: fv4
 
       - name: Test ${{ matrix.platform }} Cryo Gen
         env:
