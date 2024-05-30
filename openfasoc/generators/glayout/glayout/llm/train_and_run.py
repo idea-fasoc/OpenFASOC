@@ -143,6 +143,12 @@ def train(model, tokenizer, data, qlora: bool=True):
         fp16=True,
         optim="paged_adamw_8bit"
     )
+    # inlcude in the prompt do not repeat the context
+    # try to see Mistral 7b docs if there is another label
+    # try to only train on the response
+    # experiment with these results include prompts or not
+    # check the context length for Mistral
+    # code distral, try to directly create from the python code.
     data_collator = transformers.DataCollatorForLanguageModeling(tokenizer, mlm=False)
     # configure trainer
     trainer = transformers.Trainer(
@@ -204,7 +210,6 @@ class GlayoutLLMSessionHandler:
             return data.get('base_model_name_or_path')
         # load model
         model = AutoPeftModelForCausalLM.from_pretrained(checkpoint_dir,device_map=self.device)
-        #import pdb; pdb.set_trace()
         model_id = get_base_model_name_or_path(checkpoint_dir / "adapter_config.json")
         #basemodel = AutoModelForCausalLM.from_pretrained(model_id, device_map=self.device)
         #model = AutoGPTQForCausalLM.from_quantized(checkpoint_dir)

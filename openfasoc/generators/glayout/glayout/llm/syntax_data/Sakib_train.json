@@ -105,10 +105,6 @@
             "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the source of m1 to the drain of m2."
         },
         {
-            "NLPfilename": "StrongArmLatch.convo",
-            "LLMprompt": "Layout a differential pair called inputdiff. Layout a cross coupled inverter called ccinvs. Place a nmos called bridge, and another called clkgnd. Place a pfet called clkporL and another called clkpwrR. Connect the drain of A of inputdiff to the drain of bridge. Connect the drain of B of inputdiff to the source of bridge. Connect the source of A of inputdiff to the drain of clkgnd. Connect the source of A of ccinvs of ccinvs to the drain of clkpwrL. Connect the source of B of ccinvs of ccinvs to the drain of clkpwrR. Connect the source of bridge to the source of A of ccinvs of ccinvs to the source of bridge. Connect the drain of bridge to the source of B of ccinvs of ccinvs. Connect the gate of clkgnd to the fate of clkpwrL. Connect the gate of clkgnd to the gate of clkpwrR."
-        },
-        {
             "NLPfilename": "ULPD.convo",
             "LLMprompt": "layout a nmos called m1 with width width_m2, length length_m2, fingers m2_fingers, and multipliers m2_multipliers. layout another nmos called m2 with a different set of parameters that are suffixed by m2. Connect the gate of m1 to the drain of of m2. Connect the drain of m1 to the gate of m2."
         },

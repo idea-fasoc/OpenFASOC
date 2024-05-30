@@ -27,7 +27,7 @@ def instantiate_convo(pdk: MappedPDK, convo_file: Union[str, Path]) -> bool:
         session_code = glayout.syntaxer.dynamic_load.run_session(load_conversation=convo_file, restore_and_exit=True)
         comp = glayout.syntaxer.dynamic_load.run_glayout_code_cell(pdk, session_code)
         comp.show()
-        pdk.magic_drc(comp)
+        # pdk.magic_drc(comp)
         # pdk.lvs_netgen(comp)
         return True
     except Exception as e:

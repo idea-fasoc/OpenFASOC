@@ -27,12 +27,12 @@
         
         {
             "NLPfilename": "CascodeCommonGate1",
-            "LLMprompt": "using two nmos, create a common cascode gate with width as a parameter. route the source of 1 to the drain of the other"
+            "LLMprompt": "using two nmos, create a common cascode gate with width as a parameter. route the source of one to the drain of the other"
         },
 
         {
             "NLPfilename": "cmirror_absmove",
-            "LLMprompt": "place 2 nfets, 1 with width 5 and the other with width 10 and place the 2nd one at (5,5)"
+            "LLMprompt": "place 2 nfets, one with width 5 and the other with width 10 and place the second one at (5,5)"
         },
 
         {
@@ -47,7 +47,7 @@
 
         {
             "NLPfilename": "CommonSourceAmplifier2",
-            "LLMprompt": "With width, multipliers, and fingers as parameter, make a common source amplifier using 2 nfets with 4 routes"
+            "LLMprompt": "With width, multipliers, and fingers as parameters, make a common source amplifier"
         },
 
         {
@@ -91,11 +91,6 @@
         },
 
         {
-            "NLPfilename": "opamp",
-            "LLMprompt": "make an opamp with parameters load_pfet_width, load_pfet_fingers, load_pfet_multipliers and load_curr_source_fingers, load_curr_source_width_ref, load_curr_source_width_mirr, mim_cap_size, and mim_cap_rows. Use common centroid tecnique"
-        },
-
-        {
             "NLPfilename": "PTATVoltageGen",
             "LLMprompt": "create a PTAT voltage generator using 2 nfets with the parameters of fingers, rmult, and width for each. route bewteen the two with 3 routes"
         },
@@ -127,12 +122,17 @@
 
         {
             "NLPfilename": "Varactor",
-            "LLMprompt": "make a variable reactance diode with width and multiplier as variables. make 3 routes with common centroid technique"
+            "LLMprompt": "make a variable reactance diode parametrizing the width and multipliers. Use common centroid technique"
         },
 
         {
             "NLPfilename": "VoltageFollower",
-            "LLMprompt": "using common centroid technique, make a voltage follower with width and multiplier as parameters. Use two routes to connect two nfets together"
+            "LLMprompt": "Using common centroid technique, make a voltage follower parametrizing the width and multipliers"
+        },
+
+        {
+            "NLPfilename": "opamp_training",
+            "LLMprompt": "make an opamp with parameters load_pfet_width, load_pfet_fingers, load_pfet_multipliers and load_curr_source_fingers, load_curr_source_width_ref, load_curr_source_width_mirr, mim_cap_size, and mim_cap_rows"
         }
 
     ]
