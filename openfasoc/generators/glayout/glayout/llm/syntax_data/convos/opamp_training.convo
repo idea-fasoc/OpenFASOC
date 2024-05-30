@@ -9,7 +9,7 @@ create a float parameter called load_curr_source_width_ref
 create a float parameter called load_curr_source_width_mirr
 create a tuple parameter called mim_cap_size
 create an int parameter called mim_cap_rows
-place generic_4T_interdigitzed called mydiffload with numcols numcols top_kwargs {'tie_layers':("met3","met2")}top_row_device 'pfet' bottom_row_device  'pfet'  
+place generic_4T_interdigitzed called mydiffload with numcols numcols top_kwargs {'tie_layers':("met3","met2")} top_row_device 'pfet' bottom_row_device 'pfet'
 place  a diff_pair called mydiff with width 5 fingers numcols dummy True substrate_tap True
 place a current_mirror called mycurrmirror with numcols numcols device 'nfet' with_dummy False
 place a pfet called load_pfet_left with width load_pfet_width fingers load_pfet_fingers multipliers load_pfet_multipliers
@@ -47,19 +47,19 @@ route between mydiffload_top_B_drain_E and mydiff_br_multiplier_0_drain_E using 
 route between mydiff_bl_multiplier_0_source_W and mycurrmirror_fet_B_0_source_W using c_route with extension=3
 # move load_pfet_left by -20,20
 # move load_pfet_right by 20,20
-route between load_pfet_right_multiplier_0_gate_con_N and load_pfet_left_multiplier_0_gate_con_N using c_route with extension=18 width1=0.8 width2=0.8
-route between load_pfet_right_multiplier_0_drain_con_N and load_pfet_left_multiplier_0_drain_con_N using c_route with extension=8 width1=0.8 width2=0.8
-route between load_pfet_right_multiplier_0_source_con_N and load_pfet_left_multiplier_0_source_con_N using c_route with extension=5.5 viaoffset=(True, False) fullbottom=True width1=0.8 width2=0.8
+route between load_pfet_right_multiplier_0_gate_con_N and load_pfet_left_multiplier_0_gate_con_N using smart_route
+route between load_pfet_right_multiplier_0_drain_con_N and load_pfet_left_multiplier_0_drain_con_N using smart_route
+route between load_pfet_right_multiplier_0_source_con_N and load_pfet_left_multiplier_0_source_con_N using smart_route
 # move load_curr_source_ref by -20,0
 # move load_curr_source_mirr by 20,0
-route between load_curr_source_ref_multiplier_0_gate_con_S and load_curr_source_mirr_multiplier_0_gate_con_S using c_route with extension=3 width1=0.8 width2=0.8
-route between load_curr_source_ref_multiplier_0_drain_con_S and load_curr_source_mirr_multiplier_0_drain_con_S using c_route with extension=12 viaoffset=(False, True) width1=0.8 width2=0.8
-route between load_curr_source_ref_multiplier_0_source_con_S and load_curr_source_mirr_multiplier_0_source_con_S using c_route with extension=14 width1=0.8 width2=0.8
-route between load_curr_source_ref_multiplier_0_gate_E and load_curr_source_ref_multiplier_0_drain_E using c_route with extension=3 
+route between load_curr_source_ref_multiplier_0_gate_con_S and load_curr_source_mirr_multiplier_0_gate_con_S using smart_route
+route between load_curr_source_ref_multiplier_0_drain_con_S and load_curr_source_mirr_multiplier_0_drain_con_S using smart_route
+route between load_curr_source_ref_multiplier_0_source_con_S and load_curr_source_mirr_multiplier_0_source_con_S using smart_route
+route between load_curr_source_ref_multiplier_0_gate_E and load_curr_source_ref_multiplier_0_drain_E using smart_route
 # connect stage1 to stage2 pmos gate
-route between mydiff_tr_multiplier_0_drain_W and load_pfet_right_multiplier_0_gate_con_S using L_route
-route between load_pfet_right_multiplier_0_drain_con_S and load_curr_source_mirr_multiplier_0_drain_W using L_route
+route between mydiff_tr_multiplier_0_drain_W and load_pfet_right_multiplier_0_gate_con_S using smart_route
+route between load_pfet_right_multiplier_0_drain_con_S and load_curr_source_mirr_multiplier_0_drain_W using smart_route
 # move load_miller_cap by 45,20
-route between mydiffload_top_B_0_drain_N and load_miller_cap_row0_col0_top_met_N using c_route with extension=15
-# route between load_pfet_right_multiplier_0_drain_E and load_miller_cap_row0_col0_top_met_W using straight_route
-route between load_pfet_right_multiplier_0_drain_con_S and load_miller_cap_row0_col0_top_met_S using c_route with width1=1.2 width2=1.2
+route between mydiffload_top_B_0_drain_N and load_miller_cap_row0_col0_top_met_N using smart_route
+# route between load_pfet_right_multiplier_0_drain_E and load_miller_cap_row0_col0_top_met_W using smart_route
+route between load_pfet_right_multiplier_0_drain_con_S and load_miller_cap_row0_col0_top_met_S using smart_route

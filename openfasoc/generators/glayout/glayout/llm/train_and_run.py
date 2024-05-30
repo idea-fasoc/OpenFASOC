@@ -66,8 +66,9 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
         model = AutoModelForCausalLM.from_pretrained(modelname, token=accesstoken)
     else:
         modelname = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
-        #modelname = "mistralai/Mistral-7B-Instruct-v0.2"
-        #model = AutoModelForCausalLM.from_pretrained(modelname, token=accesstoken, device_map="auto", load_in_8bit=True)
+        modelname = "mistralai/Mistral-7B-Instruct-v0.2"
+        model = AutoModelForCausalLM.from_pretrained(modelname, token=accesstoken, device_map="auto", load_in_8bit=True)
+        import pdb; pdb.set_trace()
         model = AutoModelForCausalLM.from_pretrained(modelname, token=accesstoken, device_map="auto", trust_remote_code=False, revision="main")
         model.train()
         model.gradient_checkpointing_enable()

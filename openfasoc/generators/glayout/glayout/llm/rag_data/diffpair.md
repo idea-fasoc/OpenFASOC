@@ -1,12 +1,16 @@
 # Differential Pair
-A differential pair has two inputs and two outputs. The purpose of a differential pair is to amplify voltage differences between these two inputs. When one input is much higher than the other, one output goes to high voltage and the other goes to near zero voltage. When the other input is much higher, the opposite happens.
-There are two MOSFETs, with the sources shorted and connected to a current source. The outputs are the drains of the MOSFETs.
-### Pseudo Netlist
-an nmos is has the following subckt definition:
-NMOS drain gate source body
-
-the nfet or n-type differential pair has the following subckt definition:
-.subckt diffpair in1 in2 out1 out2 ibias
-m1 out1 in1 ibias gnd NMOS
-m2 out2 in2 ibias gnd NMOS
-.endsubckt
+## Layout Description
+The diff_pair is created using 2 nfet Components. The nfet Components are referred to as “A” and “B” respectively. Place B right of A. Route the source of A to the source of B.
+## Paramters
+The diff pair has the following configurable parameters:
+length: a float parameter specifying the length of all transistor Components part of the diff pair.
+width: a float parameter specifying the width of all transistor Components part of the diff pair.
+fingers: an integer parameter which modifies the number of fingers in all transistor Components which are part of the diff pair.
+## Ports
+The following are just some examples of the valid ports for diff_pair:
+ComponentRef_A_source_S
+ComponentRef_A_drain_N
+ComponentRef_B_source_S
+ComponentRef_A_gate_E
+ComponentRef_B_drain_W
+ComponentRef_B_gate_E
