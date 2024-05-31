@@ -6,7 +6,7 @@
         },
 
         {
-            "NLPfilename": "CascodeCommonGate ",
+            "NLPfilename": "CascodeCommonGate",
             "LLMprompt": "create a common cascode gate using two nfets called m1 and m2 with common centroid technique. make the width a parameter."
         },
         

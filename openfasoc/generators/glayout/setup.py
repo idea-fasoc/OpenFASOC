@@ -39,6 +39,8 @@ setup(
         "datasets",
         "auto-gptq",
         "optimum",
+        "trl",
+        "flash-attn"
     ],
     entry_points={
         'console_scripts': [

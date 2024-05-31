@@ -235,7 +235,7 @@ def unify_prompt_and_add_context_to_data(tokenizer, data: list, no_label: bool=F
     """
     glayout_context = get_glayout_context()
     if no_label:
-        data = [(prompt, None) for prompt, result in data]
+        data = [(prompt, None) for prompt in data]
     contextualized_prompts = list()
     for prompt, result in data:
         docs = RAGvecdb.query(prompt, 1)
@@ -268,7 +268,7 @@ def load_preprocessed_pretokenized_data(tokenizer):
     """
     # get train and evaluation data in a single unified prompt format
     train_examples = unify_prompt_and_add_context_to_data(tokenizer, load_all_labeled_syntax_data_json())
-    eval_examples = unify_prompt_and_add_context_to_data(tokenizer, load_all_labeled_syntax_data_json(True),True)
+    eval_examples = unify_prompt_and_add_context_to_data(tokenizer, load_all_labeled_syntax_data_json(True))
     # tokenize the prompts
     train_data = tokenizer(train_examples, padding=True)
     eval_data = tokenizer(eval_examples, padding=True)
