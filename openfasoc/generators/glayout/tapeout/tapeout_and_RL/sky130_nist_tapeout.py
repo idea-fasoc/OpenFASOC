@@ -699,7 +699,7 @@ def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: 
 	pdk = sky130_mapped_pdk
 	final_results = []
 	opamp_v = None
-	for i in range(50):
+	for i in range(500):
 		print('\n\ndoing run ', i)
 		if opamp_v == None:
 			results, opamp_v = __run_single_brtfrc(index, parameters, temperature_info=temperature_info, save_gds_dir=save_gds_dir, output_dir=output_dir, cload=cload, noparasitics=noparasitics, hardfail=hardfail)
