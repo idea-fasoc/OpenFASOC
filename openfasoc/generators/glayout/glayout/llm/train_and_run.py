@@ -124,7 +124,7 @@ def train(model, tokenizer, data, qlora: bool=True):
     # hyperparameters
     lr = 2e-5
     batch_size = 1 #2 #4
-    num_epochs = 1
+    num_epochs = 2
     # define training arguments
     output_dir = Path(__file__).resolve().parent / "glayout_llm_checkpoints"
     training_args = TrainingArguments(
