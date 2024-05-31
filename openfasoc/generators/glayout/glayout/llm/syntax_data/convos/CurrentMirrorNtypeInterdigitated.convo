@@ -1,4 +1,4 @@
-CrossCoupledInverters
+CurrentMirrorNtypeInterdigitated
 # create parameters in alphabetical order
 Create a float parameter called length
 Create an int parameter called numfingers

@@ -1,4 +1,5 @@
 PTATVoltageGen
+# figure 26 exactly
 create a float parameter called width_m1
 create a float parameter called width_m2
 create a float parameter called length_m1

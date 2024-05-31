@@ -1,9 +1,10 @@
 CTATVGen
+# CTAT without body effect
 create a float parameter called width_m1
 create a float parameter called width_m2
 create a int parameter called m1_multiplier
 create a int parameter called m2_multiplier
-place a nmos called m1 with width width_m1 length 3 fingers 1 rmult 1 multipliers m1_multiplier with_substrate_tap False with_tie True sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy True with_dnwell False
-place a nmos called m2 with width width_m2 length 3 fingers 1 rmult 1 multipliers m2_multiplier with_substrate_tap False with_tie True sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy True with_dnwell False
+place a nmos called m1 with width width_m1 length 3 fingers 1 rmult 1 multipliers m1_multiplier with_substrate_tap False with_tie True with_dummy True with_dnwell False
+place a nmos called m2 with width width_m2 length 3 fingers 1 rmult 1 multipliers m2_multiplier with_substrate_tap False with_tie True with_dummy True with_dnwell False
 move m2 below m1
-route between m1_multiplier_0_drain_W and m2_multiplier_0_source_W using c_route with extension=5
+route between m1_drain_W and m2_source_W using smart_route

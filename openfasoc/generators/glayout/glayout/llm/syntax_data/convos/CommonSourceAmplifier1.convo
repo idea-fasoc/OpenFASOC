@@ -1,4 +1,6 @@
 CommonSourceAmplifier1
+# FIGURE 17 exactly: The common-source amplifier
+# with diode load is sometimes called a wideband amplifier due to its potentially highspeed operation
 create a float parameter called width_m1
 create a float parameter called width_m2
 create a float parameter called length_m1
@@ -12,4 +14,4 @@ place a nmos called m2 with width width_m2 length length_m2 fingers m2_fingers r
 move m1 below m2
 route between m2_multiplier_0_source_W and m1_multiplier_0_drain_W using c_route with extension=3
 route between m2_multiplier_0_gate_E and m2_multiplier_0_drain_E using c_route with extension=2
-route between m1_tie_br_top_met_S and m2_tie_tr_top_met_N using straight_route
+# route between m1_tie_br_top_met_S and m2_tie_tr_top_met_N using straight_route
