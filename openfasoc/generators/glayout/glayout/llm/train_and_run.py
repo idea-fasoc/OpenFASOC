@@ -169,59 +169,6 @@ def train(model, tokenizer, data, qlora: bool=True):
     return model
 
 
-def train_sft(model, tokenizer, data):
-    model_kwargs = dict(
-        attn_implementation="flash_attention_2", # set this to True if your GPU supports it (Flash Attention drastically speeds up model computations)
-        torch_dtype="auto",
-        use_cache=False, # set to False as we're going to use gradient checkpointing
-        device_map=device_map,
-        quantization_config=quantization_config,
-    )
-    training_args = TrainingArguments(
-        fp16=True, # specify bf16=True instead when training on GPUs that support bf16
-        do_eval=True,
-        evaluation_strategy="epoch",
-        gradient_accumulation_steps=128,
-        gradient_checkpointing=True,
-        gradient_checkpointing_kwargs={"use_reentrant": False},
-        learning_rate=2.0e-05,
-        log_level="info",
-        logging_steps=5,
-        logging_strategy="steps",
-        lr_scheduler_type="cosine",
-        max_steps=-1,
-        num_train_epochs=1,
-        output_dir=output_dir,
-        overwrite_output_dir=True,
-        per_device_eval_batch_size=1, # originally set to 8
-        per_device_train_batch_size=1, # originally set to 8
-        save_strategy="no",
-        save_total_limit=None,
-        seed=42,
-    )
-    # based on config
-    peft_config = LoraConfig(
-        r=64,
-        lora_alpha=16,
-        lora_dropout=0.1,
-        bias="none",
-        task_type="CAUSAL_LM",
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
-    )
-    trainer = SFTTrainer(
-        model=model_id,
-        model_init_kwargs=model_kwargs,
-        args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
-        dataset_text_field="text",
-        tokenizer=tokenizer,
-        packing=True,
-        peft_config=peft_config,
-        max_seq_length=tokenizer.model_max_length,
-    )
-
-
 def run_full_training() -> tuple:
     """returns model (and tokenizer) resulting from training LLM
     Returns:
@@ -239,7 +186,7 @@ class GlayoutLLMSessionHandler:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         # look for an existing model
         base_path = Path(__file__).resolve().parent
-        checkpoint_dirs = list(base_path.glob('**/*checkpoint-final*'))
+        checkpoint_dirs = list(base_path.glob('**/*checkpoint-bestperf*'))
         checkpoint_dir = None
         if len(checkpoint_dirs)>0 and checkpoint_dirs[-1].is_dir():
             checkpoint_dir = checkpoint_dirs[-1]
@@ -254,6 +201,7 @@ class GlayoutLLMSessionHandler:
         # set self attributes
         self.model = model
         self.tokenizer = tokenizer
+        self.chat_history = []
     
     def load_model_from_checkpoint(self, checkpoint_dir):
         # helper function
@@ -272,17 +220,26 @@ class GlayoutLLMSessionHandler:
         tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True, token=accesstoken)
         return model, tokenizer
     
-    def generate(self, user_input: str) -> str:
+    def generate(self, user_input: str, clear: bool=False) -> str:
         """provide LLM output from user input
+        by default will keep appending to the previous prompts in a conversation.
         Args:
             user_input (str): general user prompt
+            clear (bool, Optional): reset the chat history. Default False
         Returns:
             str: strictsyntax output
         """
-        input_list = list()
-        input_list.append(user_input)
-        prompt = unify_prompt_and_add_context_to_data(self.tokenizer, input_list, no_label=True)[0]
-        return run_llm_normal(model=self.model, tokenizer=self.tokenizer, device=self.device, prompt=prompt)
+        model.eval()
+        if clear:
+            self.chat_history = []
+        self.chat_history.append({"role": "user", "content": prompt})
+        inputs = tokenizer.apply_chat_template(self.chat_history, tokenize=True, add_generation_prompt=True, return_tensors="pt")
+        inputs = inputs.to(self.device)
+        outputs = model.generate(input_ids=inputs, max_new_tokens=max_new_tokens)
+        self.chat_history.append({"role": "assistant", "content": outputs[0]})
+        return tokenizer.decode(outputs[0], skip_special_tokens=True)
+        #prompt = unify_prompt_and_add_context_to_data(self.tokenizer, input_list, no_label=True)[0]
+        #return run_llm_normal(model=self.model, tokenizer=self.tokenizer, device=self.device, prompt=prompt)
     
     def __call__(self, user_input: str) -> str:
         return self.generate(user_input=user_input)
