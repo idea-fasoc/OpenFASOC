@@ -122,7 +122,7 @@ def train(model, tokenizer, data, qlora: bool=True):
         raise NotImplementedError("currently only support qlora")
     #model.train()
     # hyperparameters
-    lr = 2e-5
+    lr = 5e-5
     batch_size = 1 #2 #4
     num_epochs = 2
     # define training arguments
