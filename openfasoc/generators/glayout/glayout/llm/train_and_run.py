@@ -235,9 +235,10 @@ class GlayoutLLMSessionHandler:
         self.chat_history.append({"role": "user", "content": user_input})
         inputs = self.tokenizer.apply_chat_template(self.chat_history, tokenize=True, add_generation_prompt=True, return_tensors="pt")
         inputs = inputs.to(self.device)
-        outputs = self.model.generate(input_ids=inputs, max_new_tokens=0)
-        self.chat_history.append({"role": "assistant", "content": outputs[0]})
-        return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        outputs = self.model.generate(input_ids=inputs, max_new_tokens=512)
+        response = self.tokenizer.decode(outputs[0][len(inputs[0]):-1], skip_special_tokens=False)
+        self.chat_history.append({"role": "assistant", "content": response})
+        return response
         #prompt = unify_prompt_and_add_context_to_data(self.tokenizer, input_list, no_label=True)[0]
         #return run_llm_normal(model=self.model, tokenizer=self.tokenizer, device=self.device, prompt=prompt)
     
