@@ -60,8 +60,8 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
     qlora = True
     # load modela
     # modelname = "mistralai/Mistral-7B-v0.1"
-    # modelname = "mistralai/Mistral-7B-Instruct-v0.3" # was just released
-    modelname = "mistralai/Mistral-7B-Instruct-v0.2"
+    modelname = "mistralai/Mistral-7B-Instruct-v0.3" # was just released
+    #modelname = "mistralai/Mistral-7B-Instruct-v0.2"
     if not qlora:
         model = AutoModelForCausalLM.from_pretrained(modelname, token=accesstoken)
     else:
@@ -73,7 +73,7 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
         model.train()
         model.gradient_checkpointing_enable()
         model = prepare_model_for_kbit_training(model)
-    tokenizer = AutoTokenizer.from_pretrained(modelname, use_fast=True)
+    tokenizer = AutoTokenizer.from_pretrained(modelname, use_fast=True, token=accesstoken)
     # configure lora
     if lora:
         peft_config = LoraConfig(
