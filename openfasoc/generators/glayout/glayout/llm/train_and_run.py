@@ -70,7 +70,7 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
         model = AutoModelForCausalLM.from_pretrained(modelname, token=accesstoken, quantization_config=BitsAndBytesConfig(load_in_8bit=True), attn_implementation="flash_attention_2")
         #model = AutoModelForCausalLM.from_pretrained(modelname, token=accesstoken, device_map="auto", trust_remote_code=False, revision="main")
         model.train()
-        #model.gradient_checkpointing_enable()
+        model.gradient_checkpointing_enable()
         model = prepare_model_for_kbit_training(model)
     tokenizer = AutoTokenizer.from_pretrained(modelname, use_fast=True, token=accesstoken)
     # configure lora
@@ -78,7 +78,7 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
         peft_config = LoraConfig(
             task_type="CAUSAL_LM",
             r=8,
-            lora_alpha=32,
+            lora_alpha=16,
             lora_dropout=0.05,
             #target_modules=get_lora_supported_layer_names(model),
             bias="none",
@@ -122,9 +122,9 @@ def train(model, tokenizer, data, qlora: bool=True):
         raise NotImplementedError("currently only support qlora")
     #model.train()
     # hyperparameters
-    lr = 2e-4
+    lr = 2e-5
     batch_size = 1 #2 #4
-    num_epochs = 2
+    num_epochs = 1
     # define training arguments
     output_dir = Path(__file__).resolve().parent / "glayout_llm_checkpoints"
     training_args = TrainingArguments(
@@ -139,7 +139,7 @@ def train(model, tokenizer, data, qlora: bool=True):
         save_strategy="epoch",
         load_best_model_at_end=True,
         gradient_accumulation_steps=1,
-        warmup_steps=1,
+        warmup_steps=0,
         bf16=True,
         optim="paged_adamw_8bit"
     )
@@ -229,15 +229,15 @@ class GlayoutLLMSessionHandler:
         Returns:
             str: strictsyntax output
         """
-        model.eval()
+        self.model.eval()
         if clear:
             self.chat_history = []
-        self.chat_history.append({"role": "user", "content": prompt})
-        inputs = tokenizer.apply_chat_template(self.chat_history, tokenize=True, add_generation_prompt=True, return_tensors="pt")
+        self.chat_history.append({"role": "user", "content": user_input})
+        inputs = self.tokenizer.apply_chat_template(self.chat_history, tokenize=True, add_generation_prompt=True, return_tensors="pt")
         inputs = inputs.to(self.device)
-        outputs = model.generate(input_ids=inputs, max_new_tokens=max_new_tokens)
+        outputs = self.model.generate(input_ids=inputs, max_new_tokens=0)
         self.chat_history.append({"role": "assistant", "content": outputs[0]})
-        return tokenizer.decode(outputs[0], skip_special_tokens=True)
+        return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
         #prompt = unify_prompt_and_add_context_to_data(self.tokenizer, input_list, no_label=True)[0]
         #return run_llm_normal(model=self.model, tokenizer=self.tokenizer, device=self.device, prompt=prompt)
     
