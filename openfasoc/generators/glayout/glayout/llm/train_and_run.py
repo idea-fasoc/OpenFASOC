@@ -124,7 +124,7 @@ def train(model, tokenizer, data, qlora: bool=True):
     # hyperparameters
     lr = 2e-4
     batch_size = 1 #2 #4
-    num_epochs = 8
+    num_epochs = 2
     # define training arguments
     output_dir = Path(__file__).resolve().parent / "glayout_llm_checkpoints"
     training_args = TrainingArguments(
@@ -139,7 +139,7 @@ def train(model, tokenizer, data, qlora: bool=True):
         save_strategy="epoch",
         load_best_model_at_end=True,
         gradient_accumulation_steps=1,
-        warmup_steps=2,
+        warmup_steps=1,
         bf16=True,
         optim="paged_adamw_8bit"
     )
@@ -149,8 +149,8 @@ def train(model, tokenizer, data, qlora: bool=True):
     # experiment with these results include prompts or not
     # check the context length for Mistral
     # code distral, try to directly create from the python code.
-    #data_collator = transformers.DataCollatorForLanguageModeling(tokenizer, mlm=False)
-    data_collator = DataCollatorForCompletionOnlyLM(response_template="[/INST]",tokenizer=tokenizer,mlm=False)
+    data_collator = transformers.DataCollatorForLanguageModeling(tokenizer, mlm=False)
+    #data_collator = DataCollatorForCompletionOnlyLM(response_template="[/INST]",tokenizer=tokenizer,mlm=False)
     # configure trainer
     trainer = transformers.Trainer(
         model=model,
