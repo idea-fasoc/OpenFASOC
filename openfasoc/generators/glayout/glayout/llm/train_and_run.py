@@ -4,7 +4,7 @@ from typing import Union
 import time
 import requests
 
-from glayout.llm.manage_data import load_preprocessed_pretokenized_data, unify_prompt_and_add_context_to_data, get_glayout_context, get_prompt_from_template
+from glayout.llm.manage_data import load_preprocessed_pretokenized_data, unify_prompt_and_add_context_to_data, get_glayout_context, get_prompt_from_template, load_preprocessed_data_in_messages_format
 
 import torch
 from peft import get_peft_config, get_peft_model, LoraConfig, prepare_model_for_kbit_training, AutoPeftModelForCausalLM
@@ -13,7 +13,7 @@ from auto_gptq import AutoGPTQForCausalLM
 
 from transformers import AutoModelForCausalLM, AutoModel, AutoTokenizer, TrainingArguments, BitsAndBytesConfig
 import transformers
-from trl import DataCollatorForCompletionOnlyLM
+from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 
 accesstoken = "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"
 
@@ -156,6 +156,47 @@ def run_full_training() -> tuple:
     return train(model, tokenizer, data), tokenizer
 
 
+def run_full_SFT_training() -> tuple:
+    # load model, tokenizer
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model, tokenizer = load_model_and_tokenizer(device)
+    # load data
+    data = load_preprocessed_data_in_messages_format()
+    # train
+    # hyperparameters
+    lr = 1e-4
+    batch_size = 1 #2 #4
+    num_epochs = 2
+    # define training arguments
+    output_dir = Path(__file__).resolve().parent / "glayout_llm_checkpoints"
+    training_args = TrainingArguments(
+        output_dir=str(output_dir),
+        learning_rate=lr,
+        per_device_train_batch_size=batch_size,
+        per_device_eval_batch_size=batch_size,
+        num_train_epochs=num_epochs,
+        weight_decay=0.01,
+        logging_strategy="epoch",
+        evaluation_strategy="epoch",
+        save_strategy="epoch",
+        load_best_model_at_end=True,
+        gradient_accumulation_steps=1,
+        warmup_steps=0,
+        bf16=True,
+        optim="paged_adamw_8bit"
+    )
+    training_args = TrainingArguments(output_dir=str(output_dir))
+    trainer = SFTTrainer(
+        model=model,
+        args=training_args,
+        train_dataset=data["train"],
+        eval_dataset=data["evaluation"],
+        max_seq_length=512,
+    )
+    trainer.train()
+    return model, tokenizer
+
+
 class GlayoutLLMSessionHandler:
     def __init__(self):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -172,7 +213,8 @@ class GlayoutLLMSessionHandler:
             #model.to(self.device)
             print("Model and tokenizer loaded successfully.")
         else:
-            model, tokenizer = run_full_training()
+            #model, tokenizer = run_full_training()
+            model, tokenizer = run_full_SFT_training()
         # set self attributes
         self.model = model
         self.tokenizer = tokenizer

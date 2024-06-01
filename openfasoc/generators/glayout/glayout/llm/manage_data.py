@@ -196,6 +196,7 @@ def get_prompt_from_template(
     ragcontext: str,
     prompt: str,
     strictsyntax: Optional[str] = None,
+    return_message: bool=False
 ) -> str:
     """Generate a structured prompt for translating input text to Glayout strictsyntax.
 
@@ -206,6 +207,7 @@ def get_prompt_from_template(
         prompt (str): The input prompt that needs to be converted to Glayout strictsyntax.
         strictsyntax (str, Optional): The strictsyntax command language template to be used.
             if None (default), then only format the prompt (no labeled output strictsyntax)
+        return_message (bool, Optional): if True, will not combine the prompt, rather it will return messages format
 
     Returns:
         str: The generated prompt formatted with the provided context and input data.
@@ -255,6 +257,25 @@ def unify_prompt_and_add_context_to_data(tokenizer, data: list, no_label: bool=F
         )
         contextualized_prompts.append(newprompt)
     return contextualized_prompts
+
+
+def load_preprocessed_data_in_messages_format():
+    # get train and evaluation data in a single unified prompt format
+    train_examples = load_all_labeled_syntax_data_json()
+    eval_examples = load_all_labeled_syntax_data_json(True)
+    # train
+    train_messages = list()
+    for prompt, result in train_examples:
+        train_messages.append(get_prompt_from_template(None,None,None,prompt,result,True))
+    train_data = Dataset.from_dict({"messages":train_messages})
+    # eval
+    eval_messages = list()
+    for prompt, result in eval_examples:
+        eval_messages.append(get_prompt_from_template(None,None,None,prompt,result,True))
+    eval_data = Dataset.from_dict({"messages":eval_messages})
+    return {"train": train_data, "evaluation": eval_data}
+
+
 
 
 def load_preprocessed_pretokenized_data(tokenizer):
