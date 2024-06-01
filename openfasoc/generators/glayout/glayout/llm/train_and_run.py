@@ -4,7 +4,7 @@ from typing import Union
 import time
 import requests
 
-from glayout.llm.manage_data import load_preprocessed_pretokenized_data, unify_prompt_and_add_context_to_data, get_glayout_context
+from glayout.llm.manage_data import load_preprocessed_pretokenized_data, unify_prompt_and_add_context_to_data, get_glayout_context, get_prompt_from_template
 
 import torch
 from peft import get_peft_config, get_peft_model, LoraConfig, prepare_model_for_kbit_training, AutoPeftModelForCausalLM
@@ -114,7 +114,7 @@ def train(model, tokenizer, data, qlora: bool=True):
         save_strategy="epoch",
         load_best_model_at_end=True,
         gradient_accumulation_steps=1,
-        warmup_steps=1,
+        warmup_steps=0,
         bf16=True,
         optim="paged_adamw_8bit"
     )
@@ -206,6 +206,7 @@ class GlayoutLLMSessionHandler:
             str: strictsyntax output
         """
         self.model.eval()
+        user_input = f"Glayout strictsyntax is a electronic circuit layout command language. Convert the following prompt to Glayout strictsyntax:\n{user_input}"
         if clear:
             self.chat_history = []
             self.generate(user_input="summarize the following:\n"+get_glayout_context(),clear=False)

@@ -216,7 +216,7 @@ def get_prompt_from_template(
     #inst_prompt += "convert an example prompt to Glayout strictsyntax\n"
     #inst_prompt += f"{ragcontext}\n\n----\nTRANSLATION TASK\n"
     #inst_prompt += f"Do NOT include the context in your response. Convert the following prompt to Glayout strictsyntax:\n{prompt}"
-    inst_prompt += f"Glayout strictsyntax is a eletronic circuit layout command language. Convert the following prompt to Glayout strictsyntax:\n{prompt}"
+    inst_prompt += f"Glayout strictsyntax is a electronic circuit layout command language. Convert the following prompt to Glayout strictsyntax:\n{prompt}"
     # unify prompt and return
     messages = [{"role": "user", "content": inst_prompt}]
     # conditionally add label (expected strict syntax output)
