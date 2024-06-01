@@ -253,8 +253,9 @@ class GlayoutLLMSessionHandler:
         self.model = model
         self.tokenizer = tokenizer
         self.chat_history = []
+        self.chat_history.append({"role": "user", "content": get_glayout_context()})
         #print(self.generate(self.promptexamples, clear=False))
-        print(self.generate(user_input="summarize the following:\n" + get_glayout_context(), clear=False))
+        #print(self.generate(user_input="summarize the following:\n" + get_glayout_context(), clear=False))
 
     def load_model_from_checkpoint(self, checkpoint_dir):
         # helper function

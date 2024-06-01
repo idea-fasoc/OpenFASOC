@@ -54,6 +54,13 @@ ComponentRef_top_met_E
 ComponentRef_top_met_S
 ComponentRef_top_met_W
 
+### MIMCAP Array
+There is also a mimcap_array (also written as mimcap array) which automatically places and routes several mimcaps together. The mimcap_array takes the following parameters:
+size: a tuple of floating point numbers denoting the x and y dimension of the capacitor.
+columns: the number of columns in the array
+rows: the number of rows in the array
+
+
 ### Differential Pair
 A differential pair is available, which is referred to as diff_pair or diff pair. The diff_pair is a differential pair Component which is created using 2 nfet Components. The nfet Components are referred to as “A” and “B” respectively. The diff pair has the following configurable parameters:
 length: a float parameter specifying the length of all transistor Components part of the diff pair.
