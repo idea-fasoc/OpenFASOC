@@ -10,7 +10,7 @@ from glayout.llm.manage_data import (
     get_glayout_context,
     get_prompt_from_template,
     load_preprocessed_data_in_messages_format,
-    load_labeled_syntax_data_json,
+    load_all_labeled_syntax_data_json,
 )
 
 import torch
@@ -247,7 +247,7 @@ class GlayoutLLMSessionHandler:
             model, tokenizer = run_full_SFT_training()
         # set self attributes
         self.promptexamples = "the following are several labeled examples of converting prompts to strict syntax.\n"
-        promptexamples = load_labeled_syntax_data_json()
+        promptexamples = load_all_labeled_syntax_data_json()
         for prompt, result in promptexamples[::5]:
             self.promptexamples += prompt + "\n" + result + "\n\n"
         self.model = model
