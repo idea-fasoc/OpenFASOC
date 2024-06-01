@@ -90,15 +90,15 @@
         },
         {
             "NLPfilename": "CommonSourceAmplifierWDiodeLoad",
-            "LLMprompt": "A high speed common source amplifier using nfet transistors which has a diode load is called a wide band amplifier. The input source and diode drain are shorted, and so are the diode gate and diode drain."
+            "LLMprompt": "A high speed common source amplifier using nfet transistors which has a diode load is called a wide band amplifier. The source of the input transistor and the diode drain are shorted, and so are the diode gate and diode drain."
         },
         {
             "NLPfilename": "DegenCommonGate",
-            "LLMprompt": "Create a DegenCommonGate"
+            "LLMprompt": "Use two nfets to create a degen common gate. Name one nfet isrc and the other load. The load drain and isrc source should be shorted."
         },
         {
             "NLPfilename": "PTATVoltageGen",
-            "LLMprompt": "Create a PTATVoltageGen"
+            "LLMprompt": "A proportional to absolute temperature voltage generator also known as PTAT contains a mirror nmos and bias nmos. place the bias below the mirror and short the gates. route the gate of mirror to the drain of mirror and the source of mirror to drain of bias."
         },
         {
             "NLPfilename": "ConstBiasVoltageGen",

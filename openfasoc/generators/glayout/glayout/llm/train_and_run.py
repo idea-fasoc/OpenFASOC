@@ -114,7 +114,7 @@ def train(model, tokenizer, data, qlora: bool=True):
         save_strategy="epoch",
         load_best_model_at_end=True,
         gradient_accumulation_steps=1,
-        warmup_steps=0,
+        warmup_steps=1,
         bf16=True,
         optim="paged_adamw_8bit"
     )
@@ -177,6 +177,7 @@ class GlayoutLLMSessionHandler:
         self.model = model
         self.tokenizer = tokenizer
         self.chat_history = []
+        self.generate(user_input="summarize the following:\n"+get_glayout_context(),clear=False)
     
     def load_model_from_checkpoint(self, checkpoint_dir):
         # helper function
