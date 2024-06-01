@@ -254,6 +254,7 @@ class GlayoutLLMSessionHandler:
         self.tokenizer = tokenizer
         self.chat_history = []
         self.chat_history.append({"role": "user", "content": get_glayout_context()})
+        self.chat_history.append({"role": "assistant", "content": RESPONSE})
         #print(self.generate(self.promptexamples, clear=False))
         #print(self.generate(user_input="summarize the following:\n" + get_glayout_context(), clear=False))
 
@@ -313,3 +314,12 @@ class GlayoutLLMSessionHandler:
 
     def __call__(self, user_input: str) -> str:
         return self.generate(user_input=user_input)
+
+
+RESPONSE = """Example Syntax:
+Importing: import CrossCoupledInverters
+Creating Parameters: create a float parameter called device_width
+Placing Components: place a nmos called m1 with width 1.0, length 2.0, fingers 2
+Moving Components: move m1 below m2
+Routing: route between m1_source_E and m2_source_W using smart_route
+This structured approach ensures clarity and modularity, making it easier to design complex analog circuits efficiently."""
