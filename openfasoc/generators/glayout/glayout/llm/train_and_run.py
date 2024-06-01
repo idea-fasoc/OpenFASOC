@@ -4,7 +4,7 @@ from typing import Union
 import time
 import requests
 
-from glayout.llm.manage_data import load_preprocessed_pretokenized_data, unify_prompt_and_add_context_to_data
+from glayout.llm.manage_data import load_preprocessed_pretokenized_data, unify_prompt_and_add_context_to_data, get_glayout_context
 
 import torch
 from peft import get_peft_config, get_peft_model, LoraConfig, prepare_model_for_kbit_training, AutoPeftModelForCausalLM
@@ -16,30 +16,6 @@ import transformers
 from trl import DataCollatorForCompletionOnlyLM
 
 accesstoken = "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"
-
-# credit
-# https://stackoverflow.com/questions/76768226/target-modules-for-applying-peft-lora-on-different-models
-def get_lora_supported_layer_names(model) -> list:
-    """create a list of lora supported layers in a particular model
-    This allows for easy setting of layers when creating a lora config
-    only use this if you want to use lora with all the layers
-
-    Args:
-        model (huggingface model): any model compatible with hugging face
-
-    Returns:
-        list: list of strings (layer names)
-    """
-    # Create a list to store the layer names
-    layer_names = list()
-    # Recursively visit all modules and submodules
-    for name, module in model.named_modules():
-        # Check if the module is an instance of the specified layers
-        if isinstance(module, (torch.nn.Linear, torch.nn.Embedding, torch.nn.Conv2d)):
-            layer_names.append(".".join(name.split(".")[4:]).split(".")[0])
-    layer_names = list(set(layer_names))
-    return [name for name in layer_names if not (name.isspace() or len(name) == 0)]
-
 
 # returns model, tokenizer
 def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
@@ -80,7 +56,6 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
             r=8,
             lora_alpha=16,
             lora_dropout=0.05,
-            #target_modules=get_lora_supported_layer_names(model),
             bias="none",
             target_modules=["q_proj","k_proj","v_proj","o_proj"]
         )
@@ -122,7 +97,7 @@ def train(model, tokenizer, data, qlora: bool=True):
         raise NotImplementedError("currently only support qlora")
     #model.train()
     # hyperparameters
-    lr = 5e-5
+    lr = 1e-4
     batch_size = 1 #2 #4
     num_epochs = 2
     # define training arguments
@@ -232,6 +207,7 @@ class GlayoutLLMSessionHandler:
         self.model.eval()
         if clear:
             self.chat_history = []
+            self.generate(user_input="summarize the following:\n"+get_glayout_context(),clear=False)
         self.chat_history.append({"role": "user", "content": user_input})
         inputs = self.tokenizer.apply_chat_template(self.chat_history, tokenize=True, add_generation_prompt=True, return_tensors="pt")
         inputs = inputs.to(self.device)

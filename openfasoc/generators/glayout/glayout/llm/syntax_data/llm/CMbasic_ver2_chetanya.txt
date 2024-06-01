@@ -1,1 +1,0 @@
-place an nfet current mirror with width and multipliers as parameters. Route the tie taprings of the fets together.

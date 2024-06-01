@@ -1,0 +1,9 @@
+CurrentMirrorNFET
+create a float parameter called width
+create a float parameter called length
+create an int parameter called multipliers
+create an int parameter called fingers 
+place an interdigitated nfet called cm with numcols=2, dummy=True, with_substrate_tap=False, with_tie=True, tie_layers=("met2","met1"), kwargs={"width": width, "length": length, "fingers":fingers, "rmult":1, "multipliers":multipliers, "with_substrate_tap": False, "with_tie":True, "with_dummy":True, "with_dnwell":False}
+route between cm_A_gate_E and cm_B_gate_E
+route between cm_A_drain_E and cm_A_gate_E
+route between cm_A_source_E and cm_B_source_E

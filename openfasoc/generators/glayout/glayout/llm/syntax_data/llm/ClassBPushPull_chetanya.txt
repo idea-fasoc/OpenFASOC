@@ -1,1 +1,0 @@
-create a class B power amplifier/Push-Pull amplifer with fet width, fingers, multipliers as paramaters. Turn the nfet's deep-nwell off and do not place substrate taprings for either fet. 

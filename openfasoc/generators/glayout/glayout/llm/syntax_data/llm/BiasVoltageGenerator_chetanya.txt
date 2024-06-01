@@ -1,1 +1,0 @@
-Create a bias voltage generator with parameterised nmos and pmos width, routing widths and fingers. Turn off the substrate taprings for the MOSFETs.

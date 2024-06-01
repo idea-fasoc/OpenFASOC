@@ -1,1 +1,0 @@
-place a cascode common gate stage/poor man's cascode using nfets with parameterised fet width.
