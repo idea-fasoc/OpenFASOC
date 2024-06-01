@@ -18,27 +18,27 @@
         },
         {
             "NLPfilename": "CascodeCommonGate",
-            "LLMprompt": "A cascode common gate stage involves two nfets: an input nfet and an output nfet. Connect the source of the input to the drain of the output. Position the output above the input without using any matching techniques. Parametrize all components."
+            "LLMprompt": "A cascode common gate stage involves two nfets: an input nfet and an output nfet. Connect the source of the input to the drain of the output. Position the output above the input without using any matching techniques."
         },
         {
             "NLPfilename": "CTATVGen",
-            "LLMprompt": "A CTAT (complementary to absolute temperature) voltage generator includes a pair of nmos transistors: a source and a load. Connect the drain of the source to the load's source. Avoid matching techniques and place the source above the load. Parametrize all elements."
+            "LLMprompt": "A CTAT (complementary to absolute temperature) voltage generator includes a pair of nmos transistors: a source and a load. Connect the drain of the source to the load's source. Avoid matching techniques and place the source above the load."
         },
         {
             "NLPfilename": "Inverter",
-            "LLMprompt": "An inverter comprises a pmos for pull-up and an nmos for pull-down, with their drains forming the output node and their gates forming the input node. Typically, the pfet is placed above the nfet. Parametrize all components."
+            "LLMprompt": "An inverter comprises a pmos for pull-up and an nmos for pull-down, with their drains forming the output node and their gates forming the input node. Typically, the pfet is placed above the nfet."
         },
         {
             "NLPfilename": "CascodeCommonSource",
-            "LLMprompt": "A cascode common source configuration includes an input nmos and a bias nfet stacked above each other, with the input at the bottom. Connect the bias source to the input drain. Parametrize all elements."
+            "LLMprompt": "A cascode common source configuration includes an input nmos and a bias nfet stacked above each other, with the input at the bottom. Connect the bias source to the input drain."
         },
         {
             "NLPfilename": "CurrentMirrorNtype",
-            "LLMprompt": "An n-type current mirror consists of two nmos transistors: a reference and a mirror. Place them side by side, connecting their gates and sources together. Connect the drain and gate of the mirror transistor. Parametrize all components without special placement techniques."
+            "LLMprompt": "An n-type current mirror consists of two nmos transistors: a reference and a mirror. Place them side by side, connecting their gates and sources together. Connect the drain and gate of the mirror transistor. Do not use special placement techniques."
         },
         {
             "NLPfilename": "LowNoiseAmp",
-            "LLMprompt": "A low noise amplifier configuration includes two nfets: one for input and one for gain. The gain source and input gate form the input node, while the input source and gain drain form the output node. Avoid using special placement strategies."
+            "LLMprompt": "A low noise amplifier configuration includes two nfets: one for input and one for gain. The gain source and input gate form the input node, while the input source and gain drain form the output node."
         },
         {
             "NLPfilename": "ULPD",
@@ -46,7 +46,7 @@
         },
         {
             "NLPfilename": "ClassBPushPull",
-            "LLMprompt": "Design a class B push-pull amplifier with an nfet named supply and a pfet named absorb. Parametrize all components. Connect the sources together and the gates together, without using matching techniques."
+            "LLMprompt": "Design a class B push-pull amplifier with an nfet named supply and a pfet named absorb. Connect the sources together and the gates together, without using matching techniques."
         },
         {
             "NLPfilename": "CurrentMirrorNtypeInterdigitated",

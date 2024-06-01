@@ -223,7 +223,9 @@ def get_prompt_from_template(
     messages = [{"role": "user", "content": inst_prompt}]
     # conditionally add label (expected strict syntax output)
     if strictsyntax is not None:
-        messages.append({"role":"assistant", "content": strictsyntax})
+        messages.append({"role": "assistant", "content": strictsyntax})
+    if return_message:
+        return messages
     return tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
 
 # pass all prompts through rag before handing training data to llm

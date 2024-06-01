@@ -1,0 +1,8 @@
+BiasVoltageGeneratorInterdigitated
+create a float parameter called width
+create a float parameter called length
+create an int parameter called fingers 
+place an interdigitated nfet called BiasVoltageGenerator with numcols=fingers, dummy=True, with_substrate_tap=False, with_tie=True, kwargs={"width": width, "length": length, "rmult":1}
+route between BiasVoltageGenerator_A_drain_E and BiasVoltageGenerator_B_drain_E using smart_route
+route between BiasVoltageGenerator_B_gate_E and BiasVoltageGenerator_B_drain_E using smart_route
+route between BiasVoltageGenerator_A_gate_W and BiasVoltageGenerator_B_source_W using smart_route
