@@ -246,15 +246,15 @@ class GlayoutLLMSessionHandler:
             # model, tokenizer = run_full_training()
             model, tokenizer = run_full_SFT_training()
         # set self attributes
-        self.promptexamples = "the following are several labeled examples of converting prompts to strict syntax.\n"
-        promptexamples = load_all_labeled_syntax_data_json()
-        for prompt, result in promptexamples[::5]:
-            self.promptexamples += prompt + "\n" + result + "\n\n"
+        #self.promptexamples = "the following are several labeled examples of converting prompts to strict syntax.\n"
+        #promptexamples = load_all_labeled_syntax_data_json()
+        #for prompt, result in promptexamples[::25]:
+        #    self.promptexamples += prompt + "\n" + result + "\n\n"
         self.model = model
         self.tokenizer = tokenizer
         self.chat_history = []
+        #print(self.generate(self.promptexamples, clear=False))
         print(self.generate(user_input="summarize the following:\n" + get_glayout_context(), clear=False))
-        print(self.generate(self.promptexamples, clear=False))
 
     def load_model_from_checkpoint(self, checkpoint_dir):
         # helper function

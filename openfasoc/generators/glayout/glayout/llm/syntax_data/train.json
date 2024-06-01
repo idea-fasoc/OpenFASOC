@@ -102,15 +102,39 @@
         },
         {
             "NLPfilename": "ConstBiasVoltageGen",
-            "LLMprompt": "Create a ConstBiasVoltageGen"
+            "LLMprompt": "This bias voltage generator utilizes two n-type transistors that must have different threshold voltages. The first transistor is called the source, and its source must be connected to the drain of the second transistor, also called the load. The gate of the load must also be connected to its drain. Connect the gate of source and the source of load. Don't do any matching and parametrize everything."
         },
         {
             "NLPfilename": "DegenCommonSource",
-            "LLMprompt": "Create a DegenCommonSource"
+            "LLMprompt": "This is a degenerated common source stage. It consists of two nfets, one is called isrc, and the other is called degen. Connect the source of isrc to the drain of degen. Short the gates of both transistors. Don't do any matching and parametrize everything."
         },
         {
             "NLPfilename": "RegulatedCascode",
-            "LLMprompt": "Create a RegulatedCascode"
+            "LLMprompt": "This is a regulated cascode. It consists of two nmos transistors. One is called the cascode, and the other feedback. The gate of cascode is connected to the drain of feedback. The gate of feedback is connected to the source of cascode. Don't do any matching and parametrize everything."
+        },
+        {
+            "NLPfilename": "ClassBPushPullInterdigitated",
+            "LLMprompt": "Create an interdigitated version of a class B push pull amplifier. Parametrize the width, length, and fingers."
+        },
+        {
+            "NLPfilename": "CascodeCommonGateInterdigitated",
+            "LLMprompt": "Create an interdigitated version of a cascode common gate stage. Parametrize the width, length, and fingers."
+        },
+        {
+            "NLPfilename": "CascodeCommonSourceInterdigitated",
+            "LLMprompt": "Create an interdigitated version of a cascode common source stage. Parametrize the width, length, and fingers."
+        },
+        {
+            "NLPfilename": "ClassBPushPullInterdigitated",
+            "LLMprompt": "Create a class B push pull amplfier. place an nfet named supply and pfet called absorb. parametrize everything. Route the sources together, and route the gates together. Interdigitate both transistors."
+        },
+        {
+            "NLPfilename": "CascodeCommonGateInterdigitated",
+            "LLMprompt": "A cascode common gate stage consists of 2 nfets, an input nfet and output nfet. The source of the input and drain of the output are connected. Do not use any matching techniques, just place the output above the input. Parametrize everything. The transistors should be matched through interdigitation."
+        },
+        {
+            "NLPfilename": "CascodeCommonSourceInterdigitated",
+            "LLMprompt": "A cascode common source consists of an input nmos and bias nfet, both of which are interdigitated. The bias source is connected to the input drain. parametrize everything."
         }
     ]
 }
