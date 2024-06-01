@@ -8,8 +8,8 @@ create a int parameter called cascode_multiplier
 create a int parameter called feedback_multiplier
 create a int parameter called cascode_fingers
 create a int parameter called feedback_fingers
-place a nmos called cascode with width cascode_width, length cascode_length, fingers cascode_fingers, rmult 1, multipliers cascode_multiplier, with_substrate_tap False, with_tie False, with_dummy False 
-place a nmos called feedback with width feedback_width, length feedback_length, fingers feedback_fingers, rmult 1, multipliers feedback_multiplier, with_substrate_tap False, with_tie False, with_dummy False 
+place a nmos called cascode with width=cascode_width, length=cascode_length, fingers=cascode_fingers, rmult=1, multipliers=cascode_multiplier, with_substrate_tap=False, with_tie=False, with_dummy=False 
+place a nmos called feedback with width=feedback_width, length=feedback_length, fingers=feedback_fingers, rmult=1, multipliers=feedback_multiplier, with_substrate_tap=False, with_tie=False, with_dummy=False 
 move feedback below cascode
 route between cascode_gate_E and feedback_drain_E using smart_route
 route between feedback_gate_W and feedback_source_W using smart_route

@@ -2,7 +2,7 @@
     "data": [
         {
             "NLPfilename": "StrongArmLatch.convo",
-            "LLMprompt": "Create the strictsyntax for a strong arm latch. A strong arm latch consists of a diffpair, a CrossCoupleInverters, a bridge nfet, a clkgnd nfet, and two pfets clkpwrL (west) and clkpwrR (east). The cross coupled inverters should be at the top. The bridge should be above the diffpair but below the cross coupled inverters. The clkgnd should be at the bottom, and both clkpwr transistors should be left and right of the cross coupled inverters. You must route the drain of transistor A of the diffpair with the drain of the bridge, the drain of transistor B of the diffpair with the source of the bridge, the source of transistor A in the diffpair with the source of clkgnd."
+            "LLMprompt": "A strong arm latch consists of a diffpair, a CrossCoupleInverters, a bridge nfet, a clkgnd nfet, and two pfets clkpwrL (west) and clkpwrR (east). The cross coupled inverters should be at the top. The bridge should be above the diffpair but below the cross coupled inverters. The clkgnd should be at the bottom, and both clkpwr transistors should be left and right of the cross coupled inverters. You must route the drain of transistor A of the diffpair with the drain of the bridge, the drain of transistor B of the diffpair with the source of the bridge, the source of transistor A in the diffpair with the source of clkgnd."
         },
         {
             "NLPfilename": "BiasVoltageGenerator.convo",

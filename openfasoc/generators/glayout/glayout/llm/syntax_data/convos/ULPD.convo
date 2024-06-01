@@ -9,8 +9,8 @@ create a int parameter called forward_multiplier
 create a int parameter called leakred_multiplier
 create a int parameter called forward_fingers
 create a int parameter called leakred_fingers
-place a nmos called forward with width forward_width, length forward_length, fingers forward_fingers, rmult 1, multipliers forward_multiplier, with_substrate_tap False, with_tie False, with_dummy False 
-place a nmos called leakred with width leakred_width, length leakred_length, fingers leakred_fingers, rmult 1, multipliers leakred_multiplier, with_substrate_tap False, with_tie False, with_dummy False 
-move forward above of leakred
+place a nmos called forward with width=forward_width, length=forward_length, fingers=forward_fingers, rmult=1, multipliers=forward_multiplier, with_substrate_tap=False, with_tie=False, with_dummy=False 
+place a nmos called leakred with width=leakred_width, length=leakred_length, fingers=leakred_fingers, rmult=1, multipliers=leakred_multiplier, with_substrate_tap=False, with_tie=False, with_dummy=False 
+move forward above leakred
 route between forward_gate_E and leakred_source_E using smart_route
 route between forward_source_W and leakred_gate_W using smart_route

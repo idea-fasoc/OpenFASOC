@@ -8,8 +8,8 @@ create a int parameter called input_multiplier
 create a int parameter called gain_multiplier
 create a int parameter called input_fingers
 create a int parameter called gain_fingers
-place a nmos called input with width input_width, length input_length, fingers input_fingers, rmult 1, multipliers input_multiplier, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
-place a nmos called gain with width gain_width, length gain_length, fingers gain_fingers, rmult 1, multipliers gain_multiplier, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
+place a nmos called input with width=input_width, length=input_length, fingers=input_fingers, rmult=1, multipliers=input_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called gain with width=gain_width, length=gain_length, fingers=gain_fingers, rmult=1, multipliers=gain_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
 move gain below input
 route between input_source_W and gain_drain_W using smart_route
 route between input_gate_E and gain_source_E using smart_route
