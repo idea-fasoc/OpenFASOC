@@ -1,15 +1,21 @@
+import sys, os
+try:
+    __import__('glayout')
+except ImportError:
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))) 
 from glayout.flow.components.opamp import opamp 
 from glayout.flow.components.diff_pair  import diff_pair
 from glayout.flow.primitives.fet import nmos, pmos
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk 
 from glayout.flow.components.current_mirror import current_mirror
+import json
+import numpy as np
 import shutil
 import tempfile as Temp
 from pathlib import Path as Path
 from typing import Union
 import argparse
 import warnings
-import sys, os 
 
 def validate_drc_result(drc_result: dict, component_name: str):
     """used to validate the DRC results, checks if the DRC results are present, if the DRC was successful and if there are any errors in the DRC report
@@ -139,8 +145,103 @@ def simulate_component(comp, pdk, componentref = None):
         # if not result:
         #     warnings.warn(f'Errors found in Klayout DRC report for {comp.name}!')
 
+def check_opamp_results(results, path_to_variances, path_to_means):
+    
+# read variances.json
+    with open(path_to_variances, "r") as f:
+        variances = json.load(f)
+    # read means.json
+    with open(path_to_means, "r") as f:
+        means = json.load(f)
+        
+    warn_ugb = means["unity gain bandwidth"] - np.sqrt(variances["unity gain bandwidth"])
+    warn_dc_gain = means["dc gain"] - np.sqrt(variances["dc gain"])
+    warn_phase_margin = means["phase margin"] - np.sqrt(variances["phase margin"])
+    warn_area = means["area"] + 1e4
+    warn_power = means["power"] + np.sqrt(variances["power"])
+    warn_two_stage_power = means["two stage power"] + np.sqrt(variances["two stage power"])
+    warn_noise = means["noise"] + np.sqrt(variances["noise"])
+    warn_3db_bandwidth = means["3db bandwidth"] - np.sqrt(variances["3db bandwidth"])
 
 
+    for key, val in results.items():
+        if key == "unity gain bandwidth":
+            if val <= warn_ugb:
+                warnings.warn(f"Unity Gain Bandwidth: {val} is less than the minimum value of {warn_ugb}")
+            if val <= warn_ugb - 2 * np.sqrt(variances["unity gain bandwidth"]):
+                raise ValueError(f"Unity Gain Bandwidth: {val} is less than the minimum value of {warn_ugb - 2 * np.sqrt(variances['unity gain bandwidth'])}")
+        
+        elif key == "dc gain":
+            if val <= warn_dc_gain:
+                warnings.warn(f"DC Gain: {val} is less than the minimum value of {warn_dc_gain}")
+            if val <= warn_dc_gain - 2 * np.sqrt(variances["dc gain"]):
+                raise ValueError(f"DC Gain: {val} is less than the minimum value of {warn_dc_gain - 2 * np.sqrt(variances['dc gain'])}")
+        
+        elif key == "phase margin":
+            if val <= warn_phase_margin:
+                warnings.warn(f"Phase Margin: {val} is less than the minimum value of {warn_phase_margin}")
+            if val <= warn_phase_margin - 2 * np.sqrt(variances["phase margin"]):
+                raise ValueError(f"Phase Margin: {val} is less than the minimum value of {warn_phase_margin - 2 * np.sqrt(variances['phase margin'])}")
+        
+        elif key == "area":
+            if val >= warn_area:
+                warnings.warn(f"Area: {val} is greater than the maximum value of {warn_area}")
+            if val >= warn_area + 2 * np.sqrt(variances["area"]):
+                raise ValueError(f"Area: {val} is greater than the maximum value of {warn_area + 2 * np.sqrt(variances['area'])}")
+        
+        elif key == "power":
+            if val >= warn_power:
+                warnings.warn(f"Power: {val} is greater than the maximum value of {warn_power}")
+            if val >= warn_power + 2 * np.sqrt(variances["power"]):
+                raise ValueError(f"Power: {val} is greater than the maximum value of {warn_power + 2 * np.sqrt(variances['power'])}")
+        
+        elif key == "two stage power":
+            if val >= warn_two_stage_power:
+                warnings.warn(f"Two Stage Power: {val} is greater than the maximum value of {warn_two_stage_power}")
+            if val >= warn_two_stage_power + 2 * np.sqrt(variances["two stage power"]):
+                raise ValueError(f"Two Stage Power: {val} is greater than the maximum value of {warn_two_stage_power + 2 * np.sqrt(variances['two stage power'])}")
+        
+        elif key == "noise":
+            if val >= warn_noise:
+                warnings.warn(f"Noise: {val} is greater than the maximum value of {warn_noise}")
+            if val >= warn_noise + 2 * np.sqrt(variances["noise"]):
+                raise ValueError(f"Noise: {val} is greater than the maximum value of {warn_noise + 2 * np.sqrt(variances['noise'])}")
+        
+        elif key == "3db bandwidth":
+            if val <= warn_3db_bandwidth:
+                warnings.warn(f"3dB Bandwidth: {val} is less than the minimum value of {warn_3db_bandwidth}")
+            if val <= warn_3db_bandwidth - 2 * np.sqrt(variances["3db bandwidth"]):
+                raise ValueError(f"3dB Bandwidth: {val} is less than the minimum value of {warn_3db_bandwidth - 2 * np.sqrt(variances['3db bandwidth'])}")
+
+def opamp_parametric_sim():
+    json_paths = Path(__file__).resolve().parents[5] / ".github" / "scripts" / "expected_sim_outputs" / "opamp"
+    path_to_variances = json_paths / "variances.json"
+    path_to_means = json_paths / "means.json"
+    
+    params = {
+        "half_diffpair_params": (6, 1, 4),
+        "diffpair_bias": (6, 2, 4),
+        "half_common_source_params": (7.2, 1, 10, 3),
+        "half_common_source_bias": (8, 2, 12, 3),
+        "output_stage_params": (5, 1, 16),
+        "output_stage_bias": (6, 2, 4),
+        "mim_cap_size": (12, 12),
+        "mim_cap_rows": 3,
+        "rmult": 2
+    }
+    
+    results = single_build_and_simulation(
+        opamp_parameters_serializer(
+            **params
+        ), 
+        temp=25, 
+        cload=0, 
+        noparasitics=False, 
+        hardfail=True
+    )
+
+    check_opamp_results(results, path_to_variances, path_to_means)
+    
 parser = argparse.ArgumentParser()
 parser.add_argument('--component', type=str, help='Component name to simulate')
 args = parser.parse_args()
@@ -150,6 +251,10 @@ if args.component == 'opamp':
     comp = (opamp(sky130_mapped_pdk, add_output_stage=True))
     comp.name = 'opamp_test'
     simulate_component(comp, sky130_mapped_pdk)
+
+elif args.component == 'opamp_parametric':
+    from tapeout.tapeout_and_RL.sky130_nist_tapeout import *
+    opamp_parametric_sim()
     
 elif args.component == 'diff_pair':
     comp = (diff_pair(sky130_mapped_pdk))
