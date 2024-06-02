@@ -5,6 +5,7 @@ import os
 import subprocess
 from pathlib import Path
 from importlib import metadata
+from tempfile import TemporaryDirectory
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 
 
@@ -127,6 +128,17 @@ def check_miniconda3_and_pdk():
     print("\nAll required PDK directories are present!")
     
     return miniconda3_path, pdk_root
+
+def place_nfet_run_lvs():
+    print_heading("NMOS and LVS")
+    print("\n...Creating nmos component...")
+    nmos_component = nmos(sky130)
+    print("Created nmos component!")
+    print("\n...Running LVS...")
+    nmos_component.name = 'nmos_test'
+    sky130.lvs_netgen(nmos_component, 'nmos_test')        
+    print("LVS run successful!")
+
     
 if __name__ == "__main__":
     system_tools = ['magic', 'ngspice']
@@ -139,5 +151,7 @@ if __name__ == "__main__":
     miniconda3_path, pdk_root = check_miniconda3_and_pdk()
     print_dynamic_separator()
     check_system_tools(system_tools, miniconda3_path)
+    print_dynamic_separator()
+    place_nfet_run_lvs()
     print_dynamic_separator("Tool check successful!")   
    
