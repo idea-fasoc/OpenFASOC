@@ -1,4 +1,8 @@
 import sys, os
+try:
+    __import__('glayout')
+except ImportError:
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))) 
 from glayout.flow.components.opamp import opamp 
 from glayout.flow.components.diff_pair  import diff_pair
 from glayout.flow.primitives.fet import nmos, pmos
@@ -249,7 +253,6 @@ if args.component == 'opamp':
     simulate_component(comp, sky130_mapped_pdk)
 
 elif args.component == 'opamp_parametric':
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))) 
     from tapeout.tapeout_and_RL.sky130_nist_tapeout import *
     opamp_parametric_sim()
     
