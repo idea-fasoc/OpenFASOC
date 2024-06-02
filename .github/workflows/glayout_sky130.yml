@@ -45,6 +45,26 @@ jobs:
                 if [ $? -ne 0 ]; then exit 1; fi
                 if grep "\[ERROR\]" glayout.log; then exit 1; else exit 0; fi
 
+            - name: Opamp Parametric sims
+              env:
+                IMAGE_NAME: msaligane/openfasoc:stable
+              run: |
+                cd $GITHUB_WORKSPACE
+                touch glayout.log
+                docker run --rm \
+                  -v $PWD:$PWD \
+                  -w $PWD \
+                  $IMAGE_NAME \
+                  bash -c "\
+                    cp ./.github/scripts/test_glayout.py ./openfasoc/generators/glayout/tapeout/tapeout_and_RL/. &&\
+                    pip3 install -r requirements.txt &&\
+                    cd ./openfasoc/generators/glayout/tapeout/tapeout_and_RL/ &&\
+                    pip3 install prettyprint prettyprinttree gdstk &&\
+                    python3 test_glayout.py --component opamp_parametric
+                  " && exit_code=$? | tee -a glayout.log
+                if [ $? -ne 0 ]; then exit 1; fi
+                if grep "\[ERROR\]" glayout.log; then exit 1; else exit 0; fi
+
             - name: Run pmos test
               env:
                 IMAGE_NAME: msaligane/openfasoc:stable

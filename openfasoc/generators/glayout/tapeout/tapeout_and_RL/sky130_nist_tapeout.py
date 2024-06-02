@@ -567,7 +567,7 @@ def process_spice_testbench(testbench: Union[str,Path], temperature_info: tuple[
 	with open(testbench, "w") as spice_file:
 		spice_file.write(spicetb)
 
-def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, output_dir: Optional[Union[int,str,Path]] = None, hardfail=False, opamp_v: Component=None):
+def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, output_dir: Optional[Union[int,str,Path]] = None, hardfail=False):
 	# pass pdk as global var to avoid pickling issues
 	global pdk
 	global PDK_ROOT
@@ -576,9 +576,7 @@ def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: t
 	sky130pdk = pdk
 	params = opamp_parameters_de_serializer(parameters_ele)
 	try:
-		if opamp_v is None:
-			opamp_v = sky130_add_opamp_labels(sky130_add_lvt_layer(opamp(sky130pdk, **params)))
-		print(f'generated opamp!')
+		opamp_v = sky130_add_opamp_labels(sky130_add_lvt_layer(opamp(sky130pdk, **params)))
 		opamp_v.name = "opamp"+str(index)
 		area = float(opamp_v.area())
 		# use temp dir
@@ -628,7 +626,7 @@ def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: t
 		results = opamp_results_serializer()
 		with open('get_training_data_ERRORS.log', 'a') as errlog:
 			errlog.write("\nopamp run "+str(index)+" with the following params failed: \n"+str(params))
-	return results, opamp_v
+	return results
 
 
 def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.array, temperature_info: tuple[int,str]=(25,"normal model"), cload: float=0.0, noparasitics: bool=False, saverawsims: bool=False) -> np.array:
@@ -697,20 +695,12 @@ def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: 
 	# pass pdk as global var to avoid pickling issues
 	global pdk
 	pdk = sky130_mapped_pdk
-	final_results = []
-	opamp_v = None
-	for i in range(500):
-		print('\n\ndoing run ', i)
-		if opamp_v == None:
-			results, opamp_v = __run_single_brtfrc(index, parameters, temperature_info=temperature_info, save_gds_dir=save_gds_dir, output_dir=output_dir, cload=cload, noparasitics=noparasitics, hardfail=hardfail)
-		else:
-			results, opamp_v_temp = __run_single_brtfrc(index, parameters, temperature_info=temperature_info, save_gds_dir=save_gds_dir, output_dir=output_dir, cload=cload, noparasitics=noparasitics, hardfail=hardfail, opamp_v=opamp_v)
-		final_results.append(results)
-	# results = opamp_results_de_serializer(results)
-	# if results["phaseMargin"] < 45:
-	# 	for key in results:
-	# 		results[key] = -987.654321
-	return final_results
+	results = __run_single_brtfrc(index, parameters, temperature_info=temperature_info, save_gds_dir=save_gds_dir, output_dir=output_dir, cload=cload, noparasitics=noparasitics, hardfail=hardfail)
+	results = opamp_results_de_serializer(results)
+	if results["phaseMargin"] < 45:
+		for key in results:
+			results[key] = -987.654321
+	return results
 
 
 
