@@ -221,7 +221,7 @@ def run_full_SFT_training() -> tuple:
         eval_dataset=data["evaluation"],
         max_seq_length=512,
         data_collator=data_collator
-    )
+    )# add context to all glayout prompts
     trainer.train()
     model.save_pretrained(output_dir / "checkpoint-bestperf")
     model.eval()
