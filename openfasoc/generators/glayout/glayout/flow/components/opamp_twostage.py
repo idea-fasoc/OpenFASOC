@@ -25,7 +25,7 @@ from glayout.flow.components.differential_to_single_ended_converter import diffe
 from glayout.flow.components.row_csamplifier_diff_to_single_ended_converter import row_csamplifier_diff_to_single_ended_converter
 from glayout.flow.components.diff_pair_stackedcmirror import diff_pair_stackedcmirror
 from glayout.flow.spice import Netlist
-from glayout.flow.components.stacked_current_mirror import current_mirror_netlist
+from glayout.flow.components.current_mirror import cmirror_netlist
 
 @validate_arguments
 def __create_and_route_pins(
@@ -141,15 +141,15 @@ def opamp_gain_stage_netlist(mimcap_netlist: Netlist, diff_cs_netlist: Netlist, 
 
     netlist.connect_netlist(
         cs_bias_netlist,
-        [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
+        [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT'), ('VB', 'GND')]
     )
 
-    mimcap_ref = netlist.connect_netlist(mimcap_netlist, [('V2', 'VOUT')])
+    mimcap_ref = netlist.connect_netlist(mimcap_netlist, [('V1', 'VOUT'), ('V2', 'VSS2')])
 
     netlist.connect_subnets(
         mimcap_ref,
         diff_cs_ref,
-        [('V1', 'VSS2')]
+        [('V2', 'VSS2')]
     )
 
     return netlist
@@ -219,7 +219,7 @@ def opamp_twostage(
 
     pmos_comps = row_csamplifier_diff_to_single_ended_converter(pdk, pmos_comps, half_common_source_params, rmult)
 
-    cs_bias_netlist = current_mirror_netlist(
+    cs_bias_netlist = cmirror_netlist(
         pdk,
         width=diffpair_bias[0],
         length=diffpair_bias[1],

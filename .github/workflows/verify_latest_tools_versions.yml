@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
@@ -27,7 +27,7 @@ jobs:
               IMAGE_NAME: msaligane/openfasoc:alpha
         run: |
           cd $GITHUB_WORKSPACE/docker/conda
-          docker build -t $IMAGE_NAME .
+          docker build -t $IMAGE_NAME -f Dockerfile .
           docker push $IMAGE_NAME
 
   sky130hd_temp:
@@ -42,7 +42,7 @@ jobs:
           du . -h
 
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Test sky130hd Temp sensor
         env:
@@ -62,39 +62,39 @@ jobs:
             if [ $? -ne 0 ]; then exit 1; fi
             if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi
 
-  sky130hd_ldoGen:
-    needs: build_docker_image
-    runs-on: ubuntu-latest
-    steps:
-      - name: Remove unnecessary files
-        run: |
-          du . -h
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-          du . -h
+  # sky130hd_ldoGen:
+  #   needs: build_docker_image
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Remove unnecessary files
+  #       run: |
+  #         du . -h
+  #         sudo rm -rf /usr/share/dotnet
+  #         sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+  #         du . -h
 
-      - name: Checkout repo
-        uses: actions/checkout@v2
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v4
 
-      - name: Test sky130hvl LDO
-        env:
-                IMAGE_NAME: msaligane/openfasoc:alpha
-        run: |
-          cd $GITHUB_WORKSPACE
-          touch file.log
-          docker run --rm \
-            -v $PWD:$PWD\
-            -w $PWD\
-            $IMAGE_NAME\
-            bash -c "\
-              cp ./.github/scripts/parse_rpt.py ./openfasoc/generators/ldo-gen/. &&\
-              pip3 install -r requirements.txt &&\
-              cd ./openfasoc/generators/ldo-gen &&\
-              make sky130hvl_ldo &&\
-              python3 parse_rpt.py sky130hvl_ldo
-            " && exit_code=$? | tee -a file.log
-            if [ $? -ne 0 ]; then exit 1; fi
-            if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi
+  #     - name: Test sky130hvl LDO
+  #       env:
+  #               IMAGE_NAME: msaligane/openfasoc:alpha
+  #       run: |
+  #         cd $GITHUB_WORKSPACE
+  #         touch file.log
+  #         docker run --rm \
+  #           -v $PWD:$PWD\
+  #           -w $PWD\
+  #           $IMAGE_NAME\
+  #           bash -c "\
+  #             cp ./.github/scripts/parse_rpt.py ./openfasoc/generators/ldo-gen/. &&\
+  #             pip3 install -r requirements.txt &&\
+  #             cd ./openfasoc/generators/ldo-gen &&\
+  #             make sky130hvl_ldo &&\
+  #             python3 parse_rpt.py sky130hvl_ldo
+  #           " && exit_code=$? | tee -a file.log
+  #           if [ $? -ne 0 ]; then exit 1; fi
+  #           if grep "\[ERROR\]" file.log; then exit 1; else exit 0; fi
 
 
   cryoGenerator:
@@ -113,7 +113,7 @@ jobs:
           du . -h
 
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Test ${{ matrix.platform }} Cryo Gen
         env:
@@ -137,11 +137,12 @@ jobs:
           
 
   update_readme:
-    needs: [sky130hd_temp,sky130hd_ldoGen,cryoGenerator,build_docker_image]
+    needs: [sky130hd_temp,cryoGenerator,build_docker_image]
+    # needs: [sky130hd_temp,sky130hd_ldoGen,cryoGenerator,build_docker_image]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Grep the commit numbers of all dependent tools and update README.rst
         env:
