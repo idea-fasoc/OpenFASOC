@@ -66,8 +66,7 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
         model = AutoModelForCausalLM.from_pretrained(
             modelname,
             token=accesstoken,
-            quantization_config=BitsAndBytesConfig(load_in_8bit=True),
-            attn_implementation="flash_attention_2",
+            quantization_config=BitsAndBytesConfig(load_in_8bit=True)
         )
         # model = AutoModelForCausalLM.from_pretrained(modelname, token=accesstoken, device_map="auto", trust_remote_code=False, revision="main")
         model.train()
@@ -213,6 +212,7 @@ def run_full_SFT_training() -> tuple:
         optim="paged_adamw_8bit",
     )
     training_args = TrainingArguments(output_dir=str(output_dir))
+    data_collator = DataCollatorForCompletionOnlyLM(response_template="[/INST]",instruction_template="[INST]",tokenizer=tokenizer,mlm=False)
     trainer = SFTTrainer(
         model=model,
         tokenizer=tokenizer,
@@ -220,6 +220,7 @@ def run_full_SFT_training() -> tuple:
         train_dataset=data["train"],
         eval_dataset=data["evaluation"],
         max_seq_length=512,
+        data_collator=data_collator
     )
     trainer.train()
     model.save_pretrained(output_dir / "checkpoint-bestperf")
