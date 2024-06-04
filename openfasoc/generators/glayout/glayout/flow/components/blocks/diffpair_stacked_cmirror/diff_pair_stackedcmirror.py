@@ -4,7 +4,7 @@ from gdsfactory.component_reference import ComponentReference
 from gdsfactory.components.rectangle import rectangle
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
-from glayout.flow.components.primitives.diff_pair import diff_pair
+from glayout.flow.components.blocks.diff_pair import diff_pair
 from glayout.flow.components.primitives.fet import nmos, pmos, multiplier
 from glayout.flow.components.primitives.guardring import tapring
 from glayout.flow.components.primitives.mimcap import mimcap_array, mimcap

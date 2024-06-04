@@ -5,7 +5,7 @@ from gdsfactory.components.rectangle import rectangle
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
 from glayout.flow.components.primitives.fet import nmos, pmos, multiplier
-from glayout.flow.components.primitives.diff_pair import diff_pair
+from glayout.flow.components.blocks.diff_pair import diff_pair
 from glayout.flow.components.primitives.guardring import tapring
 from glayout.flow.components.primitives.mimcap import mimcap_array, mimcap
 from glayout.flow.routing.L_route import L_route
@@ -25,7 +25,7 @@ from glayout.flow.components.blocks.diff_to_single_converter import differential
 from glayout.flow.components.blocks.row_csamp import row_csamplifier_diff_to_single_ended_converter
 from glayout.flow.components.blocks.diffpair_stacked_cmirror import diff_pair_stackedcmirror
 from glayout.flow.spice import Netlist
-from glayout.flow.components.primitives.current_mirror import cmirror_netlist
+from glayout.flow.components.blocks.current_mirror import cmirror_netlist
 
 @validate_arguments
 def __create_and_route_pins(

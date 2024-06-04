@@ -3,11 +3,11 @@ try:
     __import__('glayout')
 except ImportError:
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))) 
-from glayout.flow.components.opamp import opamp 
-from glayout.flow.components.diff_pair  import diff_pair
-from glayout.flow.primitives.fet import nmos, pmos
+from glayout.flow.components.blocks.opamp import opamp 
+from glayout.flow.components.blocks.diff_pair  import diff_pair
+from glayout.flow.components.primitives.fet import nmos, pmos
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk 
-from glayout.flow.components.current_mirror import current_mirror
+from glayout.flow.components.blocks.current_mirror import current_mirror
 import json
 import numpy as np
 import shutil
@@ -131,7 +131,7 @@ def simulate_component(comp, pdk, componentref = None):
             print(f'DRC passed for {comp.name}!')
         
         
-        result = pdk.lvs_netgen(gds_file, comp.name, netlist=cdl_file, report_handling=report_path, copy_intermediate_files = True)
+        result = pdk.lvs_netgen(gds_file, comp.name, netlist=cdl_file, output_file_path=report_path, copy_intermediate_files = True)
 
         lvs_result = validate_lvs_results(report_path, result, comp.name)
 

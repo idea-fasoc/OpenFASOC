@@ -19,7 +19,7 @@ from glayout.flow.components.primitives.via_gen import via_array
 from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized
 from glayout.flow.placement.four_transistor_interdigitized import generic_4T_interdigitzed
 from glayout.flow.placement.two_transistor_interdigitized import two_pfet_interdigitized
-from glayout.flow.components.primitives.diff_pair import diff_pair_generic
+from glayout.flow.components.blocks.diff_pair import diff_pair_generic
 from glayout.flow.routing.smart_route import smart_route
 from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.c_route import c_route

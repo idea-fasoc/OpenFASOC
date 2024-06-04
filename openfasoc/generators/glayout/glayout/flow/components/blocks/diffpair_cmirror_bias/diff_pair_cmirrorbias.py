@@ -4,7 +4,7 @@ from gdsfactory.component_reference import ComponentReference
 from gdsfactory.components.rectangle import rectangle
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
-from glayout.flow.components.primitives.diff_pair import diff_pair
+from glayout.flow.components.blocks.diff_pair import diff_pair
 from glayout.flow.components.primitives.fet import nmos, pmos, multiplier
 from glayout.flow.components.primitives.guardring import tapring
 from glayout.flow.components.primitives.mimcap import mimcap_array, mimcap
@@ -36,7 +36,7 @@ from glayout.flow.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized
 from glayout.flow.spice import Netlist
-from glayout.flow.components.primitives.current_mirror import cmirror_netlist
+from glayout.flow.components.blocks.current_mirror import cmirror_netlist
 
 def diff_pair_ibias_netlist(center_diffpair: Component, current_mirror: Component, antenna_diode: Optional[Component] = None) -> Netlist:
     netlist = Netlist(
