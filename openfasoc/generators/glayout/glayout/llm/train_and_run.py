@@ -190,9 +190,9 @@ def run_full_SFT_training() -> tuple:
     data = load_preprocessed_data_in_messages_format()
     # train
     # hyperparameters
-    lr = 1e-4
+    lr = 5e-5
     batch_size = 1  # 2 #4
-    num_epochs = 2
+    num_epochs = 4
     # define training arguments
     output_dir = Path(__file__).resolve().parent / "glayout_llm_checkpoints"
     training_args = TrainingArguments(
@@ -211,7 +211,7 @@ def run_full_SFT_training() -> tuple:
         bf16=True,
         optim="paged_adamw_8bit",
     )
-    training_args = TrainingArguments(output_dir=str(output_dir))
+    #training_args = TrainingArguments(output_dir=str(output_dir))
     data_collator = DataCollatorForCompletionOnlyLM(response_template="[/INST]",instruction_template="[INST]",tokenizer=tokenizer,mlm=False)
     trainer = SFTTrainer(
         model=model,
@@ -219,7 +219,7 @@ def run_full_SFT_training() -> tuple:
         args=training_args,
         train_dataset=data["train"],
         eval_dataset=data["evaluation"],
-        max_seq_length=512,
+        max_seq_length=4096,
         data_collator=data_collator
     )# add context to all glayout prompts
     trainer.train()
@@ -322,5 +322,5 @@ Importing: import CrossCoupledInverters
 Creating Parameters: create a float parameter called device_width
 Placing Components: place a nmos called m1 with width 1.0, length 2.0, fingers 2
 Moving Components: move m1 below m2
-Routing: route between m1_source_E and m2_source_W using smart_route
+Routing: route between m1_source_E and m2_source_E using smart_route
 This structured approach ensures clarity and modularity, making it easier to design complex analog circuits efficiently."""
