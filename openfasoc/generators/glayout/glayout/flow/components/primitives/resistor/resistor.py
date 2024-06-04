@@ -1,10 +1,10 @@
-from glayout.flow.primitives.fet import pmos, nmos
+from glayout.flow.components.primitives.fet import pmos, nmos
 from glayout.flow.routing.c_route import c_route
 from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.straight_route import straight_route
 from glayout.flow.routing.smart_route import smart_route
 from glayout.flow.pdk.mappedpdk import MappedPDK
-from glayout.flow.primitives.guardring import tapring
+from glayout.flow.components.primitives.guardring import tapring
 from glayout.flow.pdk.util.comp_utils import evaluate_bbox, add_ports_perimeter
 from gdsfactory.component import Component
 from gdsfactory.cell import cell 

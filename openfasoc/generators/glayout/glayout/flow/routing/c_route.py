@@ -4,7 +4,7 @@ from gdsfactory.port import Port
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
 from math import isclose
-from glayout.flow.primitives.via_gen import via_stack
+from glayout.flow.components.primitives.via_gen import via_stack
 from glayout.flow.routing.straight_route import straight_route
 from gdsfactory.components.rectangle import rectangle
 from glayout.flow.pdk.util.comp_utils import evaluate_bbox, get_primitive_rectangle

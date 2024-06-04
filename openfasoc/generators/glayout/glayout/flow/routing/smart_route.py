@@ -10,7 +10,7 @@ from glayout.flow.pdk.util.port_utils import (
     ports_inline,
     ports_parallel,
 )
-from glayout.flow.primitives.via_gen import via_stack
+from glayout.flow.components.primitives.via_gen import via_stack
 from glayout.flow.routing.c_route import c_route
 from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.straight_route import straight_route

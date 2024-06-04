@@ -4,8 +4,8 @@ from gdsfactory.component import Component, copy
 from gdsfactory.components.rectangle import rectangle
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
-from glayout.flow.primitives.via_gen import via_array, via_stack
-from glayout.flow.primitives.guardring import tapring
+from glayout.flow.components.primitives.via_gen import via_array, via_stack
+from glayout.flow.components.primitives.guardring import tapring
 from pydantic import validate_arguments
 from glayout.flow.pdk.util.comp_utils import evaluate_bbox, to_float, to_decimal, prec_array, prec_center, prec_ref_center, movey, align_comp_to_port
 from glayout.flow.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports

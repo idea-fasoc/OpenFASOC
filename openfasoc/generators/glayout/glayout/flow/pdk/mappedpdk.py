@@ -346,7 +346,8 @@ class MappedPDK(Pdk):
         layout: Component | PathType, 
         design_name: str, 
         pdk_root: Optional[PathType] = None, 
-        magic_drc_file: Optional[PathType] = None
+        magic_drc_file: Optional[PathType] = None, 
+        output_file: Optional[PathType] = None 
     ) -> dict:
         """Runs DRC using magic on the either the component or the gds file path provided. Requires the design name and the pdk_root to be specified, handles importing the required magicrc and other setup files, if not specified. Accepts overriden magic_commands_file and magic_drc_file.
 
@@ -360,6 +361,10 @@ class MappedPDK(Pdk):
                 - e.g. - "/usr/bin/miniconda3/share/pdk/". Defaults to "/usr/bin/miniconda3/share/pdk/".
             - magic_drc_file (Optional[PathType], optional):
                 - The .magicrc file for your PDK of choice. 
+                - Defaults to None.
+            - output_file (Optional[PathType], optional):
+                - The .rpt file to save the DRC report.
+                - The report will written to regression/drc/{design_name}/{file_name}
                 - Defaults to None.
 
         Raises:
@@ -484,21 +489,37 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
             errors = subp.stderr.read().decode('utf-8')
             if errors:
                 print(f"Soft errors: \n{errors}")
-                
-            with open(f'{str(temp_dir_path)}/{design_name}.rpt', 'r') as f:
-                num_lines = len(f.readlines())
-                if num_lines > 3:
-                    result_str = result_str + "\nErrors found in DRC report"
-                    f.seek(0)
-                    for line in f.readlines():
-                        print(line)
-                        
-                else:
-                    result_str = result_str + "\nNo errors found in DRC report"
+            
+            report_path = f'{str(temp_dir_path)}/{design_name}.rpt'
+            
+            if Path(report_path).is_file():
+                with open(report_path, 'r') as f:
+                    num_lines = len(f.readlines())
+                    if num_lines > 3:
+                        result_str = result_str + "\nErrors found in DRC report"
+                        f.seek(0)
+                        for line in f.readlines():
+                            print(line)    
+                    else:
+                        result_str = result_str + "\nNo errors found in DRC report"
+            else: 
+                raise ValueError("DRC report file not found")
                     
             ret_dict = {"result_str": result_str, "subproc_code": subproc_code}
             if ret_dict is None:
                 raise ValueError('Something weird happened')
+            
+            if output_file is not None:
+                path_to_regression_drc = Path(__file__).resolve().parents[1] / "components" / "regression" / "drc"
+                dir_name = design_name
+                path_to_dir = path_to_regression_drc / dir_name
+                if not path_to_dir.exists():
+                    path_to_dir.mkdir()
+                new_output_file_path = path_to_dir / output_file
+                if not new_output_file_path.exists():
+                    shutil.copy(report_path, path_to_dir / output_file)
+                else: 
+                    raise ValueError("Output file already exists")
 
         return ret_dict
 
@@ -512,7 +533,7 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
         lvs_schematic_ref_file: Optional[PathType] = None,
         magic_drc_file: Optional[PathType] = None, 
         netlist: Optional[PathType] = None,
-        report_handling: Optional[PathType] = None, 
+        output_file_path: Optional[PathType] = None, 
         copy_intermediate_files: Optional[bool] = False
     ) -> dict:
         """ Runs LVS using netgen on the either the component or the gds file path provided. Requires the design name and the pdk_root to be specified, handles importing the required magicrc and other setup files, if not specified. Accepts overriden lvs_setup_tcl_file, lvs_schematic_ref_file, and magic_drc_file.
@@ -537,8 +558,9 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
             - netlist (Optional[PathType], optional): 
                 - The .cdl or .spice file for the netlist.
                 - Defaults to None.
-            - report_handling (Optional[PathType], optional): 
-                - The .tcl file with report handling commands.
+            - output_file_path (Optional[PathType], optional): 
+                - The path to the report file
+                - Will write the report to regression/lvs/{design_name}/{output_file_path}
                 - Defaults to None.
             - copy_intermediate_files (Optional[bool], optional): 
                 - If True, copies intermediate files to the currenty working directory (lvsmag, pex spice, prepex spice).
@@ -719,7 +741,6 @@ exit
                 result_str = "LVS run succeeded" if netgen_subproc_code == 0 and magic_subproc_code == 0 else "LVS run failed"
 
                 if report_path.is_file():
-                    
                     with open(report_path, 'r') as f:
                         num_lines = len(f.readlines())
                         if num_lines > 3:
@@ -744,8 +765,16 @@ exit
                     if file.endswith(".ext"):
                         os.remove(file)
                 # copy the report from the temp directory to the specified location
-                if report_handling is not None:
-                    shutil.copy(report_path, report_handling)
+                if output_file_path is not None:
+                    dir_name = design_name
+                    path_to_dir = Path(__file__).resolve().parents[1] / "components" / "regression" / "lvs" / dir_name
+                    if not path_to_dir.exists():
+                        path_to_dir.mkdir()
+                    new_output_file_path = path_to_dir / output_file_path
+                    if not new_output_file_path.exists():
+                        shutil.copy(report_path, path_to_dir / output_file_path)
+                    else: 
+                        raise ValueError("Output file already exists!")
                     
                 if copy_intermediate_files:
                     shutil.copy(lvsmag_path, str(Path.cwd() / f"{design_name}_lvsmag.spice"))  

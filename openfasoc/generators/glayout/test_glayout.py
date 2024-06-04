@@ -1,4 +1,4 @@
-from glayout.flow.primitives.fet import nmos
+from glayout.flow.components.primitives.fet import nmos
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk as sky130
 import sys
 import os

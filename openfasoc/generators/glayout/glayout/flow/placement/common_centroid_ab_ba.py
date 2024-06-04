@@ -1,12 +1,12 @@
 from glayout.flow.routing.straight_route import straight_route
 from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.c_route import c_route
-from glayout.flow.primitives.fet import nmos, pmos
-from glayout.flow.primitives.via_gen import via_stack, via_array
+from glayout.flow.components.primitives.fet import nmos, pmos
+from glayout.flow.components.primitives.via_gen import via_stack, via_array
 from glayout.flow.pdk.util.comp_utils import evaluate_bbox, movex, move, movey, align_comp_to_port, prec_ref_center, center_to_edge_distance
 from glayout.flow.pdk.util.port_utils import set_port_orientation, rename_ports_by_orientation, create_private_ports
 from glayout.flow.pdk.mappedpdk import MappedPDK
-from glayout.flow.primitives.guardring import tapring
+from glayout.flow.components.primitives.guardring import tapring
 from gdsfactory.components import rectangle
 from typing import Union, Optional
 from itertools import product

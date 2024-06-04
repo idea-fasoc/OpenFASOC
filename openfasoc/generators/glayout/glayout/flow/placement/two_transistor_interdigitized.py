@@ -1,14 +1,14 @@
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from pydantic import validate_arguments
 from gdsfactory.component import Component
-from glayout.flow.primitives.fet import nmos, pmos, multiplier
+from glayout.flow.components.primitives.fet import nmos, pmos, multiplier
 from glayout.flow.pdk.util.comp_utils import evaluate_bbox
 from typing import Literal, Union
 from glayout.flow.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, create_private_ports
 from glayout.flow.pdk.util.comp_utils import prec_ref_center
 from glayout.flow.routing.straight_route import straight_route
 from gdsfactory.functions import transformed
-from glayout.flow.primitives.guardring import tapring
+from glayout.flow.components.primitives.guardring import tapring
 from glayout.flow.pdk.util.port_utils import add_ports_perimeter
 from gdsfactory.cell import clear_cache
 from typing import Literal

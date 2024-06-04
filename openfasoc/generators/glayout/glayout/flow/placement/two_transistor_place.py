@@ -2,7 +2,7 @@ from glayout.flow.pdk.mappedpdk import MappedPDK
 from pydantic import validate_arguments
 from gdsfactory.component import Component
 from typing import Callable
-from glayout.flow.primitives.fet import nmos, pmos
+from glayout.flow.components.primitives.fet import nmos, pmos
 from glayout.flow.pdk.util.comp_utils import evaluate_bbox
 
 @validate_arguments

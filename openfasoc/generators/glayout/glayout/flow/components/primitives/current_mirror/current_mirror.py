@@ -5,8 +5,8 @@ from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.straight_route import straight_route
 from glayout.flow.spice.netlist import Netlist
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk as sky130
-from glayout.flow.primitives.fet import nmos, pmos
-from glayout.flow.primitives.guardring import tapring
+from glayout.flow.components.primitives.fet import nmos, pmos
+from glayout.flow.components.primitives.guardring import tapring
 from glayout.flow.pdk.util.port_utils import add_ports_perimeter	
 from gdsfactory.component import Component
 from typing import Optional, Union 

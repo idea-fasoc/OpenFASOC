@@ -17,9 +17,9 @@ from glayout.flow.pdk.util.port_utils import (
 )
 from glayout.flow.pdk.util.snap_to_grid import component_snap_to_grid
 from glayout.flow.placement.common_centroid_ab_ba import common_centroid_ab_ba
-from glayout.flow.primitives.fet import nmos, pmos
-from glayout.flow.primitives.guardring import tapring
-from glayout.flow.primitives.via_gen import via_stack
+from glayout.flow.components.primitives.fet import nmos, pmos
+from glayout.flow.components.primitives.guardring import tapring
+from glayout.flow.components.primitives.via_gen import via_stack
 from glayout.flow.routing.c_route import c_route
 from glayout.flow.routing.smart_route import smart_route
 from glayout.flow.routing.straight_route import straight_route

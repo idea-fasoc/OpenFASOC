@@ -7,7 +7,7 @@ from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interd
 from typing import Literal, Optional
 from gdsfactory import Component
 from glayout.flow.pdk.util.comp_utils import evaluate_bbox, movey
-from glayout.flow.primitives.guardring import tapring
+from glayout.flow.components.primitives.guardring import tapring
 
 def generic_4T_interdigitzed(
     pdk: MappedPDK,
