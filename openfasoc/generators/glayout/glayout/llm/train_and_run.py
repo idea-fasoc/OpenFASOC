@@ -34,7 +34,7 @@ from transformers import (
 import transformers
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 
-accesstoken = "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"
+accesstoken = "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"
 
 
 # returns model, tokenizer
