@@ -40,7 +40,7 @@ jobs:
                       pip3 install -r requirements.txt &&\
                       cd ./openfasoc/generators/glayout/tapeout/tapeout_and_RL/ &&\
                       pip3 install prettyprint prettyprinttree gdstk &&\
-                      python3 test_glayout.py --component opamp_parametric
+                      python3 test_glayout_ci.py --component opamp_parametric
                       " && exit_code=$? | tee -a glayout.log
                   if [ $? -ne 0 ]; then exit 1; fi
                   if grep "\[ERROR\]" glayout.log; then exit 1; else exit 0; fi
