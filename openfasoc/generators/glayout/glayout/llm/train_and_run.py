@@ -90,7 +90,7 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
     if not qlora:  # the model loaded by qlora is prequantized
         model.half()
         model.to(device)
-    tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
     return model, tokenizer
 
 
@@ -207,12 +207,13 @@ def run_full_SFT_training() -> tuple:
         save_strategy="epoch",
         load_best_model_at_end=True,
         gradient_accumulation_steps=1,
-        warmup_steps=0,
+        warmup_steps=1,
         bf16=True,
         optim="paged_adamw_8bit",
     )
     #training_args = TrainingArguments(output_dir=str(output_dir))
     data_collator = DataCollatorForCompletionOnlyLM(response_template="[/INST]",instruction_template="[INST]",tokenizer=tokenizer,mlm=False)
+    #import pdb; pdb.set_trace()
     trainer = SFTTrainer(
         model=model,
         tokenizer=tokenizer,
