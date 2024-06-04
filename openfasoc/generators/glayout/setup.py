@@ -40,6 +40,7 @@ setup(
         "auto-gptq",
         "optimum",
         "trl",
+        "langchain_huggingface"
     ],
     entry_points={
         'console_scripts': [

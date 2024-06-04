@@ -4,7 +4,8 @@ from pathlib import Path
 from typing import List, Tuple, Union
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
+#from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from datasets import Dataset
 from typing import Optional
 

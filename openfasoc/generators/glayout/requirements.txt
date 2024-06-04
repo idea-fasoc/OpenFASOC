@@ -20,3 +20,4 @@ datasets
 auto-gptq
 optimum
 trl
+langchain_huggingface
