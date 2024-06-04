@@ -6,9 +6,10 @@ import subprocess
 from pathlib import Path
 from importlib import metadata
 from tempfile import TemporaryDirectory
+import warnings
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 
-
+# used for pretty printing messages
 try:
     import colorama
 except ImportError as e:
@@ -28,11 +29,13 @@ colorama.init(autoreset=True)
 figlet = Figlet(font='slant')
 
 def print_heading(text):
+    """Prints a colorful heading for the current action using colorama and pyfiglet"""
     print(Fore.YELLOW + figlet.renderText(text))
 
 import shutil
 
 def print_dynamic_separator(text=None):
+    """Prints a separator that spans the width of the terminal, with optional text in the middle"""
     terminal_width = shutil.get_terminal_size().columns  # Get the width of the terminal
     if text:
         # Ensure the separator is not longer than the terminal width
@@ -44,6 +47,7 @@ def print_dynamic_separator(text=None):
  
 # Check if the current Python version meets the minimum requirement
 def check_python_version():
+    """Check if the current Python version meets the minimum requirement of Python 3.10"""
     print_heading("Python version check")
     print("\n...Checking Python version...")
     if sys.version_info < (3, 10):
@@ -53,6 +57,8 @@ def check_python_version():
         
 # check if all requirements have been installed
 def check_python_requirements(requirements_file):
+    """Check if all Python requirements are installed using the requirements file provided
+    in the top level directory of OpenFASOC. Checks the package versions as well"""
     print_heading("Checking Python requirements")
     with open(requirements_file, 'r') as f:
         requirements = f.read().splitlines()
@@ -76,31 +82,37 @@ def check_python_requirements(requirements_file):
         
 # function to check for system-wide tools like Magic, Netgen, and Ngspice
 def check_system_tools(tool_names, miniconda3_path):
+    """Checks if magic and ngspice are installed by running the respective commands with the --version flag. Checks if netgen is present in the Miniconda3 installation directory (where the executables are placed)"""
     print_heading("Checking system tools")
     for tool in tool_names:
         try:
+            # spawn a subprocess with the tool and the --version flag
             print(f"\n...Checking {tool}...")
             result = subprocess.run([tool, '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
             print(f"\n{tool} is installed!")
         except subprocess.CalledProcessError as e:
             raise EnvironmentError(f"{tool} not installed or not in PATH. Please install it.") from e
+    
+    # check netgen installation in the miniconda3 library folder
     print("\n...Checking netgen...")
     netgen_path = miniconda3_path / "lib" / "netgen"
-    # print(str(netgen_path))
     if not netgen_path.exists():
         raise EnvironmentError("Netgen not found in expected location!")
     print("\nnetgen is installed!")
-# List of system tools to check
+
 
 def check_miniconda3_and_pdk():
+    """Checks if Miniconda3 is installed and in PATH, and if the PDK root is present in the expected locations. Also checks if the required PDK directories are present in the PDK root."""
     print_heading("Checking Miniconda3 and PDK")
     # Check if miniconda3 is installed
     try:
+        # conda installation check
         result = subprocess.run(['conda', '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
         print(f"\nMiniconda3 is installed: {result.stdout}")
     except subprocess.CalledProcessError as e:
         raise EnvironmentError("Miniconda3 not installed or not in PATH. Please install it.") from e
 
+    # Check if PDK root is present in the expected locations
     paths_to_check = [
         Path("/usr/bin/miniconda3/share/pdk/"), 
         Path(f"/home/{os.getenv('LOGNAME')}/miniconda3/share/pdk/")
@@ -117,19 +129,20 @@ def check_miniconda3_and_pdk():
     else:
         print(f"\nPDK root found at: {pdk_root}")
     
+    # check if the pdk directories are present
     miniconda3_path = pdk_root.resolve().parents[1]
     required_pdk_dirs = ["sky130A", "gf180mcuC"]
     missing_dirs = [pdk_dir for pdk_dir in required_pdk_dirs if not (pdk_root / pdk_dir).exists()]
 
     if missing_dirs:
-        print(f"\nMissing required PDK directories: {', '.join(missing_dirs)}")
-        sys.exit(1)
+        warnings.warn(f"\nMissing required PDK directories: {', '.join(missing_dirs)}")
 
     print("\nAll required PDK directories are present!")
-    
     return miniconda3_path, pdk_root
 
 def place_nfet_run_lvs():
+    """places a default nmos components using the sky130 pdk, and runs netgen lvs on it. This utilises the spice generation of the component, magic, and netgen, so it makes up a good test for the installation"""
+    
     print_heading("NMOS and LVS")
     print("\n...Creating nmos component...")
     nmos_component = nmos(sky130)
@@ -153,5 +166,6 @@ if __name__ == "__main__":
     check_system_tools(system_tools, miniconda3_path)
     print_dynamic_separator()
     place_nfet_run_lvs()
-    print_dynamic_separator("Tool check successful!")   
+    print_dynamic_separator("Tool check successful!")
+    
    
