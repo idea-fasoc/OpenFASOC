@@ -36,7 +36,7 @@ jobs:
                       -w $PWD \
                       $IMAGE_NAME \
                       bash -c "\
-                      cp ./.github/scripts/test_glayout.py ./openfasoc/generators/glayout/tapeout/tapeout_and_RL/. &&\
+                      cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/tapeout/tapeout_and_RL/. &&\
                       pip3 install -r requirements.txt &&\
                       cd ./openfasoc/generators/glayout/tapeout/tapeout_and_RL/ &&\
                       pip3 install prettyprint prettyprinttree gdstk &&\
