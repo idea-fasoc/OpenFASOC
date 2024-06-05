@@ -510,7 +510,7 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
                 raise ValueError('Something weird happened')
             
             if output_file is not None:
-                path_to_regression_drc = Path(__file__).resolve().parents[1] / "components" / "regression" / "drc"
+                path_to_regression_drc = Path(__file__).resolve().parents[1] / "regression" / "drc"
                 dir_name = design_name
                 path_to_dir = path_to_regression_drc / dir_name
                 if not path_to_dir.exists():
@@ -767,7 +767,7 @@ exit
                 # copy the report from the temp directory to the specified location
                 if output_file_path is not None:
                     dir_name = design_name
-                    path_to_dir = Path(__file__).resolve().parents[1] / "components" / "regression" / "lvs" / dir_name
+                    path_to_dir = Path(__file__).resolve().parents[1]  / "regression" / "lvs" / dir_name
                     if not path_to_dir.exists():
                         path_to_dir.mkdir()
                     new_output_file_path = path_to_dir / output_file_path

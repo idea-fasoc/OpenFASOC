@@ -9,11 +9,11 @@ from glayout.flow.pdk.util.comp_utils import prec_array, movey, align_comp_to_po
 from glayout.flow.pdk.util.port_utils import add_ports_perimeter, print_ports
 from gdsfactory.component import Component
 from glayout.flow.pdk.mappedpdk import MappedPDK
-from glayout.flow.components.blocks.opamp import opamp
+from glayout.flow.blocks.opamp import opamp
 from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.straight_route import straight_route
 from glayout.flow.routing.c_route import c_route
-from glayout.flow.components.primitives.via_gen import via_array
+from glayout.flow.primitives.via_gen import via_array
 from gdsfactory.cell import cell, clear_cache
 import numpy as np
 from subprocess import Popen

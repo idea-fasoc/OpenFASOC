@@ -9,17 +9,17 @@ from glayout.flow.pdk.mappedpdk import MappedPDK
 from gdsfactory import Component
 from glayout.flow.pdk.util.comp_utils import move, movex, movey, prec_ref_center, evaluate_bbox, center_to_edge_distance
 from glayout.flow.pdk.util.port_utils import remove_ports_with_prefix
-from glayout.flow.components.primitives.fet import nmos
-from glayout.flow.components.primitives.fet import pmos
-from glayout.flow.components.primitives.guardring import tapring
-from glayout.flow.components.primitives.mimcap import mimcap
-from glayout.flow.components.primitives.mimcap import mimcap_array
-from glayout.flow.components.primitives.via_gen import via_stack
-from glayout.flow.components.primitives.via_gen import via_array
+from glayout.flow.primitives.fet import nmos
+from glayout.flow.primitives.fet import pmos
+from glayout.flow.primitives.guardring import tapring
+from glayout.flow.primitives.mimcap import mimcap
+from glayout.flow.primitives.mimcap import mimcap_array
+from glayout.flow.primitives.via_gen import via_stack
+from glayout.flow.primitives.via_gen import via_array
 from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized
 from glayout.flow.placement.four_transistor_interdigitized import generic_4T_interdigitzed
 from glayout.flow.placement.two_transistor_interdigitized import two_pfet_interdigitized
-from glayout.flow.components.blocks.diff_pair import diff_pair_generic
+from glayout.flow.blocks.diff_pair import diff_pair_generic
 from glayout.flow.routing.smart_route import smart_route
 from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.c_route import c_route

@@ -1,7 +1,7 @@
 opamp
-import diff_pair from glayout.flow.components.primitives.diff_pair
+import diff_pair from glayout.flow.primitives.diff_pair
 import generic_4T_interdigitzed from glayout.flow.placement.four_transistor_interdigitized
-import current_mirror from glayout.flow.components.primitives.current_mirror
+import current_mirror from glayout.flow.primitives.current_mirror
 create an int parameter called numcols
 place generic_4T_interdigitzed called mydiffload with numcols numcols top_kwargs {'tie_layers':("met3","met2")}top_row_device 'pfet' bottom_row_device  'pfet'  
 place  a diff_pair called mydiff with width 5 fingers numcols dummy True substrate_tap True

@@ -3,7 +3,7 @@ from gdsfactory.component import Component
 from gdsfactory.components.rectangle import rectangle
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from typing import Optional
-from glayout.flow.components.primitives.via_gen import via_array
+from glayout.flow.primitives.via_gen import via_array
 from glayout.flow.pdk.util.comp_utils import prec_array, to_decimal, to_float
 from glayout.flow.pdk.util.port_utils import rename_ports_by_orientation, add_ports_perimeter, print_ports
 from pydantic import validate_arguments

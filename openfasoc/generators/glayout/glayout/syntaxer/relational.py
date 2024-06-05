@@ -369,15 +369,15 @@ class ImportCell(GlayoutAction):
     @classmethod
     def test(cls):
         tests = list()
-        tests.append([["nmos","nfet"],"nmos","glayout.flow.components.primitives.fet"])
-        tests.append([["pmos","pfet"],"pmos","glayout.flow.components.primitives.fet"])
-        tests.append([["guardring","tapring","welltap","well tap", "tap ring"],"tapring","glayout.flow.components.primitives.guardring"])
-        tests.append([["mimcap"],"mimcap","glayout.flow.components.primitives.mimcap"])
-        tests.append([["mimcap array","mimcaparray","mimcap_array"],"mimcap_array","glayout.flow.components.primitives.mimcap"])
-        tests.append([["via","via stack","via_stack"],"via_stack","glayout.flow.components.primitives.via_gen"])
-        tests.append([["via array","via_array"],"via_array","glayout.flow.components.primitives.via_gen"])
+        tests.append([["nmos","nfet"],"nmos","glayout.flow.primitives.fet"])
+        tests.append([["pmos","pfet"],"pmos","glayout.flow.primitives.fet"])
+        tests.append([["guardring","tapring","welltap","well tap", "tap ring"],"tapring","glayout.flow.primitives.guardring"])
+        tests.append([["mimcap"],"mimcap","glayout.flow.primitives.mimcap"])
+        tests.append([["mimcap array","mimcaparray","mimcap_array"],"mimcap_array","glayout.flow.primitives.mimcap"])
+        tests.append([["via","via stack","via_stack"],"via_stack","glayout.flow.primitives.via_gen"])
+        tests.append([["via array","via_array"],"via_array","glayout.flow.primitives.via_gen"])
         tests.append([["nlp"],"test_stream","../interpreter/deprecated/../deprecated/practice_stream.py"])
-        tests.append([["nmos","nfet"],"nmos","./glayout/components/primitives/fet/fet.py"])
+        tests.append([["nmos","nfet"],"nmos","./glayout/flow/primitives/fet/fet.py"])
         #print("expected\t\t\tresult")
         for testinst in tests:
             print(ImportCell(*testinst).get_code())
@@ -522,7 +522,7 @@ class PlaceCell(GlayoutAction):
     def test(cls):
         exp_name = "example_toplvl"
         tests = list()
-        from glayout.flow.components.primitives.fet import nmos
+        from glayout.flow.primitives.fet import nmos
         tests.append([exp_name,nmos,"mirror","width of 4 length of 1"])
         for testinst in tests:
             print(PlaceCell.get_code(*testinst))
@@ -688,13 +688,13 @@ class GlayoutCode(GlayoutAction):
         self.__known_generator_ids = list()# list of str
         self.__random_name_index = int(0)
         # primitives
-        self.update_import_table(["nmos","nfet"],"nmos","glayout.flow.components.primitives.fet")
-        self.update_import_table(["pmos","pfet"],"pmos","glayout.flow.components.primitives.fet")
-        self.update_import_table(["guardring","tapring","welltap","well tap", "tap ring"],"tapring","glayout.flow.components.primitives.guardring")
-        self.update_import_table(["mimcap"],"mimcap","glayout.flow.components.primitives.mimcap")
-        self.update_import_table(["mimcap array","mimcaparray","mimcap_array"],"mimcap_array","glayout.flow.components.primitives.mimcap")
-        self.update_import_table(["via","via stack","via_stack"],"via_stack","glayout.flow.components.primitives.via_gen")
-        self.update_import_table(["via array","via_array"],"via_array","glayout.flow.components.primitives.via_gen")
+        self.update_import_table(["nmos","nfet"],"nmos","glayout.flow.primitives.fet")
+        self.update_import_table(["pmos","pfet"],"pmos","glayout.flow.primitives.fet")
+        self.update_import_table(["guardring","tapring","welltap","well tap", "tap ring"],"tapring","glayout.flow.primitives.guardring")
+        self.update_import_table(["mimcap"],"mimcap","glayout.flow.primitives.mimcap")
+        self.update_import_table(["mimcap array","mimcaparray","mimcap_array"],"mimcap_array","glayout.flow.primitives.mimcap")
+        self.update_import_table(["via","via stack","via_stack"],"via_stack","glayout.flow.primitives.via_gen")
+        self.update_import_table(["via array","via_array"],"via_array","glayout.flow.primitives.via_gen")
         # general components and layout strategies
         two_nfet_interdigitized_aliases = ["interdigitized","interdigitated"]+list_cartesian_product(["interdigitized","interdigitated"],["nmos","nfet"],True)
         self.update_import_table(two_nfet_interdigitized_aliases,"two_nfet_interdigitized","glayout.flow.placement.two_transistor_interdigitized")
@@ -702,7 +702,7 @@ class GlayoutCode(GlayoutAction):
         self.update_import_table(generic_4T_interdigitzed_aliases, "generic_4T_interdigitzed", "glayout.flow.placement.four_transistor_interdigitized")
         two_pfet_interdigitized_aliases = list_cartesian_product(["interdigitized","interdigitated"],["pmos","pfet"],True)
         self.update_import_table(two_pfet_interdigitized_aliases,"two_pfet_interdigitized","glayout.flow.placement.two_transistor_interdigitized")
-        self.update_import_table(["diff pair","diff_pair","differential pair","differential pairs","differential transistor"],"diff_pair_generic","glayout.flow.components.blocks.diff_pair")
+        self.update_import_table(["diff pair","diff_pair","differential pair","differential pairs","differential transistor"],"diff_pair_generic","glayout.flow.blocks.diff_pair")
         # import routing funcs
         self.update_import_table(["smart route","smart","smart_route"],"smart_route","glayout.flow.routing.smart_route")
         self.update_import_table(["L route","L_route","l route","l_route"],"L_route","glayout.flow.routing.L_route")
