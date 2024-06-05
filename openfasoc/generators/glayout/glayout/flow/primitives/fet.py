@@ -63,6 +63,7 @@ def __gen_fingers_macro(pdk: MappedPDK, rmult: int, fingers: int, length: float,
     return component_snap_to_grid(rename_ports_by_orientation(multiplier))
 
 def fet_netlist(
+    pdk: MappedPDK,
     circuit_name: str,
     model: str,
     width: float,
@@ -80,7 +81,15 @@ def fet_netlist(
     elif with_dummy == True or with_dummy == (True, True):
         num_dummies = 2
 
-    source_netlist=""".subckt {circuit_name} {nodes} l=1 w=1 m=1 dm=1
+    if length is None:
+        length = pdk.get_grule('poly')['min_width']
+        
+    ltop = length
+    wtop = width
+    mtop = fingers * multipliers
+    dmtop = multipliers
+    
+    source_netlist=""".subckt {circuit_name} {nodes} """+f'l={ltop} w={wtop} m={mtop} dm={dmtop} '+"""
 XMAIN   D G S B {model} l={{l}} w={{w}} m={{m}}"""
 
     for i in range(num_dummies):
@@ -95,10 +104,10 @@ XMAIN   D G S B {model} l={{l}} w={{w}} m={{m}}"""
         instance_format="X{name} {nodes} {circuit_name} l={length} w={width} m={mult} dm={dummy_mult}",
         parameters={
             'model': model,
-            'length': length,
-            'width': width,
-            'mult': fingers * multipliers,
-            'dummy_mult': multipliers
+            'length': ltop,
+            'width': wtop,
+            'mult': mtop / 2,
+            'dummy_mult': dmtop
         }
     )
 
@@ -473,6 +482,7 @@ def nmos(
     component = rename_ports_by_orientation(nfet).flatten()
 
     component.info['netlist'] = fet_netlist(
+        pdk,
         circuit_name="NMOS",
         model=pdk.models['nfet'],
         width=width,
@@ -610,6 +620,7 @@ def pmos(
     component =  rename_ports_by_orientation(pfet).flatten()
 
     component.info['netlist'] = fet_netlist(
+        pdk,
         circuit_name="PMOS",
         model=pdk.models['pfet'],
         width=width,

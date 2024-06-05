@@ -280,7 +280,7 @@ class MappedPDK(Pdk):
         """Returns true if the layout is DRC clean and false if not
         Also saves detailed results to output_dir_or_file location as lyrdb
         layout can be passed as a file path or gdsfactory component"""
-        if not self.klayout_lydrc_file:
+        if not self.pdk_files['klayout_drc_file']:
             raise NotImplementedError("no drc script for this pdk")
         # find layout gds file path
         tempdir = None
@@ -315,7 +315,7 @@ class MappedPDK(Pdk):
             "klayout",
             "-b",
             "-r",
-            str(self.pdk_files['klayout_lydrc_file']),
+            str(self.pdk_files['klayout_drc_file']),
             "-rd",
             "input=" + str(layout_path),
             "-rd",
@@ -343,11 +343,12 @@ class MappedPDK(Pdk):
     @validate_arguments
     def drc_magic(
         self, 
-        layout: Component | str, 
+        layout: Component | PathType, 
         design_name: str, 
         pdk_root: Optional[PathType] = None, 
-        magic_drc_file: Optional[PathType] = None
-    ):
+        magic_drc_file: Optional[PathType] = None, 
+        output_file: Optional[PathType] = None 
+    ) -> dict:
         """Runs DRC using magic on the either the component or the gds file path provided. Requires the design name and the pdk_root to be specified, handles importing the required magicrc and other setup files, if not specified. Accepts overriden magic_commands_file and magic_drc_file.
 
         Args:
@@ -360,6 +361,10 @@ class MappedPDK(Pdk):
                 - e.g. - "/usr/bin/miniconda3/share/pdk/". Defaults to "/usr/bin/miniconda3/share/pdk/".
             - magic_drc_file (Optional[PathType], optional):
                 - The .magicrc file for your PDK of choice. 
+                - Defaults to None.
+            - output_file (Optional[PathType], optional):
+                - The .rpt file to save the DRC report.
+                - The report will written to regression/drc/{design_name}/{file_name}
                 - Defaults to None.
 
         Raises:
@@ -484,17 +489,39 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
             errors = subp.stderr.read().decode('utf-8')
             if errors:
                 print(f"Soft errors: \n{errors}")
-                
-            with open(f'{str(temp_dir_path)}/{design_name}.rpt', 'r') as f:
-                num_lines = len(f.readlines())
-                if num_lines > 3:
-                    result_str = result_str + "\nErrors found in DRC report"
-                    f.seek(0)
-                    print(f.read())
-                else:
-                    result_str = result_str + "\nNo errors found in DRC report"
+            
+            report_path = f'{str(temp_dir_path)}/{design_name}.rpt'
+            
+            if Path(report_path).is_file():
+                with open(report_path, 'r') as f:
+                    num_lines = len(f.readlines())
+                    if num_lines > 3:
+                        result_str = result_str + "\nErrors found in DRC report"
+                        f.seek(0)
+                        for line in f.readlines():
+                            print(line)    
+                    else:
+                        result_str = result_str + "\nNo errors found in DRC report"
+            else: 
+                raise ValueError("DRC report file not found")
+                    
+            ret_dict = {"result_str": result_str, "subproc_code": subproc_code}
+            if ret_dict is None:
+                raise ValueError('Something weird happened')
+            
+            if output_file is not None:
+                path_to_regression_drc = Path(__file__).resolve().parents[1] / "regression" / "drc"
+                dir_name = design_name
+                path_to_dir = path_to_regression_drc / dir_name
+                if not path_to_dir.exists():
+                    path_to_dir.mkdir()
+                new_output_file_path = path_to_dir / output_file
+                if not new_output_file_path.exists():
+                    shutil.copy(report_path, path_to_dir / output_file)
+                else: 
+                    raise ValueError("Output file already exists")
 
-        print(result_str)
+        return ret_dict
 
     @validate_arguments
     def lvs_netgen(
@@ -506,46 +533,54 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
         lvs_schematic_ref_file: Optional[PathType] = None,
         magic_drc_file: Optional[PathType] = None, 
         netlist: Optional[PathType] = None,
-        report_handling: Optional[tuple[Optional[bool], Optional[str]]] = (False, None)
-    ):
-        """Runs LVS using netgen on the either the component or the gds file path provided. Requires the design name and the pdk_root to be specified, handles importing the required setup files, if not specified. Accepts overriden lvs_setup_tcl_file, lvs_schematic_ref_file, and magic_drc_file.
+        output_file_path: Optional[PathType] = None, 
+        copy_intermediate_files: Optional[bool] = False
+    ) -> dict:
+        """ Runs LVS using netgen on the either the component or the gds file path provided. Requires the design name and the pdk_root to be specified, handles importing the required magicrc and other setup files, if not specified. Accepts overriden lvs_setup_tcl_file, lvs_schematic_ref_file, and magic_drc_file.
 
         Args:
-            - layout (Component | PathType): 
+            - layout (Component | PathType):
                 - Either the Component or the gds file path to run LVS on
-            design_name (str): 
+            - design_name (str): 
                 - The designated name of the design
-            pdk_root (Optional[PathType], optional): 
+            - pdk_root (Optional[PathType], optional): 
                 - The directory where the pdk files are located. 
                 - e.g. - "/usr/bin/miniconda3/share/pdk/". Defaults to None.
             - lvs_setup_tcl_file (Optional[PathType], optional): 
-                - A file containing netgen setup commands to be executed for LVS (sky130A_setup.tcl). 
-                - Defaults to None. 
-                - (Found in libs.tech/netgen/ of the pdk directory)
-            - lvs_schematic_ref_file (Optional[PathType], optional): 
-                - A spice file containing subckt definitions for the PDK. 
-                - Defaults to None. 
-                - (Found in libs.ref/sky130_fd_sc_hd/spice of the pdk directory)
-            - magic_drc_file (Optional[PathType], optional): 
-                - The .magicrc file for your PDK of choice. 
+                - The .tcl file with setup commands for LVS.
+                - Defaults to None.
+            - lvs_schematic_ref_file (Optional[PathType], optional):
+                - The .spice file with subckt references for LVS.
+                - Defaults to None.
+            - magic_drc_file (Optional[PathType], optional):
+                - The .magicrc file for your PDK of choice.
                 - Defaults to None.
             - netlist (Optional[PathType], optional): 
-                - The path to the CDL file (netlist) for the design. 
+                - The .cdl or .spice file for the netlist.
                 - Defaults to None.
-            - report_handling (Optional[tuple[Optional[bool], Optional[str]]], optional): 
-                - A tuple containing a boolean value and a string. 
-                - The boolean value indicates whether to handle the report or not, and the string indicates the path to the report. 
-                - Defaults to (False, None).
+            - output_file_path (Optional[PathType], optional): 
+                - The path to the report file
+                - Will write the report to regression/lvs/{design_name}/{output_file_path}
+                - Defaults to None.
+            - copy_intermediate_files (Optional[bool], optional): 
+                - If True, copies intermediate files to the currenty working directory (lvsmag, pex spice, prepex spice).
+                - Defaults to False.
 
         Raises:
-            - NotImplementedError: 
-                - If LVS is not supported for gf180 PDK
-            - RuntimeError:
-                - If Netgen or Magic is not found in the system
+            - NotImplementedError:
+                - If the LVS cannot be run! 
             - ValueError:
-                - If LVS cannot be run! 
-                - Please provide either a PDK root or the following files: a setup.tcl file for the PDK, a .magicrc file, and a spice file containing subckt definitions for the PDK.
+                - If the netlist file is not provided! 
+            - RuntimeError:
+                - If the netgen command is not found in the system! 
+                - If the magic command is not found in the system! 
+            - RuntimeError: 
+                - If the magic DRC file is not found in the system!
+            - ValueError: 
+                - If the path to the netlist file is not a file!
 
+        Returns:
+            dict: a dictionary containing the result string and the subprocess code
         """
         if not self.name == 'sky130':
             raise NotImplementedError("LVS only supported for sky130 PDK")
@@ -580,15 +615,18 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
         
         def modify_design_name_in_cdl(netlist, design_name):
             design_name_from_cdl = extract_design_name_from_netlist(netlist)
-            if design_name_from_cdl is not None and design_name_from_cdl == design_name:
-                print(f"Design name from CDL file: {design_name_from_cdl} matches the design name: {design_name}")
+            if design_name_from_cdl is not None:
+                if design_name_from_cdl == design_name:
+                    print(f"Design name from CDL file: {design_name_from_cdl} matches the design name: {design_name}")
+                else:
+                    # replace all occurences of design_name_from_cdl with design_name in the cdl file
+                    with open(netlist, 'r') as file:
+                        filedata = file.read()
+                    newdata = filedata.replace(design_name_from_cdl, design_name)
+                    with open(netlist, 'w') as file:
+                        file.write(newdata)
             else:
-                # replace all occurences of design_name_from_cdl with design_name in the cdl file
-                with open(netlist, 'r') as file:
-                    filedata = file.read()
-                newdata = filedata.replace(design_name_from_cdl, design_name)
-                with open(netlist, 'w') as file:
-                    file.write(newdata)
+                print("Warning: Design name not found in the netlist file")
         
         def write_spice(input_cdl, output_spice, lvs_schematic_ref_file):
         # create {design_name}.spice
@@ -657,19 +695,14 @@ gds read {gds_path}
 load {design_name}
 
 select top cell
+ext2resist all
 extract all
 ext2spice lvs
+ext2spice extresist on 
 ext2spice -o {str(lvsmag_path)}
 load {design_name}
-extract all
-ext2spice lvs
-ext2spice rthresh 0
-ext2spice cthresh 0
-ext2spice -o {str(pex_path)}
-load {design_name}
-extract all
-ext2spice cthresh 0
-ext2spice -o {str(sim_path)}
+ext2sim cthresh 0
+ext2sim -o {str(sim_path)}
 exit
 """
 
@@ -705,18 +738,49 @@ exit
                 netgen_subproc_out = netgen_subproc.stdout.decode('utf-8')
                 print(netgen_subproc_out)
                 
-                if netgen_subproc_code == 0 and magic_subproc_code == 0:
-                    print("LVS run succeeded, writing report...")
-                else:
-                    raise ValueError("LVS run failed")
+                result_str = "LVS run succeeded" if netgen_subproc_code == 0 and magic_subproc_code == 0 else "LVS run failed"
+
+                if report_path.is_file():
+                    with open(report_path, 'r') as f:
+                        num_lines = len(f.readlines())
+                        if num_lines > 3:
+                            result_str += f"\nErrors found in LVS report: {report_path}"
+                            f.seek(0)
+                            print(f.read())
+                        else:
+                            result_str += f"\nNo errors found in LVS report: {report_path}"
+                else: 
+                    raise ValueError("LVS report not found!")
+                # if netgen_subproc_code == 0 and magic_subproc_code == 0:
+                #     print("LVS run succeeded, writing report...")
+                # else:
+                #     raise ValueError("LVS run failed")
             
             finally: 
                 os.remove(magic_script_path)
                 if os.path.exists(f'{design_name}.ext'):
                     os.remove(f'{design_name}.ext')
+                # remove all files with suffix .ext
+                for file in os.listdir(temp_dir_path):
+                    if file.endswith(".ext"):
+                        os.remove(file)
                 # copy the report from the temp directory to the specified location
-                if report_handling[0]:
-                    shutil.copy(report_path, report_handling[1])
+                if output_file_path is not None:
+                    dir_name = design_name
+                    path_to_dir = Path(__file__).resolve().parents[1]  / "regression" / "lvs" / dir_name
+                    if not path_to_dir.exists():
+                        path_to_dir.mkdir()
+                    new_output_file_path = path_to_dir / output_file_path
+                    if not new_output_file_path.exists():
+                        shutil.copy(report_path, path_to_dir / output_file_path)
+                    else: 
+                        raise ValueError("Output file already exists!")
+                    
+                if copy_intermediate_files:
+                    shutil.copy(lvsmag_path, str(Path.cwd() / f"{design_name}_lvsmag.spice"))  
+                    shutil.copy(sim_path, str(Path.cwd() / f"{design_name}_sim.spice"))
+                    
+        return {'magic_subproc_code': magic_subproc_code, 'netgen_subproc_code': netgen_subproc_code, 'result_str': result_str}
                     
     
     @validate_arguments
