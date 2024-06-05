@@ -335,6 +335,12 @@ def __mult_array_macro(
             gate_ref = multiplier_arr << c_route(pdk, this_gate, next_gate, viaoffset=(True,False), extension=to_float(src_extension))
             multiplier_arr.add_ports(gate_ref.get_ports_list(), prefix=gatepfx)
     multiplier_arr = component_snap_to_grid(rename_ports_by_orientation(multiplier_arr))
+    # add port redirects for shortcut names (source,drain,gate N,E,S,W)
+    for pin in ["source","drain","gate"]:
+        for side in ["N","E","S","W"]:
+            aliasport = pin + "_" + side
+            actualport = "multiplier_0_" + aliasport
+            multiplier_arr.add_port(port=multiplier_arr.ports[actualport],name=aliasport)
     # recenter
     final_arr = Component()
     marrref = final_arr << multiplier_arr

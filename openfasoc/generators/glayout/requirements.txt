@@ -10,10 +10,14 @@ chromadb
 ollama
 unstructured
 unstructured[md]
-protobuf
 sentence-transformers
 peft
 accelerate
 bitsandbytes
 safetensors
+requests
 datasets
+auto-gptq
+optimum
+trl
+langchain_huggingface

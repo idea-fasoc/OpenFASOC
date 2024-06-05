@@ -3,9 +3,9 @@ from setuptools import setup, find_packages
 
 setup(
     name='glayout',
-    version='0.0.4',
+    version='0.0.5',
     author='Ali Hammoud, Harsh Khandeparkar, Vijay Shankar, Chetanya Goyal, Sakib Pathen, Arlene Dai, Ryan Wans, Mehdi Saligane',
-    author_email='alibilal@umich.edu, Harsh, vijayshankar.renganathan@analog.com, chetanya.goyal@research.iiit.ac.in, spathen@umich.edu, arlendai@umich.edu, Ryan, mehdi@umich.edu',
+    author_email='alibilal@umich.edu, Harsh, vijayshankar.renganathan@analog.com, Chetanya, spathen@umich.edu, arlendai@umich.edu, Ryan, mehdi@umich.edu',
     description='A human language to analog layout API with support for different technologies.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
@@ -36,7 +36,11 @@ setup(
         "bitsandbytes",
         "safetensors",
         "requests",
-        "datasets"
+        "datasets",
+        "auto-gptq",
+        "optimum",
+        "trl",
+        "langchain_huggingface"
     ],
     entry_points={
         'console_scripts': [
