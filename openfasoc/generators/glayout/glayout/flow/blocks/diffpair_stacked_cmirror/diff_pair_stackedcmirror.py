@@ -4,13 +4,13 @@ from gdsfactory.component_reference import ComponentReference
 from gdsfactory.components.rectangle import rectangle
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
+from glayout.flow.blocks.diff_pair import diff_pair
 from glayout.flow.primitives.fet import nmos, pmos, multiplier
-from glayout.flow.components.diff_pair import diff_pair
 from glayout.flow.primitives.guardring import tapring
 from glayout.flow.primitives.mimcap import mimcap_array, mimcap
+from glayout.flow.primitives.via_gen import via_stack, via_array
 from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.c_route import c_route
-from glayout.flow.primitives.via_gen import via_stack, via_array
 from gdsfactory.routing.route_quad import route_quad
 from glayout.flow.pdk.util.comp_utils import evaluate_bbox, prec_ref_center, movex, movey, to_decimal, to_float, move, align_comp_to_port, get_padding_points_cc
 from glayout.flow.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, set_port_orientation, rename_component_ports
@@ -19,10 +19,10 @@ from glayout.flow.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized
 
-from glayout.flow.components.diff_pair_cmirrorbias import diff_pair_ibias
-from glayout.flow.components.stacked_current_mirror import stacked_nfet_current_mirror
-from glayout.flow.components.differential_to_single_ended_converter import differential_to_single_ended_converter
-from glayout.flow.components.row_csamplifier_diff_to_single_ended_converter import row_csamplifier_diff_to_single_ended_converter
+from glayout.flow.blocks.diffpair_cmirror_bias import diff_pair_ibias
+from glayout.flow.blocks.stacked_current_mirror import stacked_nfet_current_mirror
+from glayout.flow.blocks.diff_to_single_converter import differential_to_single_ended_converter
+from glayout.flow.blocks.row_csamp import row_csamplifier_diff_to_single_ended_converter
 
 
 @validate_arguments

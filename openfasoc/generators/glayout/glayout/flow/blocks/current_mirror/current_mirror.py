@@ -3,12 +3,50 @@ from glayout.flow.pdk.mappedpdk import MappedPDK
 from glayout.flow.routing.c_route import c_route
 from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.straight_route import straight_route
+from glayout.flow.spice.netlist import Netlist
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk as sky130
 from glayout.flow.primitives.fet import nmos, pmos
 from glayout.flow.primitives.guardring import tapring
 from glayout.flow.pdk.util.port_utils import add_ports_perimeter	
 from gdsfactory.component import Component
-from typing import Optional 
+from typing import Optional, Union 
+
+
+def cmirror_netlist(
+	pdk: MappedPDK, 
+	width: float,
+	length: float,
+	multipliers: int, 
+	n_or_p_fet: Optional[str] = 'nfet',
+	subckt_only: Optional[bool] = False
+) -> Netlist:
+	if length is None:
+		length = pdk.get_grule('poly')['min_width']
+	if width is None:
+		width = 3 
+	mtop = multipliers if subckt_only else 1
+	model = pdk.models[n_or_p_fet]
+	
+	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={length} w={width} m={mtop} ' + """
+XA VREF VREF VSS VB {model} l={{l}} w={{w}} m={{m}}
+XB VCOPY VREF VSS VB {model} l={{l}} w={{w}} m={{m}}"""
+	source_netlist += "\n.ends {circuit_name}"
+
+	instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult}"
+ 
+	return Netlist(
+		circuit_name='CMIRROR',
+		nodes=['VREF', 'VCOPY', 'VSS', 'VB'], 
+		source_netlist=source_netlist,
+  		instance_format=instance_format,
+		parameters={
+			'model': model,
+			'width': width,
+   			'length': length,	
+			'mult': multipliers
+   		}
+	)
+
 
 #@cell
 def current_mirror(
@@ -58,12 +96,13 @@ def current_mirror(
 	top_level.add_ports(interdigitized_fets.get_ports_list(), prefix="fet_")
 	maxmet_sep = pdk.util_max_metal_seperation()
 	# short source of the fets
-	source_short = top_level << c_route(pdk, interdigitized_fets.ports['A_source_E'], interdigitized_fets.ports['B_source_E'], extension=3*maxmet_sep, viaoffset=False)
+	source_short = interdigitized_fets << c_route(pdk, interdigitized_fets.ports['A_source_E'], interdigitized_fets.ports['B_source_E'], extension=3*maxmet_sep, viaoffset=False)
 	# short gates of the fets
-	gate_short = top_level << c_route(pdk, interdigitized_fets.ports['A_gate_W'], interdigitized_fets.ports['B_gate_W'], extension=3*maxmet_sep, viaoffset=False)
+	gate_short = interdigitized_fets << c_route(pdk, interdigitized_fets.ports['A_gate_W'], interdigitized_fets.ports['B_gate_W'], extension=3*maxmet_sep, viaoffset=False)
 	# short gate and drain of one of the reference 
-	top_level << L_route(pdk, interdigitized_fets.ports['A_drain_W'], gate_short.ports['con_N'], viaoffset=False, fullbottom=False)
+	interdigitized_fets << L_route(pdk, interdigitized_fets.ports['A_drain_W'], gate_short.ports['con_N'], viaoffset=False, fullbottom=False)
 	
+	top_level << interdigitized_fets
 	# add the tie layer
 	if with_tie:
 		tap_sep = max(
@@ -103,5 +142,13 @@ def current_mirror(
 		top_level.add_ports(subtap_ring.get_ports_list(), prefix="substrate_tap_")
   
 	top_level.add_ports(source_short.get_ports_list(), prefix='purposegndports')
-	top_level << interdigitized_fets
+	
+	
+	top_level.info['netlist'] = cmirror_netlist(
+		pdk, 
+  		width=kwargs.get('width', 3), length=kwargs.get('length', 1), multipliers=numcols, 
+    	n_or_p_fet=device,
+		subckt_only=True
+	)
+ 
 	return top_level

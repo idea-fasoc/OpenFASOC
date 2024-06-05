@@ -5,7 +5,7 @@ from gdsfactory.components.rectangle import rectangle
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
 from glayout.flow.primitives.fet import nmos, pmos, multiplier
-from glayout.flow.components.diff_pair import diff_pair
+from glayout.flow.blocks.diff_pair import diff_pair
 from glayout.flow.primitives.guardring import tapring
 from glayout.flow.primitives.mimcap import mimcap_array, mimcap
 from glayout.flow.routing.L_route import L_route
@@ -20,11 +20,11 @@ from pydantic import validate_arguments
 from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized
 from glayout.flow.spice import Netlist
 
-from glayout.flow.components.opamp_twostage import opamp_twostage
-from glayout.flow.components.stacked_current_mirror import current_mirror_netlist
+from glayout.flow.blocks.opamp import opamp_twostage
+from glayout.flow.blocks.current_mirror import cmirror_netlist
 
 def opamp_output_stage_netlist(pdk: MappedPDK, output_amp_fet_ref: ComponentReference, biasParams: list) -> Netlist:
-    bias_netlist = current_mirror_netlist(pdk, biasParams[0], biasParams[1], biasParams[2])
+    bias_netlist = cmirror_netlist(pdk, biasParams[0], biasParams[1], biasParams[2])
 
     output_stage_netlist = Netlist(
         circuit_name="OUTPUT_STAGE",
@@ -38,7 +38,7 @@ def opamp_output_stage_netlist(pdk: MappedPDK, output_amp_fet_ref: ComponentRefe
 
     output_stage_netlist.connect_netlist(
         bias_netlist,
-        [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
+        [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT'), ('VB', 'GND')]
     )
 
     return output_stage_netlist
@@ -163,7 +163,8 @@ def opamp(
     mim_cap_size=(12, 12),
     mim_cap_rows=3,
     rmult: int = 2,
-    with_antenna_diode_on_diffinputs: int=5
+    with_antenna_diode_on_diffinputs: int=5, 
+    add_output_stage: Optional[bool] = True
 ) -> Component:
     """
     create a two stage opamp with an output buffer, args->
@@ -194,8 +195,9 @@ def opamp(
         with_antenna_diode_on_diffinputs
     )
     # add output amplfier stage
-    opamp_top, output_stage_netlist = __add_output_stage(pdk, opamp_top, output_stage_params, output_stage_bias, rmult)
-    opamp_top.info['netlist'] = opamp_netlist(opamp_top.info['netlist'], output_stage_netlist)
+    if add_output_stage:
+        opamp_top, output_stage_netlist = __add_output_stage(pdk, opamp_top, output_stage_params, output_stage_bias, rmult)
+        opamp_top.info['netlist'] = opamp_netlist(opamp_top.info['netlist'], output_stage_netlist)
 
     # return
     return rename_ports_by_orientation(component_snap_to_grid(opamp_top))

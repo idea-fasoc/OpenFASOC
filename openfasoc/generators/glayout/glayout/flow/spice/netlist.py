@@ -192,7 +192,7 @@ class Netlist:
 			**self.parameters
 		}
 
-	def __generate_self_subcircuit(self, prefix: str = '', suffix: str = '') -> str:
+	def __generate_self_subcircuit(self, prefix: str = '', suffix: str = '', with_pins: bool = True) -> str:
 		"""Generates the top-level SPICE subcircuit directive.
 		The name of the subcircuit is set by `self.circuit_name`.
 		"""
@@ -202,8 +202,11 @@ class Netlist:
 			return self.source_netlist.format(**self.generate_source_netlist_params(generated_circuit_name))
 
 		elif len(self.sub_netlists) > 0:
-			main_circuit = f".subckt {generated_circuit_name} {' '.join(self.nodes)}\n"
-
+			if with_pins:
+				main_circuit = f".subckt {generated_circuit_name} {' '.join(self.nodes)}\n"
+			else:
+				main_circuit = f".subckt {generated_circuit_name}\n"
+    
 			for i, netlist in enumerate(self.sub_netlists):
 				main_circuit += netlist.generate_instance(str(i), self.netlist_connections[i]) + "\n"
 
@@ -252,7 +255,7 @@ class Netlist:
 
 		return global_nodes
 
-	def generate_netlist(self, only_subcircuits: bool = False):
+	def generate_netlist(self, only_subcircuits: bool = False, with_pins: bool = True) -> str:
 		"""Generates the final SPICE netlist for the design.
 
 		The final netlist is a set of SPICE subcircuit directives and global directives. The top-level subcircuit is set by `self.circuit_name`.
@@ -290,10 +293,10 @@ class Netlist:
 
 		# GENERATE THE FINAL NETLIST
 		subcircuits = '\n\n'.join(unique_subcircuits_list)
-		main_circuit = self.__generate_self_subcircuit()
+		main_circuit = self.__generate_self_subcircuit(with_pins=with_pins)
 		global_nodes = ' '.join(self.get_global_nodes_list())
 
-		self.spice_netlist = ""
+		self.spice_netlist = "" 
 
 		if len(global_nodes) > 0 and not only_subcircuits: self.spice_netlist += f".global {global_nodes}\n\n"
 

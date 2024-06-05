@@ -5,7 +5,7 @@ from gdsfactory.components.rectangle import rectangle
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
 from glayout.flow.primitives.fet import nmos, pmos, multiplier
-from glayout.flow.components.diff_pair import diff_pair
+from glayout.flow.blocks.diff_pair import diff_pair
 from glayout.flow.primitives.guardring import tapring
 from glayout.flow.primitives.mimcap import mimcap_array, mimcap
 from glayout.flow.routing.L_route import L_route
@@ -19,13 +19,13 @@ from glayout.flow.pdk.util.snap_to_grid import component_snap_to_grid
 from pydantic import validate_arguments
 from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized
 
-from glayout.flow.components.diff_pair_cmirrorbias import diff_pair_ibias
-from glayout.flow.components.stacked_current_mirror import stacked_nfet_current_mirror
-from glayout.flow.components.differential_to_single_ended_converter import differential_to_single_ended_converter
-from glayout.flow.components.row_csamplifier_diff_to_single_ended_converter import row_csamplifier_diff_to_single_ended_converter
-from glayout.flow.components.diff_pair_stackedcmirror import diff_pair_stackedcmirror
+from glayout.flow.blocks.diffpair_cmirror_bias import diff_pair_ibias
+from glayout.flow.blocks.stacked_current_mirror import stacked_nfet_current_mirror
+from glayout.flow.blocks.diff_to_single_converter import differential_to_single_ended_converter
+from glayout.flow.blocks.row_csamp import row_csamplifier_diff_to_single_ended_converter
+from glayout.flow.blocks.diffpair_stacked_cmirror import diff_pair_stackedcmirror
 from glayout.flow.spice import Netlist
-from glayout.flow.components.stacked_current_mirror import current_mirror_netlist
+from glayout.flow.blocks.current_mirror import cmirror_netlist
 
 @validate_arguments
 def __create_and_route_pins(
@@ -141,15 +141,15 @@ def opamp_gain_stage_netlist(mimcap_netlist: Netlist, diff_cs_netlist: Netlist, 
 
     netlist.connect_netlist(
         cs_bias_netlist,
-        [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT')]
+        [('VREF', 'IBIAS'), ('VSS', 'GND'), ('VCOPY', 'VOUT'), ('VB', 'GND')]
     )
 
-    mimcap_ref = netlist.connect_netlist(mimcap_netlist, [('V2', 'VOUT')])
+    mimcap_ref = netlist.connect_netlist(mimcap_netlist, [('V1', 'VOUT'), ('V2', 'VSS2')])
 
     netlist.connect_subnets(
         mimcap_ref,
         diff_cs_ref,
-        [('V1', 'VSS2')]
+        [('V2', 'VSS2')]
     )
 
     return netlist
@@ -219,7 +219,7 @@ def opamp_twostage(
 
     pmos_comps = row_csamplifier_diff_to_single_ended_converter(pdk, pmos_comps, half_common_source_params, rmult)
 
-    cs_bias_netlist = current_mirror_netlist(
+    cs_bias_netlist = cmirror_netlist(
         pdk,
         width=diffpair_bias[0],
         length=diffpair_bias[1],
