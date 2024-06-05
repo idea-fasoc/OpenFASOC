@@ -377,7 +377,7 @@ class ImportCell(GlayoutAction):
         tests.append([["via","via stack","via_stack"],"via_stack","glayout.flow.primitives.via_gen"])
         tests.append([["via array","via_array"],"via_array","glayout.flow.primitives.via_gen"])
         tests.append([["nlp"],"test_stream","../interpreter/deprecated/../deprecated/practice_stream.py"])
-        tests.append([["nmos","nfet"],"nmos","./glayout/flow/primitives/fet/fet.py"])
+        tests.append([["nmos","nfet"],"nmos","./glayout/flow/primitives/fet.py"])
         #print("expected\t\t\tresult")
         for testinst in tests:
             print(ImportCell(*testinst).get_code())
