@@ -2,12 +2,14 @@ Example Notebooks
 =================
 Prefer to learn by example? These notebooks give a practical overview on how to run OpenFASoC's generators:
 
-*Note that the notebooks are designed and maintained by the OpenFASoC team to run in a Google Collab cloud based python env. *
+*Note that the notebooks are designed and maintained by the OpenFASoC team to run in a Google Collab cloud based python env.*
 *Automatically open a collab env by clicking on the link at the top of the notebook*
 
 .. toctree::
     :maxdepth: 1
 
-    notebooks/temp-sense-gen/temp_sense_genCollab.ipynb
-    notebooks/ldo-gen/LDO_notebook.ipynb
-    notebooks/glayout/glayout_opamp.ipynb
+    notebooks/temp-sense-gen/temp_sense_genCollab.ipynb  
+    notebooks/ldo-gen/LDO_notebook.ipynb  
+    notebooks/glayout/glayout_opamp.ipynb  
+    notebooks/glayout/Glayout_Cells.ipynb  
+    notebooks/glayout/Glayout_Via.ipynb  

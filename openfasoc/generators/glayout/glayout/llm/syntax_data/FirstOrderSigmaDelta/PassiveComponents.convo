@@ -1,0 +1,24 @@
+PassiveComponents
+import resistor
+# make a rf pair
+place a resistor called rf1
+place a resistor called rf2
+# make a ri pair
+place a resistor called ri1
+place a resistor called ri2
+# make the capacitor pair
+place a mimcap called c1 
+place a mimcap called c2
+move rf2 right next to rf1
+move ri1 below rf2
+move ri2 right next to ri1
+move ri2 below rf2
+move c1 right next to ri2
+move c2 right next to ri2
+move c2 below rf2
+# Short the terminals of the rf ri resistor pairs
+route between ri1_pfet_multiplier_0_gate_W and rf1_pfet_multiplier_0_drain_W using c_route
+route between ri2_pfet_multiplier_0_gate_W and rf2_pfet_multiplier_0_drain_W using c_route
+# Connect rf-ri junction to capacitor
+route between rf1_pfet_multiplier_0_gate_W and c1_top_met_W using c_route with extension=2
+route between ri2_pfet_multiplier_0_gate_E and c2_top_met_W using snake_route

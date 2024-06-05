@@ -1,5 +1,0 @@
-tester
-place an nmos called ref with width 5 length 1 with_dummy False with_tie False with_substrate_tap False with_dnwell False
-place an nmos called mirror with width 10 length 1 with_dummy False with_tie False with_substrate_tap False with_dnwell False
-move ref to the right of mirror
-route between ref_multiplier_0_source_E and mirror_multiplier_0_source_W using straight

@@ -1,0 +1,8 @@
+CurrentMirrorNtypeInterdigitated
+create a float parameter called width
+create a float parameter called length
+create an int parameter called fingers 
+place an interdigitated nfet called cm with numcols=fingers, dummy=True, with_substrate_tap=False, with_tie=True, kwargs={"width": width, "length": length, "rmult":1}
+route between cm_A_gate_E and cm_B_gate_E using smart_route
+route between cm_A_drain_E and cm_A_gate_E using smart_route
+route between cm_A_source_E and cm_B_source_E using smart_route

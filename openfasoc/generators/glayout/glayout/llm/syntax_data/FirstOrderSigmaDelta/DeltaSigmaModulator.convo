@@ -1,0 +1,15 @@
+DeltaSigmaModulator
+import OpAmp
+import PassiveComponents
+import LatchedComparator
+place an OpAmp called oa 
+placer a PassiveComponents called passive
+place a LatchedComparator called lc with n_latch_width 1 p_latch_width 1 
+move passive above oa
+move lc right next to oa
+# Route outp/nm to the bottom metal of the capacitors
+route between oa_abstage_pp1_p1_multiplier_0_drain_E and passive_c1_bottom_met_E using c_route with extension=2
+route between oa_abstage_pp2_p1_multiplier_0_drain_E and passive_c2_bottom_met_E using c_route with extension=2
+# Route Ri to inputs of OpAmp
+route between passive_ri1_pfet_multiplier_0_source_W and oa_finteg_gm1_B_gate_W using c_route with extension=5
+route between passive_ri2_pfet_multiplier_0_source_E and oa_abstage_gm31_A_gate_E using c_route with extension=3

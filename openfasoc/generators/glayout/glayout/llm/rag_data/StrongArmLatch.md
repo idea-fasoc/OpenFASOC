@@ -1,0 +1,3 @@
+# Strong Arm Latch
+A strong arm latch is a comparator (which means it compares two input voltages). If one voltage is higher it outputs a high voltage and if one of them is lower then it output a low voltage.
+A strong arm latch consists of a diffpair. The inputs of the diffpair are the inputs of the strong arm latch. The diff pair outputs are connected to a cross coupled inverter..... drain. There are 2 pfets for... 

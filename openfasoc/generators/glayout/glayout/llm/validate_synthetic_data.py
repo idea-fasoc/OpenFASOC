@@ -25,7 +25,11 @@ def instantiate_convo(pdk: MappedPDK, convo_file: Union[str, Path]) -> bool:
     try:
         # convert NLP to code and pass to show_glayout_code_cell
         session_code = glayout.syntaxer.dynamic_load.run_session(load_conversation=convo_file, restore_and_exit=True)
-        return glayout.syntaxer.dynamic_load.show_glayout_code_cell(pdk, session_code)
+        comp = glayout.syntaxer.dynamic_load.run_glayout_code_cell(pdk, session_code)
+        comp.show()
+        # pdk.magic_drc(comp)
+        # pdk.lvs_netgen(comp)
+        return True
     except Exception as e:
         print(f"Error running session with {convo_file}: {e}")
         print(traceback.format_exc())

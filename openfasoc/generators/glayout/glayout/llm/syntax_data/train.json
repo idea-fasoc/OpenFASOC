@@ -1,0 +1,140 @@
+{
+    "data": [
+        {
+            "NLPfilename": "BiasVoltageGenerator",
+            "LLMprompt": "A generic BiasVoltageGenerator contains a src pmos and a load nmos. The load should be below the src. The drains of both transistors and load gate should be shorted. Connect the src gate and load source. "
+        },
+        {
+            "NLPfilename": "CrossCoupledInverters",
+            "LLMprompt": "cross coupled inverters are 2 inverters where the output of one is the input of the other. Use the interdigitated place macro to match the pfet and nfet of both inverters."
+        },
+        {
+            "NLPfilename": "DiffPair",
+            "LLMprompt": "Create an nfet differential pair. Do not use any matching techniques, simply place 2 nfets side by side and route their sources."
+        },
+        {
+            "NLPfilename": "SourceFollow",
+            "LLMprompt": "Create an ntype source follower where the amplifier is called srcfoll and the load is called isrc. Place the load below the amplifier and route the load source to amplifier drain. Do not use any matching techniques."
+        },
+        {
+            "NLPfilename": "CascodeCommonGate",
+            "LLMprompt": "A cascode common gate stage consists of 2 nfets, an input nfet and output nfet. The source of the input and drain of the output are connected. Do not use any matching techniques, just place the output above the input. Parametrize everything."
+        },
+        {
+            "NLPfilename": "CTATVGen",
+            "LLMprompt": "A complimentary to absolute temperature or CTAT voltage generator is a pair of nmos transistors, one src and one load. The drain of src is connected to source of load. Do not use any matching techniques. Place the src above the load. Parametrize everything."
+        },
+        {
+            "NLPfilename": "Inverter",
+            "LLMprompt": "An inverter consists of a pmos for pullup and nmos for pulldown, with their drains connected forming the output node, and their gates connected forming the input node. Typically the pfet is above the nfet. Parametrize everything."
+        },
+        {
+            "NLPfilename": "CascodeCommonSource",
+            "LLMprompt": "A cascode common source consists of an input nmos and bias nfet which are stacked above each other with the input at the bottom. The bias source is connected to the input drain. parametrize everything."
+        },
+        {
+            "NLPfilename": "CurrentMirrorNtype",
+            "LLMprompt": "An n-type current mirror consists of 2 nmos transistors, a reference and mirror. Place them side by side connecting the gates together, and the sources together. Also connect the drain and gate of the mirror transistor. Parametrize everything. Do not use special placment techniques."
+        },
+        {
+            "NLPfilename": "LowNoiseAmp",
+            "LLMprompt": "One type of low noise amplifier uses two nfets one for input and one for gain. The gain source and input gate form the input node. The input source and gain drain form the output node. Do not use any special place strategies."
+        },
+        {
+            "NLPfilename": "ULPD",
+            "LLMprompt": "An ultra low power diode is formed using 2 nfet transistors. One is called forward and the other is called leakagered. Place forward on top. Route the gate to source of both transistors. Do not do any matching."
+        },
+        {
+            "NLPfilename": "ClassBPushPull",
+            "LLMprompt": "Create a class B push pull amplfier. place an nfet named supply and pfet called absorb. parametrize everything. Route the sources together, and route the gates together. Dont do matching."
+        },
+        {
+            "NLPfilename": "CurrentMirrorNtypeInterdigitated",
+            "LLMprompt": "Use interdigitized matching to create an n-type current mirror. Parametrize width, length, and fingers."
+        },
+        {
+            "NLPfilename": "NAND",
+            "LLMprompt": "A NAND gate is a digital circuit with 2 pullup and 2 pulldown transistors. The pullup transistors are in parralel and the pulldown transistors are in series. Place the pullup network above the pulldown network. Do not use matching."
+        },
+        {
+            "NLPfilename": "Varactor",
+            "LLMprompt": "Varactors are variable capactors. To create one, place two nmos transistors named control and accumulation. The sources are shorted, and the drains are shorted. The control source is connected to the accumulation drain."
+        },
+        {
+            "NLPfilename": "CommonSourceAmplifier",
+            "LLMprompt": "A common source amplifier contains an input nmos and bias pmos. The input should be at the bottom. route the input drain and bias source."
+        },
+        {
+            "NLPfilename": "CurrentMirrorPtype",
+            "LLMprompt": "Create a current mirror using pmos transistors. Do not match anything. Parametrize everything."
+        },
+        {
+            "NLPfilename": "NoiseXDiffConv",
+            "LLMprompt": "A NoiseXDiffConv is a type of circuit with 2 nfet transistors one below the other, and the gate of one connected to the drain of the other."
+        },
+        {
+            "NLPfilename": "VoltageFollower",
+            "LLMprompt": "A voltage follower consists of a transconductance enhancement nfet or tet and gate-source capacitance nfet or gsc. Do not use special placement strategies. Route the source of tet to drain of gsc and drain of tet to gate of gsc."
+        },
+        {
+            "NLPfilename": "CommonSourceAmplifierFoldedDiodeLoad",
+            "LLMprompt": "Another type of common source amplifier using nfet transistors has a folded diode load, whereby the bias transistor is replaced with a diode connected transistor. Route the gate and drain of the diode. Short the drains and sources. Do not use special place techniques."
+        },
+        {
+            "NLPfilename": "CurrentMirrorPtypeInterdigitated",
+            "LLMprompt": "Use interdigitized matching to create a p-type current mirror. Parametrize width, length, and fingers."
+        },
+        {
+            "NLPfilename": "NOR",
+            "LLMprompt": "A nor gate is a digital circuit with 2 pullup and 2 pulldown transistors. The pullup transistors are in series and the pulldown transistors are in parralel. Place the pullup network above the pulldown network. Do not use matching."
+        },
+        {
+            "NLPfilename": "CommonSourceAmplifierWDiodeLoad",
+            "LLMprompt": "A high speed common source amplifier using nfet transistors which has a diode load is called a wide band amplifier. The source of the input transistor and the diode drain are shorted, and so are the diode gate and diode drain."
+        },
+        {
+            "NLPfilename": "DegenCommonGate",
+            "LLMprompt": "Use two nfets to create a degen common gate. Name one nfet isrc and the other load. The load drain and isrc source should be shorted."
+        },
+        {
+            "NLPfilename": "PTATVoltageGen",
+            "LLMprompt": "A proportional to absolute temperature voltage generator also known as PTAT contains a mirror nmos and bias nmos. place the bias below the mirror and short the gates. route the gate of mirror to the drain of mirror and the source of mirror to drain of bias."
+        },
+        {
+            "NLPfilename": "ConstBiasVoltageGen",
+            "LLMprompt": "This bias voltage generator utilizes two n-type transistors that must have different threshold voltages. The first transistor is called the source, and its source must be connected to the drain of the second transistor, also called the load. The gate of the load must also be connected to its drain. Connect the gate of source and the source of load. Don't do any matching and parametrize everything."
+        },
+        {
+            "NLPfilename": "DegenCommonSource",
+            "LLMprompt": "This is a degenerated common source stage. It consists of two nfets, one is called isrc, and the other is called degen. Connect the source of isrc to the drain of degen. Short the gates of both transistors. Don't do any matching and parametrize everything."
+        },
+        {
+            "NLPfilename": "RegulatedCascode",
+            "LLMprompt": "This is a regulated cascode. It consists of two nmos transistors. One is called the cascode, and the other feedback. The gate of cascode is connected to the drain of feedback. The gate of feedback is connected to the source of cascode. Don't do any matching and parametrize everything."
+        },
+        {
+            "NLPfilename": "ClassBPushPullInterdigitated",
+            "LLMprompt": "Create an interdigitated version of a class B push pull amplifier. Parametrize the width, length, and fingers."
+        },
+        {
+            "NLPfilename": "CascodeCommonGateInterdigitated",
+            "LLMprompt": "Create an interdigitated version of a cascode common gate stage. Parametrize the width, length, and fingers."
+        },
+        {
+            "NLPfilename": "CascodeCommonSourceInterdigitated",
+            "LLMprompt": "Create an interdigitated version of a cascode common source stage. Parametrize the width, length, and fingers."
+        },
+        {
+            "NLPfilename": "ClassBPushPullInterdigitated",
+            "LLMprompt": "Create a class B push pull amplfier. place an nfet named supply and pfet called absorb. parametrize everything. Route the sources together, and route the gates together. Interdigitate both transistors."
+        },
+        {
+            "NLPfilename": "CascodeCommonGateInterdigitated",
+            "LLMprompt": "A cascode common gate stage consists of 2 nfets, an input nfet and output nfet. The source of the input and drain of the output are connected. Do not use any matching techniques, just place the output above the input. Parametrize everything. The transistors should be matched through interdigitation."
+        },
+        {
+            "NLPfilename": "CascodeCommonSourceInterdigitated",
+            "LLMprompt": "A cascode common source consists of an input nmos and bias nfet, both of which are interdigitated. The bias source is connected to the input drain. parametrize everything."
+        }
+    ]
+}

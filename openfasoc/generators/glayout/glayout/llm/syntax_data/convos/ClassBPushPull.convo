@@ -1,14 +1,15 @@
 ClassBPushPull
-create a float parameter called width_m1
-create a float parameter called width_m2
-create a float parameter called length_m1
-create a float parameter called length_m2 
-create a int parameter called m1_multiplier
-create a int parameter called m2_multiplier
-create a int parameter called m1_fingers
-create a int parameter called m2_fingers
-place a nmos called m1 with width width_m1 length length_m1 fingers m1_fingers rmult 1 multipliers m1_multiplier with_substrate_tap False with_tie True sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy True with_dnwell False
-place a pmos called m2 with width width_m2 length length_m2 fingers m2_fingers rmult 1 multipliers m2_multiplier with_substrate_tap False with_tie True sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy True 
-move m2 below m1
-route between m1_multiplier_0_source_W and m2_multiplier_0_source_W using c_route with extension=3
-route between m1_multiplier_0_gate_E and m2_multiplier_0_gate_E using c_route with extension=3
+# figure 19 exactly
+create a float parameter called supply_width
+create a float parameter called absorb_width
+create a float parameter called supply_length
+create a float parameter called absorb_length 
+create a int parameter called supply_multiplier
+create a int parameter called absorb_multiplier
+create a int parameter called supply_fingers
+create a int parameter called absorb_fingers
+place a nmos called supply with width=supply_width, length=supply_length, fingers=supply_fingers, rmult=1, multipliers=supply_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a pmos called absorb with width=absorb_width, length=absorb_length, fingers=absorb_fingers, rmult=1, multipliers=absorb_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True
+move absorb below supply
+route between supply_source_W and absorb_source_W using smart_route
+route between supply_gate_E and absorb_gate_E using smart_route

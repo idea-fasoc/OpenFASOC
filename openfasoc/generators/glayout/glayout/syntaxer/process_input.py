@@ -315,7 +315,10 @@ What would you like to do?"""
             words = nltk.word_tokenize(
                 text_input.replace("(", "").replace(")", "").replace("by", "").replace("with","")
             )
-            self.code.update_move_table("absolute", words[1], words[2])
+            move_distance = words[2]
+            if len(words) > 4 and "," in words[3]:
+                move_distance = words[2] + "," + words[4]
+            self.code.update_move_table("absolute", words[1], move_distance)
         return True
 
     def show_current_component(self, text_input: str) -> False:

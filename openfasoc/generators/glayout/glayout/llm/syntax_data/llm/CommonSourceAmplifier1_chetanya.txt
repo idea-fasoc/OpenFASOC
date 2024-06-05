@@ -1,1 +1,0 @@
-place an nfet common source amplifier/CS amplifier with the load fet in the diode connected configuration. Parameterise the widths, multipliers, and fingers of the mosfets and keep the substrate taprings off. Do not add deep-nwells to either fet. 

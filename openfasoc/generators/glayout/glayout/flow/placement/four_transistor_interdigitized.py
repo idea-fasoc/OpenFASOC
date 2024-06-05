@@ -14,6 +14,7 @@ def generic_4T_interdigitzed(
     top_row_device: Literal["nfet", "pfet"],
     bottom_row_device: Literal["nfet", "pfet"],
     numcols: int,
+    length: float=None,
     with_substrate_tap: bool = True,
     top_kwargs: Optional[dict]=None,
     bottom_kwargs: Optional[dict]=None
@@ -25,13 +26,13 @@ def generic_4T_interdigitzed(
     # place
     toplvl = Component()
     if top_row_device=="nfet":
-        toprow = toplvl << two_nfet_interdigitized(pdk,numcols,with_substrate_tap=False,**top_kwargs)
+        toprow = toplvl << two_nfet_interdigitized(pdk,numcols,with_substrate_tap=False,length=length,**top_kwargs)
     else:
-        toprow = toplvl << two_pfet_interdigitized(pdk,numcols,with_substrate_tap=False,**top_kwargs)
+        toprow = toplvl << two_pfet_interdigitized(pdk,numcols,with_substrate_tap=False,length=length,**top_kwargs)
     if bottom_row_device=="nfet":
-        bottomrow = toplvl << two_nfet_interdigitized(pdk,numcols,with_substrate_tap=False,**bottom_kwargs)
+        bottomrow = toplvl << two_nfet_interdigitized(pdk,numcols,with_substrate_tap=False,length=length,**bottom_kwargs)
     else:
-        bottomrow = toplvl << two_pfet_interdigitized(pdk,numcols,with_substrate_tap=False,**bottom_kwargs)
+        bottomrow = toplvl << two_pfet_interdigitized(pdk,numcols,with_substrate_tap=False,length=length,**bottom_kwargs)
     # move
     toprow.movey(pdk.snap_to_2xgrid((evaluate_bbox(bottomrow)[1]/2 + evaluate_bbox(toprow)[1]/2 + pdk.util_max_metal_seperation())))
     # add substrate tap

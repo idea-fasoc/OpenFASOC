@@ -1,1 +1,0 @@
-make a currentmirror. Make the width, length, num fingers and multipliers all parameters and they should be the same for both the reference and mirror.

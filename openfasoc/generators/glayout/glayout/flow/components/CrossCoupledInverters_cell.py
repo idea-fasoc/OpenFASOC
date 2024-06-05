@@ -3,7 +3,7 @@
 # Apache License
 # Version 2.0, January 2004
 # http://www.apache.org/licenses/
-# 2024-05-22 17:21:55.826288
+# 2024-06-01 00:36:26.578529
 
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from gdsfactory import Component
@@ -27,7 +27,8 @@ from glayout.flow.routing.straight_route import straight_route
 
 def CrossCoupledInverters_cell(
 	pdk: MappedPDK,
-	ccinvs_numfingers: int, 
+	ccinvs_length: float, 
+	ccinvs_fingers: int, 
 ):
 	pdk.activate()
 	CrossCoupledInverters = Component(name="CrossCoupledInverters")
@@ -36,7 +37,7 @@ def CrossCoupledInverters_cell(
 	triple_maxmetalsep = 3*pdk.util_max_metal_seperation()
 	quadruple_maxmetalsep = 4*pdk.util_max_metal_seperation()
 	# placing ccinvs centered at the origin
-	ccinvs = generic_4T_interdigitzed(pdk,**{'numcols': ccinvs_numfingers, 'top_row_device': "pfet", 'bottom_row_device': "nfet"})
+	ccinvs = generic_4T_interdigitzed(pdk,**{'numcols': ccinvs_fingers, 'length': ccinvs_length, 'top_row_device': "pfet", 'bottom_row_device': "nfet"})
 	ccinvs_ref = prec_ref_center(ccinvs)
 	CrossCoupledInverters.add(ccinvs_ref)
 	CrossCoupledInverters.add_ports(ccinvs_ref.get_ports_list(),prefix="ccinvs_")
