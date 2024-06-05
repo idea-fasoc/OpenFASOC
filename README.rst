@@ -33,7 +33,7 @@ This project is led by a team of researchers at the University of Michigan and i
         :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/cryo_gen.yml
 
 * **Glayout Generators -**
-    `Installation and Running <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/gdsfactory-gen/tapeout_and_RL/README.md>`_
+    `Installation and Running <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/glayout/tapeout/tapeout_and_RL/README.md>`_
 
 
 Getting Started
@@ -94,7 +94,7 @@ Generators
 |                                          | sky130hd,          |                            |                                                                                                                |                        
 |                                          | sky130hvl          |                            |                                                                                                                |                                     
 +------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+
-| Glayout                                  | sky130,            |     Yes                    | https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/gdsfactory-gen/tapeout_and_RL/README.md |
+| Glayout                                  | sky130,            |     Yes                    | https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/glayout/tapeout/tapeout_and_RL/README.md |
 |                                          | gf180              |                            |                                                                                                                |
 +------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+
 
