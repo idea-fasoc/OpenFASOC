@@ -21,11 +21,11 @@ from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interd
 
 from glayout.flow.blocks.diffpair_cmirror_bias import diff_pair_ibias
 from glayout.flow.blocks.stacked_current_mirror import stacked_nfet_current_mirror
-from glayout.flow.blocks.diff_to_single_converter import differential_to_single_ended_converter
-from glayout.flow.blocks.row_csamp import row_csamplifier_diff_to_single_ended_converter
-from glayout.flow.blocks.diffpair_stacked_cmirror import diff_pair_stackedcmirror
+from glayout.flow.blocks.opamp.differential_to_single_ended_converter import differential_to_single_ended_converter
+from glayout.flow.blocks.opamp.row_csamplifier_diff_to_single_ended_converter import row_csamplifier_diff_to_single_ended_converter
+from glayout.flow.blocks.opamp.diff_pair_stackedcmirror import diff_pair_stackedcmirror
 from glayout.flow.spice import Netlist
-from glayout.flow.blocks.current_mirror import cmirror_netlist
+from glayout.flow.blocks.current_mirror import current_mirror_netlist
 
 @validate_arguments
 def __create_and_route_pins(
@@ -219,7 +219,7 @@ def opamp_twostage(
 
     pmos_comps = row_csamplifier_diff_to_single_ended_converter(pdk, pmos_comps, half_common_source_params, rmult)
 
-    cs_bias_netlist = cmirror_netlist(
+    cs_bias_netlist = current_mirror_netlist(
         pdk,
         width=diffpair_bias[0],
         length=diffpair_bias[1],
