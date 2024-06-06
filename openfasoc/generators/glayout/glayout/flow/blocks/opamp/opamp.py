@@ -20,7 +20,7 @@ from pydantic import validate_arguments
 from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized
 from glayout.flow.spice import Netlist
 
-from glayout.flow.blocks.opamp import opamp_twostage
+from glayout.flow.blocks.opamp.opamp_twostage import opamp_twostage
 from glayout.flow.blocks.current_mirror import current_mirror_netlist
 
 def opamp_output_stage_netlist(pdk: MappedPDK, output_amp_fet_ref: ComponentReference, biasParams: list) -> Netlist:
