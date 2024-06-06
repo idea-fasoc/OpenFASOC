@@ -21,7 +21,7 @@ from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interd
 
 from glayout.flow.blocks.diffpair_cmirror_bias import diff_pair_ibias
 from glayout.flow.blocks.stacked_current_mirror import stacked_nfet_current_mirror
-from glayout.flow.blocks.opamp.differential_to_single_ended_converter import differential_to_single_ended_converter
+from glayout.flow.blocks.differential_to_single_ended_converter import differential_to_single_ended_converter
 from glayout.flow.blocks.opamp.row_csamplifier_diff_to_single_ended_converter import row_csamplifier_diff_to_single_ended_converter
 
 

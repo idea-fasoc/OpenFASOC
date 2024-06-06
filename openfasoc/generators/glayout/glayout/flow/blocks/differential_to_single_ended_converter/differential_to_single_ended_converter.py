@@ -166,7 +166,7 @@ XBOT2 VOUT VIN VSS2 VSS {model} l={{l}} w={{w}} m={{mb}}
         }
     )
 
-def differential_to_single_ended_converter(pdk: MappedPDK, rmult: int, half_pload: tuple[float,float,int], via_xlocation) -> tuple:
+def differential_to_single_ended_converter(pdk: MappedPDK, rmult: int, half_pload: tuple[float,float,int], via_xlocation) -> Component:
     clear_cache()
     pmos_comps, ptop_AB, pbottom_AB, LRplusdopedPorts, LRgatePorts, LRdrainsPorts, LRsourcesPorts, LRdummyports = __create_sharedgatecomps(pdk, rmult,half_pload)
     clear_cache()
