@@ -23,3 +23,5 @@ libx11-dev
 libx11-6
 libxaw7-dev
 libreadline6-dev
+libz-dev
+libgit2-dev

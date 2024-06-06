@@ -2,7 +2,7 @@ from pathlib import Path
 import json
 from typing import Union
 import time
-import requests
+import argparse
 
 from glayout.llm.manage_data import (
     load_preprocessed_pretokenized_data,
@@ -34,7 +34,35 @@ from transformers import (
 import transformers
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 
-accesstoken = "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"
+
+def get_huggingface_token():
+    """Parse the command-line arguments to retrieve the Hugging Face access token.
+    This function uses argparse to handle command-line arguments and specifically looks for an 
+    access token required to download models and tokenizers from Hugging Face. If the token is 
+    not provided, it raises an EnvironmentError with instructions on how to obtain one.
+    Returns:
+        str: The Hugging Face access token.
+    Raises:
+        EnvironmentError: If the access token is not provided in the command-line arguments.
+    """
+    parser = argparse.ArgumentParser(description="Manage, interact, and run the Glayout LLM")
+    parser.add_argument(
+        "-t",
+        "--token",
+        type=str,
+        help="Specify the access token you are using to download the model and tokenizer from huggingface",
+    )
+    args = parser.parse_args()
+    if args.token is None:
+        errstring = "To download models from huggingface you need a hugging face account and an access token"
+        errstring += "\nYou can create a hugging face account here: https://huggingface.co/join\n"
+        errstring += "Once you have an account and sign in, you can create an access token (need read access) here:\n"
+        errstring += "https://huggingface.co/settings/tokens\n"
+        errstring += "pass the access token in the command line with the option --token=[insert token here]"
+        raise EnvironmentError(errstring)
+    return args.token
+#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
+accesstoken = get_huggingface_token()
 
 
 # returns model, tokenizer
@@ -305,7 +333,7 @@ class GlayoutLLMSessionHandler:
             return_tensors="pt",
         )
         inputs = inputs.to(self.device)
-        outputs = self.model.generate(input_ids=inputs, max_new_tokens=512)
+        outputs = self.model.generate(input_ids=inputs, max_new_tokens=4096)
         response = self.tokenizer.decode(
             outputs[0][len(inputs[0]) : -1], skip_special_tokens=False
         )

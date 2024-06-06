@@ -12,7 +12,7 @@ from gdsfactory.component import Component
 from typing import Optional, Union 
 
 
-def cmirror_netlist(
+def current_mirror_netlist(
 	pdk: MappedPDK, 
 	width: float,
 	length: float,
@@ -144,7 +144,7 @@ def current_mirror(
 	top_level.add_ports(source_short.get_ports_list(), prefix='purposegndports')
 	
 	
-	top_level.info['netlist'] = cmirror_netlist(
+	top_level.info['netlist'] = current_mirror_netlist(
 		pdk, 
   		width=kwargs.get('width', 3), length=kwargs.get('length', 1), multipliers=numcols, 
     	n_or_p_fet=device,

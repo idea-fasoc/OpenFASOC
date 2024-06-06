@@ -60,8 +60,10 @@ def check_python_requirements(requirements_file):
     """Check if all Python requirements are installed using the requirements file provided
     in the top level directory of OpenFASOC. Checks the package versions as well"""
     print_heading("Checking Python requirements")
-    with open(requirements_file, 'r') as f:
-        requirements = f.read().splitlines()
+    # do not directly check reqs files because it has llm only packages
+    #with open(requirements_file, 'r') as f:
+    #    requirements = f.read().splitlines()
+    requirements = ['gdsfactory==7.7.0', 'prettyprint', 'prettyprinttree', 'nltk']
     for requirement in requirements:
         # Split the requirement safely
         parts = requirement.split('==')
@@ -134,18 +136,22 @@ def check_miniconda3_and_pdk():
     required_pdk_dirs = ["sky130A", "gf180mcuC"]
     missing_dirs = [pdk_dir for pdk_dir in required_pdk_dirs if not (pdk_root / pdk_dir).exists()]
 
-    if missing_dirs:
+    if len(missing_dirs)==len(required_pdk_dirs):
+        raise EnvironmentError(f"no installed PDK was found from {required_pdk_dirs}")
+    elif missing_dirs:
         warnings.warn(f"\nMissing required PDK directories: {', '.join(missing_dirs)}")
-
-    print("\nAll required PDK directories are present!")
+    else:
+        print("\nAll required PDK directories are present!")
     return miniconda3_path, pdk_root
 
 def place_nfet_run_lvs():
     """places a default nmos components using the sky130 pdk, and runs netgen lvs on it. This utilises the spice generation of the component, magic, and netgen, so it makes up a good test for the installation"""
-    
+
     print_heading("NMOS and LVS")
     print("\n...Creating nmos component...")
     nmos_component = nmos(sky130)
+    print("\n...Showing nmos component...")
+    nmos_component.show()
     print("Created nmos component!")
     print("\n...Running LVS...")
     nmos_component.name = 'nmos_test'
@@ -159,7 +165,8 @@ if __name__ == "__main__":
     print_dynamic_separator()
     check_python_version()
     print_dynamic_separator()
-    check_python_requirements("../../../requirements.txt")
+    #check_python_requirements("../../../requirements.txt")
+    check_python_requirements()
     print_dynamic_separator()
     miniconda3_path, pdk_root = check_miniconda3_and_pdk()
     print_dynamic_separator()

@@ -1,2 +1,1 @@
-from .opamp_twostage import *
-from .opamp import *
+from glayout.flow.blocks.opamp.opamp import opamp, opamp_netlist
