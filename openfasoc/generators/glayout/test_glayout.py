@@ -7,6 +7,7 @@ from pathlib import Path
 from importlib import metadata
 from tempfile import TemporaryDirectory
 import warnings
+from typing import Optional
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 
 # used for pretty printing messages
@@ -56,7 +57,7 @@ def check_python_version():
     print("\nPython version is 3.10 or above!")
         
 # check if all requirements have been installed
-def check_python_requirements(requirements_file):
+def check_python_requirements(requirements_file: Optional[str] = '../../../requirements.txt'):
     """Check if all Python requirements are installed using the requirements file provided
     in the top level directory of OpenFASOC. Checks the package versions as well"""
     print_heading("Checking Python requirements")
@@ -165,7 +166,6 @@ if __name__ == "__main__":
     print_dynamic_separator()
     check_python_version()
     print_dynamic_separator()
-    #check_python_requirements("../../../requirements.txt")
     check_python_requirements()
     print_dynamic_separator()
     miniconda3_path, pdk_root = check_miniconda3_and_pdk()
