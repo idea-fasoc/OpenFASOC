@@ -2783,15 +2783,15 @@ X6 a_13831_2559# w_15508_8650# vref vgnd sky130_fd_pr__nfet_05v0_nvt w=120e+06u 
 X7 vref w_15508_8650# a_4672_2559# vgnd sky130_fd_pr__nfet_05v0_nvt w=120e+06u l=900000u nf=120
 X8 a_9292_2559# w_15508_8650# vref vgnd sky130_fd_pr__nfet_05v0_nvt w=120e+06u l=900000u nf=120
 X9 vref w_15508_8650# a_1502_9722# vgnd sky130_fd_pr__nfet_05v0_nvt w=30e+06u l=900000u nf=30
-X10 vpwr trim2 a_2399_9722# vpwr sky130_fd_pr__pfet_01v8 w=3e+06u l=500000u
+X10 vpwr trim2 a_2399_9722# vpwr sky130_fd_pr__pfet_g5v0d10v5 w=3e+06u l=500000u
 X11 w_16618_2584# w_16618_2584# w_17752_3595# w_17752_3595# sky130_fd_pr__nfet_g5v0d10v5 w=2e+06u l=500000u nf=2
 X12 w_17752_3595# w_17752_3595# vgnd vgnd sky130_fd_pr__nfet_g5v0d10v5 w=2e+06u l=500000u nf=2
-X13 vpwr trim7 a_9292_2559# vpwr sky130_fd_pr__pfet_01v8 w=3e+06u l=500000u
-X14 vpwr trim1 a_1502_9722# vpwr sky130_fd_pr__pfet_01v8 w=3e+06u l=500000u
+X13 vpwr trim7 a_9292_2559# vpwr sky130_fd_pr__pfet_g5v0d10v5 w=3e+06u l=500000u
+X14 vpwr trim1 a_1502_9722# vpwr sky130_fd_pr__pfet_g5v0d10v5 w=3e+06u l=500000u
 X15 w_15508_6628# w_15508_6628# w_15508_5617# w_15508_5617# sky130_fd_pr__nfet_g5v0d10v5 w=2e+06u l=500000u nf=2
 X16 w_15508_5617# w_15508_5617# w_15508_4606# w_15508_4606# sky130_fd_pr__nfet_g5v0d10v5 w=2e+06u l=500000u nf=2
 X17 w_15508_4606# w_15508_4606# w_15508_3595# w_15508_3595# sky130_fd_pr__nfet_g5v0d10v5 w=2e+06u l=500000u nf=2
-X18 vpwr trim9 a_12329_2559# vpwr sky130_fd_pr__pfet_01v8 w=3e+06u l=500000u
+X18 vpwr trim9 a_12329_2559# vpwr sky130_fd_pr__pfet_g5v0d10v5 w=3e+06u l=500000u
 X19 w_15508_3595# w_15508_3595# w_15508_2584# w_15508_2584# sky130_fd_pr__nfet_g5v0d10v5 w=2e+06u l=500000u nf=2
 X20 vref vref w_15508_8650# w_15508_8650# sky130_fd_pr__nfet_g5v0d10v5 w=2e+06u l=500000u nf=2
 X21 w_15508_8650# w_15508_8650# w_15508_7639# w_15508_7639# sky130_fd_pr__nfet_g5v0d10v5 w=2e+06u l=500000u nf=2
@@ -2803,12 +2803,12 @@ X26 w_16618_3595# w_16618_3595# w_16618_2584# w_16618_2584# sky130_fd_pr__nfet_g
 X27 w_15508_2584# w_15508_2584# w_16618_8650# w_16618_8650# sky130_fd_pr__nfet_g5v0d10v5 w=2e+06u l=500000u nf=2
 X28 w_16618_8650# w_16618_8650# w_16618_7639# w_16618_7639# sky130_fd_pr__nfet_g5v0d10v5 w=2e+06u l=500000u nf=2
 X29 w_16618_7639# w_16618_7639# w_16618_6628# w_16618_6628# sky130_fd_pr__nfet_g5v0d10v5 w=2e+06u l=500000u nf=2
-X30 vpwr trim4 a_4672_2559# vpwr sky130_fd_pr__pfet_01v8 w=3e+06u l=500000u
-X31 vpwr trim8 a_10794_2559# vpwr sky130_fd_pr__pfet_01v8 w=3e+06u l=500000u
-X32 vpwr trim5 a_6219_2559# vpwr sky130_fd_pr__pfet_01v8 w=3e+06u l=500000u
-X33 vpwr trim6 a_7730_2559# vpwr sky130_fd_pr__pfet_01v8 w=3e+06u l=500000u
-X34 vpwr trim10 a_13831_2559# vpwr sky130_fd_pr__pfet_01v8 w=3e+06u l=500000u
-X35 vpwr trim3 a_3491_9722# vpwr sky130_fd_pr__pfet_01v8 w=3e+06u l=500000u
+X30 vpwr trim4 a_4672_2559# vpwr sky130_fd_pr__pfet_g5v0d10v5 w=3e+06u l=500000u
+X31 vpwr trim8 a_10794_2559# vpwr sky130_fd_pr__pfet_g5v0d10v5 w=3e+06u l=500000u
+X32 vpwr trim5 a_6219_2559# vpwr sky130_fd_pr__pfet_g5v0d10v5 w=3e+06u l=500000u
+X33 vpwr trim6 a_7730_2559# vpwr sky130_fd_pr__pfet_g5v0d10v5 w=3e+06u l=500000u
+X34 vpwr trim10 a_13831_2559# vpwr sky130_fd_pr__pfet_g5v0d10v5 w=3e+06u l=500000u
+X35 vpwr trim3 a_3491_9722# vpwr sky130_fd_pr__pfet_g5v0d10v5 w=3e+06u l=500000u
 .ends
 
 *******EOF
