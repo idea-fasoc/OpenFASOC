@@ -300,24 +300,26 @@ class ImportCell(GlayoutAction):
         # try to find an os path to the desired module by looking in Glayout
         if module_path is None:
             # try to resolve path of glayout package
-            matching_files = list(Path("./").resolve().rglob("glayout"))
-            if len(matching_files)>0:
-                glayout_path = (matching_files[0].resolve() / "flow").resolve()
+            matching_files = Path(__file__).resolve().parents[1]
+            # matching_files = list(Path("./").resolve().rglob("glayout"))
+            if matching_files.is_dir():
+                glayout_path = (matching_files.resolve() / "flow").resolve()
             else:
                 raise FileNotFoundError("Glayout.flow package not found in a sub folder of ../ directory")
             # try to resolve path of user module in Glayout package
             # this will look for the file which starts with "component_name" ANYWHERE in the glayout.flow package
             matching_files = list(glayout_path.rglob(str(component_name)+".py"))
+            matching_files += list(glayout_path.rglob(str(component_name)+"_cell.py"))
             matching_files += list(glayout_path.rglob(str(component_name)+".convo"))
             # also check the test_cases directory for convo files
-            matching_files += list((glayout_path / "../llm/syntax_data/convos").rglob(str(component_name)+".convo"))
+            # matching_files += list((glayout_path / "../llm/syntax_data/convos").rglob(str(component_name)+".convo"))
             if len(matching_files)>0:
                 module_path = matching_files[-1].resolve()
             else:
                 raise FileNotFoundError("Could not find a module called "+str(component_name)+" in Glayout")
         # copy convo file into glayout Components and then create a python file and copy it into glayout components
         if str(module_path).endswith(".convo"):
-            components_directory = glayout_path / "components"
+            components_directory = glayout_path / "blocks"
             if module_path.parent != components_directory:
                 shutil.copy(module_path, components_directory)
             glayoutcode = glayout.syntaxer.dynamic_load.run_session(module_path,True)
@@ -360,7 +362,18 @@ class ImportCell(GlayoutAction):
         Returns: the object that was imported
         """
         module_object = import_module(module)
-        return getattr(module_object, nameofobjtoimport)
+        if module_object is None:
+            raise ImportError("could not import module, maybe cell's __init__.py is missing?")
+        try:
+            return getattr(module_object, nameofobjtoimport)
+        except AttributeError:
+            # Try appending "_cell" if the direct attribute fetch failed
+            cell_attr_name = f"{nameofobjtoimport}_cell"
+            try:
+                return getattr(module_object, cell_attr_name)
+            except AttributeError:
+                error_msg = (f"Could not find '{nameofobjtoimport}' or '{cell_attr_name}' in module '{module_object}'.")
+                raise AttributeError(error_msg) from None
     
     def get_code(self) -> str:
         """returns as str a whole import line of code"""

@@ -514,7 +514,7 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
                 dir_name = design_name
                 path_to_dir = path_to_regression_drc / dir_name
                 if not path_to_dir.exists():
-                    path_to_dir.mkdir()
+                    path_to_dir.mkdir(parents=True, exist_ok=False)
                 new_output_file_path = path_to_dir / output_file
                 if not new_output_file_path.exists():
                     shutil.copy(report_path, path_to_dir / output_file)
@@ -769,7 +769,7 @@ exit
                     dir_name = design_name
                     path_to_dir = Path(__file__).resolve().parents[1]  / "regression" / "lvs" / dir_name
                     if not path_to_dir.exists():
-                        path_to_dir.mkdir()
+                        path_to_dir.mkdir(parents=True, exist_ok=False)
                     new_output_file_path = path_to_dir / output_file_path
                     if not new_output_file_path.exists():
                         shutil.copy(report_path, path_to_dir / output_file_path)

@@ -37,6 +37,7 @@ jobs:
                   -w $PWD \
                   $IMAGE_NAME \
                   bash -c "\
+                    pip uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
@@ -57,6 +58,7 @@ jobs:
                   -w $PWD \
                   $IMAGE_NAME \
                   bash -c "\
+                    pip uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
@@ -76,6 +78,7 @@ jobs:
                   -w $PWD \
                   $IMAGE_NAME \
                   bash -c "\
+                    pip uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
@@ -95,6 +98,7 @@ jobs:
                   -w $PWD \
                   $IMAGE_NAME \
                   bash -c "\
+                    pip uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
@@ -114,6 +118,7 @@ jobs:
                   -w $PWD \
                   $IMAGE_NAME \
                   bash -c "\
+                    pip uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
