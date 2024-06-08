@@ -16,5 +16,6 @@ sphinx
 sphinx-autodoc-typehints
 sphinx-click
 sphinx-markdown-tables
+sphinx-rtd-theme
 tox
 xdoctest
