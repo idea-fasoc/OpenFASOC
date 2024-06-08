@@ -4,6 +4,7 @@ numpy
 matplotlib
 gdsfactory==7.7.0
 nbsphinx
+sphinx_rtd_theme
 cairosvg
 scipy
 ltspice
