@@ -2,7 +2,7 @@
     "data": [
         {
             "NLPfilename": "BiasVoltageGenerator",
-            "LLMprompt": "A generic BiasVoltageGenerator contains a src pmos and a load nmos. The load should be below the src. The drains of both transistors and load gate should be shorted. Connect the src gate and load source. "
+            "LLMprompt": "A generic BiasVoltageGenerator contains a src pmos and a load nmos. The load should be below the src. The drains of both transistors and load gate should be shorted. Connect the src gate and load source."
         },
         {
             "NLPfilename": "CrossCoupledInverters",
@@ -50,7 +50,7 @@
         },
         {
             "NLPfilename": "CurrentMirrorNtypeInterdigitated",
-            "LLMprompt": "Use interdigitized matching to create an n-type current mirror. Parametrize width, length, and fingers."
+            "LLMprompt": "Use interdigitized placement matching to create an n-type current mirror. Parametrize width, length, and fingers."
         },
         {
             "NLPfilename": "NAND",
@@ -130,11 +130,15 @@
         },
         {
             "NLPfilename": "CascodeCommonGateInterdigitated",
-            "LLMprompt": "A cascode common gate stage consists of 2 nfets, an input nfet and output nfet. The source of the input and drain of the output are connected. Do not use any matching techniques, just place the output above the input. Parametrize everything. The transistors should be matched through interdigitation."
+            "LLMprompt": "A cascode common gate stage consists of 2 nfets, an input nfet and output nfet. The source of the input and drain of the output are connected. Parametrize everything. The transistors should be matched through interdigitation."
         },
         {
             "NLPfilename": "CascodeCommonSourceInterdigitated",
-            "LLMprompt": "A cascode common source consists of an input nmos and bias nfet, both of which are interdigitated. The bias source is connected to the input drain. parametrize everything."
+            "LLMprompt": "A cascode common source consists of an input nmos and bias nfet. both of which are interdigitated. The bias source is connected to the input drain. parametrize everything."
+        },
+        {
+            "NLPfilename": "CascodeCommonGateCommonCentroid",
+            "LLMprompt": "A cascode common gate stage consists of 2 nfets, an input nfet and output nfet. The source of the input and drain of the output are connected. Parametrize everything. The transistors should be matched using common centroid placement."
         }
     ]
 }

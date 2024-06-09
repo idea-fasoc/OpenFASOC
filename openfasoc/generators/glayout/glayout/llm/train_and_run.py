@@ -85,8 +85,11 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
     """
     qlora = True
     # load model
-    modelname = "microsoft/Phi-3-mini-128k-instruct"
-    #modelname = "mistralai/Codestral-22B-v0.1"
+    # when use codestral on 80GB GPU, you may need to set the following in your env
+    # PYTORCH_CUDA_ALLOC_CONF=garbage_collection_threshold:0.6,max_split_size_mb:128
+    # reduce epochs to 2
+    #modelname = "microsoft/Phi-3-mini-128k-instruct"
+    modelname = "mistralai/Codestral-22B-v0.1"
     #modelname = "mistralai/Mistral-7B-Instruct-v0.3"
     global microsoft_model
     global mistral_model
@@ -117,7 +120,7 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
             lora_alpha=16,
             lora_dropout=0.05,
             bias="none",
-            target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
+            target_modules=["q_proj", "k_proj", "v_proj"],
         )
         model = get_peft_model(model, peft_config)
         model.print_trainable_parameters()
@@ -227,9 +230,9 @@ def run_full_SFT_training() -> tuple:
     # hyperparameters
     lr = 5e-5
     batch_size = 1  # 2 #4
-    num_epochs = 4
+    num_epochs = 2
     # define training arguments
-    output_dir = Path(__file__).resolve().parent / "glayout_llm_checkpoints"
+    output_dir = Path(__file__).resolve().parent / ("glayout_llm_checkpoints" + ("phi" if microsoft_model else "mstrl"))
     training_args = TrainingArguments(
         output_dir=str(output_dir),
         learning_rate=lr,
@@ -247,7 +250,7 @@ def run_full_SFT_training() -> tuple:
         gradient_accumulation_steps=1,
         warmup_steps=1,
         bf16=True,
-        optim="paged_adamw_8bit",
+        optim="paged_adamw_8bit"
     )
     #training_args = TrainingArguments(output_dir=str(output_dir))
     if microsoft_model:

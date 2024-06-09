@@ -18,7 +18,7 @@
         },
         {
             "NLPfilename": "IntegratorStage.convo",
-            "LLMprompt": "Create an integrator stage. This can be made with two pairs of pfets and a pair of nfets. The first pair of pfets is a current mirror that is connected to a pfet diff pair. This is then connected to an active load. These components are arranged top to bottom respectively. Parametrize everything"
+            "LLMprompt": "Create an integrator stage. This can be made with two pairs of pfets and a pair of nfets. The first pair of pfets is a current mirror that is connected to a pfet diff pair. This is then connected to an active load. Parametrize everything"
         },
         {
             "NLPfilename": "DeltaSigmaModulator",
@@ -28,6 +28,5 @@
             "NLPfilename": "NtypeCurrentMirror",
             "LLMprompt": "Make a current mirror using common centroid technique."
         }
-
     ]
 }
