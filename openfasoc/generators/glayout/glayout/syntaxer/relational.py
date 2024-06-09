@@ -312,7 +312,7 @@ class ImportCell(GlayoutAction):
             matching_files += list(glayout_path.rglob(str(component_name)+"_cell.py"))
             matching_files += list(glayout_path.rglob(str(component_name)+".convo"))
             # also check the test_cases directory for convo files
-            # matching_files += list((glayout_path / "../llm/syntax_data/convos").rglob(str(component_name)+".convo"))
+            matching_files += list((glayout_path / "../llm/syntax_data/convos").rglob(str(component_name)+".convo"))
             if len(matching_files)>0:
                 module_path = matching_files[-1].resolve()
             else:

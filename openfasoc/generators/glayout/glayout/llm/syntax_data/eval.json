@@ -1,12 +1,33 @@
 {
     "data": [
         {
+            "NLPfilename": "MimcapArray.convo",
+            "LLMprompt": "Make a mimcap array called caparr with 5 rows and 5 columns. Parametrize the size of each mimcap."
+        },
+        {
+            "NLPfilename": "PTypeDiffPair.convo",
+            "LLMprompt": "Make a p-type differential pair using interdigitated placement. Parametrize everything."
+        },
+        {
             "NLPfilename": "StrongArmLatch.convo",
             "LLMprompt": "A strong arm latch consists of a diffpair, a CrossCoupleInverters, a bridge nfet, a clkgnd nfet, and two pfets clkpwrL (west) and clkpwrR (east). The cross coupled inverters should be at the top. The bridge should be above the diffpair but below the cross coupled inverters. The clkgnd should be at the bottom, and both clkpwr transistors should be left and right of the cross coupled inverters. You must route the drain of transistor A of the diffpair with the drain of the bridge, the drain of transistor B of the diffpair with the source of the bridge, the source of transistor A in the diffpair with the source of clkgnd."
         },
         {
-            "NLPfilename": "BiasVoltageGenerator.convo",
-            "LLMprompt": "Create a Bias Voltage Generator by placing an nmos and pmos side by side. Parametrize everything"
+            "NLPfilename": "ClassABStage.convo",
+            "LLMprompt": "Place two interdigitated pairs, one a pair of pfets called source and the other a pair of nfets called sink."
+        },
+        {
+            "NLPfilename": "IntegratorStage.convo",
+            "LLMprompt": "Create an integrator stage. This can be made with two pairs of pfets and a pair of nfets. The first pair of pfets is a current mirror that is connected to a pfet diff pair. This is then connected to an active load. These components are arranged top to bottom respectively. Parametrize everything"
+        },
+        {
+            "NLPfilename": "DeltaSigmaModulator",
+            "LLMprompt": "Create a delta sigma modulator. This combines several different components including an opamp and a latched comparator. The latched compartor includes a d flip flop and a strong arm latch."
+        },
+        {
+            "NLPfilename": "NtypeCurrentMirror",
+            "LLMprompt": "Make a current mirror using common centroid technique."
         }
+
     ]
 }
