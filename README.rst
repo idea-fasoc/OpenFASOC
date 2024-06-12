@@ -123,21 +123,31 @@ There are two methods to install the prerequisites to use OpenFASOC generators:
 Generators
 ********************
 
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+
-| Generator                                | Technology nodes   | Supported                  | Documentation                                                                                                  |
-|                                          |                    |                            |                                                                                                                |
-+==========================================+====================+============================+================================================================================================================+
-| Temperature Sensor                       | sky130hd           |    Yes                     | https://openfasoc.readthedocs.io/en/latest/flow-tempsense.html                                                 |       
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+
-| Low dropout Voltage Regulator (LDO)      | sky130hvl          |    Yes                     | https://openfasoc.readthedocs.io/en/latest/flow-ldo.html                                                       |  
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+ 
-| Cryogenic                                | sky130hs,          |    No (In-progress)        | https://openfasoc.readthedocs.io/en/latest/flow-cryo.html                                                      |                                      
-|                                          | sky130hd,          |                            |                                                                                                                |                        
-|                                          | sky130hvl          |                            |                                                                                                                |                                     
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+
-| Glayout                                  | sky130,            |     Yes                    | https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/glayout/tapeout/tapeout_and_RL/README.md |
-|                                          | gf180              |                            |                                                                                                                |
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+
+.. list-table::
+   :widths: 30 20 20 30
+   :header-rows: 1
+
+   * - Generator
+     - Technology nodes
+     - Supported
+     - Documentation
+   * - Temperature Sensor
+     - sky130hd
+     - Yes
+     - `Temperature Sensor Docs <https://openfasoc.readthedocs.io/en/latest/flow-tempsense.html>`_
+   * - Low dropout Voltage Regulator (LDO)
+     - sky130hvl
+     - Yes
+     - `LDO Voltage Regulator Docs <https://openfasoc.readthedocs.io/en/latest/flow-ldo.html>`_
+   * - Cryogenic
+     - sky130hs, sky130hd, sky130hvl
+     - No (In-progress)
+     - `Cryogenic Docs <https://openfasoc.readthedocs.io/en/latest/flow-cryo.html>`_
+   * - Glayout
+     - sky130, gf180
+     - Yes
+     - `Glayout Docs <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/glayout/tapeout/tapeout_and_RL/README.md>`_
+
 
 
 Tapeouts and testing setup
