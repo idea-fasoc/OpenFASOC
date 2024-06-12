@@ -82,6 +82,7 @@ There are two methods to install the prerequisites to use OpenFASOC generators:
        $ sudo docker build -t <image_name> .
        $ cd ../..
        $ sudo docker run -v $(pwd):$(pwd) -w $(pwd) --name <container_name> -it <image_name>
+       $ pip install -r requirements.txt
 
   Where `<image_name>` is the name that you want to tag the built image with and `<container_name>` is the name of the container that will be run. This container will use the OpenFASOC directory as the working directory and bind mount it to the container's present working directory. 
 
@@ -116,7 +117,7 @@ There are two methods to install the prerequisites to use OpenFASOC generators:
 
    - Python 3.10 is used in this generator.
    - All the required tools need to be loaded into the environment before running this generator.
-
+   - Glayout is now available as a `python package <https://pypi.org/project/glayout/>`_ and can be installed using `pip install glayout`
 
 
 Generators
