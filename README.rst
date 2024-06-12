@@ -42,14 +42,17 @@ This project is led by a team of researchers at the University of Michigan and i
     `Installation and Running <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/glayout/tapeout/tapeout_and_RL/README.md>`_  
 
     Opamp Notebook 
+
     .. image:: https://colab.research.google.com/assets/colab-badge.svg
         :target: https://github.com/idea-fasoc/OpenFASOC/blob/7dc5eb42cec94c02b74e72483df6fdc2b2603fb9/docs/source/notebooks/glayout/glayout_opamp.ipynb 
 
     Via Notebook 
+
     .. image:: https://colab.research.google.com/assets/colab-badge.svg
         :target: https://github.com/idea-fasoc/OpenFASOC/blob/7dc5eb42cec94c02b74e72483df6fdc2b2603fb9/docs/source/notebooks/glayout/GLayout_Via.ipynb  
 
     Current Mirror Notebook 
+    
     .. image:: https://colab.research.google.com/assets/colab-badge.svg
         :target: https://github.com/idea-fasoc/OpenFASOC/blob/7dc5eb42cec94c02b74e72483df6fdc2b2603fb9/docs/source/notebooks/glayout/GLayout_Cmirror.ipynb
 
