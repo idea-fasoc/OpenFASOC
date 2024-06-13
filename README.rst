@@ -33,70 +33,121 @@ This project is led by a team of researchers at the University of Michigan and i
         :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/cryo_gen.yml
 
 * **Glayout Generators -**
-    `Installation and Running <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/glayout/tapeout/tapeout_and_RL/README.md>`_
+
+    `Installation and Running <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/glayout/tapeout/tapeout_and_RL/README.md>`_  
+
+    .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/glayout_sky130.yml/badge.svg
+        :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/glayout_sky130.yml
+    
+    .. image:: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/glayout_opamp_sim.yml/badge.svg
+        :target: https://github.com/idea-fasoc/OpenFASOC/actions/workflows/glayout_opamp_sim.yml
+
+    Opamp Notebook 
+
+    .. image:: https://colab.research.google.com/assets/colab-badge.svg
+        :target: https://github.com/idea-fasoc/OpenFASOC/blob/7dc5eb42cec94c02b74e72483df6fdc2b2603fb9/docs/source/notebooks/glayout/glayout_opamp.ipynb 
+
+    Via Notebook 
+
+    .. image:: https://colab.research.google.com/assets/colab-badge.svg
+        :target: https://github.com/idea-fasoc/OpenFASOC/blob/7dc5eb42cec94c02b74e72483df6fdc2b2603fb9/docs/source/notebooks/glayout/GLayout_Via.ipynb  
+
+    Current Mirror Notebook 
+
+    .. image:: https://colab.research.google.com/assets/colab-badge.svg
+        :target: https://github.com/idea-fasoc/OpenFASOC/blob/7dc5eb42cec94c02b74e72483df6fdc2b2603fb9/docs/source/notebooks/glayout/GLayout_Cmirror.ipynb
 
 
 Getting Started
 ****************
+There are two methods to install the prerequisites to use OpenFASOC generators:  
 
-Install all the prerequisites using the `dependencies.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7, Ubuntu 20.04 LTS and Ubuntu 22.04 LTS.
+1. Express Installation 
 
-.. code-block:: bash
+  Install all the prerequisites using the `dependencies.sh` script provided in the home location of this project (where this README.rst file is found). Supports CentOS7, Ubuntu 20.04 LTS and Ubuntu 22.04 LTS.
 
-    $ sudo ./dependencies.sh
+  .. code-block:: bash
 
-For more info on getting-started, please refer to ["Getting Started" section ](https://openfasoc.readthedocs.io/en/latest/getting-started.html)
+      $ sudo ./dependencies.sh
 
-Below are the tool requirements along with their currently support versions that are updated regularly upon testing againsts the generators.
+  For more info on getting-started, please refer to `"Getting Started" section's express install section <https://openfasoc.readthedocs.io/en/latest/getting-started.html#express-installation>`_
 
-  1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.464)
+2. Containerized Installation 
+ 
+  This method uses `Docker <https://www.docker.com/#build>`_ to build a custom image, on top of which a container is created, in which the generators can be run. This allows the user to create a persistent snapshot of an environment where are tools are installed. **Note: If you do not have Docker Installed, refer to** `the instructions here <https://docs.docker.com/engine/install/>`_
+  
+  .. code-block:: bash
 
-  2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.272)
+       $ cd docker/conda
+       $ sudo docker build -t <image_name> .
+       $ cd ../..
+       $ sudo docker run -v $(pwd):$(pwd) -w $(pwd) --name <container_name> -it <image_name>
+       $ pip install -r requirements.txt
 
-  3. `Klayout <https://github.com/KLayout/klayout>`_ (version:0.28.17-1)
+  Where `<image_name>` is the name that you want to tag the built image with and `<container_name>` is the name of the container that will be run. This container will use the OpenFASOC directory as the working directory and bind mount it to the container's present working directory. 
 
-      - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
+3. Manual Install 
+
+  Below are the tool requirements along with their currently support versions that are updated regularly upon testing againsts the generators.
+
+    1. `Magic <https://github.com/RTimothyEdwards/magic>`_ (version:8.3.464)
+
+    2. `Netgen <https://github.com/RTimothyEdwards/netgen>`_ (version:1.5.272)
+
+    3. `Klayout <https://github.com/KLayout/klayout>`_ (version:0.28.17-1)
+
+        - Please use this command to build preferably: `./build.sh -option '-j8' -noruby -without-qt-multimedia -without-qt-xml -without-qt-svg`
 
 
-  4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.38+92)
+    4. `Yosys <https://github.com/The-OpenROAD-Project/yosys>`_ (version:0.38+92)
 
 
-  5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_12381)
+    5. `OpenROAD <https://github.com/The-OpenROAD-Project/OpenROAD>`_ (version:2.0_12381)
+ 
+    6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.471)
 
-  6. `Open_pdks <https://github.com/RTimothyEdwards/open_pdks>`_ (version:1.0.471)
+     - open_pdks is required to run drc/lvs check and the simulations
+     - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
 
-   - open_pdks is required to run drc/lvs check and the simulations
-   - After open_pdks is installed, please update the **open_pdks** key in `common/platform_config.json` with the installed path, down to the sky130A folder
+    7. `Xyce <https://github.com/Xyce/Xyce>`_ (version: 7.6)
 
-  7. `Xyce <https://github.com/Xyce/Xyce>`_ (version: 7.6)
-
-   - Once the Xyce installation is complete, please make sure to add Xyce binary to $PATH environment variable.
+     - Once the Xyce installation is complete, please make sure to add Xyce binary to $PATH environment variable.
 
   **Other notice:**
 
-   - Python 3.7 is used in this generator.
+   - Python 3.10 is used in this generator.
    - All the required tools need to be loaded into the environment before running this generator.
-
+   - Glayout is now available as a `python package <https://pypi.org/project/glayout/>`_ and can be installed using `pip install glayout`
 
 
 Generators
 ********************
 
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+
-| Generator                                | Technology nodes   | Supported                  | Documentation                                                                                                  |
-|                                          |                    |                            |                                                                                                                |
-+==========================================+====================+============================+================================================================================================================+
-| Temperature Sensor                       | sky130hd           |    Yes                     | https://openfasoc.readthedocs.io/en/latest/flow-tempsense.html                                                 |       
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+
-| Low dropout Voltage Regulator (LDO)      | sky130hvl          |    Yes                     | https://openfasoc.readthedocs.io/en/latest/flow-ldo.html                                                       |  
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+ 
-| Cryogenic                                | sky130hs,          |    No (In-progress)        | https://openfasoc.readthedocs.io/en/latest/flow-cryo.html                                                      |                                      
-|                                          | sky130hd,          |                            |                                                                                                                |                        
-|                                          | sky130hvl          |                            |                                                                                                                |                                     
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+
-| Glayout                                  | sky130,            |     Yes                    | https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/glayout/tapeout/tapeout_and_RL/README.md |
-|                                          | gf180              |                            |                                                                                                                |
-+------------------------------------------+--------------------+----------------------------+----------------------------------------------------------------------------------------------------------------+
+.. list-table::
+   :widths: 30 20 20 30
+   :header-rows: 1
+
+   * - Generator
+     - Technology nodes
+     - Supported
+     - Documentation
+   * - Temperature Sensor
+     - sky130hd
+     - Yes
+     - `Temperature Sensor Docs <https://openfasoc.readthedocs.io/en/latest/flow-tempsense.html>`_
+   * - Low dropout Voltage Regulator (LDO)
+     - sky130hvl
+     - Yes
+     - `LDO Voltage Regulator Docs <https://openfasoc.readthedocs.io/en/latest/flow-ldo.html>`_
+   * - Cryogenic
+     - sky130hs, sky130hd, sky130hvl
+     - No (In-progress)
+     - `Cryogenic Docs <https://openfasoc.readthedocs.io/en/latest/flow-cryo.html>`_
+   * - Glayout
+     - sky130, gf180
+     - Yes
+     - `Glayout Docs <https://github.com/idea-fasoc/OpenFASOC/tree/main/openfasoc/generators/glayout/tapeout/tapeout_and_RL/README.md>`_
+
 
 
 Tapeouts and testing setup
