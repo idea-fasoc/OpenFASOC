@@ -64,7 +64,8 @@ def get_huggingface_token():
 #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
 accesstoken = get_huggingface_token()
 
-
+microsoft_model = False
+mistral_model = False
 # returns model, tokenizer
 def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
     """Downloads or restores model and tokenizer
@@ -83,9 +84,17 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
         RuntimeError: If there is an error moving the model to the specified device.
     """
     qlora = True
-    # load modela
-    # modelname = "mistralai/Mistral-7B-v0.1"
-    modelname = "mistralai/Mistral-7B-Instruct-v0.3"
+    # load model
+    # when use codestral on 80GB GPU, you may need to set the following in your env
+    # PYTORCH_CUDA_ALLOC_CONF=garbage_collection_threshold:0.6,max_split_size_mb:128
+    # reduce epochs to 2
+    #modelname = "microsoft/Phi-3-mini-128k-instruct"
+    modelname = "mistralai/Codestral-22B-v0.1"
+    #modelname = "mistralai/Mistral-7B-Instruct-v0.3"
+    global microsoft_model
+    global mistral_model
+    microsoft_model = "microsoft" in modelname
+    mistral_model = "mistral" in modelname
     if not qlora:
         model = AutoModelForCausalLM.from_pretrained(modelname, token=accesstoken)
     else:
@@ -111,7 +120,7 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
             lora_alpha=16,
             lora_dropout=0.05,
             bias="none",
-            target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
+            target_modules=["q_proj", "k_proj", "v_proj"],
         )
         model = get_peft_model(model, peft_config)
         model.print_trainable_parameters()
@@ -163,12 +172,13 @@ def train(model, tokenizer, data, qlora: bool = True):
         per_device_eval_batch_size=batch_size,
         num_train_epochs=num_epochs,
         weight_decay=0.01,
-        logging_strategy="epoch",
-        evaluation_strategy="epoch",
+        logging_strategy="steps",
+        logging_steps=2,
+        eval_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
         gradient_accumulation_steps=1,
-        warmup_steps=0,
+        warmup_steps=1,
         bf16=True,
         optim="paged_adamw_8bit",
     )
@@ -220,9 +230,9 @@ def run_full_SFT_training() -> tuple:
     # hyperparameters
     lr = 5e-5
     batch_size = 1  # 2 #4
-    num_epochs = 4
+    num_epochs = 2
     # define training arguments
-    output_dir = Path(__file__).resolve().parent / "glayout_llm_checkpoints"
+    output_dir = Path(__file__).resolve().parent / ("glayout_llm_checkpoints" + ("phi" if microsoft_model else "mstrl"))
     training_args = TrainingArguments(
         output_dir=str(output_dir),
         learning_rate=lr,
@@ -230,17 +240,25 @@ def run_full_SFT_training() -> tuple:
         per_device_eval_batch_size=batch_size,
         num_train_epochs=num_epochs,
         weight_decay=0.01,
-        logging_strategy="epoch",
-        evaluation_strategy="epoch",
-        save_strategy="epoch",
+        logging_strategy="steps",
+        logging_steps=1,
+        eval_strategy="steps",
+        eval_steps=10,
+        save_strategy="steps",
+        save_steps=10,
         load_best_model_at_end=True,
         gradient_accumulation_steps=1,
         warmup_steps=1,
         bf16=True,
-        optim="paged_adamw_8bit",
+        optim="paged_adamw_8bit"
     )
     #training_args = TrainingArguments(output_dir=str(output_dir))
-    data_collator = DataCollatorForCompletionOnlyLM(response_template="[/INST]",instruction_template="[INST]",tokenizer=tokenizer,mlm=False)
+    if microsoft_model:
+        data_collator = DataCollatorForCompletionOnlyLM(response_template="<|assistant|>",instruction_template="<|user|>",tokenizer=tokenizer,mlm=False)
+    elif mistral_model:
+        data_collator = DataCollatorForCompletionOnlyLM(response_template="[/INST]",instruction_template="[INST]",tokenizer=tokenizer,mlm=False)
+    else:
+        raise ValueError("could not find a valid model, please specify a model type either mistral models or microsoft (phi) models")
     #import pdb; pdb.set_trace()
     trainer = SFTTrainer(
         model=model,
@@ -306,6 +324,7 @@ class GlayoutLLMSessionHandler:
         # model = model.merge_and_unload()
         # load tokenizer
         tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True, token=accesstoken)
+        tokenizer.add_special_tokens({'pad_token': '[PAD]'})
         return model, tokenizer
 
     def generate(self, user_input: str, clear: bool = False) -> str:
@@ -333,7 +352,7 @@ class GlayoutLLMSessionHandler:
             return_tensors="pt",
         )
         inputs = inputs.to(self.device)
-        outputs = self.model.generate(input_ids=inputs, max_new_tokens=4096)
+        outputs = self.model.generate(input_ids=inputs, max_new_tokens=4096, pad_token_id=self.tokenizer.pad_token_id)
         response = self.tokenizer.decode(
             outputs[0][len(inputs[0]) : -1], skip_special_tokens=False
         )

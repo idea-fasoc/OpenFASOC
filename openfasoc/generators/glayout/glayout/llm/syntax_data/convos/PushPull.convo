@@ -1,0 +1,20 @@
+PushPull
+create a parameter called p1_width
+create a parameter called n1_width
+create a parameter called p1_length
+create a parameter called n1_length
+create a parameter called p1_fingers
+create a parameter called n1_fingers
+place a pmos called p1 with width=p1_width, length=p1_length, fingers=p1_fingers, rmult=1, multipliers=1, with_substrate_tap=False, with_tie=True, with_dummy=True,
+place a nmos called n1 with width=n1_width, length=n1_length, fingers=n1_fingers, rmult=1, multipliers=1, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a mimcap called c3
+place a mimcap called c5
+move p1 right next to c3
+move c5 below c3
+move n1 below p1
+move n1 right next to c5
+route between p1_drain_W and c3_bottom_met_E using smart_route
+route between p1_gate_W and c3_top_met_E using smart_route
+route between p1_drain_E and n1_multiplier_0_drain_E using smart_route
+route between n1_drain_W and c5_bottom_met_E using smart_route
+route between n1_gate_W and c5_top_met_E using smart_route

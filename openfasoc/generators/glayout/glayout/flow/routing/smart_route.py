@@ -264,48 +264,54 @@ def generic_route_ab_ba_common_centroid(
     # TODO: implement
     name1, name2 = parse_port_name(edge1.name), parse_port_name(edge2.name)
     width1 = edge1.width
+    # grab basename for reading ports
+    basename = edge1.name.rstrip("NESW").rstrip("_")
+    basename = basename.removesuffix("source").removesuffix("drain").removesuffix("gate").rstrip("_")
+    basename = basename.removesuffix("A").removesuffix("B")
+    def get_top_port(prtname):
+        return top_comp.ports[basename + prtname]
     # order names so that A is first (if only one A)
     if "A" in name2 and not("A" in name1):
         name1, name2 = name2, name1
     # same device routes (A->A or B->B) (6/15)
     if check_route(name1,name2,"A_source","A_gate"):
-        return straight_route(pdk, top_comp.ports["A_source_E_private"],top_comp.ports["A_gate_route_con_N"],via2_alignment=("right","bottom"))
+        return straight_route(pdk, get_top_port("A_source_E_private"),get_top_port("A_gate_route_con_N"),via2_alignment=("right","bottom"))
     if check_route(name1,name2,"A_drain","A_gate"):
-        return straight_route(pdk, top_comp.ports["A_drain_E_private"],top_comp.ports["A_gate_route_con_N"],via2_alignment=("right","top"))
+        return straight_route(pdk, get_top_port("A_drain_E_private"),get_top_port("A_gate_route_con_N"),via2_alignment=("right","top"))
     if check_route(name1,name2,"A_source","A_drain"):
-        straight_route(pdk, top_comp.ports["br_multiplier_0_source_N"],top_comp.ports["br_multiplier_0_drain_S"],width=min(width1,1))
-        return straight_route(pdk, top_comp.ports["tl_multiplier_0_source_S"],top_comp.ports["tl_multiplier_0_drain_N"],width=min(width1,1))
+        straight_route(pdk, get_top_port("br_multiplier_0_source_N"),get_top_port("br_multiplier_0_drain_S"),width=min(width1,1))
+        return straight_route(pdk, get_top_port("tl_multiplier_0_source_S"),get_top_port("tl_multiplier_0_drain_N"),width=min(width1,1))
     if check_route(name1,name2,"B_source","B_gate"):
-        return straight_route(pdk, top_comp.ports["B_source_W_private"],top_comp.ports["B_gate_route_con_N"],via2_alignment=("left","bottom"))
+        return straight_route(pdk, get_top_port("B_source_W_private"),get_top_port("B_gate_route_con_N"),via2_alignment=("left","bottom"))
     if check_route(name1,name2,"B_drain","B_gate"):
-        return straight_route(pdk, top_comp.ports["B_drain_W_private"],top_comp.ports["B_gate_route_con_N"],via2_alignment=("left","top"))
+        return straight_route(pdk, get_top_port("B_drain_W_private"),get_top_port("B_gate_route_con_N"),via2_alignment=("left","top"))
     if check_route(name1,name2,"B_source","B_drain"):
-        top_comp << straight_route(pdk, top_comp.ports["tr_multiplier_0_source_S"],top_comp.ports["tr_multiplier_0_drain_N"],width=min(width1,1))
-        return straight_route(pdk, top_comp.ports["bl_multiplier_0_source_N"],top_comp.ports["bl_multiplier_0_drain_S"],width=min(width1,1))
+        top_comp << straight_route(pdk, get_top_port("tr_multiplier_0_source_S"),get_top_port("tr_multiplier_0_drain_N"),width=min(width1,1))
+        return straight_route(pdk, get_top_port("bl_multiplier_0_source_N"),get_top_port("bl_multiplier_0_drain_S"),width=min(width1,1))
     # A_src/drain->B_gate or B_src/drain->A_gate (4/15)
     if check_route(name1,name2,"A_source","B_gate"):
-        return straight_route(pdk, top_comp.ports["A_source_W_private"],top_comp.ports["B_gate_route_con_N"],via2_alignment=("left","top"))
+        return straight_route(pdk, get_top_port("A_source_W_private"),get_top_port("B_gate_route_con_N"),via2_alignment=("left","top"))
     if check_route(name1,name2,"A_drain","B_gate"):
-        return straight_route(pdk, top_comp.ports["A_drain_W_private"],top_comp.ports["B_gate_route_con_N"],via2_alignment=("left","bottom"))
+        return straight_route(pdk, get_top_port("A_drain_W_private"),get_top_port("B_gate_route_con_N"),via2_alignment=("left","bottom"))
     if check_route(name1,name2,"B_source","A_gate"):
-        return straight_route(pdk, top_comp.ports["B_source_E_private"],top_comp.ports["A_gate_route_con_N"],via2_alignment=("right","top"))
+        return straight_route(pdk, get_top_port("B_source_E_private"),get_top_port("A_gate_route_con_N"),via2_alignment=("right","top"))
     if check_route(name1,name2,"B_drain","A_gate"):
-        return straight_route(pdk, top_comp.ports["B_drain_E_private"],top_comp.ports["A_gate_route_con_N"],via2_alignment=("right","bottom"))
+        return straight_route(pdk, get_top_port("B_drain_E_private"),get_top_port("A_gate_route_con_N"),via2_alignment=("right","bottom"))
     # A_src/drain->B_src or A_src/drain->B_drain (4/15)
     if check_route(name1,name2,"A_source","B_source"):
-        return straight_route(pdk, top_comp.ports["tl_multiplier_0_source_E"],top_comp.ports["tr_multiplier_0_source_W"])
+        return straight_route(pdk, get_top_port("tl_multiplier_0_source_E"),get_top_port("tr_multiplier_0_source_W"))
     if check_route(name1,name2,"A_drain","B_source"):
-        portmv1 = top_comp.ports["tl_multiplier_0_drain_E"].copy()
-        return straight_route(pdk, top_comp.ports["tl_multiplier_0_drain_E"],movex(portmv1,2*pdk.get_grule(pdk.layer_to_glayer(portmv1.layer))["min_separation"]))
+        portmv1 = get_top_port("tl_multiplier_0_drain_E").copy()
+        return straight_route(pdk, get_top_port("tl_multiplier_0_drain_E"),movex(portmv1,2*pdk.get_grule(pdk.layer_to_glayer(portmv1.layer))["min_separation"]))
     if check_route(name1,name2,"A_source","B_drain"):
-        portmv1 = top_comp.ports["tr_multiplier_0_drain_W"].copy()
-        return straight_route(pdk, top_comp.ports["tr_multiplier_0_drain_W"],movex(portmv1,-2*pdk.get_grule(pdk.layer_to_glayer(portmv1.layer))["min_separation"]))
+        portmv1 = get_top_port("tr_multiplier_0_drain_W").copy()
+        return straight_route(pdk, get_top_port("tr_multiplier_0_drain_W"),movex(portmv1,-2*pdk.get_grule(pdk.layer_to_glayer(portmv1.layer))["min_separation"]))
     if check_route(name1,name2,"A_drain","B_drain"):
-        portmv1 = top_comp.ports["bl_mutliplier_0_drain_N"].copy()
-        portmv2 = top_comp.ports["br_multiplier_0_drain_N"].copy()
-        top_comp << straight_route(pdk, movex(portmv1,-portmv1.width/2), top_comp.ports["tl_multiplier_0_drain_S"],width=width1)
-        return straight_route(pdk, movex(portmv2,portmv2.width/2),top_comp.ports["tr_multiplier_0_drain_S"])
+        portmv1 = get_top_port("bl_mutliplier_0_drain_N").copy()
+        portmv2 = get_top_port("br_multiplier_0_drain_N").copy()
+        top_comp << straight_route(pdk, movex(portmv1,-portmv1.width/2), get_top_port("tl_multiplier_0_drain_S"),width=width1)
+        return straight_route(pdk, movex(portmv2,portmv2.width/2),get_top_port("tr_multiplier_0_drain_S"))
     # A_gate -> B_gate (1/15)
     if check_route(name1,name2,"A_gate","B_gate"):
-        return straight_route(pdk,top_comp.ports["br_multiplier_0_gate_W"],top_comp.ports["bl_multiplier_0_gate_E"])
+        return straight_route(pdk,get_top_port("br_multiplier_0_gate_W"),get_top_port("bl_multiplier_0_gate_E"))
     raise ValueError("You picked a port that smart_route with ab_ba_common_centroid does not support")
