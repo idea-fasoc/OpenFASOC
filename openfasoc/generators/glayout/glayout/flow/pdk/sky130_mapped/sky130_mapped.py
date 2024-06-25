@@ -33,7 +33,7 @@ sky130_glayer_mapping = {
 openfasoc_dir = Path(__file__).resolve().parent.parent.parent.parent.parent.parent.parent
 
 klayout_drc_file = Path(__file__).resolve().parent / "sky130.lydrc"
-pdk_root = Path('/usr/bin/miniconda3/share/pdk/')
+pdk_root = Path('$PDK_ROOT')
 lvs_schematic_ref_file = openfasoc_dir / "common" / "platforms" / "sky130hd" / "cdl" / "sky130_fd_sc_hd.spice"
 magic_drc_file = pdk_root / "sky130A" / "libs.tech" / "magic" / "sky130A.magicrc"
 lvs_setup_tcl_file = pdk_root / "sky130A" / "libs.tech" / "netgen" / "sky130A_setup.tcl"
@@ -66,3 +66,4 @@ sky130_mapped_pdk = MappedPDK(
 sky130_mapped_pdk.gds_write_settings.precision = 5*10**-9
 sky130_mapped_pdk.cell_decorator_settings.cache=False
 sky130_mapped_pdk.gds_write_settings.flatten_invalid_refs=False
+
