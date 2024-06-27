@@ -1,7 +1,7 @@
 """
 usage: from sky130_mapped import sky130_mapped_pdk
 """
-
+import os
 from ..mappedpdk import MappedPDK, SetupPDKFiles
 from ..sky130_mapped.grules import grulesobj
 from pathlib import Path
@@ -33,7 +33,22 @@ sky130_glayer_mapping = {
 openfasoc_dir = Path(__file__).resolve().parent.parent.parent.parent.parent.parent.parent
 
 klayout_drc_file = Path(__file__).resolve().parent / "sky130.lydrc"
-pdk_root = Path('$PDK_ROOT')
+
+paths_to_check = [
+    Path('$PDK_ROOT'),
+    Path("/usr/bin/miniconda3/share/pdk/"), 
+    Path(f"/home/{os.getenv('LOGNAME')}/miniconda3/share/pdk/")
+]
+pdk_root = None
+for path in paths_to_check:
+    # print(f"\n...Checking for PDK root at: {path}...")
+    if path.exists():
+        pdk_root = path
+        break
+
+if not pdk_root:
+    raise EnvironmentError("PDK root not found in expected locations!")
+
 lvs_schematic_ref_file = openfasoc_dir / "common" / "platforms" / "sky130hd" / "cdl" / "sky130_fd_sc_hd.spice"
 magic_drc_file = pdk_root / "sky130A" / "libs.tech" / "magic" / "sky130A.magicrc"
 lvs_setup_tcl_file = pdk_root / "sky130A" / "libs.tech" / "netgen" / "sky130A_setup.tcl"
