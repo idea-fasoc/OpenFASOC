@@ -42,7 +42,7 @@ jobs:
                     cd ./openfasoc/generators/glayout &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
                     python3 -m pip uninstall numpy -y &&\
-                    python3 -m pip install numpy==1.23.3 &&\
+                    python3 -m pip install numpy==1.23.5 &&\
                     python3 test_glayout_ci.py --component opamp
                   " && exit_code=$? | tee -a glayout.log
                 if [ $? -ne 0 ]; then exit 1; fi
@@ -65,7 +65,7 @@ jobs:
                     cd ./openfasoc/generators/glayout &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
                     python3 -m pip uninstall numpy -y &&\
-                    python3 -m pip install numpy==1.23.3 &&\
+                    python3 -m pip install numpy==1.23.5 &&\
                     python3 test_glayout_ci.py --component pmos
                   " && exit_code=$? | tee -a glayout.log
                 if [ $? -ne 0 ]; then exit 1; fi
@@ -87,7 +87,7 @@ jobs:
                     cd ./openfasoc/generators/glayout &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
                     python3 -m pip uninstall numpy -y &&\
-                    python3 -m pip install numpy==1.23.3 &&\
+                    python3 -m pip install numpy==1.23.5 &&\
                     python3 test_glayout_ci.py --component nmos
                   " && exit_code=$? | tee -a glayout.log
                 if [ $? -ne 0 ]; then exit 1; fi
@@ -109,7 +109,7 @@ jobs:
                     cd ./openfasoc/generators/glayout &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
                     python3 -m pip uninstall numpy -y &&\
-                    python3 -m pip install numpy==1.23.3 &&\
+                    python3 -m pip install numpy==1.23.5 &&\
                     python3 test_glayout_ci.py --component diff_pair
                   " && exit_code=$? | tee -a glayout.log
                 if [ $? -ne 0 ]; then exit 1; fi
@@ -131,7 +131,7 @@ jobs:
                     cd ./openfasoc/generators/glayout &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
                     python3 -m pip uninstall numpy -y &&\
-                    python3 -m pip install numpy==1.23.3 &&\
+                    python3 -m pip install numpy==1.23.5 &&\
                     python3 test_glayout_ci.py --component current_mirror
                   " && exit_code=$? | tee -a glayout.log
                 if [ $? -ne 0 ]; then exit 1; fi
