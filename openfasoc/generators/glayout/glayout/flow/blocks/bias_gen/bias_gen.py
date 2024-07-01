@@ -45,4 +45,15 @@ def bias_gen(pdk: MappedPDK):
 
     return bias_gen
 
-bias_gen(gf180_mapped_pdk).show()
+bias_gen_component = bias_gen(gf180_mapped_pdk)
+bias_gen_component.show()
+
+# Write to GDS
+bias_gen_component.write_gds('bias_gen.gds')
+
+# Run magic DRC
+magic_drc_result = gf180_mapped_pdk.drc_magic(bias_gen_component, bias_gen_component.name)
+if magic_drc_result :
+    print("DRC is clean: ", magic_drc_result)
+else:
+    print("DRC failed. Please try again.")
