@@ -28,12 +28,12 @@ def bias_gen(pdk: MappedPDK):
 
     # Relative Movement of the M1 transistor so that it doesn't overlap on M2
     M2_dimension = evaluate_bbox(nfet_M2)
-    bias_gen_M1.movex(-M2_dimension[0]-pdk.util_max_metal_seperation())
+    bias_gen_M1.movex(-0.975*M2_dimension[0]-pdk.util_max_metal_seperation())
     
 
     # Routing 
     ## Route the Gate from M1 to M2
-    bias_gen << straight_route(pdk, bias_gen_M1.ports["multiplier_0_gate_E"], bias_gen_M2.ports["multiplier_0_gate_W"])
+    bias_gen << straight_route(pdk, bias_gen_M1.ports["multiplier_0_source_E"], bias_gen_M2.ports["multiplier_0_drain_W"])
     ## Route the Drain to Gate of M2
     bias_gen << c_route(pdk, bias_gen_M2.ports["multiplier_0_drain_E"], bias_gen_M2.ports["multiplier_0_gate_E"])
     ## Calculate the centre of the bias_gen component so that the tapring could be centered around the component. 
@@ -57,3 +57,6 @@ if magic_drc_result :
     print("DRC is clean: ", magic_drc_result)
 else:
     print("DRC failed. Please try again.")
+
+# klayout_drc_result = gf180_mapped_pdk.drc(bias_gen_component)
+# print ("KLAYOUT_DRC_RESULT: ", klayout_drc_result)
