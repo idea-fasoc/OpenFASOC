@@ -1,0 +1,4 @@
+MimcapArray
+create a float parameter called mimcap_size_x
+create a float parameter called mimcap_size_y
+place a mimcap array called arr with size=(mimcap_size_x, mimcap_size_y), rows=5, columns=5

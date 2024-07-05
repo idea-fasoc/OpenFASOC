@@ -8,9 +8,6 @@ width: a float parameter specifying the width of all transistor Components part 
 fingers: an integer parameter which modifies the number of fingers in all transistor Components which are part of the diff pair.
 ## Ports
 The following are just some examples of the valid ports for diff_pair:
-ComponentRef_A_source_S
-ComponentRef_A_drain_N
-ComponentRef_B_source_S
-ComponentRef_A_gate_E
+ComponentRef_A_source_E
 ComponentRef_B_drain_W
-ComponentRef_B_gate_E
+ComponentRef_A_gate_E

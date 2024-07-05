@@ -217,9 +217,9 @@ def get_prompt_from_template(
     inst_prompt += f"Below is some context on Glayout strictsyntax:\n{glayout_nlp_context}\n\n"
     #inst_prompt += "Below is context on the circuit"
     #inst_prompt += "convert an example prompt to Glayout strictsyntax\n"
-    #inst_prompt += f"{ragcontext}\n\n----\nTRANSLATION TASK\n"
+    inst_prompt += f"\n{ragcontext}\n"
     #inst_prompt += f"Do NOT include the context in your response. Convert the following prompt to Glayout strictsyntax:\n{prompt}"
-    inst_prompt += f"Glayout strictsyntax is a electronic circuit layout command language. Convert the following prompt to Glayout strictsyntax:\n{prompt}"
+    inst_prompt += f"Convert the following prompt to Glayout strictsyntax:\n{prompt}"
     # unify prompt and return
     messages = [{"role": "user", "content": inst_prompt}]
     # conditionally add label (expected strict syntax output)
@@ -268,12 +268,14 @@ def load_preprocessed_data_in_messages_format():
     # train
     train_messages = list()
     for prompt, result in train_examples:
-        train_messages.append(get_prompt_from_template(None,None,prompt,result,True))
+        ragcontext = RAGvecdb.query(prompt, 1)
+        train_messages.append(get_prompt_from_template(None,ragcontext,prompt,result,True))
     train_data = Dataset.from_dict({"messages":train_messages})
     # eval
     eval_messages = list()
     for prompt, result in eval_examples:
-        eval_messages.append(get_prompt_from_template(None,None,prompt,result,True))
+        ragcontext = RAGvecdb.query(prompt, 1)
+        eval_messages.append(get_prompt_from_template(None,ragcontext,prompt,result,True))
     eval_data = Dataset.from_dict({"messages":eval_messages})
     return {"train": train_data, "evaluation": eval_data}
 

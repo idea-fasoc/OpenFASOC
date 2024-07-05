@@ -1,0 +1,8 @@
+CurrentMirrorNtypeCommonCentroid
+create a float parameter called width
+create a float parameter called length
+create a int parameter called fingers
+place a common centroid pair called cmirror with width=width, length=length, fingers=fingers
+route between cmirror_A_source_E and cmirror_B_source_E
+route between cmirror_A_drain_E and cmirror_B_gate_E
+route between cmirror_A_gate_E and cmirror_B_gate_E

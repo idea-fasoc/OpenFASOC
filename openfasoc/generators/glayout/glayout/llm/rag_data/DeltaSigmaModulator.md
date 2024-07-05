@@ -1,0 +1,2 @@
+# Delta Sigma Modulator ADC
+A delta sigma modulator is a circuit consisting of several existing components including an opamp and a latched comparator. The latched compartor includes a d flip flop and a strong arm latch. All these components can be directly imported. The outputs of the opamp should be connected to the inputs of the latched comparator.

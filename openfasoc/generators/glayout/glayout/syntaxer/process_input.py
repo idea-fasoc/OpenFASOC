@@ -193,11 +193,14 @@ What would you like to do?"""
             if word in ["called", "named"]:
                 varname = words[i + 1]
                 break
+        # check for a default value and remove it from varname
+        if "=" in varname:
+            varname = varname.split("=")[0]
         expr = None
         eqpar = text_input.replace("equal", "=").strip().removesuffix(".")
         expr = eqpar.split("=")[1] if "=" in eqpar else None
         if "parameter" in words:
-            self.code.update_parameter_table(varname, vartype, None, None)
+            self.code.update_parameter_table(varname, vartype, expr, None)
         else:  # variable
             self.code.update_variable_table(varname, expr)
         return True

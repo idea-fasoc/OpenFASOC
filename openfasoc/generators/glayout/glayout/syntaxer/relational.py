@@ -312,7 +312,7 @@ class ImportCell(GlayoutAction):
             matching_files += list(glayout_path.rglob(str(component_name)+"_cell.py"))
             matching_files += list(glayout_path.rglob(str(component_name)+".convo"))
             # also check the test_cases directory for convo files
-            # matching_files += list((glayout_path / "../llm/syntax_data/convos").rglob(str(component_name)+".convo"))
+            matching_files += list((glayout_path / "../llm/syntax_data/convos").rglob(str(component_name)+".convo"))
             if len(matching_files)>0:
                 module_path = matching_files[-1].resolve()
             else:
@@ -715,6 +715,7 @@ class GlayoutCode(GlayoutAction):
         self.update_import_table(generic_4T_interdigitzed_aliases, "generic_4T_interdigitzed", "glayout.flow.placement.four_transistor_interdigitized")
         two_pfet_interdigitized_aliases = list_cartesian_product(["interdigitized","interdigitated"],["pmos","pfet"],True)
         self.update_import_table(two_pfet_interdigitized_aliases,"two_pfet_interdigitized","glayout.flow.placement.two_transistor_interdigitized")
+        self.update_import_table(["common centroid"],"common_centroid_ab_ba","glayout.flow.placement.common_centroid_ab_ba")
         self.update_import_table(["diff pair","diff_pair","differential pair","differential pairs","differential transistor"],"diff_pair_generic","glayout.flow.blocks.diff_pair")
         # import routing funcs
         self.update_import_table(["smart route","smart","smart_route"],"smart_route","glayout.flow.routing.smart_route")

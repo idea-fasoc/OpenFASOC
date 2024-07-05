@@ -131,3 +131,4 @@ Where top refers to the inverter’s pmos Component and bottom refers to the inv
 
 ## StrictSyntax Style Guide
 You should always follow this order of commands when creating a Component with strictsyntax: Start by importing any required Components, then create any required parameters, then place all required ComponentRefs with their respective parameters, then move all ComponentRefs to their final positions relative to one another, and lastly route between ComponentRefs.
+Do not place components overlapping (always move components if more than one is placed)
