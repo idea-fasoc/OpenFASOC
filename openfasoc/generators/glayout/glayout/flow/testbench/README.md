@@ -30,6 +30,22 @@ The first four arguments are not mandatory. Their default values are as follows 
 - `testbench` : opamp
 
 
-<bold>Do not modify the `@@___` values in the testbenches, these are automatically filled in by the python script</bold>
+**The placeholders in the testbenches with `@@__` can be filled in manually as well, if the user so choses. Take care of the following if you use the script:** 
+1. Temperature must be an integer
+  - Temperature less than 0 is automatically treated as a cryo sim if the python script is used
+  - Temperature equal to 27 degrees is treated as STP
+2. The PDK_ROOT must be a valid and accessible path
+3. The pex script path (can be a post or pre-pex netlist) must exist
+4. The module name must be the exact same as in the netlist
+  - Pin orders:
+    - Differential Pair  
+      `XDUT minus drain_right drain_left source plus @@MODULE_NAME`
+    - Current Mirror  
+      `XDUT mirr_drain ref_drain GND @@MODULE_NAME`
+    - Opamp  
+      `XDUT GND csoutputnetNC vo VDD vip vin biascsn biason biasdpn @@MODULE_NAME`
+      - `csoutputnetNC` is the 2nd stage Amplifier's output
+      - `vo` is the output from the NMOS driver circuit
+      - the current bias components are connected to the mirror drains of the corresponding current mirrors
 
-The results are written to the directory that the script is run in.
+***The results are written to the directory that the script is run in.***
