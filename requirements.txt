@@ -2,9 +2,13 @@ pandas
 klayout
 numpy
 matplotlib
-gdsfactory
+gdsfactory==7.7.0
 nbsphinx
 cairosvg
 scipy
 ltspice
 mako
+prettyprinttree
+scikit-learn
+scipy
+seaborn

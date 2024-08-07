@@ -1,0 +1,20 @@
+ClassABStage
+import PushPull
+import CurrentMirrorNFET
+place a PushPull called pp1 
+place a PushPull called pp2 
+place an interdigitated pfet called source with numcols=2, dummy=True, with_substrate_tap=False, with_tie=True, tie_layers=("met2","met1"), kwargs={ "width" : 1 , "length" : 1}
+place an interdigitated nfet called gm31 with numcols=2, dummy=True, with_substrate_tap=False, with_tie=True, tie_layers=("met2","met1"), kwargs={ "width" : 1 , "length" : 1}
+place an interdigitated nfet called dummy with numcols=2, dummy=True, with_substrate_tap=False, with_tie=True, tie_layers=("met2","met1"), kwargs={ "width" : 1 , "length" : 1}
+place a CurrentMirrorNFET called sink
+move source above gm31
+move dummy below gm31
+move pp1 right next to gm31
+move pp2 right next to pp1
+move sink below dummy
+route between source_A_drain_E and gm31_A_drain_E using c_route
+route between source_B_drain_W and gm31_B_drain_W using c_route
+route between gm31_A_source_W and sink_cm_A_drain_W using c_route
+route between gm31_B_source_E and sink_cm_B_drain_E using c_route
+route between gm31_A_drain_E and pp1_c3_top_met_W using straight_route
+route between gm31_B_drain_E and pp2_c3_top_met_W using straight_route

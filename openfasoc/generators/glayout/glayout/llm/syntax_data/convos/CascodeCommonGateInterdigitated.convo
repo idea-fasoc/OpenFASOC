@@ -1,0 +1,6 @@
+CascodeCommonGateInterdigitated
+create a float parameter called width
+create a float parameter called length
+create an int parameter called fingers 
+place an interdigitated nfet called CascodeCommonGate with numcols=fingers, dummy=True, with_substrate_tap=False, with_tie=True, kwargs={"width": width, "length": length, "rmult":1}
+route between CascodeCommonGate_A_source_W and CascodeCommonGate_B_drain_W using smart_route

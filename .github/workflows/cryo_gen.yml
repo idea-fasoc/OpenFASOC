@@ -27,7 +27,7 @@ jobs:
           du . -h
 
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Checkout platforms submodule for PDK files
         run: git submodule update --init --remote openfasoc/common/platforms

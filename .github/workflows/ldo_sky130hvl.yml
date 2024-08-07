@@ -23,11 +23,8 @@ jobs:
           du . -h
 
       - name: Checkout repo
-        uses: actions/checkout@v2
-        
-      - name: Checkout platforms submodule for PDK files
-        run: git submodule update --init --remote openfasoc/common/platforms
-        
+        uses: actions/checkout@v4
+
       - name: Test sky130hvl LDO
         env:
                 IMAGE_NAME: msaligane/openfasoc:stable

@@ -1,0 +1,2 @@
+# Push Pull Amp (Class B Amplifier)
+A push-pull amplifier typically consists of two transistors, a nmos and pmos. The sources of the two transistors are connected together and to the output load. The drains of each transistor are connected to the supply voltages.

@@ -1,0 +1,6 @@
+CascodeCommonGateCommonCentroid
+create a float parameter called width
+create a float parameter called length
+create a int parameter called fingers
+place a common centroid pair called ccg with width=width, length=length, fingers=fingers
+route between ccg_A_source_W and ccg_B_drain_W using smart_route

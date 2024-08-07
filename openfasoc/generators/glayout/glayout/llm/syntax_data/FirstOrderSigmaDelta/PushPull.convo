@@ -1,0 +1,14 @@
+PushPull
+place a pmos called p1 with width 1 length 1 fingers 1 rmult 1 multipliers 1 with_substrate_tap False with_tie True sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy True
+place a nmos called n1 with width 1 length 1 fingers 1 rmult 1 multipliers 1 with_substrate_tap False with_tie True sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy True with_dnwell False
+place a mimcap called c3
+place a mimcap called c5
+move p1 right next to c3
+move c5 below c3
+move n1 below p1
+move n1 right next to c5
+route between p1_multiplier_0_drain_W and c3_bottom_met_E using straight_route
+route between p1_multiplier_0_gate_W and c3_top_met_E using straight_route
+route between p1_multiplier_0_drain_E and n1_multiplier_0_drain_E using c_route with viaoffset=(False,True)
+route between n1_multiplier_0_drain_W and c5_bottom_met_E using straight_route
+route between n1_multiplier_0_gate_W and c5_top_met_E using straight_route
