@@ -5,3 +5,6 @@
 	path = tapeouts
 	url = https://github.com/idea-fasoc/openfasoc-tapeouts.git
 	branch = main
+[submodule "openfasoc/common/platforms"]
+	path = openfasoc/common/platforms
+	url = https://github.com/idea-fasoc/platforms
