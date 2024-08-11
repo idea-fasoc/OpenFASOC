@@ -110,7 +110,8 @@ def __add_mimcap_arr(pdk: MappedPDK, opamp_top: Component, mim_cap_size, mim_cap
     mim_cap_size = pdk.snap_to_2xgrid(mim_cap_size, return_type="float")
     max_metalsep = pdk.util_max_metal_seperation()
     mimcaps_ref = opamp_top << mimcap_array(pdk,mim_cap_rows,2,size=mim_cap_size,rmult=6)
-
+    if int(mim_cap_rows) < 1:
+        raise ValueError("mim_cap_rows should be a positive integer")
     mimcap_netlist = mimcaps_ref.info['netlist']
 
     displace_fact = max(max_metalsep,pdk.get_grule("capmet")["min_separation"])

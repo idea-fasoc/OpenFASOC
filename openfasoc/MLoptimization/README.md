@@ -1,6 +1,9 @@
 # Machine Learning Optimization
 Code for reinforcement learning loop with openfasoc generators for optimizing metrics
 
+## Quick Start
+run `bash quickstart.bash` to get an example RL run optimizing opamps at room temperature.
+
 ## Code Setup
 The code is setup as follows:
 
@@ -45,6 +48,4 @@ Please note that results vary greatly based on random seed and spec generation (
   <img src="mean_reward_versus_step.png" width="400" /> 
 </p>
 
-## version
-ray 2.34.0 and gym 0.26.2 will not work. instead you should use
-ray 2.7.1 and gym 0.10.5
+

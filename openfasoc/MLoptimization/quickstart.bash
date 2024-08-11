@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # this script will recreate the ICCAD paper RL results (using the default seed)
-
+echo "This script has been verified to run with python3.10 and all package versions provided"
 
 
 
@@ -42,8 +42,8 @@ PY_RUN=$MOST_RECENT_PYTHON
 #
 
 # File containing the list of python dependencies
-#requirements_file="requirements.txt"
-requirements_file="donotdothischeck.txt"
+requirements_file="requirements.txt"
+#requirements_file="donotdothischeck.txt"
 
 # Function to check if a Python package is installed
 is_installed() {
@@ -91,11 +91,12 @@ echo "Dependency check and package installations complete."
 #rm eval.yaml
 #rm eval*.txt
 
+# NOTE: this is done automatically when you specify "first_run" flag
 # open gen_spec.py line 39, change the name of yaml file to train.yaml
 $PY_RUN gen_spec.py --first_run
 $PY_RUN model.py
-# NOTE: this is done automatically when you do not specify "first_run" flag
-# open gen_spec.py line 39, change the name of yaml file, and put the same name into eval.py line 20,
+# NOTE: this is done automatically when you do NOT specify "first_run" flag
+# open gen_spec.py line 36, change the name of yaml file, and put the same name into eval.py line 16
 $PY_RUN gen_spec.py
 $PY_RUN eval.py
 # eval.py creates eval*.txt which shows how many specifications are reached
