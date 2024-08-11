@@ -6,8 +6,8 @@ import argparse
 
 def generate_random_specs(env, num_specs):
   specs_range = {
-                "gain_min" : [float(14003380.0), float(50003380.0)],
-                "FOM" : [float(4e11), float(4e11)]
+                "gain_min" : [float(10003380.0), float(35003380.0)],
+                "FOM" : [float(5e11), float(5e11)]
                 }
   specs_range_vals = list(specs_range.values())
   specs_valid = []

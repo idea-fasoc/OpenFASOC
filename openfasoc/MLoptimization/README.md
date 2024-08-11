@@ -44,3 +44,7 @@ Please note that results vary greatly based on random seed and spec generation (
 <p float="left">
   <img src="mean_reward_versus_step.png" width="400" /> 
 </p>
+
+## version
+ray 2.34.0 and gym 0.26.2 will not work. instead you should use
+ray 2.7.1 and gym 0.10.5
