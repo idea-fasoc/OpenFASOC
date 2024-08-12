@@ -161,18 +161,20 @@ Citation
 
 If you find this tool useful in your research, we kindly request to cite our papers:
 
- - Tutu Ajayi et al., "`An Open-source Framework for Autonomous SoC Design with Analog Block Generation <https://ieeexplore.ieee.org/document/9344104>`_," 2020 IFIP/IEEE 28th International Conference on Very Large Scale Integration (VLSI-SOC), 2020, pp. 141-146.
-
- - Qirui Zhang et al., "`An Open-Source and Autonomous Temperature Sensor Generator Verified With 64 Instances in SkyWater 130 nm for Comprehensive Design Space Exploration <https://ieeexplore.ieee.org/abstract/document/9816083>`_," in IEEE Solid-State Circuits Letters, vol. 5, pp. 174-177, 2022.
-
- - Yaswanth Kumar Cherivirala et al., "`An Open Source Compatible Framework to Fully Autonomous Digital LDO Generation <https://ieeexplore.ieee.org/document/10071546>`_," 2023 IEEE International Symposium on Circuits and Systems (ISCAS), Monterey, CA, USA, 2023, pp. 1-5.
-
- - Ali Hammoud et al., "`OpenFASOC: An Open Platform Towards Analog and Mixed-Signal Automation and Acceleration of Chip Design <https://ieeexplore.ieee.org/document/10153547>`_," 2023 International Symposium on Devices, Circuits and Systems (ISDCS), Higashihiroshima, Japan, 2023, pp. 01-04. 
-
- - Anhang Li et al., "`A Fully Integrated, Automatically Generated DC–DC Converter Maintaining >75% Efficiency From 398 K Down to 23 K Across Wide Load Ranges in 12-nm FinFET <https://www.nist.gov/publications/fully-integrated-automatically-generated-dc-dc-converter-maintaining-75-efficiency-398>`_," in IEEE Solid-State Circuits Letters, vol. 7, pp. 42-45, 2024.
-
- - Chetanya Goyal et al., "Disrupting Conventional Chip Design through the Open Source EDA Ecosystem" 2024 8th IEEE Electron Devices Technology & Manufacturing Conference (EDTM), Bangalore, India, 2024, pp. 1-3.
+ - Ali Hammoud et al.,  “Glayout layout automation framework: Human language to analog layout using a large language model,” Accepted at MLCAD, 2024.
 
  - Ali Hammoud et al., "Reinforcement Learning-Enhanced Cloud-Based Open Source Analog Circuit Generator for Standard and Cryogenic Temperatures in 130-nm and 180-nm OpenPDKs,” Accepted at ICCAD, 2024
 
- - Ali Hammoud et al.,  “Glayout layout automation framework: Human language to analog layout using a large language model,” Accepted at MLCAD, 2024.
+ - Chetanya Goyal et al., "Disrupting Conventional Chip Design through the Open Source EDA Ecosystem" 2024 8th IEEE Electron Devices Technology & Manufacturing Conference (EDTM), Bangalore, India, 2024, pp. 1-3.
+
+- Anhang Li et al., "`A Fully Integrated, Automatically Generated DC–DC Converter Maintaining >75% Efficiency From 398 K Down to 23 K Across Wide Load Ranges in 12-nm FinFET <https://www.nist.gov/publications/fully-integrated-automatically-generated-dc-dc-converter-maintaining-75-efficiency-398>`_," in IEEE Solid-State Circuits Letters, vol. 7, pp. 42-45, 2024.
+
+- Ali Hammoud et al., "`OpenFASOC: An Open Platform Towards Analog and Mixed-Signal Automation and Acceleration of Chip Design <https://ieeexplore.ieee.org/document/10153547>`_," 2023 International Symposium on Devices, Circuits and Systems (ISDCS), Higashihiroshima, Japan, 2023, pp. 01-04. 
+
+ - Yaswanth Kumar Cherivirala et al., "`An Open Source Compatible Framework to Fully Autonomous Digital LDO Generation <https://ieeexplore.ieee.org/document/10071546>`_," 2023 IEEE International Symposium on Circuits and Systems (ISCAS), Monterey, CA, USA, 2023, pp. 1-5.
+
+- Qirui Zhang et al., "`An Open-Source and Autonomous Temperature Sensor Generator Verified With 64 Instances in SkyWater 130 nm for Comprehensive Design Space Exploration <https://ieeexplore.ieee.org/abstract/document/9816083>`_," in IEEE Solid-State Circuits Letters, vol. 5, pp. 174-177, 2022.
+
+ - Tutu Ajayi et al., "`An Open-source Framework for Autonomous SoC Design with Analog Block Generation <https://ieeexplore.ieee.org/document/9344104>`_," 2020 IFIP/IEEE 28th International Conference on Very Large Scale Integration (VLSI-SOC), 2020, pp. 141-146.
+
+
