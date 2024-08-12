@@ -1,5 +1,5 @@
 import sys
-from os import path, rename
+from os import path, rename, environ
 
 # path to glayout
 sys.path.append(path.join(path.dirname(__file__), '../../'))
@@ -52,7 +52,12 @@ __SMALL_PAD_ = True
 __NO_LVT_GLOBAL_ = False
 _GET_PARAM_SET_LENGTH_ = False
 _TAKE_OUTPUT_AT_SECOND_STAGE_ = True
-PDK_ROOT = "/usr/bin/miniconda3/share/pdk/"
+
+if 'PDK_ROOT' in environ:
+	PDK_ROOT = Path(environ['PDK_ROOT']).resolve()
+else:
+	PDK_ROOT = "/usr/bin/miniconda3/share/pdk/"
+
 _TAPEOUT_AND_RL_DIR_PATH_ = Path(__file__).resolve().parent
 #print(_TAPEOUT_AND_RL_DIR_PATH_)
 # ====Build Opamp====
@@ -1145,7 +1150,7 @@ class safe_single_build_and_simulation_helperclass:
 				pickle.dump(self, f)
 			# Define and run the subprocess
 			python_executable = sys.executable
-			command = [python_executable, "sky130_nist_tapeout.py", "safe_single_build_and_sim", "--class_pickle_file", pickle_file_path]
+			command = [python_executable, "sky130_nist_tapeout.py", "safe_single_build_and_sim", "--class_pickle_file", pickle_file_path,"--PDK_ROOT",PDK_ROOT]
 			#process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 			subprocess.Popen(command,cwd=str(_TAPEOUT_AND_RL_DIR_PATH_)).wait()
 			# load the result back from the same pickle file which was passed
@@ -1229,7 +1234,7 @@ if __name__ == "__main__":
 	safe_single_build_and_sim = subparsers.add_parser("safe_single_build_and_sim")
 	safe_single_build_and_sim.add_argument("--class_pickle_file",type=Path,help="see safe_single_build_and_simulation")
 
-	for prsr in [get_training_data_parser,gen_opamp_parser,test,create_opamp_matrix_parser]:
+	for prsr in [get_training_data_parser,gen_opamp_parser,test,create_opamp_matrix_parser,safe_single_build_and_sim]:
 		prsr.add_argument("--no_lvt",action="store_true",help="do not place any low threshold voltage transistors.")
 		prsr.add_argument("--PDK_ROOT",type=Path,default="/usr/bin/miniconda3/share/pdk/",help="path to the sky130 PDK library")
 	for prsr in [gen_opamp_parser,create_opamp_matrix_parser]:
@@ -1240,11 +1245,13 @@ if __name__ == "__main__":
 	if args.mode in ["gen_opamps","create_opamp_matrix"]:
 		__SMALL_PAD_ = not args.big_pad
 
-	if args.mode in ["get_training_data","test","gen_opamps","create_opamp_matrix"]:
+	if args.mode in ["get_training_data","test","gen_opamps","create_opamp_matrix","safe_single_build_and_sim"]:
 		__NO_LVT_GLOBAL_ = args.no_lvt
 		PDK_ROOT = Path(args.PDK_ROOT).resolve()
+		if 'PDK_ROOT' in environ:
+			PDK_ROOT = Path(environ['PDK_ROOT']).resolve()
 		if not(PDK_ROOT.is_dir()):
-			raise ValueError("PDK_ROOT is not a valid directory\n")
+			raise ValueError("PDK_ROOT "+str(PDK_ROOT)+" is not a valid directory\n")
 		PDK_ROOT = str(PDK_ROOT)
 
 	# Simulation Temperature information
