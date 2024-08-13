@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# this script will recreate the ICCAD paper RL results (using the default seed)
+# the script produces an example RL optimization run
 echo "This script has been verified to run with python3.11 and package versions provided"
 
 

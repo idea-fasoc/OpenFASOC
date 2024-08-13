@@ -252,7 +252,7 @@ class Envir(gym.Env):
         inputparam[20] = params[13]
         inputparam[22] = params[14]
         inputparam[25] = params[15]
-        result = safe_single_build_and_simulation(inputparam)
+        result = safe_single_build_and_simulation(inputparam,temp=-269)
         specs = np.array([0.0 , 0.0])
         specs[0] = result["ugb"]
         specs[1] = result["ugb"]/(result["Ibias_diffpair"]+result["Ibias_commonsource"])
