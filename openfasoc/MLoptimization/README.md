@@ -1,8 +1,11 @@
 # Machine Learning Optimization
 Code for reinforcement learning loop with openfasoc generators for optimizing metrics
 
+## Supported Versions
+Please note that this program has only been tested with python3.11
+
 ## Quick Start
-run `bash quickstart.bash` to get an example RL run optimizing opamps at room temperature.
+run `bash quickstart.bash` to get an example RL run optimizing opamps.
 
 ## Code Setup
 The code is setup as follows:
@@ -18,13 +21,13 @@ Make sure that you have OpenAI Gym and Ray installed. To do this, run the follow
 
 To generate the design specifications that the agent trains on, run:
 ```
-python3.10 gen_specs.py
+python3.11 gen_specs.py
 ```
 The result is a yaml file dumped to the ../generators/gdsfactory-gen/.
 
 To train the agent, open ipython from the top level directory and then: 
 ```
-python3.10 model.py
+python3.11 model.py
 ```
 The training checkpoints will be saved in your home directory under ray\_results. Tensorboard can be used to load reward and loss plots using the command:
 
@@ -36,7 +39,7 @@ tensorboard --logdir path/to/checkpoint
 The evaluation script takes the trained agent and gives it new specs that the agent has never seen before. To generate new design specs, run the gen_specs.py file again with your desired number of specs to validate on. To run validation:
 
 ```
-python3.10 eval.py
+python3.11 eval.py
 ``` 
 
 The evaluation result will be saved to the ../generators/gdsfactory-gen/.

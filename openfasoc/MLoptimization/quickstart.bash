@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # this script will recreate the ICCAD paper RL results (using the default seed)
-echo "This script has been verified to run with python3.10 and all package versions provided"
+echo "This script has been verified to run with python3.11 and package versions provided"
 
 
 
@@ -10,28 +10,28 @@ echo "This script has been verified to run with python3.10 and all package versi
 # find most recent version of python
 #
 # Find all installed Python 3 versions and sort them in descending order
-PYTHON_VERSIONS=$(compgen -c | grep -E '^python3\.[0-9]+$' | sort -V | tail -n 1)
+#PYTHON_VERSIONS=$(compgen -c | grep -E '^python3\.[0-9]+$' | sort -V | tail -n 1)
 # Extract the most recent version
-MOST_RECENT_PYTHON=$(echo "$PYTHON_VERSIONS" | tail -n 1)
+#MOST_RECENT_PYTHON=$(echo "$PYTHON_VERSIONS" | tail -n 1)
 # Check if a Python version was found
-if [ -z "$MOST_RECENT_PYTHON" ]; then
-    echo "No Python 3 versions found."
-    exit 1
-fi
+#if [ -z "$MOST_RECENT_PYTHON" ]; then
+#    echo "No Python 3 versions found."
+#    exit 1
+#fi
 # Print the most recent Python version
-echo
-echo "Currently using Python version: $MOST_RECENT_PYTHON"
-echo
+#echo
+#echo "Currently using Python version: $MOST_RECENT_PYTHON"
+#echo
 # Check if the most recent version is at least 3.10
-MINIMUM_VERSION="3.10"
-if [[ "$(echo $MOST_RECENT_PYTHON | cut -d '.' -f2)" -lt "$(echo $MINIMUM_VERSION | cut -d '.' -f2)" ]]; then
-    echo "The most recent Python version ($MOST_RECENT_PYTHON) is less than $MINIMUM_VERSION. Please update your Python installation."
-    echo
-    exit 1
-fi
+#MINIMUM_VERSION="3.10"
+#if [[ "$(echo $MOST_RECENT_PYTHON | cut -d '.' -f2)" -lt "$(echo $MINIMUM_VERSION | cut -d '.' -f2)" ]]; then
+#    echo "The most recent Python version ($MOST_RECENT_PYTHON) is less than $MINIMUM_VERSION. Please update your Python installation."
+#    echo
+#    exit 1
+#fi
 # Save the command to run the most recent Python version into a variable
-PY_RUN=$MOST_RECENT_PYTHON
-
+#PY_RUN=$MOST_RECENT_PYTHON
+PY_RUN="python3.11"
 
 
 

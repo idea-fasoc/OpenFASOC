@@ -1,6 +1,6 @@
 import sys
 from os import path, rename, environ
-
+environ['OPENBLAS_NUM_THREADS'] = '1'
 # path to glayout
 sys.path.append(path.join(path.dirname(__file__), '../../'))
 
@@ -41,6 +41,7 @@ import re
 import pickle
 import tempfile
 import subprocess
+import traceback
 
 global _TAPEOUT_AND_RL_DIR_PATH_
 global _GET_PARAM_SET_LENGTH_
@@ -54,7 +55,7 @@ _GET_PARAM_SET_LENGTH_ = False
 _TAKE_OUTPUT_AT_SECOND_STAGE_ = True
 
 if 'PDK_ROOT' in environ:
-	PDK_ROOT = Path(environ['PDK_ROOT']).resolve()
+	PDK_ROOT = str(Path(environ['PDK_ROOT']).resolve())
 else:
 	PDK_ROOT = "/usr/bin/miniconda3/share/pdk/"
 
@@ -1169,7 +1170,28 @@ class safe_single_build_and_simulation_helperclass:
 
 # same as calling single_build_and_simulation, but runs in a subprocess
 def safe_single_build_and_simulation(*args, **kwargs) -> dict:
-	return safe_single_build_and_simulation_helperclass(*args,**kwargs).results
+	def get_parameter_value(param_name: str, *args, **kwargs):
+		# Check if the parameter is in kwargs
+		if param_name in kwargs:
+			return kwargs[param_name]
+		# Check if the parameter is in args
+		try:
+			# Find the index of the param_name in args and return the next item as its value
+			index = args.index(param_name)
+			return args[index + 1]
+		except (ValueError, IndexError):
+			# ValueError if param_name is not in args
+			# IndexError if param_name is the last item and has no value after it
+			return None
+	try:
+		return safe_single_build_and_simulation_helperclass(*args,**kwargs).results
+	except Exception as e_LorA:
+		if bool(get_parameter_value("hardfail",*args,**kwargs)):
+			raise e_LorA
+		results = opamp_results_serializer()
+		with open('get_training_data_ERRORS.log', 'a') as errlog:
+			errlog.write("\nopamp run "+str(get_parameter_value("index",*args,**kwargs))+" with the following params failed: \n"+str(get_parameter_value("params",*args,**kwargs)))
+	return results
 
 
 
