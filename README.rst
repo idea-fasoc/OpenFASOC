@@ -161,6 +161,20 @@ Citation
 
 If you find this tool useful in your research, we kindly request to cite our papers:
 
- - Tutu Ajayi et al., "`An Open-source Framework for Autonomous SoC Design with Analog Block Generation <https://ieeexplore.ieee.org/document/9344104>`_," 2020 IFIP/IEEE 28th International Conference on Very Large Scale Integration (VLSI-SOC), 2020, pp. 141-146.
+ - A\. Hammoud, C. Goyal, S. Pathen, A. Dai, A. Li, G. Kielian, and M. Saligane,  “Human Language to Analog Layout Using Glayout Layout Automation Framework,” Accepted at MLCAD, 2024.
 
- - Qirui Zhang et al., "`An Open-Source and Autonomous Temperature Sensor Generator Verified With 64 Instances in SkyWater 130 nm for Comprehensive Design Space Exploration <https://ieeexplore.ieee.org/abstract/document/9816083>`_," in IEEE Solid-State Circuits Letters, vol. 5, pp. 174-177, 2022.
+ - A\. Hammoud, A. Li, A. Tripathi, W. Tian, H. Khandeparkar, R. Wans, G. Kielian, B. Murmann, D. Sylvester, and M. Saligane, "Reinforcement Learning-Enhanced Cloud-Based Open Source Analog Circuit Generator for Standard and Cryogenic Temperatures in 130-nm and 180-nm OpenPDKs,” Accepted at ICCAD, 2024
+
+ - C\. Goyal, H. Khandeparkar, S. Charan, J. S. M. Baquero, A. Li, J. Euphrosine, T. Ansell, M. Saligane, "`Disrupting Conventional Chip Design through the Open Source EDA Ecosystem <https://ieeexplore.ieee.org/document/10511336/authors#authors>`_," 2024 8th IEEE Electron Devices Technology & Manufacturing Conference (EDTM), Bangalore, India, 2024, pp. 1-3.
+
+ - A\. Li, J. Lee, P. Mukim, B. D. Hoskins, P. Shrestha, D. Wentzloff, D. Blaauw, D. Sylvester, M. Saligane, "`A Fully Integrated, Automatically Generated DC–DC Converter Maintaining >75% Efficiency From 398 K Down to 23 K Across Wide Load Ranges in 12-nm FinFET <https://www.nist.gov/publications/fully-integrated-automatically-generated-dc-dc-converter-maintaining-75-efficiency-398>`_," in IEEE Solid-State Circuits Letters, vol. 7, pp. 42-45, 2024.
+
+ - A\. Hammoud, V. Shankar, R. Mains, T. Ansell, J. Matres and M. Saligane, "`OpenFASOC: An Open Platform Towards Analog and Mixed-Signal Automation and Acceleration of Chip Design <https://ieeexplore.ieee.org/document/10153547>`_," 2023 International Symposium on Devices, Circuits and Systems (ISDCS), Higashihiroshima, Japan, 2023, pp. 01-04. 
+
+ - Y\. K. Cherivirala, M. Saligane and D. D. Wentzloff, "`An Open Source Compatible Framework to Fully Autonomous Digital LDO Generation <https://ieeexplore.ieee.org/document/10071546>`_," 2023 IEEE International Symposium on Circuits and Systems (ISCAS), Monterey, CA, USA, 2023, pp. 1-5.
+
+ - Q\. Zhang, W. Duan, T. Edwards, T. Ansell, D. Blaauw, D. Sylvester, M. Saligane, "`An Open-Source and Autonomous Temperature Sensor Generator Verified With 64 Instances in SkyWater 130 nm for Comprehensive Design Space Exploration <https://ieeexplore.ieee.org/abstract/document/9816083>`_," in IEEE Solid-State Circuits Letters, vol. 5, pp. 174-177, 2022.
+
+ - T\. Ajayi, S. Kamineni, Y. K. Cherivirala, M. Fayazi, K. Kwon, M. Saligane, S. Gupta, C. H. Chen, D. Sylvester, D. Blaauw, R. Dreslinski Jr., B. Calhoun, D. D. Wentzloff, "`An Open-source Framework for Autonomous SoC Design with Analog Block Generation <https://ieeexplore.ieee.org/document/9344104>`_," 2020 IFIP/IEEE 28th International Conference on Very Large Scale Integration (VLSI-SOC), 2020, pp. 141-146.
+
+
