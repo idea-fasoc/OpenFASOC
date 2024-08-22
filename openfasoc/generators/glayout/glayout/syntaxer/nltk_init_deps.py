@@ -17,3 +17,4 @@ def check_and_download_nltk_data(data_name):
 
 
 check_and_download_nltk_data("punkt")
+check_and_download_nltk_data("punkt_tab")
