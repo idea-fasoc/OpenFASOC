@@ -43,6 +43,9 @@ parser.add_argument(
 parser.add_argument(
     "--arr_size_in", help="Debug option to manually set power arr size."
 )
+parser.add_argument(
+    "--place_density", help="Debug option to manually set the placement density."
+)
 parser.add_argument("--clean", action="store_true", help="Clean the workspace.")
 parser.add_argument(
     "--simtype",
@@ -78,6 +81,8 @@ pdk_path = get_setup_pdk(jsonConfig, directories["commonDir"])
 # set model file to the one in the repo
 model_file = directories["genDir"] + "models/model.json"
 jsonModel = check_JSON(model_file)
+# set place density modelfile
+place_density_model_file = directories["genDir"] + "models/place_density.csv"
 # print config info
 print("Config:")
 print('Mode - "' + args.mode + '"')
@@ -115,7 +120,7 @@ designArea = polynomial_output_at_point_from_coefficients(jsonModel["area"], arr
 print("# LDO - Design Area = " + str(designArea) + " um^2")
 
 # Update place density according to power transistor array size
-update_area_and_place_density(directories["flowDir"], arrSize)
+update_area_and_place_density(directories["flowDir"], arrSize, place_density_model_file, place_density=args.place_density)
 
 # Generate the Behavioral Verilog
 verilog_gen_dir = os.path.join('flow', 'design', 'src', 'ldo')
@@ -158,9 +163,9 @@ if args.mode != "verilog" and clean_work_dir:
     # TODO: look at drc after this PR
     p = sp.Popen(["make", "magic_drc"], cwd=directories["flowDir"])
     p.wait()
-    # if p.returncode:
-    # 	print("[Error] DRC failed. Refer to the report")
-    # 	exit(1)
+    if p.returncode:
+        print("[Error] DRC failed. Refer to the report")
+        exit(1)
 
     print("#----------------------------------------------------------------------")
     print("# Run LVS")
@@ -177,9 +182,9 @@ if args.mode != "verilog" and clean_work_dir:
     print("# LVS and DRC finished successfully")
     print("#----------------------------------------------------------------------")
 
-if args.mode == "full":
     # function defined in configure_workspace.py
     copy_outputs(directories, args.outputDir, args.platform, user_specs["designName"])
+if args.mode == "full":
 
     # simulations are ran for the following configurations:
     cap_list = ["1p", "5p"]  # additional capacitance at node VREG
