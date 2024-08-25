@@ -1,49 +1,43 @@
 #!/bin/bash
 
-# the script produces an example RL optimization run
-echo "This script has been verified to run with python3.11 and package versions provided"
-
-
+# this script produces an example RL optimization run
 
 # =====================================================================
-#
-# find most recent version of python
-#
-# Find all installed Python 3 versions and sort them in descending order
-#PYTHON_VERSIONS=$(compgen -c | grep -E '^python3\.[0-9]+$' | sort -V | tail -n 1)
-# Extract the most recent version
-#MOST_RECENT_PYTHON=$(echo "$PYTHON_VERSIONS" | tail -n 1)
-# Check if a Python version was found
-#if [ -z "$MOST_RECENT_PYTHON" ]; then
-#    echo "No Python 3 versions found."
-#    exit 1
-#fi
-# Print the most recent Python version
-#echo
-#echo "Currently using Python version: $MOST_RECENT_PYTHON"
-#echo
-# Check if the most recent version is at least 3.10
-#MINIMUM_VERSION="3.10"
-#if [[ "$(echo $MOST_RECENT_PYTHON | cut -d '.' -f2)" -lt "$(echo $MINIMUM_VERSION | cut -d '.' -f2)" ]]; then
-#    echo "The most recent Python version ($MOST_RECENT_PYTHON) is less than $MINIMUM_VERSION. Please update your Python installation."
-#    echo
-#    exit 1
-#fi
-# Save the command to run the most recent Python version into a variable
-#PY_RUN=$MOST_RECENT_PYTHON
-PY_RUN="python3.11"
-
-
-
+# Check if Python 3.10 is installed
+if command -v python3.10 &>/dev/null; then
+    echo "Python 3.10 is installed."
+else
+    echo "Error: Python 3.10 is not installed."
+    exit 1
+fi
+PY_RUN="python3.10"
 
 # =====================================================================
-#
+# Check if ngspice is installed
+if command -v ngspice &>/dev/null; then
+    echo "ngspice is installed."
+else
+    echo "Error: ngspice is not installed."
+    exit 1
+fi
+
+# =====================================================================
+# check that ngspice 40 is installed
+ngspice --version > test_ngspice_version.txt
+version_line=$(sed -n '2p' test_ngspice_version.txt)
+expected_version="ngspice-40"
+if [[ $version_line == *"$expected_version"* ]]; then
+    echo "Correct ngspice version ($expected_version) is installed."
+else
+    echo "Error: Incorrect ngspice version. Expected $expected_version but found:"
+    echo "$version_line"
+    exit 1
+fi
+
+# =====================================================================
 # ensure all python depedencies are installed
-#
-
 # File containing the list of python dependencies
 requirements_file="requirements.txt"
-#requirements_file="donotdothischeck.txt"
 
 # Function to check if a Python package is installed
 is_installed() {
@@ -80,7 +74,6 @@ echo "Dependency check and package installations complete."
 
 
 # =====================================================================
-#
 # setup and run the RL code
 #
 
@@ -100,3 +93,4 @@ $PY_RUN model.py
 $PY_RUN gen_spec.py
 $PY_RUN eval.py
 # eval.py creates eval*.txt which shows how many specifications are reached
+

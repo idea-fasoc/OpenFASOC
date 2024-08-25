@@ -114,21 +114,42 @@ while bias_cs le bias_cs_Max
             ** Measure phase margin
             let phase = (180/PI)*vp(vo)
             meas ac pm find phase when vdb(vo)=0
-            let pm_FOM_factor = pm > 45 ? 1 : 0.0000001
+            *let pm_FOM_factor = pm > 45 ? 1 : 0.0000001
+            let pm_FOM_factor = 0.0000001
+            if ( pm ge 45 )
+                let pm_FOM_factor = 1
+            end
             ** Measure DC(ish) gain
             meas ac dcg find vdb(vo) at=10
             ** Measure 3db BW
             let threedbabsgain = dcg - 3
             meas ac threedb when vdb(vo)=threedbabsgain FALL=1
             ** if FOM is better than previous max save results
-            let FOM = pm_FOM_factor * ugb_f / (bias_cs + bias_dp)
+            * let FOM = pm_FOM_factor * ugb_f / (bias_cs + bias_dp)
+            let FOM = pm_FOM_factor * ugb_f
+            *
+            * debug outputs
+            echo "finished computations, and calculated the following"
+            echo "phase margin"
+            print pm
+            echo "pm factor:"
+            print pm_FOM_factor
+            echo "FOM"
+            print FOM
+            echo "max FOM"
+            print maxFOM
+            * end debug outputs
+            *
             if ( FOM ge maxFOM )
+                echo "now setting a new maxFOM"
                 let maxFOM = FOM
                 let maxUGB = ugb_f
                 let maxBics = bias_cs
                 let maxBidp = bias_dp
                 let maxBio = bias_o
                 let savedPhaseMargin = pm % 360
+                echo "saved Phase Margin"
+                print savedPhaseMargin
                 let savedDCGain = dcg
                 let savedthreedbBW = threedb
             end
@@ -153,6 +174,8 @@ while bias_cs le bias_cs_Max
     end
 end
 ** Export global maxima
+echo "the final saved phase margin is:"
+print savedPhaseMargin
 wrdata result_ac.txt maxUGB maxBidp maxBics maxBio savedPhaseMargin savedDCGain savedthreedbBW
 
 ** Export power usage of correctly biased opamp
@@ -180,3 +203,4 @@ quit
 .GLOBAL GND
 .GLOBAL VDD
 .end
+

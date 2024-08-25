@@ -6,7 +6,7 @@ import argparse
 
 def generate_random_specs(env, num_specs):
   specs_range = {
-                "gain_min" : [float(10003380.0), float(35003380.0)],
+                "gain_min" : [float(10003380.0), float(130003380.0)],
                 "FOM" : [float(5e11), float(5e11)]
                 }
   specs_range_vals = list(specs_range.values())
@@ -37,3 +37,4 @@ def main():
 
 if __name__=="__main__":
   main()
+

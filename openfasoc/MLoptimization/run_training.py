@@ -70,7 +70,7 @@ class Envir(gym.Env):
                   "Diffpair_bias2" : [3, 13, 1],
                   "pamp_hparams0" : [1, 9, 1], 
                   "pamp_hparams1" : [0.5, 2.1, 0.1], 
-                  "pamp_hparams2" : [2, 13, 1],
+                  "pamp_hparams2" : [4, 17, 1],
                   "bias0" : [1, 8, 1], 
                   "bias1" : [0.5, 2.1, 0.1], 
                   "bias2" : [3, 18, 1],
@@ -137,7 +137,7 @@ class Envir(gym.Env):
         self.specs_ideal_norm = self.lookup(self.specs_ideal, self.global_g)
 
         #initialize current parameters
-        self.cur_params_idx = np.array([6, 2, 7, 6, 0, 5, 7, 0, 10, 6, 5, 13, 0, 6, 4, 2])
+        self.cur_params_idx = np.array([6, 0, 7, 6, 0, 5, 7, 0, 12, 6, 5, 9, 1, 6, 2, 2])
         # param array
         self.cur_specs = self.update(self.cur_params_idx)
         cur_spec_norm = self.lookup(self.cur_specs, self.global_g)
@@ -253,6 +253,8 @@ class Envir(gym.Env):
         inputparam[22] = params[14]
         inputparam[25] = params[15]
         result = safe_single_build_and_simulation(inputparam,temp=-269)
+        with open("quick_unorganized.txt", "a") as filerec:
+            filerec.write(str(inputparam)+"\n"+str(result)+"\n\n\n")
         specs = np.array([0.0 , 0.0])
         specs[0] = result["ugb"]
         specs[1] = result["ugb"]/(result["Ibias_diffpair"]+result["Ibias_commonsource"])
@@ -270,3 +272,4 @@ def main():
 
 if __name__ == "__main__":
   main()
+
