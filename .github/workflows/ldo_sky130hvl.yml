@@ -43,7 +43,7 @@ jobs:
               cp ./.github/scripts/parse_rpt.py ./openfasoc/generators/ldo-gen/. &&\
               pip3 install -r requirements.txt &&\
               cd ./openfasoc/generators/ldo-gen &&\
-              make sky130hvl_ldo &&\
+              arrSize=$arrSize make sky130hvl_ldo &&\
               python3 parse_rpt.py sky130hvl_ldo
             " && exit_code=$? | tee -a file.log
             if [ $? -ne 0 ]; then exit 1; fi
