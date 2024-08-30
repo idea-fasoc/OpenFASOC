@@ -716,7 +716,7 @@ class GlayoutCode(GlayoutAction):
         two_pfet_interdigitized_aliases = list_cartesian_product(["interdigitized","interdigitated"],["pmos","pfet"],True)
         self.update_import_table(two_pfet_interdigitized_aliases,"two_pfet_interdigitized","glayout.flow.placement.two_transistor_interdigitized")
         self.update_import_table(["common centroid"],"common_centroid_ab_ba","glayout.flow.placement.common_centroid_ab_ba")
-        self.update_import_table(["diff pair","diff_pair","differential pair","differential pairs","differential transistor"],"diff_pair_generic","glayout.flow.blocks.diff_pair")
+        self.update_import_table(["diff pair","diff_pair","differential pair","differential pairs","differential transistor"],"diff_pair_generic","glayout.flow.blocks.elementary.diff_pair")
         # import routing funcs
         self.update_import_table(["smart route","smart","smart_route"],"smart_route","glayout.flow.routing.smart_route")
         self.update_import_table(["L route","L_route","l route","l_route"],"L_route","glayout.flow.routing.L_route")
