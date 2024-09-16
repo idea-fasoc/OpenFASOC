@@ -7,7 +7,7 @@ import nltk
 import glayout.syntaxer.nltk_init_deps
 import glayout.syntaxer.dynamic_load
 from glayout.syntaxer.relational import GlayoutCode, parse_direction
-from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk
+from glayout.flow.pdk.gf180_mapped import gf180_mapped_pdk
 
 class Session:
     """The session stores all relevant information for producing code from a conversation"""
@@ -333,11 +333,11 @@ What would you like to do?"""
             False: saveresponse=False
         """
         if "port" in text_input.lower():
-            glayout.syntaxer.dynamic_load.printPortTree_glayout_code_cell(sky130_mapped_pdk,self.code.get_code())
+            glayout.syntaxer.dynamic_load.printPortTree_glayout_code_cell(gf180_mapped_pdk,self.code.get_code())
         elif "param" in text_input.lower():
             print(*self.code.parameter_table,sep="\n")
         else:
-            glayout.syntaxer.dynamic_load.show_glayout_code_cell(sky130_mapped_pdk, self.code.get_code())
+            glayout.syntaxer.dynamic_load.show_glayout_code_cell(gf180_mapped_pdk, self.code.get_code())
         return False
     
     def process_next_input(self, text_input: str) -> bool:

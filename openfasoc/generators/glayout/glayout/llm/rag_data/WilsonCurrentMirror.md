@@ -1,0 +1,9 @@
+# Wilson Current Mirror
+A wilson current mirror is a 4 transistor extension on the basic current mirror design. It adds 2 transistors in the exact same routing configuration on top of the 2 existing transistors.
+## Placement
+The Wilson current mirror has 2 pairs of transistors which should be matched. Just like in a normal current mirror where the reference should be matched to the mirror, in this case the reference must be matched to the mirror. But, since we have 4 transistors, there are 2 references and 2 mirror transistors. There are several possible matching techniques that could be used including interdigitated placement (using the interdigitated place macro). One way to do this would be to place one interdigitated pair on top of another. There is a 4 interdigitated transistors place macro, if you use that you must specify top_row_device="nfet" and bottom_row_device="nfet".
+## Routing
+For the purposes of this description, assume you are using interdigitated matching. In the interdigitated pair, one transistor is "A" and the other is "B". Take transistor "A" as the reference and transistor "B" as the mirror.
+Route the source of top's reference transistor to the drain of bottom's reference transistor. Route the source of top's mirror transistor to the drain of the bottoms mirror transistor.
+The top pair is routed by connecting the top reference gate to top reference drain, and the top reference gate to the top mirror gate. 
+The bottom pair is routed differently, by connecting the bottom mirror gate to the bottom mirror drain and the bottom reference gate to the bottom mirror gate. Additionally, for the bottom pair the sources are shorted.

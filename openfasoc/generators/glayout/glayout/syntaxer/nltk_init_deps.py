@@ -10,10 +10,13 @@ def check_and_download_nltk_data(data_name):
     """
     try:
         nltk.data.find(f"tokenizers/{data_name}")
-    except LookupError:
+    #except LookupError:
+    except Exception:
         print(f"{data_name} is not downloaded. Downloading now...")
         nltk.download(data_name)
         print(f"{data_name} has been downloaded.")
 
 
 check_and_download_nltk_data("punkt")
+check_and_download_nltk_data("punkt_tab")
+check_and_download_nltk_data("averaged_perceptron_tagger_eng")

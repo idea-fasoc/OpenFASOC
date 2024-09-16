@@ -1,2 +1,7 @@
 # Common Source Amplifier
-There are two MOSFETs. One acts as the amplifying stage and we will call this M1, and the other is the active load which we will call M2. Depending on the type of active load, the port of the active load corresponding to the direction of current is connected to the drain of M1. The source of M1 is connected to a lower voltage level than the supply.
+Typically, this amplifier is used to provide voltage gain after preamplification. It has high input impedance and low output impedance. It consists of a pmos transistor called pullup and an nmos transistor called pulldown. This topology is called common source as the input and output terminals share the source as a common terminal. 
+
+## Routing 
+common source amplifier routing depends if it has a folded diode load. In the normal case, do the following:
+1. Connect the drain of pullup to the drain of pulldown 
+2. Connect the source of pullup to the gate of pullup

@@ -1,8 +1,16 @@
 {
     "data": [
         {
+            "NLPfilename": "PMOSArray4x3",
+            "LLMprompt": "Create a 4 by 3 array of pfets. Do not route any elements together."
+        },
+        {
             "NLPfilename": "BiasVoltageGenerator",
             "LLMprompt": "Design a BiasVoltageGenerator with a source PMOS and a load NMOS. Position the load below the source. Short the drains of both transistors and the load gate. Connect the source gate and load source."
+        },
+        {
+            "NLPfilename": "PMOSArray2x5",
+            "LLMprompt": "Create a 2 by 5 array of pfets. Parameterize the length and fingers. Do not route any elements together."
         },
         {
             "NLPfilename": "CrossCoupledInverters",
@@ -137,8 +145,16 @@
             "LLMprompt": "Design an interdigitated cascode common source stage with an input NMOS and a bias NFET. Connect the bias source to the input drain and parametrize everything."
         },
         {
+            "NLPfilename": "NMOSArray2x5",
+            "LLMprompt": "Create an array of nmos transistors with 2 rows and 5 columns. Parametrize everything. Do not route any elements together."
+        },
+        {
             "NLPfilename": "CascodeCommonGateCommonCentroid",
             "LLMprompt": "Design a cascode common gate stage with two NFETs: an input NFET and an output NFET. Connect the source of the input to the drain of the output. Parametrize everything and match the transistors using common centroid placement."
+        },
+        {
+            "NLPfilename": "NMOSArray4x3",
+            "LLMprompt": "Create a 4 by 3 array of nfets. Only parametrize width and length. Do not route any elements together."
         }
     ]
 }

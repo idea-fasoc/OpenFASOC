@@ -89,6 +89,18 @@
             "LLMprompt": "A nor gate is a digital circuit with 2 pullup and 2 pulldown transistors. The pullup transistors are in series and the pulldown transistors are in parralel. Place the pullup network above the pulldown network. Do not use matching."
         },
         {
+            "NLPfilename": "PMOSArray4x3",
+            "LLMprompt": "Create a 4 by 3 pfet array. Parametrize everything. Do not route any elements together."
+        },
+        {
+            "NLPfilename": "ViaArray3x2",
+            "LLMprompt": "Create a 3 by 2 array of vias. Parametrize glayer1 and glayer2 (both strings). Be sure to route the top_met_ of the vias and bottom_met_ of the vias."
+        },
+        {
+            "NLPfilename": "PMOSArray2x5",
+            "LLMprompt": "Create a 2 by 5 pfet array. Only Parametrize the length and fingers. Do not route any elements together."
+        },
+        {
             "NLPfilename": "CommonSourceAmplifierWDiodeLoad",
             "LLMprompt": "A high speed common source amplifier using nfet transistors which has a diode load is called a wide band amplifier. The source of the input transistor and the diode drain are shorted, and so are the diode gate and diode drain."
         },
@@ -111,6 +123,14 @@
         {
             "NLPfilename": "RegulatedCascode",
             "LLMprompt": "This is a regulated cascode. It consists of two nmos transistors. One is called the cascode, and the other feedback. The gate of cascode is connected to the drain of feedback. The gate of feedback is connected to the source of cascode. Don't do any matching and parametrize everything."
+        },
+        {
+            "NLPfilename": "NMOSArray4x3",
+            "LLMprompt": "Create a 4 by 3 nfet array. Only parametrize width and length. Do not route any elements together."
+        },
+        {
+            "NLPfilename": "NMOSArray2x5",
+            "LLMprompt": "Create a 2 by 5 nfet array. Parametrize everything. Do not route any elements together."
         },
         {
             "NLPfilename": "ClassBPushPullInterdigitated",

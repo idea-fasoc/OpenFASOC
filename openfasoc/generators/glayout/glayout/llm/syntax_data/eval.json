@@ -1,32 +1,44 @@
 {
     "data": [
         {
-            "NLPfilename": "MimcapArray.convo",
-            "LLMprompt": "Make a mimcap array called caparr with 5 rows and 5 columns. Parametrize the size of each mimcap."
+            "NLPfilename": "PTypeDiffPair.convo",
+            "LLMprompt": "Make a p-type differential pair. Parametrize everything."
         },
         {
-            "NLPfilename": "PTypeDiffPair.convo",
-            "LLMprompt": "Make a p-type differential pair using interdigitated placement. Parametrize everything."
+            "NLPfilename": "CurrentMirrorNtypeCommonCentroid",
+            "LLMprompt": "Make a current mirror using common centroid pair matching technique. Glayout includes a common centroid matching component which is the \"common centroid pair\". This single component includes 2 transistors (A and B) and has 3 parameters: width, length, and fingers.",
+            "7BcorrectionPrompt": "everything is correct, except do not move anything",
+            "22BcorrectionPrompt": "you made a mistake in routing, rather than routing A_drain to B_drain, you should instead route A_drain to A_gate"
+        },
+        {
+            "NLPfilename": "WilsonCurrentMirror",
+            "LLMprompt": "Create a wilson current mirror by placing 4 interdigitated transistors. Only parametrize int numcols."
+        },
+        {
+            "NLPfilename": "MimcapArray.convo",
+            "LLMprompt": "Create a 2 by 3 array of mimcaps. Be sure to route the top_met_ of the mimcaps and bottom_met_ of the mimcaps.",
+            "7BcorrectionPrompt":"You made some errors in the move section, you should also move mimcap6 right of mimcap2 and mimcap5 right of mimcap1.",
+            "22BcorrectionPrompt": "You made some errors in the move section. In additional to the current move commands, both mimcap5 and mimcap6 are in the second row, you must be move them above the first row"
+        },
+        {
+            "NLPfilename": "ClassABStage.convo",
+            "LLMprompt": "Place two push pulls and two interdigitated pairs, one a pair of pfets called source and the other a pair of nfets called sink. Route from drain of source_A to drain of sink_A"
+        },
+        {
+            "NLPfilename": "IntegratorStage.convo",
+            "LLMprompt": "Create an integrator stage. This is created using 4 pfets and two nfets with a mimcap. The nfets must have their gates shorted and one of the nfets must have their drain shorted to its gate. The sources are connected to ground. This is a curent mirror. A pfet current mirror is also required where the sources are connected to VDD instead. The drain of the non diode-connected pfet must be connected to sources of two other pfets connected as a differential pair (with their sources shorted). The mimcap must be connected between the drains of the differential pair and the nfet current source's nfet drains should connected to the diffpair pfet's drains"
         },
         {
             "NLPfilename": "StrongArmLatch.convo",
             "LLMprompt": "A strong arm latch consists of a diffpair, a CrossCoupleInverters, a bridge nfet, a clkgnd nfet, and two pfets clkpwrL (west) and clkpwrR (east). The cross coupled inverters should be at the top. The bridge should be above the diffpair but below the cross coupled inverters. The clkgnd should be at the bottom, and both clkpwr transistors should be left and right of the cross coupled inverters. You must route the drain of transistor A of the diffpair with the drain of the bridge, the drain of transistor B of the diffpair with the source of the bridge, the source of transistor A in the diffpair with the source of clkgnd."
         },
         {
-            "NLPfilename": "ClassABStage.convo",
-            "LLMprompt": "Place two interdigitated pairs, one a pair of pfets called source and the other a pair of nfets called sink."
-        },
-        {
-            "NLPfilename": "IntegratorStage.convo",
-            "LLMprompt": "Create an integrator stage. This can be made with two pairs of pfets and a pair of nfets. The first pair of pfets is a current mirror that is connected to a pfet diff pair. This is then connected to an active load. Parametrize everything"
+            "NLPfilename":"FourStageIntegrator.convo",
+            "LLMprompt":"I have several existing amplifier stages, and I would like to lay them out into a four stage integrator. The four stage integrator can be built by importing the first stage as FIntegrator, the second stage as SIntegrator, the third stage as TIntegrator, and the last stage as ClassABStage. Put these together routing the output of each stage to the input of the next."
         },
         {
             "NLPfilename": "DeltaSigmaModulator",
-            "LLMprompt": "Create a delta sigma modulator. This combines several different components including an opamp and a latched comparator. The latched compartor includes a d flip flop and a strong arm latch."
-        },
-        {
-            "NLPfilename": "NtypeCurrentMirror",
-            "LLMprompt": "Make a current mirror using common centroid technique."
+            "LLMprompt": "Create a delta sigma modulator. This combines several different components including an opamp and a latched comparator. The latched comparator can be imported "
         }
     ]
 }
