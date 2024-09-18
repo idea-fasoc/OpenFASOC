@@ -78,7 +78,7 @@ clean:
 	-rm -rf tools/*.pyc tools/__pycache__/
 	-rm -rf flow/design/src/ldo
 	-cd flow && make nuke
-	-rm -f blocks/sky130hvl/ldo_custom_net.txt blocks/sky130hvl/ldo_domain_insts.txt
+	-rm -f blocks/sky130hvl/ldo_custom_net.txt blocks/sky130hvl/ldo_domain_insts.txt blocks/sky130hvl/ldo_place.txt
 	-rm -rf ../../common/drc-lvs-check/sky130A
 	-rm -rf simulations/run
 

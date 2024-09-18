@@ -5,7 +5,7 @@ from gdsfactory.components.rectangle import rectangle
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from typing import Optional, Union
 from glayout.flow.primitives.fet import nmos, pmos, multiplier
-from glayout.flow.blocks.diff_pair import diff_pair
+from glayout.flow.blocks.elementary.diff_pair import diff_pair
 from glayout.flow.primitives.guardring import tapring
 from glayout.flow.primitives.mimcap import mimcap_array, mimcap
 from glayout.flow.routing.L_route import L_route
@@ -20,8 +20,8 @@ from pydantic import validate_arguments
 from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized
 from glayout.flow.spice import Netlist
 
-from glayout.flow.blocks.opamp.opamp_twostage import opamp_twostage
-from glayout.flow.blocks.current_mirror import current_mirror_netlist
+from glayout.flow.blocks.composite.opamp.opamp_twostage import opamp_twostage
+from glayout.flow.blocks.elementary.current_mirror import current_mirror_netlist
 
 def opamp_output_stage_netlist(pdk: MappedPDK, output_amp_fet_ref: ComponentReference, biasParams: list) -> Netlist:
     bias_netlist = current_mirror_netlist(pdk, biasParams[0], biasParams[1], biasParams[2])

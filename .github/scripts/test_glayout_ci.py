@@ -3,11 +3,11 @@ try:
     __import__('glayout')
 except ImportError:
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))) 
-from glayout.flow.blocks.opamp import opamp 
-from glayout.flow.blocks.diff_pair  import diff_pair
+from glayout.flow.blocks.composite.opamp import opamp 
+from glayout.flow.blocks.elementary.diff_pair  import diff_pair
 from glayout.flow.primitives.fet import nmos, pmos
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk 
-from glayout.flow.blocks.current_mirror import current_mirror
+from glayout.flow.blocks.elementary.current_mirror import current_mirror
 import json
 import numpy as np
 import shutil
