@@ -248,4 +248,3 @@ def opamp_twostage(
 
     return opamp_top
 
-
