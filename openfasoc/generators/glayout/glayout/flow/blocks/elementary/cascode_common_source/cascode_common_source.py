@@ -117,16 +117,22 @@ def cascode_common_source(
 		M2_ref.movex(0.5*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]))
 	if place_devices in ['vertical', 'V']:
 		M2_ref.movey(0.5*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]))
+
+	
+	top_level.add_ports(M1_ref.get_ports_list(), prefix="M1_")
+	top_level.add_ports(M2_ref.get_ports_list(), prefix="M2_")
+	# print(top_level.get_ports_list())
+
+	print("Getting dict list of ports: ", top_level.ports)
 	
 	# Routing and Port definitions
 	if place_devices in ['lateral', 'horizontal', 'H']:
 		top_level << straight_route(pdk, M1_ref.ports["multiplier_0_drain_W"], M2_ref.ports["multiplier_0_source_E"])
 	if  place_devices in ['vertical', 'V']:
 		top_level << c_route(pdk, M1_ref.ports["multiplier_0_drain_E"], M2_ref.ports["multiplier_0_source_E"])
+	#So now how do I attach net names to M1_multiplier_0_Gate_W to Vin, M1_multiplier_0_Source_S to Vss,
+		# M2_multiplier_0_Drain_N to Iout, M2_multiplier_0_Gate_W to Vbias. 
 	
-	# top_level.add_ports(M1_ref.get_ports_list(), prefix="M1_")
-	# top_level.add_ports(M2_ref.get_ports_list(), prefix="M2_")
-
 	# top_level<<fet_M1
 	# top_level<<fet_M2	
     # M1_ref = prec_ref_center(fet_M1)
