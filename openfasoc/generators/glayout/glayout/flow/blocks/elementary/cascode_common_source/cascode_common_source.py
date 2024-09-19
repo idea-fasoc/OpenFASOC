@@ -81,6 +81,7 @@ def cascode_common_source(
 		Component: a cascode common source amplifier component object
 	"""
 	top_level = Component("cascode common source amplifier")
+	# Create the transistors
 	if device in ['nmos', 'nfet']:
 		fet_M1=nmos(pdk,
 				with_tie=False,
@@ -105,18 +106,23 @@ def cascode_common_source(
 					**kwargs)
 	print("FETS are instantiated now")
 	
+	# Added references to the two FETs within the component level
+	M1_ref = top_level << fet_M1
+	M2_ref = top_level << fet_M2
+	# Placement
+	M1_ref_centre_coord = prec_ref_center(fet_M1)
+	M2_ref_centre_coord = prec_ref_center(fet_M2)
+	place_devices='H'
+	if place_devices in ['lateral', 'horizontal', 'H']:
+		M2_ref.movex(0.5*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]))
+	if place_devices in ['vertical', 'V']:
+		M2_ref.movey(0.5*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]))
 	
-	# top_level.add(fet_M1)
-	# top_level.add(fet_M2)
-	
-	top_level << fet_M1
-	top_level << fet_M2
-
-	M1_ref = prec_ref_center(fet_M1)
-	M2_ref = prec_ref_center(fet_M2)
-	movey(M2_ref, 0.5*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]) + pdk.util_max_metal_seperation())
-
-	
+	# Routing and Port definitions
+	if place_devices in ['lateral', 'horizontal', 'H']:
+		top_level << straight_route(pdk, M1_ref.ports["multiplier_0_gate_E"], M2_ref.ports["multiplier_0_gate_W"])
+	if  place_devices in ['vertical', 'V']:
+		top_level << c_route(pdk, M1_ref.ports["multiplier_0_gate_W"], M2_ref.ports["multiplier_0_gate_W"])
 	# top_level<<fet_M1
 	# top_level<<fet_M2	
     # M1_ref = prec_ref_center(fet_M1)
