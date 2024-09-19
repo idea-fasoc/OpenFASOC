@@ -30,15 +30,15 @@ def cascode_common_source_netlist(
 	model = pdk.models[n_or_p_fet]
 	
 	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={length} w={width} m={mtop} ' + """
-XA VREF VREF VSS VB {model} l={{l}} w={{w}} m={{m}}
-XB VCOPY VREF VSS VB {model} l={{l}} w={{w}} m={{m}}"""
+XM1 INT VIN VSS VSS {model} l={{l}} w={{w}} m={{m}}
+XM2 IOUT VBIAS INT VSS {model} l={{l}} w={{w}} m={{m}}"""
 	source_netlist += "\n.ends {circuit_name}"
 
 	instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult}"
  
 	return Netlist(
 		circuit_name='CASCODECOMMONSRC',
-		nodes=['VREF', 'VCOPY', 'VSS', 'VB'], 
+		nodes=['VIN', 'VBIAS', 'VSS', 'IOUT'], 
 		source_netlist=source_netlist,
   		instance_format=instance_format,
 		parameters={
@@ -123,7 +123,7 @@ def cascode_common_source(
 	top_level.add_ports(M2_ref.get_ports_list(), prefix="M2_")
 	# print(top_level.get_ports_list())
 
-	print("Getting dict list of ports: ", top_level.ports)
+	# print("Getting dict list of ports: ", top_level.ports)
 	
 	# Routing and Port definitions
 	if place_devices in ['lateral', 'horizontal', 'H']:
@@ -133,20 +133,7 @@ def cascode_common_source(
 	#So now how do I attach net names to M1_multiplier_0_Gate_W to Vin, M1_multiplier_0_Source_S to Vss,
 		# M2_multiplier_0_Drain_N to Iout, M2_multiplier_0_Gate_W to Vbias. 
 	
-	# top_level<<fet_M1
-	# top_level<<fet_M2	
-    # M1_ref = prec_ref_center(fet_M1)
-    # cascode_common_source.add(M1_ref)
-    # cascode_common_source.add_ports(M1_ref.get_ports_list(), prefix="M1_")
-    # M2_ref = prec_ref_center(fet_M2)
-    # cascode_common_source.add(M2_ref)
-    # cascode_common_source.add_ports(M2_ref.get_ports_list(), prefix="M2_")
-
-	# # Get dimensions of M1, M2 for displacing M1 above M2
-    # M1_dim = prec_ref_center(M1_ref)
-    # M2_dim = prec_ref_center(M2_ref)
-    # movey(M2_ref, 0.5*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]) + pdk.util_max_metal_seperation())
-
+	
 	# top_level.add_ports(interdigitized_fets.get_ports_list(), prefix="fet_")
 	# maxmet_sep = pdk.util_max_metal_seperation()
 	# # short source of the fets
@@ -198,12 +185,12 @@ def cascode_common_source(
 	# top_level.add_ports(source_short.get_ports_list(), prefix='purposegndports')
 	
 	
-	# top_level.info['netlist'] = cascode_common_source_netlist(
-	# 	pdk, 
-  	# 	width=kwargs.get('width', 3), length=kwargs.get('length', 1), multipliers=numcols, 
-    # 	n_or_p_fet=device,
-	# 	subckt_only=True
-	# )
+	top_level.info['netlist'] = cascode_common_source_netlist(
+		pdk, 
+  		width=kwargs.get('width', 3), length=kwargs.get('length', 1), multipliers=numcols, 
+    	n_or_p_fet=device,
+		subckt_only=True
+	)
  
 	return top_level
 
@@ -213,13 +200,14 @@ Cascode_cs_component = cascode_common_source(mapped_pdk_build,
 												numcols=10) #(mapped_pdk_build,2,3,4,6, cs_type="pfet")
 Cascode_cs_component.show()
 
-# magic_drc_result = sky130.drc_magic(Cascode_cs_component, Cascode_cs_component.name)
-# if magic_drc_result :
-#     print("DRC is clean: ", magic_drc_result)
-# else:
-#     print("DRC failed. Please try again.")
+magic_drc_result = sky130.drc_magic(Cascode_cs_component, Cascode_cs_component.name)
+if magic_drc_result :
+    print("DRC is clean: ", magic_drc_result)
+else:
+    print("DRC failed. Please try again.")
 
-
+## Checking netlist
+print("Netlist: ",Cascode_cs_component.info['netlist'].source_netlist)
 # netgen_lvs_result = sky130_mapped_pdk.lvs_netgen(Cascode_cs_component, 'cascode_common_source')
 # netgen_lvs_result = sky130_mapped_pdk.lvs_netgen(Cascode_cs_component, cascode_common_source.sch)
 # netgen_lvs_result = sky130_mapped_pdk.lvs_netgen(Cascode_cs_component, Cascode_cs_component.name)
