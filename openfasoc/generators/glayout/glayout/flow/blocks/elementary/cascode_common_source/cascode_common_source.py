@@ -130,8 +130,7 @@ def cascode_common_source(
 		top_level << straight_route(pdk, M1_ref.ports["multiplier_0_drain_W"], M2_ref.ports["multiplier_0_source_E"])
 	if  place_devices in ['vertical', 'V']:
 		top_level << c_route(pdk, M1_ref.ports["multiplier_0_drain_E"], M2_ref.ports["multiplier_0_source_E"])
-	#So now how do I attach net names to M1_multiplier_0_Gate_W to Vin, M1_multiplier_0_Source_S to Vss,
-		# M2_multiplier_0_Drain_N to Iout, M2_multiplier_0_Gate_W to Vbias. 
+	#So now I attach pin names for port
 	
 	
 	# top_level.add_ports(interdigitized_fets.get_ports_list(), prefix="fet_")
