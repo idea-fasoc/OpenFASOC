@@ -206,12 +206,7 @@ if magic_drc_result :
 else:
     print("DRC failed. Please try again.")
 
-## Checking netlist
-print("Netlist: ",Cascode_cs_component.info['netlist'].source_netlist)
-# netgen_lvs_result = sky130_mapped_pdk.lvs_netgen(Cascode_cs_component, 'cascode_common_source')
-# netgen_lvs_result = sky130_mapped_pdk.lvs_netgen(Cascode_cs_component, cascode_common_source.sch)
-# netgen_lvs_result = sky130_mapped_pdk.lvs_netgen(Cascode_cs_component, Cascode_cs_component.name)
-#Cascode_cs_component.name = 'cs_two_stack' 
-#netgen_lvs_result = sky130_mapped_pdk.lvs_netgen(Cascode_cs_component, cs_two_stack.name)
-#print(f"LVS results", netgen_lvs_result)
+Cascode_cs_component.name = 'cascode_common_source_lvs' 
+netgen_lvs_result = mapped_pdk_build.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
+print(f"LVS results", netgen_lvs_result)
 
