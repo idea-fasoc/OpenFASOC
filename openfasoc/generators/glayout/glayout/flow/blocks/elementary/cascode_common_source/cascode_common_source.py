@@ -112,7 +112,7 @@ def cascode_common_source(
 	# Placement
 	M1_ref_centre_coord = prec_ref_center(fet_M1)
 	M2_ref_centre_coord = prec_ref_center(fet_M2)
-	place_devices='H'
+	place_devices='V'
 	if place_devices in ['lateral', 'horizontal', 'H']:
 		M2_ref.movex(0.5*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]))
 	if place_devices in ['vertical', 'V']:
@@ -120,9 +120,13 @@ def cascode_common_source(
 	
 	# Routing and Port definitions
 	if place_devices in ['lateral', 'horizontal', 'H']:
-		top_level << straight_route(pdk, M1_ref.ports["multiplier_0_gate_E"], M2_ref.ports["multiplier_0_gate_W"])
+		top_level << straight_route(pdk, M1_ref.ports["multiplier_0_drain_W"], M2_ref.ports["multiplier_0_source_E"])
 	if  place_devices in ['vertical', 'V']:
-		top_level << c_route(pdk, M1_ref.ports["multiplier_0_gate_W"], M2_ref.ports["multiplier_0_gate_W"])
+		top_level << c_route(pdk, M1_ref.ports["multiplier_0_drain_E"], M2_ref.ports["multiplier_0_source_E"])
+	
+	# top_level.add_ports(M1_ref.get_ports_list(), prefix="M1_")
+	# top_level.add_ports(M2_ref.get_ports_list(), prefix="M2_")
+
 	# top_level<<fet_M1
 	# top_level<<fet_M2	
     # M1_ref = prec_ref_center(fet_M1)
