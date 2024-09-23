@@ -10,7 +10,7 @@ from glayout.flow.primitives.guardring import tapring
 from glayout.flow.pdk.util.port_utils import add_ports_perimeter	
 from gdsfactory.component import Component
 from typing import Optional, Union 
-
+from gdsfactory.components import text_freetype, rectangle
 
 from glayout.flow.pdk.util.comp_utils import prec_ref_center, prec_center, movey, evaluate_bbox
 
@@ -55,6 +55,10 @@ def cascode_common_source(
     pdk: MappedPDK, 
     numcols: int = 3,
     device: str = 'nfet',
+	m1_fingers: int = 1,
+	m1_multipliers: int = 1,
+	m2_fingers: int = 1,
+	m2_multipliers: int = 1,
     with_dummy: Optional[bool] = True,
     with_substrate_tap: Optional[bool] = False,
     with_tie: Optional[bool] = True,
@@ -84,22 +88,30 @@ def cascode_common_source(
 	# Create the transistors
 	if device in ['nmos', 'nfet']:
 		fet_M1=nmos(pdk,
-				with_tie=False,
-				with_dummy=with_dummy,
-				with_substrate_tap=False,
-				**kwargs)
+					fingers=m1_fingers,
+					multipliers = m1_multipliers,
+					with_tie=False,
+					with_dummy=with_dummy,
+					with_substrate_tap=False,
+					**kwargs)
 		fet_M2=nmos(pdk,
+					fingers=m2_fingers,
+					multipliers = m2_multipliers,
 					with_tie=False,
 					with_dummy=with_dummy,
 					with_substrate_tap=False,
 					**kwargs)
 	elif device in ['pmos', 'pfet']:
 		fet_M1=pmos(pdk,
+					fingers=m1_fingers,
+					multipliers = m1_multipliers,
 					with_tie=False,
 					with_dummy=with_dummy,
 					with_substrate_tap=False,
 					**kwargs)
 		fet_M2=pmos(pdk,
+					fingers=m2_fingers,
+					multipliers = m2_multipliers,
 					with_tie=False,
 					with_dummy=with_dummy,
 					with_substrate_tap=False,
@@ -121,67 +133,18 @@ def cascode_common_source(
 	
 	top_level.add_ports(M1_ref.get_ports_list(), prefix="M1_")
 	top_level.add_ports(M2_ref.get_ports_list(), prefix="M2_")
-	# print(top_level.get_ports_list())
-
-	# print("Getting dict list of ports: ", top_level.ports)
-	
 	# Routing and Port definitions
 	if place_devices in ['lateral', 'horizontal', 'H']:
 		top_level << straight_route(pdk, M1_ref.ports["multiplier_0_drain_W"], M2_ref.ports["multiplier_0_source_E"])
 	if  place_devices in ['vertical', 'V']:
 		top_level << c_route(pdk, M1_ref.ports["multiplier_0_drain_E"], M2_ref.ports["multiplier_0_source_E"])
 	#So now I attach pin names for port
-	
-	
-	# top_level.add_ports(interdigitized_fets.get_ports_list(), prefix="fet_")
-	# maxmet_sep = pdk.util_max_metal_seperation()
-	# # short source of the fets
-	# source_short = interdigitized_fets << c_route(pdk, interdigitized_fets.ports['A_source_E'], interdigitized_fets.ports['B_source_E'], extension=3*maxmet_sep, viaoffset=False)
-	# # short gates of the fets
-	# gate_short = interdigitized_fets << c_route(pdk, interdigitized_fets.ports['A_gate_W'], interdigitized_fets.ports['B_gate_W'], extension=3*maxmet_sep, viaoffset=False)
-	# # short gate and drain of one of the reference 
-	# interdigitized_fets << L_route(pdk, interdigitized_fets.ports['A_drain_W'], gate_short.ports['con_N'], viaoffset=False, fullbottom=False)
-	
-	# top_level << interdigitized_fets
-	# # add the tie layer
-	# if with_tie:
-	# 	tap_sep = max(
-    #         pdk.util_max_metal_seperation(),
-    #         pdk.get_grule("active_diff", "active_tap")["min_separation"],
-    #     )
-	# 	tap_sep += pdk.get_grule("p+s/d", "active_tap")["min_enclosure"]
-	# 	tap_encloses = (
-	# 	2 * (tap_sep + interdigitized_fets.xmax),
-	# 	2 * (tap_sep + interdigitized_fets.ymax),
-	# 	)
-	# 	tie_ref = top_level << tapring(pdk, enclosed_rectangle = tap_encloses, sdlayer = "p+s/d", horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
-	# 	top_level.add_ports(tie_ref.get_ports_list(), prefix="welltie_")
-	# 	try:
-	# 		top_level << straight_route(pdk, top_level.ports["A_0_dummy_L_gsdcon_top_met_W"],top_level.ports["welltie_W_top_met_W"],glayer2="met1")
-	# 	except KeyError:
-	# 		pass
-	# 	try:
-	# 		end_col = numcols - 1
-	# 		port1 = f'B_{end_col}_dummy_R_gdscon_top_met_E'
-	# 		top_level << straight_route(pdk, top_level.ports[port1], top_level.ports["welltie_E_top_met_E"], glayer2="met1")
-	# 	except KeyError:
-	# 		pass
-	
-	# # add a pwell 
-	# top_level.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
-	# top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("pwell"), prefix="well_")
- 
-	# # add the substrate tap if specified
-	# if with_substrate_tap:
-	# 	subtap_sep = pdk.get_grule("dnwell", "active_tap")["min_separation"]
-	# 	subtap_enclosure = (
-	# 		2.5 * (subtap_sep + interdigitized_fets.xmax),
-	# 		2.5 * (subtap_sep + interdigitized_fets.ymax),
-	# 	)
-	# 	subtap_ring = top_level << tapring(pdk, enclosed_rectangle = subtap_enclosure, sdlayer = "p+s/d", horizontal_glayer = "met2", vertical_glayer = "met1")
-	# 	top_level.add_ports(subtap_ring.get_ports_list(), prefix="substrate_tap_")
-  
-	# top_level.add_ports(source_short.get_ports_list(), prefix='purposegndports')
+	text_pin_labels = list()
+	met5pin = rectangle(size=(5,5),layer=(72,16), centered=True)
+	for name in ['VIN', 'VBIAS', 'VSS', 'IOUT']:
+		pin_w_label = met5pin.copy()
+		pin_w_label.add_label(text=name,layer=(72,5),magnification=4)
+		text_pin_labels.append(pin_w_label)
 	
 	
 	top_level.info['netlist'] = cascode_common_source_netlist(
@@ -196,7 +159,11 @@ def cascode_common_source(
 
 mapped_pdk_build = sky130
 Cascode_cs_component = cascode_common_source(mapped_pdk_build,
-												numcols=10) #(mapped_pdk_build,2,3,4,6, cs_type="pfet")
+												m1_fingers=5,
+												m2_fingers=5,
+												m1_multipliers=1,
+												m2_multipliers=1,
+												numcols=10) 
 Cascode_cs_component.show()
 
 magic_drc_result = sky130.drc_magic(Cascode_cs_component, Cascode_cs_component.name)
