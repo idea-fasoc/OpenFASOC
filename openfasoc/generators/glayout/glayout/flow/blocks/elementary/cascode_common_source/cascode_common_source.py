@@ -75,6 +75,8 @@ def cascode_common_source(
 		pdk (MappedPDK): the process design kit to use
 		numcols (int): number of columns of the interdigitized fets
 		device (str): nfet or pfet (can only interdigitize one at a time with this option)
+		m1_fingers: Number of fingers of M1 transistor
+		m1_multiplier: Number of multipliers of M1 transistor
 		with_dummy (bool): True places dummies on either side of the interdigitized fets
 		with_substrate_tap (bool): boolean to decide whether to place a substrate tapring
 		with_tie (bool): boolean to decide whether to place a tapring for tielayer
