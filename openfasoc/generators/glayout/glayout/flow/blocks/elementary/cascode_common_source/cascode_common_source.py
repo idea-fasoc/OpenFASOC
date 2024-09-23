@@ -140,7 +140,7 @@ def cascode_common_source(
 		top_level << straight_route(pdk, M1_ref.ports["multiplier_0_drain_W"], M2_ref.ports["multiplier_0_source_E"])
 	if  place_devices in ['vertical', 'V']:
 		top_level << c_route(pdk, M1_ref.ports["multiplier_0_drain_E"], M2_ref.ports["multiplier_0_source_E"])
-	#So now I attach pin names for port
+	#Now attach pin names for port
 	text_pin_labels = list()
 	met5pin = rectangle(size=(5,5),layer=(72,16), centered=True)
 	for name in ['VIN', 'VBIAS', 'VSS', 'IOUT']:
