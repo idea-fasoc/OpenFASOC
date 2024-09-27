@@ -1,0 +1,35 @@
+NMOSArray2x5
+# 2 rows by 5 cols array of nmos transistors (no routing)
+// no imports
+// create parameters: width, length, multipliers, fingers
+create a float parameter called width
+create a float parameter called length
+create a int parameter called multipliers
+create a int parameter called fingers
+// place 2*5=10 array elements
+place a nmos called element1 with width=width, length=length, fingers=fingers, rmult=1, multipliers=multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called element2 with width=width, length=length, fingers=fingers, rmult=1, multipliers=multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called element3 with width=width, length=length, fingers=fingers, rmult=1, multipliers=multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called element4 with width=width, length=length, fingers=fingers, rmult=1, multipliers=multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called element5 with width=width, length=length, fingers=fingers, rmult=1, multipliers=multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called element6 with width=width, length=length, fingers=fingers, rmult=1, multipliers=multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called element7 with width=width, length=length, fingers=fingers, rmult=1, multipliers=multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called element8 with width=width, length=length, fingers=fingers, rmult=1, multipliers=multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called element9 with width=width, length=length, fingers=fingers, rmult=1, multipliers=multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called element10 with width=width, length=length, fingers=fingers, rmult=1, multipliers=multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+// move first row into position
+move element2 to the right of element1
+move element3 to the right of element2
+move element4 to the right of element3
+move element5 to the right of element4
+// move second row above first row
+move element6 above element1
+move element7 above element1
+move element8 above element1
+move element9 above element1
+move element10 above element1
+move element7 to the right of element6
+move element8 to the right of element7
+move element9 to the right of element8
+move element10 to the right of element9
+// no routing

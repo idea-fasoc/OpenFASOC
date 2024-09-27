@@ -1,6 +1,12 @@
 # Machine Learning Optimization
 Code for reinforcement learning loop with openfasoc generators for optimizing metrics
 
+## Supported Versions
+Please note that this program has only been tested with python3.10 and ngspice v40s
+
+## Quick Start
+run `bash quickstart.bash` to get an example RL run optimizing opamps.
+
 ## Code Setup
 The code is setup as follows:
 
@@ -34,13 +40,27 @@ The evaluation script takes the trained agent and gives it new specs that the ag
 
 ```
 python3.10 eval.py
-``` 
+```
 
-The evaluation result will be saved to the ../generators/gdsfactory-gen/.
+The evaluation result will be saved to the ../generators/glayout/.
 
 ## Results
-Please note that results vary greatly based on random seed and spec generation (both for testing and validation). An example spec file is provided that was used to generate the results below. 
+example resulting opamps (parameter arrays and names provided)
 
-<p float="left">
-  <img src="mean_reward_versus_step.png" width="400" /> 
-</p>
+```
+# transistor parameters provided as (width, length, fingers, multipliers)
+# all parameters are listed in floating point format (even integers) for processing purposes
+
+153 MegHz UGB, 91db DC Gain, 166uW power
+[3.0, 0.5, 6.0, 7.0, 1.5, 10.0, 5.0, 0.7, 8.0, 3.0, 5.0, 1.2, 12.0, 3.0, 5.0, 1.0, 16.0, 6.0, 2.0, 4.0, 4.0, 0.5, 5.0, 12.0, 12.0, 3.0, 2.0]
+{'diffpair': (3.0, 0.5, 6.0), 'diffpair_bias': (7.0, 1.5, 10.0), 'secondstage': (5.0, 0.7, 8.0, 3.0), 'secondstage_bias': (5.0, 1.2, 12.0, 3.0), 'output_stage_params': (5.0, 1.0, 16.0), 'output_stage_bias': (6.0, 2.0, 4.0), 'firststage': (4.0, 0.5, 5.0), 'mim_cap_size': (12.0, 12.0), 'mim_cap_rows': 3, 'rmult': 2}
+
+143 MegHz UGB, 95db DC Gain, 179uW power
+[2.0, 0.6, 4.0, 4.0, 1.0, 7.0, 4.0, 0.7, 13.0, 3.0, 4.0, 1.1, 12.0, 3.0, 5.0, 1.0, 16.0, 6.0, 2.0, 4.0, 3.0, 0.5, 5.0, 12.0, 12.0, 3.0, 2.0]
+{'diffpair': (2.0, 0.6, 4.0), 'diffpair_bias': (4.0, 1.0, 7.0), 'secondstage': (4.0, 0.7, 13.0, 3.0), 'secondstage_bias': (4.0, 1.1, 12.0, 3.0), 'output_stage_params': (5.0, 1.0, 16.0), 'output_stage_bias': (6.0, 2.0, 4.0), 'firststage': (3.0, 0.5, 5.0), 'mim_cap_size': (12.0, 12.0), 'mim_cap_rows': 3, 'rmult': 2}
+
+137 MegHz UGB, 95db DC Gain, 41uW power
+[3.0, 0.5, 4.0, 4.0, 1.0, 7.0, 4.0, 0.8, 14.0, 3.0, 4.0, 1.2, 11.0, 3.0, 5.0, 1.0, 16.0, 6.0, 2.0, 4.0, 3.0, 0.5, 5.0, 12.0, 12.0, 3.0, 2.0]
+{'diffpair': (3.0, 0.5, 4.0), 'diffpair_bias': (4.0, 1.0, 7.0), 'secondstage': (4.0, 0.8, 14.0, 3.0), 'secondstage_bias': (4.0, 1.2, 11.0, 3.0), 'output_stage_params': (5.0, 1.0, 16.0), 'output_stage_bias': (6.0, 2.0, 4.0), 'firststage': (3.0, 0.5, 5.0), 'mim_cap_size': (12.0, 12.0), 'mim_cap_rows': 3, 'rmult': 2}
+```
+

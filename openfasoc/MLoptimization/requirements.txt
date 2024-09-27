@@ -1,0 +1,31 @@
+gdsfactory==7.7.0
+prettyprint
+prettyprinttree
+nltk
+torch
+klayout
+safetensors
+requests
+tensorboard
+ray==2.7.1
+gym==0.26.2
+gymnasium==0.28.1
+scikit-learn
+scikit-image
+scipy
+seaborn
+matplotlib
+lz4
+async-timeout
+dm_tree
+pyarrow
+aiohttp>=3.7
+aiohttp_cors
+colorful
+py-spy>=0.2.0
+grpcio>=1.42.0
+opencensus
+virtualenv>=20.0.24, !=20.21.1
+memray
+smart_open
+prometheus_client >= 0.7.1

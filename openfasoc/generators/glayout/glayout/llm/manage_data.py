@@ -2,17 +2,16 @@ import json
 import warnings
 from pathlib import Path
 from typing import List, Tuple, Union
-from langchain_community.document_loaders import DirectoryLoader, TextLoader
-from langchain_community.vectorstores import Chroma
-#from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.document_loaders import TextLoader
 from datasets import Dataset
 from typing import Optional
 
+from glayout.llm.rag import RAGdb
 
 def remove_comments_and_empty_lines(input_string: str) -> str:
     """
     Removes all lines starting with a '#' or any empty lines from the input string.
+    Does not remove lines starting with '//' (use these as annotations)
     Args:
         input_string (str): The input string containing multiple lines.
     Returns:
@@ -131,51 +130,6 @@ def load_all_labeled_syntax_data_json(
     return all_results
 
 
-class RAGdb:
-    """
-    A class to create and manage a vector database for the RAG data using ChromaDB.
-
-    Attributes:
-        chroma_client (Client): The ChromaDB client used for managing the vector database.
-        collection_name (str): The name of the collection used in ChromaDB.
-        collection (Collection): The vector database
-    """
-
-    def __init__(self, rag_data_dir: Union[str, Path]):
-        """Initializes the RAGdb instance with a ChromaDB collection"""
-        # error checking
-        rag_data_dir = Path(rag_data_dir).resolve()
-        if not rag_data_dir.is_dir():
-            raise FileNotFoundError(f"could not find RAG data directory {rag_data_dir}")
-        # load RAG data
-        self.documents = DirectoryLoader(str(rag_data_dir), glob="*.md").load()
-        # create vector db
-        embeddings_model_name = "sentence-transformers/all-MiniLM-L6-v2"
-        embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name)
-        self.vectordb = Chroma.from_documents(
-            documents=self.documents, embedding=embeddings
-        )
-
-    def query(self, query_text: str, k: int = 1) -> list:
-        """
-        Queries the vector database to find the top-k most similar vectors to the given query text.
-        Args:
-            query_text (str): The text to query.
-        Returns:
-            List: The list of top-k most similar docs.
-        """
-        kact = k if k>1 else 2
-        rawdocs = self.vectordb.similarity_search(query=query_text, k=kact)
-        rawtxt = list()
-        for i, doc in enumerate(rawdocs):
-            rawtxt.append(doc.page_content)
-            if i == kact-1:
-                break
-        return rawtxt
-
-
-RAGvecdb = RAGdb(Path(__file__).resolve().parent / "rag_data")
-
 
 def get_glayout_context() -> str:
     """retrieve the context of syntax_data/GlayoutStrictSyntax.md
@@ -193,8 +147,8 @@ def get_glayout_context() -> str:
 
 def get_prompt_from_template(
     tokenizer,
-    ragcontext: str,
     prompt: str,
+    ragcontext: Optional[str] = None,
     strictsyntax: Optional[str] = None,
     return_message: bool=False
 ) -> str:
@@ -203,7 +157,7 @@ def get_prompt_from_template(
 
     Args:
         tokenizer: a tokenizer compatible with huggingface, transformers tokenizer class
-        ragcontext (str): Contextual information about analog circuit design to aid in translation.
+        ragcontext (str, None): Contextual information about analog circuit design to aid in translation.
         prompt (str): The input prompt that needs to be converted to Glayout strictsyntax.
         strictsyntax (str, Optional): The strictsyntax command language template to be used.
             if None (default), then only format the prompt (no labeled output strictsyntax)
@@ -215,9 +169,11 @@ def get_prompt_from_template(
     inst_prompt = str()
     glayout_nlp_context = get_glayout_context()
     inst_prompt += f"Below is some context on Glayout strictsyntax:\n{glayout_nlp_context}\n\n"
-    #inst_prompt += "Below is context on the circuit"
+    #inst_prompt += "Below is additional context on the circuit"
     #inst_prompt += "convert an example prompt to Glayout strictsyntax\n"
-    inst_prompt += f"\n{ragcontext}\n"
+    if ragcontext is not None and len(ragcontext) and not(ragcontext.isspace()):
+        inst_prompt += "\nThe following is more specific context. This is only useful if it is related to the circuit the user is requesting below.\n"
+        inst_prompt += f"{ragcontext}\n"
     #inst_prompt += f"Do NOT include the context in your response. Convert the following prompt to Glayout strictsyntax:\n{prompt}"
     inst_prompt += f"Convert the following prompt to Glayout strictsyntax:\n{prompt}"
     # unify prompt and return
@@ -262,26 +218,27 @@ def unify_prompt_and_add_context_to_data(tokenizer, data: list, no_label: bool=F
 
 
 def load_preprocessed_data_in_messages_format():
+    RAGvecdb = RAGdb(Path(__file__).resolve().parent / "rag_data")
     # get train and evaluation data in a single unified prompt format
     train_examples = load_all_labeled_syntax_data_json()
     eval_examples = load_all_labeled_syntax_data_json(True)
     # train
     train_messages = list()
     for prompt, result in train_examples:
-        ragcontext = RAGvecdb.query(prompt, 1)
-        train_messages.append(get_prompt_from_template(None,ragcontext,prompt,result,True))
+        ragcontext = RAGvecdb.query(prompt, 1)[0]
+        train_messages.append(get_prompt_from_template(tokenizer=None,ragcontext=ragcontext,prompt=prompt,strictsyntax=result,return_message=True))
     train_data = Dataset.from_dict({"messages":train_messages})
     # eval
     eval_messages = list()
     for prompt, result in eval_examples:
-        ragcontext = RAGvecdb.query(prompt, 1)
-        eval_messages.append(get_prompt_from_template(None,ragcontext,prompt,result,True))
+        ragcontext = RAGvecdb.query(prompt, 1)[0]
+        eval_messages.append(get_prompt_from_template(tokenizer=None,ragcontext=ragcontext,prompt=prompt,strictsyntax=result,return_message=True))
     eval_data = Dataset.from_dict({"messages":eval_messages})
     return {"train": train_data, "evaluation": eval_data}
 
 
 
-
+# NOTE: this function is deprecated and may be removed
 def load_preprocessed_pretokenized_data(tokenizer):
     """Wrapper function for full retrival and preprocessing of dataset
     1- Loads raw data from files

@@ -13,6 +13,8 @@ from glayout.llm.manage_data import (
     load_all_labeled_syntax_data_json,
 )
 
+from glayout.llm.rag import RAGdb
+
 import torch
 from peft import (
     get_peft_config,
@@ -35,46 +37,21 @@ import transformers
 from trl import DataCollatorForCompletionOnlyLM, SFTTrainer
 
 
-def get_huggingface_token():
-    """Parse the command-line arguments to retrieve the Hugging Face access token.
-    This function uses argparse to handle command-line arguments and specifically looks for an 
-    access token required to download models and tokenizers from Hugging Face. If the token is 
-    not provided, it raises an EnvironmentError with instructions on how to obtain one.
-    Returns:
-        str: The Hugging Face access token.
-    Raises:
-        EnvironmentError: If the access token is not provided in the command-line arguments.
-    """
-    parser = argparse.ArgumentParser(description="Manage, interact, and run the Glayout LLM")
-    parser.add_argument(
-        "-t",
-        "--token",
-        type=str,
-        help="Specify the access token you are using to download the model and tokenizer from huggingface",
-    )
-    args = parser.parse_args()
-    if args.token is None:
-        errstring = "To download models from huggingface you need a hugging face account and an access token"
-        errstring += "\nYou can create a hugging face account here: https://huggingface.co/join\n"
-        errstring += "Once you have an account and sign in, you can create an access token (need read access) here:\n"
-        errstring += "https://huggingface.co/settings/tokens\n"
-        errstring += "pass the access token in the command line with the option --token=[insert token here]"
-        raise EnvironmentError(errstring)
-    return args.token
-#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
-accesstoken = get_huggingface_token()
 
 microsoft_model = False
 mistral_model = False
 # returns model, tokenizer
-def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
+def load_model_and_tokenizer(model: str, accesstoken: str, device: str, lora: bool = True) -> tuple:
     """Downloads or restores model and tokenizer
     converts the model to half precision
     moves tokenizer and model to the specified device
 
     Args:
+        model (str): which model size do you want to load. Currently supports 3,7,or 22 Billion parameters
+        accesstoken (str): access key for huggingface public repos
         device (str): move model to device (tokenizer always runs on CPU)
                       (e.g., 'cpu', 'cuda').
+        lora (bool): would you like to run low rank adaptation (currently is only supported for True)
 
     Returns:
         tuple: first element is model and second is tokenizer.
@@ -88,9 +65,20 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
     # when use codestral on 80GB GPU, you may need to set the following in your env
     # PYTORCH_CUDA_ALLOC_CONF=garbage_collection_threshold:0.6,max_split_size_mb:128
     # reduce epochs to 2
-    #modelname = "microsoft/Phi-3-mini-128k-instruct"
-    modelname = "mistralai/Codestral-22B-v0.1"
-    #modelname = "mistralai/Mistral-7B-Instruct-v0.3"
+    model = model.strip().lower()
+    if model == "3b":
+        modelname = "microsoft/Phi-3-mini-128k-instruct"
+        target_modules = ["qkv_proj"]
+    elif model=="7b":
+        modelname = "mistralai/Mistral-7B-Instruct-v0.3"
+        target_modules=["q_proj", "k_proj", "v_proj"]
+    elif model=="22b":
+        modelname = "mistralai/Codestral-22B-v0.1"
+        target_modules=["q_proj", "k_proj", "v_proj"]
+        print("consider setting PYTORCH_CUDA_ALLOC_CONF=garbage_collection_threshold:0.6,max_split_size_mb:128")
+        input("type anything to continue:")
+    else:
+        raise ValueError("a model must be provided from 3b, 7b, or 22b")
     global microsoft_model
     global mistral_model
     microsoft_model = "microsoft" in modelname
@@ -103,7 +91,8 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
         model = AutoModelForCausalLM.from_pretrained(
             modelname,
             token=accesstoken,
-            quantization_config=BitsAndBytesConfig(load_in_8bit=True)
+            quantization_config=BitsAndBytesConfig(load_in_8bit=True),
+            trust_remote_code=True
         )
         # model = AutoModelForCausalLM.from_pretrained(modelname, token=accesstoken, device_map="auto", trust_remote_code=False, revision="main")
         model.train()
@@ -120,7 +109,7 @@ def load_model_and_tokenizer(device: str, lora: bool = True) -> tuple:
             lora_alpha=16,
             lora_dropout=0.05,
             bias="none",
-            target_modules=["q_proj", "k_proj", "v_proj"],
+            target_modules=target_modules,
         )
         model = get_peft_model(model, peft_config)
         model.print_trainable_parameters()
@@ -155,6 +144,7 @@ def run_llm_normal(
     return tokenizer.decode(outputs[0], skip_special_tokens=True)
 
 
+# NOTE: this function is deprecated and may be removed
 def train(model, tokenizer, data, qlora: bool = True):
     if not qlora:
         raise NotImplementedError("currently only support qlora")
@@ -208,29 +198,54 @@ def train(model, tokenizer, data, qlora: bool = True):
     return model
 
 
-def run_full_training() -> tuple:
+# NOTE: this function is deprecated and may be removed
+def run_full_training(model: str, accesstoken: str) -> tuple:
     """returns model (and tokenizer) resulting from training LLM
+    Args:
+        model (str): which model size do you want to load. specify as string num params
+        accesstoken (str): huggingface key for public repos
     Returns:
         tuple: model, tokenizer
     """
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    model, tokenizer = load_model_and_tokenizer(device)
+    model, tokenizer = load_model_and_tokenizer(model=model,accesstoken=accesstoken,device=device)
     # load fine tuning data
     data = load_preprocessed_pretokenized_data(tokenizer)
     return train(model, tokenizer, data), tokenizer
 
 
-def run_full_SFT_training() -> tuple:
+def run_full_SFT_training(model: str, accesstoken: str) -> tuple:
+    """
+    Runs full Supervised Fine-Tuning (SFT) training for a specified language model using Hugging Face Transformers.
+
+    This function loads a pre-trained language model and tokenizer, prepares the training data, and performs training 
+    using specified hyperparameters. The trained model is saved, and the function returns the model and tokenizer.
+
+    Args:
+        model (str): The identifier of the model to load. Specify the model size as a string, e.g., "125M", "350M", 
+                     "1.3B", representing the number of parameters.
+        accesstoken (str): The Hugging Face access token for accessing public repositories.
+
+    Returns:
+        tuple: A tuple of trained model (first element) and tokenizer (second element)
+    """
+    # pick a number of steps between evaluations so that num_evals evaluations are done total
+    # train_size = size of training set (number of examples)
+    # num_epoch = total number of training epochs
+    def deterime_eval_steps(train_size: int, num_epochs: int) -> int:
+        num_evals = 6
+        return int((train_size * num_epochs) / num_evals)
+    
     # load model, tokenizer
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    model, tokenizer = load_model_and_tokenizer(device)
+    model, tokenizer = load_model_and_tokenizer(model=model,accesstoken=accesstoken,device=device)
     # load data
     data = load_preprocessed_data_in_messages_format()
     # train
     # hyperparameters
-    lr = 5e-5
-    batch_size = 1  # 2 #4
-    num_epochs = 2
+    lr = 7e-5
+    batch_size = 1 # 2 #4
+    num_epochs = 1 #2 #3
     # define training arguments
     output_dir = Path(__file__).resolve().parent / ("glayout_llm_checkpoints" + ("phi" if microsoft_model else "mstrl"))
     training_args = TrainingArguments(
@@ -242,10 +257,12 @@ def run_full_SFT_training() -> tuple:
         weight_decay=0.01,
         logging_strategy="steps",
         logging_steps=1,
-        eval_strategy="steps",
-        eval_steps=10,
-        save_strategy="steps",
-        save_steps=10,
+        eval_strategy="epoch",
+        #eval_strategy="steps",
+        #eval_steps=24,
+        save_strategy="epoch",
+        #save_strategy="steps",
+        #save_steps=24,
         load_best_model_at_end=True,
         gradient_accumulation_steps=1,
         warmup_steps=1,
@@ -259,7 +276,12 @@ def run_full_SFT_training() -> tuple:
         data_collator = DataCollatorForCompletionOnlyLM(response_template="[/INST]",instruction_template="[INST]",tokenizer=tokenizer,mlm=False)
     else:
         raise ValueError("could not find a valid model, please specify a model type either mistral models or microsoft (phi) models")
-    #import pdb; pdb.set_trace()
+    # delete this
+    # for split in ["train","evaluation"]:
+    #     for ele in data[split]:
+    #         with open(split+".txt","a") as datafile:
+    #             datafile.write(ele["messages"][1]["content"].split("\n")[0]+"\n")
+    #import pdb ; pdb.set_trace()
     trainer = SFTTrainer(
         model=model,
         tokenizer=tokenizer,
@@ -276,7 +298,17 @@ def run_full_SFT_training() -> tuple:
 
 
 class GlayoutLLMSessionHandler:
-    def __init__(self):
+    def __init__(self, model: str, accesstoken: str, converse_mode: bool=False):
+        """GlayoutLLMSessionHandler constructor
+        Args:
+            model (str): which model size do you want to load. Specify as a string of the form "{size}b"
+            accesstoken (str): huggingface key for public repos
+            converse_mode (bool=False): if set to True, all prompt engineering and RAG is disabled.
+                This allows pure conversation with the LLM
+        """
+        self.converse_mode = bool(converse_mode)
+        self.accesstoken = str(accesstoken)
+        self.model = str(model.strip().lower())
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         # look for an existing model
         base_path = Path(__file__).resolve().parent
@@ -292,20 +324,31 @@ class GlayoutLLMSessionHandler:
             print("Model and tokenizer loaded successfully.")
         else:
             # model, tokenizer = run_full_training()
-            model, tokenizer = run_full_SFT_training()
+            model, tokenizer = run_full_SFT_training(accesstoken=self.accesstoken,model=self.model)
         # set self attributes
-        #self.promptexamples = "the following are several labeled examples of converting prompts to strict syntax.\n"
-        #promptexamples = load_all_labeled_syntax_data_json()
-        #for prompt, result in promptexamples[::25]:
-        #    self.promptexamples += prompt + "\n" + result + "\n\n"
+        self.RAGvecdb = RAGdb(Path(__file__).resolve().parent / "rag_data")
         self.model = model
         self.tokenizer = tokenizer
-        self.chat_history = []
-        self.chat_history.append({"role": "user", "content": get_glayout_context()})
-        self.chat_history.append({"role": "assistant", "content": RESPONSE})
+        self.clear_history()
         #print(self.generate(self.promptexamples, clear=False))
         #print(self.generate(user_input="summarize the following:\n" + get_glayout_context(), clear=False))
 
+    def clear_history(self):
+        """Resets the chat history to start the conversation from scratch
+        Appends some initial context to setup the LLM for the conversation
+        
+        Attributes:
+            self.pastfirst (bool): A flag indicating if the conversation has moved past the first prompt.
+            self.chat_history (list): A list to store the sequence of chat messages.
+        """
+        self.chat_history = []
+        if not self.converse_mode:
+            self.pastfirst = False # a flag which indicates if we are past the first prompt
+            self.chat_history.append({"role": "user", "content": get_glayout_context()})
+            self.chat_history.append({"role": "assistant", "content": RESPONSE})
+        else:
+            self.pastfirst = True
+    
     def load_model_from_checkpoint(self, checkpoint_dir):
         # helper function
         def get_base_model_name_or_path(file_path: Union[str, Path]) -> str:
@@ -316,35 +359,46 @@ class GlayoutLLMSessionHandler:
 
         # load model
         model = AutoPeftModelForCausalLM.from_pretrained(
-            checkpoint_dir, device_map=self.device
+            checkpoint_dir,
+            device_map=self.device,
+            quantization_config=BitsAndBytesConfig(load_in_8bit=True),
+            trust_remote_code=True
         )
         model_id = get_base_model_name_or_path(checkpoint_dir / "adapter_config.json")
         # basemodel = AutoModelForCausalLM.from_pretrained(model_id, device_map=self.device)
         # model = AutoGPTQForCausalLM.from_quantized(checkpoint_dir)
         # model = model.merge_and_unload()
         # load tokenizer
-        tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True, token=accesstoken)
+        tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True, token=self.accesstoken)
         tokenizer.add_special_tokens({'pad_token': '[PAD]'})
         return model, tokenizer
 
-    def generate(self, user_input: str, clear: bool = False) -> str:
+    def generate(self, user_input: str) -> str:
         """provide LLM output from user input
         by default will keep appending to the previous prompts in a conversation.
+        The first prompt will be modified with the special indicator so that the LLM will try to create a Glayout strict syntax convo
+        all prompts after the first will have no prompt engineering.
         Args:
             user_input (str): general user prompt
-            clear (bool, Optional): reset the chat history. Default False
         Returns:
             str: strictsyntax output
         """
         self.model.eval()
-        user_input = f"Glayout strictsyntax is a electronic circuit layout command language. Convert the following prompt to Glayout strictsyntax:\n{user_input}"
-        if clear:
-            self.chat_history = []
-            self.generate(
-                user_input="summarize the following:\n" + get_glayout_context(),
-                clear=False,
-            )
-        self.chat_history.append({"role": "user", "content": user_input})
+        # if not past the first prompt, add the special indicator to create a convo
+        full_prompt = user_input
+        if not self.pastfirst:
+            full_prompt = "Glayout strictsyntax is a electronic circuit layout command language.\n"
+            # add RAG input
+            #import pdb; pdb.set_trace()
+            rag_content = self.RAGvecdb.query(user_input,k=1)[0]
+            if rag_content is not None:
+                full_prompt += "The following is more specific context. This is only useful if it is related to the circuit the user is requesting below.\n"
+                full_prompt += f"{rag_content}\n"
+            # add user prompt
+            full_prompt += f"Convert the following prompt to Glayout strictsyntax:\n{user_input}"
+            self.pastfirst = True
+        # add this prompt to the session, then tokenize and feed to the LLM
+        self.chat_history.append({"role": "user", "content": full_prompt})
         inputs = self.tokenizer.apply_chat_template(
             self.chat_history,
             tokenize=True,
@@ -352,7 +406,8 @@ class GlayoutLLMSessionHandler:
             return_tensors="pt",
         )
         inputs = inputs.to(self.device)
-        outputs = self.model.generate(input_ids=inputs, max_new_tokens=4096, pad_token_id=self.tokenizer.pad_token_id)
+        #outputs = self.model.generate(input_ids=inputs, max_new_tokens=4096, pad_token_id=self.tokenizer.pad_token_id)
+        outputs = self.model.generate(input_ids=inputs, max_new_tokens=1024, pad_token_id=self.tokenizer.pad_token_id)
         response = self.tokenizer.decode(
             outputs[0][len(inputs[0]) : -1], skip_special_tokens=False
         )
@@ -365,10 +420,5 @@ class GlayoutLLMSessionHandler:
         return self.generate(user_input=user_input)
 
 
-RESPONSE = """Example Syntax:
-Importing: import CrossCoupledInverters
-Creating Parameters: create a float parameter called device_width
-Placing Components: place a nmos called m1 with width 1.0, length 2.0, fingers 2
-Moving Components: move m1 below m2
-Routing: route between m1_source_E and m2_source_E using smart_route
-This structured approach ensures clarity and modularity, making it easier to design complex analog circuits efficiently."""
+RESPONSE = """Thank you for providing the detailed context on Glayout strict syntax. I now have a foundational understanding of the commands. You can prompt me with specific requests to create circuits, and I will be able to write the Glayout strict syntax commands for you."""
+

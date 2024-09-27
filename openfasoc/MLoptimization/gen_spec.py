@@ -6,8 +6,8 @@ import argparse
 
 def generate_random_specs(env, num_specs):
   specs_range = {
-                "gain_min" : [float(14003380.0), float(50003380.0)],
-                "FOM" : [float(4e11), float(4e11)]
+                "gain_min" : [float(10003380.0), float(130003380.0)],
+                "FOM" : [float(5e11), float(5e11)]
                 }
   specs_range_vals = list(specs_range.values())
   specs_valid = []
@@ -28,10 +28,13 @@ def generate_random_specs(env, num_specs):
 
 def main():
   parser = argparse.ArgumentParser()
-  parser.add_argument('--num_specs', type=str)
+  #parser.add_argument('--num_specs', type=str)
+  parser.add_argument('--first_run',action='store_true', help='Indicate whether this is the first run of the script.')
+  # first_run change the name of yaml file to train.yaml
   args = parser.parse_args()
-
-  generate_random_specs("train.yaml", int(100))
+  yaml_file_name = "train.yaml" if args.first_run else "eval.yaml"
+  generate_random_specs(yaml_file_name, int(100))
 
 if __name__=="__main__":
   main()
+

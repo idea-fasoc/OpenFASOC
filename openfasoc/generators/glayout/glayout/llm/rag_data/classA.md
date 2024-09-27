@@ -1,3 +1,6 @@
 # Class A Amplifier
 The purpose of a Class A amplifier is to provide linear amplification of an input signal. This results in low distortion of the amplified signal. 
-class A amplifier can be created with two nmos transistors, m1 and m2 respectivly. The gate of m1 is connected to input voltage and the drain is connected the the drain of m2. The source of m1 is tied to vss and the source of m2 is connected to vdd. The gate of m2 is connected to vgg. The node between the drains of m1 and m2 are connected to vout which can be connect to a capacitor and resistor in parallel to block unwanted signals from reaching the load.
+class A amplifier can be created with two nmos transistors, called amp and load. The source of amp is connected to VSS and the drain of amp is connected the source of load. The drain of load is connected to VDD. The gate of amp is connected to the input signal and the gate of load is connected to a bias voltage. The output signal is taken from the drain of amp.
+
+## Routing
+Route together the drain of amp and the source of load.

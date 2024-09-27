@@ -1,8 +1,4 @@
-# Add glayout to path
-import sys
-sys.path.append('../generators/gdsfactory-gen')
-sys.path.append('../generators/gdsfactory-gen/tapeout_and_RL')
-
+import glayout_import
 #training import
 import numpy as np
 from ray.rllib.algorithms.ppo import PPO
@@ -17,7 +13,7 @@ def unlookup(norm_spec, goal_spec):
     return spec
 
 def evaluate_model(checkpoint_dir: str = "./last_checkpoint"):
-    specs = yaml.safe_load(Path('newnew_eval_3.yaml').read_text())
+    specs = yaml.safe_load(Path('eval.yaml').read_text())
 
     #training set up
     env_config = {
@@ -42,9 +38,9 @@ def evaluate_model(checkpoint_dir: str = "./last_checkpoint"):
                             },
                 }
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--checkpoint_dir', '-cpd', type=str)
-    args = parser.parse_args()
+    #parser = argparse.ArgumentParser()
+    #parser.add_argument('--checkpoint_dir', '-cpd', type=str)
+    #args = parser.parse_args()
     env = Envir(env_config=env_config)
 
     agent = PPO.from_checkpoint(checkpoint_dir)
@@ -60,7 +56,7 @@ def evaluate_model(checkpoint_dir: str = "./last_checkpoint"):
     action_arr_comp = []
     rollout_steps = 0
     reached_spec = 0
-    f = open("newnewnew_eval__3.txt", "a")
+    f = open("eval_1.txt", "a")
 
     while rollout_steps < 100:
         rollout_num = []

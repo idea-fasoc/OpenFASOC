@@ -1,0 +1,17 @@
+WilsonCurrentMirror
+// create parameters: wcm_length, wcm_fingers
+Create a float parameter called wcm_length
+Create an int parameter called wcm_fingers
+// place
+place 4 interdigitated transistors called wcm with numcols=wcm_fingers, length=wcm_length, top_row_device="nfet", bottom_row_device="nfet"
+// only one component placed, so no move
+# route bottom two transistors
+route between wcm_bottom_A_source_E and wcm_bottom_B_source_E using smart_route
+route between wcm_bottom_A_gate_E and wcm_bottom_B_gate_E using smart_route
+route between wcm_bottom_B_gate_E and wcm_bottom_B_drain_E using smart_route
+# route top two transistors
+route between wcm_top_A_gate_E and wcm_top_B_gate_E using smart_route
+route between wcm_top_A_gate_E and wcm_top_A_drain_E using smart_route
+# route sources/drains
+route between wcm_top_A_source_E and wcm_bottom_A_drain_E using smart_route
+route between wcm_top_B_source_E and wcm_bottom_B_drain_E using smart_route

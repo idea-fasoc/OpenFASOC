@@ -19,13 +19,18 @@ from glayout.flow.routing.straight_route import straight_route
 def smart_route(
     pdk: MappedPDK,
     edge1: Port,
-	edge2: Port,
+    edge2: Port,
     ref_comp: Optional[Union[Component, ComponentReference]]=None,
     top_comp: Optional[Union[Component, ComponentReference]]=None,
+    auto_downscale_routing: bool = True,
     **kwargs
 ) -> Component:
     # error checks
     assert_port_manhattan([edge1,edge2])
+    # auto downscale routing widths if both port widths>1 (will make port width exactly 1)
+    if edge1.width>1 and edge2.width>1:
+        edge1.width=1
+        edge2.width=1
     # determine route type based on preconfiged route utils
     if top_comp is not None and ref_comp is not None:
         if ref_comp.info.get("route_genid") is not None:
@@ -41,7 +46,7 @@ def smart_route(
     # determine route type based on port orientation and distance
     if ports_parallel(edge1,edge2):
         # croute or straightroute
-        if ports_inline(edge1,edge2):
+        if ports_inline(edge1,edge2) or (edge1.orientation!=edge2.orientation):
             return straight_route(pdk, edge1, edge2, **kwargs)
         else:
             return c_route(pdk, edge1, edge2, **kwargs)
@@ -81,6 +86,10 @@ def generic_route_two_transistor_interdigitized(
     edge2: Port,
     top_comp: Union[Component, ComponentReference]
 ) -> Component:
+    # check if edges are on the same two transistor interdigitated component
+    if len(edge1.name.split("_")[-4])>=4 and len(edge2.name.split("_")[-4])>=4:
+        if edge1.name.split("_")[-4]!=edge2.name.split("_")[-4]:
+            raise ValueError("edges are not on the same two_transistor_interdigitized pair")
     def compensate_for_croutes(top_comp, sample_port: Port, LeftSide: bool, extend_to: Port):
         # top_comp is Component to modify, sample_port is a port name for refernce (we dont know what the prefix should be) side is either west (left) or east
         # adds a metal extension and changes the ports to compensate for the fact that there will be a croute on that side
@@ -226,8 +235,6 @@ def generic_route_four_transistor_interdigitized(
 
         # if check_route("")
 
-        raise ValueError("these ports will be supported soon")
-        # print(f'\nname1: {name1}, name2: {name2}\n"top_A_source", "bottom_A_source"\n')
         
         print('\n result of check_route: ', check_route(name1, name2, "top_A_source", "bottom_A_source"))
         if check_route(name1, name2, "top_A_drain", "bottom_A_drain"):
@@ -249,6 +256,13 @@ def generic_route_four_transistor_interdigitized(
             rt = c_route(pdk, exchange_ports(top_comp, edge1, "W"), exchange_ports(top_comp, edge2, "W"), viaoffset=(True, True), width1=width1, width2=width2, extension=4*width1)
             compensate_for_croutes(top_comp, edge1, True, rt.ports["con_N"])
             return rt
+        
+        if check_route(name1, name2, "top_B_source", "bottom_B_drain"):
+            rt = c_route(pdk, exchange_ports(top_comp, edge1, "E"), exchange_ports(top_comp, edge2, "E"), viaoffset=(True, True), width1=width1, width2=width2)
+            compensate_for_croutes(top_comp, edge1, True, rt.ports["con_N"])
+            return rt
+        raise ValueError("other ports will be supported soon")
+        # print(f'\nname1: {name1}, name2: {name2}\n"top_A_source", "bottom_A_source"\n')
     else:
         # else return 2 tran route
         return generic_route_two_transistor_interdigitized(pdk, edge1, edge2, top_comp)

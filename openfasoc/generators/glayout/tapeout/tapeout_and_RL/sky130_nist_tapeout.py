@@ -1,5 +1,6 @@
 import sys
-from os import path, rename
+from os import path, rename, environ
+environ['OPENBLAS_NUM_THREADS'] = '1'
 # path to glayout
 sys.path.append(path.join(path.dirname(__file__), '../../'))
 
@@ -37,7 +38,12 @@ from itertools import count, repeat
 from glayout.flow.pdk.util.snap_to_grid import component_snap_to_grid
 from glayout.flow.pdk.util.component_array_create import write_component_matrix
 import re
+import pickle
+import tempfile
+import subprocess
+import traceback
 
+global _TAPEOUT_AND_RL_DIR_PATH_
 global _GET_PARAM_SET_LENGTH_
 global _TAKE_OUTPUT_AT_SECOND_STAGE_
 global PDK_ROOT
@@ -46,9 +52,15 @@ global __SMALL_PAD_
 __SMALL_PAD_ = True
 __NO_LVT_GLOBAL_ = False
 _GET_PARAM_SET_LENGTH_ = False
-_TAKE_OUTPUT_AT_SECOND_STAGE_ = False
-PDK_ROOT = "/usr/bin/miniconda3/share/pdk/"
+_TAKE_OUTPUT_AT_SECOND_STAGE_ = True
 
+if 'PDK_ROOT' in environ:
+	PDK_ROOT = str(Path(environ['PDK_ROOT']).resolve())
+else:
+	PDK_ROOT = "/usr/bin/miniconda3/share/pdk/"
+
+_TAPEOUT_AND_RL_DIR_PATH_ = Path(__file__).resolve().parent
+#print(_TAPEOUT_AND_RL_DIR_PATH_)
 # ====Build Opamp====
 
 
@@ -451,7 +463,7 @@ def get_small_parameter_list(test_mode = False, clarge=False) -> np.array:
 	# if test_mode create a failed attempt (to test error handling)
 	if test_mode:
 		short_list[index] = opamp_parameters_serializer(mim_cap_rows=-1)
-		short_list[index+1] = opamp_parameters_serializer(mim_cap_rows=0)
+		short_list[index+1] = opamp_parameters_serializer(mim_cap_rows=2)
 	global _GET_PARAM_SET_LENGTH_
 	if _GET_PARAM_SET_LENGTH_:
 		print("created parameter set of length: "+str(len(short_list)))
@@ -571,6 +583,7 @@ def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: t
 	# pass pdk as global var to avoid pickling issues
 	global pdk
 	global PDK_ROOT
+	global _TAPEOUT_AND_RL_DIR_PATH_
 	# generate layout
 	destination_gds_copy = save_gds_dir / (str(index)+".gds")
 	sky130pdk = pdk
@@ -587,14 +600,14 @@ def __run_single_brtfrc(index, parameters_ele, save_gds_dir, temperature_info: t
 				destination_gds_copy.write_bytes(tmp_gds_path.read_bytes())
 			extractbash_template=str()
 			#import pdb; pdb.set_trace()
-			with open("extract.bash.template","r") as extraction_script:
+			with open(str(_TAPEOUT_AND_RL_DIR_PATH_)+"/extract.bash.template","r") as extraction_script:
 				extractbash_template = extraction_script.read()
 				extractbash_template = extractbash_template.replace("@@PDK_ROOT",PDK_ROOT).replace("@@@PAROPT","noparasitics" if noparasitics else "na")
 			with open(str(tmpdirname)+"/extract.bash","w") as extraction_script:
 				extraction_script.write(extractbash_template)
 			#copyfile("extract.bash",str(tmpdirname)+"/extract.bash")
-			copyfile("opamp_perf_eval.sp",str(tmpdirname)+"/opamp_perf_eval.sp")
-			copytree("sky130A",str(tmpdirname)+"/sky130A")
+			copyfile(str(_TAPEOUT_AND_RL_DIR_PATH_)+"/opamp_perf_eval.sp",str(tmpdirname)+"/opamp_perf_eval.sp")
+			copytree(str(_TAPEOUT_AND_RL_DIR_PATH_)+"/sky130A",str(tmpdirname)+"/sky130A")
 			# extract layout
 			Popen(["bash","extract.bash", tmp_gds_path, opamp_v.name],cwd=tmpdirname).wait()
 			print("Running simulation at temperature: " + str(temperature_info[0]) + "C")
@@ -652,9 +665,9 @@ def brute_force_full_layout_and_PEXsim(sky130pdk: MappedPDK, parameter_list: np.
 	pdk = sky130pdk
 	with Pool(128) as cores:
 		if saverawsims:
-			results = np.array(cores.starmap(__run_single_brtfrc, zip(count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info), repeat(cload), repeat(noparasitics), count(0))),np.float64)
+			results = np.array(cores.starmap(safe_single_build_and_simulation, zip(parameter_list, repeat(temperature_info[0]), count(0), repeat(cload), repeat(noparasitics),repeat(False), count(0), repeat(save_gds_dir), repeat(False))),np.float64)
 		else:
-			results = np.array(cores.starmap(__run_single_brtfrc, zip(count(0), parameter_list, repeat(save_gds_dir), repeat(temperature_info), repeat(cload), repeat(noparasitics))),np.float64)
+			results = np.array(cores.starmap(safe_single_build_and_simulation, zip(parameter_list, repeat(temperature_info[0]), repeat(None), repeat(cload), repeat(noparasitics),repeat(False), count(0), repeat(save_gds_dir), repeat(False))),np.float64)
 	# undo pdk modification
 	sky130pdk.default_decorator = add_npc_decorator
 	return results
@@ -674,7 +687,7 @@ def get_training_data(test_mode: bool=True, temperature_info: tuple[int,str]=(25
 
 
 #util function for pure simulation. sky130 is imported automatically
-def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: Optional[Union[str,Path]] = None, cload: float=0.0, noparasitics: bool=False,hardfail=False) -> dict:
+def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: Optional[Union[str,Path]] = None, cload: float=0.0, noparasitics: bool=False,hardfail=False, index: int = 12345678987654321, save_gds_dir="./", return_dict: bool=True) -> dict:
 	"""Builds, extract, and simulates a single opamp
 	saves opamp gds in current directory with name 12345678987654321.gds
 	returns -987.654321 for all values IF phase margin < 45
@@ -690,16 +703,16 @@ def single_build_and_simulation(parameters: np.array, temp: int=25, output_dir: 
 		temperature_info[1] = "cryo model"
 	temperature_info = tuple(temperature_info)
 	# run single build
-	save_gds_dir = Path('./').resolve()
-	index = 12345678987654321
+	save_gds_dir = Path(save_gds_dir).resolve()
 	# pass pdk as global var to avoid pickling issues
 	global pdk
 	pdk = sky130_mapped_pdk
 	results = __run_single_brtfrc(index, parameters, temperature_info=temperature_info, save_gds_dir=save_gds_dir, output_dir=output_dir, cload=cload, noparasitics=noparasitics, hardfail=hardfail)
-	results = opamp_results_de_serializer(results)
-	if results["phaseMargin"] < 45:
-		for key in results:
-			results[key] = -987.654321
+	if return_dict: # default behavoir will return a dictionary and filter phase margin below 45
+		results = opamp_results_de_serializer(results)
+		if results["phaseMargin"] < 45:
+			for key in results:
+				results[key] = -987.654321
 	return results
 
 
@@ -1122,6 +1135,64 @@ def create_opamp_matrix(save_dir_name: str, params: np.array, results: Optional[
 
 
 
+# ================ safe single build and sim ==================
+
+
+class safe_single_build_and_simulation_helperclass:
+	def __init__(self, *args, **kwargs):
+		self.passed_args = args
+		self.passed_kwargs = kwargs
+		# create and run using a temp dir to pass information
+		with tempfile.TemporaryDirectory() as temp_dir:
+			# Define the path for the pickle file
+			pickle_file_path = Path(temp_dir).resolve() / 'class_instance.pkl'
+			# Serialize the instance to the pickle file
+			with open(pickle_file_path, 'wb') as f:
+				pickle.dump(self, f)
+			# Define and run the subprocess
+			python_executable = sys.executable
+			command = [python_executable, "sky130_nist_tapeout.py", "safe_single_build_and_sim", "--class_pickle_file", pickle_file_path,"--PDK_ROOT",PDK_ROOT]
+			#process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+			subprocess.Popen(command,cwd=str(_TAPEOUT_AND_RL_DIR_PATH_)).wait()
+			# load the result back from the same pickle file which was passed
+			with open(pickle_file_path, 'rb') as pckfile:
+				restored_run = pickle.load(pckfile)
+			# if restored_run does not have a results attribute, that means execute did not run properly in the other session 
+			# single build and sim probably failed
+			try:
+				self.results = restored_run.results
+			except AttributeError:
+				raise RuntimeError("\nAn error silently occurred somewhere before this point\n")
+				
+			
+	def execute(self):
+		self.results = single_build_and_simulation(*self.passed_args,**self.passed_kwargs)
+
+# same as calling single_build_and_simulation, but runs in a subprocess
+def safe_single_build_and_simulation(*args, **kwargs) -> dict:
+	def get_parameter_value(param_name: str, *args, **kwargs):
+		# Check if the parameter is in kwargs
+		if param_name in kwargs:
+			return kwargs[param_name]
+		# Check if the parameter is in args
+		try:
+			# Find the index of the param_name in args and return the next item as its value
+			index = args.index(param_name)
+			return args[index + 1]
+		except (ValueError, IndexError):
+			# ValueError if param_name is not in args
+			# IndexError if param_name is the last item and has no value after it
+			return None
+	try:
+		return safe_single_build_and_simulation_helperclass(*args,**kwargs).results
+	except Exception as e_LorA:
+		if bool(get_parameter_value("hardfail",*args,**kwargs)):
+			raise e_LorA
+		results = opamp_results_serializer()
+		with open('get_training_data_ERRORS.log', 'a') as errlog:
+			errlog.write("\nopamp run "+str(get_parameter_value("index",*args,**kwargs))+" with the following params failed: \n"+str(get_parameter_value("params",*args,**kwargs)))
+	return results
+
 
 
 if __name__ == "__main__":
@@ -1181,7 +1252,11 @@ if __name__ == "__main__":
 	create_opamp_matrix_parser.add_argument("--indices", type=int, nargs="+", help="list of int indices to pick from the opamp param.npy and add to the matrix (default: the entire params list)")
 	create_opamp_matrix_parser.add_argument("--output_dir", type=Path, default="./opampmatrix", help="Directory for output files (default: ./opampmatrix)")
 
-	for prsr in [get_training_data_parser,gen_opamp_parser,test,create_opamp_matrix_parser]:
+	# Hidden subparser used for safe_single_build_and_simulation
+	safe_single_build_and_sim = subparsers.add_parser("safe_single_build_and_sim")
+	safe_single_build_and_sim.add_argument("--class_pickle_file",type=Path,help="see safe_single_build_and_simulation")
+
+	for prsr in [get_training_data_parser,gen_opamp_parser,test,create_opamp_matrix_parser,safe_single_build_and_sim]:
 		prsr.add_argument("--no_lvt",action="store_true",help="do not place any low threshold voltage transistors.")
 		prsr.add_argument("--PDK_ROOT",type=Path,default="/usr/bin/miniconda3/share/pdk/",help="path to the sky130 PDK library")
 	for prsr in [gen_opamp_parser,create_opamp_matrix_parser]:
@@ -1192,11 +1267,13 @@ if __name__ == "__main__":
 	if args.mode in ["gen_opamps","create_opamp_matrix"]:
 		__SMALL_PAD_ = not args.big_pad
 
-	if args.mode in ["get_training_data","test","gen_opamps","create_opamp_matrix"]:
+	if args.mode in ["get_training_data","test","gen_opamps","create_opamp_matrix","safe_single_build_and_sim"]:
 		__NO_LVT_GLOBAL_ = args.no_lvt
 		PDK_ROOT = Path(args.PDK_ROOT).resolve()
+		if 'PDK_ROOT' in environ:
+			PDK_ROOT = Path(environ['PDK_ROOT']).resolve()
 		if not(PDK_ROOT.is_dir()):
-			raise ValueError("PDK_ROOT is not a valid directory\n")
+			raise ValueError("PDK_ROOT "+str(PDK_ROOT)+" is not a valid directory\n")
 		PDK_ROOT = str(PDK_ROOT)
 
 	# Simulation Temperature information
@@ -1217,8 +1294,8 @@ if __name__ == "__main__":
 	elif args.mode=="get_training_data":
 		if args.get_tset_len:
 			_GET_PARAM_SET_LENGTH_ = True
-		if args.output_second_stage:
-			_TAKE_OUTPUT_AT_SECOND_STAGE_ = True
+		if not args.output_second_stage:
+			_TAKE_OUTPUT_AT_SECOND_STAGE_ = False
 		# Call the get_training_data function with test_mode flag
 		parameter_array = None
 		if args.nparray is not None:
@@ -1251,8 +1328,8 @@ if __name__ == "__main__":
 			opamp_comp_final.write_gds(args.output_gds)
 
 	elif args.mode == "test":
-		if args.output_second_stage:
-			_TAKE_OUTPUT_AT_SECOND_STAGE_ = True
+		if not args.output_second_stage:# defaults to True, so we only need to change in the False condition
+			_TAKE_OUTPUT_AT_SECOND_STAGE_ = False
 		params = {
 			"half_diffpair_params": (6, 1, 4),
 			"diffpair_bias": (6, 2, 4),
@@ -1264,7 +1341,7 @@ if __name__ == "__main__":
 			"mim_cap_rows": 3,
 			"rmult": 2
 		}
-		results = single_build_and_simulation(opamp_parameters_serializer(**params), temperature_info[0], args.output_dir, cload=args.cload, noparasitics=args.noparasitics, hardfail=True)
+		results = safe_single_build_and_simulation(opamp_parameters_serializer(**params), temperature_info[0], args.output_dir, cload=args.cload, noparasitics=args.noparasitics, hardfail=True)
 		print(results)
 
 	elif args.mode =="create_opamp_matrix":
@@ -1277,7 +1354,13 @@ if __name__ == "__main__":
 		else:
 			indices = None
 		create_opamp_matrix(args.output_dir,params,results,indices)
-
+	
+	elif args.mode=="safe_single_build_and_sim":
+		with open(args.class_pickle_file, 'rb') as pckfile:
+			restored_run = pickle.load(pckfile)
+		restored_run.execute()
+		with open(args.class_pickle_file, 'wb') as pckfile:
+			pickle.dump(restored_run, pckfile)
 
 	elif args.mode == "gen_opamps":
 		global usepdk
@@ -1299,3 +1382,4 @@ if __name__ == "__main__":
 
 	end_watch = time.time()
 	print("\ntotal runtime was "+str((end_watch-start_watch)/3600) + " hours\n")
+

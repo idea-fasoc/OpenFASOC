@@ -1,14 +1,11 @@
-# Add glayout to path
-import sys
-sys.path.append('../generators/gdsfactory-gen/tapeout_and_RL')
-
+import glayout_import
 #env import
 import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.spaces import Discrete
 from gymnasium.wrappers import EnvCompatibility
 from ray.rllib.env.wrappers.multi_agent_env_compatibility import MultiAgentEnvCompatibility
-from sky130_nist_tapeout import single_build_and_simulation
+from sky130_nist_tapeout import safe_single_build_and_simulation
 import numpy as np
 import random
 import psutil
@@ -48,7 +45,6 @@ class Envir(gym.Env):
         #data = np.load('./training_params.npy')
         #result = np.load('./training_results.npy')
         #self.result = result
-        self.epi_steps = 0
 
         # design specs
         if self.generalize == True:
@@ -66,20 +62,20 @@ class Envir(gym.Env):
 
         # param array
         params = {
-                  "diffpair_params0" : [1, 8, 1],
-                  "diffpair_params1" : [0.5, 2.1, 0.1],
-                  "diffpair_params2" : [1, 9, 1],
+                  "diffpair_params0" : [1, 8, 1],       
+                  "diffpair_params1" : [0.5, 2.1, 0.1],   
+                  "diffpair_params2" : [1, 13, 1],
                   "Diffpair_bias0" : [1, 8, 1],
                   "Diffpair_bias1" : [1, 4.5, 0.5],
                   "Diffpair_bias2" : [3, 13, 1],
-                  "pamp_hparams0" : [1, 8, 1],
-                  "pamp_hparams1" : [0.5, 2.1, 0.1],
-                  "pamp_hparams2" : [2, 11, 1],
-                  "bias0" : [1, 8, 1],
-                  "bias1" : [0.5, 2.1, 0.1],
-                  "bias2" : [3, 13, 1],
+                  "pamp_hparams0" : [1, 9, 1], 
+                  "pamp_hparams1" : [0.5, 2.1, 0.1], 
+                  "pamp_hparams2" : [4, 17, 1],
+                  "bias0" : [1, 8, 1], 
+                  "bias1" : [0.5, 2.1, 0.1], 
+                  "bias2" : [3, 18, 1],
                   "bias3" : [2, 4, 1],
-                  "half_pload1": [3, 7, 1],
+                  "half_pload1": [3, 10, 1],
                   "half_pload3": [4, 9, 1],
                   "mim_cap_rows" : [1, 4, 1],
                   }
@@ -107,7 +103,7 @@ class Envir(gym.Env):
         for spec in list(self.specs.values()):
                 self.global_g.append(float(spec[self.fixed_goal_idx]))
         self.g_star = np.array(self.global_g)
-        self.global_g = np.array([60003380.0, 3e12])
+        self.global_g = np.array([30003380.0, 1e12])
 
         #objective number (used for validation)g
         self.obj_idx = 0
@@ -141,7 +137,7 @@ class Envir(gym.Env):
         self.specs_ideal_norm = self.lookup(self.specs_ideal, self.global_g)
 
         #initialize current parameters
-        self.cur_params_idx = np.array([3, 5, 7, 5, 4, 0, 3, 0, 2, 5, 15, 1, 0, 3, 4, 2])
+        self.cur_params_idx = np.array([6, 0, 7, 6, 0, 5, 7, 0, 12, 6, 5, 9, 1, 6, 2, 2])
         # param array
         self.cur_specs = self.update(self.cur_params_idx)
         cur_spec_norm = self.lookup(self.cur_specs, self.global_g)
@@ -169,7 +165,7 @@ class Envir(gym.Env):
         reward = self.reward(self.cur_specs, self.specs_ideal)
         terminated = False
         #f = open("newnew_5.txt", "a")
-        f = open("record2.txt", "a")
+        f = open("record_2.txt", "a")
         #incentivize reaching goal state
         if(prevreward >= 2.0 and reward < 2.0):
             terminated = True
@@ -247,7 +243,7 @@ class Envir(gym.Env):
         params = np.array([self.params[i][params_idx[i]] for i in range(len(self.params_id))])
 
         #run param vals and simulate
-        inputparam = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 5.0, 1.0, 16.0, 6.0, 2.0, 4.0, 0.0, 1.0, 0.0, 12.0, 12.0, 0.0, 2.0])
+        inputparam = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 5.0, 1.0, 16.0, 6.0, 2.0, 4.0, 0.0, 0.5, 0.0, 12.0, 12.0, 0.0, 2.0])
 
         inputparam[0:3] = params[0:3]
         inputparam[3:6] = params[3:6]
@@ -256,7 +252,9 @@ class Envir(gym.Env):
         inputparam[20] = params[13]
         inputparam[22] = params[14]
         inputparam[25] = params[15]
-        result = single_build_and_simulation(inputparam,-269)
+        result = safe_single_build_and_simulation(inputparam,temp=-269)
+        with open("quick_unorganized.txt", "a") as filerec:
+            filerec.write(str(inputparam)+"\n"+str(result)+"\n\n\n")
         specs = np.array([0.0 , 0.0])
         specs[0] = result["ugb"]
         specs[1] = result["ugb"]/(result["Ibias_diffpair"]+result["Ibias_commonsource"])
@@ -274,3 +272,4 @@ def main():
 
 if __name__ == "__main__":
   main()
+

@@ -1,0 +1,33 @@
+PMOSArray2x5
+# 2 rows by 5 cols array of pmos transistors (no routing)
+// no imports
+// create parameters: length, fingers
+create a float parameter called length
+create a int parameter called fingers
+// place 2*5=10 array elements
+place a pmos called element1 with length=length, fingers=fingers, rmult=1, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a pmos called element2 with length=length, fingers=fingers, rmult=1, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a pmos called element3 with length=length, fingers=fingers, rmult=1, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a pmos called element4 with length=length, fingers=fingers, rmult=1, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a pmos called element5 with length=length, fingers=fingers, rmult=1, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a pmos called element6 with length=length, fingers=fingers, rmult=1, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a pmos called element7 with length=length, fingers=fingers, rmult=1, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a pmos called element8 with length=length, fingers=fingers, rmult=1, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a pmos called element9 with length=length, fingers=fingers, rmult=1, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a pmos called element10 with length=length, fingers=fingers, rmult=1, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+// move first row into position
+move element2 to the right of element1
+move element3 to the right of element2
+move element4 to the right of element3
+move element5 to the right of element4
+// move second row above first row
+move element6 above element1
+move element7 above element1
+move element8 above element1
+move element9 above element1
+move element10 above element1
+move element7 to the right of element6
+move element8 to the right of element7
+move element9 to the right of element8
+move element10 to the right of element9
+// no routing
