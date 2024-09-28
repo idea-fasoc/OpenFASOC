@@ -1,0 +1,9 @@
+.subckt NMOS D G S B l=0.15 w=3 m=4 dm=1 
+XMAIN   D G S B sky130_fd_pr__nfet_01v8 l={l} w={w} m={m}
+XDUMMY1 B B B B sky130_fd_pr__nfet_01v8 l={l} w={w} m={dm}
+.ends NMOS
+
+.subckt DIFF_PAIR VP VN VDD1 VDD2 VTAIL B
+X0 VDD1 VP VTAIL B NMOS l=0.15 w=3 m=2.0 dm=1
+X1 VDD2 VN VTAIL B NMOS l=0.15 w=3 m=2.0 dm=1
+.ends DIFF_PAIR
