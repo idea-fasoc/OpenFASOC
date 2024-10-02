@@ -141,13 +141,18 @@ def cascode_common_source(
 	if  place_devices in ['vertical', 'V']:
 		top_level << c_route(pdk, M1_ref.ports["multiplier_0_drain_E"], M2_ref.ports["multiplier_0_source_E"])
 	#Now attach pin names for port
-	text_pin_labels = list()
-	met5pin = rectangle(size=(5,5),layer=(72,16), centered=True)
-	for name in ['VIN', 'VBIAS', 'VSS', 'IOUT']:
-		pin_w_label = met5pin.copy()
-		pin_w_label.add_label(text=name,layer=(72,5),magnification=4)
-		text_pin_labels.append(pin_w_label)
+	# text_pin_labels = list()
+	# met5pin = rectangle(size=(5,5),layer=(72,16), centered=True)
+	# for name in ['VIN', 'VBIAS', 'VSS', 'IOUT']:
+	# 	pin_w_label = met5pin.copy()
+	# 	pin_w_label.add_label(text=name,layer=(72,5),magnification=4)
+	# 	text_pin_labels.append(pin_w_label)
 	
+	top_level.add_port('VIN', port=fet_M1.ports["multiplier_0_gate_W"])
+	top_level.add_port('VBIAS', port=fet_M2.ports["multiplier_0_gate_W"])
+	top_level.add_port('VSS', port=fet_M1.ports["multiplier_0_source_S"])
+	top_level.add_port('IOUT', port=fet_M2.ports["multiplier_0_drain_N"])
+
 	
 	top_level.info['netlist'] = cascode_common_source_netlist(
 		pdk, 
@@ -161,8 +166,8 @@ def cascode_common_source(
 
 mapped_pdk_build = sky130
 Cascode_cs_component = cascode_common_source(mapped_pdk_build,
-												m1_fingers=5,
-												m2_fingers=5,
+												m1_fingers=10,
+												m2_fingers=10,
 												m1_multipliers=1,
 												m2_multipliers=1,
 												numcols=10) 
