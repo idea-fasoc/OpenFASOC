@@ -153,68 +153,42 @@ def check_opamp_results(results, path_to_variances, path_to_means):
     # read means.json
     with open(path_to_means, "r") as f:
         means = json.load(f)
-        
-    warn_ugb = means["unity gain bandwidth"] - np.sqrt(variances["unity gain bandwidth"])
-    warn_dc_gain = means["dc gain"] - np.sqrt(variances["dc gain"])
-    warn_phase_margin = means["phase margin"] - np.sqrt(variances["phase margin"])
+
+    warn_ugb = means["ugb"] - np.sqrt(variances["ugb"])
+    warn_dc_gain = means["dcGain"] - np.sqrt(variances["dcGain"])
+    warn_phase_margin = means["phaseMargin"] - np.sqrt(variances["phaseMargin"])
     warn_area = means["area"] + 1e4
     warn_power = means["power"] + np.sqrt(variances["power"])
-    warn_two_stage_power = means["two stage power"] + np.sqrt(variances["two stage power"])
     warn_noise = means["noise"] + np.sqrt(variances["noise"])
-    warn_3db_bandwidth = means["3db bandwidth"] - np.sqrt(variances["3db bandwidth"])
+    warn_3db_bandwidth = means["bw_3db"] - np.sqrt(variances["bw_3db"])
+    warn_two_stage_power = means["power_twostage"] + np.sqrt(variances["power_twostage"])
+    warn_ibdp = means["Ibias_diffpair"] + np.sqrt(variances['Ibias_diffpair'])
+    warn_ibcs = means["Ibias_commonsource"] + np.sqrt(variances['Ibias_commonsource'])
+    warn_ibop = means["Ibias_output"] + np.sqrt(variances['Ibias_output'])
 
+    warn = [warn_ugb, warn_dc_gain, warn_phase_margin, warn_ibdp, warn_ibcs, warn_ibop, warn_area, warn_power, warn_noise, warn_3db_bandwidth, warn_two_stage_power]
+    multipliers = [-1, -1, -1, 0, 0, 0, 1, 1, 1, -1, 1]
+    # names = ["ugb", "dcGain", "phaseMargin", "Ibias_diffpair", "Ibias_commonsource", "Ibias_output", "area", "power", "power_twostage", "noise", "bw_3db"]
 
-    for key, val in results.items():
-        if key == "unity gain bandwidth":
-            if val <= warn_ugb:
-                warnings.warn(f"Unity Gain Bandwidth: {val} is less than the minimum value of {warn_ugb}")
-            if val <= warn_ugb - 2 * np.sqrt(variances["unity gain bandwidth"]):
-                raise ValueError(f"Unity Gain Bandwidth: {val} is less than the minimum value of {warn_ugb - 2 * np.sqrt(variances['unity gain bandwidth'])}")
-        
-        elif key == "dc gain":
-            if val <= warn_dc_gain:
-                warnings.warn(f"DC Gain: {val} is less than the minimum value of {warn_dc_gain}")
-            if val <= warn_dc_gain - 2 * np.sqrt(variances["dc gain"]):
-                raise ValueError(f"DC Gain: {val} is less than the minimum value of {warn_dc_gain - 2 * np.sqrt(variances['dc gain'])}")
-        
-        elif key == "phase margin":
-            if val <= warn_phase_margin:
-                warnings.warn(f"Phase Margin: {val} is less than the minimum value of {warn_phase_margin}")
-            if val <= warn_phase_margin - 2 * np.sqrt(variances["phase margin"]):
-                raise ValueError(f"Phase Margin: {val} is less than the minimum value of {warn_phase_margin - 2 * np.sqrt(variances['phase margin'])}")
-        
-        elif key == "area":
-            if val >= warn_area:
-                warnings.warn(f"Area: {val} is greater than the maximum value of {warn_area}")
-            if val >= warn_area + 2 * np.sqrt(variances["area"]):
-                raise ValueError(f"Area: {val} is greater than the maximum value of {warn_area + 2 * np.sqrt(variances['area'])}")
-        
-        elif key == "power":
-            if val >= warn_power:
-                warnings.warn(f"Power: {val} is greater than the maximum value of {warn_power}")
-            if val >= warn_power + 2 * np.sqrt(variances["power"]):
-                raise ValueError(f"Power: {val} is greater than the maximum value of {warn_power + 2 * np.sqrt(variances['power'])}")
-        
-        elif key == "two stage power":
-            if val >= warn_two_stage_power:
-                warnings.warn(f"Two Stage Power: {val} is greater than the maximum value of {warn_two_stage_power}")
-            if val >= warn_two_stage_power + 2 * np.sqrt(variances["two stage power"]):
-                raise ValueError(f"Two Stage Power: {val} is greater than the maximum value of {warn_two_stage_power + 2 * np.sqrt(variances['two stage power'])}")
-        
-        elif key == "noise":
-            if val >= warn_noise:
-                warnings.warn(f"Noise: {val} is greater than the maximum value of {warn_noise}")
-            if val >= warn_noise + 2 * np.sqrt(variances["noise"]):
-                raise ValueError(f"Noise: {val} is greater than the maximum value of {warn_noise + 2 * np.sqrt(variances['noise'])}")
-        
-        elif key == "3db bandwidth":
-            if val <= warn_3db_bandwidth:
-                warnings.warn(f"3dB Bandwidth: {val} is less than the minimum value of {warn_3db_bandwidth}")
-            if val <= warn_3db_bandwidth - 2 * np.sqrt(variances["3db bandwidth"]):
-                raise ValueError(f"3dB Bandwidth: {val} is less than the minimum value of {warn_3db_bandwidth - 2 * np.sqrt(variances['3db bandwidth'])}")
+    for index, (key, val) in enumerate(results.items()):
+        if "Ibias" in key: 
+            continue
+        else: 
+            if multipliers[index] == -1:
+                if val <= warn[index]:
+                    warnings.warn(f'{key}: {val} is less than the minimum value of {warn[index]}')
+                elif val <= warn[index] - 2 * np.sqrt(variances[key]):
+                    raise ValueError(f'{key}: {val} is less than the minimum value of {warn[index] - 2 * np.sqrt(variances[key])}')
+            if multipliers[index] == 1:
+                if val >= warn[index]:
+                    warnings.warn(f'{key}: {val} is greater than the maximum value of {warn[index]}')
+                elif val >= warn[index] + 2 * np.sqrt(variances[key]):
+                    raise ValueError(f'{key}: {val} is greater than the maximum value of {warn[index] - 2 * np.sqrt(variances[key])}')
+            
 
 def opamp_parametric_sim():
-    json_paths = Path(__file__).resolve().parents[5] / ".github" / "scripts" / "expected_sim_outputs" / "opamp"
+    # import pdb; pdb.set_trace()
+    json_paths = Path(__file__).resolve().parents[3] / ".github" / "scripts" / "expected_sim_outputs" / "opamp"
     path_to_variances = json_paths / "variances.json"
     path_to_means = json_paths / "means.json"
     
@@ -239,7 +213,6 @@ def opamp_parametric_sim():
         noparasitics=False, 
         hardfail=True
     )
-
     check_opamp_results(results, path_to_variances, path_to_means)
     
 parser = argparse.ArgumentParser()
