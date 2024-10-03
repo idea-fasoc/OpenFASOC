@@ -188,7 +188,7 @@ def check_opamp_results(results, path_to_variances, path_to_means):
 
 def opamp_parametric_sim():
     # import pdb; pdb.set_trace()
-    json_paths = Path(__file__).resolve().parents[3] / ".github" / "scripts" / "expected_sim_outputs" / "opamp"
+    json_paths = Path(__file__).resolve().parents[5] / ".github" / "scripts" / "expected_sim_outputs" / "opamp"
     path_to_variances = json_paths / "variances.json"
     path_to_means = json_paths / "means.json"
     
@@ -214,37 +214,38 @@ def opamp_parametric_sim():
         hardfail=True
     )
     check_opamp_results(results, path_to_variances, path_to_means)
-    
-parser = argparse.ArgumentParser()
-parser.add_argument('--component', type=str, help='Component name to simulate')
-args = parser.parse_args()
 
-# simulate the component
-if args.component == 'opamp':
-    comp = (opamp(sky130_mapped_pdk, add_output_stage=True))
-    comp.name = 'opamp_test'
-    simulate_component(comp, sky130_mapped_pdk)
-
-elif args.component == 'opamp_parametric':
-    from tapeout.tapeout_and_RL.sky130_nist_tapeout import *
-    opamp_parametric_sim()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--component', type=str, help='Component name to simulate')
+    args = parser.parse_args()
     
-elif args.component == 'diff_pair':
-    comp = (diff_pair(sky130_mapped_pdk))
-    comp.name = 'diff_pair_test'
-    simulate_component(comp, sky130_mapped_pdk)
+    # simulate the component
+    if args.component == 'opamp':
+        comp = (opamp(sky130_mapped_pdk, add_output_stage=True))
+        comp.name = 'opamp_test'
+        simulate_component(comp, sky130_mapped_pdk)
     
-elif args.component == 'nmos':
-    comp = (nmos(sky130_mapped_pdk))
-    comp.name = 'nmos_test'
-    simulate_component(comp, sky130_mapped_pdk)
+    elif args.component == 'opamp_parametric':
+        from tapeout.tapeout_and_RL.sky130_nist_tapeout import *
+        opamp_parametric_sim()
+        
+    elif args.component == 'diff_pair':
+        comp = (diff_pair(sky130_mapped_pdk))
+        comp.name = 'diff_pair_test'
+        simulate_component(comp, sky130_mapped_pdk)
+        
+    elif args.component == 'nmos':
+        comp = (nmos(sky130_mapped_pdk))
+        comp.name = 'nmos_test'
+        simulate_component(comp, sky130_mapped_pdk)
+        
+    elif args.component == 'pmos':
+        comp = pmos(sky130_mapped_pdk)
+        comp.name = 'pmos_test'
+        simulate_component(comp, sky130_mapped_pdk)
     
-elif args.component == 'pmos':
-    comp = pmos(sky130_mapped_pdk)
-    comp.name = 'pmos_test'
-    simulate_component(comp, sky130_mapped_pdk)
-
-elif args.component == 'current_mirror':
-    comp = current_mirror(sky130_mapped_pdk, numcols = 3, with_dummy=False)
-    comp.name = 'currmirror_test'
-    simulate_component(comp, sky130_mapped_pdk)
+    elif args.component == 'current_mirror':
+        comp = current_mirror(sky130_mapped_pdk, numcols = 3, with_dummy=False)
+        comp.name = 'currmirror_test'
+        simulate_component(comp, sky130_mapped_pdk)
