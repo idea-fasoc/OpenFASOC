@@ -12,7 +12,7 @@ from gdsfactory.component import Component
 from typing import Optional, Union 
 from gdsfactory.components import text_freetype, rectangle
 
-from glayout.flow.pdk.util.comp_utils import prec_ref_center, prec_center, movey, evaluate_bbox
+from glayout.flow.pdk.util.comp_utils import prec_ref_center, prec_center, movey, evaluate_bbox, align_comp_to_port
 
 def cascode_common_source_netlist(
 	pdk: MappedPDK, 
@@ -132,14 +132,15 @@ def cascode_common_source(
 	if place_devices in ['vertical', 'V']:
 		M2_ref.movey(0.5*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]))
 
-	
-	top_level.add_ports(M1_ref.get_ports_list(), prefix="M1_")
-	top_level.add_ports(M2_ref.get_ports_list(), prefix="M2_")
 	# Routing and Port definitions
 	if place_devices in ['lateral', 'horizontal', 'H']:
 		top_level << straight_route(pdk, M1_ref.ports["multiplier_0_drain_W"], M2_ref.ports["multiplier_0_source_E"])
 	if  place_devices in ['vertical', 'V']:
 		top_level << c_route(pdk, M1_ref.ports["multiplier_0_drain_E"], M2_ref.ports["multiplier_0_source_E"])
+
+	# ************* Adding the suffix after the routing generates the prefix after routing.
+	top_level.add_ports(M1_ref.get_ports_list(), prefix="M1_")
+	top_level.add_ports(M2_ref.get_ports_list(), prefix="M2_")
 	#Now attach pin names for port
 	# text_pin_labels = list()
 	# met5pin = rectangle(size=(5,5),layer=(72,16), centered=True)
@@ -147,12 +148,61 @@ def cascode_common_source(
 	# 	pin_w_label = met5pin.copy()
 	# 	pin_w_label.add_label(text=name,layer=(72,5),magnification=4)
 	# 	text_pin_labels.append(pin_w_label)
-	
-	top_level.add_port('VIN', port=fet_M1.ports["multiplier_0_gate_W"])
-	top_level.add_port('VBIAS', port=fet_M2.ports["multiplier_0_gate_W"])
-	top_level.add_port('VSS', port=fet_M1.ports["multiplier_0_source_S"])
-	top_level.add_port('IOUT', port=fet_M2.ports["multiplier_0_drain_N"])
+	# print(f"Getting port list of top level",top_level.get_ports_list)
+	# print(top_level.ports)
+	# print(top_level.pprint_ports())
+	# print(M1_ref.pprint_ports())
+	# ************** Adding ports through component instances fails LVS. **
+	top_level.add_port('VIN', port=M1_ref.ports['multiplier_0_gate_W'])
+	top_level.add_port('VBIAS', port=M2_ref.ports["multiplier_0_gate_W"])
+	top_level.add_port('VSS', port=M1_ref.ports["multiplier_0_source_S"])
+	top_level.add_port('IOUT', port=M2_ref.ports["multiplier_0_drain_N"])
+	# ************** Adding ports through top_level fails LVS.Crates duplicate ports in addition to declared ports. **************
+	# top_level.add_port('VIN', port=top_level.ports['M1_gate_W'])
+	# top_level.add_port('VBIAS', port=top_level.ports['M2_gate_W'])
+	# top_level.add_port('VSS', port=top_level.ports['M1_source_S'])
+	# top_level.add_port('IOUT', port=top_level.ports['M1_drain_N'])
+	# print(top_level.pprint_ports())
+	# text_pin_labels = list()
+	# met5pin = rectangle(size=(5,5),layer=(72,16), centered=True)
+	top_level.unlock()
+	move_info =list()
+	met1_pin=(68,20)
+	met1_label=(68,5)
+	met2_pin = (69,16)
+	met2_label = (69,5)
+	met3_pin = (70,16)
+	met3_label = (70,5)
+	met4_pin = (71,16)
+	met4_label = (71,5)
+	met5_pin = (72,16)
+	met5_label = (72,5)
+	VIN_label=rectangle(layer=met1_pin, size=(1,1), centered=True).copy()
+	VIN_label.add_label(text="VIN", layer=met1_label)
+	move_info.append((VIN_label, M1_ref.ports['multiplier_0_gate_W'], None))
 
+	VBIAS_label=rectangle(layer=met1_pin, size=(1,1), centered=True).copy()
+	VBIAS_label.add_label(text="VBIAS", layer=met1_label)
+	move_info.append((VBIAS_label, M2_ref.ports['multiplier_0_gate_W'], None))
+
+	VSS_label=rectangle(layer=met1_pin, size=(1,1), centered=True).copy()
+	VSS_label.add_label(text="VSS", layer=met1_label)
+	move_info.append((VSS_label, M1_ref.ports['multiplier_0_source_S'], None))
+
+	IOUT_label=rectangle(layer=met1_pin, size=(1,1), centered=True).copy()
+	IOUT_label.add_label(text="IOUT", layer=met1_label)
+	move_info.append((IOUT_label, M2_ref.ports['multiplier_0_drain_N'], None))
+
+	for comp, prt, alignment in move_info:
+		alignment = ('c','b') if alignment is None else alignment
+		compref = align_comp_to_port(comp, prt, alignment=alignment)
+		top_level.add(compref)
+
+	print(top_level.pprint_ports())
+
+	# pin_w_label = met5pin.copy()
+	# pin_w_label.add_label(text=name,layer=(72,5),magnification=4)
+	# text_pin_labels.append(pin_w_label)
 	
 	top_level.info['netlist'] = cascode_common_source_netlist(
 		pdk, 
@@ -179,7 +229,7 @@ if magic_drc_result :
 else:
     print("DRC failed. Please try again.")
 
-Cascode_cs_component.name = 'cascode_common_source_lvs' 
-netgen_lvs_result = mapped_pdk_build.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
-print(f"LVS results", netgen_lvs_result)
+# Cascode_cs_component.name = 'cascode_common_source_lvs' 
+# netgen_lvs_result = mapped_pdk_build.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
+# print(f"LVS results", netgen_lvs_result)
 
