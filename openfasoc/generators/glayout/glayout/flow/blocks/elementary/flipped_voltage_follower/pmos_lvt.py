@@ -76,16 +76,12 @@ def pmos_lvt(
      pfet_ref = top_level << pfet
 
      lvt_layer = (125,44)
-
-     #E_edge = fet_ref.ports["multiplier_0_drain_E"]
-     #W_edge = fet_ref.ports["multiplier_0_source_W"]
-     #S_edge = fet_ref.ports["multiplier_0_gate_S"]
+     
      E_edge_center = pfet_ref.ports["multiplier_0_drain_E"].center
      W_edge_center = pfet_ref.ports["multiplier_0_source_W"].center
      S_edge_center = pfet_ref.ports["multiplier_0_gate_S"].center
      x_length = E_edge_center[0] - W_edge_center[0]
      y_length = E_edge_center[1] - S_edge_center[1]
-     #ref_dimensions = evaluate_bbox(pfet)
      
      lvt_rectangle = rectangle(layer=lvt_layer, size=(x_length+0.1, y_length-0.8))
      lvt_rectangle_ref = top_level << lvt_rectangle
