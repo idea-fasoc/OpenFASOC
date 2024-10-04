@@ -40,6 +40,7 @@ jobs:
                     pip uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
+                    pip3 install --force-reinstall -r requirements.txt &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
                     python3 test_glayout_ci.py --component opamp
                   " && exit_code=$? | tee -a glayout.log
@@ -61,6 +62,7 @@ jobs:
                     pip uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
+                    pip3 install --force-reinstall -r requirements.txt &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
                     python3 test_glayout_ci.py --component pmos
                   " && exit_code=$? | tee -a glayout.log
@@ -81,6 +83,7 @@ jobs:
                     pip uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
+                    pip3 install --force-reinstall -r requirements.txt &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
                     python3 test_glayout_ci.py --component nmos
                   " && exit_code=$? | tee -a glayout.log
@@ -101,6 +104,7 @@ jobs:
                     pip uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
+                    pip3 install --force-reinstall -r requirements.txt &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
                     python3 test_glayout_ci.py --component diff_pair
                   " && exit_code=$? | tee -a glayout.log
@@ -121,6 +125,7 @@ jobs:
                     pip uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
+                    pip3 install --force-reinstall -r requirements.txt &&\
                     pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
                     python3 test_glayout_ci.py --component current_mirror
                   " && exit_code=$? | tee -a glayout.log

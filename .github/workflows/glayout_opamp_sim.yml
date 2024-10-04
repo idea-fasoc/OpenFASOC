@@ -37,11 +37,11 @@ jobs:
                       $IMAGE_NAME \
                       bash -c "\
                       cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/tapeout/tapeout_and_RL/. &&\
-                      pip uninstall glayout -y &&\
+                      pip3 uninstall glayout -y &&\
                       pip3 install -r ./openfasoc/generators/glayout/requirements.txt &&\
                       cd ./openfasoc/generators/glayout/tapeout/tapeout_and_RL/ &&\
                       pip3 install prettyprint prettyprinttree gdstk &&\
-                      pip3 install -r requirements.txt
+                      pip3 install --force-reinstall -v -r requirements.txt
                       python3 test_glayout_ci.py --component opamp_parametric
                       " && exit_code=$? | tee -a glayout.log
                   if [ $? -ne 0 ]; then exit 1; fi
