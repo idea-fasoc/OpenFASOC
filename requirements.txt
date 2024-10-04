@@ -1,6 +1,6 @@
 pandas
 klayout
-numpy
+numpy==1.23.5
 matplotlib
 gdsfactory==7.7.0
 nbsphinx
