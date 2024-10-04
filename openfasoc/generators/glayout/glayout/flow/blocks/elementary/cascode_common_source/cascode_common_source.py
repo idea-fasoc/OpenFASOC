@@ -142,21 +142,11 @@ def cascode_common_source(
 	top_level.add_ports(M1_ref.get_ports_list(), prefix="M1_")
 	top_level.add_ports(M2_ref.get_ports_list(), prefix="M2_")
 	#Now attach pin names for port
-	# text_pin_labels = list()
-	# met5pin = rectangle(size=(5,5),layer=(72,16), centered=True)
-	# for name in ['VIN', 'VBIAS', 'VSS', 'IOUT']:
-	# 	pin_w_label = met5pin.copy()
-	# 	pin_w_label.add_label(text=name,layer=(72,5),magnification=4)
-	# 	text_pin_labels.append(pin_w_label)
-	# print(f"Getting port list of top level",top_level.get_ports_list)
-	# print(top_level.ports)
-	# print(top_level.pprint_ports())
-	# print(M1_ref.pprint_ports())
-	# ************** Adding ports through component instances fails LVS. **
-	top_level.add_port('VIN', port=M1_ref.ports['multiplier_0_gate_W'])
-	top_level.add_port('VBIAS', port=M2_ref.ports["multiplier_0_gate_W"])
-	top_level.add_port('VSS', port=M1_ref.ports["multiplier_0_source_S"])
-	top_level.add_port('IOUT', port=M2_ref.ports["multiplier_0_drain_N"])
+	# ************** Adding port labels through component instances fails LVS. **
+	# top_level.add_port('VIN', port=M1_ref.ports['multiplier_0_gate_W'])
+	# top_level.add_port('VBIAS', port=M2_ref.ports["multiplier_0_gate_W"])
+	# top_level.add_port('VSS', port=M1_ref.ports["multiplier_0_source_S"])
+	# top_level.add_port('IOUT', port=M2_ref.ports["multiplier_0_drain_N"])
 	# ************** Adding ports through top_level fails LVS.Crates duplicate ports in addition to declared ports. **************
 	# top_level.add_port('VIN', port=top_level.ports['M1_gate_W'])
 	# top_level.add_port('VBIAS', port=top_level.ports['M2_gate_W'])
@@ -179,19 +169,23 @@ def cascode_common_source(
 	met5_label = (72,5)
 	VIN_label=rectangle(layer=met1_pin, size=(1,1), centered=True).copy()
 	VIN_label.add_label(text="VIN", layer=met1_label)
-	move_info.append((VIN_label, M1_ref.ports['multiplier_0_gate_W'], None))
+	# move_info.append((VIN_label, M1_ref.ports['multiplier_0_gate_W'], None))
+	move_info.append((VIN_label, top_level.ports['M1_gate_W'], None))
 
 	VBIAS_label=rectangle(layer=met1_pin, size=(1,1), centered=True).copy()
 	VBIAS_label.add_label(text="VBIAS", layer=met1_label)
-	move_info.append((VBIAS_label, M2_ref.ports['multiplier_0_gate_W'], None))
+	# move_info.append((VBIAS_label, M2_ref.ports['multiplier_0_gate_W'], None))
+	move_info.append((VBIAS_label, top_level.ports['M2_gate_W'], None))
 
 	VSS_label=rectangle(layer=met1_pin, size=(1,1), centered=True).copy()
 	VSS_label.add_label(text="VSS", layer=met1_label)
-	move_info.append((VSS_label, M1_ref.ports['multiplier_0_source_S'], None))
+	# move_info.append((VSS_label, M1_ref.ports['multiplier_0_source_S'], None))
+	move_info.append((VSS_label, top_level.ports['M1_source_S'], None))
 
 	IOUT_label=rectangle(layer=met1_pin, size=(1,1), centered=True).copy()
 	IOUT_label.add_label(text="IOUT", layer=met1_label)
-	move_info.append((IOUT_label, M2_ref.ports['multiplier_0_drain_N'], None))
+	# move_info.append((IOUT_label, M2_ref.ports['multiplier_0_drain_N'], None))
+	move_info.append((IOUT_label, top_level.ports['M2_drain_N'], None))
 
 	for comp, prt, alignment in move_info:
 		alignment = ('c','b') if alignment is None else alignment
