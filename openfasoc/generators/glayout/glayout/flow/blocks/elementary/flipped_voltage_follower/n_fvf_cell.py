@@ -63,18 +63,20 @@ def  n_fvf_cell(
     
     #add dnwell
     top_level.add_padding(layers=(pdk.get_glayer("dnwell"),),default=pdk.get_grule("pwell", "dnwell")["min_enclosure"]+1, )
-    
-    component = component_snap_to_grid(rename_ports_by_orientation(top_level))
 
-    correctionxy = prec_center(component)
-    component.movex(correctionxy[0]).movey(correctionxy[1])             
+    top_level = component_snap_to_grid(rename_ports_by_orientation(top_level))
+    comp = Component()
+    compref = comp << top_level
+    correctionxy = prec_center(compref)
+    compref.movex(correctionxy[0]).movey(correctionxy[1])
+    comp.add_ports(compref.get_ports_list())         
 
-    component.info['netlist'] = n_fvf_cell_netlist(n_fvf, c_mirr)
+    comp.info['netlist'] = n_fvf_cell_netlist(n_fvf, c_mirr)
 
-    print(component.info['netlist'].generate_netlist(only_subcircuits=True))
+    print(comp.info['netlist'].generate_netlist(only_subcircuits=True))
 
     #lvs_result = pdk.lvs_netgen(layout=component, design_name="fvf_cell", lvs_schematic_ref_file="/home/spal/layout/fvf.spice", output_file_path="/home/spal/layout/lvs/fvf.rpt")
     
-    return component
+    return component_snap_to_grid(rename_ports_by_orientation(comp))
 
 #n_fvf_cell(sky130_mapped_pdk).show()
