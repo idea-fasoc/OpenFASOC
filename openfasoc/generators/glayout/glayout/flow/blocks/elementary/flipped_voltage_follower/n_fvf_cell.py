@@ -66,6 +66,9 @@ def  n_fvf_cell(
     
     component = component_snap_to_grid(rename_ports_by_orientation(top_level))
 
+    correctionxy = prec_center(component)
+    component.movex(correctionxy[0]).movey(correctionxy[1])             
+
     component.info['netlist'] = n_fvf_cell_netlist(n_fvf, c_mirr)
 
     print(component.info['netlist'].generate_netlist(only_subcircuits=True))
