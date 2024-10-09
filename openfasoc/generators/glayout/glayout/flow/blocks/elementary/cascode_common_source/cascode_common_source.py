@@ -20,7 +20,11 @@ def cascode_common_source_netlist(
 	length: float,
 	multipliers: int, 
 	n_or_p_fet: Optional[str] = 'nfet',
-	subckt_only: Optional[bool] = False
+	subckt_only: Optional[bool] = False,
+	m1_fingers = int,
+	m2_fingers = int,
+	m1_multipliers = int,
+	m2_multipliers = int
 ) -> Netlist:
 	if length is None:
 		length = pdk.get_grule('poly')['min_width']
@@ -137,6 +141,7 @@ def cascode_common_source(
 		top_level << straight_route(pdk, M1_ref.ports["multiplier_0_drain_W"], M2_ref.ports["multiplier_0_source_E"])
 	if  place_devices in ['vertical', 'V']:
 		top_level << c_route(pdk, M1_ref.ports["multiplier_0_drain_E"], M2_ref.ports["multiplier_0_source_E"])
+		
 
 	# ************* Adding the suffix after the routing generates the prefix after routing.
 	top_level.add_ports(M1_ref.get_ports_list(), prefix="M1_")
@@ -155,7 +160,7 @@ def cascode_common_source(
 	met4_label = (71,5)
 	met5_pin = (72,16)
 	met5_label = (72,5)
-	port_size = (0.5,0.5)
+	port_size = (0.35,0.35)
 	VIN_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
 	VIN_label.add_label(text="VIN", layer=met1_label)
 	move_info.append((VIN_label, top_level.ports['M1_gate_W'], None))
@@ -177,15 +182,20 @@ def cascode_common_source(
 		compref = align_comp_to_port(comp, prt, alignment=alignment)
 		top_level.add(compref)
 
-	print(top_level.pprint_ports())
 	
 	top_level.info['netlist'] = cascode_common_source_netlist(
 		pdk, 
-  		width=kwargs.get('width', 3), length=kwargs.get('length', 1), multipliers=numcols, 
+  		width=kwargs.get('width', 3), 
+		length=kwargs.get('length', 1), 
+		multipliers=numcols, 
     	n_or_p_fet=device,
-		subckt_only=True
+		subckt_only=True,
+		m1_fingers = m1_fingers,
+		m2_fingers = m2_fingers,
+		m1_multipliers = m1_multipliers,
+		m2_multipliers = m2_multipliers
 	)
- 
+	 
 	return top_level
 
 
@@ -206,5 +216,5 @@ else:
 
 Cascode_cs_component.name = 'cascode_common_source_lvs' 
 netgen_lvs_result = mapped_pdk_build.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
-# print(f"LVS results", netgen_lvs_result)
+
 
