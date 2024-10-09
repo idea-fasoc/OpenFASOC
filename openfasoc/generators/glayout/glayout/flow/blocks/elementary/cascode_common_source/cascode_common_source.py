@@ -128,9 +128,9 @@ def cascode_common_source(
 	M2_ref_centre_coord = prec_ref_center(fet_M2)
 	place_devices='V'
 	if place_devices in ['lateral', 'horizontal', 'H']:
-		M2_ref.movex(0.5*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]))
+		M2_ref.movex(0.75*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]))
 	if place_devices in ['vertical', 'V']:
-		M2_ref.movey(0.5*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]))
+		M2_ref.movey(0.75*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]))
 
 	# Routing and Port definitions
 	if place_devices in ['lateral', 'horizontal', 'H']:
@@ -142,20 +142,8 @@ def cascode_common_source(
 	top_level.add_ports(M1_ref.get_ports_list(), prefix="M1_")
 	top_level.add_ports(M2_ref.get_ports_list(), prefix="M2_")
 	#Now attach pin names for port
-	# ************** Adding port labels through component instances fails LVS. **
-	# top_level.add_port('VIN', port=M1_ref.ports['multiplier_0_gate_W'])
-	# top_level.add_port('VBIAS', port=M2_ref.ports["multiplier_0_gate_W"])
-	# top_level.add_port('VSS', port=M1_ref.ports["multiplier_0_source_S"])
-	# top_level.add_port('IOUT', port=M2_ref.ports["multiplier_0_drain_N"])
-	# ************** Adding ports through top_level fails LVS.Crates duplicate ports in addition to declared ports. **************
-	# top_level.add_port('VIN', port=top_level.ports['M1_gate_W'])
-	# top_level.add_port('VBIAS', port=top_level.ports['M2_gate_W'])
-	# top_level.add_port('VSS', port=top_level.ports['M1_source_S'])
-	# top_level.add_port('IOUT', port=top_level.ports['M1_drain_N'])
-	# print(top_level.pprint_ports())
-	# text_pin_labels = list()
-	# met5pin = rectangle(size=(5,5),layer=(72,16), centered=True)
 	top_level.unlock()
+	# *** Adding pins and labels for metal1-5 ***
 	move_info =list()
 	met1_pin=(68,20)
 	met1_label=(68,5)
@@ -167,24 +155,21 @@ def cascode_common_source(
 	met4_label = (71,5)
 	met5_pin = (72,16)
 	met5_label = (72,5)
-	VIN_label=rectangle(layer=met1_pin, size=(1,1), centered=True).copy()
+	port_size = (0.5,0.5)
+	VIN_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
 	VIN_label.add_label(text="VIN", layer=met1_label)
-	# move_info.append((VIN_label, M1_ref.ports['multiplier_0_gate_W'], None))
 	move_info.append((VIN_label, top_level.ports['M1_gate_W'], None))
 
-	VBIAS_label=rectangle(layer=met1_pin, size=(1,1), centered=True).copy()
+	VBIAS_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
 	VBIAS_label.add_label(text="VBIAS", layer=met1_label)
-	# move_info.append((VBIAS_label, M2_ref.ports['multiplier_0_gate_W'], None))
 	move_info.append((VBIAS_label, top_level.ports['M2_gate_W'], None))
 
-	VSS_label=rectangle(layer=met1_pin, size=(1,1), centered=True).copy()
+	VSS_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
 	VSS_label.add_label(text="VSS", layer=met1_label)
-	# move_info.append((VSS_label, M1_ref.ports['multiplier_0_source_S'], None))
 	move_info.append((VSS_label, top_level.ports['M1_source_S'], None))
 
-	IOUT_label=rectangle(layer=met1_pin, size=(1,1), centered=True).copy()
+	IOUT_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
 	IOUT_label.add_label(text="IOUT", layer=met1_label)
-	# move_info.append((IOUT_label, M2_ref.ports['multiplier_0_drain_N'], None))
 	move_info.append((IOUT_label, top_level.ports['M2_drain_N'], None))
 
 	for comp, prt, alignment in move_info:
@@ -193,10 +178,6 @@ def cascode_common_source(
 		top_level.add(compref)
 
 	print(top_level.pprint_ports())
-
-	# pin_w_label = met5pin.copy()
-	# pin_w_label.add_label(text=name,layer=(72,5),magnification=4)
-	# text_pin_labels.append(pin_w_label)
 	
 	top_level.info['netlist'] = cascode_common_source_netlist(
 		pdk, 
@@ -223,7 +204,7 @@ if magic_drc_result :
 else:
     print("DRC failed. Please try again.")
 
-# Cascode_cs_component.name = 'cascode_common_source_lvs' 
-# netgen_lvs_result = mapped_pdk_build.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
+Cascode_cs_component.name = 'cascode_common_source_lvs' 
+netgen_lvs_result = mapped_pdk_build.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
 # print(f"LVS results", netgen_lvs_result)
 
