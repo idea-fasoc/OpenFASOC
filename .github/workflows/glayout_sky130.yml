@@ -40,9 +40,7 @@ jobs:
                     pip uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
-                    pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
-                    python3 -m pip uninstall numpy -y &&\
-                    python3 -m pip install numpy==1.23.5 &&\
+                    pip3 install --force-reinstall -r requirements.txt &&\
                     python3 test_glayout_ci.py --component opamp
                   " && exit_code=$? | tee -a glayout.log
                 if [ $? -ne 0 ]; then exit 1; fi
@@ -63,9 +61,7 @@ jobs:
                     pip uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
-                    pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
-                    python3 -m pip uninstall numpy -y &&\
-                    python3 -m pip install numpy==1.23.5 &&\
+                    pip3 install --force-reinstall -r requirements.txt &&\
                     python3 test_glayout_ci.py --component pmos
                   " && exit_code=$? | tee -a glayout.log
                 if [ $? -ne 0 ]; then exit 1; fi
@@ -82,12 +78,10 @@ jobs:
                   -w $PWD \
                   $IMAGE_NAME \
                   bash -c "\
-                    pip uninstall glayout -y &&\
+                    pip3 uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
-                    pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
-                    python3 -m pip uninstall numpy -y &&\
-                    python3 -m pip install numpy==1.23.5 &&\
+                    pip3 install --force-reinstall -r requirements.txt &&\
                     python3 test_glayout_ci.py --component nmos
                   " && exit_code=$? | tee -a glayout.log
                 if [ $? -ne 0 ]; then exit 1; fi
@@ -107,9 +101,7 @@ jobs:
                     pip uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
-                    pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
-                    python3 -m pip uninstall numpy -y &&\
-                    python3 -m pip install numpy==1.23.5 &&\
+                    pip3 install --force-reinstall -r requirements.txt &&\
                     python3 test_glayout_ci.py --component diff_pair
                   " && exit_code=$? | tee -a glayout.log
                 if [ $? -ne 0 ]; then exit 1; fi
@@ -129,9 +121,7 @@ jobs:
                     pip uninstall glayout -y &&\
                     cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
                     cd ./openfasoc/generators/glayout &&\
-                    pip3 install gdsfactory==7.7.0 prettyprint prettyprinttree gdstk &&\
-                    python3 -m pip uninstall numpy -y &&\
-                    python3 -m pip install numpy==1.23.5 &&\
+                    pip3 install --force-reinstall -r requirements.txt &&\
                     python3 test_glayout_ci.py --component current_mirror
                   " && exit_code=$? | tee -a glayout.log
                 if [ $? -ne 0 ]; then exit 1; fi

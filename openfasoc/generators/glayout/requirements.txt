@@ -1,6 +1,4 @@
-gdsfactory==7.7.0
-prettyprint
-prettyprinttree
+numpy==1.23.5
 nltk
 torch
 transformers
@@ -22,3 +20,7 @@ optimum
 trl
 langchain_huggingface
 tensorboard
+gdsfactory==7.7.0
+prettyprint
+prettyprinttree
+gdstk
