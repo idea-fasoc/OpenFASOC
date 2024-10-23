@@ -22,7 +22,7 @@ else
 fi
 
 # =====================================================================
-# check that ngspice>40 is installed
+# check that ngspice 40 is installed
 ngspice --version > test_ngspice_version.txt
 version_line=$(sed -n '2p' test_ngspice_version.txt)
 expected_version="ngspice-40"
