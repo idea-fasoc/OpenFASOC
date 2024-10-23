@@ -3,12 +3,31 @@ import glayout_import
 import sys 
 
 from sky130_nist_tapeout import safe_single_build_and_simulation
-from sky130_nist_tapeout import opamp_parameters_serializer
+from sky130_nist_tapeout import opamp_parameters_serializer, opamp_parameters_de_serializer
 
 import yaml
 from pathlib import Path
 import numpy as np
 from typing import Union
+
+params = {
+            "diffpair_params0" : [1, 8, 1],       
+            "diffpair_params1" : [0.5, 2.1, 0.1],   
+            "diffpair_params2" : [1, 13, 1],
+            "Diffpair_bias0" : [1, 8, 1],
+            "Diffpair_bias1" : [1, 4.5, 0.5],
+            "Diffpair_bias2" : [3, 13, 1],
+            "pamp_hparams0" : [1, 9, 1], 
+            "pamp_hparams1" : [0.5, 2.1, 0.1], 
+            "pamp_hparams2" : [2, 14, 1],
+            "bias0" : [1, 8, 1], 
+            "bias1" : [0.5, 2.1, 0.1], 
+            "bias2" : [3, 18, 1],
+            "bias3" : [2, 4, 1],
+            "half_pload1": [3, 10, 1],
+            "half_pload3": [4, 9, 1],
+            "mim_cap_rows" : [1, 4, 1],
+        }
 
 def get_indices_from_ranges(opamp_parameters: Union[dict, np.array]) -> np.array:
 	"""The RL framework works by doing design searches within a user defined range for each parameter
@@ -79,25 +98,6 @@ def get_indices_from_ranges(opamp_parameters: Union[dict, np.array]) -> np.array
 	# this relies on the fact that the params dict should be in order
 	return np.array(opamp_parameter_arr)
 
-params = {
-            "diffpair_params0" : [1, 8, 1],       
-            "diffpair_params1" : [0.5, 2.1, 0.1],   
-            "diffpair_params2" : [1, 13, 1],
-            "Diffpair_bias0" : [1, 8, 1],
-            "Diffpair_bias1" : [1, 4.5, 0.5],
-            "Diffpair_bias2" : [3, 13, 1],
-            "pamp_hparams0" : [1, 9, 1], 
-            "pamp_hparams1" : [0.5, 2.1, 0.1], 
-            "pamp_hparams2" : [2, 14, 1],
-            "bias0" : [1, 8, 1], 
-            "bias1" : [0.5, 2.1, 0.1], 
-            "bias2" : [3, 18, 1],
-            "bias3" : [2, 4, 1],
-            "half_pload1": [3, 10, 1],
-            "half_pload3": [4, 9, 1],
-            "mim_cap_rows" : [1, 4, 1],
-        }
-
 paramss = []
 params_id = list(params.keys())
 
@@ -117,7 +117,6 @@ inputparam[10:14] = paramsss[9:13]
 inputparam[20] = paramsss[13]
 inputparam[22] = paramsss[14]
 inputparam[25] = paramsss[15]
-
 
 result = safe_single_build_and_simulation(inputparam, hardfail=True)
 

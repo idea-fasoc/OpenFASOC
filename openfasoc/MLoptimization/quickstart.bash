@@ -25,13 +25,11 @@ fi
 # check that ngspice>40 is installed
 ngspice --version > test_ngspice_version.txt
 version_line=$(sed -n '2p' test_ngspice_version.txt)
-version_number=$(echo "$version_line" | grep -oP '(?<=ngspice-)\d+')
-required_version=40
-
-if [[ "$version_number" -ge "$required_version" ]]; then
-    echo "Correct ngspice version ($version_line) is installed."
+expected_version="ngspice-40"
+if [[ $version_line == *"$expected_version"* ]]; then
+    echo "Correct ngspice version ($expected_version) is installed."
 else
-    echo "Error: Incorrect ngspice version. Expected version >= $required_version but found:"
+    echo "Error: Incorrect ngspice version. Expected $expected_version but found:"
     echo "$version_line"
     exit 1
 fi
@@ -47,30 +45,30 @@ is_installed() {
 }
 
 # Read the dependencies from requirements.txt and process each line
-# while IFS= read -r package || [ -n "$package" ]; do
-#     # Remove leading/trailing whitespace
-#     package=$(echo "$package" | xargs)
-#     # Skip empty lines and comments
-#     if [[ -z "$package" || "$package" == \#* ]]; then
-#         continue
-#     fi
-#     # Extract the package name without extras and version specifiers for checking
-#     package_name=$(echo "$package" | sed 's/\[.*\]//;s/[<>=].*//')
-#     echo "Checking if $package is installed..."
-#     if is_installed "$package_name"; then
-#         echo "$package is already installed."
-#     else
-#         echo "$package is not installed. Installing..."
-#         $PY_RUN -m pip install "$package"
-#         # Check if the installation was successful
-#         if is_installed "$package_name"; then
-#             echo "$package installed successfully."
-#         else
-#             echo "Failed to install $package."
-#         fi
-#     fi
-#     echo
-# done < "$requirements_file"
+while IFS= read -r package || [ -n "$package" ]; do
+    # Remove leading/trailing whitespace
+    package=$(echo "$package" | xargs)
+    # Skip empty lines and comments
+    if [[ -z "$package" || "$package" == \#* ]]; then
+        continue
+    fi
+    # Extract the package name without extras and version specifiers for checking
+    package_name=$(echo "$package" | sed 's/\[.*\]//;s/[<>=].*//')
+    echo "Checking if $package is installed..."
+    if is_installed "$package_name"; then
+        echo "$package is already installed."
+    else
+        echo "$package is not installed. Installing..."
+        $PY_RUN -m pip install "$package"
+        # Check if the installation was successful
+        if is_installed "$package_name"; then
+            echo "$package installed successfully."
+        else
+            echo "Failed to install $package."
+        fi
+    fi
+    echo
+done < "$requirements_file"
 echo "Dependency check and package installations complete."
 
 
