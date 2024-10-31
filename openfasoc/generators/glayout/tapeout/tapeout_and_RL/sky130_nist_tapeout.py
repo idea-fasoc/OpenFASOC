@@ -1,16 +1,20 @@
 import sys
 from os import path, rename, environ
 environ['OPENBLAS_NUM_THREADS'] = '1'
+from pathlib import Path
 # path to glayout
-sys.path.append(path.join(path.dirname(__file__), '../../'))
-
+sys.path.append(path.join(str(Path(__file__).resolve().parents[2])))
 from gdsfactory.read.import_gds import import_gds
 from gdsfactory.components import text_freetype, rectangle
 from glayout.flow.pdk.util.comp_utils import prec_array, movey, align_comp_to_port, prec_ref_center
 from glayout.flow.pdk.util.port_utils import add_ports_perimeter, print_ports
 from gdsfactory.component import Component
 from glayout.flow.pdk.mappedpdk import MappedPDK
-from glayout.flow.blocks.composite.opamp import opamp
+try:
+	from glayout.flow.blocks.composite.opamp import opamp
+except: 
+    print('Regular opamp import failed! Using Fallback...')
+    from glayout.flow.blocks.opamp import opamp
 from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.straight_route import straight_route
 from glayout.flow.routing.c_route import c_route

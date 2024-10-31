@@ -7,6 +7,7 @@ klayout
 safetensors
 requests
 tensorboard
+numpy<2
 ray==2.7.1
 gym==0.26.2
 gymnasium==0.28.1
