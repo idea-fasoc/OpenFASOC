@@ -1,6 +1,7 @@
 # Transmission gate block for SAR A/D converter
 - Team: SaltyChip
-- Design (our target): DAC for 6-bit A/D converter 
+- Design (our target): DAC for 6-bit A/D converter
+- Progress: ongoing, 03/11/2024 
 
 | Design File | Description | Remark |
 | --- | --- | --- |
