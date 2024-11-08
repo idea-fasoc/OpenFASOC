@@ -15,46 +15,38 @@ from glayout.flow.placement.two_transistor_interdigitized import two_pfet_interd
 from glayout.flow.pdk.util.comp_utils import prec_ref_center, movey, evaluate_bbox, align_comp_to_port
 
 # My own cell library
-from inv_lib import basic_inv_cell
+from inv_lib import reconfig_inv
 
 def naive_tg_cell(pdk: MappedPDK, pmos_width, pmos_length, nmos_width, nmos_length):
 	# To prepare all necessary cells to construct a transmission gate, i.e.
 	# 1) PMOS
 	# 2) NMOS
-	# 3) Inverter (to control the gates of above PMOS and NMOS)
 	pfet = pmos(pdk=pdk, with_substrate_tap=False, with_dummy=(False, False), width=pmos_width, length=pmos_length)
 	nfet = nmos(pdk=pdk, with_substrate_tap=False, with_dummy=(False, False), width=nmos_width, length=nmos_length)
-	inv = basic_inv_cell(pdk=pdk, pmos_width=pmos_width, pmos_length=pmos_length, nmos_width=nmos_width, nmos_length=nmos_length, orientation="vertical")
-	
+
 	# Placement and adding ports
 	top_level = Component(name="TG")
 	pfet_ref = prec_ref_center(pfet)
 	nfet_ref = prec_ref_center(nfet)
-#	inv_ref = prec_ref_center(inv)
 	top_level.add(pfet_ref)
 	top_level.add(nfet_ref)
-#	top_level.add(inv_ref)
-	inv_ref = top_level << inv
 	top_level.add_ports(pfet_ref.get_ports_list(), prefix="pmos_")
 	top_level.add_ports(nfet_ref.get_ports_list(), prefix="nmos_")
-	top_level.add_ports(inv_ref.get_ports_list(), prefix="inv_")
 
 	# Placement
 	mos_spacing = pdk.util_max_metal_seperation()
-	pfet_ref.movey(evaluate_bbox(nfet_ref)[1]+mos_spacing)
-	pfet_ref.movex(evaluate_bbox(inv_ref)[0]+mos_spacing) # Placing the TG's PMOS at right side of the inverter
-	nfet_ref.movex(evaluate_bbox(inv_ref)[0]+mos_spacing) # Placing the TG's NMOS at right side of the inverter
+	#mos_spacing = pdk.get_grule("met1")["min_width"])
+	pfet_ref.rotate(90)
+	nfet_ref.rotate(90)
+	pfet_ref.movey(evaluate_bbox(nfet)[1] + mos_spacing)
 
 	# Routing
 	top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_source_W"], nfet_ref.ports["multiplier_0_drain_W"]) # "in" of the TG
-	top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_drain_E"], nfet_ref.ports["multiplier_0_source_E"]) # "out" of the TG
-	top_level << smart_route(pdk, inv_ref.ports["pmos_multiplier_0_drain_W"], pfet_ref.ports["multiplier_0_gate_W"]) # connect inv's output to PMOS's gate
-	top_level << straight_route(pdk, inv_ref.ports["nmos_multiplier_0_gate_E"], nfet_ref.ports["multiplier_0_gate_E"])
+	top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_drain_W"], nfet_ref.ports["multiplier_0_source_W"]) # "out" of the TG
 
 	# Add pins and text labels for LVS
 	pins_labels_info = list() # list that contains all port and component information
-	
-    # To define the layers
+	# To define the layers
 	gds_met1 = pdk.get_glayer("met2")[0]
 	gds_met2 = gds_met1+1
 	gds_met3 = gds_met2+1
@@ -81,3 +73,31 @@ def naive_tg_cell(pdk: MappedPDK, pmos_width, pmos_length, nmos_width, nmos_leng
 		#top_level.add(compref)
 
 	return top_level #top_level.flatten()
+
+def tg_with_inv(pdk: MappedPDK, pmos_width, pmos_length, nmos_width, nmos_length):
+	# To prepare all necessary cells to construct a transmission gate, i.e.
+	# 1) transmission gate
+	# 2) Inverter
+	tg = naive_tg_cell(pdk=pdk, pmos_width=pmos_width, pmos_length=pmos_length, nmos_width=nmos_width, nmos_length=nmos_length)
+	inv = reconfig_inv(pdk=pdk, component_name="gate_ctrl_inv", pmos_width=pmos_width, pmos_length=pmos_length, nmos_width=nmos_width, nmos_length=nmos_length, orientation="horizontal")
+
+	# Placement and adding ports
+	top_level = Component(name="tg_with_inv")
+	tg_ref = prec_ref_center(tg)
+	inv_ref = prec_ref_center(inv)
+	top_level.add(tg_ref)
+	top_level.add(inv_ref)
+	top_level.add_ports(tg_ref.get_ports_list(), prefix="tg_")
+	top_level.add_ports(inv_ref.get_ports_list(), prefix="inv_")
+
+	# Placement
+	mos_spacing = pdk.util_max_metal_seperation()
+	tg_ref.movex(evaluate_bbox(inv)[0] + mos_spacing)
+
+	# Routing
+	#top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_source_W"], nfet_ref.ports["multiplier_0_drain_W"]) # "in" of the TG
+	#top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_drain_E"], nfet_ref.ports["multiplier_0_source_E"]) # "out" of the TG
+
+	return top_level #top_level.flatten()
+
+tg_with_inv(pdk=sky130, pmos_width=1, pmos_length=0.15, nmos_width=1, nmos_length=0.15).show()

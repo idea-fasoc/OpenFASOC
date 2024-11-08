@@ -11,9 +11,9 @@ from glayout.flow.routing.c_route import c_route
 from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.smart_route import smart_route
 
-def basic_inv_cell(pdk: MappedPDK, pmos_width, pmos_length, nmos_width, nmos_length, orientation):
+def reconfig_inv(pdk: MappedPDK, component_name, pmos_width, pmos_length, nmos_width, nmos_length, orientation):
 	# Create a top level component
-	top_level = Component("inverter")
+	top_level = Component(component_name)
 	# To prepare one PMOS and one NMOS for the subsequent inverter cell construction
 	pfet = pmos(pdk=pdk, with_substrate_tap=False, with_dummy=(False, False), width=pmos_width, length=pmos_length)
 	nfet = nmos(pdk=pdk, with_substrate_tap=False, with_dummy=(False, False), width=nmos_width, length=nmos_length)
@@ -31,8 +31,9 @@ def basic_inv_cell(pdk: MappedPDK, pmos_width, pmos_length, nmos_width, nmos_len
 	# Placement (relative move)
 	mos_spacing = pdk.util_max_metal_seperation()
 	if(orientation=="horizontal"):
-		#pfet_ref.drotate(90)
-		#nfet_ref.drotate(90)
+		pfet_ref.rotate(90)
+		nfet_ref.rotate(90)
+	else:
 		pass
 	pfet_ref.movey(evaluate_bbox(nfet)[1] + mos_spacing)
 

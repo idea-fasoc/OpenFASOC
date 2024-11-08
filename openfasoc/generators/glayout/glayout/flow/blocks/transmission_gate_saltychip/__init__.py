@@ -1,2 +1,2 @@
-from glayout.flow.blocks.transmission_gate_saltychip.inv_lib import basic_inv_cell
-from glayout.flow.blocks.transmission_gate_saltychip.transmission_gate import naive_tg_cell
+from glayout.flow.blocks.transmission_gate_saltychip.inv_lib import reconfig_inv
+from glayout.flow.blocks.transmission_gate_saltychip.transmission_gate import tg_with_inv
