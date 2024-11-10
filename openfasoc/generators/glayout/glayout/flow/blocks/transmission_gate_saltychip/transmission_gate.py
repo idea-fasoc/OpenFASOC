@@ -105,8 +105,8 @@ def naive_tg_cell(pdk: MappedPDK, flip_config: dict[str, Union[int, str]], pmos_
 	# To prepare all necessary cells to construct a transmission gate, i.e.
 	# 1) PMOS
 	# 2) NMOS
-	pfet = pmos(pdk=pdk, with_substrate_tap=False, with_dummy=(False, True), width=pmos_width, length=pmos_length)
-	nfet = nmos(pdk=pdk, with_substrate_tap=False, with_dummy=(True, False), width=nmos_width, length=nmos_length)
+	pfet = pmos(pdk=pdk, with_substrate_tap=False, with_dummy=(True, False), width=pmos_width, length=pmos_length)
+	nfet = nmos(pdk=pdk, with_substrate_tap=False, with_dummy=(False, True), width=nmos_width, length=nmos_length)
 
 	# Placement and adding ports
 	top_level = Component(name="TG")
@@ -114,11 +114,6 @@ def naive_tg_cell(pdk: MappedPDK, flip_config: dict[str, Union[int, str]], pmos_
 	nfet_ref = prec_ref_center(nfet)
 	top_level.add(pfet_ref)
 	top_level.add(nfet_ref)
-	top_level.add_ports(pfet_ref.get_ports_list(), prefix="pmos_")
-	top_level.add_ports(nfet_ref.get_ports_list(), prefix="nmos_")
-	#top_level.add_port(
-	#	name="", center=[0, width / 2], width=width, orientation=180, layer=layer
-	#)
 
 	# Placement
 	mos_spacing = pdk.util_max_metal_seperation()
@@ -134,6 +129,12 @@ def naive_tg_cell(pdk: MappedPDK, flip_config: dict[str, Union[int, str]], pmos_
 	#     b) PMOS.drain connected to NMOS.drain 
 	top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_source_E"], nfet_ref.ports["multiplier_0_source_E"]) # "in" of the TG
 	top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_drain_W"], nfet_ref.ports["multiplier_0_drain_E"]) # "out" of the TG
+
+	top_level.add_ports(pfet_ref.get_ports_list(), prefix="pmos_")
+	top_level.add_ports(nfet_ref.get_ports_list(), prefix="nmos_")
+	#top_level.add_port(
+	#	name="", center=[0, width / 2], width=width, orientation=180, layer=layer
+	#)
 
 	# Add pins and text labels for LVS
 	pins_labels_info = list() # list that contains all port and component information
@@ -190,7 +191,8 @@ def tg_with_inv(pdk: MappedPDK, pmos_width, pmos_length, nmos_width, nmos_length
 	tg_ref.movex(inv_cell_width + nwell_min_spacing)
 
 	# Routing
-	#top_level << smart
+	top_level << smart_route(pdk, inv_ref.ports["pmos_multiplier_0_drain_E"], tg_ref.ports["pmos_multiplier_0_gate_W"])
+	top_level << smart_route(pdk, inv_ref.ports["nmos_multiplier_0_gate_S"], tg_ref.ports["nmos_multiplier_0_gate_S"])
 	#top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_source_W"], nfet_ref.ports["multiplier_0_drain_W"]) # "in" of the TG
 	#top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_drain_E"], nfet_ref.ports["multiplier_0_source_E"]) # "out" of the TG
 
