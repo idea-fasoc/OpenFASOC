@@ -198,4 +198,11 @@ def tg_with_inv(pdk: MappedPDK, pmos_width, pmos_length, nmos_width, nmos_length
 
 	return top_level #top_level.flatten()
 
-tg_with_inv(pdk=sky130, pmos_width=1, pmos_length=0.15, nmos_width=1, nmos_length=0.15).show()
+def display_component(component, scale = 3):
+  # Save to a GDS file
+  with hide:
+    component.write_gds("out.gds")
+
+tg_inst = tg_with_inv(pdk=sky130, pmos_width=1, pmos_length=0.15, nmos_width=1, nmos_length=0.15)
+tg_inst.show()
+tg_inst.write_gds("gds/tg_with_inv.gds")
