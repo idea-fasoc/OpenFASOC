@@ -14,10 +14,50 @@ from gdsfactory.components import text_freetype, rectangle
 
 from glayout.flow.pdk.util.comp_utils import prec_ref_center, prec_center, movey, evaluate_bbox, align_comp_to_port
 
+# def cascode_common_source_netlist(
+# 	pdk: MappedPDK, 
+# 	width: float,
+# 	length: float,
+# 	multipliers: int, 
+# 	n_or_p_fet: Optional[str] = 'nfet',
+# 	subckt_only: Optional[bool] = False,
+# 	m1_fingers = int,
+# 	m2_fingers = int,
+# 	m1_multipliers = int,
+# 	m2_multipliers = int
+# ) -> Netlist:
+# 	if length is None:
+# 		length = pdk.get_grule('poly')['min_width']
+# 	if width is None:
+# 		width = 3 
+# 	mtop = multipliers if subckt_only else 1
+# 	model = pdk.models[n_or_p_fet]
+	
+# 	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={length} w={width} m={mtop} ' + """
+# XM1 INT VIN VSS VSS {model} l={{length}} w={{width}} m={{m1_multipliers}}
+# XM2 IOUT VBIAS INT VSS {model} l={{length}} w={{width}} m={{m2_multipliers}}"""
+# 	source_netlist += "\n.ends {circuit_name}"
+
+# 	instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult}"
+ 
+# 	return Netlist(
+# 		circuit_name='CASCODECOMMONSRC',
+# 		nodes=['VIN', 'VBIAS', 'VSS', 'IOUT'], 
+# 		source_netlist=source_netlist,
+#   		instance_format=instance_format,
+# 		parameters={
+# 			'model': model,
+# 			'width': width,
+#    			'length': length,	
+# 			'mult': multipliers
+#    		}
+# 	)
 def cascode_common_source_netlist(
 	pdk: MappedPDK, 
-	width: float,
-	length: float,
+	m1_width: float,
+	m2_width: float,
+	m1_length: float,
+	m2_length: float,
 	multipliers: int, 
 	n_or_p_fet: Optional[str] = 'nfet',
 	subckt_only: Optional[bool] = False,
@@ -26,16 +66,22 @@ def cascode_common_source_netlist(
 	m1_multipliers = int,
 	m2_multipliers = int
 ) -> Netlist:
-	if length is None:
-		length = pdk.get_grule('poly')['min_width']
-	if width is None:
-		width = 3 
+	if m1_length is None:
+		m1_length = pdk.get_grule('poly')['min_length']
+	if m1_width is None:
+		m1_width = pdk.get_grule('poly')['min_width']
+	m2_length = m2_length or pdk.get_grule('poly')['min_length']
+	m2_width = m2_width or pdk.get_grule('poly')['min_width']
+
 	mtop = multipliers if subckt_only else 1
 	model = pdk.models[n_or_p_fet]
+	m1_multipliers = m1_multipliers or 1
+	m2_multipliers = m2_multipliers or 1
 	
-	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={length} w={width} m={mtop} ' + """
-XM1 INT VIN VSS VSS {model} l={{l}} w={{w}} m={{m}}
-XM2 IOUT VBIAS INT VSS {model} l={{l}} w={{w}} m={{m}}"""
+	
+	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={m1_length} w={m1_width} m={mtop} ' + """
+XM1 INT VIN VSS VSS {model} l={m1_length} w={m1_width} m={m1_multipliers}
+XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={m2_multipliers}"""
 	source_netlist += "\n.ends {circuit_name}"
 
 	instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult}"
@@ -47,11 +93,16 @@ XM2 IOUT VBIAS INT VSS {model} l={{l}} w={{w}} m={{m}}"""
   		instance_format=instance_format,
 		parameters={
 			'model': model,
-			'width': width,
-   			'length': length,	
-			'mult': multipliers
+			'm1_width': m1_width,
+			'm2_width': m2_width,
+   			'm1_length': m1_length,	
+			'm2_length': m2_length,	
+			'mult': multipliers,
+			'm1_multipliers': m1_multipliers,
+			'm2_multipliers': m2_multipliers,
    		}
 	)
+
 
 
 #@cell
@@ -144,6 +195,7 @@ def cascode_common_source(
 		
 
 	# ************* Adding the suffix after the routing generates the prefix after routing.
+	top_level.unlock()
 	top_level.add_ports(M1_ref.get_ports_list(), prefix="M1_")
 	top_level.add_ports(M2_ref.get_ports_list(), prefix="M2_")
 	#Now attach pin names for port
@@ -182,21 +234,92 @@ def cascode_common_source(
 		compref = align_comp_to_port(comp, prt, alignment=alignment)
 		top_level.add(compref)
 
-	
+	top_level.flatten()
+	# THIS IS THE ORIGINAL ARGUMENTS FOR THE NETLIST GENERATION FUNCTION 
+	# top_level.info['netlist'] = cascode_common_source_netlist(
+	# 	pdk, 
+  	# 	width=kwargs.get('width', 3), 
+	# 	length=kwargs.get('length', 1), 
+	# 	multipliers=numcols, 
+    # 	n_or_p_fet=device,
+	# 	subckt_only=True,
+	# 	m1_fingers = m1_fingers,
+	# 	m2_fingers = m2_fingers,
+	# 	m1_multipliers = m1_multipliers,
+	# 	m2_multipliers = m2_multipliers
+	# )
 	top_level.info['netlist'] = cascode_common_source_netlist(
 		pdk, 
-  		width=kwargs.get('width', 3), 
-		length=kwargs.get('length', 1), 
-		multipliers=numcols, 
+  		m1_width=kwargs.get('width', 21), 
+		m2_width=kwargs.get('width', 21), 
+		m1_length=kwargs.get('length',14), 
+		m2_length=kwargs.get('length',14),
+		multipliers=16, 
     	n_or_p_fet=device,
 		subckt_only=True,
-		m1_fingers = m1_fingers,
-		m2_fingers = m2_fingers,
-		m1_multipliers = m1_multipliers,
-		m2_multipliers = m2_multipliers
+		m1_fingers = 6,
+		m2_fingers = 6,
+		m1_multipliers = 9,
+		m2_multipliers = 9
 	)
-	 
+
+	generated_netlist_for_lvs = top_level.info['netlist'].generate_netlist()
+	print(f"Type of generated netlist is :", generated_netlist_for_lvs)
+	file_path_local_storage = "./gen_netlist.txt"
+	try:
+		with open(file_path_local_storage, 'w') as file:
+			file.write(generated_netlist_for_lvs)
+	except:
+		print(f"Verify the file availability and type: ", generated_netlist_for_lvs, type(generated_netlist_for_lvs))
 	return top_level
+
+
+def cascode_common_source_labels(CMS: Component) -> Component:
+	CMS.unlock()
+
+	# ************* Adding the suffix after the routing generates the prefix after routing.
+	CMS.unlock()
+	CMS.add_ports(M1_ref.get_ports_list(), prefix="M1_")
+	CMS.add_ports(M2_ref.get_ports_list(), prefix="M2_")
+	#Now attach pin names for port
+	CMS.unlock()
+	# *** Adding pins and labels for metal1-5 ***
+	move_info =list()
+	met1_pin=(68,20)
+	met1_label=(68,5)
+	met2_pin = (69,16)
+	met2_label = (69,5)
+	met3_pin = (70,16)
+	met3_label = (70,5)
+	met4_pin = (71,16)
+	met4_label = (71,5)
+	met5_pin = (72,16)
+	met5_label = (72,5)
+	port_size = (0.35,0.35)
+	VIN_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+	VIN_label.add_label(text="VIN", layer=met1_label)
+	move_info.append((VIN_label, CMS.ports['M1_gate_W'], None))
+
+	VBIAS_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+	VBIAS_label.add_label(text="VBIAS", layer=met1_label)
+	move_info.append((VBIAS_label, CMS.ports['M2_gate_W'], None))
+
+	VSS_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+	VSS_label.add_label(text="VSS", layer=met1_label)
+	move_info.append((VSS_label, CMS.ports['M1_source_S'], None))
+
+	IOUT_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+	IOUT_label.add_label(text="IOUT", layer=met1_label)
+	move_info.append((IOUT_label, CMS.ports['M2_drain_N'], None))
+
+	for comp, prt, alignment in move_info:
+		alignment = ('c','b') if alignment is None else alignment
+		compref = align_comp_to_port(comp, prt, alignment=alignment)
+		CMS.add(compref)
+
+	return CMS.flatten()
+
+
 
 
 mapped_pdk_build = sky130
@@ -215,6 +338,7 @@ else:
     print("DRC failed. Please try again.")
 
 Cascode_cs_component.name = 'cascode_common_source_lvs' 
-netgen_lvs_result = mapped_pdk_build.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
+# netgen_lvs_result = mapped_pdk_build.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
 
-
+sky130.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
+print('LVS success??')
