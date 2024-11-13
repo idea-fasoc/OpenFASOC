@@ -17,6 +17,8 @@ from glayout.flow.pdk.util.comp_utils import prec_ref_center, movey, evaluate_bb
 
 # My own cell library
 from inv_lib import reconfig_inv
+import cell_config as config
+
 '''
 def naive_tg_cell(pdk: MappedPDK, pmos_width, pmos_length, nmos_width, nmos_length):
 	# To prepare all necessary cells to construct a transmission gate, i.e.
@@ -180,10 +182,6 @@ def tg_with_inv(pdk: MappedPDK, pmos_width, pmos_length, nmos_width, nmos_length
 	top_level.add(tg_ref)
 	top_level.add(inv_ref)
 
-	# Adding the ports
-	top_level.add_ports(tg_ref.get_ports_list(), prefix="tg_")
-	top_level.add_ports(inv_ref.get_ports_list(), prefix="inv_")
-
 	# Placement
 	mos_spacing = pdk.util_max_metal_seperation()
 	nwell_min_spacing = pdk.get_grule("nwell")["min_separation"]
@@ -191,18 +189,14 @@ def tg_with_inv(pdk: MappedPDK, pmos_width, pmos_length, nmos_width, nmos_length
 	tg_ref.movex(inv_cell_width + nwell_min_spacing)
 
 	# Routing
+	#    1) PMOS of the TG is switched on/off by the inverter's output
+	#    2) NMOS of the TG is switched on/off by an external control signal connected to inverter's input port as well
 	top_level << smart_route(pdk, inv_ref.ports["pmos_multiplier_0_drain_E"], tg_ref.ports["pmos_multiplier_0_gate_W"])
 	top_level << smart_route(pdk, inv_ref.ports["nmos_multiplier_0_gate_S"], tg_ref.ports["nmos_multiplier_0_gate_S"])
-	#top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_source_W"], nfet_ref.ports["multiplier_0_drain_W"]) # "in" of the TG
-	#top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_drain_E"], nfet_ref.ports["multiplier_0_source_E"]) # "out" of the TG
 
-	return top_level #top_level.flatten()
+	# Adding the ports
+	top_level.add_ports(tg_ref.get_ports_list(), prefix="tg_")
+	top_level.add_ports(inv_ref.get_ports_list(), prefix="inv_")
 
-def display_component(component, scale = 3):
-  # Save to a GDS file
-  with hide:
-    component.write_gds("out.gds")
+	return top_level
 
-tg_inst = tg_with_inv(pdk=sky130, pmos_width=1, pmos_length=0.15, nmos_width=1, nmos_length=0.15)
-tg_inst.show()
-tg_inst.write_gds("gds/tg_with_inv.gds")
