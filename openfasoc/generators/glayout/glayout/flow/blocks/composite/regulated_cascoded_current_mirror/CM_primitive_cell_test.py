@@ -1,40 +1,99 @@
 import sys
-from os import path, rename, environ
-environ['OPENBLAS_NUM_THREADS'] = '1'
-from pathlib import Path
-# path to glayout
-sys.path.append(path.join(str(Path(__file__).resolve().parents[2])))
+sys.path.append('../../elementary/current_mirror/')
+sys.path.append('../../composite/')
 
-
-from glayout.flow.primitives.guardring import tapring
-from glayout.flow.primitives.fet import pmos
 from glayout.flow.pdk.mappedpdk import MappedPDK
-from glayout.flow.routing.straight_route import straight_route
-from glayout.flow.routing.c_route import c_route
-from glayout.flow.routing.L_route import L_route
-from gdsfactory import Component
-from glayout.flow.spice.netlist import Netlist
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk as sky130
 from glayout.flow.pdk.gf180_mapped import gf180_mapped_pdk as gf180
-from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized, two_pfet_interdigitized
-from gdsfactory.components import text_freetype, rectangle
-from typing import Optional, Union 
-from glayout.flow.pdk.util.comp_utils import evaluate_bbox, prec_center, prec_array, movey, align_comp_to_port, prec_ref_center
-from glayout.flow.routing.smart_route import smart_route
+
+from gdsfactory.cell import cell, clear_cache
+from gdsfactory.component import Component, copy
+from gdsfactory.component_reference import ComponentReference
+from gdsfactory.components.rectangle import rectangle
+from glayout.flow.pdk.mappedpdk import MappedPDK
+from typing import Optional, Union
+
+from glayout.flow.pdk.util.snap_to_grid import component_snap_to_grid
+from pydantic import validate_arguments
+from glayout.flow.pdk.util.comp_utils import evaluate_bbox, prec_ref_center, movex, movey, to_decimal, to_float, move, align_comp_to_port, get_padding_points_cc
+from glayout.flow.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, set_port_orientation, rename_component_ports
 
 
-global PDK_ROOT
-if 'PDK_ROOT' in environ:
-	PDK_ROOT = str(Path(environ['PDK_ROOT']).resolve())
-else:
-	PDK_ROOT = "/usr/bin/miniconda3/share/pdk/"
- 
-from glayout.flow.blocks.elementary.current_mirror.current_mirror import current_mirror, current_mirror_netlist
+from current_mirror import current_mirror, current_mirror_netlist
 
-comp = CurrentMirror(sky130, (3, 3, 2), type='nfet', rmult=1)
-comp = sky130_add_current_mirror_labels(comp, transistor_type='nfet', pdk=sky130)
-comp.name = "CM"
-comp.write_gds("CM.gds")
+
+def sky130_add_current_mirror_labels(CMS: Component, transistor_type: str = "nfet",pdk: MappedPDK =sky130) -> Component:  # Re-introduce transistor_type
+    """Add labels to the current mirror layout for LVS, handling both nfet and pfet."""
+
+    met2_pin = (69, 16)
+    met2_label = (69, 5)
+    met3_pin = (70, 16)
+    met3_label = (70, 5)
+    
+    
+
+    CMS.unlock()
+    move_info = []
+
+    # VREF label (for both gate and drain of transistor A, and dummy drains)
+    vref_label = rectangle(layer=met3_pin, size=(1, 1), centered=True).copy()
+    vref_label.add_label(text="VREF", layer=met3_label)
+    move_info.append((vref_label, CMS.ports["currm_A_gate_E"], None))  # Gate of A
+    move_info.append((vref_label, CMS.ports["currm_A_drain_E"], None)) # Drain of A
+
+
+    # VCOPY label (for drain of transistor B)
+    vcopy_label = rectangle(layer=met3_pin, size=(1, 1), centered=True).copy()
+    vcopy_label.add_label(text="VCOPY", layer=met3_label)
+    move_info.append((vcopy_label, CMS.ports["currm_B_drain_E"], None))  # Drain of B
+
+
+
+   # VSS/VDD label (for sources/bulk connection)
+    if transistor_type.lower() == "nfet":
+        bulk_net_name = "VSS"
+        bulk_pin_layer = met2_pin #met2 for nfet bulk
+        bulk_label_layer = met2_label #met2 for nfet bulk
+    else:  # pfet
+        bulk_net_name = "VDD"
+        bulk_pin_layer = met3_pin #met3 for pfet bulk
+        bulk_label_layer = met3_label #met3 for pfet bulk
+    
+    bulk_label = rectangle(layer=bulk_pin_layer, size=(1, 1), centered=True).copy() #Layer changes based on type
+    bulk_label.add_label(text=bulk_net_name, layer=bulk_label_layer)
+    move_info.append((bulk_label, CMS.ports["currm_A_source_E"], None))  # Source of A
+    move_info.append((bulk_label, CMS.ports["currm_B_source_E"], None))  # Source of B
+    
+    # VB label (connected to the dummy transistors' drains if present)
+    if type == "nfet":
+        vb_label = rectangle(layer=met2_pin, size=(1, 1), centered=True).copy() #met2 for nfet
+        vb_label.add_label(text=bulk_net_name , layer=met2_label)
+        move_info.append((vb_label, CMS.ports["purposegndportsbottom_met_E"], None)) 
+        move_info.append((vb_label, CMS.ports["purposegndportsbottom_met_W"], None))
+    else: #type is pfet
+        vb_label = rectangle(layer=met3_pin, size=(1, 1), centered=True).copy() #met3 for pfet
+        vb_label.add_label(text=bulk_net_name , layer=met3_label)
+        move_info.append((vb_label, CMS.ports["purposegndportsbottom_met_E"], None)) 
+        move_info.append((vb_label, CMS.ports["purposegndportsbottom_met_W"], None))
+
+
+
+    # Add labels to the component
+    for label, port, alignment in move_info:
+        if port:
+            alignment = ('c', 'c') if alignment is None else alignment
+            aligned_label = align_comp_to_port(label, port, alignment=alignment)
+            CMS.add(aligned_label)
+
+    return CMS.flatten()
+
+
+
+comp = current_mirror(sky130, numcols=2, device='nfet')
+
+# comp = sky130_add_current_mirror_labels(comp, transistor_type='nfet', pdk=sky130)
+# comp.name = "CM"
+# comp.write_gds("CM.gds")
 
 # for absc in comp.ports.keys():
 #     if len(absc.split("_")) <=5:
@@ -43,10 +102,10 @@ comp.write_gds("CM.gds")
 print(comp.info["netlist"].generate_netlist())
 comp.show()
 
-# %%
-print("\n...Running LVS...")
+# # %%
+# print("\n...Running LVS...")
 
-sky130.lvs_netgen(comp, "CM")        
+# sky130.lvs_netgen(comp, "CM")        
 
 # %%
 
