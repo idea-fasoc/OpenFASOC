@@ -1,0 +1,283 @@
+import sys
+from os import path, rename, environ
+environ['OPENBLAS_NUM_THREADS'] = '1'
+from pathlib import Path
+# path to glayout
+sys.path.append(path.join(str(Path(__file__).resolve().parents[2])))
+
+
+from glayout.flow.primitives.guardring import tapring
+from glayout.flow.primitives.fet import pmos
+from glayout.flow.pdk.mappedpdk import MappedPDK
+from glayout.flow.routing.straight_route import straight_route
+from glayout.flow.routing.c_route import c_route
+from glayout.flow.routing.L_route import L_route
+from gdsfactory import Component
+from glayout.flow.spice.netlist import Netlist
+from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk as sky130
+from glayout.flow.pdk.gf180_mapped import gf180_mapped_pdk as gf180
+from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized, two_pfet_interdigitized
+from gdsfactory.components import text_freetype, rectangle
+from typing import Optional, Union 
+from glayout.flow.pdk.util.comp_utils import evaluate_bbox, prec_center, prec_array, movey, align_comp_to_port, prec_ref_center
+from glayout.flow.routing.smart_route import smart_route
+
+
+global PDK_ROOT
+if 'PDK_ROOT' in environ:
+	PDK_ROOT = str(Path(environ['PDK_ROOT']).resolve())
+else:
+	PDK_ROOT = "/usr/bin/miniconda3/share/pdk/"
+ 
+ 
+def generate_current_mirror_netlist(
+    pdk: MappedPDK,
+    instance_name: str,
+    CM_size: tuple[float, float, int],  # (width, length, multipliers)
+    drain_net_A: str,
+    gate_net: str,
+    source_net: str,
+    drain_net_B: str,
+    transistor_type: str = "nfet",
+    bulk_net: str = None,
+    dummy: bool = True,
+    subckt_only: bool = False,
+    proposed_ground: str = None,  # Proposed ground net
+) -> Netlist:
+    """Generate a netlist for a current mirror."""
+
+    if bulk_net is None:
+        bulk_net = "VDD" if transistor_type.lower() == "pfet" else "VSS"
+
+    width = CM_size[0]
+    length = CM_size[1]
+    multipliers = CM_size[2]  
+    mtop = multipliers if subckt_only else 1
+    mtop = multipliers * 2 if dummy else multipliers # Double the multiplier to account for the dummies
+
+
+    model_name = pdk.models[transistor_type.lower()]
+
+    circuit_name = instance_name
+    nodes = [drain_net_A, drain_net_B, proposed_ground]
+
+    source_netlist = f".subckt {circuit_name} {' '.join(nodes)}\n"
+
+    #source_netlist += f"V{proposed_ground}1 ({proposed_ground} {bulk_net}) 0\n" #Proposed ground connection
+
+
+    # Generating only two transistors (one on each side):
+    source_netlist += f"XA {drain_net_A} {gate_net} {source_net} {bulk_net} {model_name} l={length} w={width} m={mtop}\n"
+    source_netlist += f"XB {drain_net_B} {gate_net} {source_net} {bulk_net} {model_name} l={length} w={width} m={mtop}\n"
+    
+    source_netlist += ".ends " + circuit_name
+
+
+    instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult}"
+
+    return Netlist(
+        circuit_name=circuit_name,
+        nodes=nodes,
+        source_netlist=source_netlist,
+        instance_format=instance_format,
+        parameters={
+            "model": model_name,
+            "width": width,
+            "length": length,
+            'mult': multipliers,
+        },
+    )
+
+def create_via(PDK: MappedPDK):
+  # Define the via dimensions and rules
+  via_dimension = PDK.get_grule('via1')['width']
+  metal1_dimension = via_dimension + 2 * PDK.get_grule('via1','met1')['min_enclosure']
+  metal2_dimension = via_dimension + 2 * PDK.get_grule('via1','met2')['min_enclosure']
+
+  # Get the layers for via and metals
+  via_layer = PDK.get_glayer('via1')
+  metal1_layer = PDK.get_glayer('met2')
+  metal2_layer = PDK.get_glayer('met3')
+
+  # Create the component and add the layers
+  top_level = Component(name='via_example')
+  top_level << rectangle(size=(via_dimension, via_dimension), layer=via_layer)
+  top_level << rectangle(size=(metal1_dimension, metal1_dimension), layer=metal1_layer)
+  top_level << rectangle(size=(metal2_dimension, metal2_dimension), layer=metal2_layer)
+
+  return top_level
+
+def sky130_add_current_mirror_labels(CMS: Component, transistor_type: str = "nfet",pdk: MappedPDK =sky130) -> Component:  # Re-introduce transistor_type
+    """Add labels to the current mirror layout for LVS, handling both nfet and pfet."""
+
+    met2_pin = (69, 16)
+    met2_label = (69, 5)
+    met3_pin = (70, 16)
+    met3_label = (70, 5)
+    
+    
+
+    CMS.unlock()
+    move_info = []
+
+    # VREF label (for both gate and drain of transistor A, and dummy drains)
+    vref_label = rectangle(layer=met3_pin, size=(1, 1), centered=True).copy()
+    vref_label.add_label(text="VREF", layer=met3_label)
+    move_info.append((vref_label, CMS.ports["currm_A_gate_E"], None))  # Gate of A
+    move_info.append((vref_label, CMS.ports["currm_A_drain_E"], None)) # Drain of A
+
+
+    # VCOPY label (for drain of transistor B)
+    vcopy_label = rectangle(layer=met3_pin, size=(1, 1), centered=True).copy()
+    vcopy_label.add_label(text="VCOPY", layer=met3_label)
+    move_info.append((vcopy_label, CMS.ports["currm_B_drain_E"], None))  # Drain of B
+
+
+
+   # VSS/VDD label (for sources/bulk connection)
+    if transistor_type.lower() == "nfet":
+        bulk_net_name = "VSS"
+        bulk_pin_layer = met2_pin #met2 for nfet bulk
+        bulk_label_layer = met2_label #met2 for nfet bulk
+    else:  # pfet
+        bulk_net_name = "VDD"
+        bulk_pin_layer = met3_pin #met3 for pfet bulk
+        bulk_label_layer = met3_label #met3 for pfet bulk
+    
+    bulk_label = rectangle(layer=bulk_pin_layer, size=(1, 1), centered=True).copy() #Layer changes based on type
+    bulk_label.add_label(text=bulk_net_name, layer=bulk_label_layer)
+    move_info.append((bulk_label, CMS.ports["currm_A_source_E"], None))  # Source of A
+    move_info.append((bulk_label, CMS.ports["currm_B_source_E"], None))  # Source of B
+    
+    # VB label (connected to the dummy transistors' drains if present)
+    if type == "nfet":
+        vb_label = rectangle(layer=met2_pin, size=(1, 1), centered=True).copy() #met2 for nfet
+        vb_label.add_label(text=bulk_net_name , layer=met2_label)
+        move_info.append((vb_label, CMS.ports["purposegndportsbottom_met_E"], None)) 
+        move_info.append((vb_label, CMS.ports["purposegndportsbottom_met_W"], None))
+    else: #type is pfet
+        vb_label = rectangle(layer=met3_pin, size=(1, 1), centered=True).copy() #met3 for pfet
+        vb_label.add_label(text=bulk_net_name , layer=met3_label)
+        move_info.append((vb_label, CMS.ports["purposegndportsbottom_met_E"], None)) 
+        move_info.append((vb_label, CMS.ports["purposegndportsbottom_met_W"], None))
+
+
+
+    # Add labels to the component
+    for label, port, alignment in move_info:
+        if port:
+            alignment = ('c', 'c') if alignment is None else alignment
+            aligned_label = align_comp_to_port(label, port, alignment=alignment)
+            CMS.add(aligned_label)
+
+    return CMS.flatten()
+
+def CurrentMirror(pdk: MappedPDK,CM_size: tuple[float, float, int],type: Optional[str] = 'nfet',rmult: Optional[int] =1):    
+    
+    CurrentMirror = Component(name="CurrentMirror")
+    
+    if type =="pfet" or type =="pmos":
+        currm= two_pfet_interdigitized(pdk,numcols=CM_size[2],width=CM_size[0],length=CM_size[1],
+                                       rmult=rmult,gate_route_topmet="met3",sd_route_topmet="met3",
+                                       with_substrate_tap=False,with_tie=True,tie_layers=("met2", "met2"))
+    elif type =="nfet" or type =="nmos":
+        currm= two_nfet_interdigitized(pdk,numcols=CM_size[2],width=CM_size[0],length=CM_size[1],
+                                       rmult=rmult,gate_route_topmet="met3",sd_route_topmet="met3",
+                                       with_substrate_tap=False,with_tie=True,tie_layers=("met2", "met2"))
+    else:
+        raise ValueError("type must be either nfet or pfet")
+        
+    currm_ref = prec_ref_center(currm)
+    CurrentMirror.add(currm_ref)
+    CurrentMirror.add_ports(currm_ref.get_ports_list(),prefix="currm_")
+    
+    
+    gate_short = CurrentMirror << smart_route(pdk,CurrentMirror.ports["currm_A_gate_E"],CurrentMirror.ports["currm_B_gate_E"],currm_ref,CurrentMirror)
+    
+    CurrentMirror << smart_route(pdk,CurrentMirror.ports["currm_A_drain_E"],CurrentMirror.ports["currm_A_gate_E"],currm_ref,CurrentMirror)
+    
+    srcshort = CurrentMirror << smart_route(pdk,CurrentMirror.ports["currm_A_source_E"],CurrentMirror.ports["currm_B_source_E"],currm_ref,CurrentMirror)
+
+    CurrentMirror.add_ports(srcshort.get_ports_list(), prefix="purposegndports")
+
+    CurrentMirror.info["netlist"] = generate_current_mirror_netlist(
+                                    pdk=pdk,
+                                    instance_name=CurrentMirror.name,
+                                    CM_size=CM_size,  # (width, length, multipliers)
+                                    transistor_type=type,
+                                    drain_net_A="VREF",  # Input drain connected to VREF (as seen in the layout)
+                                    gate_net="VREF",      # Gate connected to VREF (as seen in the layout)
+                                    source_net="VSS" if type=="nfet" else "VDD",    # Source connected to VSS
+                                    drain_net_B="VCOPY", # Output drain connected to VCOPY
+                                    dummy=True,          # Include dummy transistors (present in the layout)
+                                    subckt_only=True,    # Generate only the subcircuit (no instances)
+                                    proposed_ground= "VSS" if type=="nfet" else "VDD", #Proposed ground should also change
+
+                                    )
+
+    return CurrentMirror 
+
+
+# %%
+# netlist=generate_current_mirror_netlist(
+#     pdk=sky130,
+#     instance_name="CM",
+#     CM_size=(3, 3, 2),
+#     transistor_type="nfet",
+#     drain_net_A="VREF",  # Input drain connected to VREF (as seen in the layout)
+#     gate_net="VREF",      # Gate connected to VREF (as seen in the layout)
+#     source_net="VSS",    # Source connected to VSS
+#     drain_net_B="VCOPY", # Output drain connected to VCOPY
+#     dummy=True,          # Include dummy transistors (present in the layout)
+#     subckt_only=True,    # Generate only the subcircuit (no instances)
+#     proposed_ground="VSS", #Proposed ground is VSS
+# )
+
+# print(netlist.source_netlist)  # For debugging purposes
+
+
+comp = CurrentMirror(sky130, (3, 3, 2), type='nfet', rmult=1)
+comp = sky130_add_current_mirror_labels(comp, transistor_type='nfet', pdk=sky130)
+comp.name = "CM"
+comp.write_gds("CM.gds")
+
+# for absc in comp.ports.keys():
+#     if len(absc.split("_")) <=5:
+#         print(absc)
+    
+print(comp.info["netlist"].generate_netlist())
+comp.show()
+
+# %%
+print("\n...Running LVS...")
+
+sky130.lvs_netgen(comp, "CM")        
+
+# %%
+
+
+
+# extractbash_template=str()
+# #import pdb; pdb.set_trace()
+# with open(str(_TAPEOUT_AND_RL_DIR_PATH_)+"/extract.bash.template","r") as extraction_script:
+#     extractbash_template = extraction_script.read()
+#     extractbash_template = extractbash_template.replace("@@PDK_ROOT",PDK_ROOT).replace("@@@PAROPT","noparasitics" if noparasitics else "na")
+# with open(str(tmpdirname)+"/extract.bash","w") as extraction_script:
+#     extraction_script.write(extractbash_template)
+# #copyfile("extract.bash",str(tmpdirname)+"/extract.bash")
+# copyfile(str(_TAPEOUT_AND_RL_DIR_PATH_)+"/opamp_perf_eval.sp",str(tmpdirname)+"/opamp_perf_eval.sp")
+# copytree(str(_TAPEOUT_AND_RL_DIR_PATH_)+"/sky130A",str(tmpdirname)+"/sky130A")
+# # extract layout
+# Popen(["bash","extract.bash", tmp_gds_path, opamp_v.name],cwd=tmpdirname).wait()
+# print("Running simulation at temperature: " + str(temperature_info[0]) + "C")
+# process_spice_testbench(str(tmpdirname)+"/opamp_perf_eval.sp",temperature_info=temperature_info)
+# process_netlist_subckt(str(tmpdirname)+"/opamp"+str(index)+"_pex.spice", temperature_info[1], cload=cload, noparasitics=noparasitics)
+# rename(str(tmpdirname)+"/opamp"+str(index)+"_pex.spice", str(tmpdirname)+"/opamp_pex.spice")
+# # run sim and store result
+# #import pdb;pdb.set_trace()
+# Popen(["ngspice","-b","opamp_perf_eval.sp"],cwd=tmpdirname).wait()
+# ac_file = str(tmpdirname)+"/result_ac.txt"
+# power_file = str(tmpdirname)+"/result_power.txt"
+# noise_file = str(tmpdirname)+"/result_noise.txt"
+# result_dict = get_sim_results(ac_file, power_file, noise_file)
+# result_dict["area"] = area
