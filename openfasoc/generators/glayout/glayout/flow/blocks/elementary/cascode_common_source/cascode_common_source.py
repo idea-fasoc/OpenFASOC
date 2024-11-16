@@ -77,18 +77,23 @@ def cascode_common_source_netlist(
 	model = pdk.models[n_or_p_fet]
 	m1_multipliers = m1_multipliers or 1
 	m2_multipliers = m2_multipliers or 1
+	dmtop = m1_fingers*m1_multipliers
+	num_dummies = 4
 	
-	
-	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={m1_length} w={m1_width} m={mtop} ' + """
-XM1 INT VIN VSS VSS {model} l={m1_length} w={m1_width} m={m1_multipliers}
-XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={m2_multipliers}"""
+	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={m1_length} w={m1_width} m={mtop} dm={dmtop}' + """
+XM1 INT VIN VSS VSS {model} l={m1_length} w={m1_width} m={mult} dm={m1_multipliers}
+XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={mult} dm={m2_multipliers}"""
+	#Adding the dummies
+	#for i in range(num_dummies):
+	#	source_netlist += """ \nXDUMMY"""+f'{i+1}'+""" B B B B {model} """+f'l={m1_length} w={m1_width} m={1} dm={dmtop}'
+
 	source_netlist += "\n.ends {circuit_name}"
 
 	instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult}"
  
 	return Netlist(
 		circuit_name='CASCODECOMMONSRC',
-		nodes=['VIN', 'VBIAS', 'VSS', 'IOUT'], 
+		nodes=['VIN', 'VBIAS', 'VSS', 'IOUT', "INT"], 
 		source_netlist=source_netlist,
   		instance_format=instance_format,
 		parameters={
@@ -97,7 +102,7 @@ XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={m2_multipliers}"""
 			'm2_width': m2_width,
    			'm1_length': m1_length,	
 			'm2_length': m2_length,	
-			'mult': multipliers,
+			'mult': m1_multipliers*m1_fingers,#multipliers,
 			'm1_multipliers': m1_multipliers,
 			'm2_multipliers': m2_multipliers,
    		}
@@ -195,46 +200,46 @@ def cascode_common_source(
 		
 
 	# ************* Adding the suffix after the routing generates the prefix after routing.
-	top_level.unlock()
+	# top_level.unlock()
 	top_level.add_ports(M1_ref.get_ports_list(), prefix="M1_")
 	top_level.add_ports(M2_ref.get_ports_list(), prefix="M2_")
-	#Now attach pin names for port
-	top_level.unlock()
-	# *** Adding pins and labels for metal1-5 ***
-	move_info =list()
-	met1_pin=(68,20)
-	met1_label=(68,5)
-	met2_pin = (69,16)
-	met2_label = (69,5)
-	met3_pin = (70,16)
-	met3_label = (70,5)
-	met4_pin = (71,16)
-	met4_label = (71,5)
-	met5_pin = (72,16)
-	met5_label = (72,5)
-	port_size = (0.35,0.35)
-	VIN_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-	VIN_label.add_label(text="VIN", layer=met1_label)
-	move_info.append((VIN_label, top_level.ports['M1_gate_W'], None))
+	# #Now attach pin names for port
+	# top_level.unlock()
+	# # *** Adding pins and labels for metal1-5 ***
+	# move_info =list()
+	# met1_pin=(68,20)
+	# met1_label=(68,5)
+	# met2_pin = (69,16)
+	# met2_label = (69,5)
+	# met3_pin = (70,16)
+	# met3_label = (70,5)
+	# met4_pin = (71,16)
+	# met4_label = (71,5)
+	# met5_pin = (72,16)
+	# met5_label = (72,5)
+	# port_size = (0.35,0.35)
+	# VIN_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+	# VIN_label.add_label(text="VIN", layer=met1_label)
+	# move_info.append((VIN_label, top_level.ports['M1_gate_W'], None))
 
-	VBIAS_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-	VBIAS_label.add_label(text="VBIAS", layer=met1_label)
-	move_info.append((VBIAS_label, top_level.ports['M2_gate_W'], None))
+	# VBIAS_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+	# VBIAS_label.add_label(text="VBIAS", layer=met1_label)
+	# move_info.append((VBIAS_label, top_level.ports['M2_gate_W'], None))
 
-	VSS_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-	VSS_label.add_label(text="VSS", layer=met1_label)
-	move_info.append((VSS_label, top_level.ports['M1_source_S'], None))
+	# VSS_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+	# VSS_label.add_label(text="VSS", layer=met1_label)
+	# move_info.append((VSS_label, top_level.ports['M1_source_S'], None))
 
-	IOUT_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-	IOUT_label.add_label(text="IOUT", layer=met1_label)
-	move_info.append((IOUT_label, top_level.ports['M2_drain_N'], None))
+	# IOUT_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+	# IOUT_label.add_label(text="IOUT", layer=met1_label)
+	# move_info.append((IOUT_label, top_level.ports['M2_drain_N'], None))
 
-	for comp, prt, alignment in move_info:
-		alignment = ('c','b') if alignment is None else alignment
-		compref = align_comp_to_port(comp, prt, alignment=alignment)
-		top_level.add(compref)
+	# for comp, prt, alignment in move_info:
+	# 	alignment = ('c','b') if alignment is None else alignment
+	# 	compref = align_comp_to_port(comp, prt, alignment=alignment)
+	# 	top_level.add(compref)
 
-	top_level.flatten()
+	# top_level.flatten()
 	# THIS IS THE ORIGINAL ARGUMENTS FOR THE NETLIST GENERATION FUNCTION 
 	# top_level.info['netlist'] = cascode_common_source_netlist(
 	# 	pdk, 
@@ -250,17 +255,17 @@ def cascode_common_source(
 	# )
 	top_level.info['netlist'] = cascode_common_source_netlist(
 		pdk, 
-  		m1_width=kwargs.get('width', 21), 
-		m2_width=kwargs.get('width', 21), 
-		m1_length=kwargs.get('length',14), 
-		m2_length=kwargs.get('length',14),
-		multipliers=16, 
+  		m1_width=3, #kwargs.get('width', 21), 
+		m2_width=3, #kwargs.get('width', 21), 
+		m1_length=pdk.get_grule('poly')['min_width'], #kwargs.get('length',14), 
+		m2_length=pdk.get_grule('poly')['min_width'], #kwargs.get('length',14),
+		multipliers=1, 
     	n_or_p_fet=device,
 		subckt_only=True,
-		m1_fingers = 6,
-		m2_fingers = 6,
-		m1_multipliers = 9,
-		m2_multipliers = 9
+		m1_fingers = m1_fingers,
+		m2_fingers = m2_fingers,
+		m1_multipliers = m1_multipliers,
+		m2_multipliers = m2_multipliers
 	)
 
 	generated_netlist_for_lvs = top_level.info['netlist'].generate_netlist()
@@ -275,13 +280,7 @@ def cascode_common_source(
 
 
 def cascode_common_source_labels(CMS: Component) -> Component:
-	CMS.unlock()
-
-	# ************* Adding the suffix after the routing generates the prefix after routing.
-	CMS.unlock()
-	CMS.add_ports(M1_ref.get_ports_list(), prefix="M1_")
-	CMS.add_ports(M2_ref.get_ports_list(), prefix="M2_")
-	#Now attach pin names for port
+	# Unlock compoonent to attach the labels.
 	CMS.unlock()
 	# *** Adding pins and labels for metal1-5 ***
 	move_info =list()
@@ -312,6 +311,10 @@ def cascode_common_source_labels(CMS: Component) -> Component:
 	IOUT_label.add_label(text="IOUT", layer=met1_label)
 	move_info.append((IOUT_label, CMS.ports['M2_drain_N'], None))
 
+	INT_label = rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+	INT_label.add_label(text="INT", layer=met1_label)
+	move_info.append((INT_label, CMS.ports['M2_source_E'], None))
+
 	for comp, prt, alignment in move_info:
 		alignment = ('c','b') if alignment is None else alignment
 		compref = align_comp_to_port(comp, prt, alignment=alignment)
@@ -319,26 +322,26 @@ def cascode_common_source_labels(CMS: Component) -> Component:
 
 	return CMS.flatten()
 
-
-
-
 mapped_pdk_build = sky130
 Cascode_cs_component = cascode_common_source(mapped_pdk_build,
-												m1_fingers=10,
-												m2_fingers=10,
+												m1_fingers=1,
+												m2_fingers=1,
 												m1_multipliers=1,
 												m2_multipliers=1,
-												numcols=10) 
+												numcols=1) 
+# Add labels to the port definitions
+Cascode_cs_component = cascode_common_source_labels(Cascode_cs_component)
 Cascode_cs_component.show()
+Cascode_cs_component.write_gds("./local_casdcode_overwite.gds")
 
 magic_drc_result = sky130.drc_magic(Cascode_cs_component, Cascode_cs_component.name)
-if magic_drc_result :
-    print("DRC is clean: ", magic_drc_result)
-else:
-    print("DRC failed. Please try again.")
+# if magic_drc_result :
+#     print("DRC is clean: ", magic_drc_result)
+# else:
+#     print("DRC failed. Please try again.")
 
 Cascode_cs_component.name = 'cascode_common_source_lvs' 
-# netgen_lvs_result = mapped_pdk_build.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
+netgen_lvs_result = mapped_pdk_build.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
 
-sky130.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
-print('LVS success??')
+# sky130.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
+# print('LVS success??')
