@@ -34,8 +34,8 @@ def reconfig_inv(pdk: MappedPDK, component_name, pmos_width, pmos_length, nmos_w
 	pfet_ref.movey(evaluate_bbox(nfet)[1] + mos_spacing)
 
 	# Routing
-	top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_drain_E"], nfet_ref.ports["multiplier_0_drain_E"])
-	top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_gate_W"], nfet_ref.ports["multiplier_0_gate_W"])
+	top_level << straight_route(pdk, pfet_ref.ports["multiplier_0_drain_E"], nfet_ref.ports["multiplier_0_drain_E"], glayer1="met1") # connected by li1
+	top_level << straight_route(pdk, pfet_ref.ports["multiplier_0_gate_W"], nfet_ref.ports["multiplier_0_gate_W"]  , glayer1="met1") # connected by li1
 
 	# To add the ports
 	top_level.add_ports(pfet_ref.get_ports_list(), prefix="pmos_")

@@ -129,8 +129,8 @@ def naive_tg_cell(pdk: MappedPDK, flip_config: dict[str, Union[int, str]], pmos_
 	# To simplify the routing for the parallel-gate transistors, the layout is realised as follow which is expected to be equivalent to a TG
 	#     a) PMOS.source connected to NMOS.source
 	#     b) PMOS.drain connected to NMOS.drain 
-	top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_source_E"], nfet_ref.ports["multiplier_0_source_E"]) # "in" of the TG
-	top_level << smart_route(pdk, pfet_ref.ports["multiplier_0_drain_W"], nfet_ref.ports["multiplier_0_drain_E"]) # "out" of the TG
+	top_level << straight_route(pdk, pfet_ref.ports["multiplier_0_source_E"], nfet_ref.ports["multiplier_0_drain_E"], glayer1="met2") # "in" of the TG
+	top_level << straight_route(pdk, pfet_ref.ports["multiplier_0_drain_W"], nfet_ref.ports["multiplier_0_source_E"], glayer1="met1") # "out" of the TG
 
 	top_level.add_ports(pfet_ref.get_ports_list(), prefix="pmos_")
 	top_level.add_ports(nfet_ref.get_ports_list(), prefix="nmos_")
@@ -192,7 +192,7 @@ def tg_with_inv(pdk: MappedPDK, pmos_width, pmos_length, nmos_width, nmos_length
 	#    1) PMOS of the TG is switched on/off by the inverter's output
 	#    2) NMOS of the TG is switched on/off by an external control signal connected to inverter's input port as well
 	top_level << smart_route(pdk, inv_ref.ports["pmos_multiplier_0_drain_E"], tg_ref.ports["pmos_multiplier_0_gate_W"])
-	top_level << smart_route(pdk, inv_ref.ports["nmos_multiplier_0_gate_S"], tg_ref.ports["nmos_multiplier_0_gate_S"])
+	top_level << straight_route(pdk, inv_ref.ports["nmos_multiplier_0_gate_S"], tg_ref.ports["nmos_multiplier_0_gate_S"])
 
 	# Adding the ports
 	top_level.add_ports(tg_ref.get_ports_list(), prefix="tg_")

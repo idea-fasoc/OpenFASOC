@@ -3,8 +3,10 @@ import transmission_gate as tg
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk as sky130
 import cell_config as config
 
+TARGET_PDK = sky130
+
 def main():
-    tg_inst = tg.tg_with_inv(pdk=sky130, pmos_width=1, pmos_length=0.15, nmos_width=1, nmos_length=0.15)
+    tg_inst = tg.tg_with_inv(pdk=TARGET_PDK, pmos_width=1, pmos_length=0.15, nmos_width=1, nmos_length=0.15)
     tg_inst = config.add_port_lvs(
         pdk=sky130,
         comp=tg_inst,
@@ -12,26 +14,26 @@ def main():
 	    	{
                 "new_port": "Vctrl", 
 	    		"new_port_label": "Vctrl",
-	    		"pin_width": tg_inst.ports["inv_nmos_multiplier_0_gate_S"].width, 
-	    		"pin_height": tg_inst.ports["inv_nmos_multiplier_0_gate_S"].width, 
-	    		"ref_port": "inv_nmos_multiplier_0_gate_S"
-            },
-	    	{
-                "new_port": "Vin", 
-	    		"new_port_label": "Vin",
-	    		"pin_width": 0.3,#tg_inst.ports["tg_nmos_multiplier_0_source_S"].width, 
-	    		"pin_height": 0.3,#tg_inst.ports["tg_nmos_multiplier_0_source_S"].width, 
-	    		"ref_port": "tg_pmos_multiplier_0_source_W"
-            },
-	    	{
-                "new_port": "Vout", 
-	    		"new_port_label": "Vout",
-	    		"pin_width": 0.3,#tg_inst.ports["tg_nmos_multiplier_0_drain_S"].width, 
-	    		"pin_height": 0.3,#tg_inst.ports["tg_nmos_multiplier_0_drain_S"].width, 
-	    		"ref_port": "tg_nmos_multiplier_0_drain_N"
-            }
+				"new_port_via": True,
+				"new_port_via_layers": ("met1", "met2"),
+				"new_port_move": (0, -TARGET_PDK.get_grule("mcon")["min_separation"]),
+	    		"ref_port": "inv_nmos_multiplier_0_gate_E",
+				"ref_port_align": ("c", "b"),
+				"connect_pos": "W" # To connce the ref_port to the "west" side of the new port
+            }#,
+	    	#{
+            #    "new_port": "Vin", 
+	    	#	"new_port_label": "Vin", 
+	    	#	"ref_port": "tg_pmos_multiplier_0_source_W"
+            #},
+	    	#{
+            #    "new_port": "Vout", 
+	    	#	"new_port_label": "Vout",
+	    	#	"ref_port": "tg_nmos_multiplier_0_drain_W",
+			#	"connect_pos": "E" # To connect the ref_port to the "east" side of the new port
+            #}
 	    ],
-		port_feature = {"port_type":"wire", "layer":"met2"} # met2 is actually mapped to met1 in sky130 proceess
+		port_feature = {"port_type":"pin", "layer":"met1"} # met1 is actually mapped to li1 in sky130 proceess
 	)
     #tg_inst.flatten()
     tg_inst.show()
