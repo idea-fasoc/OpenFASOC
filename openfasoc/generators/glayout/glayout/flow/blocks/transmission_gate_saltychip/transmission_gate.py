@@ -192,7 +192,7 @@ def tg_with_inv(pdk: MappedPDK, pmos_width, pmos_length, nmos_width, nmos_length
 	#    1) PMOS of the TG is switched on/off by the inverter's output
 	#    2) NMOS of the TG is switched on/off by an external control signal connected to inverter's input port as well
 	top_level << smart_route(pdk, inv_ref.ports["pmos_multiplier_0_drain_E"], tg_ref.ports["pmos_multiplier_0_gate_W"])
-	top_level << straight_route(pdk, inv_ref.ports["nmos_multiplier_0_gate_S"], tg_ref.ports["nmos_multiplier_0_gate_S"])
+	top_level << straight_route(pdk, inv_ref.ports["nmos_multiplier_0_gate_S"], tg_ref.ports["nmos_multiplier_0_gate_S"], glayer1="met3")
 
 	# Adding the ports
 	top_level.add_ports(tg_ref.get_ports_list(), prefix="tg_")
