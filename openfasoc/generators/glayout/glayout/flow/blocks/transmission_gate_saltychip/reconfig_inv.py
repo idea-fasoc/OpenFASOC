@@ -12,7 +12,17 @@ from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.smart_route import smart_route
 
 #@cell
-def reconfig_inv(pdk: MappedPDK, component_name, pmos_width, pmos_length, nmos_width, nmos_length, orientation):
+def reconfig_inv(
+	pdk: MappedPDK,
+	component_name,
+	pmos_width,
+	pmos_length,
+	nmos_width,
+	nmos_length,
+	orientation,
+	add_pin: bool = True, # For LVS
+	**kwargs
+) -> Component:
 	# Create a top level component
 	top_level = Component(component_name)
 	# To prepare one PMOS and one NMOS for the subsequent inverter cell construction
@@ -44,33 +54,34 @@ def reconfig_inv(pdk: MappedPDK, component_name, pmos_width, pmos_length, nmos_w
 	top_level.add_ports(pfet_ref.get_ports_list(), prefix="pmos_")
 	top_level.add_ports(nfet_ref.get_ports_list(), prefix="nmos_")
 
-	# Add pins w/ labels for LVS
-	top_level.unlock()
-	pin_info = list() # list that contains all port and component information
-	met1_pin=(pdk.get_glayer("met1")[0], 20)
-	met1_label=(pdk.get_glayer("met1")[0], 5)
-	port_size = (0.24, 0.24)
-	# --- Port: A, i.e. input of the inverter
-	A_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-	A_pin.add_label(text="A", layer=met1_label)
-	pin_info.append((A_pin, top_level.ports.get(f"nmos_gate_E"), None))
-	# --- Port: Y, i.e. output of the inverver
-	Y_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-	Y_pin.add_label(text="Y", layer=met1_label)
-	pin_info.append((Y_pin, top_level.ports.get(f"nmos_drain_E"), None))
-	# --- Port: VDD
-	VDD_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-	VDD_pin.add_label(text="VDD", layer=met1_label)
-	pin_info.append((VDD_pin, top_level.ports.get(f"pmos_drain_E"), None))
-	# --- Port: VSS
-	VSS_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-	VSS_pin.add_label(text="VSS", layer=met1_label)
-	pin_info.append((VSS_pin, top_level.ports.get(f"nmos_source_W"), ('r', 't')))
+	if add_pin == True:
+		# Add pins w/ labels for LVS
+		top_level.unlock()
+		pin_info = list() # list that contains all port and component information
+		met1_pin=(pdk.get_glayer("met1")[0], 20)
+		met1_label=(pdk.get_glayer("met1")[0], 5)
+		port_size = (0.24, 0.24)
+		# --- Port: A, i.e. input of the inverter
+		A_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+		A_pin.add_label(text="A", layer=met1_label)
+		pin_info.append((A_pin, top_level.ports.get(f"nmos_gate_E"), None))
+		# --- Port: Y, i.e. output of the inverver
+		Y_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+		Y_pin.add_label(text="Y", layer=met1_label)
+		pin_info.append((Y_pin, top_level.ports.get(f"nmos_drain_E"), None))
+		# --- Port: VDD
+		VDD_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+		VDD_pin.add_label(text="VDD", layer=met1_label)
+		pin_info.append((VDD_pin, top_level.ports.get(f"pmos_drain_E"), None))
+		# --- Port: VSS
+		VSS_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+		VSS_pin.add_label(text="VSS", layer=met1_label)
+		pin_info.append((VSS_pin, top_level.ports.get(f"nmos_source_W"), ('r', 't')))
 
-	# Move everythin to position
-	for comp, prt, alignment in pin_info:
-		alignment = ('c', 'b') if alignment is None else alignment
-		comp_ref = align_comp_to_port(comp, prt, alignment=alignment)
-		top_level.add(comp_ref)
+		# Move everythin to position
+		for comp, prt, alignment in pin_info:
+			alignment = ('c', 'b') if alignment is None else alignment
+			comp_ref = align_comp_to_port(comp, prt, alignment=alignment)
+			top_level.add(comp_ref)
 
 	return top_level
