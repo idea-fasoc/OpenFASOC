@@ -81,7 +81,6 @@ def sky130_add_current_mirror_labels(CMS: Component, transistor_type: str = "nfe
 
 
 comp = current_mirror(sky130, numcols=2, device='nfet')
-
 comp.name = "CM"
 comp.write_gds("CM.gds")
 
@@ -90,14 +89,13 @@ comp.write_gds("CM.gds")
 #         print(absc)
 #         print(comp.ports[absc])
 print(comp.info["netlist"].generate_netlist())
-
 comp.show()
 
-comp = sky130_add_current_mirror_labels(comp, transistor_type='nfet', pdk=sky130)
+# comp = sky130_add_current_mirror_labels(comp, transistor_type='nfet', pdk=sky130)
 
-print("\n...Running LVS...")
+# print("\n...Running LVS...")
 
-sky130.lvs_netgen(comp, "CM")        
+# sky130.lvs_netgen(comp, "CM")        
 
 
 

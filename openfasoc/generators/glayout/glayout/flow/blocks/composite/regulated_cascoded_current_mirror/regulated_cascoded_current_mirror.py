@@ -58,7 +58,7 @@ def generate_current_mirror_netlist(
     length = CM_size[1]
     multipliers = CM_size[2]  
     mtop = multipliers if subckt_only else 1
-    mtop = multipliers * 2 if dummy else multipliers # Double the multiplier to account for the dummies
+    #mtop = multipliers * 2 if dummy else multipliers # Double the multiplier to account for the dummies
 
 
     model_name = pdk.models[transistor_type.lower()]
