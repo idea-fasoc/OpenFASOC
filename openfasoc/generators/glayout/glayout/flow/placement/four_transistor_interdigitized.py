@@ -39,8 +39,8 @@ def generic_4T_interdigitzed(
     if with_substrate_tap:
         substrate_tap = tapring(pdk, enclosed_rectangle=pdk.snap_to_2xgrid(evaluate_bbox(toplvl.flatten(),padding=pdk.util_max_metal_seperation())))
         substrate_tap_ref = toplvl << movey(substrate_tap,destination=pdk.snap_to_2xgrid(toplvl.flatten().center[1],snap4=True))
+        toplvl.add_ports(substrate_tap_ref.get_ports_list(),prefix="substratetap_")
     # add ports
-    toplvl.add_ports(substrate_tap_ref.get_ports_list(),prefix="substratetap_")
     toplvl.add_ports(toprow.get_ports_list(),prefix="top_")
     toplvl.add_ports(bottomrow.get_ports_list(),prefix="bottom_")
     # flag for smart route
