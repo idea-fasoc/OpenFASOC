@@ -8,20 +8,20 @@ TARGET_PDK = sky130
 PWD_OUTPUT = subprocess.run(['pwd'], capture_output=True, text=True)
 GDS_DIR = PWD_OUTPUT.stdout.strip() + "/gds"
 
-pmos_width  = 1
+pmos_width  = 1.5
 pmos_length = 0.15
-nmos_width  = 1
+nmos_width  = 1.5
 nmos_length = 0.15
 
 def basic_tg_eval():
-	tg_dut = tg.tg_cell(
+	tg_dut = tg.reconfig_tg(
 		pdk=TARGET_PDK,
 		component_name="tg",
-		flip_config={"degree": 270},
 		pmos_width=pmos_width,
 		pmos_length=pmos_length,
 		nmos_width=nmos_width,
-		nmos_length=nmos_length
+		nmos_length=nmos_length,
+		add_pin=True
 	)
 
 	tg_dut.show()
@@ -42,7 +42,7 @@ def gate_ctrl_inv_eval():
 		pmos_length=pmos_length,
 		nmos_width=nmos_width,
 		nmos_length=nmos_length,
-		orientation="horizontal"
+		add_pin=True
 	)
 	gate_ctrl_inv.show()
 	gate_ctrl_inv.write_gds(f"{GDS_DIR}/{gate_ctrl_inv.name}.gds")
@@ -76,7 +76,7 @@ def tg_with_ctrl_eval():
 def main():
 	basic_tg_eval()
 	gate_ctrl_inv_eval()
-	tg_with_ctrl_eval()
+	#tg_with_ctrl_eval()
 
 if __name__ == "__main__":
     main()

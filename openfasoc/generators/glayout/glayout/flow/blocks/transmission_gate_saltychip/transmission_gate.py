@@ -17,12 +17,14 @@ from glayout.flow.pdk.util.comp_utils import prec_ref_center, movey, evaluate_bb
 
 # My own cell library
 from reconfig_inv import reconfig_inv
-	
+
+LONG_CHANNEL_WIDTH = 1.5
+
 #@cell
-def tg_cell(
+def short_channel_tg(
 	pdk: MappedPDK,
 	component_name: str,
-	flip_config:
+	orientation_config:
 	dict[str, Union[int, str]],
 	pmos_width,
 	pmos_length,
@@ -46,9 +48,9 @@ def tg_cell(
 
 	# Placement
 	mos_spacing = pdk.util_max_metal_seperation()
-	if flip_config["degree"] != None:
-		pfet_ref.rotate(flip_config["degree"])
-		nfet_ref.rotate(flip_config["degree"])
+	if orientation_config["degree"] != None:
+		pfet_ref.rotate(orientation_config["degree"])
+		nfet_ref.rotate(orientation_config["degree"])
 	pfet_ref.movey(evaluate_bbox(nfet)[1] + mos_spacing)
 
 	# Routing
@@ -95,6 +97,83 @@ def tg_cell(
 	return top_level
 
 #@cell
+def long_channel_tg(
+	pdk: MappedPDK,
+	component_name: str,
+	orientation_config:
+	dict[str, Union[int, str]],
+	pmos_width,
+	pmos_length,
+	nmos_width,
+	nmos_length,
+	add_pin: bool = True, # For LVS
+	**kwargs
+) -> Component:
+	# To prepare all necessary cells to construct a transmission gate, i.e.
+	# 1) PMOS
+	# 2) NMOS
+	pfet = pmos(pdk=pdk, gate_rmult=2, with_substrate_tap=False, with_dummy=(False, False), width=pmos_width, length=pmos_length)
+	nfet = nmos(pdk=pdk, gate_rmult=2, with_dnwell=False, with_substrate_tap=False, with_dummy=(False, False), width=nmos_width, length=nmos_length)
+
+	# Placement and adding ports
+	top_level = Component(name=component_name)
+	pfet_ref = prec_ref_center(pfet)
+	nfet_ref = prec_ref_center(nfet)
+	top_level.add(pfet_ref)
+	top_level.add(nfet_ref)
+
+	# Placement
+	mos_spacing = pdk.util_max_metal_seperation()
+	if orientation_config["pmos_degree"] != None:
+		pfet_ref.rotate(orientation_config["pmos_degree"])
+	if orientation_config["nmos_degree"] != None:
+		nfet_ref.rotate(orientation_config["nmos_degree"])
+	pfet_ref.movey(evaluate_bbox(nfet)[1] + mos_spacing)
+
+	# Routing
+	# To simplify the routing for the parallel-gate transistors, the layout is realised as follow which is expected to be equivalent to a TG
+	#     a) PMOS.source connected to NMOS.source
+	#     b) PMOS.drain connected to NMOS.drain 
+	top_level << straight_route(pdk, pfet_ref.ports["multiplier_0_source_S"], nfet_ref.ports["multiplier_0_drain_S"], glayer1="met3") # "in" of the TG
+	top_level << c_route(pdk, pfet_ref.ports["multiplier_0_drain_E"], nfet_ref.ports["multiplier_0_source_W"], cglayer="met3") # "out" of the TG
+
+	# Add the ports aligned with the basic PMOS and NMOS
+	top_level.add_ports(pfet_ref.get_ports_list(), prefix="pmos_")
+	top_level.add_ports(nfet_ref.get_ports_list(), prefix="nmos_")
+
+	if add_pin == True:
+		# Add pins w/ labels for LVS
+		top_level.unlock()
+		pin_info = list() # list that contains all port and component information
+		met1_pin=(pdk.get_glayer("met1")[0], 20)
+		met1_label=(pdk.get_glayer("met1")[0], 5)
+		port_size = (0.24, 0.24)
+		# --- Port: A, i.e. input of the transmission gate
+		A_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+		A_pin.add_label(text="A", layer=met1_label)
+		pin_info.append((A_pin, top_level.ports.get(f"nmos_drain_S"), None))
+		# --- Port: Y, i.e. output of the transmission gate
+		Y_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+		Y_pin.add_label(text="Y", layer=met1_label)
+		pin_info.append((Y_pin, top_level.ports.get(f"nmos_drain_N"), None))
+		# --- Port: C, i.e. gate control to the NMOS
+		C_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+		C_pin.add_label(text="C", layer=met1_label)
+		pin_info.append((C_pin, top_level.ports.get(f"nmos_gate_N"), None))
+		# --- Port: CBAR, i.e. gate control to the PMOS
+		CBAR_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
+		CBAR_pin.add_label(text="CBAR", layer=met1_label)
+		pin_info.append((CBAR_pin, top_level.ports.get(f"pmos_gate_N"), None))
+
+		# Move everythin to position
+		for comp, prt, alignment in pin_info:
+			alignment = ('c', 'b') if alignment is None else alignment
+			comp_ref = align_comp_to_port(comp, prt, alignment=alignment)
+			top_level.add(comp_ref)
+
+	return top_level
+
+#@cell
 def tg_with_ctrl(
 	pdk: MappedPDK,
 	component_name: str,
@@ -111,7 +190,7 @@ def tg_with_ctrl(
 	tg = tg_cell(
 		pdk=pdk,
 		component_name="tg",
-		flip_config={"degree": 270},
+		orientation_config={"degree": 270},
 		pmos_width=pmos_width,
 		pmos_length=pmos_length,
 		nmos_width=nmos_width,
@@ -187,3 +266,41 @@ def tg_with_ctrl(
 			top_level.add(comp_ref)	
 
 	return top_level
+
+#@cell
+def reconfig_tg(
+	pdk: MappedPDK,
+	component_name,
+	pmos_width,
+	pmos_length,
+	nmos_width,
+	nmos_length,
+	add_pin: bool = True, # For LVS
+	**kwargs
+) -> Component:
+	if pmos_width != nmos_width:
+		raise ValueError("PCell constraint: the widths of PMOS and NMOS must be identical")
+	elif pmos_width >= LONG_CHANNEL_WIDTH: # Long-channel PMOS and NMOS
+		tg = long_channel_tg(
+			pdk=pdk,
+			component_name=component_name,
+			orientation_config={"nmos_degree": 180, "pmos_degree": 0},
+			pmos_width=pmos_width,
+			pmos_length=pmos_length,
+			nmos_width=nmos_width,
+			nmos_length=nmos_length,
+			add_pin=True
+		)
+	else: # Short-channel PMOS and NMOS
+		tg = short_channel_tg(
+			pdk=pdk,
+			component_name=component_name,
+			orientation_config={"degree": 270},
+			pmos_width=pmos_width,
+			pmos_length=pmos_length,
+			nmos_width=nmos_width,
+			nmos_length=nmos_length,
+			add_pin=True
+		)
+
+	return tg
