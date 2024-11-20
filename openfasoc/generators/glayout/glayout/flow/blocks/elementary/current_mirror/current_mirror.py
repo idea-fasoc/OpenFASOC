@@ -117,12 +117,12 @@ def current_mirror(
 		tie_ref = top_level << tapring(pdk, enclosed_rectangle = tap_encloses, sdlayer = "p+s/d", horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
 		top_level.add_ports(tie_ref.get_ports_list(), prefix="welltie_")
 		try:
-			top_level << straight_route(pdk, top_level.ports["A_0_dummy_L_gsdcon_top_met_W"],top_level.ports["welltie_W_top_met_W"],glayer2="met1")
+			top_level << straight_route(pdk, top_level.ports["fet_A_0_dummy_L_gsdcon_top_met_W"],top_level.ports["welltie_W_top_met_W"],glayer2="met1")
 		except KeyError:
 			pass
 		try:
 			end_col = numcols - 1
-			port1 = f'B_{end_col}_dummy_R_gdscon_top_met_E'
+			port1 = f'fet_B_{end_col}_dummy_R_gdscon_top_met_E'
 			top_level << straight_route(pdk, top_level.ports[port1], top_level.ports["welltie_E_top_met_E"], glayer2="met1")
 		except KeyError:
 			pass
