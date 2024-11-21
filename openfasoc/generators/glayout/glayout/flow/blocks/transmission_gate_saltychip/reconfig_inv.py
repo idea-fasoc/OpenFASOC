@@ -12,7 +12,7 @@ from glayout.flow.routing.c_route import c_route
 from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.smart_route import smart_route
 
-LONG_CHANNEL_WIDTH = 1.5
+import comp_dc
 
 #@cell
 def short_channel_inv(
@@ -176,7 +176,7 @@ def reconfig_inv(
 ) -> Component:
 	if pmos_width != nmos_width:
 		raise ValueError("PCell constraint: the widths of PMOS and NMOS must be identical")
-	elif pmos_width >= LONG_CHANNEL_WIDTH: # Long-channel PMOS and NMOS
+	elif pmos_width >= comp_dc.inv_channel_width_base: # Long-channel PMOS and NMOS
 		inv = long_channel_inv(
 			pdk=pdk,
 			component_name=component_name,

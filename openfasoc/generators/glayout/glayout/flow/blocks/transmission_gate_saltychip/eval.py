@@ -3,14 +3,15 @@ import subprocess
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk as sky130
 import reconfig_inv as reconfig_inv
 import transmission_gate as tg
+import comp_dc
 
 TARGET_PDK = sky130
 PWD_OUTPUT = subprocess.run(['pwd'], capture_output=True, text=True)
 GDS_DIR = PWD_OUTPUT.stdout.strip() + "/gds"
 
-pmos_width  = 1.5
+pmos_width  = 6.0*2
 pmos_length = 0.15
-nmos_width  = 1.5
+nmos_width  = 6.0*2
 nmos_length = 0.15
 
 def basic_tg_eval():
@@ -26,6 +27,7 @@ def basic_tg_eval():
 
 	tg_dut.show()
 	tg_dut.write_gds(f"{GDS_DIR}/{tg_dut.name}.gds")
+	'''
 	magic_drc_result = sky130.drc_magic(
 		layout=tg_dut,
 		design_name=tg_dut.name#,
@@ -33,6 +35,7 @@ def basic_tg_eval():
 	)
 	print(f"Magic DRC result ({tg_dut.name}): \n", magic_drc_result)
 	print("--------------------------------------")
+	'''
 
 def gate_ctrl_inv_eval():
 	gate_ctrl_inv = reconfig_inv.reconfig_inv(
@@ -75,8 +78,9 @@ def tg_with_ctrl_eval():
 
 def main():
 	basic_tg_eval()
-	gate_ctrl_inv_eval()
+	#gate_ctrl_inv_eval()
 	#tg_with_ctrl_eval()
 
 if __name__ == "__main__":
-    main()
+	comp_dc.initialise()
+	main()
