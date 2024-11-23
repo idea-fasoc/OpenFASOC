@@ -25,6 +25,7 @@ from glayout.flow.pdk.util.snap_to_grid import component_snap_to_grid
 from reconfig_inv import reconfig_inv
 import comp_dc
 
+'''
 def tg_netlist(pmos: Component, nmos: Component) -> Netlist:
 	# A: tg.input, i.e. PMOS & NMOS source
 	# Y: tg.output, i.e. PMOS & NMOS drain
@@ -38,6 +39,43 @@ def tg_netlist(pmos: Component, nmos: Component) -> Netlist:
 	netlist.connect_netlist(pmos.info['netlist'], [('D', 'Y'), ('G', 'CBAR'), ('S', 'A')])
 	netlist.connect_netlist(nmos.info['netlist'], [('D', 'Y'), ('G', 'C'), ('S', 'A')])
 	return netlist
+'''
+
+def transmission_gate_netlist(
+	pdk: MappedPDK,
+	width: float,
+	multipliers: int,
+	length: float,
+	subckt_only: Optional[bool] = False
+) -> Netlist:
+	if length is None:
+		length = pdk.get_grule('poly')['min_width']
+	if width is None:
+		width = 3
+	mtop = multipliers if subckt_only else 1
+	model_pmos = pdk.models['pfet']
+	model_nmos = pdk.models['nfet']
+	print(f"model_pmos: {model_pmos}")
+	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={length} w={width} m={mtop} ' + """
+XM1 Y CBAR A {model_pmos} l={{l}} w={{w}} m={{m}}
+XM2 Y C A {model_nmos} l={{l}} w={{w}} m={{m}}"""
+	source_netlist += "\n.ends {circuit_name}"
+
+	instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult}"
+ 
+	return Netlist(
+		circuit_name='tg',
+		nodes=['Y', 'C', 'CBAR', 'A'], 
+		source_netlist=source_netlist,
+  		instance_format=instance_format,
+		parameters={
+			'model_pmos': model_pmos,
+			'model_nmos': model_nmos,
+			'width': width,
+   			'length': length,	
+			'mult': multipliers
+   		}
+	)
 
 @cell
 def short_width_tg(
@@ -254,7 +292,13 @@ def long_width_tg(
 			top_level.add(comp_ref)
 	
 	component = component_snap_to_grid(rename_ports_by_orientation(top_level))
-	component.info['netlist'] = tg_netlist(pmos=pfet, nmos=nfet)
+
+	component.info['netlist'] = transmission_gate_netlist(
+		pdk, 
+  		width=kwargs.get('width', pmos_width), length=kwargs.get('length', pmos_length), multipliers=1, 
+		subckt_only=True
+	)
+	#component.info['netlist'] = tg_netlist(pmos=pfet, nmos=nfet)
 	return component
 
 def reconfig_tg(

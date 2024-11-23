@@ -32,14 +32,14 @@ def basic_tg_eval():
 	magic_drc_result = sky130.drc_magic(
 		layout=tg_dut,
 		design_name=tg_dut.name,
-		output_file=f"{DRC_RPT_DIR}/{tg_dut.name}_drc.rpt"
+		output_file=f"{DRC_RPT_DIR}/{tg_dut.name}_2_drc.rpt"
 	)
 	print(f"Magic DRC result ({tg_dut.name}): \n", magic_drc_result)
 	print("--------------------------------------")
 	netgen_lvs_result = sky130.lvs_netgen(
 		layout=tg_dut,
 		design_name=tg_dut.name,
-		output_file_path=f"{LVS_RPT_DIR}/{tg_dut.name}_lvs.rpt",
+		output_file_path=f"{LVS_RPT_DIR}/{tg_dut.name}_2_lvs.rpt",
 		copy_intermediate_files=True
 	)
 
