@@ -8,10 +8,12 @@ import comp_dc
 TARGET_PDK = sky130
 PWD_OUTPUT = subprocess.run(['pwd'], capture_output=True, text=True)
 GDS_DIR = PWD_OUTPUT.stdout.strip() + "/gds"
+DRC_RPT_DIR = PWD_OUTPUT.stdout.strip() + "/regression/drc"
+LVS_RPT_DIR = PWD_OUTPUT.stdout.strip() + "/regression/lvs"
 
-pmos_width  = 6.0*2
+pmos_width  = 12.0*1
 pmos_length = 0.15
-nmos_width  = 6.0*2
+nmos_width  = 12.0*1
 nmos_length = 0.15
 
 def basic_tg_eval():
@@ -27,15 +29,19 @@ def basic_tg_eval():
 
 	tg_dut.show()
 	tg_dut.write_gds(f"{GDS_DIR}/{tg_dut.name}.gds")
-	'''
 	magic_drc_result = sky130.drc_magic(
 		layout=tg_dut,
-		design_name=tg_dut.name#,
-		#output_file=f"{absolute_path}/{tg.name}.rpt"
+		design_name=tg_dut.name,
+		output_file=f"{DRC_RPT_DIR}/{tg_dut.name}_drc.rpt"
 	)
 	print(f"Magic DRC result ({tg_dut.name}): \n", magic_drc_result)
 	print("--------------------------------------")
-	'''
+	netgen_lvs_result = sky130.lvs_netgen(
+		layout=tg_dut,
+		design_name=tg_dut.name,
+		output_file_path=f"{LVS_RPT_DIR}/{tg_dut.name}_lvs.rpt",
+		copy_intermediate_files=True
+	)
 
 def gate_ctrl_inv_eval():
 	gate_ctrl_inv = reconfig_inv.reconfig_inv(

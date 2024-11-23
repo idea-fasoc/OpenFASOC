@@ -176,7 +176,7 @@ def reconfig_inv(
 ) -> Component:
 	if pmos_width != nmos_width:
 		raise ValueError("PCell constraint: the widths of PMOS and NMOS must be identical")
-	elif pmos_width >= comp_dc.inv_channel_width_base: # Long-channel PMOS and NMOS
+	elif pmos_width >= comp_dc.inv_fet_width_base: # Long-channel PMOS and NMOS
 		inv = long_channel_inv(
 			pdk=pdk,
 			component_name=component_name,

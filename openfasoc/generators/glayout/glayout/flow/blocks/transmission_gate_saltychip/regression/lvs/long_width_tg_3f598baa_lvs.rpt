@@ -1,0 +1,67 @@
+
+Circuit 1 cell sky130_fd_pr__pfet_01v8 and Circuit 2 cell sky130_fd_pr__pfet_01v8 are black boxes.
+Warning: Equate pins:  cell sky130_fd_pr__pfet_01v8 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__pfet_01v8 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__pfet_01v8         |Circuit 2: sky130_fd_pr__pfet_01v8         
+-------------------------------------------|-------------------------------------------
+1                                          |1                                          
+2                                          |2                                          
+3                                          |3                                          
+4                                          |4                                          
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__pfet_01v8 and sky130_fd_pr__pfet_01v8 are equivalent.
+
+Circuit 1 cell sky130_fd_pr__nfet_01v8 and Circuit 2 cell sky130_fd_pr__nfet_01v8 are black boxes.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__nfet_01v8         |Circuit 2: sky130_fd_pr__nfet_01v8         
+-------------------------------------------|-------------------------------------------
+1                                          |1                                          
+2                                          |2                                          
+3                                          |3                                          
+4                                          |4                                          
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__nfet_01v8 and sky130_fd_pr__nfet_01v8 are equivalent.
+Flattening unmatched subcell PMOS in circuit long_width_tg_3f598baa (1)(2 instances)
+Flattening unmatched subcell NMOS in circuit long_width_tg_3f598baa (1)(2 instances)
+
+Cell long_width_tg_3f598baa (1) disconnected node: VDD
+Cell long_width_tg_3f598baa (1) disconnected node: VSS
+Class long_width_tg_3f598baa (0):  Merged 6 parallel devices.
+Class long_width_tg_3f598baa (1):  Merged 2 parallel devices.
+Cell long_width_tg_3f598baa (1) disconnected node: VDD
+Cell long_width_tg_3f598baa (1) disconnected node: VSS
+Subcircuit summary:
+Circuit 1: long_width_tg_3f598baa          |Circuit 2: long_width_tg_3f598baa          
+-------------------------------------------|-------------------------------------------
+sky130_fd_pr__pfet_01v8 (4->1)             |sky130_fd_pr__pfet_01v8 (8->1)             
+sky130_fd_pr__nfet_01v8 (4->1)             |sky130_fd_pr__nfet_01v8 (8->1)             
+Number of devices: 2                       |Number of devices: 2                       
+Number of nets: 6 **Mismatch**             |Number of nets: 5 **Mismatch**             
+---------------------------------------------------------------------------------------
+NET mismatches: Class fragments follow (with fanout counts):
+Circuit 1: long_width_tg_3f598baa          |Circuit 2: long_width_tg_3f598baa          
+
+---------------------------------------------------------------------------------------
+Net: w_n697_603#                           |Net: B                                     
+  sky130_fd_pr__pfet_01v8/4 = 1            |  sky130_fd_pr__pfet_01v8/4 = 1            
+                                           |  sky130_fd_pr__nfet_01v8/4 = 1            
+                                           |                                           
+Net: (no pins)                             |(no matching net)                          
+  sky130_fd_pr__nfet_01v8/4 = 1            |                                           
+---------------------------------------------------------------------------------------
+Netlists do not match.
+
+Subcircuit pins:
+Circuit 1: long_width_tg_3f598baa          |Circuit 2: long_width_tg_3f598baa          
+-------------------------------------------|-------------------------------------------
+Cell pin lists are equivalent.
+Device classes long_width_tg_3f598baa and long_width_tg_3f598baa are equivalent.
+
+Final result: Netlists do not match.
