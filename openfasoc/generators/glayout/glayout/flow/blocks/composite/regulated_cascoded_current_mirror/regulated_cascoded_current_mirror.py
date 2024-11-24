@@ -241,14 +241,14 @@ def sky130_add_current_mirror_labels(
     vref_label = rectangle(layer=met2_pin, size=(0.5, 0.5), centered=True).copy()
     vref_label.add_label(text="VREF", layer=met2_label)
     
-    move_info.append((vref_label, CMS.ports["currm_B_drain_N"], None)) # Drain of A
+    move_info.append((vref_label, CMS.ports["currm_A_drain_W"], None)) # Drain of A
     #LVS will work if following line is uncommented
     #move_info.append((vref_label, CMS.ports["gateshortportscon_N"], None))  # Gate of A & B
     
     # VCOPY label (for drain of transistor B)
     vcopy_label = rectangle(layer=met2_pin, size=(0.5, 0.5), centered=True).copy()
     vcopy_label.add_label(text="VCOPY", layer=met2_label)
-    move_info.append((vcopy_label, CMS.ports["currm_B_drain_N"], None))  # Drain of B
+    move_info.append((vcopy_label, CMS.ports["currm_B_drain_W"], None))  # Drain of B
 
     ## Move Labels in meta3 after via creation
      
