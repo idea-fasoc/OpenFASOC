@@ -174,8 +174,8 @@ def CurrentMirror(
     CurrentMirror.add_ports(gate_short.get_ports_list(), prefix="gateshortports")
     CurrentMirror.add_ports(src2bulk.get_ports_list(), prefix="purposegndports")
 
-    CurrentMirror.add_ports(Aport.get_ports_list(), prefix="Refport")
-    CurrentMirror.add_ports(Bport.get_ports_list(), prefix="Copyport")
+    # CurrentMirror.add_ports(Aport.get_ports_list(), prefix="Refport")
+    # CurrentMirror.add_ports(Bport.get_ports_list(), prefix="Copyport")
 
 
     CurrentMirror.info["netlist"] = generate_current_mirror_netlist(
@@ -183,17 +183,15 @@ def CurrentMirror(
                                     instance_name=CurrentMirror.name,
                                     CM_size=CM_size,  # (width, length, multipliers)
                                     transistor_type=type,
-                                    drain_net_A="VREF",  # Input drain connected to VREF (as seen in the layout)
-                                    gate_net="VREF",      # Gate connected to VREF (as seen in the layout)
-                                    source_net="VSS" if type=="nfet" else "VDD",    # Source connected to VSS
+                                    drain_net_A="VREF",  # Input drain connected to VREF 
                                     drain_net_B="VCOPY", # Output drain connected to VCOPY
-                                    dummy=True,          # Include dummy transistors (present in the layout)
-                                    subckt_only=True,    # Generate only the subcircuit (no instances)
+                                    gate_net="VREF",      # Gate connected to VREF 
+                                    source_net="VSS" if type=="nfet" else "VDD",    # Source connected to VSS
                                     proposed_ground= "VSS" if type=="nfet" else "VDD", #Proposed ground should also change
-
+                                    subckt_only=True
                                     )
 
-    return CurrentMirror 
+    return CurrentMirror  
 
 def sky130_add_current_mirror_labels(
     CMS: Component, 
