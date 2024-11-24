@@ -250,6 +250,24 @@ def sky130_add_current_mirror_labels(
     vcopy_label.add_label(text="VCOPY", layer=met2_label)
     move_info.append((vcopy_label, CMS.ports["currm_B_drain_N"], None))  # Drain of B
 
+    ## Move Labels in meta3 after via creation
+     
+    # # VREF label (for both gate and drain of transistor A, and dummy drains)
+    # vref_label = rectangle(layer=met3_pin, size=(0.5, 0.5), centered=True).copy()
+    # vref_label.add_label(text="VREF", layer=met3_label)
+    
+    # move_info.append((vref_label, CMS.ports["Refporte2"], None)) # Drain of A
+    # #move_info.append((vref_label, CMS.ports["gateshortportscon_N"], None))  # Gate of A & B
+    
+    # # VCOPY label (for drain of transistor B)
+    # vcopy_label = rectangle(layer=met3_pin, size=(0.5, 0.5), centered=True).copy()
+    # vcopy_label.add_label(text="VCOPY", layer=met3_label)
+    # move_info.append((vcopy_label, CMS.ports["Copyporte2"], None))  # Drain of B
+
+    
+    
+    
+    
    # VSS/VDD label (for sources/bulk connection)
     if transistor_type.lower() == "nfet":
         bulk_net_name = "VSS"
