@@ -213,58 +213,41 @@ def sky130_add_current_mirror_labels(
     vref_label = rectangle(layer=met2_pin, size=(0.5, 0.5), centered=True).copy()
     vref_label.add_label(text="VREF", layer=met2_label)
     
-    move_info.append((vref_label, CMS.ports["currm_A_gate_E"], None))  # Gate of A
-    move_info.append((vref_label, CMS.ports["currm_A_drain_E"], None)) # Drain of A
-
-
+    move_info.append((vref_label, CMS.ports["currm_B_drain_N"], None)) # Drain of A
+    #LVS will work if following line is uncommented
+    #move_info.append((vref_label, CMS.ports["gateshortportscon_N"], None))  # Gate of A & B
+    
     # VCOPY label (for drain of transistor B)
     vcopy_label = rectangle(layer=met2_pin, size=(0.5, 0.5), centered=True).copy()
     vcopy_label.add_label(text="VCOPY", layer=met2_label)
-    
-    move_info.append((vcopy_label, CMS.ports["currm_B_drain_E"], None))  # Drain of B
-
-
+    move_info.append((vcopy_label, CMS.ports["currm_B_drain_N"], None))  # Drain of B
 
    # VSS/VDD label (for sources/bulk connection)
     if transistor_type.lower() == "nfet":
         bulk_net_name = "VSS"
-        bulk_pin_layer = met2_pin #met2 for nfet bulk
-        bulk_label_layer = met2_label #met2 for nfet bulk
+        bulk_pin_layer = met2_pin 
+        bulk_label_layer = met2_label 
     else:  # pfet
         bulk_net_name = "VDD"
-        bulk_pin_layer = met2_pin #met3 for pfet bulk
-        bulk_label_layer = met2_label #met3 for pfet bulk
+        bulk_pin_layer = met2_pin 
+        bulk_label_layer = met2_label 
     
-    bulk_label = rectangle(layer=bulk_pin_layer, size=(0.5, 0.5), centered=True).copy() #Layer changes based on type
-    bulk_label.add_label(text=bulk_net_name, layer=bulk_label_layer)
+    ##Need to clarify the bulk and source connection??
+    # VB label 
+    vb_label = rectangle(layer=bulk_pin_layer, size=(0.5, 0.5), centered=True).copy() 
+    vb_label.add_label(text=bulk_net_name , layer=bulk_label_layer)
+
+    move_info.append((vb_label, CMS.ports["purposegndportsroute_N"], None)) 
     
-    move_info.append((bulk_label, CMS.ports["currm_A_source_E"], None))  # Source of A
-    move_info.append((bulk_label, CMS.ports["currm_B_source_E"], None))  # Source of B
-    
-    # VB label (connected to the dummy transistors' drains if present)
-    if type == "nfet":
-        vb_label = rectangle(layer=met2_pin, size=(0.5, 0.5), centered=True).copy() #met2 for nfet
-        vb_label.add_label(text=bulk_net_name , layer=met2_label)
-        
-        move_info.append((vb_label, CMS.ports["purposegndportstop_met_N"], None)) 
-        move_info.append((vb_label, CMS.ports["purposegndportstop_met_S"], None))
-    else: #type is pfet
-        vb_label = rectangle(layer=met2_pin, size=(0.5, 0.5), centered=True).copy() #met3 for pfet
-        vb_label.add_label(text=bulk_net_name , layer=met2_label)
-        
-        move_info.append((vb_label, CMS.ports["purposegndportstop_met_N"], None)) 
-        move_info.append((vb_label, CMS.ports["purposegndportstop_met_S"], None))
-
-
-
     # Add labels to the component
     for label, port, alignment in move_info:
         if port:
-            alignment = ('c', 'c') if alignment is None else alignment
+            alignment = ('c', 'b') if alignment is None else alignment
             aligned_label = align_comp_to_port(label, port, alignment=alignment)
             CMS.add(aligned_label)
 
     return CMS.flatten()
+
 
 
 comp = CurrentMirror(sky130, (2, 1, 2), type='nfet', with_substrate_tap=False, with_tie=True)
