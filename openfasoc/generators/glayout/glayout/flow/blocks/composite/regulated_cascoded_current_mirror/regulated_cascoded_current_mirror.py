@@ -134,11 +134,14 @@ def CurrentMirror(
     CurrentMirror.add_ports(currm_ref.get_ports_list(),prefix="currm_")
     
     
-    gate_short = CurrentMirror << smart_route(pdk,CurrentMirror.ports["currm_A_gate_E"],CurrentMirror.ports["currm_B_gate_E"],currm_ref,CurrentMirror)
+    maxmet_sep = pdk.util_max_metal_seperation()
     
-    CurrentMirror << smart_route(pdk,CurrentMirror.ports["currm_A_drain_E"],CurrentMirror.ports["currm_A_gate_E"],currm_ref,CurrentMirror)
+    gate_short = CurrentMirror << c_route(pdk,CurrentMirror.ports["currm_A_gate_W"],CurrentMirror.ports["currm_B_gate_W"],extension=3*maxmet_sep, viaoffset=False)
     
-    srcshort = CurrentMirror << smart_route(pdk,CurrentMirror.ports["currm_A_source_E"],CurrentMirror.ports["currm_B_source_E"],currm_ref,CurrentMirror)
+    CurrentMirror << L_route(pdk,CurrentMirror.ports["currm_A_drain_W"],gate_short.ports["con_S"],viaoffset=False, fullbottom=False)
+    
+    source_short = CurrentMirror << c_route(pdk,CurrentMirror.ports["currm_A_source_E"],CurrentMirror.ports["currm_B_source_E"], viaoffset=False)
+    
 
      # add a pwell 
     CurrentMirror.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
