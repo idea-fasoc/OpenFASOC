@@ -58,9 +58,9 @@ def generate_current_mirror_netlist(
     drain_net_B: str,
     transistor_type: str = "nfet",
     bulk_net: str = None,
+    proposed_ground: str = None,  # Proposed ground net
     dummy: bool = True,
     subckt_only: bool = False,
-    proposed_ground: str = None,  # Proposed ground net
 ) -> Netlist:
     """Generate a netlist for a current mirror."""
 
@@ -87,7 +87,7 @@ def generate_current_mirror_netlist(
     # Generating only two transistors (one on each side):
     source_netlist += f"XA {drain_net_A} {gate_net} {source_net} {bulk_net} {model_name} l={length} w={width} m={mtop}\n"
     source_netlist += f"XB {drain_net_B} {gate_net} {source_net} {bulk_net} {model_name} l={length} w={width} m={mtop}\n"
-    
+    source_netlist += f"XDUMMY {bulk_net} {bulk_net} {bulk_net} {bulk_net} {model_name} l={length} w={width} m={mtop}\n"
     source_netlist += ".ends " + circuit_name
 
 
