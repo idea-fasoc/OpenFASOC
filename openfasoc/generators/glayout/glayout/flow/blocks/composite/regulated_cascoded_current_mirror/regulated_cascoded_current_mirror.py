@@ -1,5 +1,5 @@
 import sys
-from os import path, rename, environ
+from os import path, rename, environ, listdir, remove
 environ['OPENBLAS_NUM_THREADS'] = '1'
 from pathlib import Path
 # path to glayout
@@ -26,6 +26,17 @@ from gdsfactory.components import text_freetype, rectangle
 from gdsfactory import Component
 from glayout.flow.spice.netlist import Netlist
 from typing import Optional, Union 
+
+def delete_files_in_directory(directory_path):
+   try:
+     files = listdir(directory_path)
+     for file in files:
+       file_path = path.join(directory_path, file)
+       if path.isfile(file_path):
+         remove(file_path)
+     print("All files deleted successfully.")
+   except OSError:
+     print("Error occurred while deleting files.")
 
 
 global PDK_ROOT
