@@ -113,6 +113,7 @@ def CurrentMirror(
     rmult: Optional[int] =1,
     with_substrate_tap: Optional[bool] = False,
     with_tie: Optional[bool] = True,
+    with_dummy: Optional[bool] = True,
     tie_layers: tuple[str,str]=("met2","met1"),
     ) -> Component:
     """Create a current mirror """   
@@ -120,13 +121,11 @@ def CurrentMirror(
     CurrentMirror = Component(name="CurrentMirror")
     
     if type.lower() =="pfet" or type.lower() =="pmos":
-        currm= two_pfet_interdigitized(pdk,numcols=CM_size[2],width=CM_size[0],length=CM_size[1],
-                                       rmult=rmult,gate_route_topmet="met3",sd_route_topmet="met3",
-                                       with_substrate_tap=with_substrate_tap,with_tie=with_tie,tie_layers=tie_layers)
+        currm= two_pfet_interdigitized(pdk,numcols=CM_size[2],width=CM_size[0],length=CM_size[1],dummy=with_dummy,
+                                       rmult=rmult,with_substrate_tap=with_substrate_tap,with_tie=with_tie,tie_layers=tie_layers)
     elif type.lower() =="nfet" or type.lower() =="nmos":
-        currm= two_nfet_interdigitized(pdk,numcols=CM_size[2],width=CM_size[0],length=CM_size[1],
-                                       rmult=rmult,gate_route_topmet="met3",sd_route_topmet="met3",
-                                       with_substrate_tap=with_substrate_tap,with_tie=with_tie,tie_layers=tie_layers)
+        currm= two_nfet_interdigitized(pdk,numcols=CM_size[2],width=CM_size[0],length=CM_size[1],dummy=with_dummy,
+                                       rmult=rmult,with_substrate_tap=with_substrate_tap,with_tie=with_tie,tie_layers=tie_layers)
     else:
         raise ValueError("type must be either nfet or pfet")
         
