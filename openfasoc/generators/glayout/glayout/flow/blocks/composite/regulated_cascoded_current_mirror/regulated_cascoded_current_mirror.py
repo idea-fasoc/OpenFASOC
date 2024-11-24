@@ -106,25 +106,6 @@ def generate_current_mirror_netlist(
         },
     )
 
-def create_via(PDK: MappedPDK):
-  # Define the via dimensions and rules
-  via_dimension = PDK.get_grule('via1')['width']
-  metal1_dimension = via_dimension + 2 * PDK.get_grule('via1','met1')['min_enclosure']
-  metal2_dimension = via_dimension + 2 * PDK.get_grule('via1','met2')['min_enclosure']
-
-  # Get the layers for via and metals
-  via_layer = PDK.get_glayer('via1')
-  metal1_layer = PDK.get_glayer('met2')
-  metal2_layer = PDK.get_glayer('met3')
-
-  # Create the component and add the layers
-  top_level = Component(name='via_example')
-  top_level << rectangle(size=(via_dimension, via_dimension), layer=via_layer)
-  top_level << rectangle(size=(metal1_dimension, metal1_dimension), layer=metal1_layer)
-  top_level << rectangle(size=(metal2_dimension, metal2_dimension), layer=metal2_layer)
-
-  return top_level
-
 def CurrentMirror(
     pdk: MappedPDK,
     CM_size: tuple[float, float, int], # (width, length, multipliers)
