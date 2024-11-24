@@ -142,6 +142,19 @@ def CurrentMirror(
     
     source_short = CurrentMirror << c_route(pdk,CurrentMirror.ports["currm_A_source_E"],CurrentMirror.ports["currm_B_source_E"], viaoffset=False)
     
+    
+    # Connecting dummies to the welltie
+    try:
+        CurrentMirror << straight_route(pdk, CurrentMirror.ports["A_0_dummy_L_gsdcon_top_met_W"],CurrentMirror.ports["welltie_W_top_met_W"],glayer2="met1")
+    except KeyError:
+        pass
+    try:
+        end_col = CM_size[2] - 1
+        port1 = f'B_{end_col}_dummy_R_gdscon_top_met_E'
+        CurrentMirror << straight_route(pdk, CurrentMirror.ports[port1], CurrentMirror.ports["welltie_E_top_met_E"], glayer2="met1")
+    except KeyError:
+        pass
+    
 
      # add a pwell 
     CurrentMirror.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
