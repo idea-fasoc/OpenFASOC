@@ -1,4 +1,6 @@
-##FLIPPED VOLTAGE FOLLOWER CELL
+## FLIPPED VOLTAGE FOLLOWER CELL
+
+```
 def  flipped_voltage_follower(
         pdk: MappedPDK,
         device_type: str = "nmos", 
@@ -25,11 +27,11 @@ def  flipped_voltage_follower(
     multipliers: (input fet, feedback fet)
     dummy_1: dummy for input fet
     dummy_2: dummy for feedback fet
-    dnwell: adds Deep N-well
-    sb_short: shorts the source and bulk of input fet if True
     tie_layers1: tie layers for input fet
     tie_layers2: tie layers for feedback fet
     sd_rmult: sd_rmult for both fets
     **kwargs: any kwarg that is supported by nmos and pmos
-    NB:- currently LVS is passed only for nmos without sd_short and pmos with sd_short
+```
+### GDS generated
+![gds generated](./fvfgds.png)
 
