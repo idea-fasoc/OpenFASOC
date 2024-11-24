@@ -156,10 +156,19 @@ def CurrentMirror(
         pass
     
 
-     # add a pwell 
-    CurrentMirror.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
-    CurrentMirror = add_ports_perimeter(CurrentMirror, layer = pdk.get_glayer("pwell"), prefix="well_")
-
+     # add well
+    if type.lower() == "nfet":
+        # add a pwell 
+        CurrentMirror.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
+        CurrentMirror = add_ports_perimeter(CurrentMirror, layer = pdk.get_glayer("pwell"), prefix="well_")
+    elif type.lower() == "pfet":
+        # add a nwell 
+        CurrentMirror.add_padding(layers = (pdk.get_glayer("nwell"),), default = pdk.get_grule("nwell", "active_tap")["min_enclosure"], )
+        CurrentMirror = add_ports_perimeter(CurrentMirror, layer = pdk.get_glayer("nwell"), prefix="well_")
+    else:
+        raise ValueError("type must be either nfet or pfet")
+    
+    
 
     CurrentMirror.add_ports(srcshort.get_ports_list(), prefix="purposegndports")
 
