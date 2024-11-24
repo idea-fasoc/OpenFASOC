@@ -15,6 +15,7 @@ from glayout.flow.routing.smart_route import smart_route
 from glayout.flow.routing.straight_route import straight_route
 from glayout.flow.routing.c_route import c_route
 from glayout.flow.routing.L_route import L_route
+
 from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized, two_pfet_interdigitized
 
 from glayout.flow.pdk.util.comp_utils import evaluate_bbox, prec_center, prec_array, movey, align_comp_to_port, prec_ref_center
@@ -24,6 +25,7 @@ from glayout.flow.pdk.util.port_utils import add_ports_perimeter
 
 from gdsfactory.components import text_freetype, rectangle
 from gdsfactory import Component
+from gdsfactory.routing.route_quad import route_quad
 from glayout.flow.spice.netlist import Netlist
 from typing import Optional, Union 
 
