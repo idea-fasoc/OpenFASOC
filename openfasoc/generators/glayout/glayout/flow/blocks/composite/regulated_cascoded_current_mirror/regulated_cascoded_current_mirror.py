@@ -1,5 +1,7 @@
 import sys
 from os import path, rename, environ, listdir, remove
+
+from openfasoc.generators.glayout.glayout.flow import pdk
 environ['OPENBLAS_NUM_THREADS'] = '1'
 from pathlib import Path
 # path to glayout
@@ -294,30 +296,28 @@ def sky130_add_current_mirror_labels(
 
     return CMS.flatten()
 
+# comp = CurrentMirror(sky130, (3,0.5, 2), type='nfet', with_substrate_tap=False, with_tie=True)
+# comp = sky130_add_current_mirror_labels(comp, transistor_type='nfet', pdk=sky130)
+# comp.name = "CM"
+# comp.write_gds("GDS/CM.gds")
+# comp.show()
 
+# # for absc in comp.ports.keys():
+# #     if len(absc.split("_")) <=6:
+# #         print(absc)
 
-comp = CurrentMirror(sky130, (3,0.5, 2), type='nfet', with_substrate_tap=False, with_tie=True)
-comp = sky130_add_current_mirror_labels(comp, transistor_type='nfet', pdk=sky130)
-comp.name = "CM"
-comp.write_gds("GDS/CM.gds")
-comp.show()
-
-# for absc in comp.ports.keys():
-#     if len(absc.split("_")) <=6:
-#         print(absc)
-
-print("\n...Generating Netlist...")
-print(comp.info["netlist"].generate_netlist())
-# %%
-# delete_files_in_directory("DRC")
-# print("\n...Running DRC...")
-# drc_result = sky130.drc_magic(comp, "CM",output_file="DRC/")
-# print(drc_result)
-# %%
-delete_files_in_directory("LVS")
-print("\n...Running LVS...")
-netgen_lvs_result = sky130.lvs_netgen(comp, "CM",output_file_path="LVS/")        
-print(netgen_lvs_result)
+# print("\n...Generating Netlist...")
+# print(comp.info["netlist"].generate_netlist())
+# # %%
+# # delete_files_in_directory("DRC")
+# # print("\n...Running DRC...")
+# # drc_result = sky130.drc_magic(comp, "CM",output_file="DRC/")
+# # print(drc_result)
+# # %%
+# delete_files_in_directory("LVS")
+# print("\n...Running LVS...")
+# netgen_lvs_result = sky130.lvs_netgen(comp, "CM",output_file_path="LVS/")        
+# print(netgen_lvs_result)
 
 ## Will be used in future for simulation
 
