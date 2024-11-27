@@ -262,31 +262,13 @@ def sky130_add_current_mirror_labels(
     vref_label = rectangle(layer=met2_pin, size=(0.5, 0.5), centered=True).copy()
     vref_label.add_label(text="VREF", layer=met2_label)
     
-    move_info.append((vref_label, CMS.ports["currm_A_drain_W"], None)) # Drain of A
-    #LVS will work if following line is uncommented
-    #move_info.append((vref_label, CMS.ports["gateshortportscon_N"], None))  # Gate of A & B
+    move_info.append((vref_label, CMS.ports["Refporte2"], None)) # Drain of A
+    move_info.append((vref_label, CMS.ports["gateshortportscon_N"], None))  # Gate of A & B
     
     # VCOPY label (for drain of transistor B)
     vcopy_label = rectangle(layer=met2_pin, size=(0.5, 0.5), centered=True).copy()
     vcopy_label.add_label(text="VCOPY", layer=met2_label)
-    move_info.append((vcopy_label, CMS.ports["currm_B_drain_W"], None))  # Drain of B
-
-    ## Move Labels in meta3 after via creation
-     
-    # # VREF label (for both gate and drain of transistor A, and dummy drains)
-    # vref_label = rectangle(layer=met3_pin, size=(0.5, 0.5), centered=True).copy()
-    # vref_label.add_label(text="VREF", layer=met3_label)
-    
-    # move_info.append((vref_label, CMS.ports["Refporte2"], None)) # Drain of A
-    # #move_info.append((vref_label, CMS.ports["gateshortportscon_N"], None))  # Gate of A & B
-    
-    # # VCOPY label (for drain of transistor B)
-    # vcopy_label = rectangle(layer=met3_pin, size=(0.5, 0.5), centered=True).copy()
-    # vcopy_label.add_label(text="VCOPY", layer=met3_label)
-    # move_info.append((vcopy_label, CMS.ports["Copyporte2"], None))  # Drain of B
-
-    
-    
+    move_info.append((vcopy_label, CMS.ports["Copyporte2"], None))  # Drain of B
     
     
    # VSS/VDD label (for sources/bulk connection)
@@ -315,28 +297,28 @@ def sky130_add_current_mirror_labels(
 
     return CMS.flatten()
 
-# comp = CurrentMirror(sky130, (3,0.5, 2), type='nfet', with_substrate_tap=False, with_tie=True)
-# comp = sky130_add_current_mirror_labels(comp, transistor_type='nfet', pdk=sky130)
-# comp.name = "CM"
-# comp.write_gds("GDS/CM.gds")
-# comp.show()
+comp = CurrentMirror(sky130, (3,0.5, 2), type='nfet', with_substrate_tap=False, with_tie=True)
+comp = sky130_add_current_mirror_labels(comp, transistor_type='nfet', pdk=sky130)
+comp.name = "CM"
+comp.write_gds("GDS/CM.gds")
+comp.show()
 
-# # for absc in comp.ports.keys():
-# #     if len(absc.split("_")) <=6:
-# #         print(absc)
+# for absc in comp.ports.keys():
+#     if len(absc.split("_")) <=6:
+#         print(absc)
 
-# print("\n...Generating Netlist...")
-# print(comp.info["netlist"].generate_netlist())
-# # %%
-# # delete_files_in_directory("DRC")
-# # print("\n...Running DRC...")
-# # drc_result = sky130.drc_magic(comp, "CM",output_file="DRC/")
-# # print(drc_result)
-# # %%
-# delete_files_in_directory("LVS")
-# print("\n...Running LVS...")
-# netgen_lvs_result = sky130.lvs_netgen(comp, "CM",output_file_path="LVS/")        
-# print(netgen_lvs_result)
+print("\n...Generating Netlist...")
+print(comp.info["netlist"].generate_netlist())
+# %%
+# delete_files_in_directory("DRC")
+# print("\n...Running DRC...")
+# drc_result = sky130.drc_magic(comp, "CM",output_file="DRC/")
+# print(drc_result)
+# %%
+delete_files_in_directory("LVS")
+print("\n...Running LVS...")
+netgen_lvs_result = sky130.lvs_netgen(comp, "CM",output_file_path="LVS/")        
+print(netgen_lvs_result)
 
 ## Will be used in future for simulation
 
