@@ -1,7 +1,6 @@
 import sys
 from os import path, rename, environ, listdir, remove
 
-from openfasoc.generators.glayout.glayout.flow import pdk
 environ['OPENBLAS_NUM_THREADS'] = '1'
 from pathlib import Path
 # path to glayout
@@ -21,7 +20,6 @@ from glayout.flow.routing.L_route import L_route
 from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized, two_pfet_interdigitized
 
 from glayout.flow.pdk.util.comp_utils import evaluate_bbox, prec_center, prec_array, movey, align_comp_to_port, prec_ref_center
-prec_ref_center
 from glayout.flow.pdk.util.port_utils import add_ports_perimeter	
 
 
@@ -143,34 +141,6 @@ def CurrentMirror(
     CurrentMirror << L_route(pdk,CurrentMirror.ports["currm_A_drain_W"],gate_short.ports["con_S"],viaoffset=False, fullbottom=False)
     
     source_short = CurrentMirror << c_route(pdk,CurrentMirror.ports["currm_A_source_E"],CurrentMirror.ports["currm_B_source_E"], viaoffset=False)
-    
-    ###Metal 2 to Meta 3 via for connecting the labels to the drains
-    # viam2m3 = via_stack(pdk,"met2","met3",centered=True)
-    # metal_min_dim = max(pdk.get_grule("met2")["min_width"],pdk.get_grule("met3")["min_width"])
-    # metal_space = max(pdk.get_grule("met2")["min_separation"],pdk.get_grule("met3")["min_separation"],metal_min_dim)
-    
-    # # place vias at the drains
-    # drain_br_via = CurrentMirror << viam2m3
-    # drain_br_via.move(CurrentMirror.ports["currm_A_drain_N"].center).movey(viam2m3.ymin)
-    # drain_br_viatm = CurrentMirror << viam2m3
-    # drain_br_viatm.move(CurrentMirror.ports["currm_A_drain_N"].center).movey(viam2m3.ymin)
-
-    # drain_bl_via = CurrentMirror << viam2m3
-    # drain_bl_via.move(CurrentMirror.ports["currm_B_drain_N"].center).movey(viam2m3.ymin)
-    # drain_bl_viatm = CurrentMirror << viam2m3
-    # drain_bl_viatm.move(CurrentMirror.ports["currm_B_drain_N"].center).movey(-1.5 * evaluate_bbox(viam2m3)[1] - metal_space)
-    
-    # # # create route to drain via
-    # Awidth_drain_route = CurrentMirror.ports["currm_A_drain_N"].width
-    # Abottom_extension = viam2m3.ymax + Awidth_drain_route/2 + 2*metal_space
-    # drain_br_viatm.movey(0-Abottom_extension - metal_space - Awidth_drain_route/2 - viam2m3.ymax)
-    # Aport=CurrentMirror << route_quad(drain_br_viatm.ports["top_met_N"], drain_br_via.ports["top_met_S"],layer=pdk.get_glayer("met3"))
-
-    # Bwidth_drain_route = CurrentMirror.ports["currm_B_drain_N"].width
-    # bottom_extension = viam2m3.ymax + Bwidth_drain_route/2 + 2*metal_space
-    # drain_bl_viatm.movey(0-bottom_extension - metal_space - Bwidth_drain_route/2 - viam2m3.ymax)
-    # Bport=CurrentMirror << route_quad(drain_bl_viatm.ports["top_met_N"], drain_bl_via.ports["top_met_S"],layer=pdk.get_glayer("met3"))
-    
    
    
     # Connecting dummies to the welltie
@@ -201,8 +171,6 @@ def CurrentMirror(
     #Connecting the source of the fets to the bulk ???
     src2bulk=CurrentMirror << straight_route(pdk, source_short.ports["con_N"],CurrentMirror.ports["currm_welltie_N_top_met_N"], glayer2="met2")
     
-    CurrentMirror.add_ports(gate_short.get_ports_list(), prefix="gateshortports")
-    CurrentMirror.add_ports(src2bulk.get_ports_list(), prefix="purposegndports")
 
     # place vref pin
     vrefpin = CurrentMirror << rectangle(size=(0.5,0.5),layer=pdk.get_glayer("met3"),centered=True)
