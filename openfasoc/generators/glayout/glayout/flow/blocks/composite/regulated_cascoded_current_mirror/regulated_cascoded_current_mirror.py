@@ -199,8 +199,8 @@ def CurrentMirror(
         raise ValueError("type must be either nfet or pfet")
     
     #Connecting the source of the fets to the bulk ???
-    src2bulk=CurrentMirror << straight_route(pdk, source_short.ports["con_N"],CurrentMirror.ports["currm_welltie_E_top_met_W"])
-
+    src2bulk=CurrentMirror << straight_route(pdk, source_short.ports["con_N"],CurrentMirror.ports["currm_welltie_N_top_met_N"], glayer2="met2")
+    
     CurrentMirror.add_ports(gate_short.get_ports_list(), prefix="gateshortports")
     CurrentMirror.add_ports(src2bulk.get_ports_list(), prefix="purposegndports")
 
