@@ -3,6 +3,7 @@ from glayout.flow.pdk.mappedpdk import MappedPDK
 from glayout.flow.routing.c_route import c_route
 from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.straight_route import straight_route
+from glayout.flow.routing.smart_route import smart_route
 from glayout.flow.spice.netlist import Netlist
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk as sky130
 from glayout.flow.primitives.fet import nmos, pmos
@@ -229,23 +230,37 @@ def cascode_common_source(
 	vin_pin.movey(top_level.ymin+0.5*evaluate_bbox(vin_pin)[1])
 	vin_pin.movex(-evaluate_bbox(vin_pin)[0]-0.5*evaluate_bbox(M1_ref)[0])
 	## VIN input pin routing from M1 Gate
-	# top_level << smart_route(pdk, top_level.ports["M1_gate_W"], vin_pin.ports["e4"], viaoffset=False)
-
+	top_level << smart_route(pdk, top_level.ports["M1_gate_W"], vin_pin.ports["e4"], viaoffset=False)
+	## VIN input pin add label for port
+	top_level.add_ports(vin_pin.get_ports_list(), prefix="VIN")
 
 	## VBIAS input pin
 	vbias_pin = top_level << rectangle(size=pin_size, layer=pdk.get_glayer("met3"), centered=True)
 	vbias_pin.movey(evaluate_bbox(M2_ref)[1])
 	vbias_pin.movex(-evaluate_bbox(vin_pin)[0]-0.5*evaluate_bbox(M2_ref)[0])
+	## VBIAS input pin routing from M1 Gate
+	top_level << smart_route(pdk, top_level.ports["M2_gate_W"], vbias_pin.ports["e4"], viaoffset=False)
+	## VBIAS input pin add label for port
+	top_level.add_ports(vbias_pin.get_ports_list(), prefix="VBIAS")
+
 
 	## IOUT pin
 	iout_pin = top_level << rectangle(size=pin_size, layer=pdk.get_glayer("met3"), centered=True)
 	iout_pin.movey(top_level.ymax-0.5*evaluate_bbox(iout_pin)[1])
 	iout_pin.movex(evaluate_bbox(vin_pin)[0]+0.5*evaluate_bbox(M2_ref)[0])
+	## IOUT output pin routing from M1 Gate
+	top_level << smart_route(pdk, top_level.ports["M2_drain_W"], iout_pin.ports["e1"], viaoffset=False)
+	## IOUT output pin add label for port
+	top_level.add_ports(iout_pin.get_ports_list(), prefix="IOUT")
 
 	## VSS pin
 	vss_pin = top_level << rectangle(size=pin_size, layer=pdk.get_glayer("met3"), centered=True)
 	vss_pin.movey(top_level.ymin+0.5*evaluate_bbox(vss_pin)[1])
 	vss_pin.movex(evaluate_bbox(vin_pin)[0]+0.5*evaluate_bbox(M1_ref)[0])
+	## VSS pin routing from M1 Gate
+	top_level << smart_route(pdk, top_level.ports["M1_source_W"], vss_pin.ports["e1"], viaoffset=False)
+	## VSS ad label for port
+	top_level.add_ports(vss_pin.get_ports_list(), prefix="VSS")
 
 	
 	# top_level.info['netlist'] = cascode_common_source_netlist(
