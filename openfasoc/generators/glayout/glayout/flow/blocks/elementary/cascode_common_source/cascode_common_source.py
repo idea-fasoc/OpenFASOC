@@ -80,12 +80,15 @@ def cascode_common_source_netlist(
 	dmtop = m1_fingers*m1_multipliers
 	num_dummies = 4
 	
-	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={m1_length} w={m1_width} m={mtop} dm={dmtop}' + """
-XM1 INT VIN VSS VSS {model} l={m1_length} w={m1_width} m={mult} dm={m1_multipliers}
-XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={mult} dm={m2_multipliers}"""
+# 	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={m1_length} w={m1_width} m={mtop} dm={dmtop}' + """
+# XM1 INT VIN VSS VSS {model} l={m1_length} w={m1_width} m={mult} dm={m1_multipliers}
+# XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={mult} dm={m2_multipliers}"""
+	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={m1_length} w={m1_width} m={mtop}' + """
+XM1 INT VIN VSS VSS {model} l={m1_length} w={m1_width} m={mult}
+XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={mult}"""
 	#Adding the dummies
-	#for i in range(num_dummies):
-	#	source_netlist += """ \nXDUMMY"""+f'{i+1}'+""" B B B B {model} """+f'l={m1_length} w={m1_width} m={1} dm={dmtop}'
+	# for i in range(num_dummies):
+	# 	source_netlist += """ \nXDUMMY"""+f'{i+1}'+""" B B B B {model} """+f'l={m1_length} w={m1_width} m={1} dm={dmtop}'
 
 	source_netlist += "\n.ends {circuit_name}"
 
@@ -148,34 +151,35 @@ def cascode_common_source(
 	"""
 	top_level = Component("cascode common source amplifier")
 	# Create the transistors
+	print(f"Creating ", device, " devices with these parameters: ",m1_fingers,m1_multipliers, m2_fingers, m2_multipliers)
 	if device in ['nmos', 'nfet']:
 		fet_M1=nmos(pdk,
 					fingers=m1_fingers,
 					multipliers = m1_multipliers,
-					with_tie=False,
-					with_dummy=with_dummy,
+					with_tie=True,
+					with_dummy=False, #with_dummy,
 					with_substrate_tap=False,
 					**kwargs)
 		fet_M2=nmos(pdk,
 					fingers=m2_fingers,
 					multipliers = m2_multipliers,
-					with_tie=False,
-					with_dummy=with_dummy,
+					with_tie=True,
+					with_dummy=False, #with_dummy,
 					with_substrate_tap=False,
 					**kwargs)
 	elif device in ['pmos', 'pfet']:
 		fet_M1=pmos(pdk,
 					fingers=m1_fingers,
 					multipliers = m1_multipliers,
-					with_tie=False,
-					with_dummy=with_dummy,
+					with_tie=True,
+					with_dummy=False, #with_dummy,
 					with_substrate_tap=False,
 					**kwargs)
 		fet_M2=pmos(pdk,
 					fingers=m2_fingers,
 					multipliers = m2_multipliers,
-					with_tie=False,
-					with_dummy=with_dummy,
+					with_tie=True,
+					with_dummy=False, #with_dummy,
 					with_substrate_tap=False,
 					**kwargs)
 	print("FETS are instantiated now")
@@ -183,69 +187,74 @@ def cascode_common_source(
 	# Added references to the two FETs within the component level
 	M1_ref = top_level << fet_M1
 	M2_ref = top_level << fet_M2
+
+	top_level.add(M1_ref)
+	top_level.add(M2_ref)
 	# Placement
 	M1_ref_centre_coord = prec_ref_center(fet_M1)
 	M2_ref_centre_coord = prec_ref_center(fet_M2)
-	place_devices='V'
+
+	# Place the devices Horizontally ('H') or Vertically('V') based on placement selection
+	place_devices='V' 
 	if place_devices in ['lateral', 'horizontal', 'H']:
-		M2_ref.movex(0.75*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]))
+		M2_ref.movex(0.75*(evaluate_bbox(M1_ref)[0]+evaluate_bbox(M2_ref)[0]))
 	if place_devices in ['vertical', 'V']:
-		M2_ref.movey(0.75*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]))
+		M2_ref.movey(0.5*(evaluate_bbox(M1_ref)[1]+evaluate_bbox(M2_ref)[1]))
+		
+	maxmet_sep = pdk.util_max_metal_seperation()
 
 	# Routing and Port definitions
-	if place_devices in ['lateral', 'horizontal', 'H']:
-		top_level << straight_route(pdk, M1_ref.ports["multiplier_0_drain_W"], M2_ref.ports["multiplier_0_source_E"])
-	if  place_devices in ['vertical', 'V']:
-		top_level << c_route(pdk, M1_ref.ports["multiplier_0_drain_E"], M2_ref.ports["multiplier_0_source_E"])
+	# if place_devices in ['lateral', 'horizontal', 'H']:
+	# 	top_level << straight_route(pdk, M1_ref.ports["multiplier_0_drain_W"], M2_ref.ports["multiplier_0_source_E"])
+	# if  place_devices in ['vertical', 'V']:
+	# 	top_level << c_route(pdk, M1_ref.ports["multiplier_0_drain_E"], M2_ref.ports["multiplier_0_source_E"])
 		
 
 	# ************* Adding the suffix after the routing generates the prefix after routing.
-	# top_level.unlock()
+	#### top_level.unlock()
 	top_level.add_ports(M1_ref.get_ports_list(), prefix="M1_")
 	top_level.add_ports(M2_ref.get_ports_list(), prefix="M2_")
-	# #Now attach pin names for port
-	# top_level.unlock()
-	# # *** Adding pins and labels for metal1-5 ***
-	# move_info =list()
-	# met1_pin=(68,20)
-	# met1_label=(68,5)
-	# met2_pin = (69,16)
-	# met2_label = (69,5)
-	# met3_pin = (70,16)
-	# met3_label = (70,5)
-	# met4_pin = (71,16)
-	# met4_label = (71,5)
-	# met5_pin = (72,16)
-	# met5_label = (72,5)
-	# port_size = (0.35,0.35)
-	# VIN_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-	# VIN_label.add_label(text="VIN", layer=met1_label)
-	# move_info.append((VIN_label, top_level.ports['M1_gate_W'], None))
 
-	# VBIAS_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-	# VBIAS_label.add_label(text="VBIAS", layer=met1_label)
-	# move_info.append((VBIAS_label, top_level.ports['M2_gate_W'], None))
+	# Shorting the Source of M2 to the Drain of M1.
+	int_net_short = top_level << c_route(pdk, 
+											top_level.ports["M2_source_E"], 
+											top_level.ports["M1_drain_E"], 
+											extension=4*maxmet_sep, 
+											viaoffset=False)
 
-	# VSS_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-	# VSS_label.add_label(text="VSS", layer=met1_label)
-	# move_info.append((VSS_label, top_level.ports['M1_source_S'], None))
+	### Adding Port Pins for the cascode common source
+	## VIN input pin placement
+	pin_size = (0.35,0.35)
+	vin_pin = top_level << rectangle(size=pin_size, layer=pdk.get_glayer("met3"), centered=True)
+	vin_pin.movey(top_level.ymin+0.5*evaluate_bbox(vin_pin)[1])
+	vin_pin.movex(-evaluate_bbox(vin_pin)[0]-0.5*evaluate_bbox(M1_ref)[0])
+	## VIN input pin routing from M1 Gate
+	# top_level << smart_route(pdk, top_level.ports["M1_gate_W"], vin_pin.ports["e4"], viaoffset=False)
 
-	# IOUT_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-	# IOUT_label.add_label(text="IOUT", layer=met1_label)
-	# move_info.append((IOUT_label, top_level.ports['M2_drain_N'], None))
 
-	# for comp, prt, alignment in move_info:
-	# 	alignment = ('c','b') if alignment is None else alignment
-	# 	compref = align_comp_to_port(comp, prt, alignment=alignment)
-	# 	top_level.add(compref)
+	## VBIAS input pin
+	vbias_pin = top_level << rectangle(size=pin_size, layer=pdk.get_glayer("met3"), centered=True)
+	vbias_pin.movey(evaluate_bbox(M2_ref)[1])
+	vbias_pin.movex(-evaluate_bbox(vin_pin)[0]-0.5*evaluate_bbox(M2_ref)[0])
 
-	# top_level.flatten()
-	# THIS IS THE ORIGINAL ARGUMENTS FOR THE NETLIST GENERATION FUNCTION 
+	## IOUT pin
+	iout_pin = top_level << rectangle(size=pin_size, layer=pdk.get_glayer("met3"), centered=True)
+	iout_pin.movey(top_level.ymax-0.5*evaluate_bbox(iout_pin)[1])
+	iout_pin.movex(evaluate_bbox(vin_pin)[0]+0.5*evaluate_bbox(M2_ref)[0])
+
+	## VSS pin
+	vss_pin = top_level << rectangle(size=pin_size, layer=pdk.get_glayer("met3"), centered=True)
+	vss_pin.movey(top_level.ymin+0.5*evaluate_bbox(vss_pin)[1])
+	vss_pin.movex(evaluate_bbox(vin_pin)[0]+0.5*evaluate_bbox(M1_ref)[0])
+
+	
 	# top_level.info['netlist'] = cascode_common_source_netlist(
 	# 	pdk, 
-  	# 	width=kwargs.get('width', 3), 
-	# 	length=kwargs.get('length', 1), 
-	# 	multipliers=numcols, 
+  	# 	m1_width=3, #kwargs.get('width', 21), 
+	# 	m2_width=3, #kwargs.get('width', 21), 
+	# 	m1_length=pdk.get_grule('poly')['min_width'], #kwargs.get('length',14), 
+	# 	m2_length=pdk.get_grule('poly')['min_width'], #kwargs.get('length',14),
+	# 	multipliers=1, 
     # 	n_or_p_fet=device,
 	# 	subckt_only=True,
 	# 	m1_fingers = m1_fingers,
@@ -253,29 +262,15 @@ def cascode_common_source(
 	# 	m1_multipliers = m1_multipliers,
 	# 	m2_multipliers = m2_multipliers
 	# )
-	top_level.info['netlist'] = cascode_common_source_netlist(
-		pdk, 
-  		m1_width=3, #kwargs.get('width', 21), 
-		m2_width=3, #kwargs.get('width', 21), 
-		m1_length=pdk.get_grule('poly')['min_width'], #kwargs.get('length',14), 
-		m2_length=pdk.get_grule('poly')['min_width'], #kwargs.get('length',14),
-		multipliers=1, 
-    	n_or_p_fet=device,
-		subckt_only=True,
-		m1_fingers = m1_fingers,
-		m2_fingers = m2_fingers,
-		m1_multipliers = m1_multipliers,
-		m2_multipliers = m2_multipliers
-	)
 
-	generated_netlist_for_lvs = top_level.info['netlist'].generate_netlist()
-	print(f"Type of generated netlist is :", generated_netlist_for_lvs)
-	file_path_local_storage = "./gen_netlist.txt"
-	try:
-		with open(file_path_local_storage, 'w') as file:
-			file.write(generated_netlist_for_lvs)
-	except:
-		print(f"Verify the file availability and type: ", generated_netlist_for_lvs, type(generated_netlist_for_lvs))
+	# generated_netlist_for_lvs = top_level.info['netlist'].generate_netlist()
+	# print(f"Type of generated netlist is :", generated_netlist_for_lvs)
+	# file_path_local_storage = "./gen_netlist.txt"
+	# try:
+	# 	with open(file_path_local_storage, 'w') as file:
+	# 		file.write(generated_netlist_for_lvs)
+	# except:
+	# 	print(f"Verify the file availability and type: ", generated_netlist_for_lvs, type(generated_netlist_for_lvs))
 	return top_level
 
 
@@ -297,7 +292,7 @@ def cascode_common_source_labels(CMS: Component) -> Component:
 	port_size = (0.35,0.35)
 	VIN_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
 	VIN_label.add_label(text="VIN", layer=met1_label)
-	move_info.append((VIN_label, CMS.ports['M1_gate_W'], None))
+	move_info.append((VIN_label, CMS.ports['M1_gate_E'], None)) # From W to E
 
 	VBIAS_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
 	VBIAS_label.add_label(text="VBIAS", layer=met1_label)
@@ -305,20 +300,20 @@ def cascode_common_source_labels(CMS: Component) -> Component:
 
 	VSS_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
 	VSS_label.add_label(text="VSS", layer=met1_label)
-	move_info.append((VSS_label, CMS.ports['M1_source_S'], None))
+	move_info.append((VSS_label, CMS.ports['M1_source_W'], None)) # From S to W
 
 	IOUT_label=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
 	IOUT_label.add_label(text="IOUT", layer=met1_label)
-	move_info.append((IOUT_label, CMS.ports['M2_drain_N'], None))
+	move_info.append((IOUT_label, CMS.ports['M2_drain_E'], None)) # From N to E
 
 	INT_label = rectangle(layer=met1_pin, size=port_size, centered=True).copy()
 	INT_label.add_label(text="INT", layer=met1_label)
 	move_info.append((INT_label, CMS.ports['M2_source_E'], None))
 
-	for comp, prt, alignment in move_info:
+	for label, port, alignment in move_info:
 		alignment = ('c','b') if alignment is None else alignment
-		compref = align_comp_to_port(comp, prt, alignment=alignment)
-		CMS.add(compref)
+		aligned_label = align_comp_to_port(label, port, alignment=alignment)
+		CMS.add(aligned_label)
 
 	return CMS.flatten()
 
@@ -330,18 +325,18 @@ Cascode_cs_component = cascode_common_source(mapped_pdk_build,
 												m2_multipliers=1,
 												numcols=1) 
 # Add labels to the port definitions
-Cascode_cs_component = cascode_common_source_labels(Cascode_cs_component)
+#Cascode_cs_component = cascode_common_source_labels(Cascode_cs_component)
 Cascode_cs_component.show()
 Cascode_cs_component.write_gds("./local_casdcode_overwite.gds")
 
-magic_drc_result = sky130.drc_magic(Cascode_cs_component, Cascode_cs_component.name)
+# magic_drc_result = sky130.drc_magic(Cascode_cs_component, Cascode_cs_component.name)
 # if magic_drc_result :
 #     print("DRC is clean: ", magic_drc_result)
 # else:
 #     print("DRC failed. Please try again.")
 
-Cascode_cs_component.name = 'cascode_common_source_lvs' 
-netgen_lvs_result = mapped_pdk_build.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
+# Cascode_cs_component.name = 'cascode_common_source_lvs' 
+# netgen_lvs_result = mapped_pdk_build.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
 
 # sky130.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
 # print('LVS success??')
