@@ -1,3 +1,16 @@
+import sys
+from os import path, rename, environ, listdir, remove
+
+# environ['OPENBLAS_NUM_THREADS'] = '1'
+from pathlib import Path
+
+from gdsfactory.components import text_freetype, rectangle
+from gdsfactory import Component
+from gdsfactory.routing.route_quad import route_quad
+from glayout.flow.spice.netlist import Netlist
+from typing import Optional, Union 
+
+
 from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized, two_pfet_interdigitized
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from glayout.flow.routing.c_route import c_route
@@ -53,6 +66,67 @@ from glayout.flow.pdk.util.comp_utils import prec_ref_center, prec_center, movey
 # 			'mult': multipliers
 #    		}
 # 	)
+
+## WORKING COPY
+# def cascode_common_source_netlist(
+# 	pdk: MappedPDK, 
+# 	m1_width: float,
+# 	m2_width: float,
+# 	m1_length: float,
+# 	m2_length: float,
+# 	multipliers: int, 
+# 	n_or_p_fet: Optional[str] = 'nfet',
+# 	subckt_only: Optional[bool] = False,
+# 	m1_fingers = int,
+# 	m2_fingers = int,
+# 	m1_multipliers = int,
+# 	m2_multipliers = int
+# ) -> Netlist:
+# 	if m1_length is None:
+# 		m1_length = pdk.get_grule('poly')['min_length']
+# 	if m1_width is None:
+# 		m1_width = pdk.get_grule('poly')['min_width']
+# 	m2_length = m2_length or pdk.get_grule('poly')['min_length']
+# 	m2_width = m2_width or pdk.get_grule('poly')['min_width']
+
+# 	mtop = multipliers if subckt_only else 1
+# 	model = pdk.models[n_or_p_fet]
+# 	m1_multipliers = m1_multipliers or 1
+# 	m2_multipliers = m2_multipliers or 1
+# 	dmtop = m1_fingers*m1_multipliers
+# 	num_dummies = 4
+	
+# # 	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={m1_length} w={m1_width} m={mtop} dm={dmtop}' + """
+# # XM1 INT VIN VSS VSS {model} l={m1_length} w={m1_width} m={mult} dm={m1_multipliers}
+# # XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={mult} dm={m2_multipliers}"""
+# 	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={m1_length} w={m1_width} m={mtop}' + """
+# XM1 INT VIN VSS VSS {model} l={m1_length} w={m1_width} m={mult}
+# XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={mult}"""
+# 	#Adding the dummies
+# 	for i in range(num_dummies):
+# 		source_netlist += """ \nXDUMMY"""+f'{i+1}'+""" B B B B {model} """+f'l={m1_length} w={m1_width} m={1} dm={dmtop}'
+
+# 	source_netlist += "\n.ends {circuit_name}"
+
+# 	instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult}"
+ 
+# 	return Netlist(
+# 		circuit_name='CASCODECOMMONSRC',
+# 		nodes=['VIN', 'VBIAS', 'VSS', 'IOUT', "INT"], 
+# 		source_netlist=source_netlist,
+#   		instance_format=instance_format,
+# 		parameters={
+# 			'model': model,
+# 			'm1_width': m1_width,
+# 			'm2_width': m2_width,
+#    			'm1_length': m1_length,	
+# 			'm2_length': m2_length,	
+# 			'mult': m1_multipliers*m1_fingers,#multipliers,
+# 			'm1_multipliers': m1_multipliers,
+# 			'm2_multipliers': m2_multipliers,
+#    		}
+# 	)
+
 def cascode_common_source_netlist(
 	pdk: MappedPDK, 
 	m1_width: float,
@@ -81,15 +155,25 @@ def cascode_common_source_netlist(
 	dmtop = m1_fingers*m1_multipliers
 	num_dummies = 4
 	
-# 	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={m1_length} w={m1_width} m={mtop} dm={dmtop}' + """
-# XM1 INT VIN VSS VSS {model} l={m1_length} w={m1_width} m={mult} dm={m1_multipliers}
-# XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={mult} dm={m2_multipliers}"""
-	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={m1_length} w={m1_width} m={mtop}' + """
-XM1 INT VIN VSS VSS {model} l={m1_length} w={m1_width} m={mult}
-XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={mult}"""
+	circuit_name='CASCODECOMMONSRC'
+	nodes=['VIN', 'VBIAS', 'VSS', 'IOUT', "INT"]
+	model= model
+	m1_width= m1_width
+	m2_width= m2_width
+	m1_length= m1_length
+	m2_length= m2_length
+	mult= m1_multipliers*m1_fingers
+	m1_multipliers= m1_multipliers
+	m2_multipliers= m2_multipliers
+
+	source_netlist = f".subckt {circuit_name} {' '.join(nodes)}\n" 
+	# source_netlist = f".subckt {circuit_name} {' '.join(nodes)}\n"
+	# source_netlist += f'l={m1_length} w={m1_width} m={mtop}' + """
+	source_netlist += f"XM1 INT VIN VSS VSS {model} l={m1_length} w={m1_width} m={mult}\n"
+	source_netlist += f"XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={mult}"
 	#Adding the dummies
 	# for i in range(num_dummies):
-	# 	source_netlist += """ \nXDUMMY"""+f'{i+1}'+""" B B B B {model} """+f'l={m1_length} w={m1_width} m={1} dm={dmtop}'
+	# 	source_netlist += """ \nXDUMMY"""+f'{i+1}'+""" VSS VSS VSS VSS {model} """+f'l={m1_length} w={m1_width} m={1} dm={dmtop}'
 
 	source_netlist += "\n.ends {circuit_name}"
 
@@ -222,6 +306,28 @@ def cascode_common_source(
 											top_level.ports["M1_drain_E"], 
 											extension=4*maxmet_sep, 
 											viaoffset=False)
+	top_level.add_ports(int_net_short.get_ports_list(), prefix="INT")
+
+	# add well
+	if device in ['nmos', 'nfet']:
+		print(f"NMOS device")
+		# add a pwell 
+		top_level.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
+		top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("pwell"), prefix="well_")
+	elif device in ['pmos', 'pfet']:
+		# add a nwell 
+		top_level.add_padding(layers = (pdk.get_glayer("nwell"),), default = pdk.get_grule("nwell", "active_tap")["min_enclosure"], )
+		top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("nwell"), prefix="well_")
+	else:
+		raise ValueError("type must be either nfet or pfet")
+
+	# Connecting the source of the FETs to the BULK
+	srcM1bulk=top_level << straight_route(pdk, top_level.ports["M1_source_E"], 
+												top_level.ports["M1_tie_W_top_met_E"], glayer2="met2")
+	srcM2bulk=top_level << straight_route(pdk, top_level.ports["M1_tie_W_top_met_E"], 
+												top_level.ports["M2_tie_W_top_met_E"], glayer2="met2")
+	# top_level.add_ports(srcM1bulk.get_ports_list(), prefix="VSS")
+	# top_level.add_ports(srcM2bulk.get_ports_list(), prefix="VSS")
 
 	### Adding Port Pins for the cascode common source
 	## VIN input pin placement
@@ -262,6 +368,9 @@ def cascode_common_source(
 	## VSS ad label for port
 	top_level.add_ports(vss_pin.get_ports_list(), prefix="VSS")
 
+	## Bulk connections of both FETs to VSS
+	# top_level << smart_route(pdk, top_level.ports["M1_well_E"],  top_level.ports["M2_well_E"], viaoffset=False)
+
 	
 	top_level.info['netlist'] = cascode_common_source_netlist(
 		pdk, 
@@ -278,19 +387,19 @@ def cascode_common_source(
 		m2_multipliers = m2_multipliers
 	)
 
-	# generated_netlist_for_lvs = top_level.info['netlist'].generate_netlist()
-	# print(f"Type of generated netlist is :", generated_netlist_for_lvs)
-	# file_path_local_storage = "./gen_netlist.txt"
-	# try:
-	# 	with open(file_path_local_storage, 'w') as file:
-	# 		file.write(generated_netlist_for_lvs)
-	# except:
-	# 	print(f"Verify the file availability and type: ", generated_netlist_for_lvs, type(generated_netlist_for_lvs))
+	generated_netlist_for_lvs = top_level.info['netlist'].generate_netlist()
+	print(f"Type of generated netlist is :", generated_netlist_for_lvs)
+	file_path_local_storage = "./gen_netlist.txt"
+	try:
+		with open(file_path_local_storage, 'w') as file:
+			file.write(generated_netlist_for_lvs)
+	except:
+		print(f"Verify the file availability and type: ", generated_netlist_for_lvs, type(generated_netlist_for_lvs))
 	return top_level
 
 
 def cascode_common_source_labels(CMS: Component) -> Component:
-	# Unlock compoonent to attach the labels.
+	# Unlock component to attach the labels.
 	CMS.unlock()
 	# CMS.pprint_ports()
 	# *** Adding pins and labels for metal1-5 ***
@@ -306,32 +415,35 @@ def cascode_common_source_labels(CMS: Component) -> Component:
 	met5_pin = (72,16)
 	met5_label = (72,5)
 	port_size = (0.3,0.3)
-	VIN_label=rectangle(layer=met3_pin, size=port_size, centered=True).copy()
-	VIN_label.add_label(text="VIN", layer=met3_label)
-	move_info.append((VIN_label, CMS.ports['M1_gate_E'], None)) # From W to E
+	VIN_label=rectangle(layer=met2_pin, size=port_size, centered=True).copy()
+	VIN_label.add_label(text="VIN", layer=met2_label)
+	# move_info.append((VIN_label, CMS.ports['M1_gate_E'], None)) # WORKS From W to E
 	# move_info.append((VIN_label, CMS.ports['VIN'], None)) # VINe1, e2, e3, e4
 	# move_info.append((VIN_label, CMS.ports['VINe4'], None)) # VINe1, e2, e3, e4
+	move_info.append((VIN_label, CMS.ports['VINe2'], None))
 
-	VBIAS_label=rectangle(layer=met3_pin, size=port_size, centered=True).copy()
-	VBIAS_label.add_label(text="VBIAS", layer=met3_label)
-	move_info.append((VBIAS_label, CMS.ports['M2_gate_W'], None))
+	VBIAS_label=rectangle(layer=met2_pin, size=port_size, centered=True).copy()
+	VBIAS_label.add_label(text="VBIAS", layer=met2_label)
+	# move_info.append((VBIAS_label, CMS.ports['M2_gate_W'], None)) #WORKS
 	# move_info.append((VBIAS_label, CMS.ports['VBIAS'], None))
+	move_info.append((VBIAS_label, CMS.ports['VBIASe4'], None))
 
-	VSS_label=rectangle(layer=met3_pin, size=port_size, centered=True).copy()
-	VSS_label.add_label(text="VSS", layer=met3_label)
-	move_info.append((VSS_label, CMS.ports['M1_source_W'], None)) # From S to W
+	VSS_label=rectangle(layer=met2_pin, size=port_size, centered=True).copy()
+	VSS_label.add_label(text="VSS", layer=met2_label)
+	# move_info.append((VSS_label, CMS.ports['M1_source_W'], None)) #WORKS From S to W
 	# move_info.append((VSS_label, CMS.ports['VSS'], None)) # From S to W
+	move_info.append((VSS_label, CMS.ports['VSSe1'], None)) # From S to W
 
-
-	IOUT_label=rectangle(layer=met3_pin, size=port_size, centered=True).copy()
-	IOUT_label.add_label(text="IOUT", layer=met3_label)
-	move_info.append((IOUT_label, CMS.ports['M2_drain_E'], None)) # From N to E
+	IOUT_label=rectangle(layer=met2_pin, size=port_size, centered=True).copy()
+	IOUT_label.add_label(text="IOUT", layer=met2_label)
+	# move_info.append((IOUT_label, CMS.ports['M2_drain_E'], None)) # WORKS From N to E
 	# move_info.append((IOUT_label, CMS.ports['IOUT'], None)) # From N to E
+	move_info.append((IOUT_label, CMS.ports['IOUTe4'], None)) # From N to E
 
-
-	INT_label = rectangle(layer=met3_pin, size=port_size, centered=True).copy()
-	INT_label.add_label(text="INT", layer=met3_label)
-	move_info.append((INT_label, CMS.ports['M2_source_E'], None))
+	INT_label = rectangle(layer=met2_pin, size=port_size, centered=True).copy()
+	INT_label.add_label(text="INT", layer=met2_label)
+	# move_info.append((INT_label, CMS.ports['M2_source_E'], None)) #MET1_PIN
+	move_info.append((INT_label, CMS.ports['INTcon_N'], None))
 	# move_info.append((INT_label, CMS.ports['INT'], None))
 
 	for label, port, alignment in move_info:
