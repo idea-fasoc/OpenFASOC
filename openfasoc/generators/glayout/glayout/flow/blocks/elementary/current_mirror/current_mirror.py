@@ -102,19 +102,22 @@ def current_mirror(
 	# short gate and drain of one of the reference 
 	interdigitized_fets << L_route(pdk, interdigitized_fets.ports['A_drain_W'], gate_short.ports['con_N'], viaoffset=False, fullbottom=False)
 	
-	top_level << interdigitized_fets
-	# add the tie layer
-	if with_tie:
+    top_level << interdigitized_fets
+    if with_tie:
+        if device in ['nmos','nfet']:
+            tap_layer = "p+s/d"
+        if device in ['pmos','pfet']:
+            tap_layer = "n+s/d"
 		tap_sep = max(
             pdk.util_max_metal_seperation(),
             pdk.get_grule("active_diff", "active_tap")["min_separation"],
         )
-		tap_sep += pdk.get_grule("p+s/d", "active_tap")["min_enclosure"]
+		tap_sep += pdk.get_grule(tap_layer, "active_tap")["min_enclosure"]
 		tap_encloses = (
 		2 * (tap_sep + interdigitized_fets.xmax),
 		2 * (tap_sep + interdigitized_fets.ymax),
 		)
-		tie_ref = top_level << tapring(pdk, enclosed_rectangle = tap_encloses, sdlayer = "p+s/d", horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
+		tie_ref = top_level << tapring(pdk, enclosed_rectangle = tap_encloses, sdlayer = tap_layer, horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
 		top_level.add_ports(tie_ref.get_ports_list(), prefix="welltie_")
 		try:
 			top_level << straight_route(pdk, top_level.ports["A_0_dummy_L_gsdcon_top_met_W"],top_level.ports["welltie_W_top_met_W"],glayer2="met1")
@@ -128,8 +131,13 @@ def current_mirror(
 			pass
 	
 	# add a pwell 
-	top_level.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
-	top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("pwell"), prefix="well_")
+    if device in ['nmos','nfet']:
+        top_level.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
+        top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("pwell"), prefix="well_")
+    if device in ['pmos','pfet']:
+        top_level.add_padding(layers = (pdk.get_glayer("nwell"),), default = pdk.get_grule("nwell", "active_tap")["min_enclosure"], )
+        top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("nwell"), prefix="well_")
+
  
 	# add the substrate tap if specified
 	if with_substrate_tap:
