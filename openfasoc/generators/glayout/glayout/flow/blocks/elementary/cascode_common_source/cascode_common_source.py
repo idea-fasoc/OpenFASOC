@@ -325,7 +325,7 @@ def cascode_common_source(
 	srcM1bulk=top_level << straight_route(pdk, top_level.ports["M1_source_E"], 
 												top_level.ports["M1_tie_W_top_met_E"], glayer2="met2")
 	srcM2bulk=top_level << straight_route(pdk, top_level.ports["M1_tie_W_top_met_E"], 
-												top_level.ports["M2_tie_W_top_met_E"], glayer2="met2")
+												top_level.ports["M2_tie_W_top_met_E"], glayer2="met3") #M2_tie_W_top_met_E M2_tie_S_top_met_S M2_tie_E_top_met_E, only met3 matches
 	# top_level.add_ports(srcM1bulk.get_ports_list(), prefix="VSS")
 	# top_level.add_ports(srcM2bulk.get_ports_list(), prefix="VSS")
 
@@ -401,7 +401,7 @@ def cascode_common_source(
 def cascode_common_source_labels(CMS: Component) -> Component:
 	# Unlock component to attach the labels.
 	CMS.unlock()
-	# CMS.pprint_ports()
+	CMS.pprint_ports()
 	# *** Adding pins and labels for metal1-5 ***
 	move_info =list()
 	met1_pin=(68,20)
