@@ -28,105 +28,9 @@ from gdsfactory.components import text_freetype, rectangle
 
 from glayout.flow.pdk.util.comp_utils import prec_ref_center, prec_center, movey, evaluate_bbox, align_comp_to_port
 
-# def cascode_common_source_netlist(
-# 	pdk: MappedPDK, 
-# 	width: float,
-# 	length: float,
-# 	multipliers: int, 
-# 	n_or_p_fet: Optional[str] = 'nfet',
-# 	subckt_only: Optional[bool] = False,
-# 	m1_fingers = int,
-# 	m2_fingers = int,
-# 	m1_multipliers = int,
-# 	m2_multipliers = int
-# ) -> Netlist:
-# 	if length is None:
-# 		length = pdk.get_grule('poly')['min_width']
-# 	if width is None:
-# 		width = 3 
-# 	mtop = multipliers if subckt_only else 1
-# 	model = pdk.models[n_or_p_fet]
-	
-# 	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={length} w={width} m={mtop} ' + """
-# XM1 INT VIN VSS VSS {model} l={{length}} w={{width}} m={{m1_multipliers}}
-# XM2 IOUT VBIAS INT VSS {model} l={{length}} w={{width}} m={{m2_multipliers}}"""
-# 	source_netlist += "\n.ends {circuit_name}"
+from glayout.flow.primitives.via_gen import via_array
 
-# 	instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult}"
- 
-# 	return Netlist(
-# 		circuit_name='CASCODECOMMONSRC',
-# 		nodes=['VIN', 'VBIAS', 'VSS', 'IOUT'], 
-# 		source_netlist=source_netlist,
-#   		instance_format=instance_format,
-# 		parameters={
-# 			'model': model,
-# 			'width': width,
-#    			'length': length,	
-# 			'mult': multipliers
-#    		}
-# 	)
-
-## WORKING COPY
-# def cascode_common_source_netlist(
-# 	pdk: MappedPDK, 
-# 	m1_width: float,
-# 	m2_width: float,
-# 	m1_length: float,
-# 	m2_length: float,
-# 	multipliers: int, 
-# 	n_or_p_fet: Optional[str] = 'nfet',
-# 	subckt_only: Optional[bool] = False,
-# 	m1_fingers = int,
-# 	m2_fingers = int,
-# 	m1_multipliers = int,
-# 	m2_multipliers = int
-# ) -> Netlist:
-# 	if m1_length is None:
-# 		m1_length = pdk.get_grule('poly')['min_length']
-# 	if m1_width is None:
-# 		m1_width = pdk.get_grule('poly')['min_width']
-# 	m2_length = m2_length or pdk.get_grule('poly')['min_length']
-# 	m2_width = m2_width or pdk.get_grule('poly')['min_width']
-
-# 	mtop = multipliers if subckt_only else 1
-# 	model = pdk.models[n_or_p_fet]
-# 	m1_multipliers = m1_multipliers or 1
-# 	m2_multipliers = m2_multipliers or 1
-# 	dmtop = m1_fingers*m1_multipliers
-# 	num_dummies = 4
-	
-# # 	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={m1_length} w={m1_width} m={mtop} dm={dmtop}' + """
-# # XM1 INT VIN VSS VSS {model} l={m1_length} w={m1_width} m={mult} dm={m1_multipliers}
-# # XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={mult} dm={m2_multipliers}"""
-# 	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={m1_length} w={m1_width} m={mtop}' + """
-# XM1 INT VIN VSS VSS {model} l={m1_length} w={m1_width} m={mult}
-# XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={mult}"""
-# 	#Adding the dummies
-# 	for i in range(num_dummies):
-# 		source_netlist += """ \nXDUMMY"""+f'{i+1}'+""" B B B B {model} """+f'l={m1_length} w={m1_width} m={1} dm={dmtop}'
-
-# 	source_netlist += "\n.ends {circuit_name}"
-
-# 	instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult}"
- 
-# 	return Netlist(
-# 		circuit_name='CASCODECOMMONSRC',
-# 		nodes=['VIN', 'VBIAS', 'VSS', 'IOUT', "INT"], 
-# 		source_netlist=source_netlist,
-#   		instance_format=instance_format,
-# 		parameters={
-# 			'model': model,
-# 			'm1_width': m1_width,
-# 			'm2_width': m2_width,
-#    			'm1_length': m1_length,	
-# 			'm2_length': m2_length,	
-# 			'mult': m1_multipliers*m1_fingers,#multipliers,
-# 			'm1_multipliers': m1_multipliers,
-# 			'm2_multipliers': m2_multipliers,
-#    		}
-# 	)
-
+# Netlist for LVS and SPICE simulations
 def cascode_common_source_netlist(
 	pdk: MappedPDK, 
 	m1_width: float,
@@ -167,8 +71,7 @@ def cascode_common_source_netlist(
 	m2_multipliers= m2_multipliers
 
 	source_netlist = f".subckt {circuit_name} {' '.join(nodes)}\n" 
-	# source_netlist = f".subckt {circuit_name} {' '.join(nodes)}\n"
-	# source_netlist += f'l={m1_length} w={m1_width} m={mtop}' + """
+	# M1 and M2 transistor NETLIST
 	source_netlist += f"XM1 INT VIN VSS VSS {model} l={m1_length} w={m1_width} m={mult}\n"
 	source_netlist += f"XM2 IOUT VBIAS INT VSS {model} l={m2_length} w={m2_width} m={mult}"
 	#Adding the dummies
@@ -323,9 +226,21 @@ def cascode_common_source(
 
 	# Connecting the source of the FETs to the BULK
 	srcM1bulk=top_level << straight_route(pdk, top_level.ports["M1_source_E"], 
-												top_level.ports["M1_tie_W_top_met_E"], glayer2="met2")
+												top_level.ports["M1_tie_W_top_met_E"], glayer2="met2") #E
 	srcM2bulk=top_level << straight_route(pdk, top_level.ports["M1_tie_W_top_met_E"], 
 												top_level.ports["M2_tie_W_top_met_E"], glayer2="met3") #M2_tie_W_top_met_E M2_tie_S_top_met_S M2_tie_E_top_met_E, only met3 matches
+	# srcM3bulk=top_level << straight_route(pdk, top_level.ports["INTcon_S"], 
+	# 											top_level.ports["M2_tie_E_bottom_lay_E"], glayer2="met2")	#M2_tie_S_top_met_E	, M2_tie_S_top_met_S		M2_tie_E_top_met_E				M2_source_E			
+	# srcM3bulk=top_level << straight_route(pdk, top_level.ports["M2_tie_E_top_met_E"], 
+	# 											top_level.ports["M2_tie_E_bottom_lay_E"], glayer2="met1")	#M2_tie_S_top_met_E	, M2_tie_S_top_met_S		M2_tie_E_top_met_E				M2_source_E			
+	
+	srcM4bulk=top_level << straight_route(pdk, top_level.ports["M2_source_W"], 
+												top_level.ports["M2_tie_W_top_met_E"], glayer2="met2") #M2_tie_W_top_met_E M2_tie_S_top_met_S M2_tie_E_top_met_E, only met3 matches
+	
+	# add via_array to vdd pin
+	# vddarray = via_array(pdk, "met1","met3",size=(0.45,0.45))
+	# via_array_ref = top_level << vddarray
+
 	# top_level.add_ports(srcM1bulk.get_ports_list(), prefix="VSS")
 	# top_level.add_ports(srcM2bulk.get_ports_list(), prefix="VSS")
 
@@ -387,6 +302,8 @@ def cascode_common_source(
 		m2_multipliers = m2_multipliers
 	)
 
+	
+
 	generated_netlist_for_lvs = top_level.info['netlist'].generate_netlist()
 	print(f"Type of generated netlist is :", generated_netlist_for_lvs)
 	file_path_local_storage = "./gen_netlist.txt"
@@ -397,11 +314,11 @@ def cascode_common_source(
 		print(f"Verify the file availability and type: ", generated_netlist_for_lvs, type(generated_netlist_for_lvs))
 	return top_level
 
-
+# Function to add labels to the port definitions
 def cascode_common_source_labels(CMS: Component) -> Component:
 	# Unlock component to attach the labels.
 	CMS.unlock()
-	CMS.pprint_ports()
+	# CMS.pprint_ports()
 	# *** Adding pins and labels for metal1-5 ***
 	move_info =list()
 	met1_pin=(68,20)
@@ -451,6 +368,15 @@ def cascode_common_source_labels(CMS: Component) -> Component:
 		aligned_label = align_comp_to_port(label, port, alignment=alignment)
 		CMS.add(aligned_label)
 
+	# Add a label to all ports in the layout
+	# for key,val in CMS.ports.items():
+	# 	print(f"\nKEYS: ",key, " VALUES:",val, val.center, val.layer)
+	# 	# CMS.add_label(key, val.center, val.layer)
+	# 	# CMS.add_label(key,val.center,val.layer)
+	# 	alignment = ('c','b') if alignment is None else alignment
+	# 	aligned_label = align_comp_to_port(key, CMS.ports[val.name], alignment=alignment)
+	# 	CMS.add(aligned_label)
+
 	return CMS.flatten()
 
 mapped_pdk_build = sky130
@@ -467,10 +393,10 @@ Cascode_cs_component.write_gds("./local_casdcode_overwite.gds")
 
 magic_drc_result = sky130.drc_magic(Cascode_cs_component, Cascode_cs_component.name)
 # magic_drc_result = sky130.drc_magic(Cascode_cs_component, Cascode_cs_component.name, output_file_path="DRC/")
-# if magic_drc_result :
-#     print("DRC is clean: ", magic_drc_result)
-# else:
-#     print("DRC failed. Please try again.")
+if magic_drc_result :
+    print("DRC is clean: ", magic_drc_result)
+else:
+    print("DRC failed. Please try again.")
 
 Cascode_cs_component.name = 'cascode_common_source_lvs' 
 netgen_lvs_result = mapped_pdk_build.lvs_netgen(Cascode_cs_component, 'cascode_common_source_lvs')
