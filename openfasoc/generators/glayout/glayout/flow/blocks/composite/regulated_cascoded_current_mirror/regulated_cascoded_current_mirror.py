@@ -176,18 +176,18 @@ def CurrentMirror(
     
     source_short = CurrentMirror << c_route(pdk,CurrentMirror.ports["currm_A_source_E"],CurrentMirror.ports["currm_B_source_E"],fullbottom=True)
    
-   
-    # Connecting dummies to the welltie
-    try:
-        CurrentMirror << straight_route(pdk, CurrentMirror.ports["A_0_dummy_L_gsdcon_top_met_W"],CurrentMirror.ports["welltie_W_top_met_W"],glayer2="met1")
-    except KeyError:
-        pass
-    try:
-        end_col = num_cols - 1
-        port1 = f'B_{end_col}_dummy_R_gdscon_top_met_E'
-        CurrentMirror << straight_route(pdk, CurrentMirror.ports[port1], CurrentMirror.ports["welltie_E_top_met_E"], glayer2="met1")
-    except KeyError:
-        pass
+    if with_dummy:
+        # Connecting dummies to the welltie
+        try:
+            CurrentMirror << straight_route(pdk, CurrentMirror.ports["A_0_dummy_L_gsdcon_top_met_W"],CurrentMirror.ports["welltie_W_top_met_W"],glayer2="met1")
+        except KeyError:
+            pass
+        try:
+            end_col = num_cols - 1
+            port1 = f'B_{end_col}_dummy_R_gdscon_top_met_E'
+            CurrentMirror << straight_route(pdk, CurrentMirror.ports[port1], CurrentMirror.ports["welltie_E_top_met_E"], glayer2="met1")
+        except KeyError:
+            pass
     
 
      # add well (probably unnecessary)
@@ -202,7 +202,7 @@ def CurrentMirror(
     else:
         raise ValueError("type must be either nfet or pfet")
     
-    
+   
     #Connecting the source of the fets to the bulk ???
     src2bulk=CurrentMirror << straight_route(pdk, source_short.ports["con_N"],CurrentMirror.ports["currm_welltie_N_top_met_W"], glayer2="met2")
     
@@ -316,9 +316,11 @@ def sky130_add_current_mirror_labels(
 
 # Main function to generate the current mirror layout
 # mappedpdk, Width, Length, num_cols, fingers, transistor type
-comp = CurrentMirror(sky130,3,1,2,1, type='nfet', with_substrate_tap=False, with_tie=True)
+comp = CurrentMirror(sky130,3,0.5,2,1, type='nfet')
 # Add labels to the current mirror layout
 comp = sky130_add_current_mirror_labels(comp, transistor_type='nfet', pdk=sky130)
+
+
 
 # Write the current mirror layout to a GDS file
 comp.name = "CM"
