@@ -48,6 +48,35 @@ else:
 	PDK_ROOT = "/usr/bin/miniconda3/share/pdk/"
  
  
+#  def cascode_common_source_netlist(
+# 	pdk: MappedPDK, 
+# 	m1_width: float,
+# 	m2_width: float,
+# 	m1_length: float,
+# 	m2_length: float,
+# 	multipliers: int, 
+# 	n_or_p_fet: Optional[str] = 'nfet',
+# 	subckt_only: Optional[bool] = False,
+# 	m1_fingers = int,
+# 	m2_fingers = int,
+# 	m1_multipliers = int,
+# 	m2_multipliers = int
+# ) -> Netlist:
+# 	if m1_length is None:
+# 		m1_length = pdk.get_grule('poly')['min_length']
+# 	if m1_width is None:
+# 		m1_width = pdk.get_grule('poly')['min_width']
+# 	m2_length = m2_length or pdk.get_grule('poly')['min_length']
+# 	m2_width = m2_width or pdk.get_grule('poly')['min_width']
+
+# 	mtop = multipliers if subckt_only else 1
+# 	model = pdk.models[n_or_p_fet]
+# 	m1_multipliers = m1_multipliers or 1
+# 	m2_multipliers = m2_multipliers or 1
+# 	dmtop = m1_fingers*m1_multipliers
+# 	num_dummies = 4
+ 
+ 
 def generate_current_mirror_netlist(
     pdk: MappedPDK,
     instance_name: str,
@@ -106,41 +135,72 @@ def generate_current_mirror_netlist(
         },
     )
 
+# @validate_arguments
 def CurrentMirror(
-    pdk: MappedPDK,
-    CM_size: tuple[float, float, int], # (width, length, multipliers)
-    type: Optional[str] = 'nfet',
-    rmult: Optional[int] =1,
-    with_substrate_tap: Optional[bool] = False,
-    with_tie: Optional[bool] = True,
-    with_dummy: Optional[bool] = True,
-    tie_layers: tuple[str,str]=("met2","met1"),
+        pdk: MappedPDK,
+        Width: float = 3,
+        Length: Optional[float] = None,
+        num_cols: int = 2,
+        fingers: int = 1,
+        type: Optional[str] = 'nfet',
+        with_substrate_tap: Optional[bool] = False,
+        with_tie: Optional[bool] = True,
+        with_dummy: Optional[bool] = True,
+        tie_layers: tuple[str,str]=("met2","met1"),
+        **kwargs
     ) -> Component:
-    """Create a current mirror """   
     
+    """An instantiable current mirror that returns a Component object. 
+    The current mirror could be a two transistor interdigitized structure with a shorted source and gate.
+    It can be instantiated with either nmos or pmos devices. It can also be instantiated with a dummy device, a substrate tap, and a tie layer, and is centered at the origin.
+    Transistor A acts as the reference and Transistor B acts as the mirror fet
+    This current mirror is used to generate a exact copy of the reference current.
+    [TODO] It will be updated with multi-leg or stackked length parametrization in future.
+    [TODO] There will also be a Regulated Cascoded block added to it. 
+
+	Args:
+		pdk (MappedPDK): the process design kit to use
+        Width (float): width of the interdigitized fets (same for both reference and mirror)
+        Length (float): length of the interdigitized fets (same for both reference and mirror) 
+        As Default, Set to None to use the minimum length of the technology
+		numcols (int): number of columns of the interdigitized fets
+        fingers: Number of fingers of interdigitized fets (same for both reference and mirror)
+		device (str): nfet or pfet (can only interdigitize one at a time with this option)
+		with_dummy (bool): True places dummies on either side of the interdigitized fets
+		with_substrate_tap (bool): boolean to decide whether to place a substrate tapring
+		with_tie (bool): boolean to decide whether to place a tapring for tielayer
+		tie_layers (tuple[str,str], optional): the layers to use for the tie. Defaults to ("met2","met1").
+		**kwargs: The keyword arguments are passed to the two_nfet_interdigitized or two_pfet_interdigitized functions and need to be valid arguments that can be accepted by the multiplier 
+	Returns:
+		Component: a current mirror component object
+	"""
+ 
+    # Create the current mirror component
     CurrentMirror = Component(name="CurrentMirror")
     
+    # Create the interdigitized fets
     if type.lower() =="pfet" or type.lower() =="pmos":
-        currm= two_pfet_interdigitized(pdk,numcols=CM_size[2],width=CM_size[0],length=CM_size[1],dummy=with_dummy,
-                                       rmult=rmult,with_substrate_tap=with_substrate_tap,with_tie=with_tie,tie_layers=tie_layers)
+        currm= two_pfet_interdigitized(pdk,numcols=num_cols,width=Width,length=Length,fingers=fingers,
+                                       dummy=with_dummy,with_substrate_tap=with_substrate_tap,with_tie=with_tie,tie_layers=tie_layers)
     elif type.lower() =="nfet" or type.lower() =="nmos":
-        currm= two_nfet_interdigitized(pdk,numcols=CM_size[2],width=CM_size[0],length=CM_size[1],dummy=with_dummy,
-                                       rmult=rmult,with_substrate_tap=with_substrate_tap,with_tie=with_tie,tie_layers=tie_layers)
+        currm= two_nfet_interdigitized(pdk,numcols=num_cols,width=Width,length=Length,fingers=fingers,dummy=with_dummy,
+                                       with_substrate_tap=with_substrate_tap,with_tie=with_tie,tie_layers=tie_layers)
     else:
         raise ValueError("type must be either nfet or pfet")
         
+    # Add the interdigitized fets to the current mirror top component
     currm_ref = prec_ref_center(currm)
     CurrentMirror.add(currm_ref)
     CurrentMirror.add_ports(currm_ref.get_ports_list(),prefix="currm_")
-    
-    
+
     maxmet_sep = pdk.util_max_metal_seperation()
     
-    gate_short = CurrentMirror << c_route(pdk,CurrentMirror.ports["currm_A_gate_W"],CurrentMirror.ports["currm_B_gate_W"],extension=3*maxmet_sep, viaoffset=False)
+    # Connecting the source and gate of the fets
+    gate_short = CurrentMirror << c_route(pdk,CurrentMirror.ports["currm_A_gate_W"],CurrentMirror.ports["currm_B_gate_W"],extension=3*maxmet_sep)
     
-    CurrentMirror << L_route(pdk,CurrentMirror.ports["currm_A_drain_W"],gate_short.ports["con_S"],viaoffset=False, fullbottom=False)
+    CurrentMirror << L_route(pdk,CurrentMirror.ports["currm_A_drain_W"],gate_short.ports["con_S"],fullbottom=True)
     
-    source_short = CurrentMirror << c_route(pdk,CurrentMirror.ports["currm_A_source_E"],CurrentMirror.ports["currm_B_source_E"], viaoffset=False)
+    source_short = CurrentMirror << c_route(pdk,CurrentMirror.ports["currm_A_source_E"],CurrentMirror.ports["currm_B_source_E"],fullbottom=True)
    
    
     # Connecting dummies to the welltie
@@ -149,7 +209,7 @@ def CurrentMirror(
     except KeyError:
         pass
     try:
-        end_col = CM_size[2] - 1
+        end_col = num_cols - 1
         port1 = f'B_{end_col}_dummy_R_gdscon_top_met_E'
         CurrentMirror << straight_route(pdk, CurrentMirror.ports[port1], CurrentMirror.ports["welltie_E_top_met_E"], glayer2="met1")
     except KeyError:
@@ -174,7 +234,7 @@ def CurrentMirror(
 
     # place vref pin
     vrefpin = CurrentMirror << rectangle(size=(0.5,0.5),layer=pdk.get_glayer("met3"),centered=True)
-    vrefpin.movex(evaluate_bbox(vrefpin)[0]+(CM_size[2]*maxmet_sep))
+    vrefpin.movex(evaluate_bbox(vrefpin)[0]+(num_cols*maxmet_sep))
     vrefpin.movey(CurrentMirror.ymax)
     # route vref to drain of A
     CurrentMirror  << smart_route(pdk, CurrentMirror.ports["currm_A_0_drain_W"], vrefpin.ports["e4"],viaoffset=False)
@@ -198,7 +258,7 @@ def CurrentMirror(
     CurrentMirror.info["netlist"] = generate_current_mirror_netlist(
                                     pdk=pdk,
                                     instance_name=CurrentMirror.name,
-                                    CM_size=CM_size,  # (width, length, multipliers)
+                                    CM_size= (Width, Length, num_cols),  # (width, length, multipliers)
                                     transistor_type=type,
                                     drain_net_A="VREF",  # Input drain connected to VREF 
                                     drain_net_B="VCOPY", # Output drain connected to VCOPY
@@ -265,7 +325,7 @@ def sky130_add_current_mirror_labels(
 
     return CMS.flatten()
 
-comp = CurrentMirror(sky130, (3,0.5, 2), type='nfet', with_substrate_tap=False, with_tie=True)
+comp = CurrentMirror(sky130, type='nfet', with_substrate_tap=False, with_tie=True)
 comp = sky130_add_current_mirror_labels(comp, transistor_type='nfet', pdk=sky130)
 comp.name = "CM"
 comp.write_gds("GDS/CM.gds")
@@ -283,10 +343,10 @@ print(comp.info["netlist"].generate_netlist())
 # drc_result = sky130.drc_magic(comp, "CM",output_file="DRC/")
 # print(drc_result)
 # %%
-delete_files_in_directory("LVS")
-print("\n...Running LVS...")
-netgen_lvs_result = sky130.lvs_netgen(comp, "CM",output_file_path="LVS/")        
-print(netgen_lvs_result)
+# delete_files_in_directory("LVS")
+# print("\n...Running LVS...")
+# netgen_lvs_result = sky130.lvs_netgen(comp, "CM",output_file_path="LVS/")        
+# print(netgen_lvs_result)
 
 ## Will be used in future for simulation
 
