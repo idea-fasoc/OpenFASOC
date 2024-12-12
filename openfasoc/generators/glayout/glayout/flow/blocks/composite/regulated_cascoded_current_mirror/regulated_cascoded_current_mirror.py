@@ -316,7 +316,7 @@ def sky130_add_current_mirror_labels(
 
 # Main function to generate the current mirror layout
 # mappedpdk, Width, Length, num_cols, fingers, transistor type
-comp = CurrentMirror(sky130,3,1,2,2, type='nfet', with_substrate_tap=False, with_tie=True)
+comp = CurrentMirror(sky130,3,1,2,1, type='nfet', with_substrate_tap=False, with_tie=True)
 # Add labels to the current mirror layout
 comp = sky130_add_current_mirror_labels(comp, transistor_type='nfet', pdk=sky130)
 
