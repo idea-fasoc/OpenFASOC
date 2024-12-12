@@ -1,0 +1,7 @@
+
+
+.subckt CurrentMirror VREF VCOPY VSS
+XA VREF VREF VSS VSS sky130_fd_pr__nfet_01v8 l=1 w=3 m=2 nf=2
+XB VCOPY VREF VSS VSS sky130_fd_pr__nfet_01v8 l=1 w=3 m=2 nf=2
+XDUMMY VSS VSS VSS VSS sky130_fd_pr__nfet_01v8 l=1 w=3 m=2
+.ends CurrentMirror

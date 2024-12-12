@@ -1,11 +1,9 @@
 import sys
-from os import path, rename, environ, listdir, remove
-
-environ['OPENBLAS_NUM_THREADS'] = '1'
+from os import path, rename, environ , listdir, remove, chmod
+# environ['OPENBLAS_NUM_THREADS'] = '1'
 from pathlib import Path
 # path to glayout
 sys.path.append(path.join(str(Path(__file__).resolve().parents[2])))
-
 
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk as sky130
@@ -19,9 +17,9 @@ from glayout.flow.routing.L_route import L_route
 
 from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized, two_pfet_interdigitized
 
+from glayout.flow.pdk.util.snap_to_grid import component_snap_to_grid
 from glayout.flow.pdk.util.comp_utils import evaluate_bbox, prec_center, prec_array, movey, align_comp_to_port, prec_ref_center
-from glayout.flow.pdk.util.port_utils import add_ports_perimeter	
-
+from glayout.flow.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, set_port_orientation, rename_component_ports
 
 from gdsfactory.components import text_freetype, rectangle
 from gdsfactory import Component
@@ -35,11 +33,14 @@ def delete_files_in_directory(directory_path):
      for file in files:
        file_path = path.join(directory_path, file)
        if path.isfile(file_path):
-         remove(file_path)
+         try:
+            chmod(file_path, 0o777)
+            remove(file_path)
+         except PermissionError:
+               print(f"PermissionError: Operation not permitted for {file_path}")
      print("All files deleted successfully.")
    except OSError:
      print("Error occurred while deleting files.")
-
 
 global PDK_ROOT
 if 'PDK_ROOT' in environ:
@@ -47,40 +48,10 @@ if 'PDK_ROOT' in environ:
 else:
 	PDK_ROOT = "/usr/bin/miniconda3/share/pdk/"
  
- 
-#  def cascode_common_source_netlist(
-# 	pdk: MappedPDK, 
-# 	m1_width: float,
-# 	m2_width: float,
-# 	m1_length: float,
-# 	m2_length: float,
-# 	multipliers: int, 
-# 	n_or_p_fet: Optional[str] = 'nfet',
-# 	subckt_only: Optional[bool] = False,
-# 	m1_fingers = int,
-# 	m2_fingers = int,
-# 	m1_multipliers = int,
-# 	m2_multipliers = int
-# ) -> Netlist:
-# 	if m1_length is None:
-# 		m1_length = pdk.get_grule('poly')['min_length']
-# 	if m1_width is None:
-# 		m1_width = pdk.get_grule('poly')['min_width']
-# 	m2_length = m2_length or pdk.get_grule('poly')['min_length']
-# 	m2_width = m2_width or pdk.get_grule('poly')['min_width']
-
-# 	mtop = multipliers if subckt_only else 1
-# 	model = pdk.models[n_or_p_fet]
-# 	m1_multipliers = m1_multipliers or 1
-# 	m2_multipliers = m2_multipliers or 1
-# 	dmtop = m1_fingers*m1_multipliers
-# 	num_dummies = 4
- 
- 
 def generate_current_mirror_netlist(
     pdk: MappedPDK,
     instance_name: str,
-    CM_size: tuple[float, float, int],  # (width, length, multipliers)
+    CM_size: tuple[float, float, int, int],  # (width, length, multipliers, fingers)
     drain_net_A: str,
     gate_net: str,
     source_net: str,
@@ -101,6 +72,7 @@ def generate_current_mirror_netlist(
     multipliers = CM_size[2]  
     mtop = multipliers if subckt_only else 1
     #mtop = multipliers * 2 if dummy else multipliers # Double the multiplier to account for the dummies
+    fingers =  CM_size[3] # Number of fingers of the interdigitized fets
 
 
     model_name = pdk.models[transistor_type.lower()]
@@ -114,13 +86,14 @@ def generate_current_mirror_netlist(
 
 
     # Generating only two transistors (one on each side):
-    source_netlist += f"XA {drain_net_A} {gate_net} {source_net} {bulk_net} {model_name} l={length} w={width} m={mtop}\n"
-    source_netlist += f"XB {drain_net_B} {gate_net} {source_net} {bulk_net} {model_name} l={length} w={width} m={mtop}\n"
-    source_netlist += f"XDUMMY {bulk_net} {bulk_net} {bulk_net} {bulk_net} {model_name} l={length} w={width} m={mtop}\n"
+    source_netlist += f"XA {drain_net_A} {gate_net} {source_net} {bulk_net} {model_name} l={length} w={width} m={mtop} nf={fingers}\n"
+    source_netlist += f"XB {drain_net_B} {gate_net} {source_net} {bulk_net} {model_name} l={length} w={width} m={mtop} nf={fingers}\n"
+    if dummy:
+        source_netlist += f"XDUMMY {bulk_net} {bulk_net} {bulk_net} {bulk_net} {model_name} l={length} w={width} m={mtop}\n"
     source_netlist += ".ends " + circuit_name
 
 
-    instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult}"
+    instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult} nf={fingers}"
 
     return Netlist(
         circuit_name=circuit_name,
@@ -138,7 +111,7 @@ def generate_current_mirror_netlist(
 # @validate_arguments
 def CurrentMirror(
         pdk: MappedPDK,
-        Width: float = 3,
+        Width: float = 1,
         Length: Optional[float] = None,
         num_cols: int = 2,
         fingers: int = 1,
@@ -155,6 +128,7 @@ def CurrentMirror(
     It can be instantiated with either nmos or pmos devices. It can also be instantiated with a dummy device, a substrate tap, and a tie layer, and is centered at the origin.
     Transistor A acts as the reference and Transistor B acts as the mirror fet
     This current mirror is used to generate a exact copy of the reference current.
+    [TODO] Needs to be checked for both pfet and nfet configurations.
     [TODO] It will be updated with multi-leg or stackked length parametrization in future.
     [TODO] There will also be a Regulated Cascoded block added to it. 
 
@@ -216,7 +190,7 @@ def CurrentMirror(
         pass
     
 
-     # add well
+     # add well (probably unnecessary)
     if type.lower() == "nfet":
         # add a pwell 
         CurrentMirror.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
@@ -228,37 +202,43 @@ def CurrentMirror(
     else:
         raise ValueError("type must be either nfet or pfet")
     
-    #Connecting the source of the fets to the bulk ???
-    src2bulk=CurrentMirror << straight_route(pdk, source_short.ports["con_N"],CurrentMirror.ports["currm_welltie_N_top_met_N"], glayer2="met2")
     
+    #Connecting the source of the fets to the bulk ???
+    src2bulk=CurrentMirror << straight_route(pdk, source_short.ports["con_N"],CurrentMirror.ports["currm_welltie_N_top_met_W"], glayer2="met2")
+    
+    ##The default naming scheme of ports in GDSFactory
+    ##e1=West, e2=North, e3=East, e4=South. The default naming scheme of ports in GDSFactory
 
-    # place vref pin
+    # place vref pin (Needs more work to place it properly)
     vrefpin = CurrentMirror << rectangle(size=(0.5,0.5),layer=pdk.get_glayer("met3"),centered=True)
     vrefpin.movex(evaluate_bbox(vrefpin)[0]+(num_cols*maxmet_sep))
     vrefpin.movey(CurrentMirror.ymax)
     # route vref to drain of A
-    CurrentMirror  << smart_route(pdk, CurrentMirror.ports["currm_A_0_drain_W"], vrefpin.ports["e4"],viaoffset=False)
+    CurrentMirror  << smart_route(pdk, CurrentMirror.ports["currm_A_0_drain_W"], vrefpin.ports["e4"])
+    ## align_comp_to_port(vrefpin,ss.ports["top_met_E"], alignment=('c', 'b')) ?? How to align it properly
     
     
-    # place vcopy pin
+    # place vcopy pin (Needs more work to place it properly)
     vcopypin = CurrentMirror << rectangle(size=(0.5,0.5),layer=pdk.get_glayer("met3"),centered=True)
-    vcopypin.movex(evaluate_bbox(vcopypin)[0]-2*maxmet_sep)
+    vcopypin.movex(evaluate_bbox(vcopypin)[0]-(num_cols*maxmet_sep))
     vcopypin.movey(CurrentMirror.ymax)
     # route vcopy to drain of B
-    CurrentMirror  << smart_route(pdk, CurrentMirror.ports["currm_B_0_drain_E"], vcopypin.ports["e4"],viaoffset=False)
+    CurrentMirror  << smart_route(pdk, CurrentMirror.ports["currm_B_0_drain_W"], vcopypin.ports["e4"])
+    ## align_comp_to_port(vrefpin,ss.ports["top_met_E"], alignment=('c', 'b')) ?? How to align it properly
     
 
-    CurrentMirror.add_ports(gate_short.get_ports_list(), prefix="gateshortports")
-    CurrentMirror.add_ports(src2bulk.get_ports_list(), prefix="purposegndports")
+    CurrentMirror.add_ports(gate_short.get_ports_list(), prefix="gateshortports_")
+    CurrentMirror.add_ports(src2bulk.get_ports_list(), prefix="purposegndports_")
 
-    CurrentMirror.add_ports(vrefpin.get_ports_list(), prefix="Refport")
-    CurrentMirror.add_ports(vcopypin.get_ports_list(), prefix="Copyport")
+
+    CurrentMirror.add_ports(vrefpin.get_ports_list(), prefix="refport_")
+    CurrentMirror.add_ports(vcopypin.get_ports_list(), prefix="copyport_")
 
 
     CurrentMirror.info["netlist"] = generate_current_mirror_netlist(
                                     pdk=pdk,
                                     instance_name=CurrentMirror.name,
-                                    CM_size= (Width, Length, num_cols),  # (width, length, multipliers)
+                                    CM_size= (Width, Length, num_cols,fingers),  # (width, length, multipliers)
                                     transistor_type=type,
                                     drain_net_A="VREF",  # Input drain connected to VREF 
                                     drain_net_B="VCOPY", # Output drain connected to VCOPY
@@ -268,12 +248,21 @@ def CurrentMirror(
                                     subckt_only=True
                                     )
 
-    return CurrentMirror  
+    generated_netlist_for_lvs = CurrentMirror.info['netlist'].generate_netlist()
+    print(f"Type of generated netlist is :", generated_netlist_for_lvs)
+    file_path_local_storage = "./gen_netlist.txt"
+    try:
+        with open(file_path_local_storage, 'w') as file:
+            file.write(generated_netlist_for_lvs)
+    except:
+        print(f"Verify the file availability and type: ", generated_netlist_for_lvs, type(generated_netlist_for_lvs))
+
+    return rename_ports_by_orientation(component_snap_to_grid(CurrentMirror))
 
 def sky130_add_current_mirror_labels(
     CMS: Component, 
     transistor_type: str = "nfet",
-    pdk: MappedPDK =sky130) -> Component:  # Re-introduce transistor_type
+    pdk: MappedPDK =sky130) -> Component:  
     """Add labels to the current mirror layout for LVS, handling both nfet and pfet."""
 
     met2_pin = (69, 16)
@@ -281,8 +270,6 @@ def sky130_add_current_mirror_labels(
     met3_pin = (70, 16)
     met3_label = (70, 5)
     
-    
-
     CMS.unlock()
     move_info = []
 
@@ -290,13 +277,13 @@ def sky130_add_current_mirror_labels(
     vref_label = rectangle(layer=met2_pin, size=(0.5, 0.5), centered=True).copy()
     vref_label.add_label(text="VREF", layer=met2_label)
     
-    move_info.append((vref_label, CMS.ports["Refporte2"], None)) # Drain of A
-    move_info.append((vref_label, CMS.ports["gateshortportscon_N"], None))  # Gate of A & B
+    move_info.append((vref_label, CMS.ports["refport_N"], None)) # Drain of A
+    move_info.append((vref_label, CMS.ports["gateshortports_con_N"], None))  # Gate of A & B
     
     # VCOPY label (for drain of transistor B)
     vcopy_label = rectangle(layer=met2_pin, size=(0.5, 0.5), centered=True).copy()
     vcopy_label.add_label(text="VCOPY", layer=met2_label)
-    move_info.append((vcopy_label, CMS.ports["Copyporte2"], None))  # Drain of B
+    move_info.append((vcopy_label, CMS.ports["copyport_N"], None))  # Drain of B
     
     
    # VSS/VDD label (for sources/bulk connection)
@@ -314,7 +301,7 @@ def sky130_add_current_mirror_labels(
     vb_label = rectangle(layer=bulk_pin_layer, size=(0.5, 0.5), centered=True).copy() 
     vb_label.add_label(text=bulk_net_name , layer=bulk_label_layer)
 
-    move_info.append((vb_label, CMS.ports["purposegndportsroute_N"], None)) 
+    move_info.append((vb_label, CMS.ports["purposegndports_route_N"], None)) 
     
     # Add labels to the component
     for label, port, alignment in move_info:
@@ -325,31 +312,40 @@ def sky130_add_current_mirror_labels(
 
     return CMS.flatten()
 
-comp = CurrentMirror(sky130, type='nfet', with_substrate_tap=False, with_tie=True)
+
+
+# Main function to generate the current mirror layout
+# mappedpdk, Width, Length, num_cols, fingers, transistor type
+comp = CurrentMirror(sky130,3,1,2,2, type='nfet', with_substrate_tap=False, with_tie=True)
+# Add labels to the current mirror layout
 comp = sky130_add_current_mirror_labels(comp, transistor_type='nfet', pdk=sky130)
+
+# Write the current mirror layout to a GDS file
 comp.name = "CM"
+delete_files_in_directory("GDS/")
+tmpdirname = Path("GDS/").resolve()
+delete_files_in_directory("GDS/")
+tmp_gds_path = Path(comp.write_gds(gdsdir=tmpdirname)).resolve()
 comp.write_gds("GDS/CM.gds")
 comp.show()
-
-# for absc in comp.ports.keys():
-#     if len(absc.split("_")) <=6:
-#         print(absc)
-
+# Generate the netlist for the current mirror
 print("\n...Generating Netlist...")
 print(comp.info["netlist"].generate_netlist())
-# %%
-# delete_files_in_directory("DRC")
-# print("\n...Running DRC...")
-# drc_result = sky130.drc_magic(comp, "CM",output_file="DRC/")
-# print(drc_result)
-# %%
-# delete_files_in_directory("LVS")
-# print("\n...Running LVS...")
-# netgen_lvs_result = sky130.lvs_netgen(comp, "CM",output_file_path="LVS/")        
-# print(netgen_lvs_result)
+# DRC Checks
+#delete_files_in_directory("DRC/")
+print("\n...Running DRC...")
+drc_result = sky130.drc_magic(comp, "CM")
+#drc_result = sky130.drc_magic(comp, "CM",output_file="DRC/")
+print(drc_result['result_str'])
+# LVS Checks
+#delete_files_in_directory("LVS/")
+print("\n...Running LVS...")
+netgen_lvs_result = sky130.lvs_netgen(comp, "CM")  
+#netgen_lvs_result = sky130.lvs_netgen(comp, "CM",output_file_path="LVS/")        
+print(netgen_lvs_result['result_str'])
+
 
 ## Will be used in future for simulation
-
 # extractbash_template=str()
 # #import pdb; pdb.set_trace()
 # with open(str(_TAPEOUT_AND_RL_DIR_PATH_)+"/extract.bash.template","r") as extraction_script:
