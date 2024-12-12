@@ -150,12 +150,6 @@ def  flipped_voltage_follower(
     #add nwell
     if well == "nwell": 
         top_level.add_padding(layers=(pdk.get_glayer("nwell"),),default= 1 )
- 
-    
-    comp = Component()
-    compref = comp << top_level
-    correctionxy = prec_center(compref)
-    compref.movex(correctionxy[0]).movey(correctionxy[1])
     
     component = component_snap_to_grid(rename_ports_by_orientation(top_level))
 
