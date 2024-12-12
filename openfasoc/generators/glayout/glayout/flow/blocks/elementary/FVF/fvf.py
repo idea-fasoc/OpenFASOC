@@ -100,14 +100,16 @@ def  flipped_voltage_follower(
     top_level = Component(name="flipped_voltage_follower")
 
     #two fets
-    if device_type == "nmos":
-        fet_1 = nmos(pdk, width=width[0], fingers=fingers[0], multipliers=multipliers[0], with_dummy=dummy_1, with_dnwell=False, with_substrate_tap=False, length=length[0], tie_layers=tie_layers1, sd_rmult=sd_rmult, **kwargs)
-        fet_2 = nmos(pdk, width=width[1], fingers=fingers[1], multipliers=multipliers[1], with_dummy=dummy_2, with_dnwell=False, with_substrate_tap=False, length=length[1], tie_layers=tie_layers2, sd_rmult=sd_rmult, **kwargs)
-        well = "pwell"
-    elif device_type == "pmos":
-        fet_1 = pmos(pdk, width=width[0], fingers=fingers[0], multipliers=multipliers[0], with_dummy=dummy_1, with_substrate_tap=False, length=length[0], tie_layers=tie_layers1, sd_rmult=sd_rmult, **kwargs)
-        fet_2 = pmos(pdk, width=width[1], fingers=fingers[1], multipliers=multipliers[1], with_dummy=dummy_2, with_substrate_tap=False, length=length[1], tie_layers=tie_layers2, sd_rmult=sd_rmult, **kwargs)
-        well = "nwell"
+    device_map = {
+            "nmos": nmos,
+            "pmos":pmos,
+            }
+    device = device_map.get(device_type)
+    
+    fet_1 = device(pdk, width=width[0], fingers=fingers[0], multipliers=multipliers[0], with_dummy=dummy_1, with_substrate_tap=False, length=length[0], tie_layers=tie_layers1, sd_rmult=sd_rmult, **kwargs)
+    fet_2 = device(pdk, width=width[1], fingers=fingers[1], multipliers=multipliers[1], with_dummy=dummy_2, with_substrate_tap=False, length=length[1], tie_layers=tie_layers2, sd_rmult=sd_rmult, **kwargs)
+    well = "pwell" if device == nmos else "nwell" 
+
     fet_1_ref = top_level << fet_1
     fet_2_ref = top_level << fet_2 
 
@@ -145,7 +147,7 @@ def  flipped_voltage_follower(
     top_level.add_ports(source_1_via.get_ports_list(), prefix="A_source_")
     top_level.add_ports(drain_2_via.get_ports_list(), prefix="B_drain_")
     top_level.add_ports(gate_2_via.get_ports_list(), prefix="B_gate_")
-    #add dnwell
+    #add nwell
     if well == "nwell": 
         top_level.add_padding(layers=(pdk.get_glayer("nwell"),),default= 1 )
  
