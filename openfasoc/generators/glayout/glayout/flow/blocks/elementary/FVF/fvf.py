@@ -94,6 +94,8 @@ def  flipped_voltage_follower(
     tie_layers2: tie layers for feedback fet
     sd_rmult: sd_rmult for both fets
     **kwargs: any kwarg that is supported by nmos and pmos
+    
+    Note- While using nmos, use with_dnwell=False
     """
    
     #top level component
