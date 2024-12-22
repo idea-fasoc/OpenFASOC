@@ -15,7 +15,7 @@ from glayout.flow.routing.L_route import L_route
 from glayout.flow.primitives.guardring import tapring
 from glayout.flow.pdk.util.port_utils import add_ports_perimeter
 from glayout.flow.spice.netlist import Netlist
-from fvf import fvf_netlist, flipped_voltage_follower
+from glayout.flow.blocks.elementary.FVF.fvf import fvf_netlist, flipped_voltage_follower
 from glayout.flow.primitives.via_gen import via_stack
 from typing import Optional
 
@@ -41,47 +41,7 @@ def low_voltage_cmirr_netlist(bias_fvf: Component, cascode_fvf: Component, fet_1
                 )
 
         return netlist
-
-def sky130_add_lvcm_labels(lvcm_in: Component) -> Component:
-	
-    lvcm_in.unlock()
-    # define layers`
-    met1_pin = (68,16)
-    met1_label = (68,5)
-    met2_pin = (69,16)
-    met2_label = (69,5)
-    # list that will contain all port/comp info
-    move_info = list()
-    # create labels and append to info list
-    # gnd
-    gndlabel = rectangle(layer=met1_pin,size=(0.5,0.5),centered=True).copy()
-    gndlabel.add_label(text="VBULK",layer=met1_label)
-    move_info.append((gndlabel,lvcm_in.ports["M_3_B_tie_N_top_met_N"],None))
-    
-    #currentinput
-    ibias1label = rectangle(layer=met2_pin,size=(0.5,0.5),centered=True).copy()
-    ibias1label.add_label(text="IBIAS1",layer=met2_label)
-    move_info.append((ibias1label,lvcm_in.ports["M_1_A_drain_top_met_N"],None))
-    ibias2label = rectangle(layer=met2_pin,size=(0.5,0.5),centered=True).copy()
-    ibias2label.add_label(text="IBIAS2",layer=met2_label)
-    move_info.append((ibias2label,lvcm_in.ports["M_2_A_drain_top_met_N"],None))
-    
-    # currentoutput
-    iout1label = rectangle(layer=met1_pin,size=(0.25,0.25),centered=True).copy()
-    iout1label.add_label(text="IOUT1",layer=met1_label)
-    move_info.append((iout1label,lvcm_in.ports["M_3_A_multiplier_0_drain_N"],None))
-    
-    iout2label = rectangle(layer=met1_pin,size=(0.25,0.25),centered=True).copy()
-    iout2label.add_label(text="IOUT2",layer=met1_label)
-    move_info.append((iout2label,lvcm_in.ports["M_4_A_multiplier_0_drain_N"],None))
-    
-    # move everything to position
-    for comp, prt, alignment in move_info:
-        alignment = ('c','b') if alignment is None else alignment
-        compref = align_comp_to_port(comp, prt, alignment=alignment)
-        lvcm_in.add(compref)
-    return lvcm_in.flatten() 
-
+   
 @cell
 def  low_voltage_cmirror(
         pdk: MappedPDK,
@@ -178,19 +138,7 @@ def  low_voltage_cmirror(
     top_level.add_ports(fet_3_ref.get_ports_list(), prefix="M_4_B_")
     top_level.add_ports(fet_4_ref.get_ports_list(), prefix="M_4_A_")
     
-    #for netlist
-  
-    #print(top_level.info['netlist'].generate_netlist(only_subcircuits=True))
-    
     component = component_snap_to_grid(rename_ports_by_orientation(top_level))
     component.info['netlist'] = low_voltage_cmirr_netlist(bias_fvf, cascode_fvf, fet_1_ref, fet_2_ref, fet_3_ref, fet_4_ref)
     
     return component
-
-#lvcm = low_voltage_cmirror(sky130_mapped_pdk)
-#lvcm.show()
-
-#lvcm.name = "lvcm"
-#magic_drc_result = sky130_mapped_pdk.drc_magic(lvcm, lvcm.name)
-#netgen_lvs_result = sky130_mapped_pdk.lvs_netgen(lvcm, lvcm.name, netlist="lvcm.spice")
-
