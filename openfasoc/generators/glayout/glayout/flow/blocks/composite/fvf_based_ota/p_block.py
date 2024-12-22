@@ -9,15 +9,14 @@ from glayout.flow.pdk.util.comp_utils import evaluate_bbox, prec_center, prec_re
 from glayout.flow.pdk.util.snap_to_grid import component_snap_to_grid
 from glayout.flow.pdk.util.port_utils import rename_ports_by_orientation
 from glayout.flow.routing.straight_route import straight_route
-#from glayout.flow.routing.c_route import c_route
-from c_route import c_route
+from glayout.flow.routing.c_route import c_route
 from glayout.flow.routing.L_route import L_route
 from glayout.flow.primitives.guardring import tapring
 from glayout.flow.pdk.util.port_utils import add_ports_perimeter, rename_ports_by_list
 from glayout.flow.spice.netlist import Netlist
 from glayout.flow.primitives.via_gen import via_stack
 from gdsfactory.components import text_freetype, rectangle
-from four_transistor_interdigitized import generic_4T_interdigitzed
+from glayout.flow.placement.four_transistor_interdigitized import generic_4T_interdigitzed
 
 def p_block_netlist(pdk: MappedPDK, pblock: tuple[float, float, int]) -> Netlist:
     return Netlist(
@@ -86,7 +85,6 @@ def  p_block(
     nwell_rectangle_ref.move(p_block_ref.center) 
     top_level.add(nwell_rectangle_ref)
 
-
     #Renaming Ports
     top_level.add_ports(p_block.get_ports_list())
     
@@ -94,10 +92,4 @@ def  p_block(
     component.info['netlist'] = p_block_netlist(pdk, pblock=(width,length,ratio))
     #print(component.info['netlist'].generate_netlist())
 
-
     return component
-
-#p_block = p_block(sky130_mapped_pdk)
-#p_block.show()
-#magic_drc_result = sky130_mapped_pdk.drc_magic(p_block, p_block.name)
-
