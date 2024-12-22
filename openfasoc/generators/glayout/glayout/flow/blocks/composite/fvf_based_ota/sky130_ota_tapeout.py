@@ -10,8 +10,9 @@ from glayout.flow.pdk.util.comp_utils import prec_array, movey, align_comp_to_po
 from glayout.flow.pdk.util.port_utils import add_ports_perimeter, print_ports
 from gdsfactory.component import Component
 from glayout.flow.pdk.mappedpdk import MappedPDK
-from ota2 import super_class_AB_OTA
+from glayout.flow.blocks.composite.fvf_based_ota.ota import super_class_AB_OTA
 from glayout.flow.routing.L_route import L_route
+from glayout.flow.routing.c_route import c_route
 from glayout.flow.routing.straight_route import straight_route
 from glayout.flow.pdk.util.comp_utils import evaluate_bbox, prec_ref_center, prec_center, align_comp_to_port
 from glayout.flow.pdk.util.port_utils import rename_ports_by_orientation
@@ -19,7 +20,6 @@ from glayout.flow.pdk.util.snap_to_grid import component_snap_to_grid
 from gdsfactory.components import text_freetype, rectangle
 from glayout.flow.pdk.mappedpdk import MappedPDK
 from glayout.flow.primitives.via_gen import via_array, via_stack
-from c_route import c_route
 from gdsfactory.cell import cell, clear_cache
 import numpy as np
 from subprocess import Popen
@@ -77,10 +77,10 @@ def sky130_ota_add_pads(ota_in: Component, flatten=False) -> Component:
     global __SMALL_PAD_
     small_pad=__SMALL_PAD_
     if small_pad:
-        pad = import_gds("pads/pad_60um_flat.gds")
+        pad = import_gds("../../../../../tapeout/tapeout_and_RL/pads/pad_60um_flat.gds")
         pad.name = "NISTpad"
     else:
-        pad = import_gds("pads/Manhattan120umPad.gds")
+        pad = import_gds("../../../../../tapeout/tapeout_and_RL/pads/Manhattan120umPad.gds")
         pad.name = "Manhattan120umPad"
     pad = add_ports_perimeter(pad, pdk.get_glayer("met5"),prefix="pad_")
     if small_pad:
@@ -90,11 +90,7 @@ def sky130_ota_add_pads(ota_in: Component, flatten=False) -> Component:
     pad_array_ref = prec_ref_center(pad_array)
     ota_wpads.add(pad_array_ref)
     # add via_array to vdd pin
-    """
-    vddarray = via_array(pdk, "met3","met4",size=(ota_wpads.ports["VCC_top_met_N"].width,3*ota_wpads.ports["VCC_top_met_E"].width))
-    via_array_ref = ota_wpads << vddarray
-    align_comp_to_port(via_array_ref,ota_wpads.ports["VCC_top_met_N"],alignment=('c','b'))
-    """
+    
     # route to the pads
     leftroutelayer="met5"
     ota_wpads << L_route(pdk, ota_wpads.ports["PLUS_top_met_E"],pad_array_ref.ports["row1_col3_pad_S"], hwidth=3, vwidth=3)
@@ -118,21 +114,7 @@ def sky130_ota_add_pads(ota_in: Component, flatten=False) -> Component:
             pad_array_port = pad_array_ref.ports[port_name]
             pin_ref = ota_wpads << text_pin_labels[4*row + col_u]
             align_comp_to_port(pin_ref,pad_array_port,alignment=('c','t'))
-    """
-    # import nano pad and add to ota
-    nanopad = import_gds("pads/sky130_nano_pad.gds")
-    nanopad.name = "nanopad"
-    nanopad = add_ports_perimeter(nanopad, pdk.get_glayer(leftroutelayer),prefix="nanopad_")
-    nanopad_array = prec_array(nanopad, rows=2, columns=2, spacing=(10,10))
-    nanopad_array_ref = nanopad_array.ref_center()
-    ota_wpads.add(nanopad_array_ref)
-    nanopad_array_ref.movex(ota_wpads.xmin+nanopad_array.xmax)
-    # route nano pad connections
-    ota_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col0_nanopad_N"],pad_array_ref.ports["row1_col0_pad_S"],width=3,glayer2=leftroutelayer)
-    ota_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col0_nanopad_S"],pad_array_ref.ports["row0_col0_pad_N"],width=3,glayer2=leftroutelayer)
-    ota_wpads << straight_route(pdk, nanopad_array_ref.ports["row0_col1_nanopad_E"],pad_array_ref.ports["row0_col1_pad_N"],width=3,glayer2=leftroutelayer)
-    ota_wpads << straight_route(pdk, nanopad_array_ref.ports["row1_col1_nanopad_E"],pad_array_ref.ports["row1_col1_pad_S"],width=3,glayer2=leftroutelayer)
-    """
+    
     if flatten:
         return ota_wpads.flatten()
     else:
