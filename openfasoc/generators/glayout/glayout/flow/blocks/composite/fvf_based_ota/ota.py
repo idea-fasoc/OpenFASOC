@@ -12,16 +12,15 @@ from glayout.flow.spice.netlist import Netlist
 
 
 from glayout.flow.routing.straight_route import straight_route
-from c_route import c_route
+from glayout.flow.routing.c_route import c_route
 from glayout.flow.routing.L_route import L_route
-from fvf import fvf_netlist, flipped_voltage_follower
-from cm import current_mirror, current_mirror_netlist
+from glayout.flow.blocks.elementary.FVF.fvf import fvf_netlist, flipped_voltage_follower
+from glayout.flow.blocks.elementary.current_mirror.current_mirror import current_mirror, current_mirror_netlist
 from glayout.flow.primitives.via_gen import via_stack, via_array
 from glayout.flow.primitives.fet import nmos, pmos, multiplier
-from transmission_gate import transmission_gate,tg_netlist
-from p_block import p_block,p_block_netlist
-from n_block import n_block,n_block_netlist
-#from lvt_cmirror import low_voltage_cmirror
+from glayout.flow.blocks.elementary.transmission_gate.transmission_gate import transmission_gate,tg_netlist
+from glayout.flow.blocks.composite.fvf_based_ota.p_block import p_block,p_block_netlist
+from glayout.flow.blocks.composite.fvf_based_ota.n_block import n_block,n_block_netlist
 
 def super_class_AB_OTA_netlist(local_c_bias_1_ref: ComponentReference, local_c_bias_2_ref: ComponentReference, res_1_ref: ComponentReference, res_2_ref: ComponentReference, nb: Component, pblock: Component) -> Netlist:
 
@@ -154,14 +153,10 @@ def super_class_AB_OTA(
     top_level << c_route(pdk, n_block_ref.ports["Min_1_multiplier_0_drain_E"], res_1_ref.ports["N_multiplier_0_source_E"], cwidth=0.6)
     top_level << c_route(pdk, n_block_ref.ports["Min_2_multiplier_0_drain_W"], res_2_ref.ports["N_multiplier_0_source_E"], cwidth=0.6)
     
-    
     top_level.add_ports(res_1_ref.get_ports_list(), prefix="res_1_")
     top_level.add_ports(res_2_ref.get_ports_list(), prefix="res_2_")
 
-    
-    #output stage N-type current mirrors
-    
-    
+            
     #adding the p_block
     pblock = p_block(pdk, width=diff_pair_load_params[0]/2, length=diff_pair_load_params[1], fingers=1, ratio=ratio)
     p_block_ref = prec_ref_center(pblock)
@@ -178,21 +173,7 @@ def super_class_AB_OTA(
     top_level << c_route(pdk, p_block_ref.ports["bottom_B_1_drain_E"], res_2_ref.ports["P_multiplier_0_source_W"], cwidth=0.9, width2=0.29*3)
         
     top_level.add_ports(p_block_ref.get_ports_list(), prefix="pblock_")
-    """
-    #adding lvt layer
-    lvt_layer=(125,44)
-    dimensions = (evaluate_bbox(top_level)[0], (p_block_ref.ymax - res_1_ref.ymin))
-
-    lvt_rectangle = rectangle(layer=lvt_layer, size=(dimensions[0], dimensions[1]))
-    lvt_rectangle_ref = prec_ref_center(lvt_rectangle)
-    lvt_rectangle_ref.movey(n_block_ref.ymax + dimensions[1]/2)
-    top_level.add(lvt_rectangle_ref)
     
-    #adding a pwell    
-    pwell_rectangle = rectangle(layer=(pdk.get_glayer("pwell")), size=(85,30.25))
-    pwell_rectangle_ref = prec_ref_center(pwell_rectangle,(0,-8.825))
-    top_level.add(pwell_rectangle_ref)
-    """
     #adding output pin
     viam2m3 = via_stack(pdk, "met2", "met3", centered=True, fulltop=True)
     viam3m4 = via_stack(pdk, "met3", "met4", centered=True, fulltop=True)
@@ -279,14 +260,13 @@ def super_class_AB_OTA(
 
     component = component_snap_to_grid(rename_ports_by_orientation(top_level))
     component.info['netlist'] = super_class_AB_OTA_netlist(local_c_bias_1_ref, local_c_bias_2_ref, res_1_ref, res_2_ref, nb, pblock)
-    print(component.info['netlist'].generate_netlist())
+    #print(component.info['netlist'].generate_netlist())
 
     return component
-"""
-OTA = sky130_add_ota_labels(super_class_AB_OTA(sky130_mapped_pdk))
-OTA.show()
-OTA.name = "ota"
-OTA.write_gds("./ota.gds")
-magic_drc_result = sky130_mapped_pdk.drc_magic(OTA, OTA.name)
-netgen_lvs_result = sky130_mapped_pdk.lvs_netgen(OTA, design_name="ota", netlist="ota.spice")
-"""
+
+#OTA = sky130_add_ota_labels(super_class_AB_OTA(sky130_mapped_pdk))
+#OTA.show()
+#OTA.name = "ota"
+#OTA.write_gds("./ota.gds")
+#magic_drc_result = sky130_mapped_pdk.drc_magic(OTA, OTA.name)
+
