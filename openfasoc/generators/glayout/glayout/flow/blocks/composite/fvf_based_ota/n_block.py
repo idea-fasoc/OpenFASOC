@@ -13,11 +13,11 @@ from glayout.flow.spice.netlist import Netlist
 from glayout.flow.routing.straight_route import straight_route
 from glayout.flow.routing.c_route import c_route
 from glayout.flow.routing.L_route import L_route
-from fvf import fvf_netlist, flipped_voltage_follower
-from cm import current_mirror, current_mirror_netlist
+from glayout.flow.blocks.elementary.FVF.fvf import fvf_netlist, flipped_voltage_follower
+from glayout.flow.blocks.elementary.current_mirror.current_mirror import current_mirror, current_mirror_netlist
 from glayout.flow.primitives.via_gen import via_stack, via_array
 from glayout.flow.primitives.fet import nmos, pmos, multiplier
-from cm2 import low_voltage_cmirror, low_voltage_cmirr_netlist
+from glayout.flow.blocks.composite.fvf_based_ota.low_voltage_cmirror import low_voltage_cmirror, low_voltage_cmirr_netlist
 
 def n_block_netlist(fet_inA_ref: ComponentReference, fet_inB_ref: ComponentReference, fvf_1_ref: ComponentReference, fvf_2_ref: ComponentReference, cmirror: Component, global_c_bias: Component) -> Netlist:
 
