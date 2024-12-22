@@ -147,9 +147,3 @@ def n_block(
     #print(component.info['netlist'].generate_netlist(only_subcircuits=True))
 
     return component
-
-#nb = n_block(sky130_mapped_pdk)
-#nb.show()
-#nb.name = "n_block"
-#magic_drc_result = sky130_mapped_pdk.drc_magic(nb, nb.name)
-
