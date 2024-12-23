@@ -3,7 +3,7 @@
 .param mc_mm_switch=0
 
 ** IMPORTANT:   Temperature setting is added automatically in the reading
-**              of this file on line 6 as 25. DO NOT OVERRIDE.
+**              of this file. DO NOT OVERRIDE.
 .temp {@@TEMP}
 
 *.save all
