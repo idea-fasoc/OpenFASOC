@@ -43,12 +43,11 @@ def n_block(
         ) -> Component:
     """
     creates a super class AB OTA using flipped voltage follower at biasing stage and local common mode feedback to give dynamic current and gain boost much less dependent on biasing current
-    NB:- This block can only support device dimensions which achieve our design goal. In future steps will be taken to make it more flexible.
     pdk: pdk to use
     input_pair_params: differential input pair(N-type) - (width,length), input nmoses of the fvf get the same dimensions
     fvf_shunt_params: feedback fet of fvf - (width,length)
     current_mirror_params: output stage N-type currrent mirrors - (width, length)
-    global_current_bias_params: A low voltage current mirror for biasing - consists of 5 nmoses of (W/L) and one nmos of (W'/L) - ((W,W'),L)
+    global_current_bias_params: A low voltage current mirror for biasing - consists of 7 nmoses of (W/L) and one nmos of (W'/L) - (W,W',L)
     """ 
     # Create a top level component
     top_level = Component("n_block")
