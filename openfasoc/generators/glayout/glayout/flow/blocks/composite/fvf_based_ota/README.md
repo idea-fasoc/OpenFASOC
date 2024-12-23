@@ -45,7 +45,7 @@ Run this command to see various modes in which it can be run
 This generates a complete layout, **with LVT layers and labels added by default**. Custom parameters can be given. Run ``` python3 sky130_ota_tapeout.py gen_ota --h ``` to see the options.
 
 **N.B-** 
-_1. The default widths and lengths assume that the lvt layer is added. Different widths and lengths must be given to get an OTA with desired performance if no lvt layer is added.
+1. The default widths and lengths assume that the lvt layer is added. Different widths and lengths must be given to get an OTA with desired performance if no lvt layer is added.
 
 2. There is an option to add pads. For now this is set as False by default._
 #### test mode
