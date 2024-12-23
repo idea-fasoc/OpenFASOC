@@ -263,7 +263,7 @@ def super_class_AB_OTA(
 
     return component
 
-#OTA = sky130_add_ota_labels(super_class_AB_OTA(sky130_mapped_pdk))
+#OTA = super_class_AB_OTA(sky130_mapped_pdk)
 #OTA.show()
 #OTA.name = "ota"
 #OTA.write_gds("./ota.gds")
