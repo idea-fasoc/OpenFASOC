@@ -93,7 +93,7 @@ def super_class_AB_OTA(
     ratio: current mirroring ratio from input stage to output stage
     current_mirror_params: output stage N-type currrent mirrors - (width, length)
     resistor_params: passgates are used as resistors for LCMFB - (width of nmos, width of pmos,length of nmos, length of pmos)
-    global_current_bias_params: A low voltage current mirror for biasing - consists of 5 nmoses of (W/L) and one nmos of (W'/L) - (W,W',L)
+    global_current_bias_params: A low voltage current mirror for biasing - consists of 7 nmoses of (W/L) and one nmos of (W'/L) - (W,W',L)
     """ 
     # Create a top level component
     top_level = Component("Super_class_AB_OTA")
