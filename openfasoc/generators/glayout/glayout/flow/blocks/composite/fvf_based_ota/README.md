@@ -38,7 +38,7 @@ def super_class_AB_OTA(
 ```
 ## Layout generation, PEX and post-layout simulations
 ### sky130_ota_tapeout.py
-This file is used to generate layout genration, PEX and post-layout simulations. [sky130_nist_tapeout.py](https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/glayout/tapeout/tapeout_and_RL/sky130_nist_tapeout.py) was taken as a reference.
+This file is used for layout generation, PEX and post-layout simulations. [sky130_nist_tapeout.py](https://github.com/idea-fasoc/OpenFASOC/blob/main/openfasoc/generators/glayout/tapeout/tapeout_and_RL/sky130_nist_tapeout.py) was taken as a reference.
 Run this command to see various modes in which it can be run
 ``` python3 sky130_ota_tapeout_py --h ```
 #### gen_ota mode
