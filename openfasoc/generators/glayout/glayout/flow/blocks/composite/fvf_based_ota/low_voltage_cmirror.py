@@ -51,7 +51,8 @@ def  low_voltage_cmirror(
         multipliers: tuple[int,int] = (1,1),
         ) -> Component:
     """
-    A low voltage N type current mirror
+    A low voltage N type current mirror. It has two input brnaches and two output branches. It consists of total 8 nfets, 7 of them have the same W/L. One nfet has width of w' = w/3(theoretcially)
+    The default values are used to mirror 10uA.
     """
     #top level component
     top_level = Component("Low_voltage_N-type_current_mirror")
