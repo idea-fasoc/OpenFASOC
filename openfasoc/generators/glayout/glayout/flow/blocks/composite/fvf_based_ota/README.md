@@ -6,7 +6,7 @@ This topology of class AB OTA uses flipped voltage followers as voltage shifters
 ### Flipped Voltage Follower
 Used as voltage shifters. Also used to crete a low voltage current mirror for biasing. Pcell can be found under ``` glayout/flow/blocks/elementary/FVF/ ```
 ### Transmission gate
-Due to unavailability of resistors in Glayout, trasmission gates were used as LCMFB resistors. However, this limits ther slew performance. Pcell can be found here ``` glayout/flow/blocks/elementary/trasmission_gate/ ```
+Due to unavailability of resistors in Glayout, trasmission gates were used as LCMFB resistors. However, this limits the slew performance. Pcell can be found here ``` glayout/flow/blocks/elementary/trasmission_gate/ ```
 ### Low Voltage Current Mirror
 Low voltage current mirror are used to set a **bias current of 10uA**. The python code can be found in this directory itself.
 ### Others
