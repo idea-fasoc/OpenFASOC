@@ -85,16 +85,15 @@ def super_class_AB_OTA(
         ) -> Component:
     """
     creates a super class AB OTA using flipped voltage follower at biasing stage and local common mode feedback to give dynamic current and gain boost much less dependent on biasing current
-    NB:- This block can only support device dimensions which achieve our design goal. In future steps will be taken to make it more flexible.
     pdk: pdk to use
     input_pair_params: differential input pair(N-type) - (width,length), input nmoses of the fvf get the same dimensions
     fvf_shunt_params: feedback fet of fvf - (width,length)
     local_current_bias_params: local currrent mirror which directly biases each fvf - (width,length)
     diff_pair_load_params: creates a p_block consisting of both input stage pmos loads and output stage pmoses - (width,length) 
-    ratio: current mirroring ratio from input stage to output stage, currently suports only identical mirroring
+    ratio: current mirroring ratio from input stage to output stage
     current_mirror_params: output stage N-type currrent mirrors - (width, length)
-    resistor_params: passgates are used as resistors for LCMFB - ((width of nmos, width of pmos),(length of nmos, length of pmos))
-    global_current_bias_params: A low voltage current mirror for biasing - consists of 5 nmoses of (W/L) and one nmos of (W'/L) - ((W,W'),L)
+    resistor_params: passgates are used as resistors for LCMFB - (width of nmos, width of pmos,length of nmos, length of pmos)
+    global_current_bias_params: A low voltage current mirror for biasing - consists of 5 nmoses of (W/L) and one nmos of (W'/L) - (W,W',L)
     """ 
     # Create a top level component
     top_level = Component("Super_class_AB_OTA")
