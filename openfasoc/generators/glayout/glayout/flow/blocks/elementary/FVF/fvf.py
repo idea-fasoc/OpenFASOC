@@ -94,8 +94,6 @@ def  flipped_voltage_follower(
     tie_layers2: tie layers for feedback fet
     sd_rmult: sd_rmult for both fets
     **kwargs: any kwarg that is supported by nmos and pmos
-    
-    Note- While using nmos, use with_dnwell=False
     """
    
     #top level component
@@ -107,7 +105,9 @@ def  flipped_voltage_follower(
             "pmos":pmos,
             }
     device = device_map.get(device_type)
-    
+    if device_type == "nmos":
+    	kwargs["with_dnwell"] = False  
+
     fet_1 = device(pdk, width=width[0], fingers=fingers[0], multipliers=multipliers[0], with_dummy=dummy_1, with_substrate_tap=False, length=length[0], tie_layers=tie_layers1, sd_rmult=sd_rmult, **kwargs)
     fet_2 = device(pdk, width=width[1], fingers=fingers[1], multipliers=multipliers[1], with_dummy=dummy_2, with_substrate_tap=False, length=length[1], tie_layers=tie_layers2, sd_rmult=sd_rmult, **kwargs)
     well = "pwell" if device == nmos else "nwell" 
