@@ -12,7 +12,7 @@ paropt="@@@PAROPT"
 
 if [ "$paropt" = "noparasitics" ]; then
 
-magic -rcfile ./sky130A/sky130A.magicrc -noconsole -dnull << EOF
+magic -rcfile ../../../../../tapeout/tapeout_and_RL/sky130A/sky130A.magicrc -noconsole -dnull << EOF
 gds read $1
 flatten $2
 load $2
@@ -29,7 +29,7 @@ EOF
 
 else
 
-magic -rcfile ./sky130A/sky130A.magicrc -noconsole -dnull << EOF
+magic -rcfile ../../../../../tapeout/tapeout_and_RL/sky130A/sky130A.magicrc -noconsole -dnull << EOF
 gds read $1
 flatten $2
 load $2
