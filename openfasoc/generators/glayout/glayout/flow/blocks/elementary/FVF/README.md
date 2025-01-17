@@ -1,5 +1,9 @@
-## FLIPPED VOLTAGE FOLLOWER CELL
+# FLIPPED VOLTAGE FOLLOWER CELL
+## Schematic
+![FVF schematic](https://github.com/user-attachments/assets/369d8073-e5bb-4e17-96f4-22f496d5663a)
 
+A flipped voltage follower contains two fets connected as seen in this schematic. One is the input fet, the other one is the feedback fet. 
+## Parametrizing the FVF block
 ```
 def  flipped_voltage_follower(
         pdk: MappedPDK,
