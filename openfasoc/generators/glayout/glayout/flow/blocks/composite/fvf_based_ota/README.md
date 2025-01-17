@@ -44,6 +44,40 @@ Run this command to see various modes in which it can be run
 #### gen_ota mode
 This generates a complete layout, **with LVT layers and labels added by default**. Custom parameters can be given. Run ``` python3 sky130_ota_tapeout.py gen_ota --h ``` to see the options.
 
+#### drc report
+using provided pdk_root
+Defaulting to stale magic_commands.tcl
+
+Magic 8.3 revision 486 - Compiled on Sat Jul 13 11:42:22 AM CEST 2024.
+Starting magic under Tcl interpreter
+Using the terminal as the console.
+Using NULL graphics device.
+Processing system .magicrc file
+Sourcing design .magicrc for technology sky130A ...
+2 Magic internal units = 1 Lambda
+Input style sky130(): scaleFactor=2, multiplier=2
+The following types are not handled by extraction and will be treated as non-electrical types:
+    ubm 
+Scaled tech values by 2 / 1 to match internal grid scaling
+Loading sky130A Device Generator Menu ...
+Loading "/tmp/tmpf6p8n7lv/magic_commands.tcl" from command line.
+Warning: Calma reading is not undoable!  I hope that's OK.
+Library written using GDS-II Release 6.0
+Library name: library
+Reading "super_class_AB_OTA_01aaa4c6".
+Reading "rectangle_82c0dd1f".
+Reading "compass_82c0dd1f".
+Reading "rectangle_82c0dd1f".
+Reading "compass_82c0dd1f".
+[INFO]: Loading Super_class_AB_OTA
+
+Creating new cell
+Loading DRC CIF style.
+No errors found.
+[INFO]: DONE with /tmp/tmpf6p8n7lv/Super_class_AB_OTA.rpt
+
+
+
 **N.B-** 
 1. The default widths and lengths assume that the lvt layer is added. Different widths and lengths must be given to get an OTA with desired performance if no lvt layer is added.
 
