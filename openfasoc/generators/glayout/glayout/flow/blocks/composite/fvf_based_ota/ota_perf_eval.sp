@@ -41,9 +41,9 @@ Ibias2 VDD bias2  {b2}
 
 
 ** Import cryo libs (these are stored in the sky130A folder)
-*@@cryo .include ./sky130A/cryo_models/nshort.spice
-*@@cryo .include ./sky130A/cryo_models/nshortlvth.spice
-*@@cryo .include ./sky130A/cryo_models/pmos.spice
+*@@cryo .include ../../../../../tapeout/tapeout_and_RL/sky130A/cryo_models/nshort.spice
+*@@cryo .include ../../../../../tapeout/tapeout_and_RL/sky130A/cryo_models/nshortlvth.spice
+*@@cryo .include ../../../../../tapeout/tapeout_and_RL/sky130A/cryo_models/pmos.spice
 
 ** Import ota subcircuit
 .include ota_pex.spice
