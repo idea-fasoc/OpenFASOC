@@ -45,6 +45,7 @@ Run this command to see various modes in which it can be run
 This generates a complete layout, **with LVT layers and labels added by default**. Custom parameters can be given. Run ``` python3 sky130_ota_tapeout.py gen_ota --h ``` to see the options.
 
 #### drc report
+```
 using provided pdk_root
 Defaulting to stale magic_commands.tcl
 
@@ -75,7 +76,7 @@ Creating new cell
 Loading DRC CIF style.
 No errors found.
 [INFO]: DONE with /tmp/tmpf6p8n7lv/Super_class_AB_OTA.rpt
-
+```
 
 
 **N.B-** 
