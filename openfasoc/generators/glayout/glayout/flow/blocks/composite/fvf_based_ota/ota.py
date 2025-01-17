@@ -113,11 +113,7 @@ def super_class_AB_OTA(
     local_c_bias_1_ref = rename_ports_by_orientation(local_c_bias_1_ref.mirror((0,100),(0,-100)))
 
     top_level.add(local_c_bias_1_ref)
-    top_level.add(local_c_bias_2_ref)
-    
-    #adding lvt layer
-    
-    
+    top_level.add(local_c_bias_2_ref)    
     
     #biasing fvfs
     top_level << c_route(pdk, n_block_ref.ports["fvf_1_B_gate_bottom_met_E"], local_c_bias_1_ref.ports["fet_B_drain_E"], extension=5,width1=0.29, width2=0.29, cwidth=0.29, cglayer="met3")
@@ -259,13 +255,5 @@ def super_class_AB_OTA(
 
     component = component_snap_to_grid(rename_ports_by_orientation(top_level))
     component.info['netlist'] = super_class_AB_OTA_netlist(local_c_bias_1_ref, local_c_bias_2_ref, res_1_ref, res_2_ref, nb, pblock)
-    #print(component.info['netlist'].generate_netlist())
 
     return component
-
-#OTA = super_class_AB_OTA(sky130_mapped_pdk)
-#OTA.show()
-#OTA.name = "ota"
-#OTA.write_gds("./ota.gds")
-#magic_drc_result = sky130_mapped_pdk.drc_magic(OTA, OTA.name)
-
