@@ -90,22 +90,25 @@ def c_route(
     viastack2 = via_stack(pdk,e2glayer,cglayer,fullbottom=fullbottom,assume_bottom_via=True,fulltop=True)
     
     viastack1_dims = evaluate_bbox(viastack1,True)
+    #condition checking for multiple vias at first intermediate node
     if round(edge1.orientation) == 0 or round(edge1.orientation) == 180:
         use_arr1 = viastack1_dims[0] < cwidth or viastack1_dims[1] < width1
     if round(edge1.orientation) == 90 or round(edge1.orientation) == 270:
         use_arr1 = viastack1_dims[0] < width1 or viastack1_dims[1] < cwidth 
+    #via array for the first node
     if use_arr1:
         if round(edge1.orientation) == 0 or round(edge1.orientation) == 180:
             viastack1 = via_array(pdk, e1glayer, cglayer, size=(cwidth,width1), fullbottom=fullbottom, no_exception=True)
         if round(edge1.orientation) == 90 or round(edge1.orientation) == 270:
             viastack1 = via_array(pdk, e1glayer, cglayer, size=(width1,cwidth), fullbottom=fullbottom, no_exception=True)
 
- 
     viastack2_dims = evaluate_bbox(viastack2,True)
+    #condition checking for multiple vias at second intermediate node
     if round(edge2.orientation) == 0 or round(edge2.orientation) == 180:
         use_arr2 = viastack2_dims[0] < cwidth or viastack2_dims[1] < width2
     if round(edge2.orientation) == 90 or round(edge2.orientation) == 270:
         use_arr2 = viastack2_dims[0] < width2 or viastack2_dims[1] < cwidth 
+    #via array for the second node
     if use_arr2:
         if round(edge1.orientation) == 0 or round(edge1.orientation) == 180:
             viastack2 = via_array(pdk, e2glayer, cglayer, size=(cwidth,width2), fullbottom=fullbottom, no_exception=True)
