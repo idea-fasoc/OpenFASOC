@@ -52,6 +52,7 @@ def c_route(
     edge2 = second port
     width1 = optional will default to edge1 width if None
     width2 = optional will default to edge2 width if None
+    cwidth = width of the part connection part, optional will default to max of edge1 and edge2 if None
     e1glayer = glayer for the parts connecting to the edge1. Default to layer of edge1
     e2glayer = glayer for the parts connecting to the edge2. Default to layer of edge2
     cglayer = glayer for the connection part (part that goes through a via) defaults to e1glayer met+1
@@ -90,7 +91,8 @@ def c_route(
     viastack2 = via_stack(pdk,e2glayer,cglayer,fullbottom=fullbottom,assume_bottom_via=True,fulltop=True)
     
     viastack1_dims = evaluate_bbox(viastack1,True)
-    #condition checking for multiple vias at first intermediate node
+    #adds via array if any of the two dimensions of the metal route is at least twice of the respective dimension of a single via. 
+    #condition checking for multiple vias at first intermediate node,  
     if round(edge1.orientation) == 0 or round(edge1.orientation) == 180:
         use_arr1 = viastack1_dims[0] < cwidth or viastack1_dims[1] < width1
     if round(edge1.orientation) == 90 or round(edge1.orientation) == 270:
