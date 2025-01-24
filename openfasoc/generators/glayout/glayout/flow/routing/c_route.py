@@ -52,7 +52,7 @@ def c_route(
     edge2 = second port
     width1 = optional will default to edge1 width if None
     width2 = optional will default to edge2 width if None
-    cwidth = width of the part connection part, optional will default to max of edge1 and edge2 if None
+    cwidth = width of the part connection part, optional will default to max of width1 and width2 if None
     e1glayer = glayer for the parts connecting to the edge1. Default to layer of edge1
     e2glayer = glayer for the parts connecting to the edge2. Default to layer of edge2
     cglayer = glayer for the connection part (part that goes through a via) defaults to e1glayer met+1
