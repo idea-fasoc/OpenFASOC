@@ -109,7 +109,7 @@ def generate_current_mirror_netlist(
     )
 
 # @validate_arguments
-def CurrentMirror(
+def cascode_current_mirror(
         pdk: MappedPDK,
         Width: float = 1,
         Length: Optional[float] = None,
