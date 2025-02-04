@@ -102,16 +102,16 @@ def current_mirror(
 	# short gate and drain of one of the reference 
 	interdigitized_fets << L_route(pdk, interdigitized_fets.ports['A_drain_W'], gate_short.ports['con_N'], viaoffset=False, fullbottom=False)
 	
-    top_level << interdigitized_fets
-    if with_tie:
-        if device in ['nmos','nfet']:
-            tap_layer = "p+s/d"
-        if device in ['pmos','pfet']:
-            tap_layer = "n+s/d"
+	top_level << interdigitized_fets
+	if with_tie:
+		if device in ['nmos','nfet']:
+			tap_layer = "p+s/d"
+		if device in ['pmos','pfet']:
+			tap_layer = "n+s/d"
 		tap_sep = max(
-            pdk.util_max_metal_seperation(),
-            pdk.get_grule("active_diff", "active_tap")["min_separation"],
-        )
+			pdk.util_max_metal_seperation(),
+			pdk.get_grule("active_diff", "active_tap")["min_separation"],
+			)
 		tap_sep += pdk.get_grule(tap_layer, "active_tap")["min_enclosure"]
 		tap_encloses = (
 		2 * (tap_sep + interdigitized_fets.xmax),
@@ -131,12 +131,12 @@ def current_mirror(
 			pass
 	
 	# add a pwell 
-    if device in ['nmos','nfet']:
-        top_level.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
-        top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("pwell"), prefix="well_")
-    if device in ['pmos','pfet']:
-        top_level.add_padding(layers = (pdk.get_glayer("nwell"),), default = pdk.get_grule("nwell", "active_tap")["min_enclosure"], )
-        top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("nwell"), prefix="well_")
+    	if device in ['nmos','nfet']:
+        	top_level.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
+        	top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("pwell"), prefix="well_")
+    	if device in ['pmos','pfet']:
+        	top_level.add_padding(layers = (pdk.get_glayer("nwell"),), default = pdk.get_grule("nwell", "active_tap")["min_enclosure"], )
+        	top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("nwell"), prefix="well_")
 
  
 	# add the substrate tap if specified
