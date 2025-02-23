@@ -104,49 +104,27 @@ def cascode_common_source_netlist_works(
 	)
 
 def cascode_common_source_netlist(
-	pdk: MappedPDK, 
-	m1_width: float,
-	m2_width: float,
-	m1_length: float,
-	m2_length: float,
-	multipliers: int, 
+	pdk: MappedPDK,  
+	fetM1: Component,
+	fetM2: Component,
 	n_or_p_fet: Optional[str] = 'nfet',
-	subckt_only: Optional[bool] = False,
-	m1_fingers = int,
-	m2_fingers = int,
-	m1_multipliers = int,
-	m2_multipliers = int
 ) -> Netlist:
-	fet_class = nmos if 'n' in n_or_p_fet else pmos
-	fet_type = 'nfet' if 'n' in n_or_p_fet else 'pfet'
+	# fet_class = nmos if 'n' in n_or_p_fet else pmos
+	# fet_type = 'nfet' if 'n' in n_or_p_fet else 'pfet'
 	csrc_netlist=Netlist(circuit_name='CASCODECOMMONSRC',
-							nodes=['VIN', 'VBIAS', 'VSS', 'IOUT', "INT"])
-	csrc_netlist.connect_node(fet_netlist(pdk=pdk,
-									circuit_name= "M1",
-									model= pdk.models[fet_type],
-									width= 3,
-									length= None,
-									fingers= 1,
-									multipliers= m1_fingers,
-									with_dummy= False),
-					node_mapping= [("D","INT"),
-									("G","VIN"),
-									("S", "VSS"),
-									("B","VSS")]			
-									)
-	csrc_netlist.connect_node(fet_netlist(pdk=pdk,
-									circuit_name= "M2",
-									model= pdk.models[fet_type],
-									width= 3,
-									length= None,
-									fingers= 1,
-									multipliers= m2_fingers,
-									with_dummy= False),
-					node_mapping= [("D","IOUT"),
-									("G","VBIAS"),
-									("S", "INT"),
-									("B","INT")]			
-									)
+							nodes=['VIN', 'VBIAS', 'VSS', 'IOUT', 'INT'])
+	m1_ref = csrc_netlist.connect_netlist(fetM1.info['netlist'], 
+												[("D","INT"),
+												("G","VIN"),
+												("S", "VSS"),
+												("B","VSS")])
+	m2_ref = csrc_netlist.connect_netlist(fetM1.info['netlist'], 
+												[("D","IOUT"),
+												("G","VBIAS"),
+												("S", "INT"),
+												("B","VSS")])										
+	
+	
 	return csrc_netlist
 	
 
@@ -351,19 +329,25 @@ def cascode_common_source(
 	print(f"{set(unavailable_layer_stack)} is not found in the stack.")
 	print(f"{set(available_layer_stack)} is found in the stack.")
 
+	# top_level.info['netlist'] = cascode_common_source_netlist(
+	# 	pdk, 
+  	# 	m1_width=3, #kwargs.get('width', 21), 
+	# 	m2_width=3, #kwargs.get('width', 21), 
+	# 	m1_length=pdk.get_grule('poly')['min_width'], #kwargs.get('length',14), 
+	# 	m2_length=pdk.get_grule('poly')['min_width'], #kwargs.get('length',14),
+	# 	multipliers=1, 
+    # 	n_or_p_fet=device,
+	# 	subckt_only=True,
+	# 	m1_fingers = m1_fingers,
+	# 	m2_fingers = m2_fingers,
+	# 	m1_multipliers = m1_multipliers,
+	# 	m2_multipliers = m2_multipliers
+	# )
 	top_level.info['netlist'] = cascode_common_source_netlist(
 		pdk, 
-  		m1_width=3, #kwargs.get('width', 21), 
-		m2_width=3, #kwargs.get('width', 21), 
-		m1_length=pdk.get_grule('poly')['min_width'], #kwargs.get('length',14), 
-		m2_length=pdk.get_grule('poly')['min_width'], #kwargs.get('length',14),
-		multipliers=1, 
-    	n_or_p_fet=device,
-		subckt_only=True,
-		m1_fingers = m1_fingers,
-		m2_fingers = m2_fingers,
-		m1_multipliers = m1_multipliers,
-		m2_multipliers = m2_multipliers
+		fetM1=fet_M1,
+		fetM2=fet_M2,
+		n_or_p_fet=device
 	)
 
 	
@@ -456,8 +440,8 @@ def cascode_common_source_labels(CMS: Component) -> Component:
 
 mapped_pdk_build = sky130
 Cascode_cs_component = cascode_common_source(mapped_pdk_build,
-												m1_fingers=1,
-												m2_fingers=1,
+												m1_fingers=2,
+												m2_fingers=2,
 												m1_multipliers=1,
 												m2_multipliers=1,
 												numcols=1) 
