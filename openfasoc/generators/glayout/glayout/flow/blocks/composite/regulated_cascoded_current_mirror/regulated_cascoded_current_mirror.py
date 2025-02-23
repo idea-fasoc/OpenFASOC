@@ -148,7 +148,7 @@ def cascode_current_mirror(
 	Returns:
 		Component: a current mirror component object
 	"""
- 
+    pdk.activate()
     # Create the current mirror component
     CurrentMirror = Component(name="CurrentMirror")
     
@@ -316,7 +316,7 @@ def sky130_add_current_mirror_labels(
 
 # Main function to generate the current mirror layout
 # mappedpdk, Width, Length, num_cols, fingers, transistor type
-comp = CurrentMirror(sky130,3,0.5,2,1, type='nfet')
+comp = cascode_current_mirror(sky130,3,0.5,2,1, type='nfet')
 # Add labels to the current mirror layout
 comp = sky130_add_current_mirror_labels(comp, transistor_type='nfet', pdk=sky130)
 
