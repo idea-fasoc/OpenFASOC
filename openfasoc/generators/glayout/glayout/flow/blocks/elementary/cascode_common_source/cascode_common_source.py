@@ -199,7 +199,6 @@ def cascode_common_source(
 					with_dummy=False, #with_dummy,
 					with_substrate_tap=False,
 					**kwargs)
-	# print("FETS are instantiated now")
 	
 	# Added references to the two FETs within the component level
 	M1_ref = top_level << fet_M1
@@ -241,17 +240,21 @@ def cascode_common_source(
 	top_level.add_ports(int_net_short.get_ports_list(), prefix="INT")
 
 	# add well
-	if device in ['nmos', 'nfet']:
-		print(f"NMOS device")
-		# add a pwell 
-		top_level.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
-		top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("pwell"), prefix="well_")
-	elif device in ['pmos', 'pfet']:
-		# add a nwell 
-		top_level.add_padding(layers = (pdk.get_glayer("nwell"),), default = pdk.get_grule("nwell", "active_tap")["min_enclosure"], )
-		top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("nwell"), prefix="well_")
-	else:
-		raise ValueError("type must be either nfet or pfet")
+	# if device in ['nmos', 'nfet']:
+	# 	print(f"NMOS device")
+	# 	# add a pwell 
+	# 	top_level.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
+	# 	top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("pwell"), prefix="well_")
+	# elif device in ['pmos', 'pfet']:
+	# 	# add a nwell 
+	# 	top_level.add_padding(layers = (pdk.get_glayer("nwell"),), default = pdk.get_grule("nwell", "active_tap")["min_enclosure"], )
+	# 	top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("nwell"), prefix="well_")
+	# else:
+	# 	raise ValueError("type must be either nfet or pfet")
+	device_well = "nwell" if 'p' in device else "pwell"
+	top_level.add_padding(layers = (pdk.get_glayer(device_well),), default = pdk.get_grule(device_well, "active_tap")["min_enclosure"], )
+	top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer(device_well), prefix="well_")
+
 
 	# Connecting the source of the FETs to the BULK
 	srcM1bulk=top_level << straight_route(pdk, top_level.ports["M1_source_E"], 
