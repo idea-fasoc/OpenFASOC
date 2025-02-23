@@ -20,6 +20,7 @@ from glayout.flow.routing.smart_route import smart_route
 from glayout.flow.spice.netlist import Netlist
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk as sky130
 from glayout.flow.primitives.fet import nmos, pmos
+from glayout.flow.primitives.fet import fet_netlist
 from glayout.flow.primitives.guardring import tapring
 from glayout.flow.pdk.util.port_utils import add_ports_perimeter	
 from gdsfactory.component import Component
@@ -30,8 +31,11 @@ from glayout.flow.pdk.util.comp_utils import prec_ref_center, prec_center, movey
 
 from glayout.flow.primitives.via_gen import via_array
 
+# from glayout.flow.spice.netlist import connect_node
+# from glayout.flow.primitives.fet import fet_netlist
+
 # Netlist for LVS and SPICE simulations
-def cascode_common_source_netlist(
+def cascode_common_source_netlist_works(
 	pdk: MappedPDK, 
 	m1_width: float,
 	m2_width: float,
@@ -98,6 +102,53 @@ def cascode_common_source_netlist(
 			'm2_multipliers': m2_multipliers,
    		}
 	)
+
+def cascode_common_source_netlist(
+	pdk: MappedPDK, 
+	m1_width: float,
+	m2_width: float,
+	m1_length: float,
+	m2_length: float,
+	multipliers: int, 
+	n_or_p_fet: Optional[str] = 'nfet',
+	subckt_only: Optional[bool] = False,
+	m1_fingers = int,
+	m2_fingers = int,
+	m1_multipliers = int,
+	m2_multipliers = int
+) -> Netlist:
+	fet_class = nmos if 'n' in n_or_p_fet else pmos
+	fet_type = 'nfet' if 'n' in n_or_p_fet else 'pfet'
+	csrc_netlist=Netlist(circuit_name='CASCODECOMMONSRC',
+							nodes=['VIN', 'VBIAS', 'VSS', 'IOUT', "INT"])
+	csrc_netlist.connect_node(fet_netlist(pdk=pdk,
+									circuit_name= "M1",
+									model= pdk.models[fet_type],
+									width= 3,
+									length= None,
+									fingers= 1,
+									multipliers= m1_fingers,
+									with_dummy= False),
+					node_mapping= [("D","INT"),
+									("G","VIN"),
+									("S", "VSS"),
+									("B","VSS")]			
+									)
+	csrc_netlist.connect_node(fet_netlist(pdk=pdk,
+									circuit_name= "M2",
+									model= pdk.models[fet_type],
+									width= 3,
+									length= None,
+									fingers= 1,
+									multipliers= m2_fingers,
+									with_dummy= False),
+					node_mapping= [("D","IOUT"),
+									("G","VBIAS"),
+									("S", "INT"),
+									("B","INT")]			
+									)
+	return csrc_netlist
+	
 
 
 
@@ -170,7 +221,7 @@ def cascode_common_source(
 					with_dummy=False, #with_dummy,
 					with_substrate_tap=False,
 					**kwargs)
-	print("FETS are instantiated now")
+	# print("FETS are instantiated now")
 	
 	# Added references to the two FETs within the component level
 	M1_ref = top_level << fet_M1
@@ -228,14 +279,16 @@ def cascode_common_source(
 	srcM1bulk=top_level << straight_route(pdk, top_level.ports["M1_source_E"], 
 												top_level.ports["M1_tie_W_top_met_E"], glayer2="met2") #E
 	srcM2bulk=top_level << straight_route(pdk, top_level.ports["M1_tie_W_top_met_E"], 
-												top_level.ports["M2_tie_W_top_met_E"], glayer2="met3") #M2_tie_W_top_met_E M2_tie_S_top_met_S M2_tie_E_top_met_E, only met3 matches
+												top_level.ports["M2_tie_W_top_met_E"], glayer2="met3") 
+												#M2_tie_W_top_met_E M2_tie_S_top_met_S M2_tie_E_top_met_E, only met3 matches
 	# srcM3bulk=top_level << straight_route(pdk, top_level.ports["INTcon_S"], 
 	# 											top_level.ports["M2_tie_E_bottom_lay_E"], glayer2="met2")	#M2_tie_S_top_met_E	, M2_tie_S_top_met_S		M2_tie_E_top_met_E				M2_source_E			
 	# srcM3bulk=top_level << straight_route(pdk, top_level.ports["M2_tie_E_top_met_E"], 
 	# 											top_level.ports["M2_tie_E_bottom_lay_E"], glayer2="met1")	#M2_tie_S_top_met_E	, M2_tie_S_top_met_S		M2_tie_E_top_met_E				M2_source_E			
 	
 	srcM4bulk=top_level << straight_route(pdk, top_level.ports["M2_source_W"], 
-												top_level.ports["M2_tie_W_top_met_E"], glayer2="met2") #M2_tie_W_top_met_E M2_tie_S_top_met_S M2_tie_E_top_met_E, only met3 matches
+												top_level.ports["M2_tie_W_top_met_E"], glayer2="met2") 
+												#M2_tie_W_top_met_E M2_tie_S_top_met_S M2_tie_E_top_met_E, only met3 matches
 	
 	# add via_array to vdd pin
 	# vddarray = via_array(pdk, "met1","met3",size=(0.45,0.45))
@@ -285,8 +338,19 @@ def cascode_common_source(
 
 	## Bulk connections of both FETs to VSS
 	# top_level << smart_route(pdk, top_level.ports["M1_well_E"],  top_level.ports["M2_well_E"], viaoffset=False)
+	unavailable_layer_stack=[]
+	available_layer_stack=[]
+	for key,val in top_level.ports.items():
+		# print(f"\nKEYS: ",key, " VALUES:",val, val.center, val.layer)
+		try:
+			top_level.add_label(key, val.center, val.layer)
+			available_layer_stack.append(val.layer)
+		except:
+			# print(f"{val.layer} is not found in the stack.")
+			unavailable_layer_stack.append(val.layer)
+	print(f"{set(unavailable_layer_stack)} is not found in the stack.")
+	print(f"{set(available_layer_stack)} is found in the stack.")
 
-	
 	top_level.info['netlist'] = cascode_common_source_netlist(
 		pdk, 
   		m1_width=3, #kwargs.get('width', 21), 
@@ -367,11 +431,22 @@ def cascode_common_source_labels(CMS: Component) -> Component:
 		alignment = ('c','b') if alignment is None else alignment
 		aligned_label = align_comp_to_port(label, port, alignment=alignment)
 		CMS.add(aligned_label)
+	
+	for items in move_info:
+		print("\n",items)
 
+	# for key, val in CMS.ports.items():
+	# 	# print(f"\nKEYS: ",key, " VALUES:",f"{val}", val.center, val.layer)
+	# 	move_info.append((key, CMS.ports[key], None))
+	
+	# for label, port, alignment in move_info:
+	# 	alignment = ('c','b') if alignment is None else alignment
+	# 	aligned_label = align_comp_to_port(label, port, alignment=alignment)
+	# 	CMS.add(aligned_label)
 	# Add a label to all ports in the layout
 	# for key,val in CMS.ports.items():
-	# 	print(f"\nKEYS: ",key, " VALUES:",val, val.center, val.layer)
-	# 	# CMS.add_label(key, val.center, val.layer)
+	# # 	print(f"\nKEYS: ",key, " VALUES:",val, val.center, val.layer)
+	# 	CMS.add_label(key, val.center, val.layer)
 	# 	# CMS.add_label(key,val.center,val.layer)
 	# 	alignment = ('c','b') if alignment is None else alignment
 	# 	aligned_label = align_comp_to_port(key, CMS.ports[val.name], alignment=alignment)
