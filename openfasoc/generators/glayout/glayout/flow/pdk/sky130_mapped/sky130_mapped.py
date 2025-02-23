@@ -28,30 +28,6 @@ sky130_glayer_mapping = {
     "nwell": (64,20),
     "pwell": (64,44),
     "dnwell": (64,18),
-    # pins and label layers for LVS
-    # Ref: https://skywater-pdk.readthedocs.io/en/main/rules/layers.html#layers-definitions
-    "pwelliso_pin" : (44, 16),
-    "pwelliso_label" : (44, 5),
-    "diff_pin" : (65, 16),
-    "diff_label" : (65, 5),
-    "poly_pin" : (66, 16),
-    "poly_label" : (66, 5),
-    "li1_pin" : (67, 16),
-    "li1_label" : (67, 5),
-    "met1_pin" : (68, 16),
-    "met1_label" : (68, 5),
-    "met2_pin" : (69, 16),
-    "met2_label" : (69, 5),
-    "met3_pin" : (70, 16),
-    "met3_label" : (70, 5),
-    "met4_pin" : (71, 16),
-    "met4_label" : (71, 5),
-    "met5_pin" : (72, 16),
-    "met5_label" : (72, 5),
-    "pad_pin" : (76, 16),
-    "pad_label" : (76, 5),
-    "pwell_pin" : (122, 16),
-    "pwell_label" : (122, 5)
 }
 
 openfasoc_dir = Path(__file__).resolve().parent.parent.parent.parent.parent.parent.parent
