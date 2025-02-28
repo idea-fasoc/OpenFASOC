@@ -10,9 +10,9 @@ GDS_DIR = PWD_OUTPUT.stdout.strip() + "/gds"
 DRC_RPT_DIR = PWD_OUTPUT.stdout.strip() + "/regression/drc"
 LVS_RPT_DIR = PWD_OUTPUT.stdout.strip() + "/regression/lvs"
 
-pmos_width  = 12
+pmos_width  = 3*4
 pmos_length = 0.15
-nmos_width  = 12
+nmos_width  = 3*4
 nmos_length = 0.15
 fet_min_width = 3
 
@@ -20,15 +20,15 @@ def basic_tg_eval():
 	tg_dut = tg.tg_cell(
 		pdk=TARGET_PDK,
 		component_name="tg",
+		with_substrate_tap={"top_level":False, "pmos":False, "nmos":False},
+		tap_cell={"pmos":True, "nmos":True},
 		fet_min_width=fet_min_width,
 		pmos_width=pmos_width,
 		pmos_length=pmos_length,
 		nmos_width=nmos_width,
 		nmos_length=nmos_length,
-		with_substrate_tap=True,
-		add_pin=True
+		is_top_level=True
 	)
-
 	tg_dut.show()
 	print(tg_dut.info["netlist"].generate_netlist())
 	tg_dut.write_gds(f"{GDS_DIR}/{tg_dut.name}.gds")
@@ -42,7 +42,7 @@ def basic_tg_eval():
 		output_file=f"{DRC_RPT_DIR}/{tg_dut.name}_{regression_id}_drc.rpt"
 	)
 	print(f"Magic DRC result ({tg_dut.name}): \n", magic_drc_result)
-	print("--------------------------------------")
+	print("--------------------------------------\n\n")
 	netgen_lvs_result = sky130.lvs_netgen(
 		layout=tg_dut,
 		design_name=tg_dut.name,

@@ -22,8 +22,10 @@ from glayout.flow.spice import Netlist
 from glayout.flow.pdk.util.snap_to_grid import component_snap_to_grid
 from glayout.flow.primitives.guardring import tapring
 
-def transmission_gate_netlist(
+# Netlist including dummy cells (T.B.D.)
+def generic_tg_with_dummyCell_netlist(
 	pdk: MappedPDK,
+	comp_name: str,
 	width: float,
 	multipliers: int,
 	length: float,
@@ -36,17 +38,24 @@ def transmission_gate_netlist(
 	mtop = multipliers if subckt_only else 1
 	model_pmos = pdk.models['pfet']
 	model_nmos = pdk.models['nfet']
-	print(f"model_pmos: {model_pmos}")
-	source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={length} w={width} m={mtop} ' + """
-XM1 Y C A VDD {model_pmos} l={{l}} w={{w}} m={{m}}
-XM2 Y CBAR A VSS {model_nmos} l={{l}} w={{w}} m={{m}}"""
-	source_netlist += "\n.ends {circuit_name}"
+	nodes = ['Y', 'C', 'CBAR', 'A', 'VDD', 'VSS']
+	circuit_name = comp_name
 
+	# Netlist of the schematic 
+	source_netlist = f".subckt {circuit_name} {' '.join(nodes)}\n"
+	source_netlist += f"X0 Y CBAR A VDD {model_pmos} l={length}, w={width}, m={mtop}\n" # pin sequence: {inst. name, D, G, S, B}
+	source_netlist += f"X1 Y C A VDD {model_nmos} l={length}, w={width}, m={mtop}\n" # pin sequence: {inst. name, D, G, S, B}
+	source_netlist += f"XDUMMY0 VDD VDD VDD VDD {model_pmos} l={length}, w={width}, m={mtop}\n" # pin sequence: {inst. name, D, G, S, B}
+	source_netlist += f"XDUMMY1 VDD VDD VDD VDD {model_pmos} l={length}, w={width}, m={mtop}\n" # pin sequence: {inst. name, D, G, S, B}
+	source_netlist += f"XDUMMY2 VSS VSS VSS VSS {model_nmos} l={length}, w={width}, m={mtop}\n" # pin sequence: {inst. name, D, G, S, B}
+	source_netlist += f"XDUMMY3 VSS VSS VSS VSS {model_nmos} l={length}, w={width}, m={mtop}\n" # pin sequence: {inst. name, D, G, S, B}
+	source_netlist += ".ends " + circuit_name
+	
 	instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult}"
  
 	return Netlist(
-		circuit_name='tg',
-		nodes=['Y', 'C', 'CBAR', 'A'], 
+		circuit_name=circuit_name,
+		nodes=nodes, 
 		source_netlist=source_netlist,
   		instance_format=instance_format,
 		parameters={
@@ -58,25 +67,109 @@ XM2 Y CBAR A VSS {model_nmos} l={{l}} w={{w}} m={{m}}"""
    		}
 	)
 
-#@cell
+# To generate the netlist of the SPICE model for LVS
+def tg_netlist(
+	pdk: MappedPDK,
+	comp_name: str,
+	width: float,
+	multipliers: int,
+	length: float,
+	subckt_only: Optional[bool] = False
+) -> Netlist:
+	if length is None:
+		length = pdk.get_grule('poly')['min_width']
+	if width is None:
+		width = 3
+	mtop = multipliers if subckt_only else 1
+	model_pmos = pdk.models['pfet']
+	model_nmos = pdk.models['nfet']
+	nodes = ['Y', 'C', 'CBAR', 'A', 'VDD', 'VSS']
+	circuit_name = comp_name
+
+	# Netlist of the schematic 
+	source_netlist = f".subckt {circuit_name} {' '.join(nodes)}\n"
+	source_netlist += f"X0 Y CBAR A VDD {model_pmos} l={length}, w={width}, m={mtop}\n" # pin sequence: {inst. name, D, G, S, B}
+	source_netlist += f"X1 Y C A VSS {model_nmos} l={length}, w={width}, m={mtop}\n" # pin sequence: {inst. name, D, G, S, B}
+	source_netlist += ".ends " + circuit_name
+	
+	instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult}"
+ 
+	return Netlist(
+		circuit_name=circuit_name,
+		nodes=nodes, 
+		source_netlist=source_netlist,
+  		instance_format=instance_format,
+		parameters={
+			'model_pmos': model_pmos,
+			'model_nmos': model_nmos,
+			'width': width,
+   			'length': length,	
+			'mult': multipliers
+   		}
+	)
+
+def add_substrate_tap(
+	pdk: MappedPDK,
+	comp: Component
+) -> Component:
+	# Add substrate tap
+	substrate_tap = tapring(pdk, enclosed_rectangle=pdk.snap_to_2xgrid(evaluate_bbox(comp.flatten(),padding=pdk.util_max_metal_seperation())))
+	substrate_tap_ref = comp << movey(substrate_tap,destination=pdk.snap_to_2xgrid(comp.flatten().center[1],snap4=True))
+	comp.add_ports(substrate_tap_ref.get_ports_list(),prefix="substratetap_")
+	
+	return comp
+
+# To add the port corresponded to the body bias of the underlying FET, which is named either "VDD" or "VSS" dependent on the FET type (NMOS or PMOS)
+def add_bias_port(
+	pdk: MappedPDK,
+	comp: Component,
+	label_name: str,
+	is_nmos: bool
+) -> Component:
+	comp.unlock()
+	pin_info = list() # list that contains all port and component information
+	if is_nmos == True:
+		tap_layer = comp.ports.get("nmos_tie_N_top_met_W").layer[0]
+	else:
+		tap_layer = comp.ports.get("pmos_tie_N_top_met_W").layer[0]
+
+	tap_pin_layer=(tap_layer, 16)
+	tap_label_layer=(tap_layer, 5)
+	port_size = (0.24, 0.24)
+
+	tap_pin=rectangle(layer=tap_pin_layer, size=port_size, centered=True).copy()
+	tap_pin.add_label(text=label_name, layer=tap_label_layer)
+
+	if is_nmos == True:
+		alignment = ('l', 'c')
+		comp_ref = align_comp_to_port(tap_pin, comp.ports.get("nmos_tie_N_top_met_W"), alignment)
+	else:
+		alignment = ('l', 'c')
+		comp_ref= align_comp_to_port(tap_pin, comp.ports.get("pmos_tie_N_top_met_W"), alignment)
+	comp.add(comp_ref)
+	return comp
+
 def short_width_tg(
 	pdk: MappedPDK,
 	component_name: str = "tg",
-	with_substrate_tap: bool = False,
+	with_substrate_tap: dict[str, bool] = {"top_level": False, "pmos": False, "nmos": False},
+	tap_cell: dict[str, bool]={"pmos": True, "nmos": True},
 	fet_min_width: float = 3,
 	pmos_width: float = 3,
 	pmos_length: float = 0.15,
 	nmos_width: float = 3,
 	nmos_length: float = 0.15,
-	add_pin: bool = True, # For LVS
+	is_top_level: bool = True, # To set this cell as the top level where
+								# 	a) the extern I/O (pin w/ label) will be added for LVS,
+								#	b) all cells will be flattened
 	**kwargs
 ) -> Component:
 
 	# To prepare all necessary cells to construct a transmission gate, i.e.
 	# 1) PMOS
 	# 2) NMOS
-	pfet = pmos(pdk=pdk, gate_rmult=1, with_tie=False, with_substrate_tap=False, with_dummy=(True, True), width=pmos_width, length=pmos_length)
-	nfet = nmos(pdk=pdk, gate_rmult=1, with_tie=False, with_dnwell=False, with_substrate_tap=False, with_dummy=(True, True), width=nmos_width, length=nmos_length)
+	pfet = pmos(pdk=pdk, gate_rmult=1, with_tie=tap_cell["pmos"], with_substrate_tap=with_substrate_tap["pmos"], with_dummy=(False, False), width=pmos_width, length=pmos_length)
+	nfet = nmos(pdk=pdk, gate_rmult=1, with_tie=tap_cell["nmos"], with_dnwell=with_substrate_tap['nmos'], with_substrate_tap=with_substrate_tap['nmos'], with_dummy=(False, False), width=nmos_width, length=nmos_length)
 	top_level = Component(name=component_name)
 	pfet_ref = prec_ref_center(pfet)
 	nfet_ref = prec_ref_center(nfet)
@@ -162,7 +255,6 @@ def short_width_tg(
 	# Routing
 	#   a) PMOS.source connected to NMOS.source by placing a large MET2-layered rectangle
 	#   b) PMOS.drain connected to NMOS.drain by placing a large MET2-layered rectangle
-	print("nmos_source_sdvias_ref.len: ", nmos_source_sdvias_ref)
 	sdvias_connection = Component()
 	sdvias_connection.add_polygon(
 		[
@@ -185,27 +277,34 @@ def short_width_tg(
 	sdvias_connection_ref = top_level.add_ref(sdvias_connection)
 
 	# Add pins w/ labels for LVS
-	if add_pin == True:
+	if is_top_level == True:
+		if tap_cell['pmos'] == True:
+			top_level = add_bias_port(pdk=pdk, comp=top_level, label_name="VDD", is_nmos=False) # Add VDD port to PMOS tap
+		if tap_cell['nmos'] == True:
+			top_level = add_bias_port(pdk=pdk, comp=top_level, label_name="VSS", is_nmos=True) # Add VSS port to NMOS tap
+
 		top_level.unlock()
 		pin_info = list() # list that contains all port and component information
-		met1_pin=(pdk.get_glayer("met1")[0], 20)
-		met1_label=(pdk.get_glayer("met1")[0], 5)
+		li_pin=(pdk.get_glayer("met1")[0], 16)
+		li_label=(pdk.get_glayer("met1")[0], 5)
+		met1_pin=(pdk.get_glayer("met2")[0], 16)
+		met1_label=(pdk.get_glayer("met2")[0], 5)
 		port_size = (0.24, 0.24)
 		# --- Port: A, i.e. input of the transmission gate
 		A_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
 		A_pin.add_label(text="A", layer=met1_label)
-		pin_info.append((A_pin, top_level.ports.get(f"nmos_source_W"), ('r', 't')))
+		pin_info.append((A_pin, top_level.ports.get(f"nmos_source_S"), ('l', 'b')))
 		# --- Port: Y, i.e. output of the transmission gate
 		Y_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
 		Y_pin.add_label(text="Y", layer=met1_label)
-		pin_info.append((Y_pin, top_level.ports.get(f"nmos_drain_E"), ('l', 't')))
+		pin_info.append((Y_pin, top_level.ports.get(f"nmos_drain_S"), ('l', 'b')))
 		# --- Port: C, i.e. gate control to the NMOS
-		C_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-		C_pin.add_label(text="C", layer=met1_label)
+		C_pin=rectangle(layer=li_pin, size=port_size, centered=True).copy()
+		C_pin.add_label(text="C", layer=li_label)
 		pin_info.append((C_pin, top_level.ports.get(f"nmos_gate_S"), None))
 		# --- Port: CBAR, i.e. gate control to the PMOS
-		CBAR_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-		CBAR_pin.add_label(text="CBAR", layer=met1_label)
+		CBAR_pin=rectangle(layer=li_pin, size=port_size, centered=True).copy()
+		CBAR_pin.add_label(text="CBAR", layer=li_label)
 		pin_info.append((CBAR_pin, top_level.ports.get(f"pmos_gate_N"), None))
 
 		# Move everythin to position
@@ -215,32 +314,37 @@ def short_width_tg(
 			top_level.add(comp_ref)
 
 	# Add substrate tap
-	if with_substrate_tap:
-		substrate_tap = tapring(pdk, enclosed_rectangle=pdk.snap_to_2xgrid(evaluate_bbox(top_level.flatten(),padding=pdk.util_max_metal_seperation())))
-		substrate_tap_ref = top_level << movey(substrate_tap,destination=pdk.snap_to_2xgrid(top_level.flatten().center[1],snap4=True))
-		top_level.add_ports(substrate_tap_ref.get_ports_list(),prefix="substratetap_")
+	if with_substrate_tap['top_level'] == True:
+		top_level = add_substrate_tap(pdk=pdk, comp=top_level)
 
-	top_level = component_snap_to_grid(rename_ports_by_orientation(top_level))
-	top_level.info['netlist'] = transmission_gate_netlist(
-		pdk, 
-  		width=kwargs.get('width', pmos_width), length=kwargs.get('length', pmos_length), multipliers=1, 
+	if is_top_level == True:
+		top_level = component_snap_to_grid(rename_ports_by_orientation(top_level)) # To flatten the top-level cell
+
+	top_level.info['netlist'] = tg_netlist(
+		pdk,
+		comp_name="tg",
+  		width=pmos_width,
+		length=pmos_length,
+		multipliers=1,
 		subckt_only=True
 	)
+
 	top_level.info['netlist'].generate_netlist()
 	return top_level
 
-
-#@cell
 def long_width_tg(
 	pdk: MappedPDK,
 	component_name: str = "tg",
+	with_substrate_tap: dict[str, bool] = {'top_level': False, 'pmos': False, 'nmos': False},
+	tap_cell: dict[str, bool]={"pmos": True, "nmos": True},
 	fet_min_width: float = 3,
 	pmos_width: float = 12,
 	pmos_length: float = 0.15,
 	nmos_width: float = 12,
 	nmos_length: float = 0.15,
-	with_substrate_tap: bool = True,
-	add_pin: bool = True, # For LVS
+	is_top_level: bool = True, # To set this cell as the top level where
+								# 	a) the extern I/O (pin w/ label) will be added for LVS,
+								#	b) all cells will be flattened
 	**kwargs
 ) -> Component:
 	# To calculate the number of fingers for the underlying PMOS/NMOS layout
@@ -249,8 +353,8 @@ def long_width_tg(
 	# To prepare all necessary cells to construct a transmission gate, i.e.
 	# 1) PMOS
 	# 2) NMOS
-	pfet = pmos(pdk=pdk, multipliers=1, fingers=finger_num, interfinger_rmult=1, gate_rmult=1, with_tie=False, with_substrate_tap=False, with_dummy=(True, True), width=fet_min_width, length=pmos_length)
-	nfet = nmos(pdk=pdk, multipliers=1, fingers=finger_num, interfinger_rmult=1, gate_rmult=1, with_tie=False, with_dnwell=False, with_substrate_tap=False, with_dummy=(True, True), width=fet_min_width, length=nmos_length)
+	pfet = pmos(pdk=pdk, multipliers=1, fingers=finger_num, interfinger_rmult=1, gate_rmult=1, with_tie=tap_cell["pmos"], with_substrate_tap=with_substrate_tap['pmos'], with_dummy=(False, False), width=fet_min_width, length=pmos_length)
+	nfet = nmos(pdk=pdk, multipliers=1, fingers=finger_num, interfinger_rmult=1, gate_rmult=1, with_tie=tap_cell["nmos"], with_dnwell=with_substrate_tap['nmos'], with_substrate_tap=with_substrate_tap['nmos'], with_dummy=(False, False), width=fet_min_width, length=nmos_length)
 	top_level = Component(name=component_name)
 	pfet_ref = prec_ref_center(pfet)
 	nfet_ref = prec_ref_center(nfet)
@@ -330,34 +434,41 @@ def long_width_tg(
 		layer=pdk.get_glayer("met3")
 	)
 	source_connection = top_level.add_ref(source_connection)
-	top_level << c_route(pdk, pfet_ref.ports["drain_E"], nfet_ref.ports["drain_E"], cglayer="met3") # "out" of the TG
+	top_level << c_route(pdk, pfet_ref.ports["drain_W"], nfet_ref.ports["drain_W"], cglayer="met3") # "out" of the TG
 
 	# Add the ports aligned with the basic PMOS and NMOS
 	top_level.add_ports(pfet_ref.get_ports_list(), prefix="pmos_")
 	top_level.add_ports(nfet_ref.get_ports_list(), prefix="nmos_")
 
 	# Add pins w/ labels for LVS
-	if add_pin == True:
+	if is_top_level == True:
+		if tap_cell['pmos'] == True:
+			top_level = add_bias_port(pdk=pdk, comp=top_level, label_name="VDD", is_nmos=False) # Add VDD port to PMOS tap
+		if tap_cell['nmos'] == True:
+			top_level = add_bias_port(pdk=pdk, comp=top_level, label_name="VSS", is_nmos=True) # Add VSS port to NMOS tap
+
 		top_level.unlock()
 		pin_info = list() # list that contains all port and component information
-		met1_pin=(pdk.get_glayer("met1")[0], 20)
-		met1_label=(pdk.get_glayer("met1")[0], 5)
+		li_pin=(pdk.get_glayer("met1")[0], 16)
+		li_label=(pdk.get_glayer("met1")[0], 5)
+		met1_pin=(pdk.get_glayer("met2")[0], 16)
+		met1_label=(pdk.get_glayer("met2")[0], 5)
 		port_size = (0.24, 0.24)
 		# --- Port: A, i.e. input of the transmission gate
 		A_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
 		A_pin.add_label(text="A", layer=met1_label)
-		pin_info.append((A_pin, top_level.ports.get(f"nmos_source_S"), None))
+		pin_info.append((A_pin, top_level.ports.get(f"nmos_source_S"), ('l', 'b')))
 		# --- Port: Y, i.e. output of the transmission gate
 		Y_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
 		Y_pin.add_label(text="Y", layer=met1_label)
-		pin_info.append((Y_pin, top_level.ports.get(f"nmos_drain_S"), None))
+		pin_info.append((Y_pin, top_level.ports.get(f"nmos_drain_S"), ('l', 'b')))
 		# --- Port: C, i.e. gate control to the NMOS
-		C_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-		C_pin.add_label(text="C", layer=met1_label)
+		C_pin=rectangle(layer=li_pin, size=port_size, centered=True).copy()
+		C_pin.add_label(text="C", layer=li_label)
 		pin_info.append((C_pin, top_level.ports.get(f"nmos_gate_S"), None))
 		# --- Port: CBAR, i.e. gate control to the PMOS
-		CBAR_pin=rectangle(layer=met1_pin, size=port_size, centered=True).copy()
-		CBAR_pin.add_label(text="CBAR", layer=met1_label)
+		CBAR_pin=rectangle(layer=li_pin, size=port_size, centered=True).copy()
+		CBAR_pin.add_label(text="CBAR", layer=li_label)
 		pin_info.append((CBAR_pin, top_level.ports.get(f"pmos_gate_N"), None))
 
 		# Move everythin to position
@@ -367,32 +478,38 @@ def long_width_tg(
 			top_level.add(comp_ref)
 			
 	# Add substrate tap
-	if with_substrate_tap:
-		substrate_tap = tapring(pdk, enclosed_rectangle=pdk.snap_to_2xgrid(evaluate_bbox(top_level.flatten(),padding=pdk.util_max_metal_seperation())))
-		substrate_tap_ref = top_level << movey(substrate_tap,destination=pdk.snap_to_2xgrid(top_level.flatten().center[1],snap4=True))
-		top_level.add_ports(substrate_tap_ref.get_ports_list(),prefix="substratetap_")
+	if with_substrate_tap['top_level'] == True:
+		top_level = add_substrate_tap(pdk=pdk, comp=top_level)
 
-	top_level = component_snap_to_grid(rename_ports_by_orientation(top_level))
-	top_level.info['netlist'] = transmission_gate_netlist(
-		pdk, 
-  		width=kwargs.get('width', pmos_width), length=kwargs.get('length', pmos_length), multipliers=finger_num, 
+	if is_top_level == True:
+		top_level = component_snap_to_grid(rename_ports_by_orientation(top_level)) # To flatten the top-level cell
+
+	top_level.info['netlist'] = tg_netlist(
+		pdk,
+		comp_name="tg",
+  		width=pmos_width,
+		length=pmos_length,
+		multipliers=1,
 		subckt_only=True
 	)
-	top_level.info['netlist'].generate_netlist()
 
+	top_level.info['netlist'].generate_netlist()
 	return top_level
 
 @cell
 def tg_cell(
 	pdk: MappedPDK,
 	component_name: str = "tg",
+	with_substrate_tap: dict[str, bool] = {'top_level': False, 'pmos': False, 'nmos': False},
+	tap_cell: dict[str, bool]={"pmos": True, "nmos": True},
 	fet_min_width: float = 3,
 	pmos_width: float = 12,
 	pmos_length: float = 0.15,
 	nmos_width: float = 12,
 	nmos_length: float = 0.15,
-	add_pin: bool = True, # For LVS
-	with_substrate_tap: bool = True,
+	is_top_level: bool = True, # To set this cell as the top level where
+								# 	a) the extern I/O (pin w/ label) will be added for LVS,
+								#	b) all cells will be flattened
 	**kwargs
 ) -> Component:
 	if pmos_width != nmos_width:
@@ -404,25 +521,27 @@ def tg_cell(
 			tg = long_width_tg(
 				pdk=pdk,
 				component_name=component_name,
+				with_substrate_tap=with_substrate_tap,
+				tap_cell=tap_cell,
 				fet_min_width=fet_min_width,
 				pmos_width=pmos_width,
 				pmos_length=pmos_length,
 				nmos_width=nmos_width,
 				nmos_length=nmos_length,
-				with_substrate_tap=True,
-				add_pin=True
+				is_top_level=is_top_level
 			)
 	else: # Short-width PMOS and NMOS
 		tg = short_width_tg(
 			pdk=pdk,
 			component_name=component_name,
+			with_substrate_tap=with_substrate_tap,
+			tap_cell=tap_cell,
 			fet_min_width=fet_min_width,
 			pmos_width=pmos_width,
 			pmos_length=pmos_length,
 			nmos_width=nmos_width,
 			nmos_length=nmos_length,
-			with_substrate_tap=True,
-			add_pin=True
+			is_top_level=is_top_level
 		)
 
 	return tg

@@ -1,0 +1,3 @@
+- `clean_gds.sh`: to delete all generated GDSII files under the directry: gds/*.gds
+- `clean_log.sh`: to delete all intermediate *.spice, *.ext, etc.
+- `clean_regression_rpt`: to delete all DRC and LVS reports under the directries: regression/drc/*_drc.rpt and regression/lvs/*_lvs.rpt

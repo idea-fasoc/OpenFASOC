@@ -29,31 +29,26 @@ Circuit 1: sky130_fd_pr__nfet_01v8         |Circuit 2: sky130_fd_pr__nfet_01v8
 Cell pin lists are equivalent.
 Device classes sky130_fd_pr__nfet_01v8 and sky130_fd_pr__nfet_01v8 are equivalent.
 
-Class tg_cell_471429cf (0):  Merged 6 parallel devices.
 Subcircuit summary:
-Circuit 1: tg_cell_471429cf                |Circuit 2: tg_cell_471429cf                
+Circuit 1: inv_cell_cf73a99e               |Circuit 2: inv_cell_cf73a99e               
 -------------------------------------------|-------------------------------------------
-sky130_fd_pr__pfet_01v8 (6->3)             |sky130_fd_pr__pfet_01v8 (4->1) **Mismatch* 
-sky130_fd_pr__nfet_01v8 (6->3)             |sky130_fd_pr__nfet_01v8 (4->1) **Mismatch* 
-Number of devices: 6 **Mismatch**          |Number of devices: 2 **Mismatch**          
-Number of nets: 10 **Mismatch**            |Number of nets: 6 **Mismatch**             
+sky130_fd_pr__pfet_01v8 (1)                |sky130_fd_pr__pfet_01v8 (1)                
+sky130_fd_pr__nfet_01v8 (1)                |sky130_fd_pr__nfet_01v8 (1)                
+Number of devices: 2                       |Number of devices: 2                       
+Number of nets: 4                          |Number of nets: 4                          
 ---------------------------------------------------------------------------------------
-NET mismatches: Class fragments follow (with fanout counts):
-Circuit 1: tg_cell_471429cf                |Circuit 2: tg_cell_471429cf                
-
----------------------------------------------------------------------------------------
-Net: w_n715_603#                           |Net: VDD                                   
-  sky130_fd_pr__pfet_01v8/4 = 3            |  sky130_fd_pr__pfet_01v8/4 = 1            
-                                           |                                           
-Net: a_n877_n684#                          |Net: VSS                                   
-  sky130_fd_pr__nfet_01v8/4 = 3            |  sky130_fd_pr__nfet_01v8/4 = 1            
----------------------------------------------------------------------------------------
-Netlists do not match.
+Netlists match uniquely.
 
 Subcircuit pins:
-Circuit 1: tg_cell_471429cf                |Circuit 2: tg_cell_471429cf                
+Circuit 1: inv_cell_cf73a99e               |Circuit 2: inv_cell_cf73a99e               
 -------------------------------------------|-------------------------------------------
+Y                                          |Y                                          
+A                                          |A                                          
+VDD                                        |VDD                                        
+VSS                                        |VSS                                        
+---------------------------------------------------------------------------------------
 Cell pin lists are equivalent.
-Device classes tg_cell_471429cf and tg_cell_471429cf are equivalent.
+Device classes inv_cell_cf73a99e and inv_cell_cf73a99e are equivalent.
 
-Final result: Netlists do not match.
+Final result: Circuits match uniquely.
+.
