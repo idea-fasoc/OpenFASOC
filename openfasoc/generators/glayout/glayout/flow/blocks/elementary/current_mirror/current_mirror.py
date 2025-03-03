@@ -48,107 +48,209 @@ XB VCOPY VREF VSS VB {model} l={{l}} w={{w}} m={{m}}"""
 	)
 
 
-#@cell
+def create_interdigitized_fets(pdk: MappedPDK, device: str, numcols: int, with_dummy: bool, **kwargs) -> Component:
+    """Creates the interdigitized FET structure.
+
+    Args:
+        pdk (MappedPDK): The process design kit to use.
+        device (str): 'nfet' or 'pfet'.
+        numcols (int): Number of columns for interdigitation.
+        with_dummy (bool): Whether to include dummy transistors.
+        **kwargs: Keyword arguments passed to `two_nfet_interdigitized` or `two_pfet_interdigitized`.
+
+    Returns:
+        Component: The interdigitized FET component.
+    """
+    if device in ['nmos', 'nfet']:
+        return two_nfet_interdigitized(
+            pdk,
+            numcols=numcols,
+            dummy=with_dummy,
+            with_substrate_tap=False,
+            with_tie=False,
+            **kwargs
+        )
+    
+    elif device in ['pmos', 'pfet']:
+        return two_pfet_interdigitized(
+            pdk,
+            numcols=numcols,
+            dummy=with_dummy,
+            with_substrate_tap=False,
+            with_tie=False,
+            **kwargs
+        )
+    else:
+        raise ValueError(f"Invalid device type: {device}. Must be 'nfet' or 'pfet'.")
+
+
+def route_interdigitized_fets(pdk: MappedPDK, interdigitized_fets: Component) -> Component:
+    """Routes the interdigitized FETs to create the current mirror connections.
+
+    Shorts the sources and gates, and connects drain of FET A to the gate short.
+
+    Args:
+        interdigitized_fets (Component): The interdigitized FET component.
+    Returns:
+        Component: The routed interdigitized FET component.
+    """
+    max_metal_separation = pdk.util_max_metal_seperation()
+    extension_length = 3 * max_metal_separation
+
+    # Short source of the fets
+    source_short = interdigitized_fets << c_route(
+        pdk,
+        interdigitized_fets.ports['A_source_E'],
+        interdigitized_fets.ports['B_source_E'],
+        extension=extension_length,
+        viaoffset=False
+    )
+
+    # Short gates of the fets
+    gate_short = interdigitized_fets << c_route(interdigitated
+        pdk,
+        interdigitized_fets.ports['A_gate_W'],
+        interdigitized_fets.ports['B_gate_W'],
+        extension=extension_length,
+        viaoffset=False
+    )
+
+    # Short gate and drain of the reference (FET A)
+    interdigitized_fets << L_route(
+        pdk,
+        interdigitized_fets.ports['A_drain_W'],
+        gate_short.ports['con_N'],
+        viaoffset=False,
+        fullbottom=False
+    )
+    return interdigitized_fets  
+
+
+def add_well_tie(pdk: MappedPDK, component: Component, interdigitized_fets_bbox, tie_layers: tuple[str, str], numcols: int) -> Component:
+    """Adds a well tie (tap ring) to the component.
+
+    Args:
+        interdigitized_fets_bbox: Bounding box of the interdigitized FETs to enclose.
+        tie_layers (tuple[str,str]): Layers for the tie ring.
+        numcols (int): Number of columns (used for port name calculation, fragile).
+
+    Returns:
+        Component: The component with the well tie added.
+    """
+    max_metal_separation = pdk.util_max_metal_seperation()
+    tap_sep = max(
+        max_metal_separation,
+        pdk.get_grule("active_diff", "active_tap")["min_separation"],
+    )
+    tap_sep += pdk.get_grule("p+s/d", "active_tap")["min_enclosure"]
+    tap_encloses = (
+        2 * (tap_sep + interdigitized_fets_bbox.xmax),
+        2 * (tap_sep + interdigitized_fets_bbox.ymax),
+    )
+    tie_ref = component << tapring(pdk, enclosed_rectangle=tap_encloses, sdlayer="p+s/d", horizontal_glayer=tie_layers[0], vertical_glayer=tie_layers[1])
+    component.add_ports(tie_ref.get_ports_list(), prefix="welltie_")
+
+
+    try: 
+        component << straight_route(pdk, component.ports["fet_A_0_dummy_L_gsdcon_top_met_W"], component.ports["welltie_W_top_met_W"], glayer2="met1")
+    except KeyError:
+        pass
+
+    try: 
+        end_col = numcols - 1
+        port1 = f'fet_B_{end_col}_dummy_R_gdscon_top_met_E'
+        component << straight_route(pdk, component.ports[port1], component.ports["welltie_E_top_met_E"], glayer2="met1")
+    except KeyError:
+        pass
+
+    return component 
+
+def add_substrate_tap(pdk: MappedPDK, component: Component, interdigitized_fets_bbox) -> Component:
+    """Adds a substrate tap ring to the component.
+
+    Args:
+        component (Component): The component to add the substrate tap to.
+    Returns:
+        Component: The component with the substrate tap added.
+    """
+    subtap_sep = pdk.get_grule("dnwell", "active_tap")["min_separation"]
+    subtap_enclosure = (
+        2.5 * (subtap_sep + interdigitized_fets_bbox.xmax), 
+        2.5 * (subtap_sep + interdigitized_fets_bbox.ymax), 
+    )
+    subtap_ring = component << tapring(pdk, enclosed_rectangle=subtap_enclosure, sdlayer="p+s/d", horizontal_glayer="met2", vertical_glayer="met1")
+    component.add_ports(subtap_ring.get_ports_list(), prefix="substrate_tap_")
+    return component
+
+
 def current_mirror(
-    pdk: MappedPDK, 
+    pdk: MappedPDK,
     numcols: int = 3,
     device: str = 'nfet',
-    with_dummy: Optional[bool] = True,
-    with_substrate_tap: Optional[bool] = False,
-    with_tie: Optional[bool] = True,
-    tie_layers: tuple[str,str]=("met2","met1"),
+    with_dummy: bool = True,
+    with_substrate_tap: bool = False,
+    with_tie: bool = True,
+    tie_layers: tuple[str, str] = ("met2", "met1"),
     **kwargs
 ) -> Component:
-	"""An instantiable current mirror that returns a Component object. The current mirror is a two transistor interdigitized structure with a shorted source and gate. It can be instantiated with either nmos or pmos devices. It can also be instantiated with a dummy device, a substrate tap, and a tie layer, and is centered at the origin. Transistor A acts as the reference and Transistor B acts as the mirror fet
+    """An instantiable current mirror Component.
 
-	Args:
-		pdk (MappedPDK): the process design kit to use
-		numcols (int): number of columns of the interdigitized fets
-		device (str): nfet or pfet (can only interdigitize one at a time with this option)
-		with_dummy (bool): True places dummies on either side of the interdigitized fets
-		with_substrate_tap (bool): boolean to decide whether to place a substrate tapring
-		with_tie (bool): boolean to decide whether to place a tapring for tielayer
-		tie_layers (tuple[str,str], optional): the layers to use for the tie. Defaults to ("met2","met1").
-		**kwargs: The keyword arguments are passed to the two_nfet_interdigitized or two_pfet_interdigitized functions and need to be valid arguments that can be accepted by the multiplier function
+    This function creates a current mirror layout based on interdigitized transistors.
+    It supports nmos/pfet, dummy transistors, substrate taps, and well ties.
 
-	Returns:
-		Component: a current mirror component object
-	"""
-	top_level = Component("current mirror")
-	if device in ['nmos', 'nfet']:
-		interdigitized_fets = two_nfet_interdigitized(
-			pdk, 
-			numcols=numcols, 
-			dummy=with_dummy, 
-			with_substrate_tap=False, 
-			with_tie=False, 
-			**kwargs
-		)
-	elif device in ['pmos', 'pfet']:
-		interdigitized_fets = two_pfet_interdigitized(
-			pdk, 
-			numcols=numcols, 
-			dummy=with_dummy, 
-			with_substrate_tap=False, 
-			with_tie=False, 
-			**kwargs
-		)
-	top_level.add_ports(interdigitized_fets.get_ports_list(), prefix="fet_")
-	maxmet_sep = pdk.util_max_metal_seperation()
-	# short source of the fets
-	source_short = interdigitized_fets << c_route(pdk, interdigitized_fets.ports['A_source_E'], interdigitized_fets.ports['B_source_E'], extension=3*maxmet_sep, viaoffset=False)
-	# short gates of the fets
-	gate_short = interdigitized_fets << c_route(pdk, interdigitized_fets.ports['A_gate_W'], interdigitized_fets.ports['B_gate_W'], extension=3*maxmet_sep, viaoffset=False)
-	# short gate and drain of one of the reference 
-	interdigitized_fets << L_route(pdk, interdigitized_fets.ports['A_drain_W'], gate_short.ports['con_N'], viaoffset=False, fullbottom=False)
-	
-	top_level << interdigitized_fets
-	# add the tie layer
-	if with_tie:
-		tap_sep = max(
-            pdk.util_max_metal_seperation(),
-            pdk.get_grule("active_diff", "active_tap")["min_separation"],
-        )
-		tap_sep += pdk.get_grule("p+s/d", "active_tap")["min_enclosure"]
-		tap_encloses = (
-		2 * (tap_sep + interdigitized_fets.xmax),
-		2 * (tap_sep + interdigitized_fets.ymax),
-		)
-		tie_ref = top_level << tapring(pdk, enclosed_rectangle = tap_encloses, sdlayer = "p+s/d", horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
-		top_level.add_ports(tie_ref.get_ports_list(), prefix="welltie_")
-		try:
-			top_level << straight_route(pdk, top_level.ports["A_0_dummy_L_gsdcon_top_met_W"],top_level.ports["welltie_W_top_met_W"],glayer2="met1")
-		except KeyError:
-			pass
-		try:
-			end_col = numcols - 1
-			port1 = f'B_{end_col}_dummy_R_gdscon_top_met_E'
-			top_level << straight_route(pdk, top_level.ports[port1], top_level.ports["welltie_E_top_met_E"], glayer2="met1")
-		except KeyError:
-			pass
-	
-	# add a pwell 
-	top_level.add_padding(layers = (pdk.get_glayer("pwell"),), default = pdk.get_grule("pwell", "active_tap")["min_enclosure"], )
-	top_level = add_ports_perimeter(top_level, layer = pdk.get_glayer("pwell"), prefix="well_")
- 
-	# add the substrate tap if specified
-	if with_substrate_tap:
-		subtap_sep = pdk.get_grule("dnwell", "active_tap")["min_separation"]
-		subtap_enclosure = (
-			2.5 * (subtap_sep + interdigitized_fets.xmax),
-			2.5 * (subtap_sep + interdigitized_fets.ymax),
-		)
-		subtap_ring = top_level << tapring(pdk, enclosed_rectangle = subtap_enclosure, sdlayer = "p+s/d", horizontal_glayer = "met2", vertical_glayer = "met1")
-		top_level.add_ports(subtap_ring.get_ports_list(), prefix="substrate_tap_")
-  
-	top_level.add_ports(source_short.get_ports_list(), prefix='purposegndports')
-	
-	
-	top_level.info['netlist'] = current_mirror_netlist(
-		pdk, 
-  		width=kwargs.get('width', 3), length=kwargs.get('length', 1), multipliers=numcols, 
-    	n_or_p_fet=device,
-		subckt_only=True
-	)
- 
-	return top_level
+    Args:
+        pdk (MappedPDK): The process design kit to use.
+        numcols (int): Number of columns of the interdigitized fets.
+        device (str): 'nfet' or 'pfet'.
+        with_dummy (bool): True to place dummy transistors.
+        with_substrate_tap (bool): True to place a substrate tapring.
+        with_tie (bool): True to place a well tie ring.
+        tie_layers (tuple[str,str], optional): Layers for the well tie ring. Defaults to ("met2","met1").
+        **kwargs: Keyword arguments passed to transistor placement functions.
+
+    Returns:
+        Component: A current mirror component object.
+    """
+    top_level = Component("current_mirror")
+
+    # Input validation
+    assert device in ['nfet', 'pfet', 'nmos', 'pmos'], f"Invalid device type: {device}"
+    assert isinstance(numcols, int) and numcols > 0, f"numcols must be a positive integer, got {numcols}"
+
+
+    # 1. Create interdigitized FETs
+    interdigitized_fets = create_interdigitized_fets(pdk, device, numcols, with_dummy, **kwargs)
+    top_level.add_ports(interdigitized_fets.get_ports_list(), prefix="fet_")
+    top_level << interdigitized_fets 
+
+    # 2. Route interdigitized FETs
+    route_interdigitized_fets(pdk, interdigitized_fets)
+
+
+    # 3. Add well tie if requested
+    if with_tie:
+        add_well_tie(pdk, top_level, interdigitized_fets.bbox, tie_layers, numcols)
+
+    # 4. Add pwell padding and port
+    pwell_enclosure_rule = pdk.get_grule("pwell", "active_tap")["min_enclosure"]
+    top_level.add_padding(layers=(pdk.get_glayer("pwell"),), default=pwell_enclosure_rule)
+    top_level = add_ports_perimeter(top_level, layer=pdk.get_glayer("pwell"), prefix="well_")
+
+
+    # 5. Add substrate tap if requested
+    if with_substrate_tap:
+        add_substrate_tap(pdk, top_level, interdigitized_fets.bbox)
+
+
+    # 6. Add purpose ground ports
+    top_level.add_ports(interdigitized_fets.ports, prefix='purposegndports') 
+
+    # 7. Add netlist information
+    top_level.info['netlist'] = current_mirror_netlist(
+        pdk,
+        width=kwargs.get('width', 3), length=kwargs.get('length', 1), multipliers=numcols,
+        n_or_p_fet=device,
+        subckt_only=True
+    )
+
+    return top_level
