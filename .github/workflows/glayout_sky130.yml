@@ -55,7 +55,7 @@ jobs:
             bash -c "
               pip uninstall glayout -y &&\
               cd ./openfasoc/generators/glayout &&\
-              pip3 install --force-reinstall -r requirements.txt &&\
+              pip3 install --force-reinstall -r requirements.txt
             "
 
       - name: Test ${{ matrix.component }} component
