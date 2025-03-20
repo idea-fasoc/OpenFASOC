@@ -51,15 +51,16 @@ jobs:
               pip uninstall glayout -y &&\
               cd ./openfasoc/generators/glayout &&\
               pip3 install --force-reinstall -r requirements.txt &&\
-              while true; do sleep 5; done
+              while true; do if [[ -f /tmp/glayout_test_started ]]; then exit 0; else sleep 5; fi; done
             "
 
       - name: Test ${{ matrix.component }} component
         run: |
-          pushd $GITHUB_WORKSPACE
-
           docker exec test-runner \
             bash -c "
+              touch /tmp/glayout_test_started
+
+              cd ./openfasoc/generators/glayout
               python3 test_glayout_ci.py --component ${{ matrix.component }}
             " && exit_code=$? | tee -a glayout.log
 
