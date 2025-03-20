@@ -48,10 +48,14 @@ jobs:
             --name test-runner \
             $IMAGE_NAME \
             bash -c "\
+              while true; do if [[ -f /tmp/glayout_test_started ]]; then exit 0; else sleep 5; fi; done
+            "
+
+          docker exec test-runner \
+            bash -c "
               pip uninstall glayout -y &&\
               cd ./openfasoc/generators/glayout &&\
               pip3 install --force-reinstall -r requirements.txt &&\
-              while true; do if [[ -f /tmp/glayout_test_started ]]; then exit 0; else sleep 5; fi; done
             "
 
       - name: Test ${{ matrix.component }} component
