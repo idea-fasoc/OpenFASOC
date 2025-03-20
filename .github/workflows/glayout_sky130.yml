@@ -9,6 +9,8 @@ on:
       - 'openfasoc/common/**'
       - 'openfasoc/generators/common/**'
       - 'openfasoc/generators/glayout/**'
+      - '.github/workflows/glayout_sky130.yml'
+      - '.github/scripts/test_glayout_ci.py'
   workflow_dispatch:
 
 jobs:
