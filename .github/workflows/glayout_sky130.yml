@@ -48,7 +48,7 @@ jobs:
             --name test-runner \
             $IMAGE_NAME \
             bash -c "\
-              while true; do if [[ -f /tmp/glayout_test_started ]]; then exit 0; else sleep 5; fi; done
+              while true; do if [[ -f /tmp/glayout_test_complete ]]; then break; else sleep 5; fi; done
             "
 
           docker exec test-runner \
@@ -62,10 +62,10 @@ jobs:
         run: |
           docker exec test-runner \
             bash -c "
-              touch /tmp/glayout_test_started
-
               cd ./openfasoc/generators/glayout
               python3 test_glayout_ci.py --component ${{ matrix.component }}
+
+              touch /tmp/glayout_test_complete
             " && exit_code=$? | tee -a glayout.log
 
           if [ $? -ne 0 ]; then echo "Docker command exited with non-zero code" && exit 1; fi
