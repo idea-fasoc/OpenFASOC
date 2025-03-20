@@ -31,12 +31,21 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Set up workspace
+        env:
+          IMAGE_NAME: msaligane/openfasoc:stable
+        run: |
+          pushd $GITHUB_WORKSPACE
+          touch glayout.log
+
+          docker pull $IMAGE_NAME
+          cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/
+
       - name: Test ${{ matrix.component }} component
         env:
           IMAGE_NAME: msaligane/openfasoc:stable
         run: |
-          cd $GITHUB_WORKSPACE
-          touch glayout.log
+          pushd $GITHUB_WORKSPACE
 
           docker run --rm \
             -v $PWD:$PWD \
@@ -44,11 +53,10 @@ jobs:
             $IMAGE_NAME \
             bash -c "\
               pip uninstall glayout -y &&\
-              cp ./.github/scripts/test_glayout_ci.py ./openfasoc/generators/glayout/. &&\
               cd ./openfasoc/generators/glayout &&\
               pip3 install --force-reinstall -r requirements.txt &&\
               python3 test_glayout_ci.py --component ${{ matrix.component }}
             " && exit_code=$? | tee -a glayout.log
 
-          if [ $? -ne 0 ]; then exit 1; fi
-          if grep "\[ERROR\]" glayout.log; then exit 1; else exit 0; fi
+          if [ $? -ne 0 ]; then echo "Docker command exited with non-zero code" && exit 1; fi
+          if grep "\[ERROR\]" glayout.log; then echo "Glayout logs have an error" && exit 1; else echo "Test completed successfully" && exit 0; fi
