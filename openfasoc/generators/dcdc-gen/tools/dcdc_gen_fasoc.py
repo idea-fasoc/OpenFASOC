@@ -4,14 +4,11 @@
 # Switched-Cap DC-DC generator
 # ------------------------------------------------------------------------------
 import sys
-import getopt
 import math
 import subprocess as sp
-import fileinput
 import re
 import os
 import shutil
-import numpy as np
 import argparse
 import json
 import glob

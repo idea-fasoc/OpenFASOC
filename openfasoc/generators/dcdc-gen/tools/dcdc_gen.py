@@ -1,23 +1,20 @@
 import sys
-import getopt
-import math
 import subprocess as sp
-import fileinput
 import re
 import shutil
-import numpy as np
-import argparse
 import json
-import glob
 
-import operator
-import readparamgen
-import dcdc_netlist
+from dcdc_netlist import gen_dcdc_netlist_parameters
+from dcdc_simulation import run_dcdc_simulations
 import os
 import time
 
 # designName is from the json Specfile, args is commandline args, jsonSpec is parsed json Specfile
 from readparamgen import designName, args, jsonSpec
+
+# TODO: Find a better way to import modules from parent directory
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+from common.verilog_generation import generate_verilog, COMMON_PLATFORMS_PREFIX_MAP
 
 # paths declaration
 genDir = os.path.join(os.path.dirname(os.path.relpath(__file__)), "../")
@@ -122,36 +119,7 @@ else:
 print("#----------------------------------------------------------------------")
 print("# Verilog Generation")
 print("#----------------------------------------------------------------------")
-
-# declare cells to use for each platform
-
-if args.platform == "sky130hd":
-    cells = {
-        "ff_cell": "sky130_fd_sc_hd__dfxtp_1",
-        "inv_cell": "sky130_fd_sc_hd__inv_1",
-        "inv_cell_w": "sky130_fd_sc_hd__inv_4",
-        "clkgate_cell": "sky130_fd_sc_hd__dlclkp_1",
-        "clkinv_cell": "sky130_fd_sc_hd__clkinv_1",
-        "nor2_cell": "sky130_fd_sc_hd__nor2_1",
-        "nand2_cell": "sky130_fd_sc_hd__nand2_1",
-    }
-elif args.platform == "sky130hs":
-    cells = {
-        "ff_cell": "sky130_fd_sc_hs__dfxtp_1",
-        "inv_cell": "sky130_fd_sc_hs__inv_1",
-        "inv_cell_w": "sky130_fd_sc_hs__inv_4",
-        "clkgate_cell": "sky130_fd_sc_hs__dlclkp_1",
-        "clkinv_cell": "sky130_fd_sc_hs__clkinv_1",
-        "nor2_cell": "sky130_fd_sc_hs__nor2_1",
-        "nand2_cell": "sky130_fd_sc_hs__nand2_1",
-    }
-
-# generate updated verilog netlist based on the cells and jsonSpec
-
-dcdc_netlist.gen_dcdc_netlist(cells, args, jsonSpec, jsonConfig, srcDir)
-
 # generate SDC file
-
 Frequency = float(jsonSpec["specifications"]["Clock frequency (kHz)"])
 
 if re.search("sky130", args.platform):  # Update
@@ -170,16 +138,7 @@ filedata = re.sub(
 with open(flowDir + "/design/" + args.platform + "/dcdc/constraint.sdc", "w") as file:
     file.write(filedata)
 
-# replace designName in top level verilog
-
-with open(srcDir + "dcdcInst.v", "r") as rf:
-    filedata = rf.read()
-    filedata = re.sub("module\s*(\w+)\s*\n", "module " + designName + "\n", filedata)
-with open(srcDir + "dcdcInst.v", "w") as wf:
-    wf.write(filedata)
-
 # replace designName in flow/design/.../config.mk
-
 with open(flowDir + "design/" + args.platform + "/dcdc/config.mk", "r") as rf:
     filedata = rf.read()
     filedata = re.sub(
@@ -188,20 +147,19 @@ with open(flowDir + "design/" + args.platform + "/dcdc/config.mk", "r") as rf:
 with open(flowDir + "design/" + args.platform + "/dcdc/config.mk", "w") as wf:
     wf.write(filedata)
 
-# copy the generated verilog files into the flow directory
+# generate verilog files
+netlist_parameters = gen_dcdc_netlist_parameters(args, jsonSpec, jsonConfig)
+verilog_gen_parameters = {
+    "design_name": designName,
+    "cell_prefix": COMMON_PLATFORMS_PREFIX_MAP[args.platform],
+    "cell_suffix": "_1",
+    **netlist_parameters
+}
 
-shutil.copyfile(srcDir + "dcdcInst.v", flowDir + "design/src/dcdc/" + designName + ".v")
-shutil.copyfile(
-    srcDir + "DCDC_SIX_STAGES_CONV.v",
-    flowDir + "design/src/dcdc/DCDC_SIX_STAGES_CONV.v",
+generate_verilog(
+    parameters=verilog_gen_parameters,
+    out_dir=os.path.join('flow', 'design', 'src', 'dcdc')
 )
-# shutil.copyfile(srcDir + 'DCDC_CONV2TO1.v', flowDir + 'design/src/dcdc/DCDC_CONV2TO1.v')
-# shutil.copyfile(srcDir + 'DCDC_HUNIT_CONV2TO1.v', flowDir + 'design/src/dcdc/DCDC_HUNIT_CONV2TO1.v')
-shutil.copyfile(
-    srcDir + "DCDC_NOV_CLKGEN.sv", flowDir + "design/src/dcdc/DCDC_NOV_CLKGEN.sv"
-)
-shutil.copyfile(srcDir + "DCDC_BUFFER.sv", flowDir + "design/src/dcdc/DCDC_BUFFER.sv")
-shutil.copyfile(srcDir + "DCDC_POWMUX.v", flowDir + "design/src/dcdc/DCDC_POWMUX.v")
 
 print("#----------------------------------------------------------------------")
 print("# Verilog Generated")
@@ -215,9 +173,11 @@ print("#----------------------------------------------------------------------")
 print("# Run Synthesis and APR")
 print("#----------------------------------------------------------------------")
 
-p = sp.Popen(["make", args.platform], cwd=flowDir)
+p = sp.Popen(["make", "finish", "PLATFORM_ARG=" + args.platform], cwd=flowDir)
 p.wait()
-
+if p.returncode:
+    print("[Error] Place and Route failed. Refer to the log file")
+    exit(1)
 
 print("#----------------------------------------------------------------------")
 print("# Place and Route finished")
@@ -225,8 +185,11 @@ print("#----------------------------------------------------------------------")
 
 time.sleep(2)
 
-p = sp.Popen(["make", "magic_drc"], cwd=flowDir)
+p = sp.Popen(["make", "magic_drc", "PLATFORM_ARG=" + args.platform], cwd=flowDir)
 p.wait()
+if p.returncode:
+    print("[Error] DRC failed. Refer to the report")
+    exit(1)
 
 print("#----------------------------------------------------------------------")
 print("# DRC finished")
@@ -234,9 +197,11 @@ print("#----------------------------------------------------------------------")
 
 time.sleep(2)
 
-p = sp.Popen(["make", "netgen_lvs"], cwd=flowDir)
+p = sp.Popen(["make", "netgen_lvs", "PLATFORM_ARG=" + args.platform], cwd=flowDir)
 p.wait()
-
+if p.returncode:
+    print("[Error] LVS failed. Refer to the report")
+    exit(1)
 
 print("#----------------------------------------------------------------------")
 print("# LVS finished")
@@ -246,26 +211,20 @@ if os.path.isdir(args.outputDir):
     shutil.rmtree(genDir + args.outputDir)
 os.mkdir(genDir + args.outputDir)
 
-#  print("genDir + args.outputDir: {}".format(genDir + args.outputDir))
-#  print("flowDir: {}".format(flowDir))
-#  print("args.platform: {}".format(args.platform))
-#  print("designName: {}".format(designName))
-#  subprocess.run(["ls", "-l", flowDir, "results/", args.platform, "/cryo"])
-
 shutil.copyfile(
-    flowDir + "results/" + args.platform + "/cryo/6_final.gds",
+    flowDir + "results/" + args.platform + "/dcdc/6_final.gds",
     genDir + args.outputDir + "/" + args.platform + "/" + designName + ".gds",
 )
 shutil.copyfile(
-    flowDir + "results/" + args.platform + "/cryo/6_final.def",
+    flowDir + "results/" + args.platform + "/dcdc/6_final.def",
     genDir + args.outputDir + "/" + args.platform + "/" + designName + ".def",
 )
 shutil.copyfile(
-    flowDir + "results/" + args.platform + "/cryo/6_final.v",
+    flowDir + "results/" + args.platform + "/dcdc/6_final.v",
     genDir + args.outputDir + "/" + args.platform + "/" + designName + ".v",
 )
 shutil.copyfile(
-    flowDir + "results/" + args.platform + "/cryo/6_1_fill.sdc",
+    flowDir + "results/" + args.platform + "/dcdc/6_1_fill.sdc",
     genDir + args.outputDir + "/" + args.platform + "/" + designName + ".sdc",
 )
 shutil.copyfile(
@@ -277,14 +236,13 @@ shutil.copyfile(
     genDir + args.outputDir + "/" + args.platform + "/" + designName + "_pex.spice",
 )
 shutil.copyfile(
-    flowDir + "reports/" + args.platform + "/cryo/6_final_drc.rpt",
+    flowDir + "reports/" + args.platform + "/dcdc/6_final_drc.rpt",
     genDir + args.outputDir + "/" + args.platform + "/6_final_drc.rpt",
 )
 shutil.copyfile(
-    flowDir + "reports/" + args.platform + "/cryo/6_final_lvs.rpt",
+    flowDir + "reports/" + args.platform + "/dcdc/6_final_lvs.rpt",
     genDir + args.outputDir + "/" + args.platform + "/6_final_lvs.rpt",
 )
-
 
 time.sleep(2)
 
@@ -294,34 +252,14 @@ print("#----------------------------------------------------------------------")
 print()
 if args.mode == "macro":
     print("Exiting tool....")
-    # sys.exit(1)
     exit()
 
-temp_list = []
-for i in range(0, temp_points + 1):
-    temp_list.append(temp_start + i * temp_step)
-
-generate_runs(
-    genDir, designName, header_var, stage_var, temp_list, jsonConfig, args.platform
+run_dcdc_simulations(
+    platform=args.platform,
+    sim_tool=jsonConfig["simTool"],
+    open_pdks_root=pdk,
+    json_config=jsonConfig
 )
-
-# shutil.copyfile(flowDir + designName + '_pex.spice', runDir + designName + '_pex.spice')
-# shutil.copyfile(genDir + "tools/result.py", runDir + "result.py")
-# shutil.copyfile(genDir + "tools/result_error.py", runDir + "result_error.py")
-
-runDir = simDir + "run/inv{:d}_header{:d}/".format(stage_var[0], header_var[0])
-if os.path.isfile(runDir + "all_result"):
-    shutil.copyfile(runDir + "all_result", genDir + args.outputDir + "/sim_result")
-else:
-    print(runDir + "all_result file is not generated successfully")
-
-
-# with open(spice_netlist, "r") as rf:
-#   filedata = rf.read()
-#   filedata = re.sub("(V[0-9]+)", "*\g<1>", filedata)
-#   filedata = re.sub("\*(R[0-9]+)", "\g<1>", filedata)
-# with open(spice_netlist, "w") as wf:
-#   wf.write(filedata)
 
 print("#----------------------------------------------------------------------")
 print("# Simulation output Generated")
