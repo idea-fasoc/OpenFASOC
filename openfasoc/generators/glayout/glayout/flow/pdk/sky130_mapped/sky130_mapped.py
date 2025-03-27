@@ -52,6 +52,22 @@ LAYER = {
     "nwell": (64, 20),
     "pwell": (64, 44),
     "dnwell": (64, 18),
+    ## _pin layer definations 
+    # (Text type Pin definiaitons are not needed)
+    #"met5_pin": (72, 16), # (Text and data) Not Needed
+    "met4_pin": (71, 16), # (Text and data)
+    "met3_pin": (70, 16), # (Text and data)
+    "met2_pin": (69, 16), # (Text and data)
+    "met1_pin": (68, 16), # (Text and data)
+    "li1_pin": (67, 16), # (Text and data)
+    "poly_pin": (66, 16), # (Text and data)
+    "diff_pin": (65, 16), # (Text and data)
+    "nwell_pin": (64, 16), # (Text type)
+    ##
+    "pad_pin": (76, 16), # (Text and data)
+    "pwell_pin": (122, 16), # (Text and data)
+    "pwelliso_pin": (44, 16), # (Text and data)
+   
 }
 
 sky130_glayer_mapping = {
@@ -72,7 +88,7 @@ sky130_glayer_mapping = {
     "n+s/d": "nsdm",
     "p+s/d": "psdm",
     "nwell": "nwell",
-    "pwell": (64,44), # This Layer defination donot exist in the PDK manual
+    "pwell": (64,44), # This Layer defination donot exist in the PDK manual, See Pwell label
     "dnwell": "dnwell",
 }
 
