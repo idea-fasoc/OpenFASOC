@@ -115,7 +115,7 @@ sky130_glayer_mapping = {
     "active_diff_pin": "diff_pin",
     "nwell_pin": "nwell_pin",
     "pwell_pin": "pwell_pin",
-    # _layer label mapping
+    # _label layer mapping
     "met5_label": "met4_label",
     "met4_label": "met3_label",
     "met3_label": "met2_label",
