@@ -62,11 +62,11 @@ LAYER = {
     "li1_pin": (67, 16), # (Text and data)
     "poly_pin": (66, 16), # (Text and data)
     "diff_pin": (65, 16), # (Text and data)
-    "nwell_pin": (64, 16), # (Text type)
+    #"nwell_pin": (64, 16), # (Text type)
     ##
-    "pad_pin": (76, 16), # (Text and data)
-    "pwell_pin": (122, 16), # (Text and data)
-    "pwelliso_pin": (44, 16), # (Text and data)
+    #"pad_pin": (76, 16), # (Text and data)
+    #"pwell_pin": (122, 16), # (Text and data)
+    #"pwelliso_pin": (44, 16), # (Text and data)
     ## _label layer definations
     #"met5_label": (72, 5), # (Text)
     "met4_label": (71, 5), # (Text)
@@ -76,12 +76,12 @@ LAYER = {
     "li1_label": (67, 5), # (Text)
     "poly_label": (66, 5), # (Text)
     "diff_label": (65, 6), # (Text)
-    "tap_label": (65, 5), #
-    "nwell_label": (64, 5), # (Text)
+    #"tap_label": (65, 5), #
+    #"nwell_label": (64, 5), # (Text)
     ##
-    "pad_label": (76, 5), # (Text)
-    "pwell_label": (64,59), # (Text and data type)
-    "pwelliso_label": (44,5), # (Text)
+    #"pad_label": (76, 5), # (Text)
+    #"pwell_label": (64,59), # (Text and data type)
+    #"pwelliso_label": (44,5), # (Text)
    
 }
 
@@ -113,8 +113,8 @@ sky130_glayer_mapping = {
     "met1_pin": "li1_pin",
     "poly_pin": "poly_pin",
     "active_diff_pin": "diff_pin",
-    "nwell_pin": "nwell_pin",
-    "pwell_pin": "pwell_pin",
+    #"nwell_pin": "nwell_pin",
+    #"pwell_pin": "pwell_pin",
     # _label layer mapping
     "met5_label": "met4_label",
     "met4_label": "met3_label",
@@ -123,8 +123,8 @@ sky130_glayer_mapping = {
     "met1_label": "li1_label",
     "poly_label": "poly_label",
     "active_diff_label": "diff_label",
-    "nwell_label": "nwell_label",
-    "pwell_label": "pwell_label",
+    #"nwell_label": "nwell_label",
+    #"pwell_label": "pwell_label",
     
 }
 
