@@ -7,51 +7,6 @@ from ..sky130_mapped.grules import grulesobj
 from pathlib import Path
 from ..sky130_mapped.sky130_add_npc import sky130_add_npc
 
-
-#LAYER["fusetop"]=(75, 0)
-LAYER = {
-    "metal5": (81, 0),
-    "via4": (41, 0),
-    "metal4": (46, 0),
-    "via3": (40, 0),
-    "metal3": (42, 0),
-    "via2": (38, 0),
-    "metal2": (36, 0),
-    "via1": (35, 0),
-    "metal1": (34, 0),
-    "contact": (33, 0),
-    "poly2": (30, 0),
-    "comp": (22, 0),
-    "nplus": (32, 0),
-    "pplus": (31, 0),
-    "nwell": (21, 0),
-    "lvpwell": (204, 0),
-    "dnwell": (12, 0),
-    "CAP_MK": (117, 5)
-}
-
-sky130_glayer_mapping = {
-    "met5": "metal5",
-    "via4": "via4",
-    "met4": "metal4",
-    "via3": "via3",
-    "met3": "metal3",
-    "via2": "via2",
-    "met2": "metal2",
-    "via1": "via1",
-    "met1": "metal1",
-    "mcon": "contact",
-    "poly": "poly2",
-    "active_diff": "comp",
-    "active_tap": "comp",
-    "n+s/d": "nplus",
-    "p+s/d": "pplus",
-    "nwell": "nwell",
-    "pwell": "lvpwell",
-    "dnwell": "dnwell",
-    "capmet": "CAP_MK"
-}
-
 # # use mimcap over metal 3
 # sky130_glayer_mapping = {
 #     "capmet": (89, 44),
@@ -74,6 +29,52 @@ sky130_glayer_mapping = {
 #     "pwell": (64,44),
 #     "dnwell": (64,18),
 # }
+
+# Actual Pin definations for Skywater 130nm from the PDK manual
+# Ref: https://skywater-pdk.readthedocs.io/en/main/rules/layers.html#layers-definitions
+LAYER = {
+    "capm": (89, 44),
+    "met4": (71, 20),
+    "via3": (70, 44),
+    "met3": (70, 20),
+    "via2": (69, 44),
+    "met2": (69, 20),
+    "via" : (68, 44),
+    "met1": (68, 20),
+    "mcon": (67, 44),
+    "li1": (67, 20),
+    "licon1": (66, 44),
+    "poly": (66, 20),
+    "diff": (65, 20),
+    "tap" : (65, 44),
+    "nsdm": (93, 44),
+    "psdm": (94, 20),
+    "nwell": (64, 20),
+    "pwell": (64, 44),
+    "dnwell": (64, 18),
+}
+
+sky130_glayer_mapping = {
+    "capmet": "capm",
+    "met5": "met4",
+    "via4": "via3",
+    "met4": "met3",
+    "via3": "via2",
+    "met3": "met2",
+    "via2": "via",
+    "met2": "met1",
+    "via1": "mcon",
+    "met1": "li1",
+    "mcon": "licon1",
+    "poly": "poly",
+    "active_diff": "diff",
+    "active_tap": "diff", #Wrong Because it should be tap
+    "n+s/d": "nsdm",
+    "p+s/d": "psdm",
+    "nwell": "nwell",
+    "pwell": (64,44), # This Layer defination donot exist in the PDK manual
+    "dnwell": "dnwell",
+}
 
 openfasoc_dir = Path(__file__).resolve().parent.parent.parent.parent.parent.parent.parent
 
