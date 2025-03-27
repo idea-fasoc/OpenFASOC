@@ -67,6 +67,21 @@ LAYER = {
     "pad_pin": (76, 16), # (Text and data)
     "pwell_pin": (122, 16), # (Text and data)
     "pwelliso_pin": (44, 16), # (Text and data)
+    ## _label layer definations
+    #"met5_label": (72, 5), # (Text)
+    "met4_label": (71, 5), # (Text)
+    "met3_label": (70, 5), # (Text)
+    "met2_label": (69, 5), # (Text)
+    "met1_label": (68, 5), # (Text)
+    "li1_label": (67, 5), # (Text)
+    "poly_label": (66, 5), # (Text)
+    "diff_label": (65, 6), # (Text)
+    "tap_label": (65, 5), #
+    "nwell_label": (64, 5), # (Text)
+    ##
+    "pad_label": (76, 5), # (Text)
+    "pwell_label": (64,59), # (Text and data type)
+    "pwelliso_label": (44,5), # (Text)
    
 }
 
