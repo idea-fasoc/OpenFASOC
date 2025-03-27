@@ -105,6 +105,17 @@ sky130_glayer_mapping = {
     "nwell": "nwell",
     "pwell": (64,44), # This Layer defination donot exist in the PDK manual, See Pwell label
     "dnwell": "dnwell",
+    # _pin layer ampping
+    "met5_pin": "met4_pin",
+    "met4_pin": "met3_pin",
+    "met3_pin": "met2_pin",
+    "met2_pin": "met1_pin",
+    "met1_pin": "li1_pin",
+    "poly_pin": "poly_pin",
+    "active_diff_pin": "diff_pin",
+    "nwell_pin": "nwell_pin",
+    "pwell_pin": "pwell_pin",
+    
 }
 
 openfasoc_dir = Path(__file__).resolve().parent.parent.parent.parent.parent.parent.parent
