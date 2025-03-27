@@ -7,6 +7,51 @@ from ..sky130_mapped.grules import grulesobj
 from pathlib import Path
 from ..sky130_mapped.sky130_add_npc import sky130_add_npc
 
+
+#LAYER["fusetop"]=(75, 0)
+LAYER = {
+    "metal5": (81, 0),
+    "via4": (41, 0),
+    "metal4": (46, 0),
+    "via3": (40, 0),
+    "metal3": (42, 0),
+    "via2": (38, 0),
+    "metal2": (36, 0),
+    "via1": (35, 0),
+    "metal1": (34, 0),
+    "contact": (33, 0),
+    "poly2": (30, 0),
+    "comp": (22, 0),
+    "nplus": (32, 0),
+    "pplus": (31, 0),
+    "nwell": (21, 0),
+    "lvpwell": (204, 0),
+    "dnwell": (12, 0),
+    "CAP_MK": (117, 5)
+}
+
+sky130_glayer_mapping = {
+    "met5": "metal5",
+    "via4": "via4",
+    "met4": "metal4",
+    "via3": "via3",
+    "met3": "metal3",
+    "via2": "via2",
+    "met2": "metal2",
+    "via1": "via1",
+    "met1": "metal1",
+    "mcon": "contact",
+    "poly": "poly2",
+    "active_diff": "comp",
+    "active_tap": "comp",
+    "n+s/d": "nplus",
+    "p+s/d": "pplus",
+    "nwell": "nwell",
+    "pwell": "lvpwell",
+    "dnwell": "dnwell",
+    "capmet": "CAP_MK"
+}
+
 # # use mimcap over metal 3
 # sky130_glayer_mapping = {
 #     "capmet": (89, 44),
@@ -58,6 +103,7 @@ sky130_mapped_pdk = MappedPDK(
 		'pfet': 'sky130_fd_pr__pfet_01v8',
 		'mimcap': 'sky130_fd_pr__cap_mim_m3_1'
     },
+    layers=LAYER,
     grules=grulesobj,
     pdk_files=pdk_files,
     default_decorator=sky130_add_npc
