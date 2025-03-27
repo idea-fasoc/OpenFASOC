@@ -237,6 +237,26 @@ class MappedPDK(Pdk):
         "via4",
         "met5",
         "capmet",
+        # _pin layers
+        "met5_pin",
+        "met4_pin",
+        "met3_pin",
+        "met2_pin",
+        "met1_pin",
+        "poly_pin",
+        "active_diff_pin",
+        "nwell_pin",
+        "pwell_pin",
+        # _layer label mapping
+        "met5_label",
+        "met4_label",
+        "met3_label",
+        "met2_label",
+        "met1_label",
+        "poly_label",
+        "active_diff_label",
+        "nwell_label",
+        "pwell_label",
     )
 
     models: dict = {
