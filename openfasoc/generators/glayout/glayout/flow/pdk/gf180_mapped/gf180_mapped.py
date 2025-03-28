@@ -6,6 +6,8 @@ from ..gf180_mapped.grules import grulesobj
 from ..mappedpdk import MappedPDK, SetupPDKFiles
 from pathlib import Path
 
+# Actual Pin definations for GlobalFoundries 180nmMCU from the PDK manual
+# Ref: https://gf180mcu-pdk.readthedocs.io/en/latest/
 
 #LAYER["fusetop"]=(75, 0)
 LAYER = {
@@ -26,7 +28,15 @@ LAYER = {
     "nwell": (21, 0),
     "lvpwell": (204, 0),
     "dnwell": (12, 0),
-    "CAP_MK": (117, 5)
+    "CAP_MK": (117, 5),
+    # _Label Layer Definations
+    "metal5_label": (81,10),
+    "metal4_label": (46,10),
+    "metal3_label": (42,10),
+    "metal2_label": (36,10),
+    "metal1_label": (34,10),
+    "poly2_label": (30,10),
+    "comp_label": (22,10),
 }
 
 gf180_glayer_mapping = {
@@ -48,7 +58,23 @@ gf180_glayer_mapping = {
     "nwell": "nwell",
     "pwell": "lvpwell",
     "dnwell": "dnwell",
-    "capmet": "CAP_MK"
+    "capmet": "CAP_MK",
+    # _pin layer ampping
+    "met5_pin": "metal5_label",
+    "met4_pin": "metal4_label",
+    "met3_pin": "metal3_label",
+    "met2_pin": "metal2_label",
+    "met1_pin": "metal1_label",
+    "poly_pin": "poly2_label",
+    "active_diff_pin": "comp_label",
+    # _label layer mapping
+    "met5_label": "metal5_label",
+    "met4_label": "metal4_label",
+    "met3_label": "metal3_label",
+    "met2_label": "metal2_label",
+    "met1_label": "metal1_label",
+    "poly_label": "poly2_label",
+    "active_diff_label": "comp_label",
 }
 
 # note for DRC, there is mim_option 'A'. This is the one configured for use
