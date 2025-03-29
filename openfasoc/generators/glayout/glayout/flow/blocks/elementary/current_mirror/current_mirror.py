@@ -84,7 +84,7 @@ def create_interdigitized_fets(pdk: MappedPDK, device: str, numcols: int, with_d
         raise ValueError(f"Invalid device type: {device}. Must be 'nfet' or 'pfet'.")
 
 
-def route_interdigitized_fets(pdk: MappedPDK, interdigitized_fets: Component) -> Component:
+def _route_interdigitized_fets(pdk: MappedPDK, interdigitized_fets: Component) -> Component:
     """Routes the interdigitized FETs to create the current mirror connections.
 
     Shorts the sources and gates, and connects drain of FET A to the gate short.
@@ -126,7 +126,7 @@ def route_interdigitized_fets(pdk: MappedPDK, interdigitized_fets: Component) ->
     return interdigitized_fets  
 
 
-def add_well_tie(pdk: MappedPDK, component: Component, interdigitized_fets_bbox, tie_layers: tuple[str, str], numcols: int) -> Component:
+def _add_well_tie(pdk: MappedPDK, component: Component, interdigitized_fets_bbox, tie_layers: tuple[str, str], numcols: int) -> Component:
     """Adds a well tie (tap ring) to the component.
 
     Args:
@@ -165,7 +165,7 @@ def add_well_tie(pdk: MappedPDK, component: Component, interdigitized_fets_bbox,
 
     return component 
 
-def add_substrate_tap(pdk: MappedPDK, component: Component, interdigitized_fets_bbox) -> Component:
+def _add_substrate_tap(pdk: MappedPDK, component: Component, interdigitized_fets_bbox) -> Component:
     """Adds a substrate tap ring to the component.
 
     Args:
@@ -224,12 +224,12 @@ def current_mirror(
     top_level << interdigitized_fets 
 
     # 2. Route interdigitized FETs
-    route_interdigitized_fets(pdk, interdigitized_fets)
+    _route_interdigitized_fets(pdk, interdigitized_fets)
 
 
     # 3. Add well tie if requested
     if with_tie:
-        add_well_tie(pdk, top_level, interdigitized_fets.bbox, tie_layers, numcols)
+        _add_well_tie(pdk, top_level, interdigitized_fets.bbox, tie_layers, numcols)
 
     # 4. Add pwell padding and port
     pwell_enclosure_rule = pdk.get_grule("pwell", "active_tap")["min_enclosure"]
@@ -239,7 +239,7 @@ def current_mirror(
 
     # 5. Add substrate tap if requested
     if with_substrate_tap:
-        add_substrate_tap(pdk, top_level, interdigitized_fets.bbox)
+        _add_substrate_tap(pdk, top_level, interdigitized_fets.bbox)
 
 
     # 6. Add purpose ground ports
