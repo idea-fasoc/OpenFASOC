@@ -161,8 +161,8 @@ def super_class_AB_OTA(
     top_level << c_route(pdk, res_1_ref.ports["P_multiplier_0_drain_E"], p_block_ref.ports["bottom_A_0_gate_E"], e1glayer='met2', width2=0.29*2)
     top_level << c_route(pdk, res_2_ref.ports["P_multiplier_0_drain_E"], p_block_ref.ports["bottom_B_1_gate_W"], e1glayer='met2', width2=0.29*2)
 
-    top_level << c_route(pdk, p_block_ref.ports["top_A_0_drain_W"], n_block_ref.ports["op_cmirr_fet_A_drain_W"], extension=-local_c_bias_1_ref.xmax-8-2*ratio*diff_pair_load_params[1] , cwidth=3, viaoffset=(True,True))
-    top_level << c_route(pdk, p_block_ref.ports["top_B_1_drain_E"], n_block_ref.ports["op_cmirr_fet_B_drain_E"], extension=local_c_bias_2_ref.xmin-8-2*ratio*diff_pair_load_params[1] , cwidth=3, viaoffset=(True,True))
+    top_level << c_route(pdk, p_block_ref.ports["top_A_0_drain_W"], n_block_ref.ports["op_cmirr_fet_A_drain_W"], extension=-local_c_bias_1_ref.xmax-8-2*ratio*diff_pair_load_params[1] , cwidth=3, viaoffset=(True,True), extra_vias=True)
+    top_level << c_route(pdk, p_block_ref.ports["top_B_1_drain_E"], n_block_ref.ports["op_cmirr_fet_B_drain_E"], extension=local_c_bias_2_ref.xmin-8-2*ratio*diff_pair_load_params[1] , cwidth=3, viaoffset=(True,True), extra_vias=True)
 
     top_level << c_route(pdk, p_block_ref.ports["bottom_A_0_drain_W"], res_1_ref.ports["P_multiplier_0_source_W"], cwidth=0.9, width2=0.29*3)
     top_level << c_route(pdk, p_block_ref.ports["bottom_B_1_drain_E"], res_2_ref.ports["P_multiplier_0_source_W"], cwidth=0.9, width2=0.29*3)
