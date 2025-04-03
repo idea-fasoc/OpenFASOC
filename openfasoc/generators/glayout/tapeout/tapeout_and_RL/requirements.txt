@@ -4,3 +4,4 @@ matplotlib
 scipy
 seaborn
 prettyprinttree
+numpy==1.23.5
