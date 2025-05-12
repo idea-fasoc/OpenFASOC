@@ -25,7 +25,7 @@ ENV PDK_ROOT=/usr/bin/miniconda3/share/pdk/
 
 RUN wget https://www.klayout.org/downloads/Ubuntu-22/klayout_0.28.17-1_amd64.deb
 RUN dpkg -i klayout_0.28.17-1_amd64.deb
-RUN pip install layout
+RUN pip install glayout==0.0.9
 RUN pip install --force-reinstall numpy==1.24
 #RUN strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5
 
