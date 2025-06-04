@@ -282,15 +282,28 @@ def run_full_SFT_training(model: str, accesstoken: str) -> tuple:
     #         with open(split+".txt","a") as datafile:
     #             datafile.write(ele["messages"][1]["content"].split("\n")[0]+"\n")
     #import pdb ; pdb.set_trace()
-    trainer = SFTTrainer(
-        model=model,
-        tokenizer=tokenizer,
-        args=training_args,
-        train_dataset=data["train"],
-        eval_dataset=data["evaluation"],
-        max_seq_length=4096,
-        data_collator=data_collator
-    )# add context to all glayout prompts
+    try:
+        trainer = SFTTrainer(
+            model=model,
+            tokenizer=tokenizer,
+            args=training_args,
+            train_dataset=data["train"],
+            eval_dataset=data["evaluation"],
+            max_seq_length=4096,
+            data_collator=data_collator,
+        )
+    except TypeError:
+        # older versions of TRL's SFTTrainer do not accept the `tokenizer`
+        # argument, so fall back to calling without it for compatibility
+        trainer = SFTTrainer(
+            model=model,
+            args=training_args,
+            train_dataset=data["train"],
+            eval_dataset=data["evaluation"],
+            max_seq_length=4096,
+            data_collator=data_collator,
+        )
+    # add context to all glayout prompts
     trainer.train()
     model.save_pretrained(output_dir / "checkpoint-bestperf")
     model.eval()
