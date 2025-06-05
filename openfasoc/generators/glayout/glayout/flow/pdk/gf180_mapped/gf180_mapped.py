@@ -103,10 +103,10 @@ pdk_files = SetupPDKFiles(
 gf180_mapped_pdk = MappedPDK(
     name="gf180",
     glayers=gf180_glayer_mapping,
-        models={
-        'nfet': 'nfet_03v3',
-                'pfet': 'pfet_03v3',
-                'mimcap': 'mimcap_1p0fF'
+    models={
+        "nfet": "nfet_03v3",
+        "pfet": "pfet_03v3",
+        "mimcap": "mimcap_1p0fF",
     },
     layers=LAYER,
     pdk_files=pdk_files,
@@ -116,10 +116,7 @@ gf180_mapped_pdk = MappedPDK(
 # set grid size and propagate to gdsfactory config if not already defined
 gf180_mapped_pdk.grid_size = 1e-3
 if not hasattr(gf_config.CONF, "grid_size"):
-    try:
-        object.__setattr__(gf_config.CONF, "grid_size", gf180_mapped_pdk.grid_size)
-    except Exception:
-        pass
+    object.__setattr__(gf_config.CONF, "grid_size", gf180_mapped_pdk.grid_size)
 
 # configure gds settings
 gf180_mapped_pdk.gds_write_settings.precision = 5*10**-9

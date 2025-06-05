@@ -129,6 +129,10 @@ pdk_files = SetupPDKFiles(
 sky130_mapped_pdk = MappedPDK(
     name="sky130",
     glayers=sky130_glayer_mapping,
+    models={
+        "nfet": "sky130_fd_pr__nfet_01v8",
+        "pfet": "sky130_fd_pr__pfet_01v8",
+        "mimcap": "sky130_fd_pr__cap_mim_m3_1",
         models={
         'nfet': 'sky130_fd_pr__nfet_01v8',
                 'pfet': 'sky130_fd_pr__pfet_01v8',
@@ -137,11 +141,12 @@ sky130_mapped_pdk = MappedPDK(
     layers=LAYER,
     grules=grulesobj,
     pdk_files=pdk_files,
-    default_decorator=sky130_add_npc
+    default_decorator=sky130_add_npc,
 )
 # set grid size and propagate to gdsfactory config if not already defined
 sky130_mapped_pdk.grid_size = 1e-3
 if not hasattr(gf_config.CONF, "grid_size"):
+    object.__setattr__(gf_config.CONF, "grid_size", sky130_mapped_pdk.grid_size)
     try:
         object.__setattr__(gf_config.CONF, "grid_size", sky130_mapped_pdk.grid_size)
     except Exception:
