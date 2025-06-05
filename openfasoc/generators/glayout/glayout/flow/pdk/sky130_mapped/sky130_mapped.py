@@ -133,6 +133,10 @@ sky130_mapped_pdk = MappedPDK(
         "nfet": "sky130_fd_pr__nfet_01v8",
         "pfet": "sky130_fd_pr__pfet_01v8",
         "mimcap": "sky130_fd_pr__cap_mim_m3_1",
+        models={
+        'nfet': 'sky130_fd_pr__nfet_01v8',
+                'pfet': 'sky130_fd_pr__pfet_01v8',
+                'mimcap': 'sky130_fd_pr__cap_mim_m3_1'
     },
     layers=LAYER,
     grules=grulesobj,
@@ -143,6 +147,10 @@ sky130_mapped_pdk = MappedPDK(
 sky130_mapped_pdk.grid_size = 1e-3
 if not hasattr(gf_config.CONF, "grid_size"):
     object.__setattr__(gf_config.CONF, "grid_size", sky130_mapped_pdk.grid_size)
+    try:
+        object.__setattr__(gf_config.CONF, "grid_size", sky130_mapped_pdk.grid_size)
+    except Exception:
+        pass
 # configure gds settings
 sky130_mapped_pdk.gds_write_settings.precision = 5*10**-9
 sky130_mapped_pdk.cell_decorator_settings.cache=False

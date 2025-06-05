@@ -92,7 +92,7 @@ def load_model_and_tokenizer(model: str, accesstoken: str, device: str, lora: bo
             modelname,
             token=accesstoken,
             quantization_config=BitsAndBytesConfig(load_in_8bit=True),
-            trust_remote_code=True
+            trust_remote_code=False
         )
         # model = AutoModelForCausalLM.from_pretrained(modelname, token=accesstoken, device_map="auto", trust_remote_code=False, revision="main")
         model.train()
@@ -375,7 +375,7 @@ class GlayoutLLMSessionHandler:
             checkpoint_dir,
             device_map=self.device,
             quantization_config=BitsAndBytesConfig(load_in_8bit=True),
-            trust_remote_code=True
+            trust_remote_code=False
         )
         model_id = get_base_model_name_or_path(checkpoint_dir / "adapter_config.json")
         # basemodel = AutoModelForCausalLM.from_pretrained(model_id, device_map=self.device)
