@@ -116,7 +116,10 @@ gf180_mapped_pdk = MappedPDK(
 # set grid size and propagate to gdsfactory config if not already defined
 gf180_mapped_pdk.grid_size = 1e-3
 if not hasattr(gf_config.CONF, "grid_size"):
-    gf_config.CONF.grid_size = gf180_mapped_pdk.grid_size
+    try:
+        object.__setattr__(gf_config.CONF, "grid_size", gf180_mapped_pdk.grid_size)
+    except Exception:
+        pass
 
 # configure gds settings
 gf180_mapped_pdk.gds_write_settings.precision = 5*10**-9
