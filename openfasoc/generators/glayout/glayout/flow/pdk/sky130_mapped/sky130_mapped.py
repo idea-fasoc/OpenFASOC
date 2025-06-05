@@ -6,6 +6,7 @@ from ..mappedpdk import MappedPDK, SetupPDKFiles
 from ..sky130_mapped.grules import grulesobj
 from pathlib import Path
 from ..sky130_mapped.sky130_add_npc import sky130_add_npc
+import gdsfactory.config as gf_config
 
 # Actual Pin definations for Skywater 130nm from the PDK manual
 # Ref: https://skywater-pdk.readthedocs.io/en/main/rules/layers.html#layers-definitions
@@ -128,17 +129,21 @@ pdk_files = SetupPDKFiles(
 sky130_mapped_pdk = MappedPDK(
     name="sky130",
     glayers=sky130_glayer_mapping,
-	models={
-        'nfet': 'sky130_fd_pr__nfet_01v8',
-		'pfet': 'sky130_fd_pr__pfet_01v8',
-		'mimcap': 'sky130_fd_pr__cap_mim_m3_1'
+    models={
+        "nfet": "sky130_fd_pr__nfet_01v8",
+        "pfet": "sky130_fd_pr__pfet_01v8",
+        "mimcap": "sky130_fd_pr__cap_mim_m3_1",
     },
     layers=LAYER,
     grules=grulesobj,
     pdk_files=pdk_files,
-    default_decorator=sky130_add_npc
+    default_decorator=sky130_add_npc,
 )
-# set the grid size
+# set grid size and propagate to gdsfactory config if not already defined
+sky130_mapped_pdk.grid_size = 1e-3
+if not hasattr(gf_config.CONF, "grid_size"):
+    object.__setattr__(gf_config.CONF, "grid_size", sky130_mapped_pdk.grid_size)
+# configure gds settings
 sky130_mapped_pdk.gds_write_settings.precision = 5*10**-9
 sky130_mapped_pdk.cell_decorator_settings.cache=False
 sky130_mapped_pdk.gds_write_settings.flatten_invalid_refs=False
