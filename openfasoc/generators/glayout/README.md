@@ -180,6 +180,9 @@ The [PortTree](https://github.com/alibillalhammoud/OpenFASOC/blob/main/openfasoc
 
 ### Snap to 2x grid
 All rules (when creating a MappedPDK) and all user provided float arguments must be snapped to 2*grid size. This is because it is possible to center a component. Centering a component which has a dimension on grid may result in off grid polygons. You can snap floating point values to grid easily by calling `pdk.snap_to_2x_grid()`. You should also take care to snap to 2xgrid whenever you see it is neccessary while writing generator code. For example, most generators which take a size(xdim: float, ydim: float) argument should snap to 2xgrid.
+The `gf180_mapped` and `sky130_mapped` PDK modules initialize their `grid_size`
+to `1e-3` and, when imported, update `gdsfactory.config.CONF.grid_size`
+accordingly. This ensures a consistent snap-to-grid behavior across layouts.
 ### Mimcaps Implementation
 Although many technolgies have 2 or more mimcap options, there is currently only 1 mimcap option supported. When creating a mapped pdk, you specify the cap metal layer as a generic layer, but you specify the metal above and metal below the cap met as part of the DRC rule set for `pdk.get_grule("capmet")`. You can access the metal above capmet with `pdk.get_grule(capmet)["capmettop"]`.
 ### DRC

@@ -5,6 +5,7 @@ usage: from gf180_mapped import gf180_mapped_pdk
 from ..gf180_mapped.grules import grulesobj
 from ..mappedpdk import MappedPDK, SetupPDKFiles
 from pathlib import Path
+import gdsfactory.config as gf_config
 
 # Actual Pin definations for GlobalFoundries 180nmMCU from the PDK manual
 # Ref: https://gf180mcu-pdk.readthedocs.io/en/latest/
@@ -102,16 +103,21 @@ pdk_files = SetupPDKFiles(
 gf180_mapped_pdk = MappedPDK(
     name="gf180",
     glayers=gf180_glayer_mapping,
-	models={
+        models={
         'nfet': 'nfet_03v3',
-		'pfet': 'pfet_03v3',
-		'mimcap': 'mimcap_1p0fF'
+                'pfet': 'pfet_03v3',
+                'mimcap': 'mimcap_1p0fF'
     },
     layers=LAYER,
     pdk_files=pdk_files,
     grules=grulesobj,
 )
 
-# configure the grid size and other settings
+# set grid size and propagate to gdsfactory config if not already defined
+gf180_mapped_pdk.grid_size = 1e-3
+if not hasattr(gf_config.CONF, "grid_size"):
+    gf_config.CONF.grid_size = gf180_mapped_pdk.grid_size
+
+# configure gds settings
 gf180_mapped_pdk.gds_write_settings.precision = 5*10**-9
-gf180_mapped_pdk.cell_decorator_settings.cache=False
+gf180_mapped_pdk.cell_decorator_settings.cache = False
