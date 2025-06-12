@@ -132,11 +132,7 @@ sky130_mapped_pdk = MappedPDK(
     models={
         "nfet": "sky130_fd_pr__nfet_01v8",
         "pfet": "sky130_fd_pr__pfet_01v8",
-        "mimcap": "sky130_fd_pr__cap_mim_m3_1",
-        models={
-        'nfet': 'sky130_fd_pr__nfet_01v8',
-                'pfet': 'sky130_fd_pr__pfet_01v8',
-                'mimcap': 'sky130_fd_pr__cap_mim_m3_1'
+        "mimcap": "sky130_fd_pr__cap_mim_m3_1"
     },
     layers=LAYER,
     grules=grulesobj,
