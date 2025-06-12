@@ -1,0 +1,22 @@
+CrossCoupledInverters
+// no imports
+// create parameters: ccinvs_length, ccinvs_fingers
+# Create a float parameter called nfet_width
+# Create a float parameter called pfet_width
+Create a float parameter called ccinvs_length
+Create an int parameter called ccinvs_fingers
+// place
+place 4 interdigitated transistors called ccinvs with numcols=ccinvs_fingers, length=ccinvs_length, top_row_device="pfet", bottom_row_device="nfet"
+// only one component placed, so no move
+// cross coupled inverters, route both inverters together
+# sources are connected to pwr and gnd respectively
+#route between ccinvs_top_A_source_E and ccinvs_top_B_source_E using smart_route
+#route between ccinvs_bottom_A_source_E and ccinvs_bottom_B_source_E using smart_route
+# output of each inverter goes to input of the other inverter using smart_route
+route between ccinvs_top_A_drain_E and ccinvs_top_B_gate_E using smart_route
+route between ccinvs_bottom_A_drain_E and ccinvs_bottom_B_gate_E using smart_route
+route between ccinvs_top_B_drain_E and ccinvs_top_A_gate_E using smart_route
+route between ccinvs_bottom_B_drain_E and ccinvs_bottom_A_gate_E using smart_route
+# connect nfet and pfet of each inverter at the gate using smart_route
+route between ccinvs_top_B_gate_E and ccinvs_bottom_B_gate_E using smart_route
+route between ccinvs_top_A_gate_W and ccinvs_bottom_A_gate_W using smart_route

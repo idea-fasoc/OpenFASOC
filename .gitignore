@@ -151,3 +151,4 @@ cython_debug/
 # Large Language Models
 glayout_llm_checkpoints/
 
+openfasoc/generators/glayout/glayout/llm/glayout_llm_checkpointsphi/runs/Jun04_14-20-12_instance-gpu-h100-06/events.out.tfevents.1749046813.instance-gpu-h100-06.4144409.0

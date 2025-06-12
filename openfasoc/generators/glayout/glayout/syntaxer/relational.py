@@ -153,7 +153,9 @@ class ParametersList:
         rtrstr =rtrstr.removesuffix("| ")
         return rtrstr
     def __custom_tokenize(self, sentence: str) -> list:
-        sentence = sentence.strip().removesuffix(".").removeprefix("with")
+        sentence = sentence.strip().removesuffix(".")
+        if sentence.startswith("with "):
+            sentence = sentence[len("with ") :]
         # save and replace all instances of strings with indicator words
         string_pattern = re.compile(r'\'[^\']*\'|\"[^\"]*\"')
         string_list = [str(match.group()) for match in string_pattern.finditer(sentence)]

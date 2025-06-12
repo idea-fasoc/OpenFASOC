@@ -1,4 +1,5 @@
-gdsfactory==7.7.0
+gdsfactory>=7.16.0,<7.17
+numpy!=1.24.0,>=1.20
 prettyprint
 prettyprinttree
 gdstk
