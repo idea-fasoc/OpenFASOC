@@ -108,9 +108,8 @@ sky130_glayer_mapping = {
 }
 
 openfasoc_dir = Path(__file__).resolve().parent.parent.parent.parent.parent.parent.parent
-
 klayout_drc_file = Path(__file__).resolve().parent / "sky130.lydrc"
-pdk_root = Path('/usr/bin/miniconda3/share/pdk/')
+# pdk_root = Path('/usr/bin/miniconda3/share/pdk/')
 #pdk_root = Path('/usr/bin/miniconda3/share/pdk/')
 pdk_root = Path(os.getenv('PDK_ROOT'))
 lvs_schematic_ref_file = openfasoc_dir / "common" / "platforms" / "sky130hd" / "cdl" / "sky130_fd_sc_hd.spice"
