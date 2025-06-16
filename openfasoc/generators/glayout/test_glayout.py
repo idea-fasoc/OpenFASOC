@@ -1,5 +1,7 @@
 from glayout.flow.primitives.fet import nmos
 from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk as sky130
+from glayout.flow.pdk.gf180_mapped import gf180_mapped_pdk as gf180
+
 import sys
 import os
 import subprocess
@@ -118,7 +120,8 @@ def check_miniconda3_and_pdk():
     # Check if PDK root is present in the expected locations
     paths_to_check = [
         Path("/usr/bin/miniconda3/share/pdk/"), 
-        Path(f"/home/{os.getenv('LOGNAME')}/miniconda3/share/pdk/")
+        Path(f"/home/{os.getenv('LOGNAME')}/miniconda3/share/pdk/"),
+        Path(os.getenv('PDK_ROOT', '/foss/pdks'))
     ]
     pdk_root = None
     for path in paths_to_check:
@@ -133,7 +136,8 @@ def check_miniconda3_and_pdk():
         print(f"\nPDK root found at: {pdk_root}")
     
     # check if the pdk directories are present
-    miniconda3_path = pdk_root.resolve().parents[1]
+    #miniconda3_path = pdk_root.resolve().parents[1]
+    miniconda3_path = Path(os.getenv('CONDA_PREFIX'))
     required_pdk_dirs = ["sky130A", "gf180mcuC"]
     missing_dirs = [pdk_dir for pdk_dir in required_pdk_dirs if not (pdk_root / pdk_dir).exists()]
 
@@ -156,8 +160,13 @@ def place_nfet_run_lvs():
     print("Created nmos component!")
     print("\n...Running LVS...")
     nmos_component.name = 'nmos_test'
+    sky130.drc_magic(nmos_component, 'nmos_test')
+    print("DRC run successful!")
     sky130.lvs_netgen(nmos_component, 'nmos_test')        
     print("LVS run successful!")
+    #print("DRC run successful!")
+    #sky130.drc(nmos_component, 'nmos_test',output_dir_or_file="/foss/designs")        
+    #print("DRC run successful!")
 
     
 if __name__ == "__main__":

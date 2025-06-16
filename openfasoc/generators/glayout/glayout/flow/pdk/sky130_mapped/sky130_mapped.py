@@ -6,6 +6,8 @@ from ..mappedpdk import MappedPDK, SetupPDKFiles
 from ..sky130_mapped.grules import grulesobj
 from pathlib import Path
 from ..sky130_mapped.sky130_add_npc import sky130_add_npc
+import os
+
 
 # Actual Pin definations for Skywater 130nm from the PDK manual
 # Ref: https://skywater-pdk.readthedocs.io/en/main/rules/layers.html#layers-definitions
@@ -106,9 +108,10 @@ sky130_glayer_mapping = {
 }
 
 openfasoc_dir = Path(__file__).resolve().parent.parent.parent.parent.parent.parent.parent
-
 klayout_drc_file = Path(__file__).resolve().parent / "sky130.lydrc"
-pdk_root = Path('/usr/bin/miniconda3/share/pdk/')
+# pdk_root = Path('/usr/bin/miniconda3/share/pdk/')
+#pdk_root = Path('/usr/bin/miniconda3/share/pdk/')
+pdk_root = Path(os.getenv('PDK_ROOT'))
 lvs_schematic_ref_file = openfasoc_dir / "common" / "platforms" / "sky130hd" / "cdl" / "sky130_fd_sc_hd.spice"
 magic_drc_file = pdk_root / "sky130A" / "libs.tech" / "magic" / "sky130A.magicrc"
 lvs_setup_tcl_file = pdk_root / "sky130A" / "libs.tech" / "netgen" / "sky130A_setup.tcl"
