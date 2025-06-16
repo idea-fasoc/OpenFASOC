@@ -160,12 +160,13 @@ def place_nfet_run_lvs():
     print("Created nmos component!")
     print("\n...Running LVS...")
     nmos_component.name = 'nmos_test'
-    #sky130.lvs_netgen(nmos_component, 'nmos_test')        
-    print("LVS run successful!")
-    sky130.drc_magic(nmos_component, 'nmos_test')        
-    #print("DRC run successful!")
-    #sky130.drc(nmos_component, 'nmos_test')        
+    sky130.drc_magic(nmos_component, 'nmos_test')
     print("DRC run successful!")
+    sky130.lvs_netgen(nmos_component, 'nmos_test')        
+    print("LVS run successful!")
+    #print("DRC run successful!")
+    #sky130.drc(nmos_component, 'nmos_test',output_dir_or_file="/foss/designs")        
+    #print("DRC run successful!")
 
     
 if __name__ == "__main__":
