@@ -434,4 +434,3 @@ class GlayoutLLMSessionHandler:
 
 
 RESPONSE = """Thank you for providing the detailed context on Glayout strict syntax. I now have a foundational understanding of the commands. You can prompt me with specific requests to create circuits, and I will be able to write the Glayout strict syntax commands for you."""
-
