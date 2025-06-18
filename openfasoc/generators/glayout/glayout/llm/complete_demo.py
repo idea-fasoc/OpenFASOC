@@ -94,11 +94,7 @@ def run_actual_llm(hf_token, prompt):
         converse_mode=False
     )
     
-    # Load checkpoint if available
-    checkpoint_dir = "glayout_llm_checkpointsphi"
-    if Path(checkpoint_dir).exists():
-        print(f"Loading checkpoint: {checkpoint_dir}")
-        session.load_model_from_checkpoint(checkpoint_dir)
+    # Checkpoint loading is handled automatically in the constructor
     
     print(f"Generating strict syntax for: '{prompt}'")
     result = session.generate(prompt)
