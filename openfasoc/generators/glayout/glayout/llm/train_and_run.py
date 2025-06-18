@@ -4,7 +4,7 @@ from typing import Union
 import time
 import argparse
 
-from glayout.llm.manage_data import (
+from manage_data import (
     load_preprocessed_pretokenized_data,
     unify_prompt_and_add_context_to_data,
     get_glayout_context,
