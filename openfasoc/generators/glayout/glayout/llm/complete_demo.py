@@ -65,9 +65,9 @@ def demonstrate_complete_flow():
     
     hf_token = os.environ.get('HF_TOKEN')
     if not hf_token:
-        hf_token = "your_hf_token_here"  # Replace with your token
+        hf_token = None  # Replace with your token
     
-    if hf_token != "your_hf_token_here":
+    if hf_token not None:
         print("Attempting to use actual LLM...")
         try:
             result = run_actual_llm(hf_token, test_prompt)
