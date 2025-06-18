@@ -180,3 +180,81 @@ The system supports multiple base model architectures with specific optimization
 5. **Validation**: Generated syntax validated through Glayout instantiation
 
 This system enables natural language interaction with electronic circuit layout tools, bridging the gap between design intent and precise layout specifications through advanced language model capabilities.
+
+
+## Running Flow of Inference: LLM
+# Fine-tune (run once)
+python - <<'EOF'
+from glayout.llm.train_and_run import run_full_SFT_training
+run_full_SFT_training(model="7b", accesstoken="HF_TOKEN")
+EOF
+
+# Generate strict syntax
+python - <<'EOF'
+from glayout.llm.train_and_run import GlayoutLLMSessionHandler
+session = GlayoutLLMSessionHandler(model="7b", accesstoken="HF_TOKEN")
+convo = session.generate("Make a p-type differential pair. Parametrize everything.")
+print(convo)
+with open("DiffPair.convo", "w") as f:
+    f.write("DiffPair\n" + convo)
+EOF
+
+# Convert to layout
+python - <<'EOF'
+from glayout.syntaxer.dynamic_load import run_session, show_glayout_code_cell
+from glayout.flow.pdk.gf180_mapped import gf180_mapped_pdk
+code = run_session("DiffPair.convo", restore_and_exit=True)
+show_glayout_code_cell(gf180_mapped_pdk, code)
+EOF
+
+
+1. Environment Setup
+
+Activate your Python environment.
+Install dependencies from openfasoc/generators/glayout/requirements.txt and requirements.ml.txt:
+pip install -r openfasoc/generators/glayout/requirements.txt
+pip install -r openfasoc/generators/glayout/requirements.ml.txt
+Make sure you have an installed PDK (gf180 or sky130) that Glayout can access.
+2. Fine‑tune the model (one‑time)
+
+Use run_full_SFT_training from glayout.llm.train_and_run. This loads a base model, builds RAG data, adds the strict‑syntax context, and trains.
+
+python - <<'EOF'
+from glayout.llm.train_and_run import run_full_SFT_training
+run_full_SFT_training(model="7b", accesstoken="HF_TOKEN")
+EOF
+This saves a checkpoint (under glayout_llm_checkpoints*). The GlayoutLLMSessionHandler will automatically load it later.
+
+3. Generate strict syntax from a prompt
+
+Create a session and send a layout request. The first prompt triggers RAG to add analog design context.
+
+python - <<'EOF'
+from glayout.llm.train_and_run import GlayoutLLMSessionHandler
+session = GlayoutLLMSessionHandler(model="7b", accesstoken="HF_TOKEN")
+convo = session.generate("Create a p-type differential pair. Parametrize width and length.")
+print(convo)
+with open("DiffPair.convo", "w") as f:
+    f.write("DiffPair\n" + convo)
+EOF
+The .convo file stores the strict syntax lines for later use.
+
+4. Convert strict syntax to layout
+
+Use run_session from glayout.syntaxer.dynamic_load to translate the conversation into Python Glayout code, then show the layout.
+
+python - <<'EOF'
+from glayout.syntaxer.dynamic_load import run_session, show_glayout_code_cell
+from glayout.flow.pdk.gf180_mapped import gf180_mapped_pdk  # or your installed PDK
+code = run_session("DiffPair.convo", restore_and_exit=True)
+show_glayout_code_cell(gf180_mapped_pdk, code)
+EOF
+show_glayout_code_cell invokes Glayout to display the design.
+
+5. Prepare additional examples
+
+Repeat step 3 with different prompts to generate more .convo files. Each .convo can be converted into a layout using step 4. Examples:
+
+“Make a simple common‑source amplifier with parametrized load.”
+“Build a two‑stage operational amplifier.”
+By following these steps, you can demonstrate a complete end‑to‑end flow: fine‑tune the LLM, convert a natural language request into strict Glayout syntax, and render the corresponding layout.
