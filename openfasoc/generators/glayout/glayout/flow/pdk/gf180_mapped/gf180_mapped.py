@@ -120,4 +120,4 @@ if not hasattr(gf_config.CONF, "grid_size"):
 
 # configure gds settings
 gf180_mapped_pdk.gds_write_settings.precision = 5*10**-9
-gf180_mapped_pdk.cell_decorator_settings.cache = False
+# Note: cache setting removed - gdsfactory 7.16.0+ handles caching differently

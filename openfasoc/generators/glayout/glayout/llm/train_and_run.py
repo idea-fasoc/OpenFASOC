@@ -347,21 +347,50 @@ class GlayoutLLMSessionHandler:
         #print(self.generate(user_input="summarize the following:\n" + get_glayout_context(), clear=False))
 
     def clear_history(self):
-        """Resets the chat history to start the conversation from scratch
-        Appends some initial context to setup the LLM for the conversation
-        
-        Attributes:
-            self.pastfirst (bool): A flag indicating if the conversation has moved past the first prompt.
-            self.chat_history (list): A list to store the sequence of chat messages.
+        self.history = ""
+
+    def generate(self, user_input: str, clear: bool=True) -> str:
+        if clear:
+            self.clear_history()
+        # RAG
+        if not(self.converse_mode):
+            user_input = self.RAG(user_input)
+        # prepare for model
+        self.history += f"<s>[INST] {user_input} [/INST]"
+        model_inputs = self.tokenizer([self.history], return_tensors="pt").to(self.device)
+        # streamer = TextStreamer(self.tokenizer, skip_prompt=True, skip_special_tokens=True)
+        # generate
+        generated_ids = self.model.generate(**model_inputs, max_new_tokens=500, do_sample=True)
+        decoded = self.tokenizer.batch_decode(generated_ids)
+        # remove history from response
+        response = str(decoded[0][len(self.history):])
+        self.history += response
+        return response
+
+    def RAG(self, user_prompt: str) -> str:
+        """perform RAG to augment the user prompt with more context
+        currently will use the first result only and append the context at the end.
+        may change in the future to allow multiple results or different handling.
+
+        Args:
+            user_prompt (str): original user prompt
+
+        Returns:
+            str: augmented prompt with context from RAG
         """
-        self.chat_history = []
-        if not self.converse_mode:
-            self.pastfirst = False # a flag which indicates if we are past the first prompt
-            self.chat_history.append({"role": "user", "content": get_glayout_context()})
-            self.chat_history.append({"role": "assistant", "content": RESPONSE})
-        else:
-            self.pastfirst = True
-    
+        # query RAG
+        result = self.RAGvecdb.query(user_prompt, k=1)
+        # if no result found, return the original prompt
+        if result is None or len(result) == 0:
+            return user_prompt
+        # get the first result
+        context = result[0]
+        # combine context with the user prompt
+        # simple approach: just append the context to the prompt
+        # more advanced approaches could involve rephrasing or selecting parts of the context
+        augmented_prompt = f"{user_prompt}\n\nContext:\n{context}"
+        return augmented_prompt
+
     def load_model_from_checkpoint(self, checkpoint_dir):
         # helper function
         def get_base_model_name_or_path(file_path: Union[str, Path]) -> str:

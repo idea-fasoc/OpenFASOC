@@ -89,7 +89,7 @@ def run_actual_llm(hf_token, prompt):
     
     print("Loading LLM session (this may take a few minutes)...")
     session = GlayoutLLMSessionHandler(
-        model="7b",  # Mistral 7B
+        model="22b",  # Mistral 7B
         accesstoken=hf_token,
         converse_mode=False
     )
@@ -105,9 +105,9 @@ def run_actual_llm(hf_token, prompt):
     print("-" * 40)
     
     # Save result
-    with open("llm_output.convo", 'w') as f:
+    with open("llm_output_22b.convo", 'w') as f:
         f.write("LLMOutput\n" + result)
-    print("✓ Saved to llm_output.convo")
+    print("✓ Saved to llm_output_22b.convo")
     
     return result
 
@@ -156,7 +156,7 @@ def show_validation_process():
         from validate_synthetic_data import instantiate_convo
         from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk
         
-        test_files = ["llm_output.convo", "expected_output.convo", "simulated_diffpair.convo"]
+        test_files = ["llm_output_22b.convo"]#, "expected_output.convo", "simulated_diffpair.convo"]
         
         print("\nValidating generated files:")
         for test_file in test_files:

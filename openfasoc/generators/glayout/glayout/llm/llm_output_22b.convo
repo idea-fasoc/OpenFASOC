@@ -1,0 +1,33 @@
+LLMOutput
+import CrossCoupledInverters
+
+create a float parameter called device_width
+create a int parameter called device_fingers
+
+place a nmos called m1_positive_source with width 1.0, length 2.0, fingers 2, rmult 1, multipliers 3, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
+place a nmos called m1_negative_source with width 1.0, length 2.0, fingers 2, rmult 1, multipliers 3, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
+move m1_positive_source_W below m1_negative_source_W
+route between m1_positive_source_W and m1_negative_source_W using smart_route
+
+place a nmos called m2_positive_source with width 1.0, length 2.0, fingers 2, rmult 1, multipliers 3, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
+place a nmos called m2_negative_source with width 1.0, length 2.0, fingers 2, rmult 1, multipliers 3, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
+move m2_positive_source_W below m2_negative_source_W
+route between m2_positive_source_W and m2_negative_source_W using smart_route
+
+place a nmos called m3_positive_source with width 1.0, length 2.0, fingers 2, rmult 1, multipliers 3, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
+place a nmos called m3_negative_source with width 1.0, length 2.0, fingers 2, rmult 1, multipliers 3, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
+move m3_positive_source_W below m3_negative_source_W
+route between m3_positive_source_W and m3_negative_source_W using smart_route
+
+place a nmos called m4_positive_source with width 1.0, length 2.0, fingers 2, rmult 1, multipliers 3, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
+place a nmos called m4_negative_source with width 1.0, length 2.0, fingers 2, rmult 1, multipliers 3, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
+move m4_positive_source_W below m4_negative_source_W
+route between m4_positive_source_W and m4_negative_source_W using smart_route
+
+place a nmos called m5_positive_source with width 1.0, length 2.0, fingers 2, rmult 1, multipliers 3, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
+place a nmos called m5_negative_source with width 1.0, length 2.0, fingers 2, rmult 1, multipliers 3, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
+move m5_positive_source_W below m5_negative_source_W
+route between m5_positive_source_W and m5_negative_source_W using smart_route
+
+place a nmos called m6_positive_source with width 1.0, length 2.0, fingers 2, rmult 1, multipliers 3, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
+place a nmos called m6_negative_source with width 1.0, length 2.0, fingers 2, rmult 1, multipliers 3, with_substr

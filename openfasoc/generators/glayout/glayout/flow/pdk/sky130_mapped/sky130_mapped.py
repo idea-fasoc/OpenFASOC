@@ -149,5 +149,5 @@ if not hasattr(gf_config.CONF, "grid_size"):
         pass
 # configure gds settings
 sky130_mapped_pdk.gds_write_settings.precision = 5*10**-9
-sky130_mapped_pdk.cell_decorator_settings.cache=False
-sky130_mapped_pdk.gds_write_settings.flatten_invalid_refs=False
+# Note: cache setting removed - gdsfactory 7.16.0+ handles caching differently
+sky130_mapped_pdk.gds_write_settings.flatten_offgrid_references=False
