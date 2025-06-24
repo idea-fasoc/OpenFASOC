@@ -59,7 +59,7 @@ def current_mirror_netlist(
     width: float,
     length: float,
     multipliers: int, 
-    with_dummy: True,
+    with_dummy: Optional[bool] = False,
     n_or_p_fet: Optional[str] = 'nfet',
     subckt_only: Optional[bool] = False
 ) -> Netlist:
