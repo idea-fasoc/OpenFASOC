@@ -4,7 +4,7 @@ from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory import Component
 from glayout.flow.primitives.fet import nmos, pmos, multiplier
-from glayout.flow.pdk.util.comp_utils import evaluate_bbox, prec_center
+from glayout.flow.pdk.util.comp_utils import evaluate_bbox, prec_center, align_comp_to_port, movex, movey
 from glayout.flow.pdk.util.snap_to_grid import component_snap_to_grid
 from glayout.flow.pdk.util.port_utils import rename_ports_by_orientation
 from glayout.flow.routing.straight_route import straight_route
@@ -16,11 +16,61 @@ from glayout.flow.spice.netlist import Netlist
 from glayout.flow.primitives.via_gen import via_stack
 from gdsfactory.components import text_freetype, rectangle
 
+def sky130_add_tg_labels(tg_in: Component) -> Component:
+	
+    tg_in.unlock()
+    
+    # define layers`
+    met1_pin = (68,16)
+    met1_label = (68,5)
+    li1_pin = (67,16)
+    li1_label = (67,5)
+    # list that will contain all port/comp info
+    move_info = list()
+    # create labels and append to info list
+    # vin
+    vinlabel = rectangle(layer=met1_pin,size=(0.27,0.27),centered=True).copy()
+    vinlabel.add_label(text="VIN",layer=met1_label)
+    move_info.append((vinlabel,tg_in.ports["N_multiplier_0_source_E"],None))
+    
+    # vout
+    voutlabel = rectangle(layer=met1_pin,size=(0.27,0.27),centered=True).copy()
+    voutlabel.add_label(text="VOUT",layer=met1_label)
+    move_info.append((voutlabel,tg_in.ports["P_multiplier_0_drain_W"],None))
+    
+    # vcc
+    vcclabel = rectangle(layer=met1_pin,size=(0.5,0.5),centered=True).copy()
+    vcclabel.add_label(text="VCC",layer=met1_label)
+    move_info.append((vcclabel,tg_in.ports["P_tie_S_top_met_S"],None))
+    
+    # vss
+    vsslabel = rectangle(layer=met1_pin,size=(0.5,0.5),centered=True).copy()
+    vsslabel.add_label(text="VSS",layer=met1_label)
+    move_info.append((vsslabel,tg_in.ports["N_tie_S_top_met_N"], None))
+    
+    # VGP
+    vgplabel = rectangle(layer=met1_pin,size=(0.27,0.27),centered=True).copy()
+    vgplabel.add_label(text="VGP",layer=met1_label)
+    move_info.append((vgplabel,tg_in.ports["P_multiplier_0_gate_E"], None))
+    
+    # VGN
+    vgnlabel = rectangle(layer=met1_pin,size=(0.27,0.27),centered=True).copy()
+    vgnlabel.add_label(text="VGN",layer=met1_label)
+    move_info.append((vgnlabel,tg_in.ports["N_multiplier_0_gate_E"], None))
+
+    # move everything to position
+    for comp, prt, alignment in move_info:
+        alignment = ('c','b') if alignment is None else alignment
+        compref = align_comp_to_port(comp, prt, alignment=alignment)
+        tg_in.add(compref)
+    return tg_in.flatten() 
+
+
 def tg_netlist(nfet: Component, pfet: Component) -> Netlist:
 
-         netlist = Netlist(circuit_name='Transmission_Gate', nodes=['VIN', 'VSS', 'VOUT', 'VCC'])
-         netlist.connect_netlist(nfet.info['netlist'], [('D', 'VOUT'), ('G', 'VCC'), ('S', 'VIN'), ('B', 'VSS')])
-         netlist.connect_netlist(pfet.info['netlist'], [('D', 'VOUT'), ('G', 'VSS'), ('S', 'VIN'), ('B', 'VCC')])
+         netlist = Netlist(circuit_name='Transmission_Gate', nodes=['VIN', 'VSS', 'VOUT', 'VCC', 'VGP', 'VGN'])
+         netlist.connect_netlist(nfet.info['netlist'], [('D', 'VOUT'), ('G', 'VGN'), ('S', 'VIN'), ('B', 'VSS')])
+         netlist.connect_netlist(pfet.info['netlist'], [('D', 'VOUT'), ('G', 'VGP'), ('S', 'VIN'), ('B', 'VCC')])
 
          return netlist
 
@@ -80,4 +130,3 @@ def  transmission_gate(
 
 
     return component
-
