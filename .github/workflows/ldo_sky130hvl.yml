@@ -13,6 +13,9 @@ on:
 
 jobs:
   sky130hd_ldoGen:
+    strategy:
+      matrix:
+        arrSize: ['', 50, 100, 150]
     runs-on: ubuntu-latest
     steps:
       - name: Remove unnecessary files
@@ -28,6 +31,7 @@ jobs:
       - name: Test sky130hvl LDO
         env:
                 IMAGE_NAME: msaligane/openfasoc:stable
+                arrSize: ${{ matrix.arrSize }}
         run: |
           cd $GITHUB_WORKSPACE
           touch file.log
@@ -39,7 +43,7 @@ jobs:
               cp ./.github/scripts/parse_rpt.py ./openfasoc/generators/ldo-gen/. &&\
               pip3 install -r requirements.txt &&\
               cd ./openfasoc/generators/ldo-gen &&\
-              make sky130hvl_ldo &&\
+              arrSize=$arrSize make sky130hvl_ldo &&\
               python3 parse_rpt.py sky130hvl_ldo
             " && exit_code=$? | tee -a file.log
             if [ $? -ne 0 ]; then exit 1; fi
