@@ -19,12 +19,49 @@ from glayout.flow.blocks.elementary.FVF.fvf import fvf_netlist, flipped_voltage_
 from glayout.flow.primitives.via_gen import via_stack
 from typing import Optional
 
+def add_lvcm_labels(lvcm_in: Component,
+                pdk: MappedPDK
+                ) -> Component:
+	
+    lvcm_in.unlock()
+    # list that will contain all port/comp info
+    move_info = list()
+    # create labels and append to info list
+    # gnd
+    gndlabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.5,0.5),centered=True).copy()
+    gndlabel.add_label(text="GND",layer=pdk.get_glayer("met2_label"))
+    move_info.append((gndlabel,lvcm_in.ports["M_1_B_tie_N_top_met_N"],None))
+    
+    #currentbias
+    ibias1label = rectangle(layer=pdk.get_glayer("met3_pin"),size=(0.5,0.5),centered=True).copy()
+    ibias1label.add_label(text="IBIAS1",layer=pdk.get_glayer("met3_label"))
+    move_info.append((ibias1label,lvcm_in.ports["M_1_A_drain_bottom_met_N"],None))
+    
+    ibias2label = rectangle(layer=pdk.get_glayer("met3_pin"),size=(0.5,0.5),centered=True).copy()
+    ibias2label.add_label(text="IBIAS2",layer=pdk.get_glayer("met3_label"))
+    move_info.append((ibias2label,lvcm_in.ports["M_2_A_drain_bottom_met_N"],None))
+
+    # output 
+    output1label = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
+    output1label.add_label(text="IOUT1",layer=pdk.get_glayer("met2_label"))
+    move_info.append((output1label,lvcm_in.ports["M_3_A_multiplier_0_drain_N"],None))
+    
+    output2label = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
+    output2label.add_label(text="IOUT2",layer=pdk.get_glayer("met2_label"))
+    move_info.append((output2label,lvcm_in.ports["M_4_A_multiplier_0_drain_N"],None))
+
+    # move everything to position
+    for comp, prt, alignment in move_info:
+        alignment = ('c','b') if alignment is None else alignment
+        compref = align_comp_to_port(comp, prt, alignment=alignment)
+        lvcm_in.add(compref)
+    return lvcm_in.flatten() 
 
 def low_voltage_cmirr_netlist(bias_fvf: Component, cascode_fvf: Component, fet_1_ref: ComponentReference, fet_2_ref: ComponentReference, fet_3_ref: ComponentReference, fet_4_ref: ComponentReference) -> Netlist:
-
+    
         netlist = Netlist(circuit_name='Low_voltage_current_mirror', nodes=['IBIAS1', 'IBIAS2', 'GND', 'IOUT1', 'IOUT2'])
-        netlist.connect_netlist(bias_fvf.info['netlist'], [('VIN','IBIAS1'),('VBULK','GND'),('Ib','IBIAS1')])
-        netlist.connect_netlist(cascode_fvf.info['netlist'], [('VIN','IBIAS1'),('VBULK','GND'),('Ib', 'IBIAS2')])
+        netlist.connect_netlist(bias_fvf.info['netlist'], [('VIN','IBIAS1'),('VBULK','GND'),('Ib','IBIAS1'),('VOUT','local_net_1')])
+        netlist.connect_netlist(cascode_fvf.info['netlist'], [('VIN','IBIAS1'),('VBULK','GND'),('Ib', 'IBIAS2'),('VOUT','local_net_2')])
         fet_1A_ref=netlist.connect_netlist(fet_2_ref.info['netlist'], [('D', 'IOUT1'),('G','IBIAS1'),('B','GND')])
         fet_2A_ref=netlist.connect_netlist(fet_4_ref.info['netlist'], [('D', 'IOUT2'),('G','IBIAS1'),('B','GND')])
         fet_1B_ref=netlist.connect_netlist(fet_1_ref.info['netlist'], [('G','IBIAS2'),('S', 'GND'),('B','GND')])
