@@ -61,7 +61,7 @@ def lhs_maximin(d, n, patience=100, seed=None):
     
     return best
 
-# === OA Sampling for Integer Axes ===
+# === OA Sampling for Integer and Categorical Axes ===
 
 def sample_integer_oa(minv, maxv, N, seed=None):
     random.seed(seed)
@@ -69,6 +69,22 @@ def sample_integer_oa(minv, maxv, N, seed=None):
     s = len(levels)
     if N % s != 0:
         raise ValueError(f"N ({N}) not a multiple of {s}")
+    repeats = N // s
+    seq = levels * repeats
+    random.shuffle(seq)
+    return seq
+
+def sample_categorical_oa(levels, N, seed=None):
+    """
+    OA sampling for categorical variables.
+    levels: list of category values
+    N: number of samples (must be divisible by len(levels))
+    Returns: list of N categorical samples with balanced representation
+    """
+    random.seed(seed)
+    s = len(levels)
+    if N % s != 0:
+        raise ValueError(f"N ({N}) not a multiple of number of levels ({s})")
     repeats = N // s
     seq = levels * repeats
     random.shuffle(seq)
@@ -156,11 +172,11 @@ cat_specs = [
 
 # === Helper: Merge LHS & OA into Mixed Samples ===
 
-def generate_mixed_samples(pcell, lhs_pts, int_oa, cat_random):
+def generate_mixed_samples(pcell, lhs_pts, int_oa, cat_oa):
     """
     lhs_pts: array (n_p, d_p) for continuous dims
     int_oa: dict axis_name -> list of N integer OA samples
-    cat_random: dict axis_name -> list of N random category choices
+    cat_oa: dict axis_name -> list of N OA category choices
     Returns list of dicts of raw samples.
     """
     samples = []
@@ -235,15 +251,15 @@ def generate_mixed_samples(pcell, lhs_pts, int_oa, cat_random):
                 if key in raw:
                     del raw[key]
         
-        # Categorical random sampling - only add parameters that circuits actually accept
+        # Categorical OA sampling - only add parameters that circuits actually accept
         if pcell == 'diff_pair':
             # diff_pair accepts n_or_p_fet as boolean (True for nfet, False for pfet)
-            if 'type' in cat_random:
-                raw['n_or_p_fet'] = cat_random['type'][i] == 'nmos'
+            if 'type' in cat_oa:
+                raw['n_or_p_fet'] = cat_oa['type'][i] == 'nmos'
         elif pcell == 'opamp':
             # opamp accepts add_output_stage boolean
-            if 'add_output_stage' in cat_random:
-                raw['add_output_stage'] = cat_random['add_output_stage'][i]
+            if 'add_output_stage' in cat_oa:
+                raw['add_output_stage'] = cat_oa['add_output_stage'][i]
         # Skip other categorical parameters as most circuits don't accept them
         
         samples.append(raw)
@@ -252,49 +268,91 @@ def generate_mixed_samples(pcell, lhs_pts, int_oa, cat_random):
 # === Main Generation Flow ===
 
 def generate_all_samples():
-    """Generate all samples for all PCells"""
-    # Define PCells and dims for LHS - Re-enabling opamp for full dataset
-    pcells = ['fvf','txgate','current_mirror','diff_pair','opamp','lvcm']
-    dims = [sum(cnt for *_ , cnt in cont_specs[p]) for p in pcells]
-    # Integer level counts for OA validity
-    int_level_counts = [[mx - mn + 1 for _, mn, mx in int_specs[p]] for p in pcells]
-    
-    # Find a valid total sample count
-    N_start = 200
-    N_total, budgets = find_valid_N_total(dims, int_level_counts, N_start)
-    print("Valid N_total:", N_total, "Budgets:", budgets)
+    """Generate all samples for all PCells using inventory-prescribed sample counts"""
+    # 1) Define exactly the inventory-prescribed sample counts (updated for 10-hour timeline):
+    inventory_np = {
+        'fvf': 360,
+        'txgate': 360,
+        'current_mirror': 180,
+        'diff_pair': 180,
+        'lvcm': 270,     # Low Voltage Current Mirror
+        'opamp': 1440,
+    }
+
+    # 2) List the PCells in the same order as your specs dicts:
+    pcells = ['fvf','txgate','current_mirror','diff_pair','lvcm','opamp']
     
     # For reproducibility
     random.seed(0)
-    
-    # Generate and merge samples for each PCell
+
+    # 3) Loop over each PCell, pulling its LHS dim and inventory np:
     all_samples = {}
-    for pcell, d_p, n_p in zip(pcells, dims, budgets):
-        # 1. Continuous LHS + maximin
+    for pcell in pcells:
+        # how many continuous dims for this PCell?
+        d_p = sum(cnt for *_ , cnt in cont_specs[pcell])
+        # override budget with inventory np
+        n_p = inventory_np[pcell]
+
+        # a) Continuous LHS + adaptive maximin
         lhs_pts = lhs_maximin(d_p, n_p, patience=10*d_p, seed=42)
-        # 2. Integer OA
-        int_oa = {
-            name: sample_integer_oa(mn, mx, n_p, seed=hash(name))
-            for name, mn, mx in int_specs[pcell]
-        }
-        # 3. Categorical random
-        cat_random = {
-            name: [random.choice(levels) for _ in range(n_p)]
-            for name, levels in cat_specs
-        }
-        # 4. Merge
-        samples = generate_mixed_samples(pcell, lhs_pts, int_oa, cat_random)
+
+        # b) Integer OA sampling (with fallback to random if N not divisible)
+        int_oa = {}
+        for name, mn, mx in int_specs.get(pcell, []):
+            levels = list(range(mn, mx + 1))
+            s = len(levels)
+            if n_p % s == 0:
+                int_oa[name] = sample_integer_oa(mn, mx, n_p, seed=hash(f"{pcell}_{name}"))
+            else:
+                # Fallback to random sampling for integers
+                print(f"Warning: {pcell} has {n_p} samples, not divisible by {s} levels for {name}, using random sampling")
+                random.seed(hash(f"{pcell}_{name}"))
+                int_oa[name] = [random.randint(mn, mx) for _ in range(n_p)]
+
+        # c) OA categoricals
+        cat_oa = {}
+        for name, levels in cat_specs:
+            # For OA to work, N must be divisible by number of levels
+            s = len(levels)
+            if n_p % s == 0:
+                cat_oa[name] = sample_categorical_oa(levels, n_p, seed=hash(f"{pcell}_{name}"))
+            else:
+                # If N is not divisible, fall back to random for this categorical
+                print(f"Warning: {pcell} has {n_p} samples, not divisible by {s} levels for {name}, using random sampling")
+                cat_oa[name] = [random.choice(levels) for _ in range(n_p)]
+
+        # d) Merge into full mixed-level samples
+        samples = generate_mixed_samples(pcell, lhs_pts, int_oa, cat_oa)
         all_samples[pcell] = samples
-        # Print a few examples
-        print(f"\nFirst 3 samples for {pcell}:")
+
+        print(f"{pcell}: generated {len(samples)} samples (inventory np = {n_p})")
+        # Print a few examples for verification
+        print(f"First 3 samples for {pcell}:")
         for s in samples[:3]:
             print(s)
-    
+        print()
+
     return all_samples
 
 # Generate samples at module level so they can be imported
 all_samples = generate_all_samples()
 
 if __name__ == "__main__":
-    # The samples are already generated above
-    pass
+    import json
+    import os
+    
+    # Save samples to JSON files
+    output_dir = os.path.join(os.path.dirname(__file__), "generated_parameters")
+    os.makedirs(output_dir, exist_ok=True)
+    
+    for pcell, samples in all_samples.items():
+        output_file = os.path.join(output_dir, f"{pcell}_parameters.json")
+        with open(output_file, 'w') as f:
+            json.dump(samples, f, indent=2)
+        print(f"Saved {len(samples)} samples to {output_file}")
+    
+    print("\nFull dataset generation with inventory-prescribed sample counts completed.")
+    print("Sample counts:")
+    for pcell, samples in all_samples.items():
+        print(f"  {pcell}: {len(samples)} samples")
+    print("\nTotal samples across all PCells:", sum(len(samples) for samples in all_samples.values()))

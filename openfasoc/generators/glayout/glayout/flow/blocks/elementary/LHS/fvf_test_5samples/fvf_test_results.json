@@ -1,0 +1,129 @@
+[
+  {
+    "sample_id": 1,
+    "component_name": "fvf_sample_0001",
+    "success": true,
+    "drc_pass": true,
+    "lvs_pass": true,
+    "execution_time": 12.140063285827637,
+    "parameters": {
+      "width": [
+        "<max_depth_reached: float>",
+        "<max_depth_reached: float>"
+      ],
+      "length": [
+        "<max_depth_reached: float>",
+        "<max_depth_reached: float>"
+      ],
+      "fingers": [
+        "<max_depth_reached: int>",
+        "<max_depth_reached: int>"
+      ],
+      "multipliers": [
+        "<max_depth_reached: int>",
+        "<max_depth_reached: int>"
+      ]
+    },
+    "output_directory": "fvf_test_5samples/sample_0001"
+  },
+  {
+    "sample_id": 2,
+    "component_name": "fvf_sample_0002",
+    "success": false,
+    "error": "Type is not JSON serializable: SimplePDK",
+    "execution_time": 0.2817354202270508,
+    "parameters": {
+      "width": [
+        "<max_depth_reached: float>",
+        "<max_depth_reached: float>"
+      ],
+      "length": [
+        "<max_depth_reached: float>",
+        "<max_depth_reached: float>"
+      ],
+      "fingers": [
+        "<max_depth_reached: int>",
+        "<max_depth_reached: int>"
+      ],
+      "multipliers": [
+        "<max_depth_reached: int>",
+        "<max_depth_reached: int>"
+      ]
+    }
+  },
+  {
+    "sample_id": 3,
+    "component_name": "fvf_sample_0003",
+    "success": false,
+    "error": "Type is not JSON serializable: SimplePDK",
+    "execution_time": 0.5633683204650879,
+    "parameters": {
+      "width": [
+        "<max_depth_reached: float>",
+        "<max_depth_reached: float>"
+      ],
+      "length": [
+        "<max_depth_reached: float>",
+        "<max_depth_reached: float>"
+      ],
+      "fingers": [
+        "<max_depth_reached: int>",
+        "<max_depth_reached: int>"
+      ],
+      "multipliers": [
+        "<max_depth_reached: int>",
+        "<max_depth_reached: int>"
+      ]
+    }
+  },
+  {
+    "sample_id": 4,
+    "component_name": "fvf_sample_0004",
+    "success": false,
+    "error": "Type is not JSON serializable: SimplePDK",
+    "execution_time": 0.30426549911499023,
+    "parameters": {
+      "width": [
+        "<max_depth_reached: float>",
+        "<max_depth_reached: float>"
+      ],
+      "length": [
+        "<max_depth_reached: float>",
+        "<max_depth_reached: float>"
+      ],
+      "fingers": [
+        "<max_depth_reached: int>",
+        "<max_depth_reached: int>"
+      ],
+      "multipliers": [
+        "<max_depth_reached: int>",
+        "<max_depth_reached: int>"
+      ]
+    }
+  },
+  {
+    "sample_id": 5,
+    "component_name": "fvf_sample_0005",
+    "success": false,
+    "error": "Type is not JSON serializable: SimplePDK",
+    "execution_time": 0.589348316192627,
+    "parameters": {
+      "width": [
+        "<max_depth_reached: float>",
+        "<max_depth_reached: float>"
+      ],
+      "length": [
+        "<max_depth_reached: float>",
+        "<max_depth_reached: float>"
+      ],
+      "fingers": [
+        "<max_depth_reached: int>",
+        "<max_depth_reached: int>"
+      ],
+      "multipliers": [
+        "<max_depth_reached: int>",
+        "<max_depth_reached: int>"
+      ]
+    }
+  }
+]
