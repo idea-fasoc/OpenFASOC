@@ -283,32 +283,3 @@ Each generated sample contains comprehensive evaluation data:
         "symmetry_score_vertical": 0.986
     }
 }
-```
-
-## Future Work
-
-### Immediate Priorities
-1. **Complete current dataset generation**: Monitor sequential sweeper progress to completion (~90 minutes)
-2. **Fix DRC/LVS PDK path issue**: Resolve sky130_mapped_pdk path reset after first evaluation
-3. **Run dataset assembly pipeline**: Execute assemble_dataset.py → dataset_curator.py → data_diagnostics.py
-
-### Medium-term Enhancements  
-1. **Enable opamp circuit**: Fix upstream bug in `__add_output_stage` function (KeyError: 'top_met_E')
-2. **Expand to 465 total samples**: Include opamp's 240 samples when circuit is fixed
-3. **Enhanced error handling**: Improve robustness for edge cases and parameter validation
-4. **Parallel processing optimization**: Resolve file conflicts to enable faster parallel generation
-
-### Long-term Extensions
-1. **Additional circuit types**: Extend to more analog building blocks (e.g., bandgap, LDO, PLL)
-2. **Multi-objective optimization**: Include performance metrics (gain, bandwidth, power)
-3. **Process variation analysis**: Add monte carlo sampling for manufacturing variations
-4. **Advanced verification**: Include parasitic-aware simulation and corner analysis
-5. **ML model integration**: Direct integration with machine learning training pipelines
-
-### Infrastructure Improvements
-1. **Automated quality gates**: Continuous validation during dataset generation
-2. **Distributed processing**: Support for cluster-based parallel generation
-3. **Version control**: Track parameter space evolution and dataset versions
-4. **Integration testing**: Automated end-to-end pipeline validation
-
-The LHS dataset generation framework provides a solid foundation for large-scale analog circuit dataset creation with comprehensive evaluation metrics and robust parameter sampling.
