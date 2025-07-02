@@ -100,8 +100,15 @@ def run_task_enhanced(pcell, idx, params, retry=2):
             gds_time = time.time() - gds_start
             
             # Run evaluation
-            eval_start = time.time()
-            report = run_evaluation(gds_path, comp_name, comp)
+            original_dir = os.getcwd()
+            try:
+                # Change to OUTPUT_DIR
+                os.chdir(OUTPUT_DIR)
+                eval_start = time.time()
+                report = run_evaluation(gds_path, comp_name, comp)
+            finally:
+                os.chdir(original_dir)
+            #report = run_evaluation(gds_path, comp_name, comp)
             eval_time = time.time() - eval_start
             
             total_time = time.time() - task_start
