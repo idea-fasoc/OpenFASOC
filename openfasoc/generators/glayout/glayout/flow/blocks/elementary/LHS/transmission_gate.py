@@ -133,11 +133,11 @@ def  transmission_gate(
 
     return component
 
-#transmission_gate = transmission_gate(sky130_mapped_pdk)
-transmission_gate = add_tg_labels(transmission_gate(sky130_mapped_pdk),sky130_mapped_pdk)
-transmission_gate.show()
-transmission_gate.name = "Transmission_Gate"
-#magic_drc_result = sky130_mapped_pdk.drc_magic(transmission_gate, transmission_gate.name)
-#netgen_lvs_result = sky130_mapped_pdk.lvs_netgen(transmission_gate, transmission_gate.name)
-transmission_gate_gds = transmission_gate.write_gds("transmission_gate.gds")
-res = run_evaluation("transmission_gate.gds", transmission_gate.name, transmission_gate)
+if __name__=="__main__":
+    transmission_gate = add_tg_labels(transmission_gate(sky130_mapped_pdk),sky130_mapped_pdk)
+    transmission_gate.show()
+    transmission_gate.name = "Transmission_Gate"
+    #magic_drc_result = sky130_mapped_pdk.drc_magic(transmission_gate, transmission_gate.name)
+    #netgen_lvs_result = sky130_mapped_pdk.lvs_netgen(transmission_gate, transmission_gate.name)
+    transmission_gate_gds = transmission_gate.write_gds("transmission_gate.gds")
+    res = run_evaluation("transmission_gate.gds", transmission_gate.name, transmission_gate)

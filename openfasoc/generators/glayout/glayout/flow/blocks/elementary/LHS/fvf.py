@@ -163,21 +163,10 @@ def  flipped_voltage_follower(
     
     return component
 
-fvf = sky130_add_fvf_labels(flipped_voltage_follower(sky130_mapped_pdk, width=(2,1), sd_rmult=3))
-fvf.show()
-fvf.name = "fvf"
-fvf_gds = fvf.write_gds("fvf.gds")
-
-# Debug: Check if netlist exists and print it
-if 'netlist' in fvf.info:
-    print("Netlist found in component info:")
-    netlist_content = fvf.info['netlist'].generate_netlist()
-    print(netlist_content)
-    print("Writing netlist to fvf.cdl for inspection...")
-    with open("fvf.cdl", "w") as f:
-        f.write(netlist_content)
-else:
-    print("No netlist found in component info!")
-
-result = run_evaluation("fvf.gds",fvf.name,fvf)
-print(result)
+if __name__=="__main__":
+    fvf = sky130_add_fvf_labels(flipped_voltage_follower(sky130_mapped_pdk, width=(2,1), sd_rmult=3))
+    fvf.show()
+    fvf.name = "fvf"
+    fvf_gds = fvf.write_gds("fvf.gds")
+    result = run_evaluation("fvf.gds",fvf.name,fvf)
+    print(result)
