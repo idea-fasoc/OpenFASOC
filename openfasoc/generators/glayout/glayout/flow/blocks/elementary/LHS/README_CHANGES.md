@@ -2,6 +2,53 @@
 
 This document summarizes the modifications made to include **lvcm** (Low Voltage Current Mirror) and prepare for **opamp** circuits in the LHS dataset generation pipeline. Note: opamp is temporarily disabled due to upstream implementation issues.
 
+## File Structure and Roles
+
+### Core Parameter Generation
+- **`elhs.py`** - Enhanced Latin Hypercube Sampling implementation with parameter specifications for all circuit types
+- **`elementary_inventory.py`** - Circuit inventory and parameter definitions
+
+### Circuit Implementations
+- **`fvf.py`** - Flipped Voltage Follower circuit with labeling
+- **`transmission_gate.py`** - Transmission gate (txgate) circuit implementation
+- **`current_mirror.py`** - Current mirror circuit generator
+- **`diff_pair.py`** - Differential pair circuit implementation
+- **`lvcm.py`** - Low Voltage Current Mirror circuit
+- **`opamp.py`** - Operational amplifier (currently disabled due to upstream bugs)
+
+### Dataset Generation Engines
+- **`sweeper.py`** - Parallel processing sweeper for large-scale dataset generation
+- **`sequential_sweeper.py`** - Sequential processing sweeper to avoid file conflicts
+- **`enhanced_sweeper.py`** - Enhanced version with better error handling and progress tracking
+
+### Evaluation Framework
+- **`evaluator_wrapper.py`** - Main evaluation coordinator that runs DRC, LVS, PEX, and geometric analysis
+- **`evaluator_box/`** - Comprehensive evaluation modules:
+  - **`verification.py`** - DRC and LVS verification using Magic VLSI and Netgen
+  - **`physical_features.py`** - PEX extraction, area calculation, and symmetry analysis
+  - **`evaluator_wrapper.py`** - Backup evaluator wrapper
+
+### Dataset Processing and Analysis
+- **`assemble_dataset.py`** - Converts raw JSON results to structured JSONL and CSV formats
+- **`dataset_curator.py`** - Quality control and data validation for generated datasets
+- **`data_diagnostics.py`** - Comprehensive analysis of parameter space coverage and dataset quality
+
+### Testing and Validation
+- **`simple_test.py`** - Basic functionality tests for individual circuits
+- **`run_fvf.py`** - Standalone FVF circuit testing
+- **`test_output/`** - Directory containing test results and validation data
+
+### Infrastructure and Configuration
+- **`sky130A.magicrc`** - Magic VLSI configuration file for SKY130 PDK
+- **`run_pex.sh`** - Shell script for parasitic extraction using Magic VLSI
+- **`evaluator_box/run_pex.sh`** - Backup PEX script
+- **`run_full_pipeline.sh`** - Complete pipeline execution script
+
+### Output Directories
+- **`sweep_outputs/`** - Results from parallel sweep operations
+- **`sequential_outputs/`** - Results from sequential processing (created during execution)
+- **`__pycache__/`** - Python bytecode cache
+
 ## Files Modified
 
 ### 1. `elhs.py` - Core Parameter Generation
@@ -84,21 +131,184 @@ Run the complete pipeline:
 ```bash
 cd /home/arnavshukla/OpenFASOC/openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS
 
-# Test small subset (2 samples per circuit)
-python test_small_sweep.py
+# Activate environment and set PDK
+conda activate GLdev
+export PDK_ROOT=/opt/conda/envs/GLdev/share/pdk
 
-# Generate full dataset (225 samples total)
+# Test small subset (2 samples per circuit)
+python simple_test.py
+
+# Generate full dataset - Sequential approach (recommended)
+python sequential_sweeper.py
+
+# Generate full dataset - Parallel approach (may have file conflicts)
 python sweeper.py
 
 # Convert to different formats
 python assemble_dataset.py     # Convert to JSONL and CSV formats
+python dataset_curator.py      # Quality control and validation
 python data_diagnostics.py     # Analyze parameter space coverage
 ```
 
-## Future Work
-1. **Fix opamp upstream bug**: Resolve the c_route port naming issue in the output stage
-2. **Add more circuits**: Extend to additional analog building blocks
-3. **Parameter optimization**: Fine-tune parameter ranges based on evaluation results
-4. **Evaluation metrics**: Enhance the evaluation wrapper with more comprehensive metrics
+## Current Dataset Generation Status (July 2025)
 
-The pipeline now supports 5 different analog circuit types with comprehensive parameter sampling using Latin Hypercube Sampling with maximin optimization.
+**✅ Successfully Running Sequential Dataset Generation**
+
+**Progress:** 17/465 samples completed (3.7%) as of latest check
+- Currently processing FVF block (17/60 samples completed)
+- Processing rate: ~12 seconds per sample
+- Estimated completion time: ~90 minutes total
+
+**Working Features:**
+- ✅ Sequential processing eliminates file conflicts
+- ✅ GDS file generation for all circuit types
+- ✅ Geometric feature extraction (area, symmetry scores)
+- ✅ PEX (parasitic extraction) using Magic VLSI
+- ✅ Environment setup with Magic and Netgen tools
+
+**Known Issues:**
+- ❌ DRC/LVS verification fails after first sample due to PDK path reset
+  - First sample (fvf_0) contains complete DRC/LVS data
+  - Subsequent samples collect geometric + PEX data only
+  - Can be addressed later if comprehensive verification data needed
+
+**Sample Distribution:**
+- **fvf**: 60 samples (currently processing)
+- **txgate**: 60 samples  
+- **current_mirror**: 30 samples
+- **diff_pair**: 30 samples
+- **lvcm**: 45 samples
+- **opamp**: 240 samples (prepared but disabled)
+- **Total Active**: 225 samples
+- **Total Planned**: 465 samples (when opamp is enabled)
+
+## Pipeline Workflow
+
+1. **Parameter Generation** (`elhs.py`)
+   - Latin Hypercube Sampling with maximin optimization
+   - Circuit-specific parameter specifications
+   - Mixed continuous/discrete parameter handling
+
+2. **Circuit Instantiation** (circuit-specific `.py` files)
+   - Generate GDS layouts using glayout library
+   - Apply proper labeling for verification
+
+3. **Comprehensive Evaluation** (`evaluator_wrapper.py`)
+   - DRC verification using Magic VLSI
+   - LVS verification using Netgen
+   - PEX extraction for parasitics
+   - Geometric analysis (area, symmetry)
+
+4. **Data Assembly** (`assemble_dataset.py`)
+   - Collect all JSON results
+   - Convert to structured formats (JSONL, CSV)
+   - Organize by circuit type
+
+5. **Quality Control** (`dataset_curator.py`)
+   - Validate data completeness
+   - Check for anomalies
+   - Generate quality reports
+
+6. **Analysis** (`data_diagnostics.py`)
+   - Parameter space coverage analysis
+   - Statistical summaries
+   - Visualization of dataset characteristics
+
+## Dataset Structure and Metrics
+
+Each generated sample contains comprehensive evaluation data:
+
+### Core Identification
+- **component_name**: Unique identifier (e.g., "fvf_0", "txgate_15")
+- **timestamp**: Generation timestamp
+- **parameters**: Circuit-specific parameter values used
+
+### Design Rule Check (DRC)
+- **status**: "pass"/"fail"/"error"
+- **is_pass**: Boolean DRC result
+- **report_path**: Path to detailed DRC report
+- **summary**: Parsed violation details with rule names and coordinates
+
+### Layout vs Schematic (LVS)
+- **status**: "pass"/"fail"/"error"  
+- **is_pass**: Boolean LVS result
+- **report_path**: Path to detailed LVS report
+- **summary**: Net/device mismatch analysis and comparison results
+
+### Parasitic Extraction (PEX)
+- **status**: "PEX Complete"/"PEX Error"
+- **total_resistance_ohms**: Cumulative parasitic resistance
+- **total_capacitance_farads**: Cumulative parasitic capacitance
+
+### Geometric Features
+- **raw_area_um2**: Total layout area in square micrometers
+- **symmetry_score_horizontal**: Horizontal symmetry metric (0-1, 1=perfect)
+- **symmetry_score_vertical**: Vertical symmetry metric (0-1, 1=perfect)
+
+### Processing Metadata
+- **evaluation_time**: Processing time in seconds
+- **gds_path**: Path to generated GDS file
+- **drc_lvs_fail**: Combined DRC/LVS failure flag
+
+## Sample JSON Structure
+```json
+{
+    "component_name": "fvf_0",
+    "timestamp": "2025-07-01T21:12:22.624098",
+    "drc_lvs_fail": true,
+    "drc": {
+        "status": "fail",
+        "is_pass": false,
+        "report_path": "/.../fvf_0.drc.rpt",
+        "summary": {
+            "is_pass": false,
+            "total_errors": 27,
+            "error_details": [...]
+        }
+    },
+    "lvs": {
+        "status": "fail", 
+        "is_pass": false,
+        "report_path": "/.../fvf_0.lvs.rpt",
+        "summary": {...}
+    },
+    "pex": {
+        "status": "PEX Complete",
+        "total_resistance_ohms": 245.7,
+        "total_capacitance_farads": 1.23e-14
+    },
+    "geometric": {
+        "raw_area_um2": 5550.78,
+        "symmetry_score_horizontal": 0.679,
+        "symmetry_score_vertical": 0.986
+    }
+}
+```
+
+## Future Work
+
+### Immediate Priorities
+1. **Complete current dataset generation**: Monitor sequential sweeper progress to completion (~90 minutes)
+2. **Fix DRC/LVS PDK path issue**: Resolve sky130_mapped_pdk path reset after first evaluation
+3. **Run dataset assembly pipeline**: Execute assemble_dataset.py → dataset_curator.py → data_diagnostics.py
+
+### Medium-term Enhancements  
+1. **Enable opamp circuit**: Fix upstream bug in `__add_output_stage` function (KeyError: 'top_met_E')
+2. **Expand to 465 total samples**: Include opamp's 240 samples when circuit is fixed
+3. **Enhanced error handling**: Improve robustness for edge cases and parameter validation
+4. **Parallel processing optimization**: Resolve file conflicts to enable faster parallel generation
+
+### Long-term Extensions
+1. **Additional circuit types**: Extend to more analog building blocks (e.g., bandgap, LDO, PLL)
+2. **Multi-objective optimization**: Include performance metrics (gain, bandwidth, power)
+3. **Process variation analysis**: Add monte carlo sampling for manufacturing variations
+4. **Advanced verification**: Include parasitic-aware simulation and corner analysis
+5. **ML model integration**: Direct integration with machine learning training pipelines
+
+### Infrastructure Improvements
+1. **Automated quality gates**: Continuous validation during dataset generation
+2. **Distributed processing**: Support for cluster-based parallel generation
+3. **Version control**: Track parameter space evolution and dataset versions
+4. **Integration testing**: Automated end-to-end pipeline validation
+
+The LHS dataset generation framework provides a solid foundation for large-scale analog circuit dataset creation with comprehensive evaluation metrics and robust parameter sampling.
