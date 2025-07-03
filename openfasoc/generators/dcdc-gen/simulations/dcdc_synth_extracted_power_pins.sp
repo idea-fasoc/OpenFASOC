@@ -1,0 +1,195 @@
+*SPICE netlist created from verilog structural netlist module DCDC_CONV by vlog2Spice (qflow)
+*This file may contain array delimiters, not for use in simulation.
+.INCLUDE '/home/gutlo/Documents/code/chip-design/OpenFASOC/openfasoc/common/platforms/sky130hd/cdl/sky130_fd_sc_hd.spice'
+
+.subckt DCDC_CONV VPWR VGND VOUT VREF_in clk s[0] s[1]
++ sel_vh[0] sel_vh[1] sel_vh[2] sel_vh[3] sel_vh[4] sel_vh[5] sel_vl[0] sel_vl[1]
++ sel_vl[2] sel_vl[3] sel_vl[4] sel_vl[5]
+
+Xu_DCDC_CLKGATE clk comp_out VGND VGND VPWR VPWR
++ clk_gate_out
++ sky130_fd_sc_hd__dlclkp_1
+Xu_DCDC_COMP VPWR VGND VOUT VREF_in comp_out comp_out
++ clk
++ DCDC_COMP
+Xu_DCDC_FF clk_gate_out FF_out_inv VGND VGND VPWR VPWR
++ \u_DCDC_NOV_CLKGEN.b1.in\
++ sky130_fd_sc_hd__dfxtp_1
+Xu_DCDC_INVERTER \u_DCDC_NOV_CLKGEN.b1.in\ VGND VGND VPWR VPWR FF_out_inv sky130_fd_sc_hd__inv_1
+X\u_DCDC_NOV_CLKGEN.b1.u_DCDC_INVERTER1  \u_DCDC_NOV_CLKGEN.b1.in\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.b1.out1\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.b1.u_DCDC_INVERTER2  \u_DCDC_NOV_CLKGEN.b1.out1\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.b1.out\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.buf1.u_DCDC_INVERTER1  \u_DCDC_NOV_CLKGEN.buf1.in\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.buf1.out1\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.buf1.u_DCDC_INVERTER2  \u_DCDC_NOV_CLKGEN.buf1.out1\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.buf2.u_DCDC_INVERTER1  \u_DCDC_NOV_CLKGEN.buf2.in\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.buf2.out1\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.buf2.u_DCDC_INVERTER2  \u_DCDC_NOV_CLKGEN.buf2.out1\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.buf2.out\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.genblk1[0].b.u_DCDC_INVERTER1  \u_DCDC_NOV_CLKGEN.b1.out\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.genblk1[0].b.out1\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.genblk1[0].b.u_DCDC_INVERTER2  \u_DCDC_NOV_CLKGEN.genblk1[0].b.out1\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.genblk1[0].b.out\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.genblk1[1].b.u_DCDC_INVERTER1  \u_DCDC_NOV_CLKGEN.genblk1[0].b.out\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.genblk1[1].b.out1\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.genblk1[1].b.u_DCDC_INVERTER2  \u_DCDC_NOV_CLKGEN.genblk1[1].b.out1\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.genblk1[1].b.out\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.genblk1[2].b.u_DCDC_INVERTER1  \u_DCDC_NOV_CLKGEN.genblk1[1].b.out\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.genblk1[2].b.out1\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.genblk1[2].b.u_DCDC_INVERTER2  \u_DCDC_NOV_CLKGEN.genblk1[2].b.out1\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.genblk1[2].b.out\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.genblk1[3].b.u_DCDC_INVERTER1  \u_DCDC_NOV_CLKGEN.genblk1[2].b.out\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.genblk1[3].b.out1\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.genblk1[3].b.u_DCDC_INVERTER2  \u_DCDC_NOV_CLKGEN.genblk1[3].b.out1\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.genblk1[3].b.out\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.genblk1[4].b.u_DCDC_INVERTER1  \u_DCDC_NOV_CLKGEN.genblk1[3].b.out\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.genblk1[4].b.out1\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.genblk1[4].b.u_DCDC_INVERTER2  \u_DCDC_NOV_CLKGEN.genblk1[4].b.out1\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.genblk1[4].b.out\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.genblk1[5].b.u_DCDC_INVERTER1  \u_DCDC_NOV_CLKGEN.genblk1[4].b.out\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.genblk1[5].b.out1\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.genblk1[5].b.u_DCDC_INVERTER2  \u_DCDC_NOV_CLKGEN.genblk1[5].b.out1\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.genblk1[5].b.out\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.genblk1[6].b.u_DCDC_INVERTER1  \u_DCDC_NOV_CLKGEN.genblk1[5].b.out\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.genblk1[6].b.out1\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.genblk1[6].b.u_DCDC_INVERTER2  \u_DCDC_NOV_CLKGEN.genblk1[6].b.out1\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.genblk1[6].b.out\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.inverterchain_4.b1.u_DCDC_INVERTER1  \u_DCDC_NOV_CLKGEN.genblk1[6].b.out\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.inverterchain_4.b1.out1\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.inverterchain_4.b1.u_DCDC_INVERTER2  \u_DCDC_NOV_CLKGEN.inverterchain_4.b1.out1\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.clk_in9\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.nand1  \u_DCDC_NOV_CLKGEN.b1.out\ \u_DCDC_NOV_CLKGEN.clk_in9\ VGND VGND VPWR VPWR
++ \u_DCDC_NOV_CLKGEN.nandout1\
++ sky130_fd_sc_hd__nand2_1
+X\u_DCDC_NOV_CLKGEN.nor1  \u_DCDC_NOV_CLKGEN.b1.out\ \u_DCDC_NOV_CLKGEN.clk_in9\ VGND VGND VPWR VPWR
++ \u_DCDC_NOV_CLKGEN.norout1\
++ sky130_fd_sc_hd__nor2_1
+X\u_DCDC_NOV_CLKGEN.not1  \u_DCDC_NOV_CLKGEN.nandout1\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.buf1.in\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.not2  \u_DCDC_NOV_CLKGEN.buf1.in\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.clk0b\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.not3  \u_DCDC_NOV_CLKGEN.norout1\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.buf2.in\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_NOV_CLKGEN.not4  \u_DCDC_NOV_CLKGEN.buf2.in\ VGND VGND VPWR VPWR \u_DCDC_NOV_CLKGEN.clk1\ sky130_fd_sc_hd__clkinv_1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[0].gen_cap[0].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[0]\ \u_DCDC_SIX_STAGES_CONV.y0_top[0]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[0].gen_cap[0].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[0]\ \u_DCDC_SIX_STAGES_CONV.y1_top[0]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[0].gen_conv[0].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[0]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[0]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[0]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[0]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[0].genblk1.u_DCDC_POWMUX.vhigh\ \u_DCDC_SIX_STAGES_CONV.gen_stage[1].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[0].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[0].genblk1.u_DCDC_POWMUX.gen_powmux[0].powmux  VGND VPWR sel_vh[0] sel_vl[0] VGND \u_DCDC_SIX_STAGES_CONV.gen_stage[0].genblk1.u_DCDC_POWMUX.vhigh\
++ \u_DCDC_SIX_STAGES_CONV.gen_stage[0].genblk1.u_DCDC_POWMUX.vlow\
++ DCDC_MUX
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[1].gen_cap[0].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[1]\ \u_DCDC_SIX_STAGES_CONV.y0_top[1]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[1].gen_cap[0].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[1]\ \u_DCDC_SIX_STAGES_CONV.y1_top[1]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[1].gen_conv[0].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[1]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[1]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[1]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[1]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[1].genblk1.u_DCDC_POWMUX.vhigh\ \u_DCDC_SIX_STAGES_CONV.gen_stage[2].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[1].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[1].genblk1.u_DCDC_POWMUX.gen_powmux[0].powmux  VGND VPWR sel_vh[1] sel_vl[1] \u_DCDC_SIX_STAGES_CONV.gen_stage[1].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[1].genblk1.u_DCDC_POWMUX.vhigh\
++ \u_DCDC_SIX_STAGES_CONV.gen_stage[1].genblk1.u_DCDC_POWMUX.vlow\
++ DCDC_MUX
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[2].gen_cap[0].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[2]\ \u_DCDC_SIX_STAGES_CONV.y0_top[2]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[2].gen_cap[0].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[2]\ \u_DCDC_SIX_STAGES_CONV.y1_top[2]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[2].gen_cap[1].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[2]\ \u_DCDC_SIX_STAGES_CONV.y0_top[2]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[2].gen_cap[1].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[2]\ \u_DCDC_SIX_STAGES_CONV.y1_top[2]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[2].gen_conv[0].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[2]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[2]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[2]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[2]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[2].genblk1.u_DCDC_POWMUX.vhigh\ \u_DCDC_SIX_STAGES_CONV.gen_stage[3].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[2].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[2].genblk1.u_DCDC_POWMUX.gen_powmux[0].powmux  VGND VPWR sel_vh[2] sel_vl[2] \u_DCDC_SIX_STAGES_CONV.gen_stage[2].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[2].genblk1.u_DCDC_POWMUX.vhigh\
++ \u_DCDC_SIX_STAGES_CONV.gen_stage[2].genblk1.u_DCDC_POWMUX.vlow\
++ DCDC_MUX
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[3].gen_cap[0].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[3]\ \u_DCDC_SIX_STAGES_CONV.y0_top[3]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[3].gen_cap[0].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[3]\ \u_DCDC_SIX_STAGES_CONV.y1_top[3]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[3].gen_cap[1].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[3]\ \u_DCDC_SIX_STAGES_CONV.y0_top[3]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[3].gen_cap[1].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[3]\ \u_DCDC_SIX_STAGES_CONV.y1_top[3]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[3].gen_cap[2].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[3]\ \u_DCDC_SIX_STAGES_CONV.y0_top[3]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[3].gen_cap[2].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[3]\ \u_DCDC_SIX_STAGES_CONV.y1_top[3]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[3].gen_cap[3].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[3]\ \u_DCDC_SIX_STAGES_CONV.y0_top[3]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[3].gen_cap[3].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[3]\ \u_DCDC_SIX_STAGES_CONV.y1_top[3]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[3].gen_conv[0].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[3]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[3]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[3]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[3]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[3].genblk1.u_DCDC_POWMUX.vhigh\ \u_DCDC_SIX_STAGES_CONV.gen_stage[4].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[3].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[3].gen_conv[1].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[3]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[3]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[3]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[3]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[3].genblk1.u_DCDC_POWMUX.vhigh\ \u_DCDC_SIX_STAGES_CONV.gen_stage[4].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[3].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[3].genblk1.u_DCDC_POWMUX.gen_powmux[0].powmux  VGND VPWR sel_vh[3] sel_vl[3] \u_DCDC_SIX_STAGES_CONV.gen_stage[3].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[3].genblk1.u_DCDC_POWMUX.vhigh\
++ \u_DCDC_SIX_STAGES_CONV.gen_stage[3].genblk1.u_DCDC_POWMUX.vlow\
++ DCDC_MUX
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[0].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y0_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[0].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y1_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[1].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y0_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[1].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y1_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[2].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y0_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[2].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y1_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[3].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y0_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[3].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y1_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[4].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y0_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[4].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y1_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[5].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y0_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[5].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y1_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[6].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y0_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[6].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y1_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[7].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y0_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[7].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y1_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[8].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y0_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_cap[8].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y1_top[4]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_conv[0].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[4]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[4]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[4]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[4].genblk1.u_DCDC_POWMUX.vhigh\ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[4].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_conv[1].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[4]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[4]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[4]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[4].genblk1.u_DCDC_POWMUX.vhigh\ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[4].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_conv[2].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[4]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[4]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[4]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[4].genblk1.u_DCDC_POWMUX.vhigh\ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[4].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].gen_conv[3].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[4]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[4]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[4]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[4]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[4].genblk1.u_DCDC_POWMUX.vhigh\ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[4].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[4].genblk1.u_DCDC_POWMUX.gen_powmux[0].powmux  VGND VPWR sel_vh[4] sel_vl[4] \u_DCDC_SIX_STAGES_CONV.gen_stage[4].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[4].genblk1.u_DCDC_POWMUX.vhigh\
++ \u_DCDC_SIX_STAGES_CONV.gen_stage[4].genblk1.u_DCDC_POWMUX.vlow\
++ DCDC_MUX
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[0].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[0].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[10].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[10].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[11].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[11].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[12].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[12].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[13].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[13].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[14].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[14].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[15].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[15].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[16].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[16].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[17].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[17].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[1].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[1].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[2].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[2].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[3].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[3].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[4].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[4].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[5].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[5].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[6].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[6].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[7].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[7].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[8].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[8].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[9].u0_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_cap[9].u1_DCDC_CAP_UNIT  \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ DCDC_CAP_UNIT
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_conv[0].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vhigh\ VOUT \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_conv[1].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vhigh\ VOUT \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_conv[2].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vhigh\ VOUT \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_conv[3].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vhigh\ VOUT \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_conv[4].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vhigh\ VOUT \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_conv[5].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vhigh\ VOUT \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_conv[6].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vhigh\ VOUT \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].gen_conv[7].u_DCDC_CONV2TO1  VGND VPWR \u_DCDC_NOV_CLKGEN.buf1.out\ \u_DCDC_NOV_CLKGEN.clk0b\ \u_DCDC_NOV_CLKGEN.clk1\ \u_DCDC_NOV_CLKGEN.buf2.out\
++ \u_DCDC_SIX_STAGES_CONV.y0_top[5]\
++ \u_DCDC_SIX_STAGES_CONV.y1_top[5]\ \u_DCDC_SIX_STAGES_CONV.y0_bot[5]\ \u_DCDC_SIX_STAGES_CONV.y1_bot[5]\ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vhigh\ VOUT \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vlow\ DCDC_CONV2TO1
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.gen_powmux[0].powmux  VGND VPWR sel_vh[5] sel_vl[5] \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vhigh\
++ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vlow\
++ DCDC_MUX
+X\u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.gen_powmux[1].powmux  VGND VPWR sel_vh[5] sel_vl[5] \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vin\ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vhigh\
++ \u_DCDC_SIX_STAGES_CONV.gen_stage[5].genblk1.u_DCDC_POWMUX.vlow\
++ DCDC_MUX
+
+.ends
+.end

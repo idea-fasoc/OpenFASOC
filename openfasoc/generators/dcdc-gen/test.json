@@ -1,5 +1,5 @@
 {
-    "module_name": "DCDC_SIX_STAGES_CONV",
+    "module_name": "DCDC_CONV",
     "generator": "dcdc-gen",
     "specifications": {
 		"Iload (mA)": 0.1,
