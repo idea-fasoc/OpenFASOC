@@ -17,10 +17,35 @@ def setup_environment():
     conda_env = os.environ.get('CONDA_DEFAULT_ENV', '')
     print(f"Current conda environment: {conda_env}")
     
-    # Ensure PDK_ROOT is set
-    if 'PDK_ROOT' not in os.environ:
-        os.environ['PDK_ROOT'] = '/opt/conda/envs/GLdev/share/pdk'
-        print(f"Set PDK_ROOT to: {os.environ['PDK_ROOT']}")
+     # 1. Handle PDK_ROOT existence and value
+    pdk_root = os.environ.get('PDK_ROOT')
+    default_path = '/opt/conda/envs/GLdev/share/pdk'
+    
+    # Case 1: Missing or literal 'None'
+    if not pdk_root or str(pdk_root).strip().lower() == 'none':
+        logging.warning(f"Invalid PDK_ROOT: '{pdk_root}'. Setting to default: {default_path}")
+        os.environ['PDK_ROOT'] = default_path
+        pdk_root = default_path
+    
+    # 2. Verify directory structure
+    required_files = {
+        'magic': 'sky130A/libs.tech/magic/sky130A.tech',
+        'netgen': 'sky130A/libs.tech/netgen/setup.tcl'
+    }
+    
+    missing_files = []
+    for tool, rel_path in required_files.items():
+        abs_path = os.path.join(pdk_root, rel_path)
+        if not os.path.exists(abs_path):
+            missing_files.append(abs_path)
+    
+    if missing_files:
+        logging.error(f"Missing critical PDK files:\n- " + "\n- ".join(missing_files))
+        if pdk_root != default_path:
+            logging.info(f"Attempting fallback to default PDK: {default_path}")
+            os.environ['PDK_ROOT'] = default_path
+            return setup_pdk_environment()  # Recursively verify default path
+        raise FileNotFoundError(f"PDK files missing in both {pdk_root} and default location")
     
     # Check if tools are available
     magic_path = subprocess.run(['which', 'magic'], capture_output=True, text=True)
