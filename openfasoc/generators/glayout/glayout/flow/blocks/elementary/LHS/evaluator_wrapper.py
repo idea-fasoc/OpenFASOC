@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from gdsfactory.typings import Component
 
-from glayout.flow.blocks.evaluator_box.verification import run_verification
+from robust_verification import run_robust_verification
 from glayout.flow.blocks.evaluator_box.physical_features import run_physical_feature_extraction
 
 def get_next_filename(base_name="evaluation", extension=".json"):
@@ -51,7 +51,7 @@ def run_evaluation(layout_path: str, component_name: str, top_level: Component) 
 
     # Run verification module
     print("Running verification checks (DRC, LVS)...")
-    verification_results = run_verification(layout_path, component_name, top_level)
+    verification_results = run_robust_verification(layout_path, component_name, top_level)
     
     # Run physical features module
     print("Running physical feature extraction (PEX, Area, Symmetry)...")

@@ -5,6 +5,10 @@ Fixed verification module that properly handles PDK_ROOT environment variable.
 This addresses the issue where PDK_ROOT gets reset to None between trials.
 """
 
+# -----------------------------------------------------------------------------
+# Make sure the `glayout` repository is discoverable *before* we import from it.
+# -----------------------------------------------------------------------------
+
 import os
 import re
 import subprocess
@@ -12,43 +16,76 @@ import shutil
 import tempfile
 import sys
 from pathlib import Path
-from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk
+
+# Insert the repo root (`.../generators/glayout`) if it is not already present
+_here = Path(__file__).resolve()
+_glayout_repo_path = _here.parent.parent.parent.parent.parent.parent
+
+if _glayout_repo_path.exists() and str(_glayout_repo_path) not in sys.path:
+    sys.path.insert(0, str(_glayout_repo_path))
+
+del _here
+
 from gdsfactory.typings import Component
 
 def ensure_pdk_environment():
-    """Ensure PDK environment is properly set"""
-    pdk_root = '/opt/conda/envs/GLdev/share/pdk'
-    
-    # Set multiple environment variables to ensure PDK is found
-    os.environ['PDK_ROOT'] = pdk_root
-    os.environ['PDKPATH'] = pdk_root
-    os.environ['PDK'] = 'sky130A'
-    
-    # Additional Magic/Netgen specific environment variables
-    os.environ['MAGIC_PDK_ROOT'] = pdk_root
-    os.environ['NETGEN_PDK_ROOT'] = pdk_root
-    
-    # Set CAD_ROOT for Magic (fallback)
-    os.environ['CAD_ROOT'] = pdk_root
-    
-    # Also try to reinitialize the PDK module
+    """Ensure PDK environment is properly set.
+
+    * Uses an existing PDK_ROOT env if already set (preferred)
+    * Falls back to the conda-env PDK folder if needed
+    * Sets CAD_ROOT **only** to the Magic installation directory (``$CONDA_PREFIX/lib``)
+    """
+    # Respect an existing PDK_ROOT (set by the user / calling script)
+    pdk_root = os.environ.get('PDK_ROOT')
+    # Some libraries erroneously set the literal string "None". Treat that as
+    # undefined so we fall back to a real path.
+    if pdk_root in (None, '', 'None'):
+        pdk_root = None
+
+    if not pdk_root:
+        # Fall back to the PDK bundled inside the current conda environment
+        conda_prefix = os.environ.get('CONDA_PREFIX', '')
+        if not conda_prefix or 'miniconda3' in conda_prefix:
+            # Hard-code the *known* GLDev env path as a robust fallback
+            conda_prefix = "/home/adityakak/.conda/envs/GLDev"
+
+        pdk_root = os.path.join(conda_prefix, 'share', 'pdk')
+        if not os.path.isdir(pdk_root):
+            raise RuntimeError(
+                f"Derived PDK_ROOT '{pdk_root}' does not exist; please set the PDK_ROOT env variable"
+            )
+
+    # Build a consistent set of environment variables
+    conda_prefix = os.environ.get('CONDA_PREFIX', '')
+    env_vars = {
+        'PDK_ROOT': pdk_root,
+        'PDKPATH': pdk_root,
+        # Ensure a default value for PDK but preserve if user overrides elsewhere
+        'PDK': os.environ.get('PDK', 'sky130A'),
+        'MAGIC_PDK_ROOT': pdk_root,
+        'NETGEN_PDK_ROOT': pdk_root,
+    }
+
+    # Point CAD_ROOT to Magic installation folder only (fixes missing magicdnull)
+    if conda_prefix:
+        env_vars['CAD_ROOT'] = os.path.join(conda_prefix, 'lib')
+
+    # Refresh the environment in *one* atomic update to avoid partial states
+    os.environ.update(env_vars)
+
+    # Also try to reinitialize the PDK module to avoid stale state
     try:
-        # Clear any cached PDK instances to force reinitialization
-        import sys
-        modules_to_reload = [mod for mod in sys.modules.keys() if 'pdk' in mod.lower()]
+        import importlib, sys as _sys
+        modules_to_reload = [mod for mod in _sys.modules if 'pdk' in mod.lower()]
         for mod_name in modules_to_reload:
-            if mod_name in sys.modules:
-                try:
-                    import importlib
-                    importlib.reload(sys.modules[mod_name])
-                except:
-                    pass  # Ignore reload errors
-        
-        print(f"PDK environment reset: PDK_ROOT={pdk_root}")
-        
+            try:
+                importlib.reload(_sys.modules[mod_name])
+            except Exception:
+                pass  # Ignore reload errors – best-effort only
+        print(f"PDK environment reset via os.environ.update: PDK_ROOT={pdk_root}")
     except Exception as e:
         print(f"Warning: Could not reload PDK modules: {e}")
-    
+
     return pdk_root
 
 def parse_drc_report(report_content: str) -> dict:
@@ -79,27 +116,110 @@ def parse_drc_report(report_content: str) -> dict:
 def parse_lvs_report(report_content: str) -> dict:
     """
     Parses the raw netgen LVS report and returns a summarized, machine-readable format.
+    Focuses on parsing net and instance mismatches, similar to the reference
+    implementation in ``evaluator_box/verification.py``.
     """
     summary = {
         "is_pass": False,
         "conclusion": "LVS failed or report was inconclusive.",
         "total_mismatches": 0,
         "mismatch_details": {
-            "nets": "Not found", 
-            "devices": "Not found", 
+            "nets": "Not found",
+            "devices": "Not found",
             "unmatched_nets_parsed": [],
             "unmatched_instances_parsed": []
         }
     }
 
-    if "Circuits match uniquely" in report_content:
+    # Primary check for LVS pass/fail – if the core matcher says the netlists
+    # match (even with port errors) we treat it as a _pass_ just like the
+    # reference flow.
+    if "Netlists match" in report_content or "Circuits match uniquely" in report_content:
         summary["is_pass"] = True
-        summary["conclusion"] = "LVS passed. Circuits match uniquely."
-        return summary
-    elif "match" in report_content.lower():
-        summary["is_pass"] = True
-        summary["conclusion"] = "LVS appears to have passed based on keywords."
-        
+        summary["conclusion"] = "LVS Pass: Netlists match."
+
+    # ------------------------------------------------------------------
+    # Override: If the report explicitly states that netlists do NOT
+    # match, or mentions other mismatch keywords (even if the specific
+    # "no matching net" regex patterns are absent), force a failure so
+    # we never mis-classify.
+    # ------------------------------------------------------------------
+    lowered = report_content.lower()
+    failure_keywords = (
+        "netlists do not match",
+        "netlist mismatch",
+        "failed pin matching",
+        "mismatch"
+    )
+    if any(k in lowered for k in failure_keywords):
+        summary["is_pass"] = False
+        summary["conclusion"] = "LVS Fail: Netlist mismatch."
+
+    for line in report_content.splitlines():
+        stripped = line.strip()
+
+        # Parse net mismatches of the form:
+        #   Net: <name_left> | (no matching net)
+        m = re.search(r"Net:\s*([^|]+)\s*\|\s*\(no matching net\)", stripped)
+        if m:
+            summary["mismatch_details"]["unmatched_nets_parsed"].append({
+                "type": "net",
+                "name": m.group(1).strip(),
+                "present_in": "layout",
+                "missing_in": "schematic"
+            })
+            continue
+
+        # Parse instance mismatches
+        m = re.search(r"Instance:\s*([^|]+)\s*\|\s*\(no matching instance\)", stripped)
+        if m:
+            summary["mismatch_details"]["unmatched_instances_parsed"].append({
+                "type": "instance",
+                "name": m.group(1).strip(),
+                "present_in": "layout",
+                "missing_in": "schematic"
+            })
+            continue
+
+        # Right-side (schematic-only) mismatches
+        m = re.search(r"\|\s*([^|]+)\s*\(no matching net\)", stripped)
+        if m:
+            summary["mismatch_details"]["unmatched_nets_parsed"].append({
+                "type": "net",
+                "name": m.group(1).strip(),
+                "present_in": "schematic",
+                "missing_in": "layout"
+            })
+            continue
+
+        m = re.search(r"\|\s*([^|]+)\s*\(no matching instance\)", stripped)
+        if m:
+            summary["mismatch_details"]["unmatched_instances_parsed"].append({
+                "type": "instance",
+                "name": m.group(1).strip(),
+                "present_in": "schematic",
+                "missing_in": "layout"
+            })
+            continue
+
+        # Capture the summary lines with device/net counts for debugging
+        if "Number of devices:" in stripped:
+            summary["mismatch_details"]["devices"] = stripped.split(":", 1)[1].strip()
+        elif "Number of nets:" in stripped:
+            summary["mismatch_details"]["nets"] = stripped.split(":", 1)[1].strip()
+
+    # Tot up mismatches that we actually parsed (nets + instances)
+    summary["total_mismatches"] = (
+        len(summary["mismatch_details"]["unmatched_nets_parsed"]) +
+        len(summary["mismatch_details"]["unmatched_instances_parsed"])
+    )
+
+    # If we found *any* explicit net/instance mismatches, override to FAIL.
+    if summary["total_mismatches"] > 0:
+        summary["is_pass"] = False
+        if "Pass" in summary["conclusion"]:
+            summary["conclusion"] = "LVS Fail: Mismatches found."
+
     return summary
 
 def run_robust_verification(layout_path: str, component_name: str, top_level: Component) -> dict:
@@ -114,6 +234,10 @@ def run_robust_verification(layout_path: str, component_name: str, top_level: Co
     # Ensure PDK environment before each operation
     pdk_root = ensure_pdk_environment()
     print(f"Using PDK_ROOT: {pdk_root}")
+    
+    # Import sky130_mapped_pdk *after* the environment is guaranteed sane so
+    # that gdsfactory/PDK initialization picks up the correct PDK_ROOT.
+    from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk
     
     # DRC Check
     drc_report_path = os.path.abspath(f"./{component_name}.drc.rpt")
@@ -130,18 +254,7 @@ def run_robust_verification(layout_path: str, component_name: str, top_level: Co
         print(f"Running DRC for {component_name}...")
         
         # Try the PDK DRC method first
-        try:
-            sky130_mapped_pdk.drc_magic(layout_path, component_name, output_file=drc_report_path)
-        except Exception as pdk_error:
-            print(f"PDK DRC failed: {pdk_error}")
-            print("Trying alternative DRC approach...")
-            
-            # If PDK method fails, create a basic "pass" report to continue pipeline
-            # This is a fallback to prevent pipeline breakage
-            with open(drc_report_path, 'w') as f:
-                f.write(f"{component_name} count: 0\n")
-                f.write("----------------------------------------\n\n")
-            print(f"Created fallback DRC report: {drc_report_path}")
+        sky130_mapped_pdk.drc_magic(layout_path, component_name, output_file=drc_report_path)
         
         # Check if report was created and read it
         report_content = ""
@@ -149,13 +262,13 @@ def run_robust_verification(layout_path: str, component_name: str, top_level: Co
             with open(drc_report_path, 'r') as f:
                 report_content = f.read()
             print(f"DRC report created successfully: {len(report_content)} chars")
-        else:
+        '''else:
             print("Warning: DRC report file was not created, creating empty report")
             # Create empty report as fallback
             report_content = f"{component_name} count: \n----------------------------------------\n\n"
             with open(drc_report_path, 'w') as f:
                 f.write(report_content)
-            
+            '''
         summary = parse_drc_report(report_content)
         verification_results["drc"].update({
             "summary": summary, 
@@ -193,18 +306,7 @@ def run_robust_verification(layout_path: str, component_name: str, top_level: Co
         print(f"Running LVS for {component_name}...")
         
         # Try the PDK LVS method first
-        try:
-            sky130_mapped_pdk.lvs_netgen(layout=top_level, design_name=component_name, output_file_path=lvs_report_path)
-        except Exception as pdk_error:
-            print(f"PDK LVS failed: {pdk_error}")
-            print("Trying alternative LVS approach...")
-            
-            # If PDK method fails, create a basic "pass" report to continue pipeline
-            with open(lvs_report_path, 'w') as f:
-                f.write(f"LVS Report for {component_name}\n")
-                f.write("Final result: Circuits match uniquely.\n")
-                f.write("LVS Done.\n")
-            print(f"Created fallback LVS report: {lvs_report_path}")
+        sky130_mapped_pdk.lvs_netgen(layout=top_level, design_name=component_name, output_file_path=lvs_report_path)
         
         # Check if report was created and read it
         report_content = ""
@@ -212,13 +314,13 @@ def run_robust_verification(layout_path: str, component_name: str, top_level: Co
             with open(lvs_report_path, 'r') as report_file:
                 report_content = report_file.read()
             print(f"LVS report created successfully: {len(report_content)} chars")
-        else:
+        '''else:
             print("Warning: LVS report file was not created, creating fallback report")
             # Create fallback report
             report_content = f"LVS Report for {component_name}\nFinal result: Circuits match uniquely.\nLVS Done.\n"
             with open(lvs_report_path, 'w') as f:
                 f.write(report_content)
-            
+           '''
         lvs_summary = parse_lvs_report(report_content)
         verification_results["lvs"].update({
             "summary": lvs_summary, 

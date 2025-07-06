@@ -152,3 +152,58 @@ cython_debug/
 glayout_llm_checkpoints/
 
 openfasoc/generators/glayout/glayout/llm/glayout_llm_checkpointsphi/runs/Jun04_14-20-12_instance-gpu-h100-06/events.out.tfevents.1749046813.instance-gpu-h100-06.4144409.0
+# FVF Dataset Generation - Large Files and Directories
+# =======================================================
+# Note: FVF datasets can be 10GB-170GB+ in size
+# Individual samples: ~2-5MB each (GDS + reports + PEX files)
+# 2K dataset: ~10GB total, 34K dataset: ~170GB total
+
+# Large dataset directories (2K, 34K samples, etc.)
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/fvf_dataset_*/
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/fvf_test_*/
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/smoke_test_*/
+
+# Large parameter files and directories
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/fvf_*_lhs_params/
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/gen_params_*/
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/generated_params*/
+
+# Individual sample directories
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/sample_*/
+
+# Generated circuit files
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*.gds
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*.spice
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*.ext
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*.res.ext
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*_pex.spice
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*_lvsmag.spice
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*_sim.spice
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*.sim
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*.nodes
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*.cdl
+
+# Report files
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*.drc.rpt
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*.lvs.rpt
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*.log
+
+# Checkpoint and temporary files
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/checkpoint.json
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*_checkpoint.json
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*.tmp
+
+# Large result files
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/fvf_results.json
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/fvf_summary.csv
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*_results.json
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*_summary.csv
+
+# Legacy individual sample JSON files
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/fvf_sample_*_1.json
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*_sample_*.json
+
+# Output directories from different runs
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/sweep_outputs/
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/sequential_outputs/
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/evaluator_box/

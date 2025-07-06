@@ -1,6 +1,0 @@
-sample_id,component_name,success,drc_pass,lvs_pass,execution_time,parameters,output_directory,error
-1,fvf_sample_0001,True,True,True,12.140063285827637,"{'width': [6.849744047369886, 17.267894084513433], 'length': [2.2904011055787254, 0.9553198141336708], 'fingers': [5, 5], 'multipliers': [1, 1]}",fvf_test_5samples/sample_0001,
-2,fvf_sample_0002,False,,,0.2817354202270508,"{'width': [12.03239872698942, 0.7721537892863424], 'length': [3.4143600337426028, 0.6870101456241215], 'fingers': [3, 3], 'multipliers': [1, 1]}",,Type is not JSON serializable: SimplePDK
-3,fvf_sample_0003,False,,,0.5633683204650879,"{'width': [4.230560511563407, 17.48393742836399], 'length': [1.6753400766852904, 3.64786654109148], 'fingers': [2, 2], 'multipliers': [2, 2]}",,Type is not JSON serializable: SimplePDK
-4,fvf_sample_0004,False,,,0.30426549911499023,"{'width': [14.38595730599563, 16.922100412614498], 'length': [3.57817459815143, 1.516458697003135], 'fingers': [5, 5], 'multipliers': [2, 2]}",,Type is not JSON serializable: SimplePDK
-5,fvf_sample_0005,False,,,0.589348316192627,"{'width': [14.932459990703311, 9.65070989862769], 'length': [2.943093388855079, 1.865050255731611], 'fingers': [5, 5], 'multipliers': [1, 1]}",,Type is not JSON serializable: SimplePDK

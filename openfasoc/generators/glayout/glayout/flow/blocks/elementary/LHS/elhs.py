@@ -268,15 +268,15 @@ def generate_mixed_samples(pcell, lhs_pts, int_oa, cat_oa):
 # === Main Generation Flow ===
 
 def generate_all_samples():
-    """Generate all samples for all PCells using inventory-prescribed sample counts"""
-    # 1) Define exactly the inventory-prescribed sample counts (updated for 10-hour timeline):
+    """Generate all samples for all PCells using the 32-hour budget"""
+    # 1) EXACT sample counts for a 32h / 26-core run (+2 PVT sweeps)
     inventory_np = {
-        'fvf': 360,
-        'txgate': 360,
-        'current_mirror': 180,
-        'diff_pair': 180,
-        'lvcm': 270,     # Low Voltage Current Mirror
-        'opamp': 1440,
+        'fvf'           :  34995,   # Flipped-voltage follower   
+        'txgate'        :  23331,   # Transmission gate          
+        'current_mirror':  23331,   # Current mirror             
+        'diff_pair'     :  29163,   # Differential pair          
+        'lvcm'          :  23331,   # Low-V current mirror       
+        'opamp'         :  52494,   # Two-stage op-amp           
     }
 
     # 2) List the PCells in the same order as your specs dicts:
@@ -342,7 +342,7 @@ if __name__ == "__main__":
     import os
     
     # Save samples to JSON files
-    output_dir = os.path.join(os.path.dirname(__file__), "generated_parameters")
+    output_dir = os.path.join(os.path.dirname(__file__), "gen_params_32hr")
     os.makedirs(output_dir, exist_ok=True)
     
     for pcell, samples in all_samples.items():

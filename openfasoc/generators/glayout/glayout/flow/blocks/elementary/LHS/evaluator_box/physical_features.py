@@ -51,8 +51,10 @@ def _parse_simple_parasitics(component_name: str) -> tuple[float, float]:
         return 0.0, 0.0
     with open(spice_file_path, 'r') as f:
         for line in f:
+            orig_line = line.strip()  # Keep original case for capacitor parsing
             line = line.strip().upper()
             parts = line.split()
+            orig_parts = orig_line.split()  # Original case parts for capacitor values
             if not parts: continue
             
             name = parts[0]
@@ -61,13 +63,14 @@ def _parse_simple_parasitics(component_name: str) -> tuple[float, float]:
                 except (ValueError): continue
             elif name.startswith('C') and len(parts) >= 4:
                 try:
-                    cap_str = parts[3]
+                    cap_str = orig_parts[3]  # Use original case for capacitor value
                     unit = cap_str[-1]
                     val_str = cap_str[:-1]
                     if unit == 'F': cap_value = float(val_str) * 1e-15
                     elif unit == 'P': cap_value = float(val_str) * 1e-12
                     elif unit == 'N': cap_value = float(val_str) * 1e-9
                     elif unit == 'U': cap_value = float(val_str) * 1e-6
+                    elif unit == 'f': cap_value = float(val_str) * 1e-15  # femtofarads
                     else: cap_value = float(cap_str)
                     total_capacitance += cap_value
                 except (ValueError): continue
@@ -108,4 +111,4 @@ def run_physical_feature_extraction(layout_path: str, component_name: str, top_l
     except Exception as e:
         print(f"Warning: Could not calculate geometric features. Error: {e}")
 
-    return physical_results
+    return physical_results 

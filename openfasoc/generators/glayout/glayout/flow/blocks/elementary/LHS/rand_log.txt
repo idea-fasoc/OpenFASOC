@@ -1,0 +1,252 @@
+(GLdev) arnavshukla@instance-gpu-h100-06:~/OpenFASOC/openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS$ python fvf.py
+2025-07-04 17:38:07.117 | WARNING  | gdsfactory.pdk:get_active_pdk:733 - No active PDK. Activating generic PDK.
+
+2025-07-04 17:38:07.346 | INFO     | gdsfactory.technology.layer_views:__init__:790 - Importing LayerViews from YAML file: '/opt/conda/envs/GLdev/lib/python3.10/site-packages/gdsfactory/generic_tech/layer_views.yaml'.
+2025-07-04 17:38:07.346 | INFO     | gdsfactory.pdk:activate:337 - 'generic' PDK is now active
+2025-07-04 17:38:07.353 | INFO     | gdsfactory.pdk:activate:337 - 'sky130' PDK is now active
+/opt/conda/envs/GLdev/lib/python3.10/site-packages/gdsfactory/show.py:40: UserWarning: Unnamed cells, 1 in 'Unnamed_91a9c5bf'
+  gdspath = component.write_gds(
+2025-07-04 17:38:09.756 | WARNING  | gdsfactory.klive:show:48 - Could not connect to klive server. Is klayout open and klive plugin installed?
+2025-07-04 17:38:09.757 | INFO     | gdsfactory.component:_write_library:1851 - Wrote to 'fvf.gds'
+--- Starting Comprehensive Evaluation for fvf ---
+Cleaning up intermediate files for component 'fvf'...
+  - Deleted: fvf.res.ext
+  - Deleted: fvf.lvs.rpt
+  - Deleted: fvf.nodes
+  - Deleted: fvf.sim
+Running verification checks (DRC, LVS)...
+PDK environment reset via os.environ.update: PDK_ROOT=/opt/conda/envs/GLdev/share/pdk
+Using PDK_ROOT: /opt/conda/envs/GLdev/share/pdk
+PDK environment reset via os.environ.update: PDK_ROOT=/opt/conda/envs/GLdev/share/pdk
+Running DRC for fvf...
+2025-07-04 17:38:09.875 | WARNING  | gdsfactory.pdk:get_active_pdk:733 - No active PDK. Activating generic PDK.
+
+2025-07-04 17:38:09.938 | INFO     | gdsfactory.technology.layer_views:__init__:790 - Importing LayerViews from YAML file: '/opt/conda/envs/GLdev/lib/python3.10/site-packages/gdsfactory/generic_tech/layer_views.yaml'.
+2025-07-04 17:38:09.938 | INFO     | gdsfactory.pdk:activate:337 - 'generic' PDK is now active
+using default pdk_root: /usr/bin/miniconda3/share/pdk/
+Defaulting to stale magic_commands.tcl
+
+Magic 8.3 revision 464 - Compiled on Sat Mar  9 23:18:29 UTC 2024.
+Starting magic under Tcl interpreter
+Using the terminal as the console.
+Using NULL graphics device.
+Processing system .magicrc file
+Sourcing design .magicrc for technology sky130A ...
+2 Magic internal units = 1 Lambda
+Input style sky130(): scaleFactor=2, multiplier=2
+The following types are not handled by extraction and will be treated as non-electrical types:
+    ubm 
+Scaled tech values by 2 / 1 to match internal grid scaling
+Loading sky130A Device Generator Menu ...
+Loading "/var/tmp/tmp6b7nr_x6/magic_commands.tcl" from command line.
+Warning: Calma reading is not undoable!  I hope that's OK.
+Library written using GDS-II Release 6.0
+Library name: library
+Reading "fvf".
+[INFO]: Loading fvf
+
+Loading DRC CIF style.
+No errors found.
+[INFO]: DONE with /var/tmp/tmp6b7nr_x6/fvf.rpt
+
+Using technology "sky130A", version 1.0.471-0-g97d0844
+
+Soft errors: 
+Error while reading cell "fvf" (byte position 118): Unknown layer/datatype in boundary, layer=64 type=44
+
+DRC report created successfully: 54 chars
+PDK environment reset via os.environ.update: PDK_ROOT=/opt/conda/envs/GLdev/share/pdk
+Running LVS for fvf...
+2025-07-04 17:38:11.224 | WARNING  | gdsfactory.pdk:get_active_pdk:733 - No active PDK. Activating generic PDK.
+
+2025-07-04 17:38:11.356 | INFO     | gdsfactory.technology.layer_views:__init__:790 - Importing LayerViews from YAML file: '/opt/conda/envs/GLdev/lib/python3.10/site-packages/gdsfactory/generic_tech/layer_views.yaml'.
+2025-07-04 17:38:11.357 | INFO     | gdsfactory.pdk:activate:337 - 'generic' PDK is now active
+using user specified pdk_root, will search for required files in the specified directory
+2025-07-04 17:38:11.359 | INFO     | gdsfactory.component:_write_library:1851 - Wrote to '/var/tmp/tmpxw50d60i/fvf.gds'
+
+Magic 8.3 revision 464 - Compiled on Sat Mar  9 23:18:29 UTC 2024.
+Starting magic under Tcl interpreter
+Using the terminal as the console.
+Using NULL graphics device.
+Processing system .magicrc file
+Sourcing design .magicrc for technology sky130A ...
+2 Magic internal units = 1 Lambda
+Input style sky130(): scaleFactor=2, multiplier=2
+The following types are not handled by extraction and will be treated as non-electrical types:
+    ubm 
+Scaled tech values by 2 / 1 to match internal grid scaling
+Loading sky130A Device Generator Menu ...
+Using technology "sky130A", version 1.0.471-0-g97d0844
+Warning: Calma reading is not undoable!  I hope that's OK.
+Library written using GDS-II Release 6.0
+Library name: library
+Reading "fvf".
+Extracting fvf into fvf.ext:
+fvf: 4 warnings
+exttospice finished.
+exttosim finished.
+
+Netgen 1.5.272 compiled on Tue Mar  5 23:16:53 UTC 2024
+Warning: netgen command 'format' use fully-qualified name '::netgen::format'
+Warning: netgen command 'global' use fully-qualified name '::netgen::global'
+Reading netlist file /var/tmp/tmpxw50d60i/fvf_lvsmag.spice
+Call to undefined subcircuit sky130_fd_pr__nfet_01v8
+Creating placeholder cell definition.
+Reading netlist file /var/tmp/tmpxw50d60i/fvf.spice
+Call to undefined subcircuit sky130_fd_pr__nfet_01v8
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_pr__pfet_01v8_hvt
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_pr__diode_pw2nd
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_sc_hd__nand2_2
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_sc_hd__nor2_2
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_pr__nfet_03v3_nvt
+Creating placeholder cell definition.
+Call to undefined subcircuit sky130_fd_pr__nfet_01v8_lvt
+Creating placeholder cell definition.
+
+Reading setup file /opt/conda/envs/GLdev/share/pdk/sky130A/libs.tech/netgen/sky130A_setup.tcl
+
+Model sky130_fd_pr__res_generic_po pin end_a == end_b
+No property mult found for device sky130_fd_pr__res_generic_po
+Model sky130_fd_pr__nfet_01v8 pin 1 == 3
+No property mult found for device sky130_fd_pr__nfet_01v8
+No property sa found for device sky130_fd_pr__nfet_01v8
+No property sb found for device sky130_fd_pr__nfet_01v8
+No property sd found for device sky130_fd_pr__nfet_01v8
+No property nf found for device sky130_fd_pr__nfet_01v8
+No property nrd found for device sky130_fd_pr__nfet_01v8
+No property nrs found for device sky130_fd_pr__nfet_01v8
+No property area found for device sky130_fd_pr__nfet_01v8
+No property perim found for device sky130_fd_pr__nfet_01v8
+No property topography found for device sky130_fd_pr__nfet_01v8
+Model sky130_fd_pr__nfet_01v8 pin 1 == 3
+No property as found for device sky130_fd_pr__nfet_01v8
+No property ad found for device sky130_fd_pr__nfet_01v8
+No property ps found for device sky130_fd_pr__nfet_01v8
+No property pd found for device sky130_fd_pr__nfet_01v8
+No property nf found for device sky130_fd_pr__nfet_01v8
+No property nrd found for device sky130_fd_pr__nfet_01v8
+No property nrs found for device sky130_fd_pr__nfet_01v8
+No property area found for device sky130_fd_pr__nfet_01v8
+No property perim found for device sky130_fd_pr__nfet_01v8
+No property topography found for device sky130_fd_pr__nfet_01v8
+Model sky130_fd_pr__nfet_01v8_lvt pin 1 == 3
+No property as found for device sky130_fd_pr__nfet_01v8_lvt
+No property ad found for device sky130_fd_pr__nfet_01v8_lvt
+No property ps found for device sky130_fd_pr__nfet_01v8_lvt
+No property pd found for device sky130_fd_pr__nfet_01v8_lvt
+No property nf found for device sky130_fd_pr__nfet_01v8_lvt
+No property nrd found for device sky130_fd_pr__nfet_01v8_lvt
+No property nrs found for device sky130_fd_pr__nfet_01v8_lvt
+No property area found for device sky130_fd_pr__nfet_01v8_lvt
+No property perim found for device sky130_fd_pr__nfet_01v8_lvt
+No property topography found for device sky130_fd_pr__nfet_01v8_lvt
+Model sky130_fd_pr__nfet_03v3_nvt pin 1 == 3
+No property mult found for device sky130_fd_pr__nfet_03v3_nvt
+No property sa found for device sky130_fd_pr__nfet_03v3_nvt
+No property sb found for device sky130_fd_pr__nfet_03v3_nvt
+No property sd found for device sky130_fd_pr__nfet_03v3_nvt
+No property nf found for device sky130_fd_pr__nfet_03v3_nvt
+No property nrd found for device sky130_fd_pr__nfet_03v3_nvt
+No property nrs found for device sky130_fd_pr__nfet_03v3_nvt
+No property area found for device sky130_fd_pr__nfet_03v3_nvt
+No property perim found for device sky130_fd_pr__nfet_03v3_nvt
+No property topography found for device sky130_fd_pr__nfet_03v3_nvt
+Model sky130_fd_pr__pfet_01v8_hvt pin 1 == 3
+No property as found for device sky130_fd_pr__pfet_01v8_hvt
+No property ad found for device sky130_fd_pr__pfet_01v8_hvt
+No property ps found for device sky130_fd_pr__pfet_01v8_hvt
+No property pd found for device sky130_fd_pr__pfet_01v8_hvt
+No property nf found for device sky130_fd_pr__pfet_01v8_hvt
+No property nrd found for device sky130_fd_pr__pfet_01v8_hvt
+No property nrs found for device sky130_fd_pr__pfet_01v8_hvt
+No property area found for device sky130_fd_pr__pfet_01v8_hvt
+No property perim found for device sky130_fd_pr__pfet_01v8_hvt
+No property topography found for device sky130_fd_pr__pfet_01v8_hvt
+Comparison output logged to file /var/tmp/tmpxw50d60i/fvf_lvs.rpt
+Logging to file "/var/tmp/tmpxw50d60i/fvf_lvs.rpt" enabled
+Circuit sky130_fd_pr__nfet_01v8 contains no devices.
+
+Contents of circuit 1:  Circuit: 'fvf'
+Circuit fvf contains 6 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances:   6
+Circuit contains 4 nets.
+Contents of circuit 2:  Circuit: 'fvf'
+Circuit fvf contains 6 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances:   6
+Circuit contains 4 nets.
+
+Circuit was modified by parallel/series device merging.
+New circuit summary:
+
+Contents of circuit 1:  Circuit: 'fvf'
+Circuit fvf contains 3 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances:   3
+Circuit contains 4 nets.
+Contents of circuit 2:  Circuit: 'fvf'
+Circuit fvf contains 3 device instances.
+  Class: sky130_fd_pr__nfet_01v8 instances:   3
+Circuit contains 4 nets.
+
+Circuit 1 contains 3 devices, Circuit 2 contains 3 devices.
+Circuit 1 contains 4 nets,    Circuit 2 contains 4 nets.
+
+No more changes can be made to series/parallel networks.
+
+Final result: 
+Circuits match uniquely.
+.
+Logging to file "/var/tmp/tmpxw50d60i/fvf_lvs.rpt" disabled
+LVS Done.
+
+
+Circuit 1 cell sky130_fd_pr__nfet_01v8 and Circuit 2 cell sky130_fd_pr__nfet_01v8 are black boxes.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__nfet_01v8         |Circuit 2: sky130_fd_pr__nfet_01v8         
+-------------------------------------------|-------------------------------------------
+1                                          |1                                          
+2                                          |2                                          
+3                                          |3                                          
+4                                          |4                                          
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__nfet_01v8 and sky130_fd_pr__nfet_01v8 are equivalent.
+Flattening unmatched subcell NMOS in circuit fvf (1)(1 instance)
+Flattening unmatched subcell NMOS_1 in circuit fvf (1)(1 instance)
+
+Class fvf (0):  Merged 3 parallel devices.
+Class fvf (1):  Merged 3 parallel devices.
+Subcircuit summary:
+Circuit 1: fvf                             |Circuit 2: fvf                             
+-------------------------------------------|-------------------------------------------
+sky130_fd_pr__nfet_01v8 (6->3)             |sky130_fd_pr__nfet_01v8 (6->3)             
+Number of devices: 3                       |Number of devices: 3                       
+Number of nets: 4                          |Number of nets: 4                          
+---------------------------------------------------------------------------------------
+Netlists match uniquely.
+
+Subcircuit pins:
+Circuit 1: fvf                             |Circuit 2: fvf                             
+-------------------------------------------|-------------------------------------------
+VIN                                        |VIN                                        
+Ib                                         |Ib                                         
+VOUT                                       |VOUT                                       
+VBULK                                      |VBULK                                      
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes fvf and fvf are equivalent.
+
+Final result: Circuits match uniquely.
+.
+
+LVS report created successfully: 2578 chars
+Running physical feature extraction (PEX, Area, Symmetry)...
+--- Evaluation complete. Results saved to fvf_2.json ---
+{'component_name': 'fvf', 'timestamp': '2025-07-04T17:38:12.228597', 'drc_lvs_fail': False, 'drc': {'status': 'pass', 'is_pass': True, 'report_path': '/home/arnavshukla/OpenFASOC/openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/fvf.drc.rpt', 'summary': {'is_pass': True, 'total_errors': 0, 'error_details': []}}, 'lvs': {'status': 'pass', 'is_pass': True, 'report_path': '/home/arnavshukla/OpenFASOC/openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/fvf.lvs.rpt', 'summary': {'is_pass': True, 'conclusion': 'LVS Pass: Netlists match.', 'total_mismatches': 0, 'mismatch_details': {'nets': '4                          |Number of nets: 4', 'devices': '3                       |Number of devices: 3', 'unmatched_nets_parsed': [], 'unmatched_instances_parsed': []}}}, 'pex': {'status': 'PEX Complete', 'total_resistance_ohms': 0.0, 'total_capacitance_farads': 0.0}, 'geometric': {'raw_area_um2': 314.47160000000014, 'symmetry_score_horizontal': 0.6881072885437034, 'symmetry_score_vertical': 0.95614675538268}}
