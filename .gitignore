@@ -207,3 +207,6 @@ openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/*_sample_*.json
 openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/sweep_outputs/
 openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/sequential_outputs/
 openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/evaluator_box/
+
+# Current Mirror Dataset - 3164 samples
+openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/cm_dataset_3164_lhs/

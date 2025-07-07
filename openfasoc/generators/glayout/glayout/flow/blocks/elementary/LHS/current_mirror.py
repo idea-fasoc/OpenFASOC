@@ -27,6 +27,8 @@ def add_cm_labels(cm_in: Component,
                 ) -> Component:
 	
     cm_in.unlock()
+    met2_pin = (68,16)
+    met2_label = (68,5)
 
     # list that will contain all port/comp info
     move_info = list()
@@ -63,7 +65,7 @@ def current_mirror_netlist(
     width: float,
     length: float,
     multipliers: int, 
-    with_dummy: True,
+    with_dummy: bool = True,
     n_or_p_fet: Optional[str] = 'nfet',
     subckt_only: Optional[bool] = False
 ) -> Netlist:
@@ -158,10 +160,10 @@ def current_mirror(
         if device in ['pmos','pfet']:
             tap_layer = "n+s/d"
         tap_sep = max(
-            pdk.util_max_metal_seperation(),
-            pdk.get_grule("active_diff", "active_tap")["min_separation"],
+            float(pdk.util_max_metal_seperation()),
+            float(pdk.get_grule("active_diff", "active_tap")["min_separation"]),
         )
-        tap_sep += pdk.get_grule(tap_layer, "active_tap")["min_enclosure"]
+        tap_sep += float(pdk.get_grule(tap_layer, "active_tap")["min_enclosure"])
         tap_encloses = (
         2 * (tap_sep + interdigitized_fets.xmax),
         2 * (tap_sep + interdigitized_fets.ymax),
