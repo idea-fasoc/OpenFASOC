@@ -26,6 +26,11 @@ def add_lvcm_labels(lvcm_in: Component,
                 ) -> Component:
 	
     lvcm_in.unlock()
+
+    met2_pin = (68,16)
+    met2_label = (68,5)
+    met3_pin = (69,16)
+    met3_label = (69,5)
     # list that will contain all port/comp info
     move_info = list()
     # create labels and append to info list

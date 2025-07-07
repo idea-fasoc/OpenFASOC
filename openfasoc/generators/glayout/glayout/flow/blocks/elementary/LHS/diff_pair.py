@@ -37,47 +37,50 @@ def add_df_labels(df_in: Component,
                         pdk: MappedPDK
                          ) -> Component:
 	
-    df_in.unlock()
-    
+	df_in.unlock()
+	met1_pin = (67,16)
+	met1_label = (67,5)
+	met2_pin = (68,16)
+	met2_label = (68,5)
     # list that will contain all port/comp info
-    move_info = list()
+	move_info = list()
     # create labels and append to info list
     # vtail
-    vtaillabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
-    vtaillabel.add_label(text="VTAIL",layer=pdk.get_glayer("met2_label"))
-    move_info.append((vtaillabel,df_in.ports["bl_multiplier_0_source_S"],None))
+	vtaillabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
+	vtaillabel.add_label(text="VTAIL",layer=pdk.get_glayer("met2_label"))
+	move_info.append((vtaillabel,df_in.ports["bl_multiplier_0_source_S"],None))
     
     # vdd1
-    vdd1label = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
-    vdd1label.add_label(text="VDD1",layer=pdk.get_glayer("met2_label"))
-    move_info.append((vdd1label,df_in.ports["tl_multiplier_0_drain_N"],None))
+	vdd1label = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
+	vdd1label.add_label(text="VDD1",layer=pdk.get_glayer("met2_label"))
+	move_info.append((vdd1label,df_in.ports["tl_multiplier_0_drain_N"],None))
     
     # vdd2
-    vdd2label = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
-    vdd2label.add_label(text="VDD2",layer=pdk.get_glayer("met2_label"))
-    move_info.append((vdd2label,df_in.ports["tr_multiplier_0_drain_N"],None))
+	vdd2label = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
+	vdd2label.add_label(text="VDD2",layer=pdk.get_glayer("met2_label"))
+	move_info.append((vdd2label,df_in.ports["tr_multiplier_0_drain_N"],None))
     
     # VB
-    vblabel = rectangle(layer=pdk.get_glayer("met1_pin"),size=(0.5,0.5),centered=True).copy()
-    vblabel.add_label(text="B",layer=pdk.get_glayer("met1_label"))
-    move_info.append((vblabel,df_in.ports["tap_N_top_met_S"], None))
+	vblabel = rectangle(layer=pdk.get_glayer("met1_pin"),size=(0.5,0.5),centered=True).copy()
+	vblabel.add_label(text="B",layer=pdk.get_glayer("met1_label"))
+	move_info.append((vblabel,df_in.ports["tap_N_top_met_S"], None))
     
     # VP
-    vplabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
-    vplabel.add_label(text="VP",layer=pdk.get_glayer("met2_label"))
-    move_info.append((vplabel,df_in.ports["br_multiplier_0_gate_S"], None))
+	vplabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
+	vplabel.add_label(text="VP",layer=pdk.get_glayer("met2_label"))
+	move_info.append((vplabel,df_in.ports["br_multiplier_0_gate_S"], None))
     
     # VN
-    vnlabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
-    vnlabel.add_label(text="VN",layer=pdk.get_glayer("met2_label"))
-    move_info.append((vnlabel,df_in.ports["bl_multiplier_0_gate_S"], None))
+	vnlabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
+	vnlabel.add_label(text="VN",layer=pdk.get_glayer("met2_label"))
+	move_info.append((vnlabel,df_in.ports["bl_multiplier_0_gate_S"], None))
 
     # move everything to position
-    for comp, prt, alignment in move_info:
-        alignment = ('c','b') if alignment is None else alignment
-        compref = align_comp_to_port(comp, prt, alignment=alignment)
-        df_in.add(compref)
-    return df_in.flatten() 
+	for comp, prt, alignment in move_info:
+		alignment = ('c','b') if alignment is None else alignment
+		compref = align_comp_to_port(comp, prt, alignment=alignment)
+		df_in.add(compref)
+	return df_in.flatten() 
 
 def diff_pair_netlist(fetL: Component, fetR: Component) -> Netlist:
 	diff_pair_netlist = Netlist(circuit_name='DIFF_PAIR', nodes=['VP', 'VN', 'VDD1', 'VDD2', 'VTAIL', 'B'])
