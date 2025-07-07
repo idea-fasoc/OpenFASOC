@@ -27,6 +27,8 @@ def add_cm_labels(cm_in: Component,
                 ) -> Component:
 	
     cm_in.unlock()
+    met2_pin = (68,16)
+    met2_label = (68,5)
 
     # list that will contain all port/comp info
     move_info = list()
