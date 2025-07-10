@@ -1,0 +1,172 @@
+[
+  {
+    "sample_id": 1,
+    "component_name": "tg_sample_0001",
+    "success": true,
+    "drc_pass": true,
+    "lvs_pass": true,
+    "execution_time": 29.35896062850952,
+    "parameters": {
+      "width": [
+        1.0,
+        2.0
+      ],
+      "length": [
+        0.15,
+        0.15
+      ],
+      "fingers": [
+        1,
+        1
+      ],
+      "multipliers": [
+        1,
+        1
+      ],
+      "substrate_tap": false
+    },
+    "output_directory": "tg_dataset_5_samples/sample_0001",
+    "pex_status": "PEX Complete",
+    "total_resistance_ohms": 81231.86954200029,
+    "total_capacitance_farads": 1.0403348000000002e-14,
+    "area_um2": 259.7833999999999,
+    "symmetry_horizontal": 1.0,
+    "symmetry_vertical": 0.6651764508432794
+  },
+  {
+    "sample_id": 2,
+    "component_name": "tg_sample_0002",
+    "success": true,
+    "drc_pass": true,
+    "lvs_pass": true,
+    "execution_time": 75.16478776931763,
+    "parameters": {
+      "width": [
+        2.0,
+        4.0
+      ],
+      "length": [
+        0.18,
+        0.18
+      ],
+      "fingers": [
+        2,
+        2
+      ],
+      "multipliers": [
+        1,
+        1
+      ],
+      "substrate_tap": true
+    },
+    "output_directory": "tg_dataset_5_samples/sample_0002",
+    "pex_status": "PEX Complete",
+    "total_resistance_ohms": 369158.3916403401,
+    "total_capacitance_farads": 2.1303673000000006e-14,
+    "area_um2": 488.53920000000403,
+    "symmetry_horizontal": 1.0,
+    "symmetry_vertical": 0.6945849995251174
+  },
+  {
+    "sample_id": 3,
+    "component_name": "tg_sample_0003",
+    "success": false,
+    "drc_pass": true,
+    "lvs_pass": false,
+    "execution_time": 571.7324965000153,
+    "parameters": {
+      "width": [
+        3.0,
+        6.0
+      ],
+      "length": [
+        0.15,
+        0.15
+      ],
+      "fingers": [
+        3,
+        3
+      ],
+      "multipliers": [
+        2,
+        2
+      ],
+      "substrate_tap": false
+    },
+    "output_directory": "tg_dataset_5_samples/sample_0003",
+    "pex_status": "PEX Complete",
+    "total_resistance_ohms": 170966.8971330001,
+    "total_capacitance_farads": 4.5296900000000173e-14,
+    "area_um2": 954.5744999999988,
+    "symmetry_horizontal": 0.999530680947375,
+    "symmetry_vertical": 0.6647532486987653
+  },
+  {
+    "sample_id": 4,
+    "component_name": "tg_sample_0004",
+    "success": true,
+    "drc_pass": true,
+    "lvs_pass": true,
+    "execution_time": 47.26456165313721,
+    "parameters": {
+      "width": [
+        1.5,
+        3.0
+      ],
+      "length": [
+        0.5,
+        0.5
+      ],
+      "fingers": [
+        1,
+        1
+      ],
+      "multipliers": [
+        1,
+        1
+      ],
+      "substrate_tap": true
+    },
+    "output_directory": "tg_dataset_5_samples/sample_0004",
+    "pex_status": "PEX Complete",
+    "total_resistance_ohms": 342916.11769499996,
+    "total_capacitance_farads": 1.3122505999999999e-14,
+    "area_um2": 454.68080000000276,
+    "symmetry_horizontal": 1.0,
+    "symmetry_vertical": 0.6939145000184762
+  },
+  {
+    "sample_id": 5,
+    "component_name": "tg_sample_0005",
+    "success": false,
+    "drc_pass": true,
+    "lvs_pass": false,
+    "execution_time": 1157.8264248371124,
+    "parameters": {
+      "width": [
+        4.0,
+        8.0
+      ],
+      "length": [
+        0.28,
+        0.28
+      ],
+      "fingers": [
+        4,
+        4
+      ],
+      "multipliers": [
+        2,
+        2
+      ],
+      "substrate_tap": true
+    },
+    "output_directory": "tg_dataset_5_samples/sample_0005",
+    "pex_status": "PEX Complete",
+    "total_resistance_ohms": 828984.1705281547,
+    "total_capacitance_farads": 5.717530199999993e-14,
+    "area_um2": 1552.9602000000111,
+    "symmetry_horizontal": 0.9997012157813188,
+    "symmetry_vertical": 0.6889343332816922
+  }
+]

@@ -1,0 +1,1664 @@
+scale 1000 1 500000
+rnode "VDD2.n0" 0 26.3637 -109 -679 0
+rnode "VDD2.n1" 0 61.7841 -109 -475 0
+rnode "VDD2.t5" 0 44.2035 -142 -577 0
+rnode "VDD2.n2" 0 45.5551 -109 -611 0
+rnode "VDD2.n3" 0 13.1755 -109 -611 0
+rnode "VDD2.n4" 0 10.6949 -109 -613 0
+rnode "VDD2.n5" 0 120.724 -109 -613 0
+rnode "VDD2.n6" 0 43.8014 -109 -685 0
+rnode "VDD2.t6" 0 28.31 -420 -577 0
+rnode "VDD2.t1" 0 28.31 -486 -577 0
+rnode "VDD2.n7" 0 181.279 -453 -475 0
+rnode "VDD2.n8" 0 284.656 -453 -901 0
+rnode "VDD2.t2" 0 28.31 -764 -577 0
+rnode "VDD2.t3" 0 28.31 -830 -577 0
+rnode "VDD2.n9" 0 182.391 -797 -475 0
+rnode "VDD2.n10" 0 946.618 -539 -973 0
+rnode "VDD2.n11" 0 26.3637 969 679 0
+rnode "VDD2.n12" 0 61.7841 969 543 0
+rnode "VDD2.t7" 0 44.2035 936 577 0
+rnode "VDD2.n13" 0 45.5551 969 611 0
+rnode "VDD2.n14" 0 13.1755 969 611 0
+rnode "VDD2.n15" 0 10.6949 969 613 0
+rnode "VDD2.n16" 0 120.724 969 613 0
+rnode "VDD2.n17" 0 42.5489 969 685 0
+rnode "VDD2.n18" 0 1008.99 969 901 0
+rnode "VDD2.t0" 0 28.31 658 577 0
+rnode "VDD2.t8" 0 28.31 592 577 0
+rnode "VDD2.n19" 0 181.279 625 679 0
+rnode "VDD2.n20" 0 201.901 625 901 0
+rnode "VDD2.t9" 0 28.31 314 577 0
+rnode "VDD2.t4" 0 28.31 248 577 0
+rnode "VDD2.n21" 0 182.38 281 611 0
+rnode "VDD2" 0 272.672 512 876 0
+resist "VDD2.n10" "VDD2.n8" 0.129999
+resist "VDD2" "VDD2.n20" 0.243534
+resist "VDD2.n4" "VDD2.n3" 0.387879
+resist "VDD2.n15" "VDD2.n14" 0.387879
+resist "VDD2.n20" "VDD2.n18" 0.741379
+resist "VDD2.n6" "VDD2.n0" 1.16364
+resist "VDD2.n17" "VDD2.n11" 1.16364
+resist "VDD2.n5" "VDD2.n1" 5.62459
+resist "VDD2.n16" "VDD2.n12" 5.62459
+resist "VDD2.n5" "VDD2.n4" 9.3
+resist "VDD2.n16" "VDD2.n15" 9.3
+resist "VDD2.n6" "VDD2.n5" 9.45517
+resist "VDD2.n17" "VDD2.n16" 9.45517
+resist "VDD2.n7" "VDD2.t1" 11
+resist "VDD2.n7" "VDD2.t6" 11
+resist "VDD2.n9" "VDD2.t3" 11
+resist "VDD2.n9" "VDD2.t2" 11
+resist "VDD2.n19" "VDD2.t8" 11
+resist "VDD2.n19" "VDD2.t0" 11
+resist "VDD2.n21" "VDD2.t4" 11
+resist "VDD2.n21" "VDD2.t9" 11
+resist "VDD2.n4" "VDD2.n0" 12.8
+resist "VDD2.n15" "VDD2.n11" 12.8
+resist "VDD2.n3" "VDD2.n1" 14.7313
+resist "VDD2.n14" "VDD2.n12" 14.7313
+resist "VDD2.n18" "VDD2.n10" 28.7881
+resist "VDD2.n18" "VDD2.n17" 51.1909
+resist "VDD2.n8" "VDD2.n6" 51.9323
+resist "VDD2.n2" "VDD2.t5" 52.3077
+resist "VDD2.n13" "VDD2.t7" 52.3077
+resist "VDD2.n8" "VDD2.n7" 101.81
+resist "VDD2.n20" "VDD2.n19" 101.81
+resist "VDD2" "VDD2.n21" 102.308
+resist "VDD2.n10" "VDD2.n9" 102.311
+resist "VDD2.t5" "VDD2.n1" 164.876
+resist "VDD2.t7" "VDD2.n12" 164.876
+resist "VDD2.n3" "VDD2.n2" 185
+resist "VDD2.n14" "VDD2.n13" 185
+resist "VDD2.n2" "VDD2.n0" 289.615
+resist "VDD2.n13" "VDD2.n11" 289.615
+rnode "VN.n0" 0 27.8369 -739 -234 0
+rnode "VN.t8" 0 83.1061 -539 -577 0
+rnode "VN.n1" 0 65.0883 -592 -234 0
+rnode "VN.t4" 0 90.544 -195 -577 0
+rnode "VN.n2" 0 55.4612 -339 -234 0
+rnode "VN.t3" 0 83.1061 -367 -577 0
+rnode "VN.n3" 0 64.316 -420 -234 0
+rnode "VN.n4" 0 6.31676 -439 -234 0
+rnode "VN.n5" 0 91.3636 -439 -234 0
+rnode "VN.n6" 0 27.8369 -539 -234 0
+rnode "VN.n7" 0 27.8369 -639 -234 0
+rnode "VN.n8" 0 6.31676 -639 -234 0
+rnode "VN.t7" 0 83.1061 -711 -577 0
+rnode "VN.n9" 0 64.316 -764 -234 0
+rnode "VN.t6" 0 83.1061 -883 -577 0
+rnode "VN.n10" 0 62.6856 -839 -234 0
+rnode "VN.n11" 0 21.5725 -839 -234 0
+rnode "VN.n12" 0 27.8369 739 234 0
+rnode "VN.t1" 0 83.1061 539 577 0
+rnode "VN.n13" 0 65.0883 592 234 0
+rnode "VN.t5" 0 90.544 195 577 0
+rnode "VN.n14" 0 55.4612 339 234 0
+rnode "VN.t0" 0 83.1061 367 577 0
+rnode "VN.n15" 0 64.316 420 234 0
+rnode "VN.n16" 0 6.31676 439 234 0
+rnode "VN.n17" 0 91.3636 439 234 0
+rnode "VN.n18" 0 27.8369 539 234 0
+rnode "VN.n19" 0 27.8369 639 234 0
+rnode "VN.n20" 0 6.31676 639 234 0
+rnode "VN.t9" 0 83.1061 711 577 0
+rnode "VN.n21" 0 64.316 764 234 0
+rnode "VN.t2" 0 83.1061 883 577 0
+rnode "VN.n22" 0 62.6856 839 234 0
+rnode "VN.n23" 0 811.961 839 234 0
+rnode "VN" 0 821.781 -866 -259 0
+resist "VN" "VN.n11" 0.0511364
+resist "VN.n11" "VN.n0" 0.189394
+resist "VN.n7" "VN.n0" 0.189394
+resist "VN.n7" "VN.n6" 0.189394
+resist "VN.n6" "VN.n5" 0.189394
+resist "VN.n18" "VN.n17" 0.189394
+resist "VN.n19" "VN.n18" 0.189394
+resist "VN.n19" "VN.n12" 0.189394
+resist "VN.n23" "VN.n12" 0.189394
+resist "VN.n21" "VN.n20" 13.8758
+resist "VN.n16" "VN.n15" 13.8758
+resist "VN.n9" "VN.n8" 13.8758
+resist "VN.n4" "VN.n3" 13.8758
+resist "VN.n3" "VN.n2" 20.9571
+resist "VN.n15" "VN.n14" 20.9571
+resist "VN.n20" "VN.n13" 34.3242
+resist "VN.n16" "VN.n13" 34.3242
+resist "VN.n8" "VN.n1" 34.3242
+resist "VN.n4" "VN.n1" 34.3242
+resist "VN" "VN.n23" 34.5928
+resist "VN.n22" "VN.n21" 48.2
+resist "VN.n10" "VN.n9" 48.2
+resist "VN.n5" "VN.n2" 70.4028
+resist "VN.n17" "VN.n14" 70.4028
+resist "VN.n22" "VN.t2" 155.968
+resist "VN.n21" "VN.t9" 155.968
+resist "VN.n13" "VN.t1" 155.968
+resist "VN.n15" "VN.t0" 155.968
+resist "VN.n10" "VN.t6" 155.968
+resist "VN.n9" "VN.t7" 155.968
+resist "VN.n1" "VN.t8" 155.968
+resist "VN.n3" "VN.t3" 155.968
+resist "VN.n5" "VN.n4" 161.3
+resist "VN.n6" "VN.n1" 161.3
+resist "VN.n8" "VN.n7" 161.3
+resist "VN.n9" "VN.n0" 161.3
+resist "VN.n17" "VN.n16" 161.3
+resist "VN.n18" "VN.n13" 161.3
+resist "VN.n20" "VN.n19" 161.3
+resist "VN.n21" "VN.n12" 161.3
+resist "VN.n23" "VN.n22" 161.3
+resist "VN.n11" "VN.n10" 161.3
+resist "VN.n14" "VN.t5" 176.95
+resist "VN.n2" "VN.t4" 176.95
+rnode "VDD1.n0" 0 25.9305 -109 679 0
+rnode "VDD1.n1" 0 60.7688 -109 543 0
+rnode "VDD1.t2" 0 43.4772 -142 577 0
+rnode "VDD1.n2" 0 44.8065 -109 611 0
+rnode "VDD1.n3" 0 12.959 -109 611 0
+rnode "VDD1.n4" 0 10.5191 -109 613 0
+rnode "VDD1.n5" 0 118.741 -109 613 0
+rnode "VDD1.n6" 0 43.0816 -109 685 0
+rnode "VDD1.t0" 0 27.8448 -420 577 0
+rnode "VDD1.t9" 0 27.8448 -486 577 0
+rnode "VDD1.n7" 0 178.301 -453 679 0
+rnode "VDD1.n8" 0 283.648 -453 901 0
+rnode "VDD1.n9" 0 25.9305 969 -679 0
+rnode "VDD1.n10" 0 60.7688 969 -475 0
+rnode "VDD1.t3" 0 43.4772 936 -577 0
+rnode "VDD1.n11" 0 44.8065 969 -611 0
+rnode "VDD1.n12" 0 12.959 969 -611 0
+rnode "VDD1.n13" 0 10.5191 969 -613 0
+rnode "VDD1.n14" 0 118.741 969 -613 0
+rnode "VDD1.n15" 0 43.0816 969 -685 0
+rnode "VDD1.t6" 0 27.8448 658 -577 0
+rnode "VDD1.t4" 0 27.8448 592 -577 0
+rnode "VDD1.n16" 0 178.3 625 -475 0
+rnode "VDD1.n17" 0 279.978 625 -901 0
+rnode "VDD1.t8" 0 27.8448 314 -577 0
+rnode "VDD1.t5" 0 27.8448 248 -577 0
+rnode "VDD1.n18" 0 179.394 281 -475 0
+rnode "VDD1.n19" 0 984.847 539 -973 0
+rnode "VDD1.t1" 0 27.8448 -764 577 0
+rnode "VDD1.t7" 0 27.8448 -830 577 0
+rnode "VDD1.n20" 0 178.301 -797 611 0
+rnode "VDD1.n21" 0 1147.14 -797 901 0
+rnode "VDD1" 0 46.7642 -566 876 0
+resist "VDD1.n19" "VDD1.n17" 0.129999
+resist "VDD1" "VDD1.n8" 0.243534
+resist "VDD1.n13" "VDD1.n12" 0.387879
+resist "VDD1.n4" "VDD1.n3" 0.387879
+resist "VDD1" "VDD1.n21" 0.497845
+resist "VDD1.n15" "VDD1.n9" 1.16364
+resist "VDD1.n6" "VDD1.n0" 1.16364
+resist "VDD1.n14" "VDD1.n10" 5.62459
+resist "VDD1.n5" "VDD1.n1" 5.62459
+resist "VDD1.n14" "VDD1.n13" 9.3
+resist "VDD1.n5" "VDD1.n4" 9.3
+resist "VDD1.n15" "VDD1.n14" 9.45517
+resist "VDD1.n6" "VDD1.n5" 9.45517
+resist "VDD1.n16" "VDD1.t4" 11
+resist "VDD1.n16" "VDD1.t6" 11
+resist "VDD1.n18" "VDD1.t5" 11
+resist "VDD1.n18" "VDD1.t8" 11
+resist "VDD1.n7" "VDD1.t9" 11
+resist "VDD1.n7" "VDD1.t0" 11
+resist "VDD1.n20" "VDD1.t7" 11
+resist "VDD1.n20" "VDD1.t1" 11
+resist "VDD1.n13" "VDD1.n9" 12.8
+resist "VDD1.n4" "VDD1.n0" 12.8
+resist "VDD1.n12" "VDD1.n10" 14.7313
+resist "VDD1.n3" "VDD1.n1" 14.7313
+resist "VDD1.n21" "VDD1.n19" 29.7418
+resist "VDD1.n17" "VDD1.n15" 51.9323
+resist "VDD1.n8" "VDD1.n6" 51.9323
+resist "VDD1.n11" "VDD1.t3" 52.3077
+resist "VDD1.n2" "VDD1.t2" 52.3077
+resist "VDD1.n17" "VDD1.n16" 101.81
+resist "VDD1.n8" "VDD1.n7" 101.81
+resist "VDD1.n21" "VDD1.n20" 101.81
+resist "VDD1.n19" "VDD1.n18" 102.311
+resist "VDD1.t3" "VDD1.n10" 164.876
+resist "VDD1.t2" "VDD1.n1" 164.876
+resist "VDD1.n12" "VDD1.n11" 185
+resist "VDD1.n3" "VDD1.n2" 185
+resist "VDD1.n11" "VDD1.n9" 289.615
+resist "VDD1.n2" "VDD1.n0" 289.615
+rnode "VTAIL.t17" 0 35.496 -248 -577 0
+rnode "VTAIL.t16" 0 35.496 -314 -577 0
+rnode "VTAIL.n0" 0 194.144 -281 -475 0
+rnode "VTAIL.n1" 0 290.162 -281 -815 0
+rnode "VTAIL.n2" 0 33.0557 109 -679 0
+rnode "VTAIL.n3" 0 77.467 109 -475 0
+rnode "VTAIL.t13" 0 55.4239 142 -577 0
+rnode "VTAIL.n4" 0 57.1185 109 -611 0
+rnode "VTAIL.n5" 0 16.5199 109 -611 0
+rnode "VTAIL.n6" 0 13.4096 109 -613 0
+rnode "VTAIL.n7" 0 151.368 109 -613 0
+rnode "VTAIL.n8" 0 36.1484 109 -685 0
+rnode "VTAIL.n9" 0 150.826 109 -815 0
+rnode "VTAIL.t11" 0 35.496 486 -577 0
+rnode "VTAIL.t9" 0 35.496 420 -577 0
+rnode "VTAIL.n10" 0 194.144 453 -475 0
+rnode "VTAIL.n11" 0 292.415 453 -815 0
+rnode "VTAIL.t4" 0 35.496 830 -577 0
+rnode "VTAIL.t12" 0 35.496 764 -577 0
+rnode "VTAIL.n12" 0 194.144 797 -475 0
+rnode "VTAIL.n13" 0 815.784 797 -815 0
+rnode "VTAIL.t0" 0 35.496 830 577 0
+rnode "VTAIL.t2" 0 35.496 764 577 0
+rnode "VTAIL.n14" 0 194.145 797 679 0
+rnode "VTAIL.n15" 0 815.783 797 815 0
+rnode "VTAIL.t1" 0 35.496 486 577 0
+rnode "VTAIL.t19" 0 35.496 420 577 0
+rnode "VTAIL.n16" 0 194.145 453 679 0
+rnode "VTAIL.n17" 0 292.414 453 815 0
+rnode "VTAIL.n18" 0 33.0557 109 679 0
+rnode "VTAIL.n19" 0 77.467 109 543 0
+rnode "VTAIL.t18" 0 55.4239 142 577 0
+rnode "VTAIL.n20" 0 57.1185 109 611 0
+rnode "VTAIL.n21" 0 16.5199 109 611 0
+rnode "VTAIL.n22" 0 13.4096 109 613 0
+rnode "VTAIL.n23" 0 151.368 109 613 0
+rnode "VTAIL.n24" 0 36.1484 109 685 0
+rnode "VTAIL.n25" 0 150.826 109 815 0
+rnode "VTAIL.t5" 0 35.496 -248 577 0
+rnode "VTAIL.t7" 0 35.496 -314 577 0
+rnode "VTAIL.n26" 0 194.145 -281 679 0
+rnode "VTAIL.n27" 0 300.385 -281 815 0
+rnode "VTAIL.t8" 0 35.496 -592 577 0
+rnode "VTAIL.t6" 0 35.496 -658 577 0
+rnode "VTAIL.n28" 0 194.145 -625 679 0
+rnode "VTAIL.n29" 0 292.414 -625 815 0
+rnode "VTAIL.n30" 0 33.0557 -969 679 0
+rnode "VTAIL.n31" 0 77.467 -969 543 0
+rnode "VTAIL.t10" 0 55.4239 -936 577 0
+rnode "VTAIL.n32" 0 57.1185 -969 611 0
+rnode "VTAIL.n33" 0 16.5199 -969 611 0
+rnode "VTAIL.n34" 0 13.4096 -969 613 0
+rnode "VTAIL.n35" 0 151.368 -969 613 0
+rnode "VTAIL.n36" 0 36.1484 -969 685 0
+rnode "VTAIL.n37" 0 606.609 -969 815 0
+rnode "VTAIL.n38" 0 33.0557 -969 -679 0
+rnode "VTAIL.n39" 0 77.467 -969 -475 0
+rnode "VTAIL.t14" 0 55.4239 -936 -577 0
+rnode "VTAIL.n40" 0 57.1185 -969 -611 0
+rnode "VTAIL.n41" 0 16.5199 -969 -611 0
+rnode "VTAIL.n42" 0 13.4096 -969 -613 0
+rnode "VTAIL.n43" 0 151.368 -969 -613 0
+rnode "VTAIL.n44" 0 36.1484 -969 -685 0
+rnode "VTAIL.n45" 0 606.609 -969 -815 0
+rnode "VTAIL.t15" 0 35.496 -592 -577 0
+rnode "VTAIL.t3" 0 35.496 -658 -577 0
+rnode "VTAIL.n46" 0 194.144 -625 -475 0
+rnode "VTAIL.n47" 0 243.025 -625 -815 0
+rnode "VTAIL" 0 59.6142 -566 -840 0
+resist "VTAIL" "VTAIL.n47" 0.127155
+resist "VTAIL.n22" "VTAIL.n21" 0.387879
+resist "VTAIL.n34" "VTAIL.n33" 0.387879
+resist "VTAIL.n6" "VTAIL.n5" 0.387879
+resist "VTAIL.n42" "VTAIL.n41" 0.387879
+resist "VTAIL" "VTAIL.n1" 0.614224
+resist "VTAIL.n47" "VTAIL.n45" 0.741379
+resist "VTAIL.n11" "VTAIL.n9" 0.741379
+resist "VTAIL.n13" "VTAIL.n11" 0.741379
+resist "VTAIL.n37" "VTAIL.n29" 0.741379
+resist "VTAIL.n29" "VTAIL.n27" 0.741379
+resist "VTAIL.n25" "VTAIL.n17" 0.741379
+resist "VTAIL.n17" "VTAIL.n15" 0.741379
+resist "VTAIL.n9" "VTAIL.n1" 0.840517
+resist "VTAIL.n27" "VTAIL.n25" 0.840517
+resist "VTAIL.n24" "VTAIL.n18" 1.16364
+resist "VTAIL.n36" "VTAIL.n30" 1.16364
+resist "VTAIL.n8" "VTAIL.n2" 1.16364
+resist "VTAIL.n44" "VTAIL.n38" 1.16364
+resist "VTAIL.n23" "VTAIL.n19" 5.62459
+resist "VTAIL.n35" "VTAIL.n31" 5.62459
+resist "VTAIL.n7" "VTAIL.n3" 5.62459
+resist "VTAIL.n43" "VTAIL.n39" 5.62459
+resist "VTAIL.n23" "VTAIL.n22" 9.3
+resist "VTAIL.n35" "VTAIL.n34" 9.3
+resist "VTAIL.n7" "VTAIL.n6" 9.3
+resist "VTAIL.n43" "VTAIL.n42" 9.3
+resist "VTAIL.n24" "VTAIL.n23" 9.45517
+resist "VTAIL.n36" "VTAIL.n35" 9.45517
+resist "VTAIL.n8" "VTAIL.n7" 9.45517
+resist "VTAIL.n44" "VTAIL.n43" 9.45517
+resist "VTAIL.n14" "VTAIL.t2" 11
+resist "VTAIL.n14" "VTAIL.t0" 11
+resist "VTAIL.n16" "VTAIL.t19" 11
+resist "VTAIL.n16" "VTAIL.t1" 11
+resist "VTAIL.n26" "VTAIL.t7" 11
+resist "VTAIL.n26" "VTAIL.t5" 11
+resist "VTAIL.n28" "VTAIL.t6" 11
+resist "VTAIL.n28" "VTAIL.t8" 11
+resist "VTAIL.n12" "VTAIL.t12" 11
+resist "VTAIL.n12" "VTAIL.t4" 11
+resist "VTAIL.n10" "VTAIL.t9" 11
+resist "VTAIL.n10" "VTAIL.t11" 11
+resist "VTAIL.n0" "VTAIL.t16" 11
+resist "VTAIL.n0" "VTAIL.t17" 11
+resist "VTAIL.n46" "VTAIL.t3" 11
+resist "VTAIL.n46" "VTAIL.t15" 11
+resist "VTAIL.n22" "VTAIL.n18" 12.8
+resist "VTAIL.n34" "VTAIL.n30" 12.8
+resist "VTAIL.n6" "VTAIL.n2" 12.8
+resist "VTAIL.n42" "VTAIL.n38" 12.8
+resist "VTAIL.n45" "VTAIL.n37" 14.6595
+resist "VTAIL.n21" "VTAIL.n19" 14.7313
+resist "VTAIL.n33" "VTAIL.n31" 14.7313
+resist "VTAIL.n5" "VTAIL.n3" 14.7313
+resist "VTAIL.n41" "VTAIL.n39" 14.7313
+resist "VTAIL.n15" "VTAIL.n13" 15.4009
+resist "VTAIL.n25" "VTAIL.n24" 34.5121
+resist "VTAIL.n37" "VTAIL.n36" 34.5121
+resist "VTAIL.n9" "VTAIL.n8" 34.5121
+resist "VTAIL.n45" "VTAIL.n44" 34.5121
+resist "VTAIL.n20" "VTAIL.t18" 52.3077
+resist "VTAIL.n32" "VTAIL.t10" 52.3077
+resist "VTAIL.n4" "VTAIL.t13" 52.3077
+resist "VTAIL.n40" "VTAIL.t14" 52.3077
+resist "VTAIL.n13" "VTAIL.n12" 85.1316
+resist "VTAIL.n11" "VTAIL.n10" 85.1316
+resist "VTAIL.n1" "VTAIL.n0" 85.1316
+resist "VTAIL.n47" "VTAIL.n46" 85.1316
+resist "VTAIL.n15" "VTAIL.n14" 85.1317
+resist "VTAIL.n17" "VTAIL.n16" 85.1317
+resist "VTAIL.n27" "VTAIL.n26" 85.1317
+resist "VTAIL.n29" "VTAIL.n28" 85.1317
+resist "VTAIL.t18" "VTAIL.n19" 164.876
+resist "VTAIL.t10" "VTAIL.n31" 164.876
+resist "VTAIL.t13" "VTAIL.n3" 164.876
+resist "VTAIL.t14" "VTAIL.n39" 164.876
+resist "VTAIL.n21" "VTAIL.n20" 185
+resist "VTAIL.n33" "VTAIL.n32" 185
+resist "VTAIL.n5" "VTAIL.n4" 185
+resist "VTAIL.n41" "VTAIL.n40" 185
+resist "VTAIL.n20" "VTAIL.n18" 289.615
+resist "VTAIL.n32" "VTAIL.n30" 289.615
+resist "VTAIL.n4" "VTAIL.n2" 289.615
+resist "VTAIL.n40" "VTAIL.n38" 289.615
+rnode "VP.n0" 0 28.1516 339 -234 0
+rnode "VP.t5" 0 84.0458 539 -577 0
+rnode "VP.n1" 0 65.8243 486 -234 0
+rnode "VP.n2" 0 28.1516 739 -234 0
+rnode "VP.n3" 0 28.1516 -739 234 0
+rnode "VP.t2" 0 84.0458 -883 577 0
+rnode "VP.t8" 0 84.0458 -711 577 0
+rnode "VP.t0" 0 84.0458 -539 577 0
+rnode "VP.n4" 0 65.8243 -486 234 0
+rnode "VP.t7" 0 91.5677 -195 577 0
+rnode "VP.n5" 0 56.0882 -239 234 0
+rnode "VP.t9" 0 84.0458 -367 577 0
+rnode "VP.n6" 0 65.0432 -314 234 0
+rnode "VP.n7" 0 6.38818 -439 234 0
+rnode "VP.n8" 0 92.3966 -439 234 0
+rnode "VP.n9" 0 28.1516 -539 234 0
+rnode "VP.n10" 0 28.1516 -639 234 0
+rnode "VP.n11" 0 6.38818 -639 234 0
+rnode "VP.n12" 0 65.0432 -658 234 0
+rnode "VP.n13" 0 63.3943 -830 234 0
+rnode "VP.n14" 0 802.396 -839 234 0
+rnode "VP.n15" 0 832.06 839 -234 0
+rnode "VP.t6" 0 84.0458 883 -577 0
+rnode "VP.n16" 0 63.3943 830 -234 0
+rnode "VP.t3" 0 84.0458 711 -577 0
+rnode "VP.n17" 0 65.0432 658 -234 0
+rnode "VP.n18" 0 6.38818 639 -234 0
+rnode "VP.n19" 0 28.1516 639 -234 0
+rnode "VP.n20" 0 28.1516 539 -234 0
+rnode "VP.n21" 0 28.1516 439 -234 0
+rnode "VP.n22" 0 6.38818 439 -234 0
+rnode "VP.t1" 0 84.0458 367 -577 0
+rnode "VP.n23" 0 65.0432 314 -234 0
+rnode "VP.t4" 0 84.0458 195 -577 0
+rnode "VP.n24" 0 63.3943 239 -234 0
+rnode "VP.n25" 0 21.8164 239 -234 0
+rnode "VP" 0 14.4928 212 -259 0
+resist "VP" "VP.n25" 0.0511364
+resist "VP.n25" "VP.n0" 0.189394
+resist "VP.n21" "VP.n0" 0.189394
+resist "VP.n21" "VP.n20" 0.189394
+resist "VP.n20" "VP.n19" 0.189394
+resist "VP.n19" "VP.n2" 0.189394
+resist "VP.n15" "VP.n2" 0.189394
+resist "VP.n14" "VP.n3" 0.189394
+resist "VP.n10" "VP.n3" 0.189394
+resist "VP.n10" "VP.n9" 0.189394
+resist "VP.n9" "VP.n8" 0.189394
+resist "VP.n7" "VP.n6" 13.8758
+resist "VP.n12" "VP.n11" 13.8758
+resist "VP.n23" "VP.n22" 13.8758
+resist "VP.n18" "VP.n17" 13.8758
+resist "VP.n6" "VP.n5" 20.9571
+resist "VP.n15" "VP.n14" 34.2121
+resist "VP.n7" "VP.n4" 34.3242
+resist "VP.n11" "VP.n4" 34.3242
+resist "VP.n22" "VP.n1" 34.3242
+resist "VP.n18" "VP.n1" 34.3242
+resist "VP.n13" "VP.n12" 48.2
+resist "VP.n24" "VP.n23" 48.2
+resist "VP.n17" "VP.n16" 48.2
+resist "VP.n8" "VP.n5" 70.4028
+resist "VP.n6" "VP.t9" 155.968
+resist "VP.n4" "VP.t0" 155.968
+resist "VP.n12" "VP.t8" 155.968
+resist "VP.n13" "VP.t2" 155.968
+resist "VP.n24" "VP.t4" 155.968
+resist "VP.n23" "VP.t1" 155.968
+resist "VP.n1" "VP.t5" 155.968
+resist "VP.n17" "VP.t3" 155.968
+resist "VP.n16" "VP.t6" 155.968
+resist "VP.n16" "VP.n15" 161.3
+resist "VP.n17" "VP.n2" 161.3
+resist "VP.n19" "VP.n18" 161.3
+resist "VP.n20" "VP.n1" 161.3
+resist "VP.n22" "VP.n21" 161.3
+resist "VP.n23" "VP.n0" 161.3
+resist "VP.n14" "VP.n13" 161.3
+resist "VP.n12" "VP.n3" 161.3
+resist "VP.n11" "VP.n10" 161.3
+resist "VP.n9" "VP.n4" 161.3
+resist "VP.n8" "VP.n7" 161.3
+resist "VP.n25" "VP.n24" 161.3
+resist "VP.n5" "VP.t7" 176.95
+rnode "B.n0" 0 0 102 1207 0
+rnode "B.n1" 0 0 -102 1207 0
+rnode "B.n2" 0 0 -34 1207 0
+rnode "B.n3" 0 0 102 1207 0
+rnode "B.n4" 0 0 102 1207 0
+rnode "B.n5" 0 0 34 -1207 0
+rnode "B.n6" 0 0 -34 -1207 0
+rnode "B.n7" 0 0 -102 -1207 0
+rnode "B.n8" 0 0 -170 1207 0
+rnode "B.n9" 0 0 -238 1207 0
+rnode "B.n10" 0 0 -374 1207 0
+rnode "B.n11" 0 0 -374 1207 0
+rnode "B.t8" 0 0 -195 577 0
+rnode "B.n12" 0 0 -238 1207 0
+rnode "B.n13" 0 0 -306 -1207 0
+rnode "B.n14" 0 0 -374 -1207 0
+rnode "B.n15" 0 0 -442 -1207 0
+rnode "B.n16" 0 0 -510 1207 0
+rnode "B.n17" 0 0 -510 1207 0
+rnode "B.n18" 0 0 -646 1207 0
+rnode "B.n19" 0 0 -646 1207 0
+rnode "B.t6" 0 0 -539 577 0
+rnode "B.n20" 0 0 -578 -1207 0
+rnode "B.n21" 0 0 -646 -1207 0
+rnode "B.n22" 0 0 -714 -1207 0
+rnode "B.n23" 0 0 -782 1207 0
+rnode "B.n24" 0 0 -782 1207 0
+rnode "B.n25" 0 0 -918 1207 0
+rnode "B.n26" 0 0 -918 1207 0
+rnode "B.n27" 0 0 -850 -1207 0
+rnode "B.n28" 0 0 -918 -1207 0
+rnode "B.n29" 0 0 -986 -1207 0
+rnode "B.n30" 0 0 -1054 1207 0
+rnode "B.n31" 0 0 -1054 1207 0
+rnode "B.n32" 0 0 -1190 1207 0
+rnode "B.n33" 0 0 -1190 1207 0
+rnode "B.n34" 0 0 -1122 -1207 0
+rnode "B.n35" 0 0 -1190 -1207 0
+rnode "B.n36" 0 0 -1258 -1207 0
+rnode "B.t18" 0 0 -1273 577 0
+rnode "B.n37" 0 0 -1326 1207 0
+rnode "B.n38" 0 0 -1462 1207 0
+rnode "B.n39" 0 0 -1462 1207 0
+rnode "B.n40" 0 0 -1326 1207 0
+rnode "B.n41" 0 0 -1394 -1207 0
+rnode "B.n42" 0 0 -1462 -1207 0
+rnode "B.n43" 0 0 -1530 -1207 0
+rnode "B.n44" 0 0 -1598 1207 0
+rnode "B.n45" 0 0 -1598 1207 0
+rnode "B.n46" 0 0 -1707 1020 0
+rnode "B.n47" 0 0 -1707 1020 0
+rnode "B.n48" 0 0 -1707 -1088 0
+rnode "B.n49" 0 0 -1707 -1088 0
+rnode "B.n50" 0 0 -1707 -1088 0
+rnode "B.n51" 0 0 -1707 -1088 0
+rnode "B.n52" 0 0 -1707 -1088 0
+rnode "B.n53" 0 0 -1707 -1088 0
+rnode "B.n54" 0 0 -1707 -1088 0
+rnode "B.n55" 0 0 -1707 -1088 0
+rnode "B.n56" 0 0 -1707 -1088 0
+rnode "B.n57" 0 0 -1707 -1088 0
+rnode "B.n58" 0 0 -1707 -1088 0
+rnode "B.n59" 0 0 -1707 -1088 0
+rnode "B.n60" 0 0 -1707 -1088 0
+rnode "B.n61" 0 0 -1707 -1088 0
+rnode "B.n62" 0 0 -1707 -1088 0
+rnode "B.n63" 0 0 -1707 -1020 0
+rnode "B.n64" 0 0 -1598 -1207 0
+rnode "B.t23" 0 0 -1326 -577 0
+rnode "B.t22" 0 0 -1220 -577 0
+rnode "B.t21" 0 0 -1273 -577 0
+rnode "B.n65" 0 0 -1273 -314 0
+rnode "B.n66" 0 0 -1359 -347 0
+rnode "B.t20" 0 0 -1326 577 0
+rnode "B.t19" 0 0 -1220 577 0
+rnode "B.t17" 0 0 -1273 577 0
+rnode "B.n67" 0 0 -1273 314 0
+rnode "B.n68" 0 0 -1359 347 0
+rnode "B.n69" 0 0 -1666 314 0
+rnode "B.n70" 0 0 -1707 952 0
+rnode "B.n71" 0 0 -1707 952 0
+rnode "B.n72" 0 0 -1707 884 0
+rnode "B.n73" 0 0 -1707 884 0
+rnode "B.n74" 0 0 -1707 816 0
+rnode "B.n75" 0 0 -1707 816 0
+rnode "B.n76" 0 0 -1707 748 0
+rnode "B.n77" 0 0 -1707 748 0
+rnode "B.n78" 0 0 -1707 680 0
+rnode "B.n79" 0 0 -1707 680 0
+rnode "B.n80" 0 0 -1707 612 0
+rnode "B.n81" 0 0 -1707 612 0
+rnode "B.n82" 0 0 -1707 544 0
+rnode "B.n83" 0 0 -1707 544 0
+rnode "B.n84" 0 0 -1707 476 0
+rnode "B.n85" 0 0 -1707 476 0
+rnode "B.n86" 0 0 -1707 408 0
+rnode "B.n87" 0 0 -1707 408 0
+rnode "B.n88" 0 0 -1707 340 0
+rnode "B.n89" 0 0 -1707 340 0
+rnode "B.n90" 0 0 -1707 272 0
+rnode "B.n91" 0 0 -1707 272 0
+rnode "B.n92" 0 0 -1707 204 0
+rnode "B.n93" 0 0 -1707 204 0
+rnode "B.n94" 0 0 -1707 136 0
+rnode "B.n95" 0 0 -1707 136 0
+rnode "B.n96" 0 0 -1707 68 0
+rnode "B.n97" 0 0 -1707 68 0
+rnode "B.n98" 0 0 -1707 0 0
+rnode "B.n99" 0 0 -1707 0 0
+rnode "B.n100" 0 0 -1707 -68 0
+rnode "B.n101" 0 0 -1707 -68 0
+rnode "B.n102" 0 0 -1707 -136 0
+rnode "B.n103" 0 0 -1707 -136 0
+rnode "B.n104" 0 0 -1707 -204 0
+rnode "B.n105" 0 0 -1707 -204 0
+rnode "B.n106" 0 0 -1707 -272 0
+rnode "B.n107" 0 0 -1707 -272 0
+rnode "B.n108" 0 0 -1666 -314 0
+rnode "B.n109" 0 0 -1707 -340 0
+rnode "B.n110" 0 0 -1707 -340 0
+rnode "B.n111" 0 0 -1707 -408 0
+rnode "B.n112" 0 0 -1707 -408 0
+rnode "B.n113" 0 0 -1707 -476 0
+rnode "B.n114" 0 0 -1707 -476 0
+rnode "B.n115" 0 0 -1707 -544 0
+rnode "B.n116" 0 0 -1707 -544 0
+rnode "B.n117" 0 0 -1707 -612 0
+rnode "B.n118" 0 0 -1707 -612 0
+rnode "B.n119" 0 0 -1707 -680 0
+rnode "B.n120" 0 0 -1707 -680 0
+rnode "B.n121" 0 0 -1707 -748 0
+rnode "B.n122" 0 0 -1707 -748 0
+rnode "B.n123" 0 0 -1707 -816 0
+rnode "B.n124" 0 0 -1707 -816 0
+rnode "B.n125" 0 0 -1707 -884 0
+rnode "B.n126" 0 0 -1707 -884 0
+rnode "B.n127" 0 0 -1707 -952 0
+rnode "B.n128" 0 0 -1707 -952 0
+rnode "B.n129" 0 0 -1707 -1020 0
+rnode "B.n130" 0 0 170 -1207 0
+rnode "B.n131" 0 0 238 -1207 0
+rnode "B.t5" 0 0 195 577 0
+rnode "B.n132" 0 0 238 1207 0
+rnode "B.n133" 0 0 374 1207 0
+rnode "B.n134" 0 0 374 1207 0
+rnode "B.t0" 0 0 367 577 0
+rnode "B.n135" 0 0 374 -1207 0
+rnode "B.n136" 0 0 510 -1207 0
+rnode "B.n137" 0 0 510 -1207 0
+rnode "B.n138" 0 0 510 1207 0
+rnode "B.n139" 0 0 374 1207 0
+rnode "B.n140" 0 0 510 1207 0
+rnode "B.n141" 0 0 646 1207 0
+rnode "B.n142" 0 0 646 1207 0
+rnode "B.n143" 0 0 646 1207 0
+rnode "B.n144" 0 0 646 -1207 0
+rnode "B.n145" 0 0 782 -1207 0
+rnode "B.n146" 0 0 782 -1207 0
+rnode "B.n147" 0 0 782 1207 0
+rnode "B.t2" 0 0 711 577 0
+rnode "B.n148" 0 0 782 1207 0
+rnode "B.n149" 0 0 918 1207 0
+rnode "B.n150" 0 0 918 1207 0
+rnode "B.t3" 0 0 883 577 0
+rnode "B.n151" 0 0 918 -1207 0
+rnode "B.n152" 0 0 1054 -1207 0
+rnode "B.n153" 0 0 1054 -1207 0
+rnode "B.n154" 0 0 1054 1207 0
+rnode "B.n155" 0 0 918 1207 0
+rnode "B.n156" 0 0 1054 1207 0
+rnode "B.n157" 0 0 1190 1207 0
+rnode "B.n158" 0 0 1190 1207 0
+rnode "B.n159" 0 0 1190 1207 0
+rnode "B.n160" 0 0 1190 -1207 0
+rnode "B.n161" 0 0 1326 -1207 0
+rnode "B.n162" 0 0 1326 -1207 0
+rnode "B.t11" 0 0 1273 577 0
+rnode "B.n163" 0 0 1326 1207 0
+rnode "B.n164" 0 0 1462 1207 0
+rnode "B.n165" 0 0 1462 1207 0
+rnode "B.n166" 0 0 1462 1207 0
+rnode "B.n167" 0 0 1462 -1207 0
+rnode "B.n168" 0 0 1598 -1207 0
+rnode "B.n169" 0 0 1598 -1207 0
+rnode "B.n170" 0 0 1598 1207 0
+rnode "B.n171" 0 0 1598 1207 0
+rnode "B.n172" 0 0 1707 1020 0
+rnode "B.n173" 0 0 1707 1020 0
+rnode "B.n174" 0 0 1707 1088 0
+rnode "B.n175" 0 0 1707 1088 0
+rnode "B.n176" 0 0 1707 1088 0
+rnode "B.n177" 0 0 1707 1088 0
+rnode "B.n178" 0 0 1707 1088 0
+rnode "B.n179" 0 0 1707 1088 0
+rnode "B.n180" 0 0 1707 1088 0
+rnode "B.n181" 0 0 1707 1088 0
+rnode "B.n182" 0 0 1707 1088 0
+rnode "B.n183" 0 0 1707 1088 0
+rnode "B.n184" 0 0 1707 1088 0
+rnode "B.n185" 0 0 1707 1088 0
+rnode "B.n186" 0 0 1707 1088 0
+rnode "B.n187" 0 0 1707 1088 0
+rnode "B.n188" 0 0 1707 1088 0
+rnode "B.n189" 0 0 1707 884 0
+rnode "B.t12" 0 0 1326 577 0
+rnode "B.t13" 0 0 1220 577 0
+rnode "B.t10" 0 0 1273 577 0
+rnode "B.n190" 0 0 1273 314 0
+rnode "B.n191" 0 0 1359 347 0
+rnode "B.t15" 0 0 1326 -577 0
+rnode "B.t16" 0 0 1220 -577 0
+rnode "B.t14" 0 0 1273 -577 0
+rnode "B.n192" 0 0 1273 -314 0
+rnode "B.n193" 0 0 1359 -347 0
+rnode "B.n194" 0 0 1666 -314 0
+rnode "B.n195" 0 0 1707 -1088 0
+rnode "B.n196" 0 0 1707 -1088 0
+rnode "B.n197" 0 0 1707 -1020 0
+rnode "B.n198" 0 0 1707 -1020 0
+rnode "B.n199" 0 0 1707 -952 0
+rnode "B.n200" 0 0 1707 -952 0
+rnode "B.n201" 0 0 1707 -884 0
+rnode "B.n202" 0 0 1707 -884 0
+rnode "B.n203" 0 0 1707 -816 0
+rnode "B.n204" 0 0 1707 -816 0
+rnode "B.n205" 0 0 1707 -748 0
+rnode "B.n206" 0 0 1707 -748 0
+rnode "B.n207" 0 0 1707 -680 0
+rnode "B.n208" 0 0 1707 -680 0
+rnode "B.n209" 0 0 1707 -612 0
+rnode "B.n210" 0 0 1707 -612 0
+rnode "B.n211" 0 0 1707 -544 0
+rnode "B.n212" 0 0 1707 -544 0
+rnode "B.n213" 0 0 1707 -476 0
+rnode "B.n214" 0 0 1707 -476 0
+rnode "B.n215" 0 0 1707 -408 0
+rnode "B.n216" 0 0 1707 -408 0
+rnode "B.n217" 0 0 1707 -340 0
+rnode "B.n218" 0 0 1707 -340 0
+rnode "B.n219" 0 0 1707 -272 0
+rnode "B.n220" 0 0 1707 -272 0
+rnode "B.n221" 0 0 1707 -204 0
+rnode "B.n222" 0 0 1707 -204 0
+rnode "B.n223" 0 0 1707 -136 0
+rnode "B.n224" 0 0 1707 -136 0
+rnode "B.n225" 0 0 1707 -68 0
+rnode "B.n226" 0 0 1707 -68 0
+rnode "B.n227" 0 0 1707 0 0
+rnode "B.n228" 0 0 1707 0 0
+rnode "B.n229" 0 0 1707 68 0
+rnode "B.n230" 0 0 1707 68 0
+rnode "B.n231" 0 0 1707 136 0
+rnode "B.n232" 0 0 1707 136 0
+rnode "B.n233" 0 0 1707 204 0
+rnode "B.n234" 0 0 1707 204 0
+rnode "B.n235" 0 0 1707 272 0
+rnode "B.n236" 0 0 1707 272 0
+rnode "B.n237" 0 0 1666 314 0
+rnode "B.n238" 0 0 1707 340 0
+rnode "B.n239" 0 0 1707 340 0
+rnode "B.n240" 0 0 1707 408 0
+rnode "B.n241" 0 0 1707 408 0
+rnode "B.n242" 0 0 1707 476 0
+rnode "B.n243" 0 0 1707 476 0
+rnode "B.n244" 0 0 1707 544 0
+rnode "B.n245" 0 0 1707 544 0
+rnode "B.n246" 0 0 1707 612 0
+rnode "B.n247" 0 0 1707 612 0
+rnode "B.n248" 0 0 1707 680 0
+rnode "B.n249" 0 0 1707 680 0
+rnode "B.n250" 0 0 1707 748 0
+rnode "B.n251" 0 0 1707 748 0
+rnode "B.n252" 0 0 1707 816 0
+rnode "B.n253" 0 0 1707 816 0
+rnode "B.n254" 0 0 1707 884 0
+rnode "B.n255" 0 0 1707 952 0
+rnode "B.n256" 0 0 1707 952 0
+rnode "B.n257" 0 0 1707 1088 0
+rnode "B.n258" 0 0 1707 1088 0
+rnode "B.n259" 0 0 1707 1088 0
+rnode "B.n260" 0 0 1707 1088 0
+rnode "B.n261" 0 0 1598 1207 0
+rnode "B.n262" 0 0 1530 1207 0
+rnode "B.n263" 0 0 1530 1207 0
+rnode "B.n264" 0 0 1530 1207 0
+rnode "B.n265" 0 0 1530 -1207 0
+rnode "B.n266" 0 0 1530 -1207 0
+rnode "B.n267" 0 0 1462 -1207 0
+rnode "B.n268" 0 0 1394 -1207 0
+rnode "B.n269" 0 0 1394 -1207 0
+rnode "B.n270" 0 0 1326 1207 0
+rnode "B.n271" 0 0 1394 1207 0
+rnode "B.n272" 0 0 1394 1207 0
+rnode "B.n273" 0 0 1394 1207 0
+rnode "B.n274" 0 0 1326 1207 0
+rnode "B.n275" 0 0 1258 1207 0
+rnode "B.n276" 0 0 1258 1207 0
+rnode "B.n277" 0 0 1258 1207 0
+rnode "B.n278" 0 0 1258 -1207 0
+rnode "B.n279" 0 0 1258 -1207 0
+rnode "B.n280" 0 0 1190 -1207 0
+rnode "B.n281" 0 0 1122 -1207 0
+rnode "B.n282" 0 0 1122 -1207 0
+rnode "B.n283" 0 0 1122 1207 0
+rnode "B.n284" 0 0 1122 1207 0
+rnode "B.n285" 0 0 1122 1207 0
+rnode "B.n286" 0 0 1054 1207 0
+rnode "B.n287" 0 0 986 1207 0
+rnode "B.n288" 0 0 986 1207 0
+rnode "B.n289" 0 0 986 1207 0
+rnode "B.n290" 0 0 986 -1207 0
+rnode "B.n291" 0 0 986 -1207 0
+rnode "B.n292" 0 0 918 -1207 0
+rnode "B.n293" 0 0 850 -1207 0
+rnode "B.n294" 0 0 850 -1207 0
+rnode "B.n295" 0 0 850 1207 0
+rnode "B.n296" 0 0 850 1207 0
+rnode "B.n297" 0 0 850 1207 0
+rnode "B.n298" 0 0 782 1207 0
+rnode "B.n299" 0 0 714 1207 0
+rnode "B.n300" 0 0 714 1207 0
+rnode "B.n301" 0 0 714 1207 0
+rnode "B.n302" 0 0 714 -1207 0
+rnode "B.n303" 0 0 714 -1207 0
+rnode "B.n304" 0 0 646 -1207 0
+rnode "B.n305" 0 0 578 -1207 0
+rnode "B.n306" 0 0 578 -1207 0
+rnode "B.t4" 0 0 539 577 0
+rnode "B.n307" 0 0 578 1207 0
+rnode "B.n308" 0 0 578 1207 0
+rnode "B.n309" 0 0 578 1207 0
+rnode "B.n310" 0 0 510 1207 0
+rnode "B.n311" 0 0 442 1207 0
+rnode "B.n312" 0 0 442 1207 0
+rnode "B.n313" 0 0 442 1207 0
+rnode "B.n314" 0 0 442 -1207 0
+rnode "B.n315" 0 0 442 -1207 0
+rnode "B.n316" 0 0 374 -1207 0
+rnode "B.n317" 0 0 238 -1207 0
+rnode "B.n318" 0 0 306 -1207 0
+rnode "B.n319" 0 0 306 -1207 0
+rnode "B.n320" 0 0 238 1207 0
+rnode "B.n321" 0 0 306 1207 0
+rnode "B.n322" 0 0 306 1207 0
+rnode "B.n323" 0 0 306 1207 0
+rnode "B.n324" 0 0 238 1207 0
+rnode "B.n325" 0 0 170 1207 0
+rnode "B.n326" 0 0 170 1207 0
+rnode "B.n327" 0 0 170 1207 0
+rnode "B.n328" 0 0 170 -1207 0
+rnode "B.n329" 0 0 102 -1207 0
+rnode "B.n330" 0 0 102 -1207 0
+rnode "B.n331" 0 0 34 -1207 0
+rnode "B.n332" 0 0 -34 -1207 0
+rnode "B.n333" 0 0 -102 -1207 0
+rnode "B.n334" 0 0 -170 -1207 0
+rnode "B.n335" 0 0 -170 -1207 0
+rnode "B.n336" 0 0 -238 -1207 0
+rnode "B.n337" 0 0 -238 -1207 0
+rnode "B.n338" 0 0 -306 -1207 0
+rnode "B.n339" 0 0 -374 -1207 0
+rnode "B.n340" 0 0 -442 -1207 0
+rnode "B.n341" 0 0 -510 -1207 0
+rnode "B.n342" 0 0 -510 -1207 0
+rnode "B.n343" 0 0 -578 -1207 0
+rnode "B.n344" 0 0 -646 -1207 0
+rnode "B.n345" 0 0 -714 -1207 0
+rnode "B.n346" 0 0 -782 -1207 0
+rnode "B.n347" 0 0 -782 -1207 0
+rnode "B.n348" 0 0 -850 -1207 0
+rnode "B.n349" 0 0 -918 -1207 0
+rnode "B.n350" 0 0 -986 -1207 0
+rnode "B.n351" 0 0 -1054 -1207 0
+rnode "B.n352" 0 0 -1054 -1207 0
+rnode "B.n353" 0 0 -1122 -1207 0
+rnode "B.n354" 0 0 -1190 -1207 0
+rnode "B.n355" 0 0 -1258 -1207 0
+rnode "B.n356" 0 0 -1326 -1207 0
+rnode "B.n357" 0 0 -1326 -1207 0
+rnode "B.n358" 0 0 -1394 -1207 0
+rnode "B.n359" 0 0 -1462 -1207 0
+rnode "B.n360" 0 0 -1530 -1207 0
+rnode "B.n361" 0 0 -1598 -1207 0
+rnode "B.n362" 0 0 -1707 -1088 0
+rnode "B.n363" 0 0 -1707 -1088 0
+rnode "B.n364" 0 0 -1707 -1088 0
+rnode "B.n365" 0 0 -1707 -1088 0
+rnode "B.n366" 0 0 -1707 1088 0
+rnode "B.n367" 0 0 -1707 1088 0
+rnode "B.n368" 0 0 -1598 1207 0
+rnode "B.n369" 0 0 -1530 1207 0
+rnode "B.n370" 0 0 -1530 1207 0
+rnode "B.n371" 0 0 -1530 1207 0
+rnode "B.n372" 0 0 -1462 1207 0
+rnode "B.n373" 0 0 -1394 1207 0
+rnode "B.n374" 0 0 -1394 1207 0
+rnode "B.n375" 0 0 -1394 1207 0
+rnode "B.n376" 0 0 -1326 1207 0
+rnode "B.n377" 0 0 -1258 1207 0
+rnode "B.n378" 0 0 -1258 1207 0
+rnode "B.n379" 0 0 -1258 1207 0
+rnode "B.n380" 0 0 -1190 1207 0
+rnode "B.n381" 0 0 -1122 1207 0
+rnode "B.n382" 0 0 -1122 1207 0
+rnode "B.n383" 0 0 -1122 1207 0
+rnode "B.n384" 0 0 -1054 1207 0
+rnode "B.n385" 0 0 -986 1207 0
+rnode "B.n386" 0 0 -986 1207 0
+rnode "B.n387" 0 0 -986 1207 0
+rnode "B.n388" 0 0 -918 1207 0
+rnode "B.t1" 0 0 -883 577 0
+rnode "B.n389" 0 0 -850 1207 0
+rnode "B.n390" 0 0 -850 1207 0
+rnode "B.n391" 0 0 -850 1207 0
+rnode "B.n392" 0 0 -782 1207 0
+rnode "B.n393" 0 0 -714 1207 0
+rnode "B.n394" 0 0 -714 1207 0
+rnode "B.n395" 0 0 -714 1207 0
+rnode "B.t7" 0 0 -711 577 0
+rnode "B.n396" 0 0 -646 1207 0
+rnode "B.n397" 0 0 -578 1207 0
+rnode "B.n398" 0 0 -578 1207 0
+rnode "B.n399" 0 0 -578 1207 0
+rnode "B.n400" 0 0 -510 1207 0
+rnode "B.n401" 0 0 -442 1207 0
+rnode "B.n402" 0 0 -442 1207 0
+rnode "B.n403" 0 0 -442 1207 0
+rnode "B.n404" 0 0 -374 1207 0
+rnode "B.t9" 0 0 -367 577 0
+rnode "B.n405" 0 0 -306 1207 0
+rnode "B.n406" 0 0 -306 1207 0
+rnode "B.n407" 0 0 -306 1207 0
+rnode "B.n408" 0 0 -238 1207 0
+rnode "B.n409" 0 0 -170 1207 0
+rnode "B.n410" 0 0 -170 1207 0
+rnode "B.n411" 0 0 -102 1207 0
+rnode "B.n412" 0 0 -102 1207 0
+rnode "B.n413" 0 0 -34 1207 0
+rnode "B.n414" 0 0 34 1207 0
+rnode "B.n415" 0 0 34 1207 0
+rnode "B.n416" 0 0 34 1207 0
+rnode "B.n417" 0 0 -34 1207 0
+rnode "B" 0 0 -50 1066 0
+resist "B.n109" "B.n108" 4.05854
+resist "B.n88" "B.n69" 4.05854
+resist "B.n217" "B.n194" 4.05854
+resist "B.n238" "B.n237" 4.05854
+resist "B.t7" "B.n395" 4.66431
+resist "B.n301" "B.t2" 4.66431
+resist "B.n108" "B.n107" 6.5561
+resist "B.n91" "B.n69" 6.5561
+resist "B.n220" "B.n194" 6.5561
+resist "B.n237" "B.n236" 6.5561
+resist "B.n417" "B.n1" 8.11707
+resist "B.n417" "B.n0" 8.11707
+resist "B.n362" "B.n129" 10.6146
+resist "B.n129" "B.n128" 10.6146
+resist "B.n128" "B.n125" 10.6146
+resist "B.n125" "B.n124" 10.6146
+resist "B.n124" "B.n121" 10.6146
+resist "B.n121" "B.n120" 10.6146
+resist "B.n120" "B.n117" 10.6146
+resist "B.n117" "B.n116" 10.6146
+resist "B.n116" "B.n113" 10.6146
+resist "B.n113" "B.n112" 10.6146
+resist "B.n112" "B.n109" 10.6146
+resist "B.n107" "B.n104" 10.6146
+resist "B.n104" "B.n103" 10.6146
+resist "B.n103" "B.n100" 10.6146
+resist "B.n100" "B.n99" 10.6146
+resist "B.n99" "B.n96" 10.6146
+resist "B.n96" "B.n95" 10.6146
+resist "B.n95" "B.n92" 10.6146
+resist "B.n92" "B.n91" 10.6146
+resist "B.n88" "B.n87" 10.6146
+resist "B.n87" "B.n84" 10.6146
+resist "B.n84" "B.n83" 10.6146
+resist "B.n83" "B.n80" 10.6146
+resist "B.n80" "B.n79" 10.6146
+resist "B.n79" "B.n76" 10.6146
+resist "B.n76" "B.n75" 10.6146
+resist "B.n75" "B.n72" 10.6146
+resist "B.n72" "B.n71" 10.6146
+resist "B.n71" "B.n46" 10.6146
+resist "B.n367" "B.n46" 10.6146
+resist "B.n369" "B.n368" 10.6146
+resist "B.n369" "B.n38" 10.6146
+resist "B.n375" "B.n38" 10.6146
+resist "B.n376" "B.n375" 10.6146
+resist "B.n377" "B.n376" 10.6146
+resist "B.n377" "B.n32" 10.6146
+resist "B.n383" "B.n32" 10.6146
+resist "B.n384" "B.n383" 10.6146
+resist "B.n385" "B.n384" 10.6146
+resist "B.n385" "B.n25" 10.6146
+resist "B.n391" "B.n25" 10.6146
+resist "B.n392" "B.n391" 10.6146
+resist "B.n393" "B.n392" 10.6146
+resist "B.n393" "B.n18" 10.6146
+resist "B.n399" "B.n18" 10.6146
+resist "B.n400" "B.n399" 10.6146
+resist "B.n401" "B.n400" 10.6146
+resist "B.n401" "B.n10" 10.6146
+resist "B.n407" "B.n10" 10.6146
+resist "B.n408" "B.n407" 10.6146
+resist "B.n409" "B.n408" 10.6146
+resist "B.n409" "B.n1" 10.6146
+resist "B.n361" "B.n360" 10.6146
+resist "B.n360" "B.n359" 10.6146
+resist "B.n359" "B.n358" 10.6146
+resist "B.n358" "B.n357" 10.6146
+resist "B.n357" "B.n355" 10.6146
+resist "B.n355" "B.n354" 10.6146
+resist "B.n354" "B.n353" 10.6146
+resist "B.n353" "B.n352" 10.6146
+resist "B.n352" "B.n350" 10.6146
+resist "B.n350" "B.n349" 10.6146
+resist "B.n349" "B.n348" 10.6146
+resist "B.n348" "B.n347" 10.6146
+resist "B.n347" "B.n345" 10.6146
+resist "B.n345" "B.n344" 10.6146
+resist "B.n344" "B.n343" 10.6146
+resist "B.n343" "B.n342" 10.6146
+resist "B.n342" "B.n340" 10.6146
+resist "B.n340" "B.n339" 10.6146
+resist "B.n339" "B.n338" 10.6146
+resist "B.n338" "B.n337" 10.6146
+resist "B.n337" "B.n334" 10.6146
+resist "B.n334" "B.n333" 10.6146
+resist "B.n333" "B.n332" 10.6146
+resist "B.n332" "B.n331" 10.6146
+resist "B.n331" "B.n330" 10.6146
+resist "B.n330" "B.n130" 10.6146
+resist "B.n317" "B.n130" 10.6146
+resist "B.n318" "B.n317" 10.6146
+resist "B.n318" "B.n316" 10.6146
+resist "B.n316" "B.n315" 10.6146
+resist "B.n315" "B.n136" 10.6146
+resist "B.n305" "B.n136" 10.6146
+resist "B.n305" "B.n304" 10.6146
+resist "B.n304" "B.n303" 10.6146
+resist "B.n303" "B.n145" 10.6146
+resist "B.n293" "B.n145" 10.6146
+resist "B.n293" "B.n292" 10.6146
+resist "B.n292" "B.n291" 10.6146
+resist "B.n291" "B.n152" 10.6146
+resist "B.n281" "B.n152" 10.6146
+resist "B.n281" "B.n280" 10.6146
+resist "B.n280" "B.n279" 10.6146
+resist "B.n279" "B.n161" 10.6146
+resist "B.n268" "B.n161" 10.6146
+resist "B.n268" "B.n267" 10.6146
+resist "B.n267" "B.n266" 10.6146
+resist "B.n266" "B.n168" 10.6146
+resist "B.n197" "B.n196" 10.6146
+resist "B.n200" "B.n197" 10.6146
+resist "B.n201" "B.n200" 10.6146
+resist "B.n204" "B.n201" 10.6146
+resist "B.n205" "B.n204" 10.6146
+resist "B.n208" "B.n205" 10.6146
+resist "B.n209" "B.n208" 10.6146
+resist "B.n212" "B.n209" 10.6146
+resist "B.n213" "B.n212" 10.6146
+resist "B.n216" "B.n213" 10.6146
+resist "B.n217" "B.n216" 10.6146
+resist "B.n221" "B.n220" 10.6146
+resist "B.n224" "B.n221" 10.6146
+resist "B.n225" "B.n224" 10.6146
+resist "B.n228" "B.n225" 10.6146
+resist "B.n229" "B.n228" 10.6146
+resist "B.n232" "B.n229" 10.6146
+resist "B.n233" "B.n232" 10.6146
+resist "B.n236" "B.n233" 10.6146
+resist "B.n241" "B.n238" 10.6146
+resist "B.n242" "B.n241" 10.6146
+resist "B.n245" "B.n242" 10.6146
+resist "B.n246" "B.n245" 10.6146
+resist "B.n249" "B.n246" 10.6146
+resist "B.n250" "B.n249" 10.6146
+resist "B.n253" "B.n250" 10.6146
+resist "B.n254" "B.n253" 10.6146
+resist "B.n255" "B.n254" 10.6146
+resist "B.n255" "B.n172" 10.6146
+resist "B.n260" "B.n172" 10.6146
+resist "B.n325" "B.n0" 10.6146
+resist "B.n325" "B.n324" 10.6146
+resist "B.n324" "B.n323" 10.6146
+resist "B.n323" "B.n133" 10.6146
+resist "B.n311" "B.n133" 10.6146
+resist "B.n311" "B.n310" 10.6146
+resist "B.n310" "B.n309" 10.6146
+resist "B.n309" "B.n141" 10.6146
+resist "B.n299" "B.n141" 10.6146
+resist "B.n299" "B.n298" 10.6146
+resist "B.n298" "B.n297" 10.6146
+resist "B.n297" "B.n149" 10.6146
+resist "B.n287" "B.n149" 10.6146
+resist "B.n287" "B.n286" 10.6146
+resist "B.n286" "B.n285" 10.6146
+resist "B.n285" "B.n157" 10.6146
+resist "B.n275" "B.n157" 10.6146
+resist "B.n275" "B.n274" 10.6146
+resist "B.n274" "B.n273" 10.6146
+resist "B.n273" "B.n164" 10.6146
+resist "B.n262" "B.n164" 10.6146
+resist "B.n262" "B.n261" 10.6146
+resist "B.t9" "B.n404" 10.8834
+resist "B.n139" "B.t0" 10.8834
+resist "B.n191" "B.n190" 16.6788
+resist "B.n193" "B.n192" 16.6788
+resist "B.n66" "B.n65" 16.6788
+resist "B.n68" "B.n67" 16.6788
+resist "B" "B.n417" 18.048
+resist "B.n379" "B.t18" 23.3216
+resist "B.n277" "B.t11" 23.3216
+resist "B.n362" "B.n361" 29.1902
+resist "B.n368" "B.n367" 29.1902
+resist "B.n196" "B.n168" 29.1902
+resist "B.n261" "B.n260" 29.1902
+resist "B.t8" "B.n8" 38.8693
+resist "B.n327" "B.t5" 38.8693
+resist "B.t6" "B.n16" 45.0883
+resist "B.t4" "B.n138" 45.0883
+resist "B.n389" "B.t1" 51.3074
+resist "B.n295" "B.t3" 51.3074
+resist "B.t1" "B.n388" 54.417
+resist "B.n155" "B.t3" 54.417
+resist "B.n237" "B.n191" 59.5394
+resist "B.n194" "B.n193" 59.5394
+resist "B.n108" "B.n66" 59.5394
+resist "B.n69" "B.n68" 59.5394
+resist "B.n397" "B.t6" 60.636
+resist "B.n307" "B.t4" 60.636
+resist "B.n12" "B.t8" 66.8551
+resist "B.n320" "B.t5" 66.8551
+resist "B.n416" "B.n2" 71.6755
+resist "B.n416" "B.n415" 71.6755
+resist "B.n195" "B.n188" 71.6755
+resist "B.n199" "B.n187" 71.6755
+resist "B.n203" "B.n186" 71.6755
+resist "B.n207" "B.n185" 71.6755
+resist "B.n211" "B.n184" 71.6755
+resist "B.n215" "B.n183" 71.6755
+resist "B.n219" "B.n182" 71.6755
+resist "B.n223" "B.n181" 71.6755
+resist "B.n227" "B.n180" 71.6755
+resist "B.n231" "B.n179" 71.6755
+resist "B.n235" "B.n178" 71.6755
+resist "B.n240" "B.n177" 71.6755
+resist "B.n244" "B.n176" 71.6755
+resist "B.n248" "B.n175" 71.6755
+resist "B.n252" "B.n174" 71.6755
+resist "B.n258" "B.n173" 71.6755
+resist "B.n198" "B.n188" 71.6755
+resist "B.n202" "B.n187" 71.6755
+resist "B.n206" "B.n186" 71.6755
+resist "B.n210" "B.n185" 71.6755
+resist "B.n214" "B.n184" 71.6755
+resist "B.n218" "B.n183" 71.6755
+resist "B.n222" "B.n182" 71.6755
+resist "B.n226" "B.n181" 71.6755
+resist "B.n230" "B.n180" 71.6755
+resist "B.n234" "B.n179" 71.6755
+resist "B.n239" "B.n178" 71.6755
+resist "B.n243" "B.n177" 71.6755
+resist "B.n247" "B.n176" 71.6755
+resist "B.n251" "B.n175" 71.6755
+resist "B.n189" "B.n174" 71.6755
+resist "B.n259" "B.n258" 71.6755
+resist "B.n365" "B.n47" 71.6755
+resist "B.n73" "B.n48" 71.6755
+resist "B.n77" "B.n49" 71.6755
+resist "B.n81" "B.n50" 71.6755
+resist "B.n85" "B.n51" 71.6755
+resist "B.n89" "B.n52" 71.6755
+resist "B.n93" "B.n53" 71.6755
+resist "B.n97" "B.n54" 71.6755
+resist "B.n101" "B.n55" 71.6755
+resist "B.n105" "B.n56" 71.6755
+resist "B.n110" "B.n57" 71.6755
+resist "B.n114" "B.n58" 71.6755
+resist "B.n118" "B.n59" 71.6755
+resist "B.n122" "B.n60" 71.6755
+resist "B.n126" "B.n61" 71.6755
+resist "B.n63" "B.n62" 71.6755
+resist "B.n127" "B.n62" 71.6755
+resist "B.n123" "B.n61" 71.6755
+resist "B.n119" "B.n60" 71.6755
+resist "B.n115" "B.n59" 71.6755
+resist "B.n111" "B.n58" 71.6755
+resist "B.n106" "B.n57" 71.6755
+resist "B.n102" "B.n56" 71.6755
+resist "B.n98" "B.n55" 71.6755
+resist "B.n94" "B.n54" 71.6755
+resist "B.n90" "B.n53" 71.6755
+resist "B.n86" "B.n52" 71.6755
+resist "B.n82" "B.n51" 71.6755
+resist "B.n78" "B.n50" 71.6755
+resist "B.n74" "B.n49" 71.6755
+resist "B.n70" "B.n48" 71.6755
+resist "B.n366" "B.n365" 71.6755
+resist "B.n40" "B.t18" 82.4028
+resist "B.n270" "B.t11" 82.4028
+resist "B.n405" "B.t9" 94.841
+resist "B.n321" "B.t0" 94.841
+resist "B.n396" "B.t7" 101.06
+resist "B.t2" "B.n143" 101.06
+resist "B.n371" "B.n44" 105.724
+resist "B.n372" "B.n371" 105.724
+resist "B.n373" "B.n372" 105.724
+resist "B.n373" "B.n40" 105.724
+resist "B.n380" "B.n379" 105.724
+resist "B.n381" "B.n380" 105.724
+resist "B.n381" "B.n30" 105.724
+resist "B.n387" "B.n30" 105.724
+resist "B.n388" "B.n387" 105.724
+resist "B.n389" "B.n23" 105.724
+resist "B.n395" "B.n23" 105.724
+resist "B.n397" "B.n396" 105.724
+resist "B.n403" "B.n16" 105.724
+resist "B.n404" "B.n403" 105.724
+resist "B.n405" "B.n12" 105.724
+resist "B.n412" "B.n8" 105.724
+resist "B.n413" "B.n412" 105.724
+resist "B.n414" "B.n413" 105.724
+resist "B.n414" "B.n4" 105.724
+resist "B.n327" "B.n4" 105.724
+resist "B.n321" "B.n320" 105.724
+resist "B.n313" "B.n139" 105.724
+resist "B.n313" "B.n138" 105.724
+resist "B.n307" "B.n143" 105.724
+resist "B.n301" "B.n147" 105.724
+resist "B.n295" "B.n147" 105.724
+resist "B.n289" "B.n155" 105.724
+resist "B.n289" "B.n154" 105.724
+resist "B.n283" "B.n154" 105.724
+resist "B.n283" "B.n159" 105.724
+resist "B.n277" "B.n159" 105.724
+resist "B.n271" "B.n270" 105.724
+resist "B.n271" "B.n166" 105.724
+resist "B.n264" "B.n166" 105.724
+resist "B.n264" "B.n170" 105.724
+resist "B.n191" "B.t12" 119.139
+resist "B.n68" "B.t20" 119.139
+resist "B.n193" "B.t15" 119.139
+resist "B.n66" "B.t23" 119.139
+resist "B.n190" "B.t13" 135.818
+resist "B.n67" "B.t19" 135.818
+resist "B.n192" "B.t16" 135.818
+resist "B.n65" "B.t22" 135.818
+resist "B.n370" "B.n45" 163.366
+resist "B.n370" "B.n39" 163.366
+resist "B.n374" "B.n39" 163.366
+resist "B.n374" "B.n37" 163.366
+resist "B.n378" "B.n37" 163.366
+resist "B.n378" "B.n33" 163.366
+resist "B.n382" "B.n33" 163.366
+resist "B.n382" "B.n31" 163.366
+resist "B.n386" "B.n31" 163.366
+resist "B.n386" "B.n26" 163.366
+resist "B.n390" "B.n26" 163.366
+resist "B.n390" "B.n24" 163.366
+resist "B.n394" "B.n24" 163.366
+resist "B.n394" "B.n19" 163.366
+resist "B.n398" "B.n19" 163.366
+resist "B.n398" "B.n17" 163.366
+resist "B.n402" "B.n17" 163.366
+resist "B.n402" "B.n11" 163.366
+resist "B.n406" "B.n11" 163.366
+resist "B.n406" "B.n9" 163.366
+resist "B.n410" "B.n9" 163.366
+resist "B.n411" "B.n410" 163.366
+resist "B.n411" "B.n2" 163.366
+resist "B.n415" "B.n3" 163.366
+resist "B.n326" "B.n3" 163.366
+resist "B.n326" "B.n132" 163.366
+resist "B.n322" "B.n132" 163.366
+resist "B.n322" "B.n134" 163.366
+resist "B.n312" "B.n134" 163.366
+resist "B.n312" "B.n140" 163.366
+resist "B.n308" "B.n140" 163.366
+resist "B.n308" "B.n142" 163.366
+resist "B.n300" "B.n142" 163.366
+resist "B.n300" "B.n148" 163.366
+resist "B.n296" "B.n148" 163.366
+resist "B.n296" "B.n150" 163.366
+resist "B.n288" "B.n150" 163.366
+resist "B.n288" "B.n156" 163.366
+resist "B.n284" "B.n156" 163.366
+resist "B.n284" "B.n158" 163.366
+resist "B.n276" "B.n158" 163.366
+resist "B.n276" "B.n163" 163.366
+resist "B.n272" "B.n163" 163.366
+resist "B.n272" "B.n165" 163.366
+resist "B.n263" "B.n165" 163.366
+resist "B.n263" "B.n171" 163.366
+resist "B.n199" "B.n198" 163.366
+resist "B.n203" "B.n202" 163.366
+resist "B.n207" "B.n206" 163.366
+resist "B.n211" "B.n210" 163.366
+resist "B.n215" "B.n214" 163.366
+resist "B.n219" "B.n218" 163.366
+resist "B.n223" "B.n222" 163.366
+resist "B.n227" "B.n226" 163.366
+resist "B.n231" "B.n230" 163.366
+resist "B.n235" "B.n234" 163.366
+resist "B.n240" "B.n239" 163.366
+resist "B.n244" "B.n243" 163.366
+resist "B.n248" "B.n247" 163.366
+resist "B.n252" "B.n251" 163.366
+resist "B.n256" "B.n189" 163.366
+resist "B.n256" "B.n173" 163.366
+resist "B.n64" "B.n43" 163.366
+resist "B.n43" "B.n42" 163.366
+resist "B.n42" "B.n41" 163.366
+resist "B.n356" "B.n41" 163.366
+resist "B.n356" "B.n36" 163.366
+resist "B.n36" "B.n35" 163.366
+resist "B.n35" "B.n34" 163.366
+resist "B.n351" "B.n34" 163.366
+resist "B.n351" "B.n29" 163.366
+resist "B.n29" "B.n28" 163.366
+resist "B.n28" "B.n27" 163.366
+resist "B.n346" "B.n27" 163.366
+resist "B.n346" "B.n22" 163.366
+resist "B.n22" "B.n21" 163.366
+resist "B.n21" "B.n20" 163.366
+resist "B.n341" "B.n20" 163.366
+resist "B.n341" "B.n15" 163.366
+resist "B.n15" "B.n14" 163.366
+resist "B.n14" "B.n13" 163.366
+resist "B.n336" "B.n13" 163.366
+resist "B.n336" "B.n335" 163.366
+resist "B.n335" "B.n7" 163.366
+resist "B.n7" "B.n6" 163.366
+resist "B.n6" "B.n5" 163.366
+resist "B.n329" "B.n5" 163.366
+resist "B.n329" "B.n328" 163.366
+resist "B.n328" "B.n131" 163.366
+resist "B.n319" "B.n131" 163.366
+resist "B.n319" "B.n135" 163.366
+resist "B.n314" "B.n135" 163.366
+resist "B.n314" "B.n137" 163.366
+resist "B.n306" "B.n137" 163.366
+resist "B.n306" "B.n144" 163.366
+resist "B.n302" "B.n144" 163.366
+resist "B.n302" "B.n146" 163.366
+resist "B.n294" "B.n146" 163.366
+resist "B.n294" "B.n151" 163.366
+resist "B.n290" "B.n151" 163.366
+resist "B.n290" "B.n153" 163.366
+resist "B.n282" "B.n153" 163.366
+resist "B.n282" "B.n160" 163.366
+resist "B.n278" "B.n160" 163.366
+resist "B.n278" "B.n162" 163.366
+resist "B.n269" "B.n162" 163.366
+resist "B.n269" "B.n167" 163.366
+resist "B.n265" "B.n167" 163.366
+resist "B.n265" "B.n169" 163.366
+resist "B.n363" "B.n63" 163.366
+resist "B.n127" "B.n126" 163.366
+resist "B.n123" "B.n122" 163.366
+resist "B.n119" "B.n118" 163.366
+resist "B.n115" "B.n114" 163.366
+resist "B.n111" "B.n110" 163.366
+resist "B.n106" "B.n105" 163.366
+resist "B.n102" "B.n101" 163.366
+resist "B.n98" "B.n97" 163.366
+resist "B.n94" "B.n93" 163.366
+resist "B.n90" "B.n89" 163.366
+resist "B.n86" "B.n85" 163.366
+resist "B.n82" "B.n81" 163.366
+resist "B.n78" "B.n77" 163.366
+resist "B.n74" "B.n73" 163.366
+resist "B.n70" "B.n47" 163.366
+resist "B.n364" "B.n44" 169.47
+resist "B.n257" "B.n170" 169.47
+resist "B.n417" "B.n416" 256.663
+resist "B.n257" "B.n188" 256.663
+resist "B.n257" "B.n187" 256.663
+resist "B.n257" "B.n186" 256.663
+resist "B.n257" "B.n185" 256.663
+resist "B.n257" "B.n184" 256.663
+resist "B.n257" "B.n183" 256.663
+resist "B.n257" "B.n182" 256.663
+resist "B.n257" "B.n181" 256.663
+resist "B.n257" "B.n180" 256.663
+resist "B.n257" "B.n179" 256.663
+resist "B.n257" "B.n178" 256.663
+resist "B.n257" "B.n177" 256.663
+resist "B.n257" "B.n176" 256.663
+resist "B.n257" "B.n175" 256.663
+resist "B.n257" "B.n174" 256.663
+resist "B.n258" "B.n257" 256.663
+resist "B.n365" "B.n364" 256.663
+resist "B.n364" "B.n48" 256.663
+resist "B.n364" "B.n49" 256.663
+resist "B.n364" "B.n50" 256.663
+resist "B.n364" "B.n51" 256.663
+resist "B.n364" "B.n52" 256.663
+resist "B.n364" "B.n53" 256.663
+resist "B.n364" "B.n54" 256.663
+resist "B.n364" "B.n55" 256.663
+resist "B.n364" "B.n56" 256.663
+resist "B.n364" "B.n57" 256.663
+resist "B.n364" "B.n58" 256.663
+resist "B.n364" "B.n59" 256.663
+resist "B.n364" "B.n60" 256.663
+resist "B.n364" "B.n61" 256.663
+resist "B.n364" "B.n62" 256.663
+resist "B.n190" "B.t10" 287.575
+resist "B.n192" "B.t14" 287.575
+resist "B.n65" "B.t21" 287.575
+resist "B.n67" "B.t17" 287.575
+resist "B.n259" "B.n171" 449.256
+resist "B.n195" "B.n169" 449.256
+resist "B.n363" "B.n64" 449.256
+resist "B.n366" "B.n45" 449.256
+resist "B.n413" "B.n2" 585
+resist "B.n415" "B.n414" 585
+resist "B.n45" "B.n44" 585
+resist "B.n368" "B.n45" 585
+resist "B.n371" "B.n370" 585
+resist "B.n370" "B.n369" 585
+resist "B.n372" "B.n39" 585
+resist "B.n39" "B.n38" 585
+resist "B.n374" "B.n373" 585
+resist "B.n375" "B.n374" 585
+resist "B.n40" "B.n37" 585
+resist "B.n376" "B.n37" 585
+resist "B.n379" "B.n378" 585
+resist "B.n378" "B.n377" 585
+resist "B.n380" "B.n33" 585
+resist "B.n33" "B.n32" 585
+resist "B.n382" "B.n381" 585
+resist "B.n383" "B.n382" 585
+resist "B.n31" "B.n30" 585
+resist "B.n384" "B.n31" 585
+resist "B.n387" "B.n386" 585
+resist "B.n386" "B.n385" 585
+resist "B.n388" "B.n26" 585
+resist "B.n26" "B.n25" 585
+resist "B.n390" "B.n389" 585
+resist "B.n391" "B.n390" 585
+resist "B.n24" "B.n23" 585
+resist "B.n392" "B.n24" 585
+resist "B.n395" "B.n394" 585
+resist "B.n394" "B.n393" 585
+resist "B.n396" "B.n19" 585
+resist "B.n19" "B.n18" 585
+resist "B.n398" "B.n397" 585
+resist "B.n399" "B.n398" 585
+resist "B.n17" "B.n16" 585
+resist "B.n400" "B.n17" 585
+resist "B.n403" "B.n402" 585
+resist "B.n402" "B.n401" 585
+resist "B.n404" "B.n11" 585
+resist "B.n11" "B.n10" 585
+resist "B.n406" "B.n405" 585
+resist "B.n407" "B.n406" 585
+resist "B.n12" "B.n9" 585
+resist "B.n408" "B.n9" 585
+resist "B.n410" "B.n8" 585
+resist "B.n410" "B.n409" 585
+resist "B.n412" "B.n411" 585
+resist "B.n411" "B.n1" 585
+resist "B.n4" "B.n3" 585
+resist "B.n3" "B.n0" 585
+resist "B.n327" "B.n326" 585
+resist "B.n326" "B.n325" 585
+resist "B.n320" "B.n132" 585
+resist "B.n324" "B.n132" 585
+resist "B.n322" "B.n321" 585
+resist "B.n323" "B.n322" 585
+resist "B.n139" "B.n134" 585
+resist "B.n134" "B.n133" 585
+resist "B.n313" "B.n312" 585
+resist "B.n312" "B.n311" 585
+resist "B.n140" "B.n138" 585
+resist "B.n310" "B.n140" 585
+resist "B.n308" "B.n307" 585
+resist "B.n309" "B.n308" 585
+resist "B.n143" "B.n142" 585
+resist "B.n142" "B.n141" 585
+resist "B.n301" "B.n300" 585
+resist "B.n300" "B.n299" 585
+resist "B.n148" "B.n147" 585
+resist "B.n298" "B.n148" 585
+resist "B.n296" "B.n295" 585
+resist "B.n297" "B.n296" 585
+resist "B.n155" "B.n150" 585
+resist "B.n150" "B.n149" 585
+resist "B.n289" "B.n288" 585
+resist "B.n288" "B.n287" 585
+resist "B.n156" "B.n154" 585
+resist "B.n286" "B.n156" 585
+resist "B.n284" "B.n283" 585
+resist "B.n285" "B.n284" 585
+resist "B.n159" "B.n158" 585
+resist "B.n158" "B.n157" 585
+resist "B.n277" "B.n276" 585
+resist "B.n276" "B.n275" 585
+resist "B.n270" "B.n163" 585
+resist "B.n274" "B.n163" 585
+resist "B.n272" "B.n271" 585
+resist "B.n273" "B.n272" 585
+resist "B.n166" "B.n165" 585
+resist "B.n165" "B.n164" 585
+resist "B.n264" "B.n263" 585
+resist "B.n263" "B.n262" 585
+resist "B.n171" "B.n170" 585
+resist "B.n261" "B.n171" 585
+resist "B.n196" "B.n195" 585
+resist "B.n198" "B.n197" 585
+resist "B.n200" "B.n199" 585
+resist "B.n202" "B.n201" 585
+resist "B.n204" "B.n203" 585
+resist "B.n206" "B.n205" 585
+resist "B.n208" "B.n207" 585
+resist "B.n210" "B.n209" 585
+resist "B.n212" "B.n211" 585
+resist "B.n214" "B.n213" 585
+resist "B.n216" "B.n215" 585
+resist "B.n218" "B.n217" 585
+resist "B.n220" "B.n219" 585
+resist "B.n222" "B.n221" 585
+resist "B.n224" "B.n223" 585
+resist "B.n226" "B.n225" 585
+resist "B.n228" "B.n227" 585
+resist "B.n230" "B.n229" 585
+resist "B.n232" "B.n231" 585
+resist "B.n234" "B.n233" 585
+resist "B.n236" "B.n235" 585
+resist "B.n239" "B.n238" 585
+resist "B.n241" "B.n240" 585
+resist "B.n243" "B.n242" 585
+resist "B.n245" "B.n244" 585
+resist "B.n247" "B.n246" 585
+resist "B.n249" "B.n248" 585
+resist "B.n251" "B.n250" 585
+resist "B.n253" "B.n252" 585
+resist "B.n254" "B.n189" 585
+resist "B.n257" "B.n256" 585
+resist "B.n256" "B.n255" 585
+resist "B.n173" "B.n172" 585
+resist "B.n260" "B.n259" 585
+resist "B.n170" "B.n169" 585
+resist "B.n169" "B.n168" 585
+resist "B.n265" "B.n264" 585
+resist "B.n266" "B.n265" 585
+resist "B.n167" "B.n166" 585
+resist "B.n267" "B.n167" 585
+resist "B.n271" "B.n269" 585
+resist "B.n269" "B.n268" 585
+resist "B.n270" "B.n162" 585
+resist "B.n162" "B.n161" 585
+resist "B.n278" "B.n277" 585
+resist "B.n279" "B.n278" 585
+resist "B.n160" "B.n159" 585
+resist "B.n280" "B.n160" 585
+resist "B.n283" "B.n282" 585
+resist "B.n282" "B.n281" 585
+resist "B.n154" "B.n153" 585
+resist "B.n153" "B.n152" 585
+resist "B.n290" "B.n289" 585
+resist "B.n291" "B.n290" 585
+resist "B.n155" "B.n151" 585
+resist "B.n292" "B.n151" 585
+resist "B.n295" "B.n294" 585
+resist "B.n294" "B.n293" 585
+resist "B.n147" "B.n146" 585
+resist "B.n146" "B.n145" 585
+resist "B.n302" "B.n301" 585
+resist "B.n303" "B.n302" 585
+resist "B.n144" "B.n143" 585
+resist "B.n304" "B.n144" 585
+resist "B.n307" "B.n306" 585
+resist "B.n306" "B.n305" 585
+resist "B.n138" "B.n137" 585
+resist "B.n137" "B.n136" 585
+resist "B.n314" "B.n313" 585
+resist "B.n315" "B.n314" 585
+resist "B.n139" "B.n135" 585
+resist "B.n316" "B.n135" 585
+resist "B.n321" "B.n319" 585
+resist "B.n319" "B.n318" 585
+resist "B.n320" "B.n131" 585
+resist "B.n317" "B.n131" 585
+resist "B.n328" "B.n327" 585
+resist "B.n328" "B.n130" 585
+resist "B.n329" "B.n4" 585
+resist "B.n330" "B.n329" 585
+resist "B.n414" "B.n5" 585
+resist "B.n331" "B.n5" 585
+resist "B.n413" "B.n6" 585
+resist "B.n332" "B.n6" 585
+resist "B.n412" "B.n7" 585
+resist "B.n333" "B.n7" 585
+resist "B.n335" "B.n8" 585
+resist "B.n335" "B.n334" 585
+resist "B.n336" "B.n12" 585
+resist "B.n337" "B.n336" 585
+resist "B.n405" "B.n13" 585
+resist "B.n338" "B.n13" 585
+resist "B.n404" "B.n14" 585
+resist "B.n339" "B.n14" 585
+resist "B.n403" "B.n15" 585
+resist "B.n340" "B.n15" 585
+resist "B.n341" "B.n16" 585
+resist "B.n342" "B.n341" 585
+resist "B.n397" "B.n20" 585
+resist "B.n343" "B.n20" 585
+resist "B.n396" "B.n21" 585
+resist "B.n344" "B.n21" 585
+resist "B.n395" "B.n22" 585
+resist "B.n345" "B.n22" 585
+resist "B.n346" "B.n23" 585
+resist "B.n347" "B.n346" 585
+resist "B.n389" "B.n27" 585
+resist "B.n348" "B.n27" 585
+resist "B.n388" "B.n28" 585
+resist "B.n349" "B.n28" 585
+resist "B.n387" "B.n29" 585
+resist "B.n350" "B.n29" 585
+resist "B.n351" "B.n30" 585
+resist "B.n352" "B.n351" 585
+resist "B.n381" "B.n34" 585
+resist "B.n353" "B.n34" 585
+resist "B.n380" "B.n35" 585
+resist "B.n354" "B.n35" 585
+resist "B.n379" "B.n36" 585
+resist "B.n355" "B.n36" 585
+resist "B.n356" "B.n40" 585
+resist "B.n357" "B.n356" 585
+resist "B.n373" "B.n41" 585
+resist "B.n358" "B.n41" 585
+resist "B.n372" "B.n42" 585
+resist "B.n359" "B.n42" 585
+resist "B.n371" "B.n43" 585
+resist "B.n360" "B.n43" 585
+resist "B.n64" "B.n44" 585
+resist "B.n361" "B.n64" 585
+resist "B.n367" "B.n366" 585
+resist "B.n47" "B.n46" 585
+resist "B.n71" "B.n70" 585
+resist "B.n73" "B.n72" 585
+resist "B.n75" "B.n74" 585
+resist "B.n77" "B.n76" 585
+resist "B.n79" "B.n78" 585
+resist "B.n81" "B.n80" 585
+resist "B.n83" "B.n82" 585
+resist "B.n85" "B.n84" 585
+resist "B.n87" "B.n86" 585
+resist "B.n89" "B.n88" 585
+resist "B.n91" "B.n90" 585
+resist "B.n93" "B.n92" 585
+resist "B.n95" "B.n94" 585
+resist "B.n97" "B.n96" 585
+resist "B.n99" "B.n98" 585
+resist "B.n101" "B.n100" 585
+resist "B.n103" "B.n102" 585
+resist "B.n105" "B.n104" 585
+resist "B.n107" "B.n106" 585
+resist "B.n110" "B.n109" 585
+resist "B.n112" "B.n111" 585
+resist "B.n114" "B.n113" 585
+resist "B.n116" "B.n115" 585
+resist "B.n118" "B.n117" 585
+resist "B.n120" "B.n119" 585
+resist "B.n122" "B.n121" 585
+resist "B.n124" "B.n123" 585
+resist "B.n126" "B.n125" 585
+resist "B.n128" "B.n127" 585
+resist "B.n129" "B.n63" 585
+resist "B.n364" "B.n363" 585
+resist "B.n363" "B.n362" 585
+device msubckt sky130_fd_pr__nfet_01v8 658 397 659 398  "B.t2" "VN.t9" 212 0 "VDD2.t0" 360 11880,426 "VTAIL.t2" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 -592 -757 -591 -756  "B.t6" "VN.t8" 212 0 "VTAIL.t15" 360 11880,426 "VDD2.t1" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 -420 397 -419 398  "B.t9" "VP.t9" 212 0 "VDD1.t0" 360 11880,426 "VTAIL.t7" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 -764 -757 -763 -756  "B.t7" "VN.t7" 212 0 "VDD2.t2" 360 11880,426 "VTAIL.t3" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 -936 -757 -935 -756  "B.t1" "VN.t6" 212 0 "VTAIL.t14" 360 28080,876 "VDD2.t3" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 142 397 143 398  "B.t5" "VN.t5" 212 0 "VTAIL.t18" 360 28080,876 "VDD2.t4" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 1220 397 1221 398  "B.t11" "B.t10" 212 0 "B.t12" 360 0 "B.t13" 360 28080,876
+device msubckt sky130_fd_pr__nfet_01v8 -764 397 -763 398  "B.t7" "VP.t8" 212 0 "VDD1.t1" 360 11880,426 "VTAIL.t6" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 1220 -757 1221 -756  "B.t11" "B.t14" 212 0 "B.t15" 360 0 "B.t16" 360 28080,876
+device msubckt sky130_fd_pr__nfet_01v8 -248 -757 -247 -756  "B.t8" "VN.t4" 212 0 "VTAIL.t17" 360 11880,426 "VDD2.t5" 360 28080,876
+device msubckt sky130_fd_pr__nfet_01v8 -420 -757 -419 -756  "B.t9" "VN.t3" 212 0 "VDD2.t6" 360 11880,426 "VTAIL.t16" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 830 397 831 398  "B.t3" "VN.t2" 212 0 "VTAIL.t0" 360 11880,426 "VDD2.t7" 360 28080,876
+device msubckt sky130_fd_pr__nfet_01v8 486 397 487 398  "B.t4" "VN.t1" 212 0 "VTAIL.t1" 360 11880,426 "VDD2.t8" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 -248 397 -247 398  "B.t8" "VP.t7" 212 0 "VTAIL.t5" 360 11880,426 "VDD1.t2" 360 28080,876
+device msubckt sky130_fd_pr__nfet_01v8 830 -757 831 -756  "B.t3" "VP.t6" 212 0 "VTAIL.t4" 360 11880,426 "VDD1.t3" 360 28080,876
+device msubckt sky130_fd_pr__nfet_01v8 486 -757 487 -756  "B.t4" "VP.t5" 212 0 "VTAIL.t11" 360 11880,426 "VDD1.t4" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 142 -757 143 -756  "B.t5" "VP.t4" 212 0 "VTAIL.t13" 360 28080,876 "VDD1.t5" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 314 397 315 398  "B.t0" "VN.t0" 212 0 "VDD2.t9" 360 11880,426 "VTAIL.t19" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 658 -757 659 -756  "B.t2" "VP.t3" 212 0 "VDD1.t6" 360 11880,426 "VTAIL.t12" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 -936 397 -935 398  "B.t1" "VP.t2" 212 0 "VTAIL.t10" 360 28080,876 "VDD1.t7" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 -1326 397 -1325 398  "B.t18" "B.t17" 212 0 "B.t19" 360 0 "B.t20" 360 28080,876
+device msubckt sky130_fd_pr__nfet_01v8 314 -757 315 -756  "B.t0" "VP.t1" 212 0 "VDD1.t8" 360 11880,426 "VTAIL.t9" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 -592 397 -591 398  "B.t6" "VP.t0" 212 0 "VTAIL.t8" 360 11880,426 "VDD1.t9" 360 11880,426
+device msubckt sky130_fd_pr__nfet_01v8 -1326 -757 -1325 -756  "B.t18" "B.t21" 212 0 "B.t22" 360 0 "B.t23" 360 28080,876

@@ -1,0 +1,45 @@
+
+Circuit 1 cell sky130_fd_pr__nfet_01v8 and Circuit 2 cell sky130_fd_pr__nfet_01v8 are black boxes.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__nfet_01v8         |Circuit 2: sky130_fd_pr__nfet_01v8         
+-------------------------------------------|-------------------------------------------
+1                                          |1                                          
+2                                          |2                                          
+3                                          |3                                          
+4                                          |4                                          
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__nfet_01v8 and sky130_fd_pr__nfet_01v8 are equivalent.
+Flattening unmatched subcell NMOS in circuit diff_pair_sample_1574 (1)(4 instances)
+
+Class diff_pair_sample_1574 (0):  Merged 21 parallel devices.
+Class diff_pair_sample_1574 (1):  Merged 5 parallel devices.
+Subcircuit summary:
+Circuit 1: diff_pair_sample_1574           |Circuit 2: diff_pair_sample_1574           
+-------------------------------------------|-------------------------------------------
+sky130_fd_pr__nfet_01v8 (24->3)            |sky130_fd_pr__nfet_01v8 (24->3)            
+Number of devices: 3                       |Number of devices: 3                       
+Number of nets: 6                          |Number of nets: 6                          
+---------------------------------------------------------------------------------------
+Resolving symmetries by property value.
+Resolving symmetries by pin name.
+Netlists match uniquely.
+
+Subcircuit pins:
+Circuit 1: diff_pair_sample_1574           |Circuit 2: diff_pair_sample_1574           
+-------------------------------------------|-------------------------------------------
+B                                          |B                                          
+VDD2                                       |VDD2                                       
+VDD1                                       |VDD1                                       
+VN                                         |VN                                         
+VP                                         |VP                                         
+VTAIL                                      |VTAIL                                      
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes diff_pair_sample_1574 and diff_pair_sample_1574 are equivalent.
+
+Final result: Circuits match uniquely.
+.

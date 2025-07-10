@@ -222,13 +222,48 @@ def parse_lvs_report(report_content: str) -> dict:
 
     return summary
 
+def _parse_simple_parasitics(component_name: str) -> tuple[float, float]:
+    """Parses total parasitic R and C from a SPICE file by simple summation."""
+    total_resistance = 0.0
+    total_capacitance = 0.0
+    spice_file_path = f"{component_name}_pex.spice"
+    if not os.path.exists(spice_file_path):
+        return 0.0, 0.0
+    with open(spice_file_path, 'r') as f:
+        for line in f:
+            orig_line = line.strip()  # Keep original case for capacitor parsing
+            line = line.strip().upper()
+            parts = line.split()
+            orig_parts = orig_line.split()  # Original case parts for capacitor values
+            if not parts: continue
+            
+            name = parts[0]
+            if name.startswith('R') and len(parts) >= 4:
+                try: total_resistance += float(parts[3])
+                except (ValueError): continue
+            elif name.startswith('C') and len(parts) >= 4:
+                try:
+                    cap_str = orig_parts[3]  # Use original case for capacitor value
+                    unit = cap_str[-1]
+                    val_str = cap_str[:-1]
+                    if unit == 'F': cap_value = float(val_str) * 1e-15
+                    elif unit == 'P': cap_value = float(val_str) * 1e-12
+                    elif unit == 'N': cap_value = float(val_str) * 1e-9
+                    elif unit == 'U': cap_value = float(val_str) * 1e-6
+                    elif unit == 'f': cap_value = float(val_str) * 1e-15  # femtofarads
+                    else: cap_value = float(cap_str)
+                    total_capacitance += cap_value
+                except (ValueError): continue
+    return total_resistance, total_capacitance
+
 def run_robust_verification(layout_path: str, component_name: str, top_level: Component) -> dict:
     """
-    Runs DRC and LVS checks with robust PDK handling.
+    Runs DRC, LVS, and PEX checks with robust PDK handling.
     """
     verification_results = {
         "drc": {"status": "not run", "is_pass": False, "report_path": None, "summary": {}},
-        "lvs": {"status": "not run", "is_pass": False, "report_path": None, "summary": {}}
+        "lvs": {"status": "not run", "is_pass": False, "report_path": None, "summary": {}},
+        "pex": {"status": "not run", "total_resistance_ohms": 0.0, "total_capacitance_farads": 0.0, "spice_file": None}
     }
     
     # Ensure PDK environment before each operation
@@ -338,6 +373,47 @@ def run_robust_verification(layout_path: str, component_name: str, top_level: Co
             verification_results["lvs"]["status"] = f"error: {e}"
         except:
             verification_results["lvs"]["status"] = f"error: {e}"
+
+    # Small delay between LVS and PEX
+    time.sleep(1)
+    
+    # PEX Extraction
+    pex_spice_path = os.path.abspath(f"./{component_name}_pex.spice")
+    verification_results["pex"]["spice_file"] = pex_spice_path
+    
+    try:
+        # Clean up any existing PEX file
+        if os.path.exists(pex_spice_path):
+            os.remove(pex_spice_path)
+        
+        print(f"Running PEX extraction for {component_name}...")
+        
+        # Run the PEX extraction script 
+        subprocess.run(["bash", "run_pex.sh", layout_path, component_name], 
+                      check=True, capture_output=True, text=True, cwd=".")
+        
+        # Check if PEX spice file was created and parse it
+        if os.path.exists(pex_spice_path):
+            total_res, total_cap = _parse_simple_parasitics(component_name)
+            verification_results["pex"].update({
+                "status": "PEX Complete",
+                "total_resistance_ohms": total_res,
+                "total_capacitance_farads": total_cap
+            })
+            print(f"PEX extraction completed: R={total_res:.2f}Ω, C={total_cap:.6e}F")
+        else:
+            verification_results["pex"]["status"] = "PEX Error: Spice file not generated"
+            
+    except subprocess.CalledProcessError as e:
+        error_msg = e.stderr if e.stderr else str(e)
+        verification_results["pex"]["status"] = f"PEX Error: {error_msg}"
+        print(f"PEX extraction failed: {error_msg}")
+    except FileNotFoundError:
+        verification_results["pex"]["status"] = "PEX Error: run_pex.sh not found"
+        print("PEX extraction failed: run_pex.sh script not found")
+    except Exception as e:
+        verification_results["pex"]["status"] = f"PEX Unexpected Error: {e}"
+        print(f"PEX extraction failed with unexpected error: {e}")
         
     return verification_results
 

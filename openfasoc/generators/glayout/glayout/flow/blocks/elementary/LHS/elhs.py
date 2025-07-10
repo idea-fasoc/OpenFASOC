@@ -271,12 +271,12 @@ def generate_all_samples():
     """Generate all samples for all PCells using the 32-hour budget"""
     # 1) EXACT sample counts for a 32h / 26-core run (+2 PVT sweeps)
     inventory_np = {
-        'fvf'           :  34995,   # Flipped-voltage follower   
-        'txgate'        :  23331,   # Transmission gate          
-        'current_mirror':  23331,   # Current mirror             
-        'diff_pair'     :  29163,   # Differential pair          
-        'lvcm'          :  23331,   # Low-V current mirror       
-        'opamp'         :  52494,   # Two-stage op-amp           
+        'fvf'           :  0,   # Flipped-voltage follower   
+        'txgate'        :  200,   # Transmission gate          
+        'current_mirror':  0,   # Current mirror             
+        'diff_pair'     :  0,   # Differential pair          
+        'lvcm'          :  0,   # Low-V current mirror       
+        'opamp'         :  0,   # Two-stage op-amp           
     }
 
     # 2) List the PCells in the same order as your specs dicts:
@@ -292,6 +292,12 @@ def generate_all_samples():
         d_p = sum(cnt for *_ , cnt in cont_specs[pcell])
         # override budget with inventory np
         n_p = inventory_np[pcell]
+        
+        # Skip PCells with 0 samples
+        if n_p == 0:
+            all_samples[pcell] = []
+            print(f"{pcell}: skipped (inventory np = 0)")
+            continue
 
         # a) Continuous LHS + adaptive maximin
         lhs_pts = lhs_maximin(d_p, n_p, patience=10*d_p, seed=42)
@@ -342,7 +348,8 @@ if __name__ == "__main__":
     import os
     
     # Save samples to JSON files
-    output_dir = os.path.join(os.path.dirname(__file__), "gen_params_32hr")
+    # output_dir = os.path.join(os.path.dirname(__file__), "gen_params_32hr")
+    output_dir = os.path.join(os.path.dirname(__file__), "txgate_200_params")
     os.makedirs(output_dir, exist_ok=True)
     
     for pcell, samples in all_samples.items():

@@ -1,0 +1,54 @@
+
+Circuit 1 cell sky130_fd_pr__nfet_01v8 and Circuit 2 cell sky130_fd_pr__nfet_01v8 are black boxes.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__nfet_01v8         |Circuit 2: sky130_fd_pr__nfet_01v8         
+-------------------------------------------|-------------------------------------------
+1                                          |1                                          
+2                                          |2                                          
+3                                          |3                                          
+4                                          |4                                          
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__nfet_01v8 and sky130_fd_pr__nfet_01v8 are equivalent.
+Flattening unmatched subcell NMOS in circuit diff_pair_sample_1686 (1)(2 instances)
+
+Class diff_pair_sample_1686 (0):  Merged 13 parallel devices.
+Class diff_pair_sample_1686 (1):  Merged 1 parallel devices.
+Subcircuit summary:
+Circuit 1: diff_pair_sample_1686           |Circuit 2: diff_pair_sample_1686           
+-------------------------------------------|-------------------------------------------
+sky130_fd_pr__nfet_01v8 (16->3)            |sky130_fd_pr__nfet_01v8 (8->3)             
+Number of devices: 3                       |Number of devices: 3                       
+Number of nets: 6                          |Number of nets: 6                          
+---------------------------------------------------------------------------------------
+Resolving symmetries by property value.
+Resolving symmetries by pin name.
+Netlists match uniquely with property errors.
+sky130_fd_pr__nfet_01v8:2 vs. NMOS:0/sky130_fd_pr__nfet_01v8:DUMMY1:
+ w circuit1: 54.8   circuit2: 27.3923   (delta=66.7%, cutoff=1%)
+sky130_fd_pr__nfet_01v8:0 vs. NMOS:0/sky130_fd_pr__nfet_01v8:MAIN:
+ w circuit1: 82.2   circuit2: 41.0885   (delta=66.7%, cutoff=1%)
+sky130_fd_pr__nfet_01v8:1 vs. NMOS:1/sky130_fd_pr__nfet_01v8:MAIN:
+ w circuit1: 82.2   circuit2: 41.0885   (delta=66.7%, cutoff=1%)
+
+Subcircuit pins:
+Circuit 1: diff_pair_sample_1686           |Circuit 2: diff_pair_sample_1686           
+-------------------------------------------|-------------------------------------------
+B                                          |B                                          
+VDD2                                       |VDD2                                       
+VDD1                                       |VDD1                                       
+VN                                         |VN                                         
+VP                                         |VP                                         
+VTAIL                                      |VTAIL                                      
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes diff_pair_sample_1686 and diff_pair_sample_1686 are equivalent.
+
+Final result: Circuits match uniquely.
+Property errors were found.
+
+The following cells had property errors:
+ diff_pair_sample_1686
