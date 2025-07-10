@@ -10,7 +10,7 @@ from glayout.flow.primitives.guardring import tapring
 from glayout.flow.primitives.mimcap import mimcap_array, mimcap
 from glayout.flow.primitives.via_gen import via_stack, via_array
 from glayout.flow.routing.L_route import L_route
-from glayout.flow.routing.c_route import c_route
+from glayout.flow.routing.c_route_old import c_route
 from gdsfactory.routing.route_quad import route_quad
 from glayout.flow.pdk.util.comp_utils import (
     evaluate_bbox,

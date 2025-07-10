@@ -1,6 +1,6 @@
 from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized, two_pfet_interdigitized
 from glayout.flow.pdk.mappedpdk import MappedPDK
-from glayout.flow.routing.c_route import c_route
+from glayout.flow.routing.c_route_old import c_route
 from glayout.flow.routing.L_route import L_route
 from glayout.flow.routing.straight_route import straight_route
 from glayout.flow.spice.netlist import Netlist
