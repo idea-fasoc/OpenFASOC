@@ -16,7 +16,6 @@ RUN conda install python=3.10 \
                    open_pdks.gf180mcuC \
                    magic \
                    netgen \
-                   openroad \
                    -c litex-hub \
                    -c conda-forge \
                    -c anaconda \
