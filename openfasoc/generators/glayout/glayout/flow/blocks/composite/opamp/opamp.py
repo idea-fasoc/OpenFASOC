@@ -9,7 +9,7 @@ from glayout.flow.blocks.elementary.diff_pair import diff_pair
 from glayout.flow.primitives.guardring import tapring
 from glayout.flow.primitives.mimcap import mimcap_array, mimcap
 from glayout.flow.routing.L_route import L_route
-from glayout.flow.routing.c_route import c_route
+from glayout.flow.routing.c_route_old import c_route
 from glayout.flow.primitives.via_gen import via_stack, via_array
 from gdsfactory.routing.route_quad import route_quad
 from glayout.flow.pdk.util.comp_utils import evaluate_bbox, prec_ref_center, movex, movey, to_decimal, to_float, move, align_comp_to_port, get_padding_points_cc
@@ -153,18 +153,18 @@ def opamp_netlist(two_stage_netlist: Netlist, output_stage_netlist: Netlist) -> 
 @cell
 def opamp(
     pdk: MappedPDK,
-    half_diffpair_params: tuple[float, float, int] = (6, 1, 4),
-    diffpair_bias: tuple[float, float, int] = (6, 2, 4),
-    half_common_source_params: tuple[float, float, int, int] = (7, 1, 10, 3),
-    half_common_source_bias: tuple[float, float, int, int] = (6, 2, 8, 2),
-    output_stage_params: tuple[float, float, int] = (5, 1, 16),
-    output_stage_bias: tuple[float, float, int] = (6, 2, 4),
-    half_pload: tuple[float,float,int] = (6,1,6),
-    mim_cap_size=(12, 12),
-    mim_cap_rows=3,
+    half_diffpair_params: tuple[float, float, int] = (4.830253286815493,2.2539578478046662,8),
+    diffpair_bias: tuple[float, float, int] = (6.037515802496237,4.123786739228095,3),
+    half_common_source_params: tuple[float, float, int, int] = (2.0125794375155603,14.565564649657246,15,5),
+    half_common_source_bias: tuple[float, float, int, int] = (4.944937663219363,7.28342012411769,7,4),
+    output_stage_params: tuple[float, float, int] = (5.399091728093639,4.5857715613487375,20),
+    output_stage_bias: tuple[float, float, int] = (4.833064927880735,3.4385982794948085,5),
+    half_pload: tuple[float,float,int] = (6.475062736253839,2.8421424334962415,2),
+    mim_cap_size=(15.335314270645531,10.161949416053947),
+    mim_cap_rows=2,
     rmult: int = 2,
-    with_antenna_diode_on_diffinputs: int=5, 
-    add_output_stage: Optional[bool] = True
+    with_antenna_diode_on_diffinputs: int=7, 
+    add_output_stage: Optional[bool] = False
 ) -> Component:
     """
     create a two stage opamp with an output buffer, args->

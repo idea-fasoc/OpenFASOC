@@ -1,0 +1,157 @@
+
+Circuit 1 cell sky130_fd_pr__nfet_01v8 and Circuit 2 cell sky130_fd_pr__nfet_01v8 are black boxes.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__nfet_01v8 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__nfet_01v8         |Circuit 2: sky130_fd_pr__nfet_01v8         
+-------------------------------------------|-------------------------------------------
+1                                          |1                                          
+2                                          |2                                          
+3                                          |3                                          
+4                                          |4                                          
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__nfet_01v8 and sky130_fd_pr__nfet_01v8 are equivalent.
+
+Circuit 1 cell sky130_fd_pr__pfet_01v8 and Circuit 2 cell sky130_fd_pr__pfet_01v8 are black boxes.
+Warning: Equate pins:  cell sky130_fd_pr__pfet_01v8 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__pfet_01v8 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__pfet_01v8         |Circuit 2: sky130_fd_pr__pfet_01v8         
+-------------------------------------------|-------------------------------------------
+1                                          |1                                          
+2                                          |2                                          
+3                                          |3                                          
+4                                          |4                                          
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__pfet_01v8 and sky130_fd_pr__pfet_01v8 are equivalent.
+
+Circuit 1 cell sky130_fd_pr__cap_mim_m3_1 and Circuit 2 cell sky130_fd_pr__cap_mim_m3_1 are black boxes.
+Warning: Equate pins:  cell sky130_fd_pr__cap_mim_m3_1 is a placeholder, treated as a black box.
+Warning: Equate pins:  cell sky130_fd_pr__cap_mim_m3_1 is a placeholder, treated as a black box.
+
+Subcircuit pins:
+Circuit 1: sky130_fd_pr__cap_mim_m3_1      |Circuit 2: sky130_fd_pr__cap_mim_m3_1      
+-------------------------------------------|-------------------------------------------
+1                                          |1                                          
+2                                          |2                                          
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes sky130_fd_pr__cap_mim_m3_1 and sky130_fd_pr__cap_mim_m3_1 are equivalent.
+Flattening unmatched subcell INPUT_STAGE in circuit opamp_sample_0003 (1)(1 instance)
+Flattening unmatched subcell DIFF_PAIR in circuit opamp_sample_0003 (1)(1 instance)
+Flattening unmatched subcell NMOS in circuit opamp_sample_0003 (1)(4 instances)
+Flattening unmatched subcell CMIRROR in circuit opamp_sample_0003 (1)(4 instances)
+Flattening unmatched subcell NMOS_1 in circuit opamp_sample_0003 (1)(4 instances)
+Flattening unmatched subcell GAIN_STAGE in circuit opamp_sample_0003 (1)(1 instance)
+Flattening unmatched subcell DIFF_TO_SINGLE_CS in circuit opamp_sample_0003 (1)(1 instance)
+Flattening unmatched subcell DIFF_TO_SINGLE in circuit opamp_sample_0003 (1)(1 instance)
+Flattening unmatched subcell PMOS in circuit opamp_sample_0003 (1)(36 instances)
+Flattening unmatched subcell CMIRROR_1 in circuit opamp_sample_0003 (1)(4 instances)
+Flattening unmatched subcell MIMCAP_ARR in circuit opamp_sample_0003 (1)(1 instance)
+Flattening unmatched subcell MIMCap in circuit opamp_sample_0003 (1)(6 instances)
+
+Class opamp_sample_0003 (0):  Merged 236 parallel devices.
+Class opamp_sample_0003 (1):  Merged 130 parallel devices.
+Subcircuit summary:
+Circuit 1: opamp_sample_0003               |Circuit 2: opamp_sample_0003               
+-------------------------------------------|-------------------------------------------
+sky130_fd_pr__nfet_01v8 (112->9)           |sky130_fd_pr__nfet_01v8 (56->9)            
+sky130_fd_pr__pfet_01v8 (134->6)           |sky130_fd_pr__pfet_01v8 (1552->6)          
+sky130_fd_pr__cap_mim_m3_1 (6->1)          |sky130_fd_pr__cap_mim_m3_1 (6->1)          
+Number of devices: 16                      |Number of devices: 16                      
+Number of nets: 12                         |Number of nets: 12                         
+---------------------------------------------------------------------------------------
+Netlists match uniquely with property errors.
+sky130_fd_pr__cap_mim_m3_1:3 vs. GAIN_STAGE:1/MIMCAP_ARR:2/MIMCap:0/sky130_fd_pr__cap_mim_m3_1:1:
+ w circuit1: 12   circuit2: 1   (delta=169%, cutoff=1%)
+ l circuit1: 12   circuit2: 1   (delta=169%, cutoff=1%)
+sky130_fd_pr__pfet_01v8:1 vs. GAIN_STAGE:1/DIFF_TO_SINGLE_CS:0/PMOS:1/sky130_fd_pr__pfet_01v8:MAIN:
+ w circuit1: 576   circuit2: 10368   (delta=179%, cutoff=1%)
+sky130_fd_pr__pfet_01v8:4 vs. GAIN_STAGE:1/DIFF_TO_SINGLE_CS:0/PMOS:1/sky130_fd_pr__pfet_01v8:DUMMY1:
+ w circuit1: 156   circuit2: 1728   (delta=167%, cutoff=1%)
+Circuit 2 parallel/series network does not match Circuit 1
+Circuit 1 instance sky130_fd_pr__nfet_01v8:6 network:
+  l = 1
+  w = 6
+  ps = 0
+  as = 0
+  pd = 12.78
+  ad = 2.34
+  M = 4
+  l = 2
+  w = 6
+  ps = 0
+  as = 0
+  pd = 12.78
+  ad = 2.34
+  M = 2
+  l = 2
+  w = 7
+  ps = 0
+  as = 0
+  pd = 14.78
+  ad = 2.73
+  M = 12
+Circuit 2 instance INPUT_STAGE:0/DIFF_PAIR:0/NMOS:0/sky130_fd_pr__nfet_01v8:DUMMY1 network:
+  m = 4
+  w = 6
+  l = 1
+Circuit 2 parallel/series network does not match Circuit 1
+Circuit 1 instance sky130_fd_pr__nfet_01v8:6 network:
+  l = 1
+  w = 6
+  ps = 0
+  as = 0
+  pd = 12.78
+  ad = 2.34
+  M = 4
+  l = 2
+  w = 6
+  ps = 0
+  as = 0
+  pd = 12.78
+  ad = 2.34
+  M = 2
+  l = 2
+  w = 7
+  ps = 0
+  as = 0
+  pd = 14.78
+  ad = 2.73
+  M = 12
+Circuit 2 instance INPUT_STAGE:0/DIFF_PAIR:0/NMOS:0/sky130_fd_pr__nfet_01v8:DUMMY1 network:
+  m = 4
+  w = 6
+  l = 1
+sky130_fd_pr__nfet_01v8:44 vs. INPUT_STAGE:0/NMOS_1:2/sky130_fd_pr__nfet_01v8:MAIN:
+ w circuit1: 5   circuit2: 10   (delta=66.7%, cutoff=1%)
+sky130_fd_pr__nfet_01v8:39 vs. INPUT_STAGE:0/NMOS_1:3/sky130_fd_pr__nfet_01v8:MAIN:
+ w circuit1: 5   circuit2: 10   (delta=66.7%, cutoff=1%)
+sky130_fd_pr__nfet_01v8:11 vs. GAIN_STAGE:1/CMIRROR_1:1/sky130_fd_pr__nfet_01v8:B:
+ w circuit1: 280   circuit2: 24   (delta=168%, cutoff=1%)
+sky130_fd_pr__nfet_01v8:0 vs. GAIN_STAGE:1/CMIRROR_1:1/sky130_fd_pr__nfet_01v8:A:
+ w circuit1: 140   circuit2: 24   (delta=141%, cutoff=1%)
+
+Subcircuit pins:
+Circuit 1: opamp_sample_0003               |Circuit 2: opamp_sample_0003               
+-------------------------------------------|-------------------------------------------
+VP                                         |VP                                         
+VN                                         |VN                                         
+VDD                                        |VDD                                        
+VOUT                                       |VOUT                                       
+DIFFPAIR_BIAS                              |DIFFPAIR_BIAS                              
+CS_BIAS                                    |CS_BIAS                                    
+GND                                        |GND                                        
+---------------------------------------------------------------------------------------
+Cell pin lists are equivalent.
+Device classes opamp_sample_0003 and opamp_sample_0003 are equivalent.
+
+Final result: Circuits match uniquely.
+Property errors were found.
+
+The following cells had property errors:
+ opamp_sample_0003

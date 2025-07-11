@@ -24,13 +24,13 @@ if {[catch {set PDKPATH $env(PDKPATH)}]} {
 }
 
 # loading technology
-tech load /opt/conda/envs/GLdev/share/pdk/sky130A/libs.tech/magic/sky130A.tech
+tech load /home/adityakak/.conda/envs/GLDev/share/pdk/sky130A/libs.tech/magic/sky130A.tech
 
 # load device generator
-source /opt/conda/envs/GLdev/share/pdk/sky130A/libs.tech/magic/sky130A.tcl
+source /home/adityakak/.conda/envs/GLDev/share/pdk/sky130A/libs.tech/magic/sky130A.tcl
 
 # load bind keys (optional)
-# source /opt/conda/envs/GLdev/share/pdk/sky130A/libs.tech/magic/sky130A-BindKeys
+# source /home/adityakak/.conda/envs/GLDev/share/pdk/sky130A/libs.tech/magic/sky130A-BindKeys
 
 # set units to lambda grid
 snap lambda

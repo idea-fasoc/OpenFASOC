@@ -10,7 +10,7 @@ from glayout.flow.primitives.guardring import tapring
 from glayout.flow.primitives.mimcap import mimcap_array, mimcap
 from glayout.flow.primitives.via_gen import via_stack, via_array
 from glayout.flow.routing.L_route import L_route
-from glayout.flow.routing.c_route import c_route
+from glayout.flow.routing.c_route_old import c_route
 from gdsfactory.routing.route_quad import route_quad
 from glayout.flow.pdk.util.comp_utils import evaluate_bbox, prec_ref_center, movex, movey, to_decimal, to_float, move, align_comp_to_port, get_padding_points_cc
 from glayout.flow.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, set_port_orientation, rename_component_ports

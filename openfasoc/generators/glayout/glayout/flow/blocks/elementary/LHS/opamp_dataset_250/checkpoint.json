@@ -1,0 +1,889 @@
+{
+  "results": [
+    {
+      "sample_id": 1,
+      "component_name": "opamp_sample_0001",
+      "success": false,
+      "drc_pass": false,
+      "lvs_pass": false,
+      "execution_time": 45.12345552444458,
+      "parameters": {
+        "half_diffpair_params": [
+          2.725425054834657,
+          3.2614669174459507,
+          1
+        ],
+        "diffpair_bias": [
+          3.970262433281418,
+          2.2608421115350503,
+          3
+        ],
+        "half_common_source_params": [
+          2.4464931624337973,
+          5.216390042373812,
+          4,
+          5
+        ],
+        "half_common_source_bias": [
+          4.163821764768155,
+          2.035422971115569,
+          1,
+          4
+        ],
+        "output_stage_params": [
+          2.6539501818771916,
+          3.304793824993671,
+          4
+        ],
+        "output_stage_bias": [
+          3.866067231612279,
+          2.8811717601784226,
+          2
+        ],
+        "half_pload": [
+          5.093698158078709,
+          3.298835814187667,
+          5
+        ],
+        "mim_cap_size": [
+          9.41339514807036,
+          7.686365676692914
+        ],
+        "mim_cap_rows": 3,
+        "rmult": 1,
+        "with_antenna_diode_on_diffinputs": 6,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 2884735.704834273,
+      "total_capacitance_farads": 1.0380242180000031e-12,
+      "area_um2": 30315.280100000717
+    },
+    {
+      "sample_id": 2,
+      "component_name": "opamp_sample_0002",
+      "success": false,
+      "drc_pass": true,
+      "lvs_pass": false,
+      "execution_time": 42.76516103744507,
+      "parameters": {
+        "half_diffpair_params": [
+          4.12268996511162,
+          2.1904683858535,
+          3
+        ],
+        "diffpair_bias": [
+          4.018757901248119,
+          3.0618933696140473,
+          3
+        ],
+        "half_common_source_params": [
+          2.003870596158634,
+          5.866327584509921,
+          3,
+          2
+        ],
+        "half_common_source_bias": [
+          3.4724688316096817,
+          4.641710062058845,
+          3,
+          4
+        ],
+        "output_stage_params": [
+          3.6995458640468195,
+          3.2928857806743688,
+          11
+        ],
+        "output_stage_bias": [
+          3.4165324639403676,
+          2.7192991397474042,
+          4
+        ],
+        "half_pload": [
+          4.23753136812692,
+          2.4210712167481208,
+          4
+        ],
+        "mim_cap_size": [
+          15.335314270645531,
+          10.161949416053947
+        ],
+        "mim_cap_rows": 2,
+        "rmult": 2,
+        "with_antenna_diode_on_diffinputs": 7,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 3088662.7422330114,
+      "total_capacitance_farads": 8.243334429999854e-13,
+      "area_um2": 31502.26300000268
+    },
+    {
+      "sample_id": 3,
+      "component_name": "opamp_sample_0003",
+      "success": false,
+      "drc_pass": false,
+      "lvs_pass": false,
+      "execution_time": 63.61548376083374,
+      "parameters": {
+        "half_diffpair_params": [
+          5.952180191404684,
+          3.431108967055163,
+          6
+        ],
+        "diffpair_bias": [
+          2.504487107019587,
+          2.3169684582546513,
+          4
+        ],
+        "half_common_source_params": [
+          3.0699212559146325,
+          5.480388721180384,
+          7,
+          3
+        ],
+        "half_common_source_bias": [
+          3.724369450415186,
+          5.82928297608508,
+          8,
+          4
+        ],
+        "output_stage_params": [
+          4.8570055692980425,
+          4.066677148863075,
+          7
+        ],
+        "output_stage_bias": [
+          4.260795758367964,
+          4.6830021337378875,
+          6
+        ],
+        "half_pload": [
+          3.826683843177677,
+          5.971123770280052,
+          3
+        ],
+        "mim_cap_size": [
+          9.89675129725819,
+          5.642700313764186
+        ],
+        "mim_cap_rows": 2,
+        "rmult": 3,
+        "with_antenna_diode_on_diffinputs": 4,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 5735752.059654309,
+      "total_capacitance_farads": 1.3942804036999308e-12,
+      "area_um2": 68961.89039997889
+    },
+    {
+      "sample_id": 4,
+      "component_name": "opamp_sample_0004",
+      "success": false,
+      "drc_pass": false,
+      "lvs_pass": false,
+      "execution_time": 74.89182662963867,
+      "parameters": {
+        "half_diffpair_params": [
+          5.4396201079046005,
+          5.260645940393377,
+          6
+        ],
+        "diffpair_bias": [
+          4.844801468760398,
+          2.447882203683984,
+          4
+        ],
+        "half_common_source_params": [
+          4.851409209959966,
+          5.237362386294528,
+          6,
+          3
+        ],
+        "half_common_source_bias": [
+          2.788717353941979,
+          5.027508335503649,
+          8,
+          5
+        ],
+        "output_stage_params": [
+          3.1926573475913864,
+          2.374900140864754,
+          3
+        ],
+        "output_stage_bias": [
+          2.1737632480299576,
+          5.326167518823425,
+          4
+        ],
+        "half_pload": [
+          5.141305552611353,
+          3.70446246070171,
+          4
+        ],
+        "mim_cap_size": [
+          14.14608583361113,
+          14.734100068555037
+        ],
+        "mim_cap_rows": 4,
+        "rmult": 3,
+        "with_antenna_diode_on_diffinputs": 6,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 5255298.123935941,
+      "total_capacitance_farads": 1.466430988899922e-12,
+      "area_um2": 73734.69859998922
+    },
+    {
+      "sample_id": 5,
+      "component_name": "opamp_sample_0005",
+      "success": false,
+      "drc_pass": true,
+      "lvs_pass": false,
+      "execution_time": 51.56300592422485,
+      "parameters": {
+        "half_diffpair_params": [
+          7.168766760319986,
+          6.978714094384207,
+          5
+        ],
+        "diffpair_bias": [
+          4.135052685428073,
+          4.059136798430998,
+          5
+        ],
+        "half_common_source_params": [
+          3.983506914646913,
+          3.2570125217722823,
+          1,
+          5
+        ],
+        "half_common_source_bias": [
+          2.7005666452348875,
+          2.361463541700406,
+          5,
+          3
+        ],
+        "output_stage_params": [
+          4.418345550827709,
+          3.5162569682261546,
+          12
+        ],
+        "output_stage_bias": [
+          5.567067156132975,
+          4.027497857727648,
+          3
+        ],
+        "half_pload": [
+          2.267302499875733,
+          5.925409335764369,
+          2
+        ],
+        "mim_cap_size": [
+          5.266578070859524,
+          10.712966107453614
+        ],
+        "mim_cap_rows": 4,
+        "rmult": 2,
+        "with_antenna_diode_on_diffinputs": 4,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 4061597.0201127026,
+      "total_capacitance_farads": 7.84042445999981e-13,
+      "area_um2": 45575.08064998686
+    },
+    {
+      "sample_id": 6,
+      "component_name": "opamp_sample_0006",
+      "success": false,
+      "drc_pass": false,
+      "lvs_pass": false,
+      "execution_time": 49.82656764984131,
+      "parameters": {
+        "half_diffpair_params": [
+          2.2720564750321426,
+          5.278246715325439,
+          2
+        ],
+        "diffpair_bias": [
+          2.2269756738453435,
+          4.253328433281477,
+          2
+        ],
+        "half_common_source_params": [
+          5.055636606829858,
+          4.686559234227589,
+          3,
+          5
+        ],
+        "half_common_source_bias": [
+          2.964442250390457,
+          5.768609964315978,
+          2,
+          4
+        ],
+        "output_stage_params": [
+          2.7334196515354625,
+          4.5199832835983464,
+          4
+        ],
+        "output_stage_bias": [
+          3.725563006356589,
+          4.100858873998757,
+          5
+        ],
+        "half_pload": [
+          2.9048614995908153,
+          5.289903660382456,
+          4
+        ],
+        "mim_cap_size": [
+          6.841909274651128,
+          15.582183044412867
+        ],
+        "mim_cap_rows": 1,
+        "rmult": 3,
+        "with_antenna_diode_on_diffinputs": 7,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 4001902.305214531,
+      "total_capacitance_farads": 1.3147932392000447e-12,
+      "area_um2": 47287.92384998779
+    },
+    {
+      "sample_id": 7,
+      "component_name": "opamp_sample_0007",
+      "success": false,
+      "drc_pass": false,
+      "lvs_pass": false,
+      "execution_time": 45.254032373428345,
+      "parameters": {
+        "half_diffpair_params": [
+          3.3593164973467187,
+          6.005896401936413,
+          1
+        ],
+        "diffpair_bias": [
+          4.574111905566072,
+          5.904609637367208,
+          3
+        ],
+        "half_common_source_params": [
+          5.073462708948679,
+          3.140804685859028,
+          1,
+          3
+        ],
+        "half_common_source_bias": [
+          2.3957460806166475,
+          3.5044931779624364,
+          4,
+          5
+        ],
+        "output_stage_params": [
+          5.1075399855365475,
+          3.236529756973456,
+          4
+        ],
+        "output_stage_bias": [
+          2.8568102159656994,
+          4.731644135010477,
+          4
+        ],
+        "half_pload": [
+          2.782457744605544,
+          4.273558361655299,
+          4
+        ],
+        "mim_cap_size": [
+          17.872653422609986,
+          9.907858198112287
+        ],
+        "mim_cap_rows": 2,
+        "rmult": 1,
+        "with_antenna_diode_on_diffinputs": 2,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 3205180.8010503016,
+      "total_capacitance_farads": 8.637181249999406e-13,
+      "area_um2": 31585.522650002968
+    },
+    {
+      "sample_id": 8,
+      "component_name": "opamp_sample_0008",
+      "success": false,
+      "drc_pass": true,
+      "lvs_pass": false,
+      "execution_time": 53.68016839027405,
+      "parameters": {
+        "half_diffpair_params": [
+          3.312657041020384,
+          5.874098730345394,
+          5
+        ],
+        "diffpair_bias": [
+          2.4771716354729723,
+          3.746294171454522,
+          6
+        ],
+        "half_common_source_params": [
+          4.915863687522636,
+          5.284488592704784,
+          7,
+          2
+        ],
+        "half_common_source_bias": [
+          3.7530865113635983,
+          5.925963058548761,
+          6,
+          2
+        ],
+        "output_stage_params": [
+          2.262654432497396,
+          5.717602454375123,
+          2
+        ],
+        "output_stage_bias": [
+          4.798648890861761,
+          3.4653470815652705,
+          4
+        ],
+        "half_pload": [
+          4.09533417321821,
+          3.896096146892088,
+          5
+        ],
+        "mim_cap_size": [
+          6.000208327260033,
+          5.711328548668037
+        ],
+        "mim_cap_rows": 1,
+        "rmult": 2,
+        "with_antenna_diode_on_diffinputs": 5,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 4960751.547899645,
+      "total_capacitance_farads": 1.1690131760000053e-12,
+      "area_um2": 49072.487849982455
+    },
+    {
+      "sample_id": 9,
+      "component_name": "opamp_sample_0009",
+      "success": false,
+      "drc_pass": false,
+      "lvs_pass": false,
+      "execution_time": 51.39346194267273,
+      "parameters": {
+        "half_diffpair_params": [
+          2.909518328774659,
+          5.417896530267735,
+          6
+        ],
+        "diffpair_bias": [
+          3.4852705125034102,
+          2.017198078105971,
+          2
+        ],
+        "half_common_source_params": [
+          3.7827030217647937,
+          4.106450083127443,
+          2,
+          2
+        ],
+        "half_common_source_bias": [
+          2.0705453521362975,
+          5.711635138063524,
+          5,
+          5
+        ],
+        "output_stage_params": [
+          3.7766630525881366,
+          5.384283145008913,
+          11
+        ],
+        "output_stage_bias": [
+          4.195476236363995,
+          5.966676320001241,
+          6
+        ],
+        "half_pload": [
+          2.0722134667065895,
+          5.768148688090328,
+          4
+        ],
+        "mim_cap_size": [
+          18.8637304127015,
+          14.205696316857436
+        ],
+        "mim_cap_rows": 1,
+        "rmult": 3,
+        "with_antenna_diode_on_diffinputs": 0,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 4595712.573746311,
+      "total_capacitance_farads": 1.103260635200037e-12,
+      "area_um2": 48325.62834998525
+    },
+    {
+      "sample_id": 10,
+      "component_name": "opamp_sample_0010",
+      "success": false,
+      "drc_pass": false,
+      "lvs_pass": false,
+      "execution_time": 53.74903106689453,
+      "parameters": {
+        "half_diffpair_params": [
+          7.124636254374633,
+          2.3055925840857947,
+          1
+        ],
+        "diffpair_bias": [
+          4.69869489604252,
+          5.879669241560455,
+          4
+        ],
+        "half_common_source_params": [
+          2.4249774166351195,
+          5.919654206721915,
+          1,
+          5
+        ],
+        "half_common_source_bias": [
+          5.90677932921289,
+          4.369661427650564,
+          2,
+          4
+        ],
+        "output_stage_params": [
+          2.045756014576022,
+          2.6471354217033753,
+          6
+        ],
+        "output_stage_bias": [
+          4.4622627881418335,
+          3.8292441585113632,
+          3
+        ],
+        "half_pload": [
+          2.555500259458576,
+          5.81344923784493,
+          5
+        ],
+        "mim_cap_size": [
+          7.836380323142787,
+          18.33388115048494
+        ],
+        "mim_cap_rows": 1,
+        "rmult": 3,
+        "with_antenna_diode_on_diffinputs": 7,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 4023324.22537243,
+      "total_capacitance_farads": 1.182461379000059e-12,
+      "area_um2": 47388.27464998397
+    },
+    {
+      "sample_id": 11,
+      "component_name": "opamp_sample_0011",
+      "success": false,
+      "drc_pass": false,
+      "lvs_pass": false,
+      "execution_time": 46.16242742538452,
+      "parameters": {
+        "half_diffpair_params": [
+          3.9414142172970585,
+          4.690015715716697,
+          4
+        ],
+        "diffpair_bias": [
+          4.9403165761456815,
+          2.399401399101181,
+          2
+        ],
+        "half_common_source_params": [
+          3.511122360489736,
+          4.058065243458201,
+          3,
+          2
+        ],
+        "half_common_source_bias": [
+          3.3627233641098817,
+          5.4430679764469705,
+          8,
+          2
+        ],
+        "output_stage_params": [
+          5.210925777714836,
+          3.9207536096788838,
+          10
+        ],
+        "output_stage_bias": [
+          2.1073453145897583,
+          4.343759085932293,
+          5
+        ],
+        "half_pload": [
+          5.307904558550918,
+          3.3770233028792163,
+          3
+        ],
+        "mim_cap_size": [
+          9.250123530945078,
+          18.19730536283646
+        ],
+        "mim_cap_rows": 1,
+        "rmult": 1,
+        "with_antenna_diode_on_diffinputs": 2,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 3984603.764550166,
+      "total_capacitance_farads": 8.607421019999885e-13,
+      "area_um2": 38915.154599994356
+    },
+    {
+      "sample_id": 12,
+      "component_name": "opamp_sample_0012",
+      "success": false,
+      "drc_pass": false,
+      "lvs_pass": false,
+      "execution_time": 43.91353750228882,
+      "parameters": {
+        "half_diffpair_params": [
+          2.373557670559927,
+          4.59218298646266,
+          1
+        ],
+        "diffpair_bias": [
+          2.2097331637399216,
+          3.0440222716886884,
+          1
+        ],
+        "half_common_source_params": [
+          2.0817473201459435,
+          2.929704853764834,
+          4,
+          3
+        ],
+        "half_common_source_bias": [
+          3.8156982662338166,
+          2.2029451351707072,
+          6,
+          5
+        ],
+        "output_stage_params": [
+          2.611647801086224,
+          2.885413419789316,
+          12
+        ],
+        "output_stage_bias": [
+          5.73802147633802,
+          4.302488533311015,
+          1
+        ],
+        "half_pload": [
+          3.3480513662184155,
+          5.355800631745234,
+          2
+        ],
+        "mim_cap_size": [
+          6.743791210967974,
+          11.525541765499659
+        ],
+        "mim_cap_rows": 1,
+        "rmult": 1,
+        "with_antenna_diode_on_diffinputs": 8,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 3163371.720258715,
+      "total_capacitance_farads": 8.485708229999906e-13,
+      "area_um2": 29571.401950002804
+    },
+    {
+      "sample_id": 13,
+      "component_name": "opamp_sample_0013",
+      "success": false,
+      "drc_pass": false,
+      "lvs_pass": false,
+      "execution_time": 41.24286890029907,
+      "parameters": {
+        "half_diffpair_params": [
+          6.461053809622125,
+          2.4360532958690024,
+          3
+        ],
+        "diffpair_bias": [
+          5.917547450934007,
+          2.0131317070694763,
+          3
+        ],
+        "half_common_source_params": [
+          3.7184098753356665,
+          2.0020070073466005,
+          5,
+          4
+        ],
+        "half_common_source_bias": [
+          2.5888570453485666,
+          4.923034821233598,
+          2,
+          2
+        ],
+        "output_stage_params": [
+          5.123561522588141,
+          4.608450777183025,
+          1
+        ],
+        "output_stage_bias": [
+          2.567988141020763,
+          2.58969763995918,
+          1
+        ],
+        "half_pload": [
+          4.991777019396669,
+          2.7003255035200184,
+          1
+        ],
+        "mim_cap_size": [
+          5.352090666932809,
+          8.199340479583228
+        ],
+        "mim_cap_rows": 3,
+        "rmult": 1,
+        "with_antenna_diode_on_diffinputs": 3,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 2634580.1864617197,
+      "total_capacitance_farads": 5.071922059999733e-13,
+      "area_um2": 26204.569150001746
+    },
+    {
+      "sample_id": 14,
+      "component_name": "opamp_sample_0014",
+      "success": false,
+      "drc_pass": false,
+      "lvs_pass": false,
+      "execution_time": 50.71661615371704,
+      "parameters": {
+        "half_diffpair_params": [
+          6.797076019888915,
+          4.795848081641105,
+          1
+        ],
+        "diffpair_bias": [
+          5.700891801029714,
+          2.1507021342524655,
+          5
+        ],
+        "half_common_source_params": [
+          3.580803589573439,
+          3.827134007581084,
+          3,
+          4
+        ],
+        "half_common_source_bias": [
+          5.316553485926147,
+          2.100176255937351,
+          6,
+          2
+        ],
+        "output_stage_params": [
+          3.453903075975083,
+          3.0700199391415945,
+          12
+        ],
+        "output_stage_bias": [
+          3.313158999183896,
+          5.001638748898801,
+          3
+        ],
+        "half_pload": [
+          2.187184820931505,
+          3.1921826552743755,
+          1
+        ],
+        "mim_cap_size": [
+          19.54022814723418,
+          12.262662604577182
+        ],
+        "mim_cap_rows": 2,
+        "rmult": 3,
+        "with_antenna_diode_on_diffinputs": 2,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 3144616.412561819,
+      "total_capacitance_farads": 1.0043136799999735e-12,
+      "area_um2": 38315.213699992244
+    },
+    {
+      "sample_id": 15,
+      "component_name": "opamp_sample_0015",
+      "success": false,
+      "drc_pass": true,
+      "lvs_pass": false,
+      "execution_time": 68.51124620437622,
+      "parameters": {
+        "half_diffpair_params": [
+          4.801125290554831,
+          7.377804597696511,
+          5
+        ],
+        "diffpair_bias": [
+          2.7676022481378197,
+          2.1831168313227707,
+          5
+        ],
+        "half_common_source_params": [
+          2.1658563982131027,
+          3.646305641539988,
+          8,
+          4
+        ],
+        "half_common_source_bias": [
+          2.0297545664469774,
+          4.48929417089094,
+          5,
+          5
+        ],
+        "output_stage_params": [
+          5.248540289405709,
+          2.93446331914825,
+          8
+        ],
+        "output_stage_bias": [
+          2.273071628454397,
+          5.523130225350193,
+          5
+        ],
+        "half_pload": [
+          5.496521894375116,
+          3.635443784811965,
+          5
+        ],
+        "mim_cap_size": [
+          14.65892979296138,
+          18.253451360194056
+        ],
+        "mim_cap_rows": 4,
+        "rmult": 2,
+        "with_antenna_diode_on_diffinputs": 7,
+        "add_output_stage": false
+      },
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 4400770.429431601,
+      "total_capacitance_farads": 1.4129212990001926e-12,
+      "area_um2": 57203.67439997889
+    }
+  ]
+}

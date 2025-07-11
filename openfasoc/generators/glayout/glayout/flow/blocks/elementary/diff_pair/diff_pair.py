@@ -20,7 +20,7 @@ from glayout.flow.placement.common_centroid_ab_ba import common_centroid_ab_ba
 from glayout.flow.primitives.fet import nmos, pmos
 from glayout.flow.primitives.guardring import tapring
 from glayout.flow.primitives.via_gen import via_stack
-from glayout.flow.routing.c_route import c_route
+from glayout.flow.routing.c_route_old import c_route
 from glayout.flow.routing.smart_route import smart_route
 from glayout.flow.routing.straight_route import straight_route
 from glayout.flow.spice import Netlist
