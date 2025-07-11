@@ -1,0 +1,121 @@
+{
+  "results": [
+    {
+      "sample_id": 1,
+      "component_name": "opamp_sample_0001",
+      "success": true,
+      "drc_pass": true,
+      "lvs_pass": true,
+      "execution_time": 65.22055125236511,
+      "parameters": {
+        "add_output_stage": false
+      },
+      "output_directory": "opamp_dataset_5_samples/sample_0001",
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 2823416.175391999,
+      "total_capacitance_farads": 1.014087234999984e-12,
+      "area_um2": 32354.958550007814
+    },
+    {
+      "sample_id": 2,
+      "component_name": "opamp_sample_0002",
+      "success": true,
+      "drc_pass": true,
+      "lvs_pass": true,
+      "execution_time": 66.06982803344727,
+      "parameters": {
+        "half_diffpair_params": [
+          7,
+          1,
+          4
+        ],
+        "diffpair_bias": [
+          7,
+          2,
+          4
+        ],
+        "add_output_stage": false
+      },
+      "output_directory": "opamp_dataset_5_samples/sample_0002",
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 2774522.733108223,
+      "total_capacitance_farads": 1.0228300729999807e-12,
+      "area_um2": 33071.14575000877
+    },
+    {
+      "sample_id": 3,
+      "component_name": "opamp_sample_0003",
+      "success": true,
+      "drc_pass": true,
+      "lvs_pass": true,
+      "execution_time": 72.4274263381958,
+      "parameters": {
+        "half_common_source_params": [
+          8,
+          1,
+          12,
+          3
+        ],
+        "half_common_source_bias": [
+          7,
+          2,
+          10,
+          2
+        ],
+        "add_output_stage": false
+      },
+      "output_directory": "opamp_dataset_5_samples/sample_0003",
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 3103450.8866293416,
+      "total_capacitance_farads": 1.1390357030000414e-12,
+      "area_um2": 36607.799750002276
+    },
+    {
+      "sample_id": 4,
+      "component_name": "opamp_sample_0004",
+      "success": true,
+      "drc_pass": true,
+      "lvs_pass": true,
+      "execution_time": 64.49638605117798,
+      "parameters": {
+        "output_stage_params": [
+          6,
+          1,
+          20
+        ],
+        "output_stage_bias": [
+          6,
+          2,
+          6
+        ],
+        "add_output_stage": false
+      },
+      "output_directory": "opamp_dataset_5_samples/sample_0004",
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 2823416.175391999,
+      "total_capacitance_farads": 1.0140873439999839e-12,
+      "area_um2": 32354.958550007814
+    },
+    {
+      "sample_id": 5,
+      "component_name": "opamp_sample_0005",
+      "success": true,
+      "drc_pass": true,
+      "lvs_pass": true,
+      "execution_time": 62.25819659233093,
+      "parameters": {
+        "half_pload": [
+          5,
+          1,
+          4
+        ],
+        "add_output_stage": false
+      },
+      "output_directory": "opamp_dataset_5_samples/sample_0005",
+      "pex_status": "PEX Complete",
+      "total_resistance_ohms": 2619936.0856910627,
+      "total_capacitance_farads": 9.67341811000016e-13,
+      "area_um2": 31158.269350007184
+    }
+  ]
+}

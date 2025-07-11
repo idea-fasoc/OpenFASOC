@@ -1,0 +1,41 @@
+{
+    "component_name": "opamp",
+    "timestamp": "2025-07-10T21:31:49.808301",
+    "drc_lvs_fail": false,
+    "drc": {
+        "status": "pass",
+        "is_pass": true,
+        "report_path": "/home/adityakak/OpenFASOC/openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/opamp.drc.rpt",
+        "summary": {
+            "is_pass": true,
+            "total_errors": 0,
+            "error_details": []
+        }
+    },
+    "lvs": {
+        "status": "pass",
+        "is_pass": true,
+        "report_path": "/home/adityakak/OpenFASOC/openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/opamp.lvs.rpt",
+        "summary": {
+            "is_pass": true,
+            "conclusion": "LVS Pass: Netlists match.",
+            "total_mismatches": 0,
+            "mismatch_details": {
+                "nets": "12                         |Number of nets: 12",
+                "devices": "16                      |Number of devices: 16",
+                "unmatched_nets_parsed": [],
+                "unmatched_instances_parsed": []
+            }
+        }
+    },
+    "pex": {
+        "status": "PEX Complete",
+        "total_resistance_ohms": 2823416.1749919993,
+        "total_capacitance_farads": 1.0140873999999821e-12
+    },
+    "geometric": {
+        "raw_area_um2": 32354.958550007814,
+        "symmetry_score_horizontal": 0.9151351470360843,
+        "symmetry_score_vertical": 0.6799760975123395
+    }
+}
