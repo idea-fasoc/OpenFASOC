@@ -123,14 +123,19 @@ cont_specs = {
        ('length', 0.15, 4.0, 1),
    ],
    'opamp': [
-       ('half_diffpair_params', 2.0, 4.0, 2),  # width, length (fingers is int) - constrained length
-       ('diffpair_bias', 2.0, 4.0, 2),  # width, length (fingers is int) - constrained length
-       ('half_common_source_params', 2.0, 4.0, 2),  # width, length (fingers, mults are int) - much shorter length
-       ('half_common_source_bias', 2.0, 4.0, 2),  # width, length (fingers, mults are int) - constrained length
-       ('output_stage_params', 2.0, 4.0, 2),  # width, length (fingers is int) - constrained length
-       ('output_stage_bias', 2.0, 4.0, 2),  # width, length (fingers is int) - constrained length
-       ('half_pload', 2.0, 4.0, 2),  # width, length (fingers is int) - constrained length
-       ('mim_cap_size', 5.0, 20.0, 2),  # width, height
+       ('half_diffpair_params_w', 5, 7, 1),  # width, length (fingers is int) - constrained length
+       ('half_diffpair_params_l', 0.5, 1.5, 1),  # width, length (fingers is int) - constrained length
+       ('diffpair_bias_w', 5, 7, 1),  # width, length (fingers is int) - constrained length
+       ('diffpair_bias_l', 1.5, 2.5, 1),  # width, length (fingers is int) - constrained length
+       ('half_common_source_params_w', 6, 8, 1),  # width, length (fingers, mults are int) - much shorter length
+       ('half_common_source_params_l', 0.5, 1.5, 1),  # width, length (fingers, mults are int) - much shorter length
+       ('half_common_source_bias_w', 5, 7, 1),  # width, length (fingers, mults are int) - constrained length
+       ('half_common_source_bias_l', 1.5, 2.5, 1),  # width, length (fingers, mults are int) - constrained length
+       ('output_stage_params', 0.5, 1.5, 2),  # width, length (fingers is int) - constrained length
+       ('output_stage_bias', 1.5, 2.5, 2),  # width, length (fingers is int) - constrained length
+       ('half_pload_w', 5, 7, 1),  # width, length (fingers is int) - constrained length
+       ('half_pload_l', 0.5, 1.5, 1),  # width, length (fingers is int) - constrained length
+       ('mim_cap_size', 10.0, 15.0, 2),  # width, height
    ],
    'lvcm': [
        ('width', 0.5, 20.0, 2),  # tuple of 2 widths
@@ -156,15 +161,15 @@ int_specs = {
        ('fingers', 1, 5),
    ],
    'opamp': [
-       ('half_diffpair_fingers', 1, 6),
-       ('diffpair_bias_fingers', 1, 6),
-       ('half_common_source_fingers', 1, 8),
-       ('half_common_source_mults', 1, 5),
-       ('half_common_source_bias_fingers', 1, 8),
-       ('half_common_source_bias_mults', 2, 5),
+       ('half_diffpair_fingers', 1, 2),
+       ('diffpair_bias_fingers', 1, 2),
+       ('half_common_source_fingers', 8, 12),
+       ('half_common_source_mults', 2, 4),
+       ('half_common_source_bias_fingers', 7, 9),
+       ('half_common_source_bias_mults', 2, 3),
        ('output_stage_fingers', 1, 12),
        ('output_stage_bias_fingers', 1, 6),
-       ('half_pload_fingers', 1, 6),
+       ('half_pload_fingers', 4, 6),
        ('mim_cap_rows', 1, 5),
        ('rmult', 1, 3),
        ('with_antenna_diode_on_diffinputs', 0, 8),  # Allow 0 or 2-8; we'll remap 1 to 0 later
@@ -252,27 +257,64 @@ def generate_mixed_samples(pcell, lhs_pts, int_oa, cat_oa):
       
        # Special post-processing for opamp to construct proper parameter tuples
        if pcell == 'opamp':
-           # Ensure antenna diode count is valid: remap value 1 → 0
-           if raw.get('with_antenna_diode_on_diffinputs', 0) == 1:
+            # Ensure antenna diode count is valid
+            if raw.get('with_antenna_diode_on_diffinputs', 0) == 1:
                raw['with_antenna_diode_on_diffinputs'] = 0
-
-
-           # Construct the complex parameter tuples
-           raw['half_diffpair_params'] = (raw['half_diffpair_params'][0], raw['half_diffpair_params'][1], raw['half_diffpair_fingers'])
-           raw['diffpair_bias'] = (raw['diffpair_bias'][0], raw['diffpair_bias'][1], raw['diffpair_bias_fingers'])
-           raw['half_common_source_params'] = (raw['half_common_source_params'][0], raw['half_common_source_params'][1], raw['half_common_source_fingers'], raw['half_common_source_mults'])
-           raw['half_common_source_bias'] = (raw['half_common_source_bias'][0], raw['half_common_source_bias'][1], raw['half_common_source_bias_fingers'], raw['half_common_source_bias_mults'])
-           raw['output_stage_params'] = (raw['output_stage_params'][0], raw['output_stage_params'][1], raw['output_stage_fingers'])
-           raw['output_stage_bias'] = (raw['output_stage_bias'][0], raw['output_stage_bias'][1], raw['output_stage_bias_fingers'])
-           raw['half_pload'] = (raw['half_pload'][0], raw['half_pload'][1], raw['half_pload_fingers'])
-          
-           # Remove the individual integer parameters
-           for key in ['half_diffpair_fingers', 'diffpair_bias_fingers', 'half_common_source_fingers', 'half_common_source_mults',
-                      'half_common_source_bias_fingers', 'half_common_source_bias_mults', 'output_stage_fingers',
-                      'output_stage_bias_fingers', 'half_pload_fingers']:
-               if key in raw:
-                   del raw[key]
-      
+            # Extract scalar values from single-element tuples/lists
+            def get_scalar(v):
+                return v[0] if isinstance(v, (list, tuple)) else v
+            # Construct parameter tuples with scalar values
+            raw['half_diffpair_params'] = (
+                    get_scalar(raw['half_diffpair_params_w']),
+                    get_scalar(raw['half_diffpair_params_l']),
+                    raw['half_diffpair_fingers']
+                    )
+            raw['diffpair_bias'] = (
+                    get_scalar(raw['diffpair_bias_w']),
+                    get_scalar(raw['diffpair_bias_l']),
+                    raw['diffpair_bias_fingers']
+                    )
+            raw['half_common_source_params'] = (
+                    get_scalar(raw['half_common_source_params_w']),
+                    get_scalar(raw['half_common_source_params_l']),
+                    raw['half_common_source_fingers'],
+                    raw['half_common_source_mults']
+                    )
+            raw['half_common_source_bias'] = (
+                    get_scalar(raw['half_common_source_bias_w']),
+                    get_scalar(raw['half_common_source_bias_l']),
+                    raw['half_common_source_bias_fingers'],
+                    raw['half_common_source_bias_mults']
+                    )
+            raw['output_stage_params'] = (
+                    get_scalar(raw['output_stage_params'][0]),
+                    get_scalar(raw['output_stage_params'][1]),
+                    raw['output_stage_fingers']
+                    )
+            raw['output_stage_bias'] = (
+                    get_scalar(raw['output_stage_bias'][0]),
+                    get_scalar(raw['output_stage_bias'][1]),
+                    raw['output_stage_bias_fingers']
+                    )
+            raw['half_pload'] = (
+                    get_scalar(raw['half_pload_w']),
+                    get_scalar(raw['half_pload_l']),
+                    raw['half_pload_fingers']
+                    )
+            # Cleanup temporary keys
+            keys_to_delete = [
+                    'half_diffpair_fingers', 'diffpair_bias_fingers',
+                    'half_common_source_fingers', 'half_common_source_mults',
+                    'half_common_source_bias_fingers', 'half_common_source_bias_mults',
+                    'output_stage_fingers', 'output_stage_bias_fingers', 'half_pload_fingers',
+                    'half_diffpair_params_w','half_diffpair_params_l',
+                    'diffpair_bias_w','diffpair_bias_l',
+                    'half_common_source_params_w', 'half_common_source_params_l',
+                    'half_common_source_bias_w', 'half_common_source_bias_l',
+                    'half_pload_w', 'half_pload_l'
+                    ]
+            for key in keys_to_delete:
+                raw.pop(key, None)      
        # Categorical OA sampling - only add parameters that circuits actually accept
        if pcell == 'diff_pair':
            # diff_pair accepts n_or_p_fet as boolean (True for nfet, False for pfet)
@@ -401,4 +443,3 @@ if __name__ == "__main__":
    for pcell, samples in all_samples.items():
        print(f"  {pcell}: {len(samples)} samples")
    print("\nTotal samples across all PCells:", sum(len(samples) for samples in all_samples.values()))
-
