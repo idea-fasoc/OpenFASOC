@@ -99,7 +99,7 @@ cont_specs = {
         ('length', 0.15, 4.0, 2),
     ],
     'txgate': [
-        ('width', 0.5, 20.0, 2),
+        ('width', 0.5, 4.0, 2),
         ('length', 0.15, 4.0, 2),
     ],
     'current_mirror': [
@@ -133,7 +133,7 @@ int_specs = {
         ('multipliers', 1, 2),
     ],
     'txgate': [
-        ('fingers', 1, 5),
+        ('fingers', 1, 3),
         ('multipliers', 1, 2),
     ],
     'current_mirror': [
@@ -272,7 +272,7 @@ def generate_all_samples():
     # 1) EXACT sample counts for a 32h / 26-core run (+2 PVT sweeps)
     inventory_np = {
         'fvf'           :  0,   # Flipped-voltage follower   
-        'txgate'        :  200,   # Transmission gate          
+        'txgate'        :  1000,   # Transmission gate          
         'current_mirror':  0,   # Current mirror             
         'diff_pair'     :  0,   # Differential pair          
         'lvcm'          :  0,   # Low-V current mirror       
@@ -349,7 +349,9 @@ if __name__ == "__main__":
     
     # Save samples to JSON files
     # output_dir = os.path.join(os.path.dirname(__file__), "gen_params_32hr")
-    output_dir = os.path.join(os.path.dirname(__file__), "txgate_200_params")
+    output_dir = "/home/arnavshukla/OpenFASOC/openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/txgate_1000_params"
+
+    # Create the output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
     
     for pcell, samples in all_samples.items():
