@@ -5,7 +5,10 @@
 GDS_FILE=$1
 LAYOUT_CELL=$2
 
-magic -rcfile ./sky130A.magicrc -noconsole -dnull << EOF
+# Use the PDK_ROOT environment variable to find the correct magicrc file
+MAGICRC_PATH="$PDK_ROOT/sky130A/libs.tech/magic/sky130A.magicrc"
+
+magic -rcfile "$MAGICRC_PATH" -noconsole -dnull << EOF
 gds read $GDS_FILE
 flatten $LAYOUT_CELL
 load $LAYOUT_CELL

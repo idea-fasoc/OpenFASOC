@@ -392,8 +392,8 @@ def run_dataset_generation(n_samples, output_dir, checkpoint_interval=100, resum
             except Exception as e:
                 logger.warning(f"Failed to save checkpoint: {e}")
         
-        # Progress updates - more frequent for small datasets, less for large
-        progress_interval = 10 if n_samples <= 100 else (50 if n_samples <= 1000 else 100)
+        # Progress updates - adjusted for large dataset
+        progress_interval = 100  # Report every 100 samples for 10k+ dataset
         
         if (i + 1) % progress_interval == 0 or (i + 1) <= 10:
             success_rate = sum(1 for r in results if r["success"]) / len(results) * 100

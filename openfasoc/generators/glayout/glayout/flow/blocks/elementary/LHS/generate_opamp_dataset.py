@@ -216,23 +216,52 @@ def run_dataset(n_samples: int = 250):
     out_dir.mkdir(exist_ok=True)
 
     params = load_opamp_parameters(n_samples)
+
+    ckpt_file = out_dir / "checkpoint.json"
     results: List[Dict[str, Any]] = []
+    start_idx = 0  # 0-based index into *params*
 
-    for idx, p in enumerate(params, start=1):
-        results.append(run_single(idx, p, out_dir))
-        # quick checkpoint after each sample
-        with open(out_dir / "checkpoint.json", "w") as f:
-            json.dump({"results": make_serializable(results)}, f, indent=2)
+    # -------------------- Resume support --------------------
+    if ckpt_file.exists():
+        try:
+            with open(ckpt_file, "r") as fh:
+                ckpt_data = json.load(fh)
+            results = ckpt_data.get("results", [])
+            start_idx = len(results)
+            logger.info(f"📂 Resuming from checkpoint – {start_idx}/{n_samples} samples already processed")
+        except Exception as e:
+            logger.warning(f"Could not load checkpoint ({e}); starting from scratch")
+            results = []
+            start_idx = 0
 
-    # summary
+    # -------------------- Main loop --------------------
+    for idx in range(start_idx, n_samples):
+        p = params[idx]
+        # sample_id is 1-based for naming consistency
+        sample_id = idx + 1
+        results.append(run_single(sample_id, p, out_dir))
+
+        # Save checkpoint after every sample
+        try:
+            with open(ckpt_file, "w") as fh:
+                json.dump({"results": make_serializable(results)}, fh, indent=2)
+        except Exception as e:
+            logger.warning(f"Failed to save checkpoint at sample {sample_id}: {e}")
+
+    # -------------------- Summary & persistence --------------------
     successes = [r for r in results if r["success"]]
     rate = len(successes) / len(results) * 100 if results else 0.0
     logger.info(f"Dataset finished – success rate {len(successes)}/{len(results)} = {rate:.1f}%")
 
-    # persist
     with open(out_dir / "opamp_results.json", "w") as f:
         json.dump(make_serializable(results), f, indent=2)
     pd.DataFrame(results).to_csv(out_dir / "opamp_summary.csv", index=False)
+
+    # cleanup checkpoint on success
+    try:
+        ckpt_file.unlink(missing_ok=True)  # type: ignore[arg-type]
+    except Exception:
+        pass
 
     return rate >= 80.0
 

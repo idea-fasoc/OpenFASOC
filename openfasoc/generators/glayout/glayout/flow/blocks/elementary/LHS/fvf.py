@@ -66,13 +66,13 @@ def sky130_add_fvf_labels(fvf_in: Component) -> Component:
 
 @cell
 def  flipped_voltage_follower(
-        pdk: MappedPDK,
-        device_type: str = "nmos", 
-        placement: str = "horizontal",
-        width: tuple[float,float] = (2,2),
-        length: tuple[float,float] = (0.15,0.15),
-        fingers: tuple[int,int] = (1, 1),
-        multipliers: tuple[int,int] = (1,1),
+    pdk: MappedPDK,
+    device_type: str = "nmos", 
+    placement: str = "horizontal",
+    width: tuple[float,float] = (6.605703928526579, 3.713220935212418),
+    length: tuple[float,float] = (2.3659471990041707, 1.9639325665440608),
+    fingers: tuple[int,int] = (1, 1),
+    multipliers: tuple[int,int] = (2, 2),
         dummy_1: tuple[bool,bool] = (True,True),
         dummy_2: tuple[bool,bool] = (True,True),
         tie_layers1: tuple[str,str] = ("met2","met1"),

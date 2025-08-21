@@ -1,3 +1,50 @@
+# Top-level gitignore for repository
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual envs
+venv/
+env/
+.venv/
+
+# Byte-compiled / optimized / DLL files
+*.so
+*.dylib
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Logs
+.log
+
+# Generated design data and datasets from generators
+openfasoc/generators/**/flow/**/run.log
+openfasoc/generators/**/flow/**/resume.log
+openfasoc/generators/**/flow/**/checkpoint.json
+openfasoc/generators/**/flow/**/sample_*/
+openfasoc/generators/**/flow/**/sample_*/**
+openfasoc/generators/**/flow/**/opamp_dataset_*/
+openfasoc/generators/**/flow/**/diff_pair_dataset_*/
+openfasoc/generators/**/flow/**/fvf_dataset_*/
+
+# Common output files from verification and layout
+*.gds
+*.pex.spice
+*.res.ext
+*.drc.rpt
+*.lvs.rpt
+*.spice
+
+# Data and results
+*.json
+*.csv
+
+# Ignore local notebooks checkpoints
+.ipynb_checkpoints/
 *.prn
 *.log
 *.out

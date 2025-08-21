@@ -106,73 +106,78 @@ def sample_categorical_oa(levels, N, seed=None):
 
 # Continuous specs: (axis_name, min, max, count)
 cont_specs = {
-    'fvf': [
-        ('width', 0.5, 20.0, 2),
-        ('length', 0.15, 4.0, 2),
-    ],
-    'txgate': [
-        ('width', 0.5, 20.0, 2),
-        ('length', 0.15, 4.0, 2),
-    ],
-    'current_mirror': [
-        ('width', 0.5, 20.0, 1),
-        ('length', 0.15, 4.0, 1),
-    ],
-    'diff_pair': [
-        ('width', 0.5, 20.0, 1),
-        ('length', 0.15, 4.0, 1),
-    ],
-    'opamp': [
-        ('half_diffpair_params', 2.0, 10.0, 2),  # width, length (fingers is int)
-        ('diffpair_bias', 2.0, 10.0, 2),  # width, length (fingers is int)
-        ('half_common_source_params', 2.0, 15.0, 2),  # width, length (fingers, mults are int)
-        ('half_common_source_bias', 2.0, 10.0, 2),  # width, length (fingers, mults are int)
-        ('output_stage_params', 2.0, 10.0, 2),  # width, length (fingers is int)
-        ('output_stage_bias', 2.0, 10.0, 2),  # width, length (fingers is int)
-        ('half_pload', 2.0, 10.0, 2),  # width, length (fingers is int)
-        ('mim_cap_size', 5.0, 20.0, 2),  # width, height
-    ],
-    'lvcm': [
-        ('width', 0.5, 20.0, 2),  # tuple of 2 widths
-        ('length', 0.15, 4.0, 1),  # single length
-    ],
+   'fvf': [
+       ('width', 0.5, 20.0, 2),
+       ('length', 0.15, 4.0, 2),
+   ],
+   'txgate': [
+       ('width', 0.5, 20.0, 2),
+       ('length', 0.15, 4.0, 2),
+   ],
+   'current_mirror': [
+       ('width', 0.5, 20.0, 1),
+       ('length', 0.15, 4.0, 1),
+   ],
+   'diff_pair': [
+       ('width', 0.5, 20.0, 1),
+       ('length', 0.15, 4.0, 1),
+   ],
+   'opamp': [
+       ('half_diffpair_params_w', 5, 7, 1),  # width, length (fingers is int) - constrained length
+       ('half_diffpair_params_l', 0.5, 1.5, 1),  # width, length (fingers is int) - constrained length
+       ('diffpair_bias_w', 5, 7, 1),  # width, length (fingers is int) - constrained length
+       ('diffpair_bias_l', 1.5, 2.5, 1),  # width, length (fingers is int) - constrained length
+       ('half_common_source_params_w', 6, 8, 1),  # width, length (fingers, mults are int) - much shorter length
+       ('half_common_source_params_l', 0.5, 1.5, 1),  # width, length (fingers, mults are int) - much shorter length
+       ('half_common_source_bias_w', 5, 7, 1),  # width, length (fingers, mults are int) - constrained length
+       ('half_common_source_bias_l', 1.5, 2.5, 1),  # width, length (fingers, mults are int) - constrained length
+       ('output_stage_params', 0.5, 1.5, 2),  # width, length (fingers is int) - constrained length
+       ('output_stage_bias', 1.5, 2.5, 2),  # width, length (fingers is int) - constrained length
+       ('half_pload_w', 5, 7, 1),  # width, length (fingers is int) - constrained length
+       ('half_pload_l', 0.5, 1.5, 1),  # width, length (fingers is int) - constrained length
+       ('mim_cap_size', 10.0, 15.0, 2),  # width, height
+   ],
+   'lvcm': [
+       ('width', 0.5, 20.0, 2),  # tuple of 2 widths
+       ('length', 0.15, 4.0, 1),  # single length
+   ],
 }
 
 
 # Integer (OA) specs: (axis_name, min, max)
 int_specs = {
-    'fvf': [
-        ('fingers', 1, 5),
-        ('multipliers', 1, 2),
-    ],
-    'txgate': [
-        ('fingers', 1, 5),
-        ('multipliers', 1, 2),
-    ],
-    'current_mirror': [
-        ('numcols', 1, 5),
-    ],
-    'diff_pair': [
-        ('fingers', 1, 5),
-    ],
-    'opamp': [
-        ('half_diffpair_fingers', 1, 10),
-        ('diffpair_bias_fingers', 1, 10),
-        ('half_common_source_fingers', 1, 15),
-        ('half_common_source_mults', 1, 5),
-        ('half_common_source_bias_fingers', 1, 15),
-        ('half_common_source_bias_mults', 2, 5),
-        ('output_stage_fingers', 1, 20),
-        ('output_stage_bias_fingers', 1, 10),
-        ('half_pload_fingers', 1, 10),
-        ('mim_cap_rows', 1, 5),
-        ('rmult', 1, 3),
-        ('with_antenna_diode_on_diffinputs', 1, 10),
-    ],
-    'lvcm': [
-        ('fingers', 1, 5),  # tuple of 2 finger counts
-        ('multipliers', 1, 3),  # tuple of 2 multiplier counts
-    ],
+   'fvf': [
+       ('fingers', 1, 5),
+       ('multipliers', 1, 2),
+   ],
+   'txgate': [
+       ('fingers', 1, 5),
+       ('multipliers', 1, 2),
+   ],
+   'current_mirror': [
+       ('numcols', 1, 5),
+   ],
+   'diff_pair': [
+       ('fingers', 1, 5),
+   ],
+   'opamp': [
+       ('half_diffpair_fingers', 1, 2),
+       ('diffpair_bias_fingers', 1, 2),
+       ('half_common_source_fingers', 8, 12),
+       ('half_common_source_mults', 2, 4),
+       ('half_common_source_bias_fingers', 7, 9),
+       ('half_common_source_bias_mults', 2, 3),
+       ('output_stage_fingers', 1, 12),
+       ('output_stage_bias_fingers', 1, 6),
+       ('half_pload_fingers', 4, 6),
+       ('mim_cap_rows', 1, 5),
+       ('rmult', 1, 3),
+       ('with_antenna_diode_on_diffinputs', 0, 8),  # Allow 0 or 2-8; we'll remap 1 to 0 later
+   ],
+   'lvcm': [
+       ('fingers', 1, 5),  # tuple of 2 finger counts
+       ('multipliers', 1, 3),  # tuple of 2 multiplier counts
+   ],
 }
 
 
@@ -329,22 +334,24 @@ def generate_mixed_samples(pcell, lhs_pts, int_oa, cat_oa):
 
 
 def generate_all_samples():
-    """Generate all samples for all PCells using the 32-hour budget"""
-    # 1) EXACT sample counts for a 32h / 26-core run (+2 PVT sweeps)
-    inventory_np = {
-        'fvf'           :  0,   # Flipped-voltage follower   
-        'txgate'        :  200,   # Transmission gate          
-        'current_mirror':  0,   # Current mirror             
-        'diff_pair'     :  0,   # Differential pair          
-        'lvcm'          :  0,   # Low-V current mirror       
-        'opamp'         :  0,   # Two-stage op-amp           
-    }
+   """Generate all samples for all PCells using the 8-hour runtime-aware budget from budgets_8h_runtime_aware_measuredTp_dpCorrected.json"""
+   # Sample counts from budgets_8h_runtime_aware_measuredTp_dpCorrected.json
+   # Total samples: 40,814 across 8 hours on 26 cores with 1.2x overhead
+   inventory_np = {
+       'fvf'           :  10886,   # Flipped-voltage follower  
+       'txgate'        :  3464,    # Transmission gate
+       'current_mirror':  7755,    # Current mirror            
+       'diff_pair'     :  9356,    # Differential pair         
+       'lvcm'          :  3503,    # Low-V current mirror      
+       'opamp'         :  5850,    # Two-stage op-amp
+   }
+
 
    # 2) List the PCells in the same order as your specs dicts:
    pcells = ['fvf','txgate','current_mirror','diff_pair','lvcm','opamp']
   
-   # For reproducibility
-   random.seed(0)
+   # For reproducibility - using seed 1337 to match budget plan
+   random.seed(1337)
 
 
    # 3) Loop over each PCell, pulling its LHS dim and inventory np:
@@ -414,22 +421,26 @@ all_samples = generate_all_samples()
 
 
 if __name__ == "__main__":
-    import json
-    import os
-    
-    # Save samples to JSON files
-    # output_dir = os.path.join(os.path.dirname(__file__), "gen_params_32hr")
-    output_dir = os.path.join(os.path.dirname(__file__), "txgate_200_params")
-    os.makedirs(output_dir, exist_ok=True)
-    
-    for pcell, samples in all_samples.items():
-        output_file = os.path.join(output_dir, f"{pcell}_parameters.json")
-        with open(output_file, 'w') as f:
-            json.dump(samples, f, indent=2)
-        print(f"Saved {len(samples)} samples to {output_file}")
-    
-    print("\nFull dataset generation with inventory-prescribed sample counts completed.")
-    print("Sample counts:")
-    for pcell, samples in all_samples.items():
-        print(f"  {pcell}: {len(samples)} samples")
-    print("\nTotal samples across all PCells:", sum(len(samples) for samples in all_samples.values()))
+   import json
+   import os
+  
+   # Save samples to JSON files
+   # output_dir = os.path.join(os.path.dirname(__file__), "gen_params_32hr")
+   output_dir = os.path.join(os.path.dirname(__file__), "gen_params_8h_runtime_aware")
+   os.makedirs(output_dir, exist_ok=True)
+  
+   for pcell, samples in all_samples.items():
+       # Match naming style used for other datasets
+       fname = f"{pcell}_params.json"
+       output_file = os.path.join(output_dir, fname)
+       with open(output_file, 'w') as f:
+           json.dump(samples, f, indent=2)
+       print(f"Saved {len(samples)} samples to {output_file}")
+  
+   print("\n8-hour runtime-aware dataset generation with budget-prescribed sample counts completed.")
+   print("Sample counts:")
+   for pcell, samples in all_samples.items():
+       print(f"  {pcell}: {len(samples)} samples")
+   print("\nTotal samples across all PCells:", sum(len(samples) for samples in all_samples.values()))
+   print("Expected total from budget: 40,814 samples")
+
