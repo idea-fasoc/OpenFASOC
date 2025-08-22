@@ -212,7 +212,7 @@ openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/smoke_test_*/
 
 # Large parameter files and directories
 openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/fvf_*_lhs_params/
-openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/gen_params_*/
+# openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/gen_params_*/
 openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/generated_params*/
 
 # Individual sample directories
@@ -260,3 +260,4 @@ openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/cm_dataset_3164_
 
 tg_dataset_100_lhs
 tg_dataset_1000_lhs
+# openfasoc/generators/glayout/glayout/flow/blocks/elementary/LHS/gen_params_8h_runtime_aware/
