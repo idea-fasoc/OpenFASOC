@@ -72,8 +72,11 @@ def add_tg_labels(tg_in: Component,
 def tg_netlist(nfet: Component, pfet: Component) -> Netlist:
 
          netlist = Netlist(circuit_name='Transmission_Gate', nodes=['VIN', 'VSS', 'VOUT', 'VCC', 'VGP', 'VGN'])
-         netlist.connect_netlist(nfet.info['netlist'], [('D', 'VOUT'), ('G', 'VGN'), ('S', 'VIN'), ('B', 'VSS')])
-         netlist.connect_netlist(pfet.info['netlist'], [('D', 'VOUT'), ('G', 'VGP'), ('S', 'VIN'), ('B', 'VCC')])
+         # Use netlist_obj if available, otherwise try to get the netlist directly
+         nfet_netlist = nfet.info.get('netlist_obj', nfet.info['netlist'])
+         pfet_netlist = pfet.info.get('netlist_obj', pfet.info['netlist'])
+         netlist.connect_netlist(nfet_netlist, [('D', 'VOUT'), ('G', 'VGN'), ('S', 'VIN'), ('B', 'VSS')])
+         netlist.connect_netlist(pfet_netlist, [('D', 'VOUT'), ('G', 'VGP'), ('S', 'VIN'), ('B', 'VCC')])
 
          return netlist
 
@@ -129,7 +132,10 @@ def  transmission_gate(
             top_level.add_ports(guardring_ref.get_ports_list(),prefix="tap_")
     
     component = component_snap_to_grid(rename_ports_by_orientation(top_level)) 
-    component.info['netlist'] = tg_netlist(nfet, pfet)
+    # Store netlist as string to avoid gymnasium info dict type restrictions
+    netlist_obj = tg_netlist(nfet, pfet)
+    component.info['netlist'] = str(netlist_obj)
+    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
 
 
     return component

@@ -481,7 +481,8 @@ def nmos(
 
     component = rename_ports_by_orientation(nfet).flatten()
 
-    component.info['netlist'] = fet_netlist(
+    # Store netlist as string to avoid gymnasium info dict type restrictions
+    netlist_obj = fet_netlist(
         pdk,
         circuit_name="NMOS",
         model=pdk.models['nfet'],
@@ -491,6 +492,8 @@ def nmos(
         multipliers=multipliers,
         with_dummy=with_dummy
     )
+    component.info['netlist'] = str(netlist_obj)
+    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
 
     return component
 
@@ -619,7 +622,8 @@ def pmos(
         )
     component =  rename_ports_by_orientation(pfet).flatten()
 
-    component.info['netlist'] = fet_netlist(
+    # Store netlist as string to avoid gymnasium info dict type restrictions
+    netlist_obj = fet_netlist(
         pdk,
         circuit_name="PMOS",
         model=pdk.models['pfet'],
@@ -629,6 +633,8 @@ def pmos(
         multipliers=multipliers,
         with_dummy=with_dummy
     )
+    component.info['netlist'] = str(netlist_obj)
+    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
 
     return component
 
