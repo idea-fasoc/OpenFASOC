@@ -21,8 +21,11 @@ def fvf_netlist(fet_1: Component, fet_2: Component) -> Netlist:
 
          netlist = Netlist(circuit_name='FLIPPED_VOLTAGE_FOLLOWER', nodes=['VIN', 'VBULK', 'VOUT', 'Ib'])
          
-         netlist.connect_netlist(fet_1.info['netlist'], [('D', 'Ib'), ('G', 'VIN'), ('S', 'VOUT'), ('B', 'VBULK')])
-         netlist.connect_netlist(fet_2.info['netlist'], [('D', 'VOUT'), ('G', 'Ib'), ('S', 'VBULK'), ('B', 'VBULK')])
+         # Use netlist_obj if available, otherwise try to get the netlist directly
+         fet_1_netlist = fet_1.info.get('netlist_obj', fet_1.info['netlist'])
+         fet_2_netlist = fet_2.info.get('netlist_obj', fet_2.info['netlist'])
+         netlist.connect_netlist(fet_1_netlist, [('D', 'Ib'), ('G', 'VIN'), ('S', 'VOUT'), ('B', 'VBULK')])
+         netlist.connect_netlist(fet_2_netlist, [('D', 'VOUT'), ('G', 'Ib'), ('S', 'VBULK'), ('B', 'VBULK')])
 
          return netlist
 
@@ -159,7 +162,10 @@ def  flipped_voltage_follower(
     component = component_snap_to_grid(rename_ports_by_orientation(top_level))
     #component = rename_ports_by_orientation(top_level)
 
-    component.info['netlist'] = fvf_netlist(fet_1, fet_2)
+    # Store netlist as string to avoid gymnasium info dict type restrictions
+    netlist_obj = fvf_netlist(fet_1, fet_2)
+    component.info['netlist'] = str(netlist_obj)
+    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
     
     return component
 

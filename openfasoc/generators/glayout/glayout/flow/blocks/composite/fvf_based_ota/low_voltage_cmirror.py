@@ -140,6 +140,9 @@ def  low_voltage_cmirror(
     top_level.add_ports(fet_4_ref.get_ports_list(), prefix="M_4_A_")
     
     component = component_snap_to_grid(rename_ports_by_orientation(top_level))
-    component.info['netlist'] = low_voltage_cmirr_netlist(bias_fvf, cascode_fvf, fet_1_ref, fet_2_ref, fet_3_ref, fet_4_ref)
+    # Store netlist as string to avoid gymnasium info dict type restrictions
+    netlist_obj = low_voltage_cmirr_netlist(bias_fvf, cascode_fvf, fet_1_ref, fet_2_ref, fet_3_ref, fet_4_ref)
+    component.info['netlist'] = str(netlist_obj)
+    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
     
     return component

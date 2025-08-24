@@ -143,7 +143,10 @@ def n_block(
 
     
     component = component_snap_to_grid(rename_ports_by_orientation(top_level))
-    component.info['netlist'] = n_block_netlist(fet_inA_ref, fet_inB_ref, fvf_1_ref, fvf_2_ref, cmirror, global_c_bias)
+    # Store netlist as string to avoid gymnasium info dict type restrictions
+    netlist_obj = n_block_netlist(fet_inA_ref, fet_inB_ref, fvf_1_ref, fvf_2_ref, cmirror, global_c_bias)
+    component.info['netlist'] = str(netlist_obj)
+    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
     #print(component.info['netlist'].generate_netlist(only_subcircuits=True))
 
     return component

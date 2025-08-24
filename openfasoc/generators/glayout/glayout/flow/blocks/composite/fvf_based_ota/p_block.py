@@ -89,7 +89,10 @@ def  p_block(
     top_level.add_ports(p_block.get_ports_list())
     
     component = component_snap_to_grid(rename_ports_by_orientation(top_level))
-    component.info['netlist'] = p_block_netlist(pdk, pblock=(width,length,ratio))
+    # Store netlist as string to avoid gymnasium info dict type restrictions
+    netlist_obj = p_block_netlist(pdk, pblock=(width,length,ratio))
+    component.info['netlist'] = str(netlist_obj)
+    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
     #print(component.info['netlist'].generate_netlist())
 
     return component

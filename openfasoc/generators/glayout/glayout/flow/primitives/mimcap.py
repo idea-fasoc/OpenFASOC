@@ -81,8 +81,10 @@ def mimcap(
 
     component = rename_ports_by_orientation(mim_cap).flatten()
 
-    # netlist generation
-    component.info['netlist'] = __generate_mimcap_netlist(pdk, size)
+    # netlist generation - store as string to avoid gymnasium info dict type restrictions
+    netlist_obj = __generate_mimcap_netlist(pdk, size)
+    component.info['netlist'] = str(netlist_obj)
+    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
 
     return component
 
@@ -128,8 +130,11 @@ def mimcap_array(pdk: MappedPDK, rows: int, columns: int, size: tuple[float,floa
 	for port_pair in port_pairs:
 		mimcap_arr << straight_route(pdk,port_pair[0],port_pair[1],width=rmult*pdk.get_grule(port_pair[2])["min_width"])
 
-	# add netlist
-	mimcap_arr.info['netlist'] = __generate_mimcap_array_netlist(mimcap_single.info['netlist'], rows * columns)
+	# add netlist - store as string to avoid gymnasium info dict type restrictions
+	mimcap_single_netlist = mimcap_single.info.get('netlist_obj', mimcap_single.info['netlist'])
+	netlist_obj = __generate_mimcap_array_netlist(mimcap_single_netlist, rows * columns)
+	mimcap_arr.info['netlist'] = str(netlist_obj)
+	mimcap_arr.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
 
 	return mimcap_arr.flatten()
 
