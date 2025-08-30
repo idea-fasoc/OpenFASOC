@@ -25,10 +25,10 @@ def test_component_info_serialization(component, component_name):
     try:
         # Check netlist storage
         netlist_value = component.info.get('netlist')
-        netlist_obj = component.info.get('netlist_obj')
+        netlist_data = component.info.get('netlist_data')
         
         print(f"  Netlist type: {type(netlist_value)}")
-        print(f"  Netlist object type: {type(netlist_obj)}")
+        print(f"  Netlist data type: {type(netlist_data)}")
         
         success = True
         
@@ -39,17 +39,25 @@ def test_component_info_serialization(component, component_name):
         else:
             print("  ✅ SUCCESS: netlist is stored as string")
             
-        # Verify netlist_obj is available if netlist was originally an object
-        if netlist_obj is None and 'netlist' in str(netlist_value).lower():
-            print("  ⚠️  WARNING: netlist_obj is None but netlist suggests an object was stored")
-        elif netlist_obj is not None:
-            print("  ✅ SUCCESS: netlist_obj is available for internal use")
+        # Verify netlist_data is available for gdsfactory 7.16.0+ compatibility
+        if netlist_data is None:
+            print("  ⚠️  WARNING: netlist_data is None - may not work with gdsfactory 7.16.0+")
+        elif isinstance(netlist_data, dict):
+            required_keys = ['circuit_name', 'nodes', 'source_netlist']
+            if all(key in netlist_data for key in required_keys):
+                print("  ✅ SUCCESS: netlist_data contains all required fields for reconstruction")
+            else:
+                print(f"  ❌ FAILED: netlist_data missing required keys: {[k for k in required_keys if k not in netlist_data]}")
+                success = False
+        else:
+            print(f"  ❌ FAILED: netlist_data should be dict, got {type(netlist_data)}")
+            success = False
             
         # Test JSON serialization
         try:
             info_copy = {}
             for key, value in component.info.items():
-                if isinstance(value, (str, int, float, bool, list, tuple)):
+                if isinstance(value, (str, int, float, bool, list, tuple, dict)):
                     info_copy[key] = value
                 else:
                     info_copy[key] = str(value)
@@ -156,8 +164,9 @@ def main():
         print("The gymnasium info dict error should be resolved for your friend.")
         print("\nSolution Summary:")
         print("- All netlist objects are now stored as strings in component.info['netlist']")
-        print("- Original netlist objects are preserved in component.info['netlist_obj']")
+        print("- Netlist data is preserved in component.info['netlist_data'] for reconstruction")
         print("- This prevents gymnasium from encountering unsupported object types")
+        print("- Compatible with both gdsfactory 7.7.0 and 7.16.0+ strict Pydantic validation")
         return True
     else:
         print(f"\n⚠️  {total - passed} tests failed. Some issues may remain.")

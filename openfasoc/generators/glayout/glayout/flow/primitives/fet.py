@@ -482,6 +482,7 @@ def nmos(
     component = rename_ports_by_orientation(nfet).flatten()
 
     # Store netlist as string to avoid gymnasium info dict type restrictions
+    # Compatible with both gdsfactory 7.7.0 and 7.16.0+ strict Pydantic validation
     netlist_obj = fet_netlist(
         pdk,
         circuit_name="NMOS",
@@ -493,7 +494,12 @@ def nmos(
         with_dummy=with_dummy
     )
     component.info['netlist'] = str(netlist_obj)
-    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
+    # Store serialized netlist data for reconstruction if needed
+    component.info['netlist_data'] = {
+        'circuit_name': netlist_obj.circuit_name,
+        'nodes': netlist_obj.nodes,
+        'source_netlist': netlist_obj.source_netlist
+    }
 
     return component
 
@@ -623,6 +629,7 @@ def pmos(
     component =  rename_ports_by_orientation(pfet).flatten()
 
     # Store netlist as string to avoid gymnasium info dict type restrictions
+    # Compatible with both gdsfactory 7.7.0 and 7.16.0+ strict Pydantic validation
     netlist_obj = fet_netlist(
         pdk,
         circuit_name="PMOS",
@@ -634,7 +641,12 @@ def pmos(
         with_dummy=with_dummy
     )
     component.info['netlist'] = str(netlist_obj)
-    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
+    # Store serialized netlist data for reconstruction if needed
+    component.info['netlist_data'] = {
+        'circuit_name': netlist_obj.circuit_name,
+        'nodes': netlist_obj.nodes,
+        'source_netlist': netlist_obj.source_netlist
+    }
 
     return component
 

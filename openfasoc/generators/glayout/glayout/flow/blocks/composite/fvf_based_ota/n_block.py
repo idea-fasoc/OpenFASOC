@@ -144,9 +144,15 @@ def n_block(
     
     component = component_snap_to_grid(rename_ports_by_orientation(top_level))
     # Store netlist as string to avoid gymnasium info dict type restrictions
+    # Compatible with both gdsfactory 7.7.0 and 7.16.0+ strict Pydantic validation
     netlist_obj = n_block_netlist(fet_inA_ref, fet_inB_ref, fvf_1_ref, fvf_2_ref, cmirror, global_c_bias)
     component.info['netlist'] = str(netlist_obj)
-    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
+    # Store serialized netlist data for reconstruction if needed
+    component.info['netlist_data'] = {
+        'circuit_name': netlist_obj.circuit_name,
+        'nodes': netlist_obj.nodes,
+        'source_netlist': netlist_obj.source_netlist
+    }
     #print(component.info['netlist'].generate_netlist(only_subcircuits=True))
 
     return component

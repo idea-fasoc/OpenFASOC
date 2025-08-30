@@ -17,13 +17,34 @@ from glayout.flow.primitives.via_gen import via_stack
 from gdsfactory.components import text_freetype, rectangle
 from evaluator_wrapper import run_evaluation # CUSTOM IMPLEMENTED EVAL BOX
 
+def get_component_netlist(component):
+    """Helper function to get netlist object from component info, compatible with all gdsfactory versions"""
+    from glayout.flow.spice.netlist import Netlist
+    
+    # Try to get stored object first (for older gdsfactory versions)
+    if 'netlist_obj' in component.info:
+        return component.info['netlist_obj']
+    
+    # Try to reconstruct from netlist_data (for newer gdsfactory versions)
+    if 'netlist_data' in component.info:
+        data = component.info['netlist_data']
+        netlist = Netlist(
+            circuit_name=data['circuit_name'],
+            nodes=data['nodes']
+        )
+        netlist.source_netlist = data['source_netlist']
+        return netlist
+    
+    # Fallback: return the string representation (should not happen in normal operation)
+    return component.info.get('netlist', '')
+
 def fvf_netlist(fet_1: Component, fet_2: Component) -> Netlist:
 
          netlist = Netlist(circuit_name='FLIPPED_VOLTAGE_FOLLOWER', nodes=['VIN', 'VBULK', 'VOUT', 'Ib'])
          
-         # Use netlist_obj if available, otherwise try to get the netlist directly
-         fet_1_netlist = fet_1.info.get('netlist_obj', fet_1.info['netlist'])
-         fet_2_netlist = fet_2.info.get('netlist_obj', fet_2.info['netlist'])
+         # Use helper function to get netlist objects regardless of gdsfactory version
+         fet_1_netlist = get_component_netlist(fet_1)
+         fet_2_netlist = get_component_netlist(fet_2)
          netlist.connect_netlist(fet_1_netlist, [('D', 'Ib'), ('G', 'VIN'), ('S', 'VOUT'), ('B', 'VBULK')])
          netlist.connect_netlist(fet_2_netlist, [('D', 'VOUT'), ('G', 'Ib'), ('S', 'VBULK'), ('B', 'VBULK')])
 
@@ -163,9 +184,15 @@ def  flipped_voltage_follower(
     #component = rename_ports_by_orientation(top_level)
 
     # Store netlist as string to avoid gymnasium info dict type restrictions
+    # Compatible with both gdsfactory 7.7.0 and 7.16.0+ strict Pydantic validation
     netlist_obj = fvf_netlist(fet_1, fet_2)
     component.info['netlist'] = str(netlist_obj)
-    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
+    # Store serialized netlist data for reconstruction if needed
+    component.info['netlist_data'] = {
+        'circuit_name': netlist_obj.circuit_name,
+        'nodes': netlist_obj.nodes,
+        'source_netlist': netlist_obj.source_netlist
+    }
     
     return component
 

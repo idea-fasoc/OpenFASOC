@@ -6,7 +6,14 @@ from typing import Callable, Union, Optional
 from decimal import Decimal
 from pathlib import Path
 import pickle
-from PrettyPrint import PrettyPrintTree
+try:
+    from prettyprinttree import PrettyPrintTree
+except ImportError:
+    try:
+        from PrettyPrint import PrettyPrintTree
+    except ImportError:
+        # Fallback if neither package is available
+        PrettyPrintTree = None
 import math
 
 
@@ -459,6 +466,10 @@ class PortTree:
 		kwargs -> kwargs are prettyprint options passed directly to prettyprint.
 		****NOTE: kwargs override all other options
 		"""
+		if PrettyPrintTree is None:
+			print("PrettyPrintTree not available. Please install 'prettyprinttree' package.")
+			return
+			
 		depth = int(depth) if (depth is not None and depth>0) else -1
 		extra_kwargs = {}
 		if default_opts:

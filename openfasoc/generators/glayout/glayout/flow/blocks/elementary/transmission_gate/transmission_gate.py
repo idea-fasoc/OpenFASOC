@@ -68,12 +68,33 @@ def add_tg_labels(tg_in: Component,
     return tg_in.flatten() 
 
 
+def get_component_netlist(component):
+    """Helper function to get netlist object from component info, compatible with all gdsfactory versions"""
+    from glayout.flow.spice.netlist import Netlist
+    
+    # Try to get stored object first (for older gdsfactory versions)
+    if 'netlist_obj' in component.info:
+        return component.info['netlist_obj']
+    
+    # Try to reconstruct from netlist_data (for newer gdsfactory versions)
+    if 'netlist_data' in component.info:
+        data = component.info['netlist_data']
+        netlist = Netlist(
+            circuit_name=data['circuit_name'],
+            nodes=data['nodes']
+        )
+        netlist.source_netlist = data['source_netlist']
+        return netlist
+    
+    # Fallback: return the string representation (should not happen in normal operation)
+    return component.info.get('netlist', '')
+
 def tg_netlist(nfet: Component, pfet: Component) -> Netlist:
 
          netlist = Netlist(circuit_name='Transmission_Gate', nodes=['VIN', 'VSS', 'VOUT', 'VCC', 'VGP', 'VGN'])
-         # Use netlist_obj if available, otherwise try to get the netlist directly
-         nfet_netlist = nfet.info.get('netlist_obj', nfet.info['netlist'])
-         pfet_netlist = pfet.info.get('netlist_obj', pfet.info['netlist'])
+         # Use helper function to get netlist objects regardless of gdsfactory version
+         nfet_netlist = get_component_netlist(nfet)
+         pfet_netlist = get_component_netlist(pfet)
          netlist.connect_netlist(nfet_netlist, [('D', 'VOUT'), ('G', 'VGN'), ('S', 'VIN'), ('B', 'VSS')])
          netlist.connect_netlist(pfet_netlist, [('D', 'VOUT'), ('G', 'VGP'), ('S', 'VIN'), ('B', 'VCC')])
 
@@ -132,9 +153,15 @@ def  transmission_gate(
     
     component = component_snap_to_grid(rename_ports_by_orientation(top_level)) 
     # Store netlist as string to avoid gymnasium info dict type restrictions
+    # Compatible with both gdsfactory 7.7.0 and 7.16.0+ strict Pydantic validation
     netlist_obj = tg_netlist(nfet, pfet)
     component.info['netlist'] = str(netlist_obj)
-    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
+    # Store serialized netlist data for reconstruction if needed
+    component.info['netlist_data'] = {
+        'circuit_name': netlist_obj.circuit_name,
+        'nodes': netlist_obj.nodes,
+        'source_netlist': netlist_obj.source_netlist
+    }
 
 
     return component

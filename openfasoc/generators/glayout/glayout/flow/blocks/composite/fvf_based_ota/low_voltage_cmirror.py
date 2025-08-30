@@ -141,8 +141,14 @@ def  low_voltage_cmirror(
     
     component = component_snap_to_grid(rename_ports_by_orientation(top_level))
     # Store netlist as string to avoid gymnasium info dict type restrictions
+    # Compatible with both gdsfactory 7.7.0 and 7.16.0+ strict Pydantic validation
     netlist_obj = low_voltage_cmirr_netlist(bias_fvf, cascode_fvf, fet_1_ref, fet_2_ref, fet_3_ref, fet_4_ref)
     component.info['netlist'] = str(netlist_obj)
-    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
+    # Store serialized netlist data for reconstruction if needed
+    component.info['netlist_data'] = {
+        'circuit_name': netlist_obj.circuit_name,
+        'nodes': netlist_obj.nodes,
+        'source_netlist': netlist_obj.source_netlist
+    }
     
     return component

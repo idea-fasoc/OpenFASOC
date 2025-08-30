@@ -82,9 +82,15 @@ def mimcap(
     component = rename_ports_by_orientation(mim_cap).flatten()
 
     # netlist generation - store as string to avoid gymnasium info dict type restrictions
+    # Compatible with both gdsfactory 7.7.0 and 7.16.0+ strict Pydantic validation
     netlist_obj = __generate_mimcap_netlist(pdk, size)
     component.info['netlist'] = str(netlist_obj)
-    component.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
+    # Store serialized netlist data for reconstruction if needed
+    component.info['netlist_data'] = {
+        'circuit_name': netlist_obj.circuit_name,
+        'nodes': netlist_obj.nodes,
+        'source_netlist': netlist_obj.source_netlist
+    }
 
     return component
 
@@ -131,10 +137,24 @@ def mimcap_array(pdk: MappedPDK, rows: int, columns: int, size: tuple[float,floa
 		mimcap_arr << straight_route(pdk,port_pair[0],port_pair[1],width=rmult*pdk.get_grule(port_pair[2])["min_width"])
 
 	# add netlist - store as string to avoid gymnasium info dict type restrictions
-	mimcap_single_netlist = mimcap_single.info.get('netlist_obj', mimcap_single.info['netlist'])
-	netlist_obj = __generate_mimcap_array_netlist(mimcap_single_netlist, rows * columns)
+	# Compatible with both gdsfactory 7.7.0 and 7.16.0+ strict Pydantic validation
+	# Get netlist from single mimcap
+	if 'netlist_data' in mimcap_single.info:
+		from glayout.flow.spice.netlist import Netlist
+		data = mimcap_single.info['netlist_data']
+		single_netlist = Netlist(circuit_name=data['circuit_name'], nodes=data['nodes'])
+		single_netlist.source_netlist = data['source_netlist']
+	else:
+		single_netlist = mimcap_single.info['netlist']
+	
+	netlist_obj = __generate_mimcap_array_netlist(single_netlist, rows * columns)
 	mimcap_arr.info['netlist'] = str(netlist_obj)
-	mimcap_arr.info['netlist_obj'] = netlist_obj  # Keep object reference for internal use
+	# Store serialized netlist data for reconstruction if needed
+	mimcap_arr.info['netlist_data'] = {
+		'circuit_name': netlist_obj.circuit_name,
+		'nodes': netlist_obj.nodes,
+		'source_netlist': netlist_obj.source_netlist
+	}
 
 	return mimcap_arr.flatten()
 
