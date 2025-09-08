@@ -69,40 +69,50 @@ def add_tg_labels(tg_in: Component,
     return tg_in.flatten() 
 
 
-def get_component_netlist(component):
-    """Helper function to get netlist object from component info, compatible with all gdsfactory versions"""
-    from glayout.flow.spice.netlist import Netlist
+def get_component_netlist(component) -> Netlist:
+    """Helper function to extract netlist from component with version compatibility"""
+    if hasattr(component.info, 'get'):        
+        # Check if netlist object is stored directly 
+        if 'netlist' in component.info:
+            netlist_obj = component.info['netlist']
+            if isinstance(netlist_obj, str):
+                # It's a string representation, try to reconstruct
+                # For gymnasium compatibility, we don't store netlist_data, so create a simple netlist
+                return Netlist(source_netlist=netlist_obj)
+            else:
+                # It's already a Netlist object
+                return netlist_obj
     
-    # Try to get stored object first (for older gdsfactory versions)
-    if 'netlist_obj' in component.info:
-        return component.info['netlist_obj']
+    # Fallback: return empty netlist
+    return Netlist()
+
+def tg_netlist(nfet_comp, pfet_comp) -> str:
+    """Generate SPICE netlist string for transmission gate - gymnasium compatible"""
     
-    # Try to reconstruct from netlist_data (for newer gdsfactory versions)
-    if 'netlist_data' in component.info:
-        data = component.info['netlist_data']
-        netlist = Netlist(
-            circuit_name=data['circuit_name'],
-            nodes=data['nodes']
-        )
-        netlist.source_netlist = data['source_netlist']
-        return netlist
+    # Get the SPICE netlists directly from components
+    nmos_spice = nfet_comp.info.get('netlist', '')
+    pmos_spice = pfet_comp.info.get('netlist', '')
     
-    # Fallback: return the string representation (should not happen in normal operation)
-    return component.info.get('netlist', '')
+    if not nmos_spice or not pmos_spice:
+        raise ValueError("Component netlists not found")
+    
+    # Create the transmission gate SPICE netlist by combining the primitives
+    tg_spice = f"""{nmos_spice}
 
-def tg_netlist(nfet: Component, pfet: Component) -> Netlist:
+{pmos_spice}
 
-         netlist = Netlist(circuit_name='Transmission_Gate', nodes=['VIN', 'VSS', 'VOUT', 'VCC', 'VGP', 'VGN'])
-         # Use helper function to get netlist objects regardless of gdsfactory version
-         nfet_netlist = get_component_netlist(nfet)
-         pfet_netlist = get_component_netlist(pfet)
-         netlist.connect_netlist(nfet_netlist, [('D', 'VOUT'), ('G', 'VGN'), ('S', 'VIN'), ('B', 'VSS')])
-         netlist.connect_netlist(pfet_netlist, [('D', 'VOUT'), ('G', 'VGP'), ('S', 'VIN'), ('B', 'VCC')])
-
-         return netlist
+.subckt transmission_gate D G S VDD VSS
+* PMOS: connects D to S when G is low (G_n is high)  
+X0 D G_n S VDD PMOS
+* NMOS: connects D to S when G is high
+X1 D G S VSS NMOS
+.ends transmission_gate
+"""
+    
+    return tg_spice
 
 @cell
-def  transmission_gate(
+def transmission_gate(
         pdk: MappedPDK,
         width: tuple[float,float] = (1,1),
         length: tuple[float,float] = (None,None),
@@ -153,16 +163,11 @@ def  transmission_gate(
             top_level.add_ports(guardring_ref.get_ports_list(),prefix="tap_")
     
     component = component_snap_to_grid(rename_ports_by_orientation(top_level)) 
-    # Store netlist as string to avoid gymnasium info dict type restrictions
-    # Compatible with both gdsfactory 7.7.0 and 7.16.0+ strict Pydantic validation
-    netlist_obj = tg_netlist(nfet, pfet)
-    component.info['netlist'] = str(netlist_obj)
-    # Store serialized netlist data for reconstruction if needed
-    component.info['netlist_data'] = {
-        'circuit_name': netlist_obj.circuit_name,
-        'nodes': netlist_obj.nodes,
-        'source_netlist': netlist_obj.source_netlist
-    }
+    # Generate netlist as SPICE string for gymnasium compatibility
+    netlist_string = tg_netlist(nfet, pfet)
+    
+    # Store as string for gymnasium compatibility - LVS method supports this directly
+    component.info['netlist'] = netlist_string
 
 
     return component

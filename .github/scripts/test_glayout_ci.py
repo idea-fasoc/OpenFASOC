@@ -116,8 +116,26 @@ def simulate_component(comp, pdk, componentref = None):
         comp.write_gds(str(gds_file))
         shutil.copy(str(gds_file), str(Path(__file__).resolve().parent / f'{comp.name}_test.gds'))
         
-        # write netlist and copy to temp directory
-        net = comp.info['netlist'].generate_netlist(with_pins=True)
+        # write netlist and copy to temp directory - compatible with all gdsfactory versions
+        from glayout.flow.spice.netlist import Netlist
+        
+        # Try to get stored object first (for older gdsfactory versions)
+        if 'netlist_obj' in comp.info:
+            netlist_obj = comp.info['netlist_obj']
+            net = netlist_obj.generate_netlist(with_pins=True)
+        # Try to reconstruct from netlist_data (for newer gdsfactory versions)
+        elif 'netlist_data' in comp.info:
+            data = comp.info['netlist_data']
+            netlist_obj = Netlist(
+                circuit_name=data['circuit_name'],
+                nodes=data['nodes']
+            )
+            netlist_obj.source_netlist = data['source_netlist']
+            net = netlist_obj.generate_netlist(with_pins=True)
+        else:
+            # Fallback: if it's already a string, use it directly
+            net = str(comp.info.get('netlist', ''))
+        
         with open(cdl_file, 'w') as f:
             f.write(net)
         # shutil.copy(str(cdl_file), str(Path(__file__).resolve().parent / f'{comp.name}_test.cdl'))

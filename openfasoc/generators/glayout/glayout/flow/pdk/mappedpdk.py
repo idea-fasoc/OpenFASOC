@@ -682,7 +682,31 @@ custom_drc_save_report $::env(DESIGN_NAME) $::env(REPORTS_DIR)/$::env(DESIGN_NAM
             if isinstance(layout, Component):
                 layout.write_gds(str(gds_path))
                 if netlist is None:
-                    netlist = layout.info['netlist'].generate_netlist()
+                    # Get netlist object from component info, compatible with all gdsfactory versions
+                    from glayout.flow.spice.netlist import Netlist
+                    
+                    # Try to get stored object first (for older gdsfactory versions)
+                    if 'netlist_obj' in layout.info:
+                        netlist_obj = layout.info['netlist_obj']
+                    # Try to reconstruct from netlist_data (for newer gdsfactory versions)
+                    elif 'netlist_data' in layout.info:
+                        data = layout.info['netlist_data']
+                        netlist_obj = Netlist(
+                            circuit_name=data['circuit_name'],
+                            nodes=data['nodes']
+                        )
+                        netlist_obj.source_netlist = data['source_netlist']
+                    else:
+                        # Fallback: if it's already a string, use it directly
+                        if isinstance(layout.info.get('netlist'), str):
+                            netlist = layout.info['netlist']
+                        else:
+                            raise ValueError("No netlist information found in component.info")
+                    
+                    # Generate netlist if we have a netlist object
+                    if 'netlist_obj' in locals() or 'netlist_obj' in layout.info:
+                        netlist = netlist_obj.generate_netlist()
+                    
                     with open(str(netlist_from_comp), 'w') as f:
                         f.write(netlist)
                 else: 

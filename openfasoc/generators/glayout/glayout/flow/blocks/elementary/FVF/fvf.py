@@ -171,7 +171,27 @@ fvf_gds = fvf.write_gds("fvf.gds")
 # Debug: Check if netlist exists and print it
 if 'netlist' in fvf.info:
     print("Netlist found in component info:")
-    netlist_content = fvf.info['netlist'].generate_netlist()
+    
+    # Get netlist object from component info, compatible with all gdsfactory versions
+    from glayout.flow.spice.netlist import Netlist
+    
+    # Try to get stored object first (for older gdsfactory versions)
+    if 'netlist_obj' in fvf.info:
+        netlist_obj = fvf.info['netlist_obj']
+        netlist_content = netlist_obj.generate_netlist()
+    # Try to reconstruct from netlist_data (for newer gdsfactory versions)
+    elif 'netlist_data' in fvf.info:
+        data = fvf.info['netlist_data']
+        netlist_obj = Netlist(
+            circuit_name=data['circuit_name'],
+            nodes=data['nodes']
+        )
+        netlist_obj.source_netlist = data['source_netlist']
+        netlist_content = netlist_obj.generate_netlist()
+    else:
+        # Fallback: if it's already a string, use it directly
+        netlist_content = str(fvf.info['netlist'])
+    
     print(netlist_content)
     print("Writing netlist to fvf.cdl for inspection...")
     with open("fvf.cdl", "w") as f:

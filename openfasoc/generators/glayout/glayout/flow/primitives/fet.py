@@ -493,13 +493,10 @@ def nmos(
         multipliers=multipliers,
         with_dummy=with_dummy
     )
-    component.info['netlist'] = str(netlist_obj)
-    # Store serialized netlist data for reconstruction if needed
-    component.info['netlist_data'] = {
-        'circuit_name': netlist_obj.circuit_name,
-        'nodes': netlist_obj.nodes,
-        'source_netlist': netlist_obj.source_netlist
-    }
+    
+    # For gymnasium compatibility, store the full generated netlist as a string
+    generated_netlist = netlist_obj.generate_netlist()
+    component.info['netlist'] = generated_netlist
 
     return component
 
@@ -640,13 +637,10 @@ def pmos(
         multipliers=multipliers,
         with_dummy=with_dummy
     )
-    component.info['netlist'] = str(netlist_obj)
-    # Store serialized netlist data for reconstruction if needed
-    component.info['netlist_data'] = {
-        'circuit_name': netlist_obj.circuit_name,
-        'nodes': netlist_obj.nodes,
-        'source_netlist': netlist_obj.source_netlist
-    }
+    
+    # For gymnasium compatibility, store the full generated netlist as a string
+    generated_netlist = netlist_obj.generate_netlist()
+    component.info['netlist'] = generated_netlist
 
     return component
 
