@@ -19,6 +19,18 @@ import pandas as pd
 # Ensure the *local* `glayout` package is discoverable *before* we import any
 # module that depends on it (e.g. `robust_verification`).
 # -----------------------------------------------------------------------------
+# Suppress overly verbose gdsfactory logging
+import warnings
+warnings.filterwarnings(
+    "ignore", 
+    message="decorator is deprecated and will be removed soon.*"
+)
+warnings.filterwarnings(
+    "ignore", 
+    message=".*we will remove unlock to discourage use.*"
+)
+# Also suppress info with "* PDK is now active"
+logging.getLogger("gdsfactory").setLevel(logging.WARNING)
 
 _here = Path(__file__).resolve()
 # Path to `<repo>/generators/glayout`

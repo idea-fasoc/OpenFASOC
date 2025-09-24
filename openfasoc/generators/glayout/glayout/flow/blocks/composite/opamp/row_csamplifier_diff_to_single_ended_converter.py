@@ -26,16 +26,40 @@ def row_csamplifier_diff_to_single_ended_converter_netlist(diff_to_single: Compo
         nodes=['VIN1', 'VIN2', 'VOUT', 'VSS', 'VSS2']
     )
 
+    # Handle diff_to_single netlist - reconstruct if it's a string
+    diff_netlist = diff_to_single.info['netlist']
+    if isinstance(diff_netlist, str):
+        if 'netlist_data' in diff_to_single.info:
+            data = diff_to_single.info['netlist_data']
+            diff_netlist = Netlist(circuit_name=data['circuit_name'], nodes=data['nodes'])
+            diff_netlist.source_netlist = data['source_netlist']
+            if 'parameters' in data:
+                diff_netlist.parameters = data['parameters']
+        else:
+            raise ValueError("No netlist_data found for string netlist in diff_to_single component.info")
+
     overall_netlist.connect_netlist(
-        diff_to_single.info['netlist'],
+        diff_netlist,
         [('VIN', 'VIN1'), ('VOUT', 'VIN2')]
     )
 
     return overall_netlist
 
 def __connect_cs_netlist(pmos_comps: Component, half_cs_pmos: Component):
+    # Handle half_cs_pmos netlist - reconstruct if it's a string
+    half_cs_netlist = half_cs_pmos.info['netlist']
+    if isinstance(half_cs_netlist, str):
+        if 'netlist_data' in half_cs_pmos.info:
+            data = half_cs_pmos.info['netlist_data']
+            half_cs_netlist = Netlist(circuit_name=data['circuit_name'], nodes=data['nodes'])
+            half_cs_netlist.source_netlist = data['source_netlist']
+            if 'parameters' in data:
+                half_cs_netlist.parameters = data['parameters']
+        else:
+            raise ValueError("No netlist_data found for string netlist in half_cs_pmos component.info")
+
     pmos_comps.info['netlist'].connect_netlist(
-        half_cs_pmos.info['netlist'],
+        half_cs_netlist,
         [('D', 'VOUT'), ('S', 'VSS'), ('B', 'VSS'), ('G', 'VIN2')]
     )
 

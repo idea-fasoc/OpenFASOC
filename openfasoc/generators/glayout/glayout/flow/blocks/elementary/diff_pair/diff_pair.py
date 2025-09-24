@@ -35,12 +35,37 @@ except ImportError:
 
 def diff_pair_netlist(fetL: Component, fetR: Component) -> Netlist:
 	diff_pair_netlist = Netlist(circuit_name='DIFF_PAIR', nodes=['VP', 'VN', 'VDD1', 'VDD2', 'VTAIL', 'B'])
+	
+	# Handle fetL netlist - reconstruct if it's a string
+	fetL_netlist = fetL.info['netlist']
+	if isinstance(fetL_netlist, str):
+		if 'netlist_data' in fetL.info:
+			data = fetL.info['netlist_data']
+			fetL_netlist = Netlist(circuit_name=data['circuit_name'], nodes=data['nodes'])
+			fetL_netlist.source_netlist = data['source_netlist']
+			if 'parameters' in data:
+				fetL_netlist.parameters = data['parameters']
+		else:
+			raise ValueError("No netlist_data found for string netlist in fetL component.info")
+	
+	# Handle fetR netlist - reconstruct if it's a string
+	fetR_netlist = fetR.info['netlist']
+	if isinstance(fetR_netlist, str):
+		if 'netlist_data' in fetR.info:
+			data = fetR.info['netlist_data']
+			fetR_netlist = Netlist(circuit_name=data['circuit_name'], nodes=data['nodes'])
+			fetR_netlist.source_netlist = data['source_netlist']
+			if 'parameters' in data:
+				fetR_netlist.parameters = data['parameters']
+		else:
+			raise ValueError("No netlist_data found for string netlist in fetR component.info")
+	
 	diff_pair_netlist.connect_netlist(
-		fetL.info['netlist'],
+		fetL_netlist,
 		[('D', 'VDD1'), ('G', 'VP'), ('S', 'VTAIL'), ('B', 'B')]
 	)
 	diff_pair_netlist.connect_netlist(
-		fetR.info['netlist'],
+		fetR_netlist,
 		[('D', 'VDD2'), ('G', 'VN'), ('S', 'VTAIL'), ('B', 'B')]
 	)
 	return diff_pair_netlist

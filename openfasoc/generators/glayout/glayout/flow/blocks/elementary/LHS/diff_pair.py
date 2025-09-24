@@ -142,10 +142,10 @@ def diff_pair(
 	a_topl = (diffpair << fetL).movey(fetL.ymax+min_spacing_y/2+0.5).movex(0-fetL.xmax-min_spacing_x/2)
 	b_topr = (diffpair << fetR).movey(fetR.ymax+min_spacing_y/2+0.5).movex(fetL.xmax+min_spacing_x/2)
 	a_botr = (diffpair << fetR)
-	a_botr.mirror_y()
+	a_botr = a_botr.mirror_y()
 	a_botr.movey(0-0.5-fetL.ymax-min_spacing_y/2).movex(fetL.xmax+min_spacing_x/2)
 	b_botl = (diffpair << fetL)
-	b_botl.mirror_y()
+	b_botl = b_botl.mirror_y()
 	b_botl.movey(0-0.5-fetR.ymax-min_spacing_y/2).movex(0-fetL.xmax-min_spacing_x/2)
 	# if substrate tap place substrate tap
 	if substrate_tap:

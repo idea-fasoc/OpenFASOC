@@ -771,7 +771,7 @@ exit
                 
                 lvssetup_file = self.pdk_files['lvs_setup_tcl_file'] if lvs_setup_tcl_file is None else lvs_setup_tcl_file 
                 netgen_command = f'netgen -batch lvs "{str(lvsmag_path)} {design_name}" "{str(spice_path)} {design_name}" {lvssetup_file} {str(report_path)}'
-                
+                print(f"Running netgen command: {netgen_command}")
                 netgen_subproc = subprocess.run(
                     netgen_command,
                     shell=True,
