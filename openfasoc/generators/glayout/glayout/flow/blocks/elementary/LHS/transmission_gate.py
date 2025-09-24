@@ -16,7 +16,7 @@ from glayout.flow.spice.netlist import Netlist
 from glayout.flow.primitives.via_gen import via_stack
 from gdsfactory.components import text_freetype, rectangle
 try:
-    from evaluator_wrapper import run_evaluation
+    from evaluator_wrapper import run_evaluation # pyright: ignore[reportMissingImports]
 except ImportError:
     print("Warning: evaluator_wrapper not found. Evaluation will be skipped.")
     run_evaluation = None
