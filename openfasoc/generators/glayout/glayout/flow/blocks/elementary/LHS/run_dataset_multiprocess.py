@@ -464,30 +464,37 @@ def run_dataset_generation(parameters, output_dir, max_workers=1):
     # Threshold as before
     return success_rate >= 50, len(successful), len(results)
 
+import argparse
 def main():
-    """Main function for 100-sample Transmission Gate dataset generation"""
-    output_dir = "tg_dataset_100_lhs"
-    json_file = pwd_path / "params_txgate_100_params/txgate_parameters.json"
-    # get number of CPU cores to use from the command line argument n_cores=<num_cores>
-    import argparse
-    parser = argparse.ArgumentParser(description="Transmission Gate Dataset Generator - 100 Samples")
-    parser.add_argument("--n_cores", type=int, default=1, help="Number of CPU cores to use")
+    """Main function for Dataset generation"""
+
+    # Argument parsing
+    parser = argparse.ArgumentParser(description="Dataset Generator - 100 Samples")
+    parser.add_argument("json_file",    type=str,                   help="Path to the JSON file containing parameters")
+    parser.add_argument("--n_cores",    type=int, default=1,        help="Number of CPU cores to use") # Number of CPU cores to use, default=1
+    parser.add_argument("--output_dir", type=str, default="result", help="Output directory for the generated dataset")
+    parser.add_argument("-y", "--yes", action="store_true", help="Automatic yes to prompts")
     args = parser.parse_args()
+    json_file = Path(args.json_file).resolve()
+    output_dir = args.output_dir
     n_cores = args.n_cores if args.n_cores > 0 else 1
     if n_cores > (os.cpu_count()):
         n_cores = os.cpu_count()
+    print("="*30+" Arguments "+"="*30)
     print(f"Using {n_cores} CPU cores for parallel processing")
-    print(f"📁 Input file: {json_file}")
-    print(f"📁 Output will be saved to: {output_dir}")
+    print(f"Input file: {json_file}")
+    print(f"Output will be saved to: {output_dir}")
+    print("="*70)
     
     # Load parameters from JSON
+    # Todo: make this work with other kind of cells
     try:
         parameters = load_tg_parameters_from_json(json_file)
         n_samples = len(parameters)
-        print(f"✅ Loaded {n_samples} parameter combinations")
+        print(f"Loaded {n_samples} parameter combinations")
     except FileNotFoundError as e:
         print(f"❌ Error: {e}")
-        print(f"💡 Make sure you have run 'python elhs.py' first to generate the parameters")
+        print(f"Make sure you have run 'python elhs.py' first to generate the parameters")
         return False
     except Exception as e:
         print(f"❌ Error loading parameters: {e}")
@@ -501,8 +508,6 @@ def main():
     print(f"   PMOS width range: {min(widths_pmos):.2f} - {max(widths_pmos):.2f} μm")
     print(f"   Finger combinations: {len(set(tuple(p['fingers']) for p in parameters))} unique")
     print(f"   Multiplier combinations: {len(set(tuple(p['multipliers']) for p in parameters))} unique")
-    
-    # Show sample examples
     print(f"\n📋 Sample Parameter Examples:")
     for i, params in enumerate(parameters[:3], 1):
         nmos_w, pmos_w = params["width"]
@@ -512,33 +517,24 @@ def main():
         print(f"   {i}. NMOS: {nmos_w:.2f}μm/{nmos_l:.3f}μm×{nmos_f}f×{nmos_m} | "
               f"PMOS: {pmos_w:.2f}μm/{pmos_l:.3f}μm×{pmos_f}f×{pmos_m}")
     
-    print(f"\n🤔 Continue with transmission gate dataset generation for {n_samples} samples? (y/n): ", end="")
+    # Prompt user to continue
+    print(f"\nContinue with transmission gate dataset generation for {n_samples} samples? (y/n): ", end="")
     response = input().lower().strip()
-    
     if response != 'y':
         print("Stopping as requested.")
         return True
     
-    # Estimate time
-    estimated_time_per_sample = 50  # seconds, based on previous 5-sample run
-    estimated_total_minutes = (n_samples * estimated_time_per_sample) / 60
-    print(f"\n⏱️ Estimated runtime: ~{estimated_total_minutes:.0f} minutes ({estimated_total_minutes/60:.1f} hours)")
-    print(f"💡 Based on ~{estimated_time_per_sample}s per sample average")
-    
     # Generate dataset
-    print(f"\n🚀 Starting generation of {n_samples} transmission gate samples...")
+    print(f"\nStarting generation of {n_samples} transmission gate samples...")
     success, passed, total = run_dataset_generation(parameters, output_dir, max_workers=n_cores)
     
     if success:
         print(f"\n🎉 Transmission gate dataset generation completed successfully!")
-        print(f"📊 Final results: {passed}/{total} samples successful")
-        print(f"📁 Dataset saved to: {output_dir}/")
-        return True
     else:
         print(f"\n⚠️ Dataset generation completed with issues")
-        print(f"📊 Final results: {passed}/{total} samples successful")
-        print(f"💡 Check logs and results in: {output_dir}/")
-        return False
+    print(f"📊 Final results: {passed}/{total} samples successful")
+    print(f"📁 Dataset saved to: {output_dir}/")
+    return success
 
 
 if __name__ == "__main__":
