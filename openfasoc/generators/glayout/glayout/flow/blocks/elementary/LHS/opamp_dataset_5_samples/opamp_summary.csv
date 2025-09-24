@@ -1,6 +1,0 @@
-sample_id,component_name,success,drc_pass,lvs_pass,execution_time,parameters,output_directory,pex_status,total_resistance_ohms,total_capacitance_farads,area_um2
-1,opamp_sample_0001,True,True,True,65.22055125236511,{'add_output_stage': False},opamp_dataset_5_samples/sample_0001,PEX Complete,2823416.175391999,1.014087234999984e-12,32354.958550007814
-2,opamp_sample_0002,True,True,True,66.06982803344727,"{'half_diffpair_params': [7, 1, 4], 'diffpair_bias': [7, 2, 4], 'add_output_stage': False}",opamp_dataset_5_samples/sample_0002,PEX Complete,2774522.733108223,1.0228300729999807e-12,33071.14575000877
-3,opamp_sample_0003,True,True,True,72.4274263381958,"{'half_common_source_params': [8, 1, 12, 3], 'half_common_source_bias': [7, 2, 10, 2], 'add_output_stage': False}",opamp_dataset_5_samples/sample_0003,PEX Complete,3103450.8866293416,1.1390357030000414e-12,36607.799750002276
-4,opamp_sample_0004,True,True,True,64.49638605117798,"{'output_stage_params': [6, 1, 20], 'output_stage_bias': [6, 2, 6], 'add_output_stage': False}",opamp_dataset_5_samples/sample_0004,PEX Complete,2823416.175391999,1.0140873439999839e-12,32354.958550007814
-5,opamp_sample_0005,True,True,True,62.25819659233093,"{'half_pload': [5, 1, 4], 'add_output_stage': False}",opamp_dataset_5_samples/sample_0005,PEX Complete,2619936.0856910627,9.67341811000016e-13,31158.269350007184
