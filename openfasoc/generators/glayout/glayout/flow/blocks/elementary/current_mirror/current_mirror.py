@@ -22,12 +22,51 @@ except ImportError:
     print("Warning: evaluator_wrapper not found. Evaluation will be skipped.")
     run_evaluation = None
 
+def sky130_add_cm_labels(cm_in: Component) -> Component:
+	
+    cm_in.unlock()
+    
+    # define layers`
+    met1_pin = (68,16)
+    met1_label = (68,5)
+    met2_pin = (69,16)
+    met2_label = (69,5)
+    # list that will contain all port/comp info
+    move_info = list()
+    # create labels and append to info list
+    # vss
+    vsslabel = rectangle(layer=met1_pin,size=(0.27,0.27),centered=True).copy()
+    vsslabel.add_label(text="VSS",layer=met1_label)
+    move_info.append((vsslabel,cm_in.ports["fet_A_source_E"],None))
+    
+    # vref
+    vreflabel = rectangle(layer=met1_pin,size=(0.27,0.27),centered=True).copy()
+    vreflabel.add_label(text="VREF",layer=met1_label)
+    move_info.append((vreflabel,cm_in.ports["fet_A_drain_N"],None))
+    
+    # vcopy
+    vcopylabel = rectangle(layer=met1_pin,size=(0.27,0.27),centered=True).copy()
+    vcopylabel.add_label(text="VCOPY",layer=met1_label)
+    move_info.append((vcopylabel,cm_in.ports["fet_B_drain_N"],None))
+    
+    # VB
+    vblabel = rectangle(layer=met1_pin,size=(0.5,0.5),centered=True).copy()
+    vblabel.add_label(text="VB",layer=met1_label)
+    move_info.append((vblabel,cm_in.ports["welltie_S_top_met_S"], None))
+    
+    # move everything to position
+    for comp, prt, alignment in move_info:
+        alignment = ('c','b') if alignment is None else alignment
+        compref = align_comp_to_port(comp, prt, alignment=alignment)
+        cm_in.add(compref)
+    return cm_in.flatten() 
 
 def current_mirror_netlist(
     pdk: MappedPDK, 
     width: float,
     length: float,
     multipliers: int, 
+    with_dummy: Optional[bool] = False,
     n_or_p_fet: Optional[str] = 'nfet',
     subckt_only: Optional[bool] = False
 ) -> Netlist:
@@ -41,6 +80,8 @@ def current_mirror_netlist(
     source_netlist = """.subckt {circuit_name} {nodes} """ + f'l={length} w={width} m={mtop} ' + """
 XA VREF VREF VSS VB {model} l={{l}} w={{w}} m={{m}}
 XB VCOPY VREF VSS VB {model} l={{l}} w={{w}} m={{m}}"""
+    if with_dummy:
+        source_netlist += "\nXDUMMY VB VB VB VB {model} l={{l}} w={{w}} m={{2}}"
     source_netlist += "\n.ends {circuit_name}"
 
     instance_format = "X{name} {nodes} {circuit_name} l={length} w={width} m={mult}"
@@ -131,7 +172,8 @@ def current_mirror(
         tie_ref = top_level << tapring(pdk, enclosed_rectangle = tap_encloses, sdlayer = tap_layer, horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
         top_level.add_ports(tie_ref.get_ports_list(), prefix="welltie_")
         try:
-            top_level << straight_route(pdk, top_level.ports["A_0_dummy_L_gsdcon_top_met_W"],top_level.ports["welltie_W_top_met_W"],glayer2="met1")
+            top_level << straight_route(pdk, top_level.ports[f"fet_B_{numcols - 1}_dummy_R_gsdcon_top_met_E"],top_level.ports["welltie_E_top_met_E"],glayer2="met1")
+            top_level << straight_route(pdk, top_level.ports["fet_A_0_dummy_L_gsdcon_top_met_W"],top_level.ports["welltie_W_top_met_W"],glayer2="met1")
         except KeyError:
             pass
         try:
@@ -165,7 +207,7 @@ def current_mirror(
     
     top_level.info['netlist'] = current_mirror_netlist(
         pdk, 
-        width=kwargs.get('width', 3), length=kwargs.get('length', 1), multipliers=numcols, 
+        width=kwargs.get('width', 3), length=kwargs.get('length', 0.15), multipliers=numcols, with_dummy=with_dummy,
         n_or_p_fet=device,
         subckt_only=True
     )
