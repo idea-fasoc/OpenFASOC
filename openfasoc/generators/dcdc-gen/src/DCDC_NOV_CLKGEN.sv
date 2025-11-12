@@ -30,15 +30,15 @@ module DCDC_NOV_CLKGEN #(parameter N_delay) (
     MUX4 mux4(.y(clk_in9), .a(out1), .b(out2), .c(out3), .d(out4), .s(s));
 
     //output clk0, clk0b
-	sky130_fd_sc_hs__nand2_1 nand1(.Y(nandout1), .A(clk_in1[0]), .B(clk_in9));
-	sky130_fd_sc_hs__clkinv_1 not1(.Y(nandout2), .A(nandout1));
-	sky130_fd_sc_hs__clkinv_1 not2(.Y(clk0b), .A(nandout2));
+    ${cell('nand2')} nand1(.Y(nandout1), .A(clk_in1[0]), .B(clk_in9));
+    ${cell('clkinv')} not1(.Y(nandout2), .A(nandout1));
+    ${cell('clkinv')} not2(.Y(clk0b), .A(nandout2));
 	DCDC_BUFFER buf1(clk0, nandout2);
 
 	//output clk1, clk1b
-	sky130_fd_sc_hs__nor2_1 nor1(.Y(norout1), .A(clk_in1[0]), .B(clk_in9));
-	sky130_fd_sc_hs__clkinv_1 not3(.Y(norout2), .A(norout1));
-	sky130_fd_sc_hs__clkinv_1 not4(.Y(clk1), .A(norout2));
+    ${cell('nor2')} nor1(.Y(norout1), .A(clk_in1[0]), .B(clk_in9));
+    ${cell('clkinv')} not3(.Y(norout2), .A(norout1));
+    ${cell('clkinv')} not4(.Y(clk1), .A(norout2));
     DCDC_BUFFER buf2(clk1b, norout2);
 endmodule
 

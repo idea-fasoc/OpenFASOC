@@ -1,7 +1,5 @@
 ##for HSPICE netlist
 import re
-import function
-import os
 import sys
 import math
 
@@ -9,8 +7,7 @@ import numpy as np
 from scipy import interpolate
 
 
-def gen_dcdc_netlist(cells, args, jsonSpec, platformConfig, srcDir):
-
+def gen_dcdc_netlist_parameters(args, jsonSpec, platformConfig):
     # power mux models
     xs = list(range(100, 10001, 100))
     ys = [
@@ -2036,70 +2033,9 @@ def gen_dcdc_netlist(cells, args, jsonSpec, platformConfig, srcDir):
     print("dcdc_sw_size: " + str(dcdc_sw_size))
     print("pow_mux_config: " + ",".join(powmux_config) + "\n\n")
 
-    # process 6-stage conv verilog
-    with open(srcDir + "/DCDC_SIX_STAGES_CONV.template.v", "r") as file:
-        filedata = file.read()
-        filedata = re.sub(r"(?<=DCDC_CAP_SIZE = ).+(?=;)", str(dcdc_cap_size), filedata)
-        filedata = re.sub(r"(?<=DCDC_SW_SIZE = ).+(?=;)", str(dcdc_sw_size), filedata)
-        filedata = re.sub(
-            r"(?<=DCDC_PWR_MUX_CONF = ).+(?=;)",
-            "{" + ",".join(powmux_config) + "}",
-            filedata,
-        )
-
-    with open(srcDir + "/DCDC_SIX_STAGES_CONV.v", "w") as file:
-        file.write(filedata)
-
-    # process the top level verilog
-    r_netlist = open(srcDir + "/dcdcInst.template.v", "r")
-    lines = list(r_netlist.readlines())
-    w_netlist = open(srcDir + "/dcdcInst.v", "w")
-
-    netmap_top = function.netmap()
-    netmap_top.get_net("na", cells["ff_cell"], 1, 1, 1)
-    netmap_top.get_net("nb", cells["inv_cell"], 1, 1, 1)
-    netmap_top.get_net("nc", cells["clkgate_cell"], 1, 1, 1)
-
-    for line in lines:
-        netmap_top.printline(line, w_netlist)
-
-    # process the non-inverting clock verilog
-    r_netlist = open(srcDir + "/DCDC_NOV_CLKGEN.template.sv", "r")
-    lines = list(r_netlist.readlines())
-    w_netlist = open(srcDir + "/DCDC_NOV_CLKGEN.sv", "w")
-
-    netmap_novclkgen = function.netmap()
-    netmap_novclkgen.get_net("na", cells["nand2_cell"], 1, 1, 1)
-    netmap_novclkgen.get_net("nb", cells["clkinv_cell"], 1, 1, 1)
-    netmap_novclkgen.get_net("nc", cells["clkinv_cell"], 1, 1, 1)
-    netmap_novclkgen.get_net("ne", cells["clkinv_cell"], 1, 1, 1)
-    netmap_novclkgen.get_net("nf", cells["clkinv_cell"], 1, 1, 1)
-    netmap_novclkgen.get_net("nd", cells["nor2_cell"], 1, 1, 1)
-
-    for line in lines:
-        netmap_novclkgen.printline(line, w_netlist)
-
-    netmap_buffer = function.netmap()
-    netmap_buffer.get_net("nb", cells["clkinv_cell"], 1, 1, 1)
-    netmap_buffer.get_net("nc", cells["clkinv_cell"], 1, 1, 1)
-
-    r_netlist = open(srcDir + "/DCDC_BUFFER.template.sv", "r")
-    lines = list(r_netlist.readlines())
-    w_netlist = open(srcDir + "/DCDC_BUFFER.sv", "w")
-
-    for line in lines:
-        netmap_buffer.printline(line, w_netlist)
-
-    # process the power mux verilog
-    r_netlist = open(srcDir + "/DCDC_POWMUX.template.v", "r")
-    lines = list(r_netlist.readlines())
-    w_netlist = open(srcDir + "/DCDC_POWMUX.v", "w")
-
-    netmap_powmux = function.netmap()
-    # netmap_powmux.get_net('na',cells['inv_cell_w'],1,1,1)
-    # netmap_powmux.get_net('nb',cells['inv_cell_w'],1,1,1)
-
-    for line in lines:
-        netmap_powmux.printline(line, w_netlist)
-
-    return
+    powmux_config_str = "{" + ",".join(powmux_config) + "}"
+    return {
+        "dcdc_cap_size": dcdc_cap_size,
+        "dcdc_sw_size": dcdc_sw_size,
+        "powmux_config": powmux_config_str,
+    }
