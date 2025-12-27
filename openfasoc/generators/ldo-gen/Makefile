@@ -18,6 +18,9 @@ endif
 ifdef pex
 UserSpec += --pex $(pex)
 endif
+ifdef arrSize
+UserSpec += --arr_size_in $(arrSize)
+endif
 
 help:banner
 	@@echo "OpenFASOC is focused on open source automated analog generation"
