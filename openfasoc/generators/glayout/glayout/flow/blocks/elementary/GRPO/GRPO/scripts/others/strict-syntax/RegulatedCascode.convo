@@ -1,0 +1,20 @@
+RegulatedCascode
+# figure 48
+// no imports
+// create parameters: cascode_width, feedback_width, cascode_length, feedback_length, cascode_multiplier, feedback_multiplier, cascode_fingers, feedback_fingers
+create a float parameter called cascode_width
+create a float parameter called feedback_width
+create a float parameter called cascode_length
+create a float parameter called feedback_length
+create a int parameter called cascode_multiplier
+create a int parameter called feedback_multiplier
+create a int parameter called cascode_fingers
+create a int parameter called feedback_fingers
+// place
+place a nmos called cascode with width=cascode_width, length=cascode_length, fingers=cascode_fingers, rmult=1, multipliers=cascode_multiplier, with_substrate_tap=False, with_tie=False, with_dummy=False 
+place a nmos called feedback with width=feedback_width, length=feedback_length, fingers=feedback_fingers, rmult=1, multipliers=feedback_multiplier, with_substrate_tap=False, with_tie=False, with_dummy=False 
+// more than one component has been placed, so move
+move feedback below cascode
+// regulated cascode, route gate to drain, and gate to source
+route between cascode_gate_E and feedback_drain_E using smart_route
+route between feedback_gate_W and feedback_source_W using smart_route

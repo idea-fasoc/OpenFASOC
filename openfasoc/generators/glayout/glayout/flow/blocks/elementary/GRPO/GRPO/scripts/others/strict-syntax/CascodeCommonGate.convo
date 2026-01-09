@@ -1,0 +1,19 @@
+CascodeCommonGate
+// no imports
+// create parameters: input_width, output_width, input_length, output_length, input_multipliers, output_multipliers, input_fingers, output_fingers
+# figure 12 exactly except output and input might be swapped
+create a float parameter called input_width
+create a float parameter called output_width
+create a float parameter called input_length
+create a float parameter called output_length
+create a int parameter called input_multipliers
+create a int parameter called output_multipliers
+create a int parameter called input_fingers
+create a int parameter called output_fingers
+// place
+place a nmos called input with width=input_width, length=input_length, fingers=input_fingers, rmult=1, multipliers=input_multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called output with width=output_width, length=output_length, fingers=output_fingers, rmult=1, multipliers=output_multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+// more than one component has been placed, so move
+move output above input
+// cascode common gate, route source to drain
+route between input_source_W and output_drain_W using smart_route

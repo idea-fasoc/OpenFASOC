@@ -1,0 +1,48 @@
+StrongArmLatch
+// import required components
+import CrossCoupledInverters
+// create parameters: bridge_width, clkgnd_width, clkpwr_width, bridge_length, clkgnd_length, clkpwr_length, ccinvs_length, bridge_multipliers, clkgnd_multipliers, clkpwr_multipliers, bridge_fingers, clkgnd_fingers, clkpwr_fingers, ccinvs_fingers
+create a float parameter called bridge_width
+create a float parameter called clkgnd_width
+create a float parameter called clkpwr_width
+create a float parameter called bridge_length
+create a float parameter called clkgnd_length
+create a float parameter called clkpwr_length
+create a float parameter called ccinvs_length
+create a int parameter called bridge_multipliers
+create a int parameter called clkgnd_multipliers
+create a int parameter called clkpwr_multipliers
+create a int parameter called bridge_fingers
+create a int parameter called clkgnd_fingers
+create a int parameter called clkpwr_fingers
+create a int parameter called ccinvs_fingers
+// place
+place a diff pair called inputdiff
+place a CrossCoupledInverters called ccinvs with ccinvs_fingers=ccinvs_fingers, ccinvs_length=ccinvs_length
+place a nmos called clkgnd with width=clkgnd_width, length=clkgnd_length, fingers=clkgnd_fingers, rmult=1, multipliers=clkgnd_multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called bridge with width=bridge_width, length=bridge_length, fingers=bridge_fingers, rmult=1, multipliers=bridge_multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a pmos called clkpwrL with width=clkpwr_width, length=clkpwr_length, fingers=clkpwr_fingers, rmult=1, multipliers=clkpwr_multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True
+place a pmos called clkpwrR with width=clkpwr_width, length=clkpwr_length, fingers=clkpwr_fingers, rmult=1, multipliers=clkpwr_multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True
+// more than one component has been placed, so move
+move clkgnd below inputdiff
+move bridge above inputdiff
+move ccinvs above bridge
+move clkpwrR right of ccinvs
+move clkpwrR above bridge
+move clkpwrL left of ccinvs
+move clkpwrL above bridge
+// strong arm latch, route bridge to inputdiff, inputdiff to clkgnd, ccinvs to clkpwr, bridge to ccins, and clock routing
+# route bridge to inputdiff
+route between inputdiff_A_drain_E and bridge_drain_E using smart_route
+route between inputdiff_B_drain_W and bridge_source_W using smart_route
+# route inputdiff with clkgnd
+route between inputdiff_A_source_E and clkgnd_multiplier_0_drain_E using smart_route
+# route ccinvs to clkpwr
+route between ccinvs_ccinvs_top_A_drain_W and clkpwrL_drain_W using smart_route
+route between ccinvs_ccinvs_top_B_source_E and clkpwrR_drain_E using smart_route
+# route bridge to ccinvs
+route between bridge_source_W and ccinvs_ccinvs_bottom_A_source_W using smart_route
+route between bridge_drain_E and ccinvs_ccinvs_bottom_B_source_E using smart_route
+# clock routing
+route between clkgnd_gate_W and clkpwrL_gate_W using smart_route
+route between clkgnd_gate_E and clkpwrR_gate_E using smart_route

@@ -1,0 +1,21 @@
+CommonSourceAmplifierFoldedDiodeLoad
+# figure 18 exactly
+// no imports
+// create parameters: input_width, diode_width, input_length, diode_length, input_multiplier, diode_multiplier, input_fingers, diode_fingers
+create a float parameter called input_width
+create a float parameter called diode_width
+create a float parameter called input_length
+create a float parameter called diode_length 
+create a int parameter called input_multiplier
+create a int parameter called diode_multiplier
+create a int parameter called input_fingers
+create a int parameter called diode_fingers
+// place
+place a nmos called input with width=input_width, length=input_length, fingers=input_fingers, rmult=1, multipliers=input_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called diode with width=diode_width, length=diode_length, fingers=diode_fingers, rmult=1, multipliers=diode_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+// more than one component has been placed, so move
+move diode below input
+// common source amplifier with folded diode load, source to drain, gate to drain, and drain to drain
+route between diode_gate_E and diode_drain_E using smart_route
+route between input_source_W and diode_source_W using smart_route
+route between input_drain_E and diode_drain_E using smart_route

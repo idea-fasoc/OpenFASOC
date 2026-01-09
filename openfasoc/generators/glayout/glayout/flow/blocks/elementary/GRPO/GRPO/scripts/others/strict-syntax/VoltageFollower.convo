@@ -1,0 +1,21 @@
+VoltageFollower
+# figure 33
+# tet stands for Transconductance Enhancement Transistor and gsc stands for Gate-Source Capacitance Transistor
+// no imports
+// create parameters: gsc_width, tet_width, gsc_length, tet_length, gsc_multiplier, tet_multiplier, gsc_fingers, tet_fingers
+create a float parameter called gsc_width
+create a float parameter called tet_width
+create a float parameter called gsc_length
+create a float parameter called tet_length
+create a int parameter called gsc_multiplier
+create a int parameter called tet_multiplier
+create a int parameter called gsc_fingers
+create a int parameter called tet_fingers
+// place
+place a nmos called gsc with width=gsc_width, length=gsc_length, fingers=gsc_fingers, rmult=1, multipliers=gsc_multiplier, with_substrate_tap=False, with_tie=False, with_dummy=False
+place a nmos called tet with width=tet_width, length=tet_length, fingers=tet_fingers, rmult=1, multipliers=tet_multiplier, with_substrate_tap=False, with_tie=False, with_dummy=False
+// more than one component has been placed, so move
+move gsc above tet
+// voltage follower route source to drain and drain to gate
+route between tet_source_W and gsc_drain_W using smart_route
+route between tet_drain_E and gsc_gate_E using smart_route

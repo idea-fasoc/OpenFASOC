@@ -1,0 +1,12 @@
+ClassBPushPullInterdigitated
+// no imports
+// create parameters: width, length, fingers
+create a float parameter called width
+create a float parameter called length
+create an int parameter called fingers
+// place
+place an interdigitated nfet called ClassBPushPull with numcols=fingers, dummy=True, with_substrate_tap=False, with_tie=True, kwargs={"width": width, "length": length, "rmult":1}
+// only one component placed, so no move
+// class B push pull amplifier, route source to source, and gate to gate
+route between ClassBPushPull_A_source_W and ClassBPushPull_B_source_W using smart_route
+route between ClassBPushPull_A_gate_E and ClassBPushPull_B_gate_E using smart_route

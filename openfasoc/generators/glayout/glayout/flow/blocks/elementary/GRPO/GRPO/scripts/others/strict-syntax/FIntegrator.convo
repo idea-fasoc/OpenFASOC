@@ -1,0 +1,20 @@
+FIntegrator
+# Make the first integrator
+import CurrentMirrorPFET
+import CurrentMirrorNFET
+# Make the diff pair
+# TODO: parametrize this
+place an interdigitated pfet called gm1 with numcols=2, dummy=True, with_substrate_tap=False, with_tie=True, tie_layers=("met2","met1"), kwargs={ "width" : 1 , "length" : 1}
+place a CurrentMirrorPFET called source
+place a CurrentMirrorNFET called sink
+place an interdigitated nfet called dummy with numcols=2, dummy=True, with_substrate_tap=False, with_tie=True, tie_layers=("met2","met1"), kwargs={ "width" : 1 , "length" : 1}
+move source above gm1 
+move dummy below gm1
+move sink below dummy
+# short sources of the diffpair
+route between gm1_A_source_E and gm1_B_source_E
+# Connect the drain of source's B to the source of the diffpairs
+route between gm1_A_source_W and source_cm_B_drain_W using c_route with extension=2
+# Connect the drains of the diffpair to the drains of the sink
+route between gm1_A_drain_E and sink_cm_A_drain_E using smart_route
+route between gm1_B_drain_W and sink_cm_B_drain_W using c_route

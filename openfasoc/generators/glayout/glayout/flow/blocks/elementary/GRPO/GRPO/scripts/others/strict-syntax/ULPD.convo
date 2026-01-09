@@ -1,0 +1,21 @@
+ULPD
+# ultra low power diode
+# figure 43
+// no imports
+// create parameters: forward_width, leakred_width, forward_length, leakred_length, forward_multiplier, leakred_multiplier, forward_fingers, leakred_fingers
+create a float parameter called forward_width
+create a float parameter called leakred_width
+create a float parameter called forward_length
+create a float parameter called leakred_length
+create a int parameter called forward_multiplier
+create a int parameter called leakred_multiplier
+create a int parameter called forward_fingers
+create a int parameter called leakred_fingers
+// place
+place a nmos called forward with width=forward_width, length=forward_length, fingers=forward_fingers, rmult=1, multipliers=forward_multiplier, with_substrate_tap=False, with_tie=False, with_dummy=False 
+place a nmos called leakred with width=leakred_width, length=leakred_length, fingers=leakred_fingers, rmult=1, multipliers=leakred_multiplier, with_substrate_tap=False, with_tie=False, with_dummy=False 
+// more than one component has been placed, so move
+move forward above leakred
+// low power diode, route gate to source, and source to gate
+route between forward_gate_E and leakred_source_E using smart_route
+route between forward_source_W and leakred_gate_W using smart_route

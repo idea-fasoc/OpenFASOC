@@ -1,0 +1,20 @@
+LowNoiseAmp
+// no imports
+// create parameters: input_width, gain_width, input_length, gain_length, input_multiplier, gain_multiplier, input_fingers, gain_fingers
+# figure 23 exactly
+create a float parameter called input_width
+create a float parameter called gain_width
+create a float parameter called input_length
+create a float parameter called gain_length
+create a int parameter called input_multiplier
+create a int parameter called gain_multiplier
+create a int parameter called input_fingers
+create a int parameter called gain_fingers
+// place
+place a nmos called input with width=input_width, length=input_length, fingers=input_fingers, rmult=1, multipliers=input_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called gain with width=gain_width, length=gain_length, fingers=gain_fingers, rmult=1, multipliers=gain_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+// more than one component has been placed, so move
+move gain below 
+// low noise amplifier, route source to drain and gate to source
+route between input_source_W and gain_drain_W using smart_route
+route between input_gate_E and gain_source_E using smart_route

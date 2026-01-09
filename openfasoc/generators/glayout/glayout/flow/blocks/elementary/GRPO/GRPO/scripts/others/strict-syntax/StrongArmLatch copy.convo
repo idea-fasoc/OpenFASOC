@@ -1,0 +1,29 @@
+StrongArmLatch
+import CrossCoupledInverters
+place a diff pair called inputdiff
+place CrossCoupledInverters called ccinvs with ccinvs_numfingers=4
+place a nfet called bridge with with_substrate_tap=False with_dnwell=False
+place a nfet called clkgnd with with_substrate_tap=False with_dnwell=False
+place a pfet called clkpwrL
+place a pfet called clkpwrR
+move clkgnd below inputdiff
+move bridge above inputdiff
+move ccinvs above bridge
+move clkpwrR to the right of ccinvs
+move clkpwrR above bridge
+move clkpwrL to the left of ccinvs
+move clkpwrL above bridge
+# route bridge to inputdiff
+route between inputdiff_A_drain_E and bridge_multiplier_0_drain_E
+route between inputdiff_B_drain_W and bridge_multiplier_0_source_W
+# route inputdiff with clkgnd
+route between inputdiff_A_source_E and clkgnd_multiplier_0_drain_E
+# route ccinvs to clkpwr
+route between ccinvs_ccinvs_top_A_drain_W and clkpwrL_multiplier_0_drain_W
+route between ccinvs_ccinvs_top_B_source_E and clkpwrR_multiplier_0_drain_E
+# route bridge to ccinvs
+route between bridge_multiplier_0_source_W and ccinvs_ccinvs_bottom_A_source_W
+route between bridge_multiplier_0_drain_E and ccinvs_ccinvs_bottom_B_source_E
+# clock routing
+route between clkgnd_multiplier_0_gate_W and clkpwrL_multiplier_0_gate_W
+route between clkgnd_multiplier_0_gate_E and clkpwrR_multiplier_0_gate_E

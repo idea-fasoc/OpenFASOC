@@ -1,0 +1,6 @@
+Inverter
+place a nmos called m1 with width 1 length 1 fingers 1 rmult 1 multipliers 1 with_substrate_tap False with_tie False sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy False 
+place a pmos called m2 with width 1 length 1 fingers 1 rmult 1 multipliers 1 with_substrate_tap False with_tie False sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy False 
+move m2 above m1
+route between m2_multiplier_0_source_W and m1_multiplier_0_drain_W using smart_route
+route between m2_multiplier_0_gate_W and m1_multiplier_0_gate_W using smart_route

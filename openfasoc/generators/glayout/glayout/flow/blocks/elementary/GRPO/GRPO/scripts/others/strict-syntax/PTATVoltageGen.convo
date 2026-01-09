@@ -1,0 +1,21 @@
+PTATVoltageGen
+# figure 26 exactly
+// no imports
+// create parameters: bias_width, mirror_width, bias_length, mirror_length, bias_multiplier, mirror_multiplier, bias_fingers, mirror_fingers
+create a float parameter called bias_width
+create a float parameter called mirror_width
+create a float parameter called bias_length
+create a float parameter called mirror_length
+create a int parameter called bias_multiplier
+create a int parameter called mirror_multiplier
+create a int parameter called bias_fingers
+create a int parameter called mirror_fingers
+// place
+place a nmos called bias with width=bias_width, length=bias_length, fingers=bias_fingers, rmult=1, multipliers=bias_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called mirror with width=mirror_width, length=mirror_length, fingers=mirror_fingers, rmult=1, multipliers=mirror_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+// more than one component has been placed, so move
+move bias below mirror
+// PTAT, route source to drain, gate to gate, and gate to drain
+route between mirror_source_E and bias_drain_E using smart_route
+route between mirror_gate_W and bias_gate_W using smart_route
+route between mirror_gate_W and mirror_drain_W using smart_route

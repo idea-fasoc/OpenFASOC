@@ -1,0 +1,15 @@
+NAND
+create a float parameter called nfet_width
+create a float parameter called pfet_width
+place a nmos called m1 with width nfet_width fingers 1 rmult 1 multipliers 1 with_substrate_tap False with_tie False sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy False 
+place a nmos called m2 with width nfet_width fingers 1 rmult 1 multipliers 1 with_substrate_tap False with_tie False sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy False 
+place a pmos called m3 with width pfet_width fingers 1 rmult 1 multipliers 1 with_substrate_tap False with_tie False sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy False 
+place a pmos called m4 with width pfet_width fingers 1 rmult 1 multipliers 1 with_substrate_tap False with_tie False sd_rmult 1 gate_rmult 1 interfinger_rmult 1 with_dummy False 
+move m3 above m1
+move m2 to the right of m1
+move m4 north of m1
+move m4 to the right of m3
+route between m1_multiplier_0_drain_W and m2_multiplier_0_source_W using smart_route
+route between m2_multiplier_0_drain_W and m3_multiplier_0_drain_W using smart_route
+route between m3_multiplier_0_source_W and m4_multiplier_0_source_W using smart_route
+route between m3_multiplier_0_drain_W and m4_multiplier_0_drain_W using smart_route

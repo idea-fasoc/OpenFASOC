@@ -1,0 +1,29 @@
+ClassABStage
+// import required components
+import PushPull
+import CurrentMirrorNFET
+// create parameters: source_numcols, gm31_numcols, source_length, gm31_length, source_width, gm31_width
+create a float parameter called source_numcols
+create a float parameter called gm31_numcols
+create a float parameter called source_length
+create a float parameter called gm31_length
+create a float parameter called source_width
+create a float parameter called gm31_width
+// place
+place a PushPull called pp1 
+place a PushPull called pp2
+place an interdigitated pfet called source with numcols=source_numcols, dummy=True, with_substrate_tap=False, with_tie=True, kwargs={ "width" : source_width , "length" : source_width}
+place an interdigitated nfet called gm31 with numcols=gm31_numcols, dummy=True, with_substrate_tap=False, with_tie=True, kwargs={ "width" : gm31_width , "length" : gm31_length}
+place a CurrentMirrorNFET called sink
+// more than one component has been placed, so move
+move source above gm31
+move pp1 right of gm31
+move pp2 right of pp1
+move sink below gm31
+// class AB stage, route components together
+route between source_A_drain_E and gm31_A_drain_E using smart_route
+route between source_B_drain_W and gm31_B_drain_W using smart_route
+route between gm31_A_source_W and sink_cm_A_drain_W using smart_route
+route between gm31_B_source_E and sink_cm_B_drain_E using smart_route
+route between gm31_A_drain_E and pp1_c3_top_met_W using smart_route
+route between gm31_B_drain_E and pp2_c3_top_met_W using smart_route

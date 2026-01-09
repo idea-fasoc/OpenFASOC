@@ -1,0 +1,21 @@
+ConstBiasVoltageGen
+// no imports
+// create parameters: source_width, load_width, source_length, load_length, source_multiplier, load_multiplier, source_fingers, load_fingers
+# figure 25 exactly: CONSTANT bias voltage generator
+create a float parameter called source_width
+create a float parameter called load_width
+create a float parameter called source_length
+create a float parameter called load_length 
+create a int parameter called source_multiplier
+create a int parameter called load_multiplier
+create a int parameter called source_fingers
+create a int parameter called load_fingers
+// place
+place a nmos called source with width=source_width, length=source_length, fingers=source_fingers, rmult=1, multipliers=source_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called load with width=load_width, length=load_length, fingers=load_fingers, rmult=1, multipliers=load_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+// more than one component has been placed, so move
+move load below source
+// bias voltage generator, route source to drain, gate to drain, and gate to source
+route between source_source_E and load_drain_E using smart_route
+route between load_gate_E and load_drain_E using smart_route
+route between source_gate_W and load_source_W using smart_route

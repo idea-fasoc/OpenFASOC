@@ -1,0 +1,40 @@
+MimcapArray
+// no imports
+// create parameters: mimcap_size_x, mimcap_size_y
+create a float parameter called mimcap_size_x
+create a float parameter called mimcap_size_y
+# 2 rows by 3 cols
+// place 2*3=6 array elements
+place a mimcap called element1 with size=(mimcap_size_x,mimcap_size_y)
+place a mimcap called element2 with size=(mimcap_size_x,mimcap_size_y)
+place a mimcap called element3 with size=(mimcap_size_x,mimcap_size_y)
+place a mimcap called element4 with size=(mimcap_size_x,mimcap_size_y)
+place a mimcap called element5 with size=(mimcap_size_x,mimcap_size_y)
+place a mimcap called element6 with size=(mimcap_size_x,mimcap_size_y)
+// array from bottom left to top right
+// first row
+move element2 to the right of element1
+move element3 to the right of element2
+// second row
+move element4 above element1
+move element5 above element1
+move element6 above element1
+move element5 to the right of element4
+move element6 to the right of element5
+// route top_met_ of the mimcaps and bottom_met_ of the mimcaps
+# route top met
+route between element1_top_met_E and element2_top_met_W using smart_route
+route between element2_top_met_E and element3_top_met_W using smart_route
+route between element4_top_met_E and element5_top_met_W using smart_route
+route between element5_top_met_E and element6_top_met_W using smart_route
+route between element1_top_met_N and element4_top_met_S using smart_route
+route between element2_top_met_N and element5_top_met_S using smart_route
+route between element3_top_met_N and element6_top_met_S using smart_route
+# route bottom met
+route between element1_bottom_met_E and element2_bottom_met_W using smart_route
+route between element2_bottom_met_E and element3_bottom_met_W using smart_route
+route between element4_bottom_met_E and element5_bottom_met_W using smart_route
+route between element5_bottom_met_E and element6_bottom_met_W using smart_route
+route between element1_bottom_met_N and element4_bottom_met_S using smart_route
+route between element2_bottom_met_N and element5_bottom_met_S using smart_route
+route between element3_bottom_met_N and element6_bottom_met_S using smart_route

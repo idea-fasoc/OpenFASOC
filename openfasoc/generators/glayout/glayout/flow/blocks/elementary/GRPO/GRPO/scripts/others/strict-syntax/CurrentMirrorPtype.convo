@@ -1,0 +1,22 @@
+CurrentMirrorPtype
+# Todo rename stuff
+# ntype current mirror
+// no imports
+// create parameters: reference_width, mirror_width, reference_length, mirror_length, reference_multiplier, mirror_multiplier, reference_fingers, mirror_fingers
+create a float parameter called reference_width
+create a float parameter called mirror_width
+create a float parameter called reference_length
+create a float parameter called mirror_length 
+create a int parameter called reference_multiplier
+create a int parameter called mirror_multiplier
+create a int parameter called reference_fingers
+create a int parameter called mirror_fingers
+// place
+place a pmos called reference with width=reference_width, length=reference_length, fingers=reference_fingers, rmult=1, multipliers=reference_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True
+place a pmos called mirror with width=mirror_width, length=mirror_length, fingers=mirror_fingers, rmult=1, multipliers=mirror_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True
+// more than one component has been placed, so move
+move mirror to the right of reference
+// current mirror, route reference gate to mirror gate, reference drain to reference gate, and reference source to mirror source
+route between reference_gate_E and mirror_gate_E using smart_route
+route between mirror_drain_E and mirror_gate_E using smart_route
+route between mirror_source_E and mirror_source_E using smart_route

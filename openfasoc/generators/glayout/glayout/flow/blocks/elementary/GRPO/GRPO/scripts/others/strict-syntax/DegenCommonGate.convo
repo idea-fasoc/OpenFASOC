@@ -1,0 +1,21 @@
+DegenCommonGate
+# figure 21
+# The degeneration of M1 can be adapted by tuning Vbias.
+// no imports
+// create parameters: isrc_width, load_width, isrc_length, load_length, isrc_multiplier, load_multiplier, isrc_fingers, load_fingers
+create a float parameter called isrc_width
+create a float parameter called load_width
+create a float parameter called isrc_length
+create a float parameter called load_length
+create a int parameter called isrc_multiplier
+create a int parameter called load_multiplier
+create a int parameter called isrc_fingers
+create a int parameter called load_fingers
+// place
+place a nmos called isrc with width isrc_width, length isrc_length, fingers isrc_fingers, rmult 1, multipliers isrc_multiplier, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
+place a nmos called load with width load_width, length load_length, fingers load_fingers, rmult 1, multipliers load_multiplier, with_substrate_tap False, with_tie True, with_dummy True, with_dnwell False
+// more than one component has been placed, so move
+move load below isrc
+// degen common gate, route source to drain
+route between isrc_source_W and load_drain_W using smart_route
+# route between load_tie_br_top_met_S and isrc_tie_tr_top_met_N using smart_route

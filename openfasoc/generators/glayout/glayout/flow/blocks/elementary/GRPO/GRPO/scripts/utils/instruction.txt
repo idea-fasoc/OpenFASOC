@@ -1,0 +1,43 @@
+step1:
+---------
+Properly import modules from gdsfactory and glayout package. Refer to this directory for available modules in glayout- https://github.com/idea-fasoc/OpenFASOC/main/openfasoc/generators/glayout/glayout/flow.
+
+step2:
+---------
+Create a function with multiple arguments(width, length, fingers, kwargs for used macros etc. as neccessary for that specific Pcell). Write comments about what those arguments are.
+
+step3:
+---------
+Create a top_level component for target Pcell.
+
+step4.
+---------
+Call primitives(pmos, nmos, multipliers), placements(interdigitized, common_centroid), or blocks(currrent_mirror, diff_pair...) as needed for target Pcell. Refer to the files in the package for needed arguments.
+
+step5:
+---------
+Create reference of called components to the top_level.(connect with our component).
+
+step5:
+---------
+Properly place the componentreferences using move,movex,movey. Find destination using evaluate_bbox, {compref}.xmin/xmax/ymn/ymax. All these are documented in the comp_utils module. 
+
+step6:
+---------
+Connect ports as needed for the PCell. Use routing directory in the repo as a guide. Create intermediate vias if neccessary.
+
+step7.
+---------
+Connect all the ports to the top_level by adding proper prefixes.
+
+step8.
+---------
+Create a seperate netlist function for our block. Use the spice directory in the repo as a guide. Call that function inside our main function to create a netlist for our Pcell.
+
+step8.
+---------
+Give some finishing touch by renaming all ports according to direction.... return the component.
+
+step9:
+--------
+Create another functions to add labels. The pins and labels should match with the netlist function. Use appropriate layers. Use the Pcells inside 'flow/blocks/elementary/' as a guide for this.

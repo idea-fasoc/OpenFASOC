@@ -1,0 +1,9 @@
+LatchedComparator
+create a float parameter called n_latch_width
+create a float parameter called p_latch_width
+import DFlipFlop
+import StrongArmLatch
+place a DFlipFlop called flipflop with n_flip_width n_latch_width p_flip_width p_latch_width
+place a StrongArmLatch called strong 
+move flipflop below strong
+route between strong_clkpwrL_multiplier_0_source_W and flipflop_inv_m1_multiplier_0_gate_W using smart_route

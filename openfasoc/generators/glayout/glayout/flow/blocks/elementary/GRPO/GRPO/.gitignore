@@ -1,0 +1,64 @@
+# Data directories (regenerable)
+data/
+external/
+models/
+plots/
+predictions/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Environment files
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+*~
+
+# Log files
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Model checkpoints (large files)
+*.bin
+*.safetensors
+*.pt
+*/pytorch_model.bin
+*/model.safetensors
+
+# GRPO training outputs (model weights)
+grpo_standalone_outputs/
+unsloth_compiled_cache/
+
+# Large output files
+output.json
+
+# WandB logs
+wandb/

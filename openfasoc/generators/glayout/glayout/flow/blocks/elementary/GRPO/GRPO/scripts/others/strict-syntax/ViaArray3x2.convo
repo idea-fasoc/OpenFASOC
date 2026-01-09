@@ -1,0 +1,51 @@
+ViaArray3x2
+# 3 rows by 2 cols array of vias
+// no imports
+// create parameters: glayer1, glayer2
+create a str parameter called glayer1
+create a str parameter called glayer2
+// place 3*2=6 array elements
+place a via called element1 with glayer1=glayer1, glayer2=glayer2
+place a via called element2 with glayer1=glayer1, glayer2=glayer2
+place a via called element3 with glayer1=glayer1, glayer2=glayer2
+place a via called element4 with glayer1=glayer1, glayer2=glayer2
+place a via called element5 with glayer1=glayer1, glayer2=glayer2
+place a via called element6 with glayer1=glayer1, glayer2=glayer2
+// move first row into position
+move element2 to the right of element1
+// move second row above first row
+move element3 above element1
+move element4 above element1
+move element4 to the right of element3
+// move third row above second row
+move element5 above element3
+move element6 above element3
+move element6 to the right of element5
+// route top_met_ of the vias and bottom_met_ of the vias
+# route top met
+# top_met_
+# row1
+route between element1_top_met_E and element2_top_met_W using smart_route
+# row2
+route between element3_top_met_E and element4_top_met_W using smart_route
+# row3
+route between element5_top_met_E and element6_top_met_W using smart_route
+# col1
+route between element1_top_met_N and element3_top_met_S using smart_route
+route between element3_top_met_N and element5_top_met_S using smart_route
+# col2
+route between element2_top_met_N and element4_top_met_S using smart_route
+route between element4_top_met_N and element6_top_met_S using smart_route
+# bottom_met_
+# row1
+route between element1_bottom_met_E and element2_bottom_met_W using smart_route
+# row2
+route between element3_bottom_met_E and element4_bottom_met_W using smart_route
+# row3
+route between element5_bottom_met_E and element6_bottom_met_W using smart_route
+# col1
+route between element1_bottom_met_N and element3_bottom_met_S using smart_route
+route between element3_bottom_met_N and element5_bottom_met_S using smart_route
+# col2
+route between element2_bottom_met_N and element4_bottom_met_S using smart_route
+route between element4_bottom_met_N and element6_bottom_met_S using smart_route

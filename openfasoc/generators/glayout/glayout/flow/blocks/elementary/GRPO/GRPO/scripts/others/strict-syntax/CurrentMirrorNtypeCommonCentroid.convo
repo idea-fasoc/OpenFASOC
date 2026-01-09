@@ -1,0 +1,13 @@
+CurrentMirrorNtypeCommonCentroid
+// no imports
+// create parameters: width, length, fingers
+create a float parameter called width
+create a float parameter called length
+create a int parameter called fingers
+// place
+place a common centroid pair called cmirror with width=width, length=length, fingers=fingers
+// only one component placed, so no move
+// current mirror, route reference gate to mirror gate, reference drain to reference gate, and reference source to mirror source
+route between cmirror_A_source_E and cmirror_B_source_E
+route between cmirror_A_drain_E and cmirror_B_gate_E
+route between cmirror_A_gate_E and cmirror_B_gate_E

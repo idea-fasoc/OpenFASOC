@@ -1,0 +1,26 @@
+NOR
+// no imports
+// create parameters: pullup_width, pulldown_width, pullup_length, pulldown_length, pullup_multiplier, pulldown_multiplier, pullup_fingers, pulldown_fingers
+create a float parameter called pullup_width
+create a float parameter called pulldown_width
+create a float parameter called pullup_length
+create a float parameter called pulldown_length
+create a int parameter called pullup_multiplier
+create a int parameter called pulldown_multiplier
+create a int parameter called pullup_fingers
+create a int parameter called pulldown_fingers
+// place
+place a nmos called pulldown1 with width=pulldown_width, fingers=pulldown_fingers, rmult=1, multipliers=pulldown_multiplier, with_substrate_tap=False, with_tie=False, with_dummy False 
+place a nmos called pulldown2 with width=pulldown_width, fingers=pulldown_fingers, rmult=1, multipliers=pulldown_multiplier, with_substrate_tap=False, with_tie=False, with_dummy False 
+place a pmos called pullup1 with width=pullup_width, fingers=pullup_fingers, rmult=1, multipliers=pullup_multiplier, with_substrate_tap=False, with_tie=False, with_dummy False 
+place a pmos called pullup2 with width=pullup_width, fingers=pullup_fingers, rmult=1, multipliers=pullup_multiplier, with_substrate_tap=False, with_tie=False, with_dummy False 
+// more than one component has been placed, so move
+move pullup1 above pulldown1
+move pulldown2 to the right of pulldown1
+move pullup2 north of pulldown1
+move pullup2 to the right of pullup1
+// Nor gate, route source to source, drain to drain for pullup and pulldown, and source to drain
+route between pulldown1_source_W and pulldown2_source_W using smart_route
+route between pulldown1_drain_W and pulldown2_drain_W using smart_route
+route between pulldown1_drain_W and pullup1_drain_W using smart_route
+route between pullup1_source_W and pullup2_drain_W using smart_route

@@ -1,0 +1,18 @@
+PTypeDiffPair 
+// no imports
+// create parameters: vin1_width, vin2_width, vin1_length, vin2_length, vin1_multiplier, vin2_multiplier, vin1_fingers, vin2_fingers
+create a float parameter called vin1_width
+create a float parameter called vin2_width
+create a float parameter called vin1_length
+create a float parameter called vin2_length
+create a int parameter called vin1_multiplier
+create a int parameter called vin2_multiplier
+create a int parameter called vin1_fingers
+create a int parameter called vin2_fingers
+// place
+place a pmos called vin1 with width=vin1_width, length=vin1_length, fingers=vin1_fingers, rmult=1, multipliers=vin1_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True
+place a pmos called vin2 with width=vin2_width, length=vin2_length, fingers=vin2_fingers, rmult=1, multipliers=vin2_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True
+// more than one component has been placed, so move
+move vin1 to the left of vin2
+// differential pair only has one route which is source to source
+route between vin1_source_E and vin2_source_W using smart_route

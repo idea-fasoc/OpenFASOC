@@ -1,0 +1,19 @@
+CTATVGen
+// no imports
+// create parameters: src_width, load_width, src_length, load_length, src_multiplier, load_multiplier, src_fingers, load_fingers
+# CTAT without body effect
+create a float parameter called src_width
+create a float parameter called load_width
+create a float parameter called src_length
+create a float parameter called load_length 
+create a int parameter called src_multiplier
+create a int parameter called load_multiplier
+create a int parameter called src_fingers
+create a int parameter called load_fingers
+// place
+place a nmos called src with width=src_width, length=src_length, fingers=src_fingers, rmult=1, multipliers=src_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a nmos called load with width=load_width, length=load_length, fingers=load_fingers, rmult=1, multipliers=load_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+// more than one component has been placed, so move
+move load below src
+// CTAT, route drain to source
+route between src_drain_W and load_source_W using smart_route

@@ -1,0 +1,24 @@
+SIntegrator
+# Make the second integrator
+import CurrentMirrorNFET
+place an interdigitated pfet called gm2 with numcols=2, dummy=True, with_substrate_tap=False, with_tie=True, tie_layers=("met2","met1"), kwargs={ "width" : 1 , "length" : 1}
+place an interdigitated pfet called gm4 with numcols=2, dummy=True, with_substrate_tap=False, with_tie=True, tie_layers=("met2","met1"), kwargs={ "width" : 1 , "length" : 1}
+place an interdigitated pfet called source with numcols=2, dummy=True, with_substrate_tap=False, with_tie=True, tie_layers=("met2","met1"), kwargs={ "width" : 1 , "length" : 1}
+place a CurrentMirrorNFET called sink
+move source above gm2
+move gm4 below gm2
+move sink below gm4
+# short the gates of source
+route between source_A_gate_E and source_B_gate_E
+# Short the sources of the gm2 and gm4
+route between gm2_A_source_E and gm2_B_source_E
+route between gm4_A_source_E and gm4_B_source_E
+# Connect the source to the diffpair sources
+route between source_A_drain_E and gm2_A_source_E using c_route
+route between source_B_drain_W and gm4_B_source_W using c_route
+# Connect the drains of the diffpairs
+route between gm2_A_drain_W and gm4_A_drain_W using c_route with extension=2
+route between gm2_B_drain_E and gm4_B_drain_E using c_route with extension=1
+# Connect the sink
+route between gm4_A_drain_E and sink_cm_A_drain_E using c_route
+route between gm4_B_drain_E and sink_cm_B_drain_E using c_route with extension=2

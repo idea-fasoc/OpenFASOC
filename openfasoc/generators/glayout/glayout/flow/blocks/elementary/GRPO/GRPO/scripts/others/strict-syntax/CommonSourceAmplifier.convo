@@ -1,0 +1,19 @@
+CommonSourceAmplifier
+// no imports
+// create parameters: input_width, bias_width, input_length, bias_length, input_multiplier, bias_multiplier, input_fingers, bias_fingers
+# figure 10 exactly, uses a pmos load and nmos amp
+create a float parameter called input_width
+create a float parameter called bias_width
+create a float parameter called input_length
+create a float parameter called bias_length 
+create a int parameter called input_multiplier
+create a int parameter called bias_multiplier
+create a int parameter called input_fingers
+create a int parameter called bias_fingers
+// place
+place a nmos called input with width=input_width, length=input_length, fingers=input_fingers, rmult=1, multipliers=input_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a pmos called bias with width=bias_width, length=bias_length, fingers=bias_fingers, rmult=1, multipliers=bias_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True
+// more than one component has been placed, so move
+move input below bias
+// common source amplifier, route drain to source
+route between input_drain_W and bias_source_W using smart_route

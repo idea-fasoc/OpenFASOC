@@ -1,0 +1,20 @@
+ClassBPushPull
+# figure 19 exactly
+// no imports
+// create parameters: supply_width, absorb_width, supply_length, absorb_length, supply_multiplier, absorb_multiplier, supply_fingers, absorb_fingers
+create a float parameter called supply_width
+create a float parameter called absorb_width
+create a float parameter called supply_length
+create a float parameter called absorb_length 
+create a int parameter called supply_multiplier
+create a int parameter called absorb_multiplier
+create a int parameter called supply_fingers
+create a int parameter called absorb_fingers
+// place
+place a nmos called supply with width=supply_width, length=supply_length, fingers=supply_fingers, rmult=1, multipliers=supply_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+place a pmos called absorb with width=absorb_width, length=absorb_length, fingers=absorb_fingers, rmult=1, multipliers=absorb_multiplier, with_substrate_tap=False, with_tie=True, with_dummy=True
+// more than one component has been placed, so move
+move absorb below supply
+// class B push pull amplifier, route source to source, and gate to gate
+route between supply_source_W and absorb_source_W using smart_route
+route between supply_gate_E and absorb_gate_E using smart_route

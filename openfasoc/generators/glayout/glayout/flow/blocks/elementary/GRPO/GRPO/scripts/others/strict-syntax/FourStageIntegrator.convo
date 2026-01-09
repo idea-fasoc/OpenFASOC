@@ -1,0 +1,29 @@
+OpAmp
+import FIntegrator
+import SIntegrator
+import TIntegrator
+import ClassABStage
+place a FIntegrator called finteg
+place a SIntegrator called sinteg 
+place a TIntegrator called tinteg 
+place a ClassABStage called abstage 
+move sinteg right next to finteg
+move tinteg right next to sinteg 
+move abstage right next to tinteg
+# Route inp
+route between finteg_gm1_A_gate_E and sinteg_gm2_A_gate_W using straight_route
+route between sinteg_gm2_A_gate_E and tinteg_gm32_A_gate_W using straight_route
+route between tinteg_gm32_A_gate_E and abstage_gm31_A_gate_W using straight_route
+# Route inn
+route between finteg_gm1_B_gate_E and sinteg_gm2_B_gate_W using straight_route
+route between sinteg_gm2_B_gate_E and tinteg_gm32_B_gate_W using straight_route
+route between tinteg_gm32_B_gate_E and abstage_gm31_B_gate_W using straight_route
+# Route the drains of gm1 to the gates of gm4
+route between finteg_sink_cm_A_drain_E and sinteg_gm4_B_gate_W using snake_route with extension=2
+route between finteg_sink_cm_B_drain_E and sinteg_gm4_A_gate_W using snake_route with extension=3
+# Route the drains of gm2 to the gates of gm5
+route between sinteg_sink_cm_A_drain_E and tinteg_gm5_B_gate_W using snake_route with viaoffset=(False, False)
+route between sinteg_sink_cm_B_drain_E and tinteg_gm5_A_gate_W using snake_route with extension=2 viaoffset=(False, False)
+# Route the drains of gm32 to the gates of class ab nfets
+route between tinteg_gm5_A_drain_E and abstage_pp1_n1_multiplier_0_gate_E using c_route
+route between tinteg_gm5_B_drain_E and abstage_pp2_n1_multiplier_0_gate_E using c_route

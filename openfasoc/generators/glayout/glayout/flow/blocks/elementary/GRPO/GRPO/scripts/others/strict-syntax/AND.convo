@@ -1,0 +1,10 @@
+AND 
+create a float parameter called n_width
+create a float parameter called p_width
+import Inverter
+import NAND 
+place an Inverter called inv
+place a NAND called nand with nfet_width n_width pfet_width p_width
+move inv to the right of nand
+route between inv_m1_multiplier_0_gate_W and nand_m4_multiplier_0_drain_W
+

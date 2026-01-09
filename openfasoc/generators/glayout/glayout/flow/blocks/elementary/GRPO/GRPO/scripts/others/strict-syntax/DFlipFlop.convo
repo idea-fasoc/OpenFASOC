@@ -1,0 +1,32 @@
+DFlipFlop
+import AND
+import Inverter
+import NOR
+create a float parameter called n_flip_width
+create a float parameter called p_flip_width
+place an Inverter called inv
+place an AND called and1 with n_width n_flip_width p_width p_flip_width
+place an AND called and2 with n_width n_flip_width p_width p_flip_width
+place a NOR called nor1 with nfet_width n_flip_width pfet_width p_flip_width
+place a NOR called nor2 with nfet_width n_flip_width pfet_width p_flip_width
+move and1 above and2
+move nor2 to the right of and2
+move nor1 north of and2
+move nor1 right of and1
+move inv left of and2
+route between inv_m1_multiplier_0_gate_W and and2_nand_m1_multiplier_0_gate_W using smart_route
+route between and2_nand_m4_multiplier_0_gate_W and and2_nand_m1_multiplier_0_gate_W using smart_route
+route between inv_m1_multiplier_0_drain_W and and1_nand_m3_multiplier_0_gate_W using smart_route
+route between and1_nand_m2_multiplier_0_gate_W and and1_nand_m3_multiplier_0_gate_W using smart_route
+route between and1_nand_m4_multiplier_0_gate_W and and1_nand_m1_multiplier_0_gate_W using smart_route
+route between and2_nand_m3_multiplier_0_gate_W and and1_nand_m1_multiplier_0_gate_W using smart_route
+route between and2_nand_m3_multiplier_0_gate_W and and2_nand_m2_multiplier_0_gate_W using smart_route
+route between and1_nand_m4_multiplier_0_drain_W and and1_nand_m1_multiplier_0_gate_W using smart_route
+route between and1_inv_m1_multiplier_0_drain_W and nor1_m1_multiplier_0_gate_W using smart_route
+route between and1_inv_m1_multiplier_0_drain_W and nor1_m4_multiplier_0_gate_W using smart_route
+route between nor1_m2_multiplier_0_gate_W and nor1_m3_multiplier_0_gate_W using smart_route
+route between nor1_m2_multiplier_0_gate_W and nor2_m2_multiplier_0_drain_W using smart_route
+route between nor1_m2_multiplier_0_drain_W and nor2_m4_multiplier_0_gate_W using smart_route
+route between nor2_m4_multiplier_0_gate_W and nor2_m1_multiplier_0_gate_W using smart_route
+route between nor2_m3_multiplier_0_gate_W and nor2_m2_multiplier_0_gate_W using smart_route
+route between and2_inv_m1_multiplier_0_drain_W and nor2_m3_multiplier_0_gate_W using smart_route

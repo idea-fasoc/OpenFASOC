@@ -1,0 +1,21 @@
+BiasVoltageGenerator
+// no imports
+// create parameters: src_width, load_width, src_length, load_length, src_multipliers, load_multipliers, src_fingers, load_fingers
+# figure 24 exactly
+create a float parameter called src_width
+create a float parameter called load_width
+create a float parameter called src_length
+create a float parameter called load_length 
+create a int parameter called src_multipliers
+create a int parameter called load_multipliers
+create a int parameter called src_fingers
+create a int parameter called load_fingers
+// place
+place a pmos called src with width=src_width, length=src_length, fingers=src_fingers, rmult=1, multipliers=src_multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True 
+place a nmos called load with width=load_width, length=load_length, fingers=load_fingers, rmult=1, multipliers=load_multipliers, with_substrate_tap=False, with_tie=True, with_dummy=True, with_dnwell=False
+// more than one component has been placed, so move
+move load below src
+// bias voltage generator, route drain to drain, gate to drain, and gate to source
+route between src_drain_E and load_drain_E using smart_route
+route between load_gate_E and load_drain_E using smart_route
+route between src_gate_W and load_source_W using smart_route

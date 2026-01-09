@@ -1,0 +1,21 @@
+Varactor
+# figure 30 variable capacitor
+// no imports
+// create parameters: control_width, accumulation_width, control_length, accumulation_length, control_multiplier, accumulation_multiplier, control_fingers, accumulation_fingers
+create a float parameter called control_width
+create a float parameter called accumulation_width
+create a float parameter called control_length
+create a float parameter called accumulation_length
+create a int parameter called control_multiplier
+create a int parameter called accumulation_multiplier
+create a int parameter called control_fingers
+create a int parameter called accumulation_fingers
+// place
+place a nmos called control with width=control_width, length=control_length, fingers=control_fingers, rmult=1, multipliers=control_multiplier, with_substrate_tap=False, with_tie=False, with_dummy=False
+place a nmos called accumulation with width=accumulation_width, length=accumulation_length, fingers=accumulation_fingers, rmult=1, multipliers=accumulation_multiplier, with_substrate_tap=False, with_tie=False, with_dummy=False 
+// more than one component has been placed, so move
+move accumulation to the right of control
+// variable capacitor route drain to drain, source to source, and source to drain
+route between control_drain_N and accumulation_drain_N using smart_route
+route between control_source_N and accumulation_source_N using smart_route
+route between control_source_N and accumulation_drain_N using smart_route

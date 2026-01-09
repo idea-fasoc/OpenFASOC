@@ -150,4 +150,9 @@ cython_debug/
 
 # Large Language Models
 glayout_llm_checkpoints/
+glayout_llm_checkpointsphi/
 
+# Regression results
+regression/
+
+.git.backup/

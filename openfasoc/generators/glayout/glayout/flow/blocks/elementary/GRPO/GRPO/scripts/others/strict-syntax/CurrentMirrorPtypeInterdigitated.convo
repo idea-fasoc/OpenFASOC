@@ -1,0 +1,13 @@
+CurrentMirrorPtypeInterdigitated
+// no imports
+// create parameters: width, length, fingers
+create a float parameter called width
+create a float parameter called length
+create an int parameter called fingers
+// place
+place an interdigitated pfet called cm with numcols=fingers, dummy=True, with_substrate_tap=False, with_tie=True, kwargs={"width": width, "length": length, "rmult":1}
+// only one component placed, so no move
+// current mirror, route reference gate to mirror gate, reference drain to reference gate, and reference source to mirror source
+route between cm_A_gate_E and cm_B_gate_E using smart_route
+route between cm_A_drain_E and cm_A_gate_E using smart_route
+route between cm_A_source_E and cm_B_source_E using smart_route

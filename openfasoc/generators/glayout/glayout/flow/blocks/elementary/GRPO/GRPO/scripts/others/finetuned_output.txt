@@ -1,0 +1,38 @@
+```
+import gdsfactory as gf
+from gdsfactory.component import Component
+from gdsfactor.routing.route_quad import route_quad
+from gdsfactort.components.bend_euler import bend_euler
+from gdsfacotry.components.straight import straight
+from gdsfctory.components.taper import taper
+from gdsfcoty.components.via import via
+from gdsfcy.components.wire import wire
+
+class FlippedVoltageFollower(Component):
+    def __init__(self, width=10, length=20, layer=(1, 0)):
+        super().__init__()
+        self.width = width
+        self.length = length
+        self.layer = layer
+
+    def build(self):
+        # Create the input and output ports
+        inp = Port(name="in", orientation=90)
+        out = Port(name="out", orientation=-90)
+
+        # Add the input and output wires
+        inp_wire = Wire([inp], layer=self.layer)
+        out_wire = Wire(out, layer=self.layer, width=self.width)
+
+        # Route the input wire to the output wire
+        route_quad(inp_wire, out_wire, bend_radius=5)
+
+        # Connect the input and output wiring to the component ports
+        self.add_ports(inp, out)
+
+# Create an instance of the FlippedVoltanceFollower class
+flipped_voltage_follower = FlippedVoltangeFollower()
+
+# Generate the GDSII file for the flipped voltage follow circuit
+gds_file = flipped_voltage.to_gds()
+```

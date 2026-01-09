@@ -1,0 +1,12 @@
+params_*/
+_old/
+.old/
+results/
+generate*.py
+readme/
+__pycache__/
+evaluator_box/
+monitor_realtime.sh
+resume_fvf_nohup.py
+run_lhs_files.py
+PERFORMANCE_ANALYSIS.md
