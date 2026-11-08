@@ -2,6 +2,7 @@ import os, sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from common.check_gen_files import check_gen_files
+from common.check_lvs import lvs_result
 
 generator_is = {
     'sky130hvl_ldo': 0, 
@@ -20,13 +21,11 @@ else:
 
 lvs_filename = "work/6_final_lvs.rpt"
 
-with open(lvs_filename) as f:
-    f1 = f.read()
-
-    if "failed" in f1:
-        raise ValueError("LVS failed!")
-    else:
-        print("LVS is clean!")
+lvs_clean, lvs_final = lvs_result(lvs_filename)
+if not lvs_clean:
+    raise ValueError("LVS failed! netgen final result: " + lvs_final)
+else:
+    print("LVS is clean!")
 
 json_filename = "test.json"
 

@@ -4,6 +4,7 @@ import sys, os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from common.check_gen_files import check_gen_files
+from common.check_lvs import lvs_result
 
 generator_is = {
     'sky130hvl_ldo': 0, 
@@ -24,15 +25,9 @@ else:
     print("DRC is clean!")
 
 lvs_filename = "flow/reports/" + cryo_library + "/cryo/6_final_lvs.rpt"
-lvs_line = subprocess.check_output(["tail", "-1", lvs_filename]).decode(
-    sys.stdout.encoding
-)
-
-regex = r"failed"
-match = re.search(regex, lvs_line)
-
-if match != None:
-    raise ValueError("LVS failed!")
+lvs_clean, lvs_final = lvs_result(lvs_filename)
+if not lvs_clean:
+    raise ValueError("LVS failed! netgen final result: " + lvs_final)
 else:
     print("LVS is clean!")
 

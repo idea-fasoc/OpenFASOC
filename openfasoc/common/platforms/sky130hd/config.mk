@@ -9,7 +9,10 @@ export SC_LEF = $(PLATFORM_DIR)/lef/sky130_fd_sc_hd_merged.lef
 
 export LIB_FILES = $(PLATFORM_DIR)/lib/sky130_fd_sc_hd__tt_025C_1v80.lib \
                      $(ADDITIONAL_LIBS)
-export GDS_FILES = $(wildcard $(PLATFORM_DIR)/gds/*.gds) \
+# Standard-cell layouts come from the PDK whose magic tech extracts them for LVS (and whose
+# libs.ref spice is the LVS reference); gds/ is an older copy, used only when PDK_ROOT has no sky130A.
+export SC_PDK_GDS = $(PDK_ROOT)/sky130A/libs.ref/sky130_fd_sc_hd/gds/sky130_fd_sc_hd.gds
+export GDS_FILES = $(if $(wildcard $(SC_PDK_GDS)),$(SC_PDK_GDS),$(wildcard $(PLATFORM_DIR)/gds/*.gds)) \
                      $(ADDITIONAL_GDS_FILES)
 
 # Dont use cells to ease congestion
